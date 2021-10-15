@@ -13,7 +13,6 @@
 # You should have received a copy of the GNU General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 
-
 def rrd(snapshot, start, end):
 	reg_a = 0x00
 	for addr in range(start, end):
@@ -25,12 +24,9 @@ def rrd(snapshot, start, end):
 		byte = (a2 << 4) + b1
 		snapshot[addr] = byte
 		reg_a = a1 + b2
-	return snapshot
-
 
 def decrypt_aticatac(snapshot):
-	return rrd(snapshot, 0x5FFF, 0xDBFF)
-
+	rrd(snapshot, 0x5FFF, 0xDBFF)
 
 def decrypt_lunarjetman(snapshot):
-	return rrd(snapshot, 0x7FFF, 0xFBFF)
+	rrd(snapshot, 0x7FFF, 0xFBFF)

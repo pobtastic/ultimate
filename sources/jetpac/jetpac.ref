@@ -1,0 +1,77 @@
+;
+; SkoolKit ref file for Jet Pac
+;
+; To build the HTML disassembly, run these commands:
+;   tap2sna.py @jetpac.t2s
+;   sna2skool.py -H -c sources/jetpac/jetpac.ctl jetpac.z80 > sources/jetpac/jetpac.skool
+;   skool2html.py -H sources/jetpac/jetpac.skool -T dark
+
+[Config]
+;RefFiles=changelog.ref;pokes.ref
+HtmlWriterClass=:linking.UltimateHtmlWriter
+GameDir=ultimate/jetpac
+
+[Game]
+Game=Jetpac
+Logo=#SCR1,2,1,27,5(/images/logo)
+Copyright=&copy; 1983 Ultimate Play the Game
+StyleSheet=skoolkit.css;skoolkit-dark.css;jetpac.css
+
+[PageHeaders]
+GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics]
+Jetman
+Ships
+Aliens
+Items
+Platforms
+
+[Links]
+Jetman=[Jetman]
+Ships=[Ships]
+Aliens=[Aliens]
+Items=[Items]
+Platforms=[Platforms]
+
+[Page:Jetman]
+SectionPrefix=Jetman
+
+[Page:Ships]
+PageContent=#INCLUDE(PageContent:Ships)
+
+[Page:Aliens]
+SectionPrefix=Aliens
+
+[Page:Items]
+SectionPrefix=Items
+
+[Page:Platforms]
+PageContent=#INCLUDE(PageContent:Platforms)
+
+[Page:Pokes]
+SectionType=ListItems
+[Poke:Pokes]
+Assorted POKEs for the game
+
+<p>Starting lives 1UP (default is "4");<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$6316 | #SPACE(1) | #SPACE(1) | LD A, <i>$04</i> } { $6317 | <i>$FF</i> (or whatever you want it to be) | LD A, $FF | ^^ } TABLE#</p>
+<p>Starting lives 2UP (default is "5" / which due to how the code works, is "4 lives"+1);<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$6324 | #SPACE(1) | #SPACE(1) | LD A, <i>$05</i> } { $6325 | <i>$FF</i> (or whatever you want it to be) | LD A, $FF | ^^ } TABLE#</p>
+
+<p>Only need one fuel cell;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$65D6 | <i>$3E</i>       | LD A, $05	;	Set #REGa=$05 | LD A, ($5D35)	;	Fetch current #R$5D35 for level } { $65D7 | <i>$05</i>       | ^^        | #SPACE(1) } { $65D8 | <i>$00</i>       | NOP       | #SPACE(1) } { $65D9 | #SPACE(1) | #SPACE(1) | INC A	;	Increase #R$5D35 by one } { $65DA | #SPACE(1) | #SPACE(1) | LD ($5D35),A	;	Write back the updated value } TABLE#</p>
+
+<p>Fuel drops immediately;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$65CE | #SPACE(1) | #SPACE(1) | LD A,(IX+$02)	;	Fuel Y co-ordinate } { $65D1 | #SPACE(1) | #SPACE(1) | CP $B0	;	Has the fuel reached the ship yet? } { $65D3 | #SPACE(1) | #SPACE(1) | JP C,#R$653F	;	If not, continue dropping the fuel pod } { $65D4 | <i>$D6</i> | JP C,#R$65D6	;	If not, fuel pod deposited correctly! } TABLE#</p>
+
+<p>Infinite lives;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$61B3 | #SPACE(1) | #SPACE(1) | LD A,($5DF1)	;	#REGa=#R$5DF1 } { $61B6 | #SPACE(1) | #SPACE(1) | DEC A	;	Decrease by 1... } { $61B7 | <i>$3E</i> | LD A, $05	;	Set #REGa=$05 | LD ($5DF1),A	;	Write the new value back } { $61B8 | <i>$05</i> | ^^ } { $61B9 | <i>$00</i> | NOP } { $61BA | <i>$00</i> | NOP | JP $70A4 } TABLE#</p>
+
+<p>Disable firing;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$706E | #SPACE(1) | #SPACE(1) | LD A,(IX+$06)	;	 } { $7070 | $00 | LD A,(IX+$00) | #SPACE(1) } TABLE#</p>
+
+[Page:Changelog]
+SectionType=BulletPoints
+[Changelog:20200531]
+- First draft created in SkoolKit 8.1.
