@@ -7,8 +7,9 @@
 ;   skool2html.py -H sources/jetpac/jetpac.skool -T dark
 
 [Config]
-;RefFiles=changelog.ref;pokes.ref
-HtmlWriterClass=:linking.UltimateHtmlWriter
+Expand=#INCLUDE(Expand)
+RefFiles=../bases.ref;changelog.ref;jetpacGraphics.ref;pokes.ref
+HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/jetpac
 
 [Game]
@@ -26,6 +27,12 @@ Graphics
 DataTables
 Reference
 
+[Index:Reference:Reference]
+Changelog
+Bugs
+Pokes
+Credits
+
 [Index:Graphics:Graphics]
 Jetman
 Ships
@@ -40,11 +47,13 @@ Aliens=[Aliens]
 Items=[Items]
 Platforms=[Platforms]
 
-[Page:Jetman]
-SectionPrefix=Jetman
-
-[Page:Ships]
-PageContent=#INCLUDE(PageContent:Ships)
+[Paths]
+Credits=reference/credits.html
+Aliens=graphics/aliens.html
+Items=graphics/items.html
+Jetman=graphics/jetman.html
+Platforms=graphics/platforms.html
+Ships=graphics/ships.html
 
 [Page:Aliens]
 SectionPrefix=Aliens
@@ -52,26 +61,132 @@ SectionPrefix=Aliens
 [Page:Items]
 SectionPrefix=Items
 
+[Page:Jetman]
+SectionPrefix=Jetman
+
 [Page:Platforms]
-PageContent=#INCLUDE(PageContent:Platforms)
+SectionPrefix=Platforms
 
-[Page:Pokes]
-SectionType=ListItems
-[Poke:Pokes]
-Assorted POKEs for the game
+[Page:Ships]
+SectionPrefix=Ships
 
-<p>Starting lives 1UP (default is "4");<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$6316 | #SPACE(1) | #SPACE(1) | LD A, <i>$04</i> } { $6317 | <i>$FF</i> (or whatever you want it to be) | LD A, $FF | ^^ } TABLE#</p>
-<p>Starting lives 2UP (default is "5" / which due to how the code works, is "4 lives"+1);<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$6324 | #SPACE(1) | #SPACE(1) | LD A, <i>$05</i> } { $6325 | <i>$FF</i> (or whatever you want it to be) | LD A, $FF | ^^ } TABLE#</p>
+[Expand]
+#DEF(#JETMAN(id)(fname)
+  #GRAPHIC($id,$76FA)($fname)
+)
 
-<p>Only need one fuel cell;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$65D6 | <i>$3E</i>       | LD A, $05	;	Set #REGa=$05 | LD A, ($5D35)	;	Fetch current #R$5D35 for level } { $65D7 | <i>$05</i>       | ^^        | #SPACE(1) } { $65D8 | <i>$00</i>       | NOP       | #SPACE(1) } { $65D9 | #SPACE(1) | #SPACE(1) | INC A	;	Increase #R$5D35 by one } { $65DA | #SPACE(1) | #SPACE(1) | LD ($5D35),A	;	Write back the updated value } TABLE#</p>
+#DEF(#SHIP()(fname)
+  #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;(#PC + n)-(#PC + n + $11)-$01-$10))($fname)
+)
 
-<p>Fuel drops immediately;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$65CE | #SPACE(1) | #SPACE(1) | LD A,(IX+$02)	;	Fuel Y co-ordinate } { $65D1 | #SPACE(1) | #SPACE(1) | CP $B0	;	Has the fuel reached the ship yet? } { $65D3 | #SPACE(1) | #SPACE(1) | JP C,#R$653F	;	If not, continue dropping the fuel pod } { $65D4 | <i>$D6</i> | JP C,#R$65D6	;	If not, fuel pod deposited correctly! } TABLE#</p>
+#DEF(#CONVERTFF(addr)
+  #LET(length=#PEEK($addr) * #PEEK($addr + $01))
+  #FOR($00,{length})||n|
+    #IF(#PEEK($02 + $addr + n) == $FF)(#POKES(($02 + $addr + n), $47))
+  ||
+)
 
-<p>Infinite lives;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$61B3 | #SPACE(1) | #SPACE(1) | LD A,($5DF1)	;	#REGa=#R$5DF1 } { $61B6 | #SPACE(1) | #SPACE(1) | DEC A	;	Decrease by 1... } { $61B7 | <i>$3E</i> | LD A, $05	;	Set #REGa=$05 | LD ($5DF1),A	;	Write the new value back } { $61B8 | <i>$05</i> | ^^ } { $61B9 | <i>$00</i> | NOP } { $61BA | <i>$00</i> | NOP | JP $70A4 } TABLE#</p>
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)($fname))
 
-<p>Disable firing;<br>#TABLE(default) { =h Address | =h Poke/ Alteration | =h New Code | =h Old Code } { #R$706E | #SPACE(1) | #SPACE(1) | LD A,(IX+$06)	;	 } { $7070 | $00 | LD A,(IX+$00) | #SPACE(1) } TABLE#</p>
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
 
-[Page:Changelog]
-SectionType=BulletPoints
-[Changelog:20200531]
-- First draft created in SkoolKit 8.1.
+#DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height)($fname)
+)
+
+#DEF(#COLOURCROP(addr,width,height,attrtable)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height){$00, $04 * ($08 - ($height % $08)), $04 * $width * $08, $04 * $height}($fname)
+)
+
+#DEF(#SPRITE(id,base=$6945)(fname)
+  #LET(offset=$id * $02)
+  #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
+  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+
+#DEF(#GRAPHIC(id,base=$76FA,attributes=0)(fname)
+  #LET(offset=$id * $02)
+  #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
+  #LET(width=#PEEK({addr} + $01))
+  #LET(height=#PEEK({addr} + $02))
+  #IF($attributes > $00)||
+    TODO
+  |
+    #IF({height} % $08)(
+      #CROP({addr} + $03, {width}, $07)($fname),
+      #NOCROP({addr} + $03, {width}, $07)($fname)
+    )
+  ||
+)
+
+#DEF(#ALIEN(id)(fname)
+  #SPRITE($id,$6945)($fname)
+)
+
+#DEF(#ALIENNAME(id)
+  #MAP($id)(
+    ?,
+    0:"Round 1: Meteor Frame 1",
+    1:"Round 1: Meteor Frame 2",
+    2:"Round 2: Tribble Alien Frame 1",
+    3:"Round 2: Tribble Alien Frame 2",
+    4:"Round 3: Bubble Alien Frame 1",
+    5:"Round 3: Bubble Alien Frame 2",
+    6:"Round 4: Jet Fighter",
+    7:"Round 4: Jet Fighter",
+    8:"Round 5: UFO",
+    9:"Round 5: UFO",
+    10:"Round 6: Cross Ship",
+    11:"Round 6: Cross Ship",
+    12:"Round 7: Slick Ship",
+    13:"Round 7: Slick Ship",
+    14:"Round 8: Frog Alien",
+    15:"Round 8: Frog Alien"
+  )
+)
+
+#DEF(#EXPLOSION(id)(fname)
+  #GRAPHIC($id,$690F)($fname)
+)
+
+#DEF(#EXPLOSIONNAME(id)
+  #MAP($id)(
+    ?,
+    0:"Small Explosion",
+    1:"Medium Explosion",
+    2:"Large Explosion",
+    3:"Small Explosion",
+    4:"Medium Explosion",
+    5:"Large Explosion"
+  )
+)
+
+#DEF(#COLLECTABLE(id)(fname)
+  #GRAPHIC($id,$67C3)($fname)
+)
+
+#DEF(#COLLECTABLENAME(id)
+  #MAP($id)(
+    ?,
+    0:"Ship U1: Bottom",
+    1:"Ship U2: Bottom",
+    2:"Ship U3: Bottom",
+    3:"Ship U4: Bottom",
+    4:"Ship U1: Middle",
+    5:"Ship U2: Middle",
+    6:"Ship U3: Middle",
+    7:"Ship U4: Middle",
+    8:"Ship U1: Top",
+    9:"Ship U2: Top",
+    10:"Ship U3: Top",
+    11:"Ship U4: Top",
+    12:"Fuel Pod",
+    13:"Fuel Pod",
+    14:"Fuel Pod",
+    15:"Fuel Pod",
+    16:"Gold Bar",
+    17:"Plutonium",
+    18:"Isotope",
+    19:"Mineral",
+    20:"Gemstone"
+  )
+)

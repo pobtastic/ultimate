@@ -237,6 +237,18 @@ c$5B80 DI            ; Disable interrupts.
  $5B87 LD BC,$2114   ;
  $5B8A LDIR          ; }
  $5B8C JP $61C6      ; Jump to #R$61C6.
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$5B80 }
+; { #JETPAC$5B80 }
+; { #TRANZAM$5B80 }
+; LIST#
+; .
+; Later Ultimate games use more advanced decryption mechanisms;
+; #LIST
+; { #ATICATAC$5B80 }
+; { #LUNARJETMAN$5B80 }
+; LIST#
 
 ; Data block at 5B8F
 b$5B8F DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -418,6 +430,8 @@ g$5E1F DEFB $3A
 @label=FrameUpdated
 g$5E20 DEFB $F5
 
+; Menu Item Attribute
+;
 ; Current menu item colour attribute.
 @label=Current_MenuAttr
 g$5E21 DEFB $AC
@@ -1005,6 +1019,14 @@ c$613B LD HL,$5E37   ; #REGhl=#R$5E37.
  $6160 DJNZ $6159    ; Decrease counter by one and loop back to #R$6159 until
                      ; counter is zero.
  $6162 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$6416 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$613B }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Game Over Message
 @label=Message_GameOver
@@ -1187,6 +1209,14 @@ c$61CD LD HL,$5E00   ; {Write #N$00 to #N$0B bytes from #N$5E00 to #N$5E0B.
  $624C SET 7,(HL)    ; Set the FLASH attribute for the second selection.
  $624E INC HL        ; Move onto the next menu selection attribute.
  $624F RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7C19 }
+; { #COOKIE$6298 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$800A }
+; { #TRANZAM$5F07 }
+; LIST#
 
 ; Game Selection Menu
 ;
@@ -1221,6 +1251,14 @@ c$6250 LD DE,$627C   ; #REGde=#R$627C.
  $6273 LD HL,$B800   ; #REGhl=#N$B800.
  $6276 LD DE,$5EF5   ; #REGde=#R$5EF5.
  $6279 JP $73ED      ; Jump to #R$73ED.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7CAF }
+; { #COOKIE$6332 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$80D1 }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Game Select Attribute Table
 @label=GameSelection_Attributes
@@ -1267,6 +1305,14 @@ c$62E7 PUSH HL       ; Stash #REGhl containing the co-ordinate on the stack.
  $62F0 POP HL        ; Restore #REGhl from the stack.
  $62F1 CALL $748F    ; Call #R$748F.
  $62F4 JP $73F9      ; Jump to #R$73F9.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7D8A }
+; { #COOKIE$63E0 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$0000 }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Reset Player Data
 ;
@@ -1315,7 +1361,7 @@ c$631E DEFM $47                     ; {"SPRAY THE BUGS"
  $6346 CALL $62F7                   ; Call #R$62F7.
  $6349 CALL $7113                   ; Call #R$7113.
  $634C CALL $5F80                   ; Call #R$5F80.
-; This entry point is used by the routine at #R$7130.
+; This entry point is used by the routines at #R$7130 and #R$721A.
 *$634F LD SP,$5D00                  ; #REGsp=#N$5D00.
  $6352 EI                           ; Enable interrupts.
  $6353 LD IX,$5E8C                  ; #REGix=#R$5E8C.
@@ -3130,6 +3176,7 @@ c$7130 LD HL,$5E19     ; {Increment #R$5E19 by one.
  $7140 SBC HL,BC       ;
  $7142 JP C,$635B      ;
 ; Holding "SHIFT" pauses the game.
+@label=Pause_Loop
 *$7145 LD A,$FE        ; {Read from the keyboard;
  $7147 OUT ($FD),A     ; #TABLE(default,centre,centre,centre,centre,centre,centre)
  $7149 IN A,($FE)      ; { =h,r2 Port Number | =h,c5 Bit }
@@ -3194,6 +3241,7 @@ c$7130 LD HL,$5E19     ; {Increment #R$5E19 by one.
  $71B8 JP Z,$7262      ;
  $71BB ADD HL,DE       ;
  $71BC DJNZ $71B6      ;
+; This entry point is used by the routine at #R$7262.
 *$71BE LD A,($5E3C)    ;
  $71C1 AND A           ;
  $71C2 JP NZ,$721A     ;
@@ -3217,6 +3265,7 @@ c$7130 LD HL,$5E19     ; {Increment #R$5E19 by one.
  $71E9 CP $05          ;
  $71EB JR NC,$725A     ;
  $71ED LD (IX+$01),$08 ;
+; This entry point is used by the routine at #R$7249.
 *$71F1 RRCA            ;
  $71F2 RRCA            ;
  $71F3 RRCA            ;
@@ -3233,112 +3282,120 @@ c$7130 LD HL,$5E19     ; {Increment #R$5E19 by one.
  $720A LD (IX+$00),A   ;
  $720D LD (IX+$03),$43 ;
  $7211 LD (IX+$05),C   ;
+; This entry point is used by the routine at #R$7249.
 *$7214 CALL $64E7      ;
  $7217 JP $634F        ;
-*$721A LD IX,$5E3C     ;
- $721E CALL $75B9      ;
- $7221 LD C,(IX+$05)   ;
- $7224 LD B,$00        ;
- $7226 LD HL,$5E23     ;
- $7229 ADD HL,BC       ;
- $722A LD A,(HL)       ;
- $722B CP (IX+$04)     ;
- $722E JR NZ,$7249     ;
- $7230 CALL $74EB      ;
- $7233 CALL $7450      ;
- $7236 LD A,($5E17)    ;
- $7239 AND $03         ;
- $723B JP NZ,$634F     ;
- $723E LD A,(IX+$03)   ;
- $7241 XOR $04         ;
- $7243 LD (IX+$03),A   ;
- $7246 JP $634F        ;
-*$7249 LD (HL),$00     ;
+
+; Routine at 721A
+;
+; Used by the routine at #R$7130.
+c$721A LD IX,$5E3C   ; #REGix=#R$5E3C.
+ $721E CALL $75B9    ; Call #R$75B9.
+ $7221 LD C,(IX+$05) ;
+ $7224 LD B,$00      ;
+ $7226 LD HL,$5E23   ;
+ $7229 ADD HL,BC     ;
+ $722A LD A,(HL)     ;
+ $722B CP (IX+$04)   ;
+ $722E JR NZ,$7249   ;
+ $7230 CALL $74EB    ; Call #R$74EB.
+ $7233 CALL $7450    ; Call #R$7450.
+ $7236 LD A,($5E17)  ; #REGa=#R$5E17.
+ $7239 AND %00000011 ; Keep only bits 0-1.
+ $723B JP NZ,$634F   ;
+ $723E LD A,(IX+$03) ;
+ $7241 XOR %00000100 ; Unset bit 2.
+ $7243 LD (IX+$03),A ;
+ $7246 JP $634F      ; Jump to #R$634F.
+
+; Routine at 7249
+;
+; Used by the routine at #R$721A.
+c$7249 LD (HL),$00     ;
  $724B CALL $7526      ;
  $724E LD BC,$1000     ;
  $7251 CALL $737A      ;
  $7254 LD (IX+$00),$00 ;
  $7258 JR $7214        ;
+; This entry point is used by the routine at #R$7130.
 *$725A LD (IX+$01),$E8 ;
  $725E SUB $05         ;
  $7260 JR $71F1        ;
-*$7262 PUSH HL         ;
- $7263 EX DE,HL        ;
- $7264 LD HL,$5F16     ;
- $7267 LD BC,$0008     ;
- $726A LDIR            ;
- $726C POP IX          ;
- $726E LD A,($5E13)    ;
- $7271 CP $05          ;
- $7273 JR NC,$72CC     ;
- $7275 LD (IX+$01),$08 ;
- $7279 SET 6,(IX+$00)  ;
-*$727D RRCA            ;
- $727E RRCA            ;
- $727F RRCA            ;
- $7280 AND $E0         ;
- $7282 ADD A,$37       ;
- $7284 LD (IX+$02),A   ;
- $7287 LD A,($5E37)    ;
- $728A CP $01          ;
- $728C JR Z,$72D4      ;
- $728E CP $02          ;
- $7290 JR Z,$72DA      ;
- $7292 CP $03          ;
- $7294 JR Z,$72E1      ;
- $7296 CP $04          ;
- $7298 JR C,$729C      ;
- $729A LD A,R          ;
-*$729C AND $03         ;
- $729E LD C,A          ;
- $729F SLA A           ;
- $72A1 ADD A,C         ;
- $72A2 LD C,A          ;
- $72A3 LD B,$00        ;
- $72A5 LD HL,$72E9     ;
- $72A8 ADD HL,BC       ;
- $72A9 LD A,(HL)       ;
- $72AA LD (IX+$00),A   ;
- $72AD INC HL          ;
- $72AE LD A,($5E19)    ;
- $72B1 BIT 6,A         ;
- $72B3 JR Z,$72B6      ;
- $72B5 INC HL          ;
-*$72B6 LD A,(HL)       ;
- $72B7 LD (IX+$03),A   ;
- $72BA LD E,$00        ;
- $72BC LD HL,$5E6E     ;
- $72BF CALL $7310      ;
- $72C2 DEC E           ;
- $72C3 JR NZ,$72C9     ;
- $72C5 LD (IX+$00),$00 ;
-*$72C9 JP $71BE        ;
-*$72CC LD (IX+$01),$E0 ;
- $72D0 SUB $05         ;
- $72D2 JR $727D        ;
-*$72D4 LD A,R          ;
- $72D6 AND $01         ;
- $72D8 JR $729C        ;
-*$72DA LD A,R          ;
- $72DC AND $01         ;
- $72DE INC A           ;
- $72DF JR $729C        ;
-*$72E1 LD A,R          ;
- $72E3 AND $01         ;
- $72E5 OR $02          ;
- $72E7 JR $729C        ;
- $72E9 RLCA            ;
- $72EA LD B,H          ;
- $72EB LD B,L          ;
- $72EC LD A,(BC)       ;
- $72ED LD B,C          ;
- $72EE LD B,D          ;
- $72EF ADD HL,BC       ;
- $72F0 LD B,(HL)       ;
- $72F1 LD B,E          ;
- $72F2 RLCA            ;
- $72F3 LD B,H          ;
- $72F4 LD B,L          ;
+
+; Routine at 7262
+;
+; Used by the routine at #R$7130.
+c$7262 PUSH HL          ; Stash #REGhl on the stack.
+ $7263 EX DE,HL         ; Switch #REGde and #REGhl.
+ $7264 LD HL,$5F16      ; {Copy #N$0008 bytes of data from #R$5F16 to #REGde.
+ $7267 LD BC,$0008      ;
+ $726A LDIR             ; }
+ $726C POP IX           ; Restore #REGix from the stack (the old value in
+                        ; #REGhl).
+ $726E LD A,($5E13)     ; #REGa=#R$5E13.
+ $7271 CP $05           ;
+ $7273 JR NC,$72CC      ;
+ $7275 LD (IX+$01),$08  ;
+ $7279 SET 6,(IX+$00)   ;
+*$727D RRCA             ;
+ $727E RRCA             ;
+ $727F RRCA             ;
+ $7280 AND %11100000    ; Keep only bits 5-7.
+ $7282 ADD A,$37        ;
+ $7284 LD (IX+$02),A    ;
+ $7287 LD A,($5E37)     ; #REGa=#R$5E37.
+ $728A CP $01           ;
+ $728C JR Z,$72D4       ;
+ $728E CP $02           ;
+ $7290 JR Z,$72DA       ;
+ $7292 CP $03           ;
+ $7294 JR Z,$72E1       ;
+ $7296 CP $04           ;
+ $7298 JR C,$729C       ;
+ $729A LD A,R           ;
+*$729C AND %00000011    ; Keep only bits 0-1.
+ $729E LD C,A           ;
+ $729F SLA A            ;
+ $72A1 ADD A,C          ;
+ $72A2 LD C,A           ;
+ $72A3 LD B,$00         ;
+ $72A5 LD HL,$72E9      ; #REGhl=#R$72E9.
+ $72A8 ADD HL,BC        ;
+ $72A9 LD A,(HL)        ;
+ $72AA LD (IX+$00),A    ;
+ $72AD INC HL           ;
+ $72AE LD A,($5E19)     ; #REGa=#R$5E19.
+ $72B1 BIT 6,A          ;
+ $72B3 JR Z,$72B6       ;
+ $72B5 INC HL           ;
+*$72B6 LD A,(HL)        ;
+ $72B7 LD (IX+$03),A    ;
+ $72BA LD E,$00         ;
+ $72BC LD HL,$5E6E      ; #REGhl=#R$5E6E.
+ $72BF CALL $7310       ;
+ $72C2 DEC E            ;
+ $72C3 JR NZ,$72C9      ;
+ $72C5 LD (IX+$00),$00  ;
+*$72C9 JP $71BE         ; Jump to #R$71BE.
+; Who knows.
+*$72CC LD (IX+$01),$E0  ;
+ $72D0 SUB $05          ;
+ $72D2 JR $727D         ;
+*$72D4 LD A,R           ;
+ $72D6 AND %00000001    ; Keep only bit 0.
+ $72D8 JR $729C         ;
+*$72DA LD A,R           ;
+ $72DC AND %00000001    ; Keep only bit 0.
+ $72DE INC A            ;
+ $72DF JR $729C         ;
+*$72E1 LD A,R           ;
+ $72E3 AND %00000001    ; Keep only bit 0.
+ $72E5 OR $02           ;
+ $72E7 JR $729C         ; Jump to #R$729C.
+ $72E9 DEFB $07,$44,$45 ;
+ $72EC DEFB $0A,$41,$42 ;
+ $72EF DEFB $09,$46,$43 ;
+ $72F2 DEFB $07,$44,$45 ;
 
 ; Bug Collision
 ;
@@ -3366,7 +3423,7 @@ c$72F5 LD HL,$5E6C   ; #REGhl=#R$5E6C.
 *$730C CP $10        ; {Return if #REGa >= #N$10.
  $730E RET NC        ; }
  $730F INC HL        ; {#REGa=#R$5E6E.
-; This entry point is used by the routine at #R$7130.
+; This entry point is used by the routine at #R$7262.
 *$7310 LD A,(HL)     ; }
  $7311 SUB (IX+$02)  ; Robbie Y position - bug Y position.
  $7314 JP P,$731E    ; {Set #REGd to #N$12 if it's a positive number.
@@ -3443,7 +3500,7 @@ c$7325 LD HL,$0040    ; {Call #R$759A with #N($0040, 4, 4) for 1UP lives.
 
 ; Routine at 737A
 ;
-; Used by the routines at #R$64FA, #R$6A98 and #R$7130.
+; Used by the routines at #R$64FA, #R$6A98 and #R$7249.
 c$737A LD A,($5E1E)  ;
  $737D AND A         ;
  $737E JR NZ,$7385   ;
@@ -3663,7 +3720,7 @@ c$7447 LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
 ; Colourise sprite.
 ;
 ; Used by the routines at #R$5FDE, #R$65F7, #R$69E8, #R$6C53, #R$6D0C, #R$6ED2,
-; #R$6EF1 and #R$7130.
+; #R$6EF1 and #R$721A.
 @label=ColouriseSprite
 c$7450 EXX                     ; Switch to the shadow registers.
  $7451 LD HL,($5E1A)           ; #REGhl'=actor co-ordinates.
@@ -3714,6 +3771,11 @@ c$7450 EXX                     ; Switch to the shadow registers.
 ;
 ; Used by the routines at #R$619E, #R$61B4, #R$62E7, #R$670E, #R$6D0C, #R$73ED
 ; and #R$7450.
+;
+;   HL Pixel address co-ordinates
+; O:HL Attribute buffer address
+;
+; Converts a given pixel address to the associated attribute buffer address.
 @label=AttributeAddress
 c$748F LD A,L        ; Horizontal co-ordinate.
  $7490 RRCA          ; {Divide by #N08.
@@ -3786,7 +3848,7 @@ c$74A5 CALL $7542    ;
  $74E5 CALL $74C0    ;
  $74E8 EXX           ;
  $74E9 JR $74F2      ;
-; This entry point is used by the routines at #R$6ED2, #R$6EF1 and #R$7130.
+; This entry point is used by the routines at #R$6ED2, #R$6EF1 and #R$721A.
 *$74EB CALL $74BD    ;
  $74EE EXX           ;
  $74EF CALL $74A5    ;
@@ -3819,7 +3881,7 @@ c$751C CALL $74C0    ; Call #R$74C0.
 ; This entry point is used by the routine at #R$69E8.
 *$7521 CALL $74A8    ; Call #R$74A8.
  $7524 JR $7529      ; Jump to #R$7529.
-; This entry point is used by the routines at #R$65F7, #R$698F and #R$7130.
+; This entry point is used by the routines at #R$65F7, #R$698F and #R$7249.
 *$7526 CALL $74A5    ; Call #R$74A5.
 ; This entry point is used by the routine at #R$65F7.
 *$7529 EXX           ;
@@ -3954,11 +4016,11 @@ c$759A LD A,L        ; #REGa=#REGl.
  $75B7 LD H,A        ; #REGh=#REGa.
  $75B8 RET           ; Return.
 
-; Test...
+; Store Entity
 ;
 ; Used by the routines at #R$64ED, #R$65F7, #R$66A6, #R$698F, #R$69E8, #R$6BD0,
-; #R$6C53, #R$6D0C, #R$6DBA, #R$6ED2, #R$6EF1 and #R$7130.
-@@label=ActorUpdateMove
+; #R$6C53, #R$6D0C, #R$6DBA, #R$6ED2, #R$6EF1 and #R$721A.
+@label=StoreEntity
 c$75B9 LD A,(IX+$01) ; {Copy actor X position to active actor X position.
  $75BC LD ($5E0B),A  ; }
  $75BF LD A,(IX+$02) ; {Copy actor Y position to active actor Y position.
@@ -3966,6 +4028,14 @@ c$75B9 LD A,(IX+$01) ; {Copy actor X position to active actor X position.
  $75C5 LD A,(IX+$00) ; {Copy actor movement to active actor movement.
  $75C8 LD ($5E0D),A  ; }
  $75CB RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9FFB }
+; { #COOKIE$0000 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$0000 }
+; { #TRANZAM$71ED }
+; LIST#
 
 ; Controls: Kempston Joystick
 ;
@@ -4175,6 +4245,14 @@ w$761A DEFW $778A    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
                      ; $100)(#EVAL((#PC - $761A) / 2)).
  $7698 DEFW $7FAD    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
                      ; $100)(#EVAL((#PC - $761A) / 2)).
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$A4BE }
+; { #COOKIE$7702 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$0000 }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Sprite: Flower (Bud)
 ;

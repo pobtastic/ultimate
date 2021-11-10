@@ -7,7 +7,8 @@
 ;   skool2html.py -H sources/aticatac/aticatac.skool -T dark
 
 [Config]
-RefFiles=changelog.ref;pokes.ref
+Expand=#INCLUDE(Expand)
+RefFiles=../bases.ref;changelog.ref;pokes.ref;aticatacGraphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/aticatac
 
@@ -15,6 +16,318 @@ GameDir=ultimate/aticatac
 Game=Atic Atac
 Logo=#SCR1,0,0,32,8,$4000,$5800(/images/logo)
 Copyright=&copy; 1983 Ultimate Play the Game
+LinkInternalOperands=1
+AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics]
+Warriors
+Graphics
+Sprites
+
+[Index:Reference:Reference]
+Changelog
+Bugs
+Pokes
+Credits
+
+[Links]
+Warriors=[Warriors]
+Graphics=[Graphics]
+Sprites=[Sprites]
+
+[Paths]
+Credits=reference/credits.html
+Warriors=graphics/warriors.html
+Graphics=graphics/graphics.html
+Sprites=graphics/sprites.html
+
+[Page:Warriors]
+SectionPrefix=Warriors
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Sprites]
+SectionPrefix=Sprites
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+LIST#
+  This game shares a lot of functionality with Jetpac, hence his disassembly was
+  invaluable!
+</div>
+
+[Expand]
+#DEF(#CONVERTFF(addr)
+  #LET(length=#PEEK($addr) * #PEEK($addr + $01))
+  #FOR($00,{length})||n|
+    #IF(#PEEK($02 + $addr + n) == $FF)(#POKES(($02 + $addr + n), $47))
+  ||
+)
+
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)($fname))
+
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
+
+#DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height)($fname)
+)
+
+#DEF(#COLOURCROP(addr,width,height,attrtable)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height){$00, $04 * ($08 - ($height % $08)), $04 * $width * $08, $04 * $height}($fname)
+)
+
+#DEF(#GRAPHIC(id,attributes=0)(fname)
+  #LET(offset=$id * $02)
+  #LET(addr=#PEEK($A600 + {offset}) + #PEEK($A600 + {offset} + $01) * $100)
+  #LET(width=#PEEK({addr}))
+  #LET(height=#PEEK({addr} + $01))
+  #IF($attributes > $00)||
+    #LET(attr=#PEEK($A64E + {offset}) + #PEEK($A64E + {offset} + $01) * $100)
+    #PUSHS
+    #CONVERTFF({attr})
+    #IF({height} % $08)(
+      #COLOURCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname),
+      #COLOURNOCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname)
+    )
+    #POPS
+  |
+    #IF({height} % $08)(
+      #CROP({addr} + $02, {width}, $07)($fname),
+      #NOCROP({addr} + $02, {width}, $07)($fname)
+    )
+  ||
+)
+
+#DEF(#SPRITE(id)(fname)
+  #LET(offset=$id * $02)
+  #LET(addr=#PEEK($A4BE + {offset}) + #PEEK($A4BE + {offset} + $01) * $100)
+  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+
+#DEF(#GRAPHICNAME(id)
+  #MAP($id)(
+    ?,
+    0:"Cave Door Frame",
+    1:"Door Frame",
+    2:"Big Door Frame",
+    3:"None",
+    4:"None",
+    5:"None",
+    6:"None",
+    7:"Door Locked (red)",
+    8:"Door Locked (green)",
+    9:"Door Locked (cyan)",
+    10:"Door Locked (yellow)",
+    11:"Cave Door Locked (red)",
+    12:"Cave Door Locked (green)",
+    13:"Cave Door Locked (cyan)",
+    14:"Cave Door Locked (yellow)",
+    15:"Clock",
+    16:"Ghost Picture",
+    17:"Table",
+    18:"Chicken: Full",
+    19:"Chicken: Empty",
+    20:"Wall Antlers",
+    21:"Wall Trophy",
+    22:"Bookcase",
+    23:"Trap: Closed",
+    24:"Trap: Open",
+    25:"Barrel",
+    26:"Rug",
+    27:"A.C.G. Shield",
+    28:"Wall Shield",
+    29:"Suit Of Armour",
+    30:"None",
+    31:"Door shut",
+    32:"Door Frame",
+    33:"Cave Door Shut",
+    34:"Cave Door Frame",
+    35:"A.C.G. Door",
+    36:"Pumpkin Picture",
+    37:"Skeleton",
+    38:"Barrel Stack"
+  )
+)
+
+#DEF(#SPRITENAME(id)
+  #MAP($id)(
+    ?,
+    0:"Knight: Left Frame 1",
+    1:"Knight: Left Frame 2",
+    2:"Knight: Left Frame 3",
+    3:"Knight: Left Frame 2",
+    4:"Knight: Right Frame 1",
+    5:"Knight: Right Frame 2",
+    6:"Knight: Right Frame 3",
+    7:"Knight: Right Frame 2",
+    8:"Knight: Up Frame 1",
+    9:"Knight: Up Frame 2",
+    10:"Knight: Up Frame 3",
+    11:"Knight: Up Frame 2",
+    12:"Knight: Down Frame 1",
+    13:"Knight: Down Frame 2",
+    14:"Knight: Down Frame 3",
+    15:"Knight: Down Frame 2",
+    16:"Wizard: Left Frame 1",
+    17:"Wizard: Left Frame 2",
+    18:"Wizard: Left Frame 3",
+    19:"Wizard: Left Frame 2",
+    20:"Wizard: Right Frame 1",
+    21:"Wizard: Right Frame 2",
+    22:"Wizard: Right Frame 3",
+    23:"Wizard: Right Frame 2",
+    24:"Wizard: Up Frame 1",
+    25:"Wizard: Up Frame 2",
+    26:"Wizard: Up Frame 3",
+    27:"Wizard: Up Frame 2",
+    28:"Wizard: Down Frame 1",
+    29:"Wizard: Down Frame 2",
+    30:"Wizard: Down Frame 3",
+    31:"Wizard: Down Frame 2",
+    32:"Serf: Left Frame 1",
+    33:"Serf: Left Frame 2",
+    34:"Serf: Left Frame 3",
+    35:"Serf: Left Frame 2",
+    36:"Serf: Right Frame 1",
+    37:"Serf: Right Frame 2",
+    38:"Serf: Right Frame 3",
+    39:"Serf: Right Frame 2",
+    40:"Serf: Up Frame 1",
+    41:"Serf: Up Frame 2",
+    42:"Serf: Up Frame 3",
+    43:"Serf: Up Frame 2",
+    44:"Serf: Down Frame 1",
+    45:"Serf: Down Frame 2",
+    46:"Serf: Down Frame 3",
+    47:"Serf: Down Frame 2",
+    48:"Blank",
+    49:"Cursor: Left",
+    50:"Cursor: Right",
+    51:"Fireball: Frame 1",
+    52:"Fireball: Frame 2",
+    53:"Fireball: Frame 3",
+    54:"Fireball: Frame 4",
+    55:"Sword: Frame 1",
+    56:"Sword: Frame 2",
+    57:"Sword: Frame 3",
+    58:"Sword: Frame 4",
+    59:"Sword: Frame 5",
+    60:"Sword: Frame 6",
+    61:"Sword: Frame 7",
+    62:"Sword: Frame 8",
+    63:"Axe: Frame 1",
+    64:"Axe: Frame 2",
+    65:"Axe: Frame 3",
+    66:"Axe: Frame 4",
+    67:"Axe: Frame 5",
+    68:"Axe: Frame 6",
+    69:"Axe: Frame 7",
+    70:"Axe: Frame 8",
+    71:"Keyboard: Left",
+    72:"Keyboard: Right",
+    73:"Joystick: Left",
+    74:"Joystick: Right",
+    75:"Pumpkin: Frame 1",
+    76:"Pumpkin: Frame 2",
+    77:"Ghostlet: Frame 1",
+    78:"Ghostlet: Frame 2",
+    79:"Can",
+    80:"Candy",
+    81:"Chop",
+    82:"Lollipop",
+    83:"Ice Cream",
+    84:"Dessert",
+    85:"Apple",
+    86:"Bottle",
+    87:"Sparkle: Frame 1",
+    88:"Sparkle: Frame 2",
+    89:"Sparkle: Frame 3",
+    90:"Sparkle: Frame 4",
+    91:"Spider: Frame 1",
+    92:"Spider: Frame 2",
+    93:"Spikey: Frame 1",
+    94:"Spikey: Frame 2",
+    95:"Blob: Frame 1",
+    96:"Blob: Frame 2",
+    97:"Ghoul: Frame 1",
+    98:"Ghoul: Frame 2",
+    99:"None",
+    100:"None",
+    101:"None",
+    102:"None",
+    103:"Ghost: Frame 1",
+    104:"Ghost: Frame 2",
+    105:"Bat: Frame 1",
+    106:"Bat: Frame 2",
+    107:"Pop: Frame 1",
+    108:"Pop: Frame 2",
+    109:"Pop: Frame 3",
+    110:"Pop: Frame 4",
+    111:"Mummy: Frame 1",
+    112:"Mummy: Frame 2",
+    113:"Mummy: Frame 3",
+    114:"Mummy: Frame 2",
+    115:"Frankenstein: Frame 1",
+    116:"Frankenstein: Frame 2",
+    117:"Frankenstein: Frame 3",
+    118:"Frankenstein: Frame 2",
+    119:"Devil: Frame 1",
+    120:"Devil: Frame 2",
+    121:"Devil: Frame 3",
+    122:"Devil: Frame 2",
+    123:"Dracula: Frame 1",
+    124:"Dracula: Frame 2",
+    125:"Dracula: Frame 3",
+    126:"Dracula: Frame 2",
+    127:"Leaf",
+    128:"Key",
+    129:"Wine",
+    130:"Coin",
+    131:"Wing",
+    132:"Whip",
+    133:"Frog Leg",
+    134:"Gem",
+    135:"Money Bag",
+    136:"Skull",
+    137:"Crucifix",
+    138:"Spanner",
+    139:"A.C.G. Key: Left",
+    140:"A.C.G. Key: Middle",
+    141:"A.C.G. Key: Right",
+    142:"Tombstone",
+    143:"Witch: Left Frame 1",
+    144:"Witch: Left Frame 2",
+    145:"Witch: Right Frame 1",
+    146:"Witch: Right Frame 2",
+    147:"Monk: Left Frame 1",
+    148:"Monk: Left Frame 2",
+    149:"Monk: Right Frame 1",
+    150:"Monk: Right Frame 2",
+    151:"Bat: Left Frame 1",
+    152:"Bat: Left Frame 2",
+    153:"Bat: Right Frame 1",
+    154:"Bat: Right Frame 2",
+    155:"Hunchback: Frame 1",
+    156:"Hunchback: Frame 2",
+    157:"Hunchback: Frame 3",
+    158:"Hunchback: Frame 2",
+    159:"None",
+    160:"Mushroom"
+  )
+)

@@ -8,9 +8,20 @@ B $5800,$300,$20 Attributes
 
 i $5B00
 @ $5B00 expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2;($addr)-($addr+$11)-$01-$10{0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
-@ $5B00 expand=#DEF(#FONT(id) #EVAL($7B4A + $id * $08))
 
 c $5B80 Game entry point
+E $5B80 View the equivalent code in;
+. #LIST
+. { #JETPAC$5B80 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$5B80 }
+. { #TRANZAM$5B80 }
+. LIST#
+E $5B80 Later Ultimate games use more advanced decryption mechanisms;
+. #LIST
+. { #ATICATAC$5B80 }
+. { #LUNARJETMAN$5B80 }
+. LIST#
 @ $5B80 label=GameEntry
   $5B80,$01 Disable interrupts.
   $5B81,$0B Moves #N$20FF bytes from #N$5F01 to #N$5F00.
@@ -19,6 +30,14 @@ c $5B80 Game entry point
 b $5B8F
 
 c $5F00 Security Check
+E $5F00 View the equivalent code in;
+. #LIST
+. { #ATICATAC$6000 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$8000 }
+. { #PSSST$61C6 }
+. { #TRANZAM$5F00 }
+. LIST#
 @ $5F00 label=SecurityCheck
   $5F00,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
   $5F03,$03 Return if #REGa is not #N$32.
@@ -84,7 +103,10 @@ g $5F23 Frame Updated
 @ $5F23 label=FrameUpdated
 D $5F23 Has the frame been updated? #N$00=No #N$01=Yes.
 
-g $5F24
+g $5F24 Menu Item Attribute
+D $5F24 Current menu item colour attribute.
+@ $5F24 label=Current_MenuAttr
+B $5F24,$01
 
 g $5F25 Game Delay Timer
 @ $5F25 label=GameDelayTimer
@@ -212,7 +234,7 @@ N $6017 The pantry is constructed like it is a font.
   $6021,$03 #REGa=#R$5F2D.
   $6024,$02,b$01 Keep only bits 0-2.
   $6026,$01 Store the result in #REGb.
-  $6027,$02 #REGa=#N$20.  #FONT($15)
+  $6027,$02 #REGa=#N$20.
   $6032,$03 #REGde=#R$613B.
   $6035,$03 #REGhl=#N$10D0.
   $6038,$03 Call #R$7488.
@@ -236,6 +258,14 @@ L $613B,$07,$02
   $6219,$04,b$01 Offsets.
 
 c $6298 Game Initialisation
+E $6298 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7C19 }
+. { #JETPAC$61EB }
+. { #LUNARJETMAN$800A }
+. { #PSSST$61CD }
+. { #TRANZAM$5F07 }
+. LIST#
 @ $6298 label=GameInitialisation
 @ $629E label=GameInitialisation_Loop
 N $6298 Blank the 1UP, 2UP and HI scores.
@@ -308,38 +338,53 @@ N $62F6 Handle starting a new game.
   $62F6,$02 Has key "0" been pressed? ("START GAME").
   $62F8,$03 If so, jump to #R$6428.
 N $62FB Handle flashing each selection.
-  $62FB,$03 #REGhl=#N$635F.
+  $62FB,$03 #REGhl=#R$635F(GameSelection_Attributes)+#N$01 (i.e. ignoring "Game Selection" as it doesn't flash).
   $62FE,$04 #REGc=#R$5F0C.
   $6302,$04 If a 1UP game is selected, jump to #R$631F.
   $6306,$03 Call #R$6324.
+@ $6309 label=MenuAttrHandler
   $6309,$03 #REGb=#N$03.
   $630B,$01 #REGa=#REGc.
+@ $630D label=MenuAttrHandler_Loop
   $630D,$02,b$01 Keep only bits 0-1.
   $6311,$03 Call #R$6327.
   $6314,$01 Decrease #REGa by one.
   $6315,$02 Decrease counter by one and loop back to #R$630D until counter is zero.
   $6317,$03 Jump back to #R$62BC.
-
+N $631A Handle flashing 2UP.
+@ $631A label=MenuAttrHandle2UP
   $631A,$03 Call #R$632E.
   $631D,$02 Jump to #R$6314.
-
+N $631F Handle flashing joystick.
+@ $631F label=MenuAttrHandleJoystick
   $631F,$03 Call #R$632B.
   $6322,$02 Jump to #R$6309.
-
-  $6324,$02 Set bit 7 of #REGhl.
-  $6326,$01 Increase #REGhl by one.
-
-  $6327,$02 Reset bit 7 of #REGhl.
-  $6329,$01 Increase #REGhl by one.
+N $6324 Set the first menu item, unset the second.
+@ $6324 label=MenuAttributeSetUnset
+  $6324,$02 Set the FLASH attribute for the menu attribute.
+  $6326,$01 Move onto the next menu attribute.
+@ $6327 label=MenuAttributeUnSetFirst
+  $6327,$02 Unset the FLASH attribute for the menu attribute.
+  $6329,$01 Move onto the next menu attribute.
   $632A,$01 Return.
-
-  $632B,$02 Reset bit 7 of #REGhl.
-  $632D,$01 Increase #REGhl by one.
-  $632E,$02 Set bit 7 of #REGhl.
-  $6330,$01 Increase #REGhl by one.
+N $632B Unset the first menu item, set the second.
+@ $632B label=MenuAttributeUnsetSet
+  $632B,$02 Unset the FLASH attribute for the menu attribute.
+  $632D,$01 Move onto the next menu attribute.
+@ $632E label=MenuAttributeSetFirst
+  $632E,$02 Set the FLASH attribute for the menu attribute.
+  $6330,$01 Move onto the next menu attribute.
   $6331,$01 Return.
 
 c $6332 Game Selection Menu
+E $6332 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CAF }
+. { #JETPAC$6260 }
+. { #LUNARJETMAN$80D1 }
+. { #PSSST$6250 }
+. { #TRANZAM$0000 }
+. LIST#
 @ $6332 label=GameMenu
   $6332,$03 #REGde=#R$635E.
   $6335,$01 Switch to the shadow registers.
@@ -367,19 +412,35 @@ N $633C There are seven lines of text.
   $635B,$03 Jump to #R$7488.
 
 b $635E Game Select Attribute Table
+E $635E View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CEA }
+. { #JETPAC$628D }
+. { #LUNARJETMAN$810E }
+. { #PSSST$627C }
+. { #TRANZAM$5FA7 }
+. LIST#
 @ $635E label=GameSelection_Attributes
-  $635E,$07,$01 #TABLE(default,centre,centre)
+  $635E,$07,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
-. { 1 | Game Selection }
-. { 2 | 1 Player Game }
-. { 3 | 2 Player Game }
-. { 4 | Keyboard }
-. { 5 | Kempston Joystick }
-. { 6 | Cursor Joystick }
-. { 7 | Start Game }
+. { #N$01 | Game Selection }
+. { #N$02 | 1 Player Game }
+. { #N$03 | 2 Player Game }
+. { #N$04 | Keyboard }
+. { #N$05 | Kempston Joystick }
+. { #N$06 | Cursor Joystick }
+. { #N$07 | Start Game }
 . TABLE#
 
 b $6365 Game Select Y Position Table
+E $6365 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CF1 }
+. { #JETPAC$6293 }
+. { #LUNARJETMAN$8115 }
+. { #PSSST$6282 }
+. { #TRANZAM$5FAC }
+. LIST#
 @ $6365 label=GameSelection_Position
   $6365,$07,$01 #TABLE(default,centre,centre)
 . { =h Byte(n) | =h Position | =h Menu Item }
@@ -393,6 +454,14 @@ b $6365 Game Select Y Position Table
 . TABLE#
 
 t $636C Game Selection Screen Text
+E $636C View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CF8 }
+. { #JETPAC$6299 }
+. { #LUNARJETMAN$811C }
+. { #PSSST$6288 }
+. { #TRANZAM$5FB1 }
+. LIST#
 @ $636C label=GameSelection_Text
 T $636C,$0E,$0D:$01 "GAME SELECTION".
 T $637A,$11,$10:$01 "1   1 PLAYER GAME".
@@ -402,11 +471,19 @@ T $63A8,$15,$14:$01 "4   KEMPSTON JOYSTICK".
 T $63BD,$15,$14:$01 "5   CURSOR   JOYSTICK".
 T $63D2,$0E,$0D:$01 "0   START GAME".
 
-c $63E0 Calculate screen/ attribute addresses
-@ $63E0 label=GameMenu_Calc
-  $63E0,$01 Stash #REGhl on the stack.
+c $63E0 Write Menu Line
+E $63E0 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D8A }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$62E7 }
+. { #TRANZAM$0000 }
+. LIST#
+@ $63E0 label=MenuWriteText
+  $63E0,$01 Stash #REGhl containing the co-ordinate on the stack.
   $63E1,$03 Call #R$76E3.
-  $63E4,$03 #REGa=#N$5F24.
+  $63E4,$03 #REGa=the menu attribute byte from #R$5F24.
   $63E7,$01 Switch to the shadow #REGaf register.
   $63E8,$01 Switch to the shadow registers.
   $63E9,$01 Restore #REGhl from the stack.
@@ -437,6 +514,13 @@ M $640C,$06 Return if bit 0 of #R$5F0C is not set (i.e. if this is a 1UP game).
   $6415,$01 Return.
 
 c $6416 1UP/ 2UP Swapper.
+E $6416 View the equivalent code in;
+. #LIST
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$613B }
+. { #TRANZAM$0000 }
+. LIST#
 @ $6416 label=ChangePlayer
 N $6416 This routine "swaps" the data between #REGde and #REGhl.
   $6416,$03 #REGhl=#R$5F2D.
@@ -446,9 +530,8 @@ N $641E This looks complicated but it's just grabbing the data from #REGde, grab
 @ $641E label=ChangePlayer_Loop
   $641E,$01 #REGa=#REGde.
   $641F,$01 #REGc=#REGhl.
-  $6420,$01 #REGhl=#REGa.
-  $6421,$01 #REGa=#REGc.
-  $6422,$01 #REGde=#REGa.
+  $6420,$01 Store #REGa at #REGhl.
+  $6421,$02 Store #REGc at #REGde.
   $6423,$02 Increase both #REGhl and #REGde by one.
   $6425,$02 Decrease counter by one and loop back to #R$641E until counter is zero.
   $6427,$01 Return.
@@ -1021,6 +1104,9 @@ c $74EE
 
 c $7534 Calculate Attribute Address
 @ $7534 label=AttributeAddress
+N $7534 Converts a given pixel address to the associated attribute buffer address.
+R $7534 HL Pixel address co-ordinates
+R $7534 O:HL Attribute buffer address
   $7534,$01 Horizontal co-ordinate.
   $7535,$03 Divide by #N08.
   $7538,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
@@ -1115,6 +1201,14 @@ c $76E3 Calculate Screen Address
   $7701,$01 Return.
 
 w $7702 Sprites Table
+E $7702 View the equivalent code in;
+. #LIST
+. { #ATICATAC$A4BE }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$761A }
+. { #TRANZAM$0000 }
+. LIST#
 @ $7702 label=SpritesTable
   $7702,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#EVAL((#PC - $7702) / 2)).
 L $7702,$02,$30

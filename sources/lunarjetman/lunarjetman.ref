@@ -2,19 +2,172 @@
 ; SkoolKit ref file for Lunar Jetman
 ;
 ; To build the HTML disassembly, run these commands:
-;   tap2sna.py @lj.t2s
+;   tap2sna.py @lunarjetman.t2s
 ;   sna2skool.py -H -c sources/lunarjetman/lunarjetman.ctl LunarJetman.z80 > sources/lunarjetman/lunarjetman.skool
 ;   skool2html.py -H sources/lunarjetman/lunarjetman.skool -T dark
 
 [Config]
-;RefFiles=changelog.ref;pokes.ref
-HtmlWriterClass=:linking.UltimateHtmlWriter
+Expand=#INCLUDE(Expand)
+RefFiles=../bases.ref;changelog.ref;pokes.ref
+HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/lunarjetman
 
 [Game]
 Game=Lunar Jetman
 Logo=#SCR1,0,0,31,8,$4000,$5800(/images/logo)
 Copyright=&copy; 1983 Ultimate Play the Game
+LinkInternalOperands=1
+AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Reference:Reference]
+Changelog
+Bugs
+Pokes
+Credits
+
+[Links]
+Graphics=[Graphics]
+Sprites=[Sprites]
+
+[Paths]
+Credits=reference/credits.html
+Graphics=graphics/graphics.html
+Sprites=graphics/sprites.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Sprites]
+SectionPrefix=Sprites
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+LIST#
+  This game shares a lot of functionality with Jetpac, hence his disassembly was
+  invaluable!
+</div>
+
+[Expand]
+#DEF(#CONVERTFF(addr)
+  #LET(length=#PEEK($addr) * #PEEK($addr + $01))
+  #FOR($00,{length})||n|
+    #IF(#PEEK($02 + $addr + n) == $FF)(#POKES(($02 + $addr + n), $47))
+  ||
+)
+
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)($fname))
+
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
+
+#DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height)($fname)
+)
+
+#DEF(#COLOURCROP(addr,width,height,attrtable)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height){$00, $04 * ($08 - ($height % $08)), $04 * $width * $08, $04 * $height}($fname)
+)
+
+#DEF(#JETMAN(id)(fname)
+  #SPRITE($id,$BAC0)($fname)
+)
+
+#DEF(#ROVER(id)(fname)
+  #GRAPHIC($id,$BAE2)($fname)
+)
+
+#DEF(#GRAPHIC(id,base=$BB8C,attributes=0)(fname)
+  #LET(offset=$id * $02)
+  #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
+  #LET(width=#PEEK({addr}))
+  #LET(height=#PEEK({addr} + $01))
+  #IF($attributes > $00)||
+    #LET(attr=#PEEK($A64E + {offset}) + #PEEK($A64E + {offset} + $01) * $100)
+    #PUSHS
+    #CONVERTFF({attr})
+    #IF({height} % $08)(
+      #COLOURCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname),
+      #COLOURNOCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname)
+    )
+    #POPS
+  |
+    #IF({height} % $08)(
+      #CROP({addr} + $02, {width}, $07)($fname),
+      #NOCROP({addr} + $02, {width}, $07)($fname)
+    )
+  ||
+)
+
+#DEF(#SPRITE(id,base=$BB12)(fname)
+  #LET(offset=$id * $02)
+  #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
+  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+
+#DEF(#SPRITENAME(id)
+  #MAP($id)(
+    ?,
+    0:"Teleporter: Frame 1",
+    1:"Teleporter: Frame 2",
+    2:"Teleporter: Frame 3",
+    3:"Teleporter: Frame 4",
+    4:"Platform",
+    5:"Platform",
+    6:"Turret: Left Frame 1",
+    7:"Turret: Left Frame 2",
+    8:"Turret: Left Frame 3",
+    9:"Turret: Left Frame 4",
+    10:"Turret: Left Frame 5",
+    11:"Turret: Left Frame 6",
+    12:"Turret: Left Frame 7",
+    13:"Turret: Left Frame 8",
+    14:"Turret: Right Frame 1",
+    15:"Turret: Right Frame 2",
+    16:"Turret: Right Frame 3",
+    17:"Turret: Right Frame 4",
+    18:"Turret: Right Frame 5",
+    19:"Turret: Right Frame 6",
+    20:"Turret: Right Frame 7",
+    21:"Turret: Right Frame 8",
+    22:"Spinning Top Alien: Frame 1",
+    23:"Spinning Top Alien: Frame 2",
+    24:"Spinning Top Alien: Frame 3",
+    25:"Spinning Top Alien: Frame 4",
+    26:"Spinning Top Alien: Frame 5",
+    27:"Spinning Top Alien: Frame 6",
+    28:"Spinning Top Alien: Frame 7",
+    29:"Spinning Top Alien: Frame 8",
+    30:"Blob: Frame 1",
+    31:"Blob: Frame 2",
+    32:"Blob: Frame 3",
+    33:"Blob: Frame 4",
+    34:"Blob: Frame 5",
+    35:"Blob: Frame 6",
+    36:"Blob: Frame 7",
+    37:"Blob: Frame 8",
+    38:"Blob: Frame 9",
+    39:"Blob: Frame 10",
+    40:"Blob: Frame 11",
+    41:"Blob: Frame 12",
+    42:"Blob: Frame 13",
+    43:"Blob: Frame 14",
+    44:"Blob: Frame 15",
+    45:"Blob: Frame 16",
+    57:"None",
+    61:"None"
+  )
+)

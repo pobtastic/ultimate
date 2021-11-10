@@ -7,11 +7,23 @@ B $4000,$1800,$20 Pixels
 B $5800,$300,$20 Attributes
 
 i $5B00
+
 @ $5B00 replace=/#DIMENSIONS/Dimensions #EVAL(#PEEK(#PC + $01) * $08) pixels x #EVAL(#PEEK(#PC + $02), $0A, $02) pixels.
 @ $5B00 expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2;($addr)-($addr+$11)-$01-$10{0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
 @ $5B00 expand=#DEF(#FONT(id) #EVAL($7B4A + $id * $08))
 
 c $5B80 Game entry point
+E $5B80 View the equivalent code in;
+. #LIST
+. { #COOKIE$5B80 }
+. { #JETPAC$5B80 }
+. { #TRANZAM$5B80 }
+. LIST#
+E $5B80 Later Ultimate games use more advanced decryption mechanisms;
+. #LIST
+. { #ATICATAC$5B80 }
+. { #LUNARJETMAN$5B80 }
+. LIST#
 @ $5B80 label=GameEntry
   $5B80,$01 Disable interrupts.
   $5B81,$0B Moves #N$2114 bytes from #N$5EED to #N$5EEC.
@@ -90,8 +102,10 @@ g $5E20 Frame Updated
 @ $5E20 label=FrameUpdated
 D $5E20 Has the frame been updated? #N$00=No #N$01=Yes.
 
-g $5E21 Current menu item colour attribute.
+g $5E21 Menu Item Attribute
+D $5E21 Current menu item colour attribute.
 @ $5E21 label=Current_MenuAttr
+B $5E21,$01
 
 g $5E22 "Get Ready" Delay Counter
 @ $5E22 label=PlayDelay_Counter
@@ -442,6 +456,14 @@ N $6127 This is a controller with a jump to #R$61EA to return to the game select
   $6139,$02 Jump to #R$6133.
 
 c $613B 1UP/ 2UP Swapper.
+E $613B View the equivalent code in;
+. #LIST
+. { #COOKIE$6416 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$613B }
+. { #TRANZAM$0000 }
+. LIST#
 @ $613B label=ChangePlayer
 N $613B This routine "swaps" the data between #REGde and #REGhl.
   $613B,$03 #REGhl=#R$5E37.
@@ -495,6 +517,14 @@ E $61C6 Continue on to #R$61CD.
   $61CA,$03 Return if #REGa is not #N$65.
 
 c $61CD Game Initialisation
+E $61CD View the equivalent code in;
+. #LIST
+. { #ATICATAC$7C19 }
+. { #COOKIE$6298 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$800A }
+. { #TRANZAM$5F07 }
+. LIST#
 N $61CD Blank the 1UP, 2UP and HI scores.
 @ $61CD label=GameInitialisation
   $61CD,$0A Write #N$00 to #N$0B bytes from #N$5E00 to #N$5E0B.
@@ -588,6 +618,14 @@ N $6249 Unset the first menu item, set the second.
   $624F,$01 Return.
 
 c $6250 Game Selection Menu
+E $6250 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CAF }
+. { #COOKIE$6332 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$80D1 }
+. { #TRANZAM$0000 }
+. LIST#
 @ $6250 label=GameMenu
   $6250,$03 #REGde=#R$627C.
   $6253,$01 Switch to the shadow registers.
@@ -616,8 +654,16 @@ N $6273 Print the copyright footer.
   $6279,$03 Jump to #R$73ED.
 
 b $627C Game Select Attribute Table
+E $627C View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CEA }
+. { #COOKIE$635E }
+. { #JETPAC$628D }
+. { #LUNARJETMAN$810E }
+. { #TRANZAM$5FA7 }
+. LIST#
 @ $627C label=GameSelection_Attributes
-  $627C,$06,$01 #TABLE(default,centre,centre)
+  $627C,$06,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
 . { #N$01 | Game Selection }
 . { #N$02 | 1 Player Game }
@@ -628,6 +674,14 @@ b $627C Game Select Attribute Table
 . TABLE#
 
 b $6282 Game Select Y Position Table
+E $6282 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CF1 }
+. { #COOKIE$6365 }
+. { #JETPAC$6293 }
+. { #LUNARJETMAN$8115 }
+. { #TRANZAM$5FAC }
+. LIST#
 @ $6282 label=GameSelection_Position
   $6282,$06,$01 #TABLE(default,centre,centre)
 . { =h Byte(n) | =h Position | =h Menu Item }
@@ -640,6 +694,14 @@ b $6282 Game Select Y Position Table
 . TABLE#
 
 t $6288 Game Selection Screen Text
+E $6288 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CF8 }
+. { #COOKIE$636C }
+. { #JETPAC$6299 }
+. { #LUNARJETMAN$811C }
+. { #TRANZAM$5FB1 }
+. LIST#
 @ $6288 label=GameSelection_Text
   $6288,$0E,$0D:$01 "GAME SELECTION".
   $6296,$11,$10:$01 "1   1 PLAYER GAME".
@@ -649,6 +711,14 @@ t $6288 Game Selection Screen Text
   $62D9,$0E,$0D:$01 "5   START GAME".
 
 c $62E7 Write Menu Line
+E $62E7 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D8A }
+. { #COOKIE$63E0 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #TRANZAM$0000 }
+. LIST#
 @ $62E7 label=MenuWriteText
   $62E7,$01 Stash #REGhl containing the co-ordinate on the stack.
   $62E8,$03 Call #R$759A.
@@ -1066,6 +1136,7 @@ N $713C The self-modifying code routines change the address here to be either;
   $713F,$01 Clear the carry flag
   $7140,$05
 
+@ $7145 label=Pause_Loop
 N $7145 Holding "SHIFT" pauses the game.
   $7145,$06 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
@@ -1077,6 +1148,39 @@ N $7145 Holding "SHIFT" pauses the game.
   $714D,$02 If it has then jump to #R$7145.
   $714F,$03 #REGhl=#R$5E17(see #R$711E).
   $7152,$01
+
+c $721A
+  $721A,$04 #REGix=#R$5E3C.
+  $721E,$03 Call #R$75B9.
+  $7230,$03 Call #R$74EB.
+  $7233,$03 Call #R$7450.
+  $7236,$03 #REGa=#R$5E17.
+  $7239,$02,b$01 Keep only bits 0-1.
+  $7241,$02,b$01 Unset bit 2.
+  $7246,$03 Jump to #R$634F.
+
+c $7249
+
+c $7262
+  $7262,$01 Stash #REGhl on the stack.
+  $7263,$01 Switch #REGde and #REGhl.
+  $7264,$08 Copy #N$0008 bytes of data from #R$5F16 to #REGde.
+  $726C,$02 Restore #REGix from the stack (the old value in #REGhl).
+  $726E,$03 #REGa=#R$5E13.
+  $7280,$02,b$01 Keep only bits 5-7.
+  $7287,$03 #REGa=#R$5E37.
+  $729C,$02,b$01 Keep only bits 0-1.
+
+  $72A5,$03 #REGhl=#R$72E9.
+  $72AE,$03 #REGa=#R$5E19.
+  $72BC,$03 #REGhl=#R$5E6E.
+  $72C9,$03 Jump to #R$71BE.
+  $72D6,$02,b$01 Keep only bit 0.
+  $72DC,$02,b$01 Keep only bit 0.
+  $72E3,$02,b$01 Keep only bit 0.
+  $72E7,$02 Jump to #R$729C.
+N $72CC Who knows.
+B $72E9,$0C,$03
 
 c $72F5 Bug Collision
 @ $72F5 label=BugCollision
@@ -1187,7 +1291,6 @@ N $73B3 Prints the score.
   $73CA,$02 Decrease counter by one and loop back to #R$73B5 until counter is zero.
   $73CC,$01 Return.
 
-c $73CD
 c $73CD Print Character
 @ $73CD label=PrintScreen
 R $73CD A ASCII value to print
@@ -1333,6 +1436,9 @@ c $7450 Colourise sprite.
 
 c $748F Calculate Attribute Address
 @ $748F label=AttributeAddress
+N $748F Converts a given pixel address to the associated attribute buffer address.
+R $748F HL Pixel address co-ordinates
+R $748F O:HL Attribute buffer address
   $748F,$01 Horizontal co-ordinate.
   $7490,$03 Divide by #N08.
   $7493,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
@@ -1426,8 +1532,16 @@ c $759A Calculate Screen Address
   $75B7,$01 #REGh=#REGa.
   $75B8,$01 Return.
 
-c $75B9 Test...
-@ $75B9 @label=ActorUpdateMove
+c $75B9 Store Entity
+E $75B9 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9FFB }
+. { #COOKIE$0000 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #TRANZAM$71ED }
+. LIST#
+@ $75B9 label=StoreEntity
   $75B9,$06 Copy actor X position to active actor X position.
   $75BF,$06 Copy actor Y position to active actor Y position.
   $75C5,$06 Copy actor movement to active actor movement.
@@ -1466,6 +1580,14 @@ N $75D7 Loop to create a mask of the sprite and it write to the screen.
   $75F7,$01 Restore #REGbc from the stack.
 
 w $761A Sprites Table
+E $761A View the equivalent code in;
+. #LIST
+. { #ATICATAC$A4BE }
+. { #COOKIE$7702 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #TRANZAM$0000 }
+. LIST#
 @ $761A label=SpritesTable
   $761A,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#EVAL((#PC - $761A) / 2)).
 L $761A,$02,$40

@@ -225,7 +225,6 @@ b$4000 DEFB $00,$00,$00,$00,$00,$00,$0F,$FF,$C0,$00,$00,$00,$00,$00,$3F,$FF,$C0,
  $5AE0 DEFB $07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07,$07 ; }
 
 @expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2;($addr)-($addr+$11)-$01-$10{0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
-@expand=#DEF(#FONT(id) #EVAL($7B4A + $id * $08))
 i$5B00
 
 ; Game entry point
@@ -236,6 +235,19 @@ c$5B80 DI            ; Disable interrupts.
  $5B87 LD BC,$20FF   ;
  $5B8A LDIR          ; }
  $5B8C JP $5F00      ; Jump to #R$5F00.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$5B80 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$5B80 }
+; { #TRANZAM$5B80 }
+; LIST#
+; .
+; Later Ultimate games use more advanced decryption mechanisms;
+; #LIST
+; { #ATICATAC$5B80 }
+; { #LUNARJETMAN$5B80 }
+; LIST#
 
 ; Data block at 5B8F
 b$5B8F DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -359,6 +371,14 @@ c$5F00 LD A,($5C79)  ; #HTML(#REGa=<a
  $5F03 CP $32        ; {Return if #REGa is not #N$32.
  $5F05 RET NZ        ; }
  $5F06 JP $6298      ; Jump to #R$6298.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$6000 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$8000 }
+; { #PSSST$61C6 }
+; { #TRANZAM$5F00 }
+; LIST#
 
 ; HI Score
 ;
@@ -445,7 +465,10 @@ g$5F22 DEFB $00
 @label=FrameUpdated
 g$5F23 DEFB $00
 
-; Game status buffer entry at 5F24
+; Menu Item Attribute
+;
+; Current menu item colour attribute.
+@label=Current_MenuAttr
 g$5F24 DEFB $00
 
 ; Game Delay Timer
@@ -626,7 +649,7 @@ c$5FE1 LD HL,$5F2E                  ; {Increase #R$5F2E by one.
  $6021 LD A,($5F2D)                 ; #REGa=#R$5F2D.
  $6024 AND %00000111                ; Keep only bits 0-2.
  $6026 LD B,A                       ; Store the result in #REGb.
- $6027 LD A,$20                     ; #REGa=#N$20.  #FONT($15)
+ $6027 LD A,$20                     ; #REGa=#N$20.
  $6029 JR Z,$602F                   ;
 *$602B SRL A                        ;
  $602D DJNZ $602B                   ;
@@ -969,15 +992,18 @@ c$6298 LD HL,$5F09   ; {Write #N$00 to #N$0B bytes from #R$5F09 to #N$5F13.
  $62F6 BIT 0,A       ; Has key "0" been pressed? ("START GAME").
  $62F8 JP NZ,$6428   ; If so, jump to #R$6428.
 ; Handle flashing each selection.
- $62FB LD HL,$635F   ; #REGhl=#N$635F.
+ $62FB LD HL,$635F   ; #REGhl=#R$635F(GameSelection_Attributes)+#N$01 (i.e.
+                     ; ignoring "Game Selection" as it doesn't flash).
  $62FE LD A,($5F0C)  ; {#REGc=#R$5F0C.
  $6301 LD C,A        ; }
  $6302 BIT 0,C       ; {If a 1UP game is selected, jump to #R$631F.
  $6304 JR NZ,$631F   ; }
  $6306 CALL $6324    ; Call #R$6324.
+@label=MenuAttrHandler
 *$6309 LD B,$03      ; #REGb=#N$03.
  $630B LD A,C        ; #REGa=#REGc.
  $630C RRCA          ;
+@label=MenuAttrHandler_Loop
 *$630D AND %00000011 ; Keep only bits 0-1.
  $630F JR Z,$631A    ;
  $6311 CALL $6327    ; Call #R$6327.
@@ -985,20 +1011,38 @@ c$6298 LD HL,$5F09   ; {Write #N$00 to #N$0B bytes from #R$5F09 to #N$5F13.
  $6315 DJNZ $630D    ; Decrease counter by one and loop back to #R$630D until
                      ; counter is zero.
  $6317 JP $62BC      ; Jump back to #R$62BC.
+; Handle flashing 2UP.
+@label=MenuAttrHandle2UP
 *$631A CALL $632E    ; Call #R$632E.
  $631D JR $6314      ; Jump to #R$6314.
+; Handle flashing joystick.
+@label=MenuAttrHandleJoystick
 *$631F CALL $632B    ; Call #R$632B.
  $6322 JR $6309      ; Jump to #R$6309.
-*$6324 SET 7,(HL)    ; Set bit 7 of #REGhl.
- $6326 INC HL        ; Increase #REGhl by one.
-*$6327 RES 7,(HL)    ; Reset bit 7 of #REGhl.
- $6329 INC HL        ; Increase #REGhl by one.
+; Set the first menu item, unset the second.
+@label=MenuAttributeSetUnset
+*$6324 SET 7,(HL)    ; Set the FLASH attribute for the menu attribute.
+ $6326 INC HL        ; Move onto the next menu attribute.
+@label=MenuAttributeUnSetFirst
+*$6327 RES 7,(HL)    ; Unset the FLASH attribute for the menu attribute.
+ $6329 INC HL        ; Move onto the next menu attribute.
  $632A RET           ; Return.
-*$632B RES 7,(HL)    ; Reset bit 7 of #REGhl.
- $632D INC HL        ; Increase #REGhl by one.
-*$632E SET 7,(HL)    ; Set bit 7 of #REGhl.
- $6330 INC HL        ; Increase #REGhl by one.
+; Unset the first menu item, set the second.
+@label=MenuAttributeUnsetSet
+*$632B RES 7,(HL)    ; Unset the FLASH attribute for the menu attribute.
+ $632D INC HL        ; Move onto the next menu attribute.
+@label=MenuAttributeSetFirst
+*$632E SET 7,(HL)    ; Set the FLASH attribute for the menu attribute.
+ $6330 INC HL        ; Move onto the next menu attribute.
  $6331 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7C19 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$800A }
+; { #PSSST$61CD }
+; { #TRANZAM$5F07 }
+; LIST#
 
 ; Game Selection Menu
 ;
@@ -1032,6 +1076,14 @@ c$6332 LD DE,$635E   ; #REGde=#R$635E.
  $6355 LD HL,$B800   ; #REGhl=#R$B800.
  $6358 LD DE,$5F8E   ; #REGde=#R$5F8E.
  $635B JP $7488      ; Jump to #R$7488.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7CAF }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$80D1 }
+; { #PSSST$6250 }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Game Select Attribute Table
 @label=GameSelection_Attributes
@@ -1069,18 +1121,26 @@ t$636C DEFM "GAME SELECTIO","N"+$80        ; "GAME SELECTION".
  $63BD DEFM "5   CURSOR   JOYSTIC","K"+$80 ; "5   CURSOR   JOYSTICK".
  $63D2 DEFM "0   START GAM","E"+$80        ; "0   START GAME".
 
-; Calculate screen/ attribute addresses
+; Write Menu Line
 ;
 ; Used by the routine at #R$6332.
-@label=GameMenu_Calc
-c$63E0 PUSH HL       ; Stash #REGhl on the stack.
+@label=MenuWriteText
+c$63E0 PUSH HL       ; Stash #REGhl containing the co-ordinate on the stack.
  $63E1 CALL $76E3    ; Call #R$76E3.
- $63E4 LD A,($5F24)  ; #REGa=#N$5F24.
+ $63E4 LD A,($5F24)  ; #REGa=the menu attribute byte from #R$5F24.
  $63E7 EX AF,AF'     ; Switch to the shadow #REGaf register.
  $63E8 EXX           ; Switch to the shadow registers.
  $63E9 POP HL        ; Restore #REGhl from the stack.
  $63EA CALL $7534    ; Call #R$7534.
  $63ED JP $7494      ; Jump to #R$7494.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7D8A }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$62E7 }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Initialise Players
 ;
@@ -1128,14 +1188,21 @@ c$6416 LD HL,$5F2D   ; #REGhl=#R$5F2D.
 @label=ChangePlayer_Loop
 *$641E LD A,(DE)     ; #REGa=#REGde.
  $641F LD C,(HL)     ; #REGc=#REGhl.
- $6420 LD (HL),A     ; #REGhl=#REGa.
- $6421 LD A,C        ; #REGa=#REGc.
- $6422 LD (DE),A     ; #REGde=#REGa.
+ $6420 LD (HL),A     ; Store #REGa at #REGhl.
+ $6421 LD A,C        ; {Store #REGc at #REGde.
+ $6422 LD (DE),A     ; }
  $6423 INC HL        ; {Increase both #REGhl and #REGde by one.
  $6424 INC DE        ; }
  $6425 DJNZ $641E    ; Decrease counter by one and loop back to #R$641E until
                      ; counter is zero.
  $6427 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$613B }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Start Game
 ;
@@ -3379,6 +3446,11 @@ c$74EE EXX           ;
 ; Calculate Attribute Address
 ;
 ; Used by the routines at #R$5FE1, #R$63E0, #R$7020, #R$7488 and #R$74EE.
+;
+;   HL Pixel address co-ordinates
+; O:HL Attribute buffer address
+;
+; Converts a given pixel address to the associated attribute buffer address.
 @label=AttributeAddress
 c$7534 LD A,L        ; Horizontal co-ordinate.
  $7535 RRCA          ; {Divide by #N08.
@@ -3814,6 +3886,14 @@ w$7702 DEFW $7883    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
                      ; $100)(#EVAL((#PC - $7702) / 2)).
  $7760 DEFW $77E6    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
                      ; $100)(#EVAL((#PC - $7702) / 2)).
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$A4BE }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$761A }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Sprite: Cake
 ;

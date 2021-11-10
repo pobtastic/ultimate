@@ -7,7 +7,8 @@
 ;   skool2html.py -H sources/tranzam/tranzam.skool -T dark
 
 [Config]
-;RefFiles=changelog.ref;pokes.ref
+Expand=#INCLUDE(Expand)
+RefFiles=../bases.ref;changelog.ref;pokes.ref;tranzamGraphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/tranzam
 
@@ -15,6 +16,123 @@ GameDir=ultimate/tranzam
 Game=Tranz Am
 Logo=#SCR1,0,0,32,8,$4000,$5800(/images/logo)
 Copyright=&copy; 1983 Ultimate Play the Game
+LinkInternalOperands=1
+AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics]
+Player
+Sidebar
+Items
+Obstacles
+
+[Links]
+Items=[Items]
+Obstacles=[Obstacles]
+Player=[Player]
+Sidebar=[Sidebar]
+
+[Paths]
+Credits=reference/credits.html
+Items=graphics/items.html
+Obstacles=graphics/obstacles.html
+Player=graphics/player.html
+Sidebar=graphics/sidebar.html
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Page:Items]
+SectionPrefix=Items
+
+[Page:Obstacles]
+SectionPrefix=Obstacles
+
+[Page:Player]
+SectionPrefix=Player
+
+[Page:Sidebar]
+SectionPrefix=Sidebar
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+LIST#
+  This game shares a lot of functionality with Jetpac, hence his disassembly was
+  invaluable!
+</div>
+
+[Expand]
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)($fname))
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
+
+#DEF(#SPRITE(id,base=$7F06)(fname)
+  #LET(offset=$id * $02)
+  #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
+  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+
+#DEF(#SPRITENAME(id)
+  #MAP($id)(
+    ?,
+    0:"Cactus",
+    1:"USA Sign",
+    2:"Car",
+    3:"Flower",
+    4:"Boulder",
+    5:"Tree",
+    6:"Fuel Pump",
+    7:"Cactus",
+    8:"USA Sign",
+    9:"Car",
+    10:"Flower",
+    11:"Boulder",
+    12:"Tree",
+    13:"Pylon",
+    14:"Tombstone"
+  )
+)
+
+#DEF(#CAR(id)(fname)
+  #SPRITE($id,$7F24)($fname)
+)
+
+#DEF(#CARNAME(id)
+  #MAP($id)(
+    ?,
+    0:"Car: Frame 1",
+    1:"Car: Frame 2",
+    2:"Car: Frame 3",
+    3:"Car: Frame 4",
+    4:"Car: Frame 5",
+    5:"Car: Frame 6",
+    6:"Car: Frame 7",
+    7:"Car: Frame 8",
+    8:"Car: Frame 9",
+    9:"Car: Frame 10",
+    10:"Car: Frame 11",
+    11:"Car: Frame 12",
+    12:"Car: Frame 13",
+    13:"Car: Frame 14",
+    14:"Car: Frame 15",
+    15:"Car: Frame 16"
+  )
+)
+
+#DEF(#SIDEBAR()
+  #LET(data=$7691)
+  #LET(attr=$7751)
+  #TABLE(default)
+  #FOR($00,$17)(y,{ #FOR(0,7)||x|#UDG($74B1 + #PEEK((y * 8) + x + {data}) * $08,attr=#PEEK((y * 8) + {attr} + x))|| })
+  TABLE#
+)
