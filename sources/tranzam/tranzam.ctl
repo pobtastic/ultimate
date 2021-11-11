@@ -211,7 +211,7 @@ N $5F7B There are five lines of text.
   $5F7B,$02 #REGb'=#N$05 (counter).
 @ $5F7D label=GameMenu_Loop
   $5F7D,$01 Switch.
-  $5F7E,$01 Copy a byte from DE to #R$5E3F.
+  $5F7E,$01 Copy a byte from #REGde to #R$5E3F.
   $5F83,$01 Switch to the shadow registers.
   $5F8D,$03 Call #R$5F97.
   $5F90,$01 Switch.
