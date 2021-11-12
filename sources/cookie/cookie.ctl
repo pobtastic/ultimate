@@ -13,7 +13,6 @@ c $5B80 Game entry point
 E $5B80 View the equivalent code in;
 . #LIST
 . { #JETPAC$5B80 }
-. { #LUNARJETMAN$0000 }
 . { #PSSST$5B80 }
 . { #TRANZAM$5B80 }
 . LIST#
@@ -33,7 +32,7 @@ c $5F00 Security Check
 E $5F00 View the equivalent code in;
 . #LIST
 . { #ATICATAC$6000 }
-. { #JETPAC$0000 }
+. { #JETPAC$61E5 }
 . { #LUNARJETMAN$8000 }
 . { #PSSST$61C6 }
 . { #TRANZAM$5F00 }
@@ -43,9 +42,17 @@ E $5F00 View the equivalent code in;
   $5F03,$03 Return if #REGa is not #N$32.
   $5F06,$03 Jump to #R$6298.
 
-g $5F09 HI Score
+g $5F09 High Score
+E $5F09 View the equivalent code in;
+. #LIST
+. { #JETPAC$5CF0 }
+. { #LUNARJETMAN$5E06 }
+. { #PSSST$5E00 }
+. LIST#
 D $5F09 3-byte representation of the score.
-@ $5F09 label=HI_Score
+@ $5F09 label=High_Score
+B $5F09,$03
+
 g $5F0C Game Options
 @ $5F0C label=GameOptions
 D $5F0C #TABLE(default,centre,centre)

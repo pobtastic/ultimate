@@ -26,7 +26,7 @@ E $5B80 Later Ultimate games use more advanced decryption mechanisms;
 . LIST#
 @ $5B80 label=GameEntry
   $5B80,$01 Disable interrupts.
-  $5B81,$0B Moves #N$2114 bytes from #N$5EED to #N$5EEC.
+  $5B81,$0B Copy #N$2114 bytes from #N$5EED to #N$5EEC.
   $5B8C,$03 Jump to #R$61C6.
 
 b $5B8F
@@ -35,9 +35,16 @@ c $5CB0
 
 g $5CB1
 
-g $5E00 HI Score
+g $5E00 High Score
+E $5E00 View the equivalent code in;
+. #LIST
+. { #COOKIE$5F09 }
+. { #JETPAC$5CF0 }
+. { #LUNARJETMAN$5E06 }
+. { #PSSST$5E00 }
+. LIST#
 D $5E00 3-byte representation of the score.
-@ $5E00 label=HI_Score
+@ $5E00 label=High_Score
 
 g $5E03 Game Options
 @ $5E03 label=GameOptions

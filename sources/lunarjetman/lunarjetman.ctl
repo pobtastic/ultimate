@@ -49,9 +49,15 @@ D $5E04 Holds a pointer to the currently used font data.
 @ $5E04 label=FontPointer
 W $5E04,$02
 
-g $5E06 HI Score
+g $5E06 High Score
+E $5E06 View the equivalent code in;
+. #LIST
+. { #COOKIE$5F09 }
+. { #JETPAC$5CF0 }
+. { #PSSST$5E00 }
+. LIST#
 D $5E06 3-byte representation of the score.
-@ $5E06 label=HI_Score
+@ $5E06 label=High_Score
 
 g $5E09
 

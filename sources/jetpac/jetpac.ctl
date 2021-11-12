@@ -27,7 +27,16 @@ E $5B80 Later Ultimate games use more advanced decryption mechanisms;
 i $5B8E
 
 g $5CF0 High Score
-@ $5CF0 label=HIGH_SCORE
+E $5CF0 View the equivalent code in;
+. #LIST
+. { #COOKIE$5F09 }
+. { #LUNARJETMAN$5E06 }
+. { #PSSST$5E00 }
+. LIST#
+D $5CF0 3-byte representation of the score.
+@ $5CF0 label=High_Score
+B $5CF0,$03
+
 g $5CF3 Game Type
 @ $5CF3 label=GAME_TYPE
 D $5CF3 Holds the number of players and the chosen control method.

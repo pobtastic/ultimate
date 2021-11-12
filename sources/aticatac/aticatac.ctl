@@ -168,6 +168,7 @@ c $6000 Security Check
 E $6000 View the equivalent code in;
 . #LIST
 . { #COOKIE$5F00 }
+. { #JETPAC$61E5 }
 . { #LUNARJETMAN$8000 }
 . { #PSSST$61C6 }
 . { #TRANZAM$5F00 }

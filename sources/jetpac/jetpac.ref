@@ -65,10 +65,10 @@ SectionPrefix=Items
 SectionPrefix=Jetman
 
 [Page:Platforms]
-SectionPrefix=Platforms
+PageContent=#INCLUDE(PageContent:Platforms)
 
 [Page:Ships]
-SectionPrefix=Ships
+PageContent=#INCLUDE(PageContent:Ships)
 
 [Expand]
 #DEF(#JETMAN(id)(fname)
@@ -79,47 +79,28 @@ SectionPrefix=Ships
   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;(#PC + n)-(#PC + n + $11)-$01-$10))($fname)
 )
 
-#DEF(#CONVERTFF(addr)
-  #LET(length=#PEEK($addr) * #PEEK($addr + $01))
-  #FOR($00,{length})||n|
-    #IF(#PEEK($02 + $addr + n) == $FF)(#POKES(($02 + $addr + n), $47))
-  ||
-)
-
 #DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)($fname))
 
 #DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
 
-#DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height)($fname)
-)
-
-#DEF(#COLOURCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height){$00, $04 * ($08 - ($height % $08)), $04 * $width * $08, $04 * $height}($fname)
-)
-
-#DEF(#SPRITE(id,base=$6945)(fname)
+#DEF(#SPRITE(id,base=$6945,attribute=$07)(fname)
   #LET(offset=$id * $02)
   #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
-  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $attribute)($fname),#NOCROP({addr} + $01, $02, $attribute)($fname)))
 
-#DEF(#GRAPHIC(id,base=$76FA,attributes=0)(fname)
+#DEF(#GRAPHIC(id,base=$76FA,attribute=$07)(fname)
   #LET(offset=$id * $02)
   #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
   #LET(width=#PEEK({addr} + $01))
   #LET(height=#PEEK({addr} + $02))
-  #IF($attributes > $00)||
-    TODO
-  |
-    #IF({height} % $08)(
-      #CROP({addr} + $03, {width}, $07)($fname),
-      #NOCROP({addr} + $03, {width}, $07)($fname)
-    )
-  ||
+  #IF({height} % $08)(
+    #CROP({addr} + $03, {width}, $attribute)($fname),
+    #NOCROP({addr} + $03, {width}, $attribute)($fname)
+  )
 )
 
-#DEF(#ALIEN(id)(fname)
-  #SPRITE($id,$6945)($fname)
+#DEF(#ALIEN(id,attribute=$07)(fname)
+  #SPRITE($id,$6945,$attribute)($fname)
 )
 
 #DEF(#ALIENNAME(id)
@@ -160,8 +141,8 @@ SectionPrefix=Ships
   )
 )
 
-#DEF(#COLLECTABLE(id)(fname)
-  #GRAPHIC($id,$67C3)($fname)
+#DEF(#COLLECTABLE(id,attribute=$07)(fname)
+  #GRAPHIC($id,$67C3,$attribute)($fname)
 )
 
 #DEF(#COLLECTABLENAME(id)
