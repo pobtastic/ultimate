@@ -130,6 +130,10 @@ g $5F27
 g $5F28
 
 g $5F29
+
+g $5F2B
+W $5F2B,$02
+
 g $5F2D 1UP Player
 @ $5F2D label=1UP_Level
   $5F2D,$01 1UP Level
@@ -960,6 +964,67 @@ N $71B4 Holding "SHIFT" during an interlude pauses the game.
   $7277,$02 Jump to #R$7211.
 B $7279
   $72A3
+
+c $7378 Display Lives
+E $7378 View the equivalent code in;
+. #LIST
+. { #ATICATAC$0000 }
+. { #JETPAC$70A4 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$7325 }
+. { #TRANZAM$0000 }
+. LIST#
+  $7378,$06 Write #N($0002, $04, $04) to #R$5F2B.
+@ $737E label=DisplayPlayerLives
+N $737E Controller for 1UP lives.
+  $737E,$06 Call #R$76E3 with #N($0040, $04, $04) (screen buffer address) for 1UP lives.
+  $7384,$03 #REGa=1UP lives remaining (by calling #R$73BD).
+  $7387,$03 If 1UP lives are zero, jump to #R$73A6.
+  $738A,$03 Else, there are lives to display so call #R$7399.
+N $738D Controller for 2UP lives.
+@ $738D label=Controller2UPLives
+  $738D,$06 Call #R$76E3 with #N($00B0, $04, $04) (screen buffer address) for 2UP lives.
+  $7393,$03 #REGa=2UP lives remaining (by calling #R$73CB).
+  $7396,$03 If 2UP lives are zero, jump to #R$73AB.
+N $7399 Handles displaying the lives count and UDG character.
+@ $7399 label=HandlerDisplayLives
+  $7399,$02 Add #N$30 to convert to an ASCII character (starting at "0" character).
+  $739B,$03 Call #R$7468.
+  $739E,$03 #REGde=#R$73B5.
+  $73A1,$02 Stash #REGbc and #REGde on the stack.
+  $73A3,$03 Jump to #R$7478.
+N $73A6 1UP has no lives.
+@ $73A6 label=Handler1UPNoLives
+  $73A6,$03 Call #R$73AB.
+  $73A9,$02 Jump to #R$738D.
+N $73AB 2UP has no lives.
+@ $73AB label=Handler2UPNoLives
+  $73AB,$02 #REGa=ASCII " " (SPACE).
+  $73AD,$03 Call #R$7468.
+  $73B0,$02 #REGa=ASCII " " (SPACE).
+  $73B2,$03 Jump to #R$7468.
+
+N $73B5 The UDG for the lives icon.
+@ $73B5 label=UDG_Life
+B $73B5,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
+
+N $73BD Controller for the currently active player.
+@ $73BD label=ControllerActiveLives
+  $73BD,$06 If #R$5F21 is not zero then jump to #R$73C7.
+N $73C3 Return currently active players lives left.
+@ $73C3 label=ActivePlayerLives
+  $73C3,$03 #REGa=#R$5F2E.
+  $73C6,$01 Return.
+N $73C7 Return inactive players lives left.
+@ $73C7 label=InactivePlayerLives
+  $73C7,$03 #REGa=#R$5F32.
+  $73CA,$01 Return.
+N $73CB Controller for the inactive player.
+@ $73CB label=ControllerInactiveLives
+  $73CB,$06 If #R$5F21 is zero then jump to #R$73C7.
+  $73D1,$02 Jump to #R$73C3.
+
+c $73D3
 
 c $7438 Print Scores
 E $7438 View the equivalent code in;

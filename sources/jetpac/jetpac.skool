@@ -495,12 +495,18 @@ g$5D98 DEFB $00,$00,$0A,$00,$00,$3B,$22,$14
  $5DA8 DEFB $57,$41,$49,$54,$22,$14,$00,$3A
  $5DB0 DEFB $F5,$AC,$30,$0E,$00,$00,$00,$00
  $5DB8 DEFB $00,$2C,$30,$0E,$00,$00,$00,$00
- $5DC0 DEFB $00,$3A,$EF,$22,$22
+ $5DC0 DEFB $00,$3A,$EF
 
-; ???
+; Game status buffer entry at 5DC3
+g$5DC3 DEFB $22
+
+; Game status buffer entry at 5DC4
+g$5DC4 DEFB $22
+
+; Game status buffer entry at 5DC5
 g$5DC5 DEFB $AA
 
-; ???
+; Game status buffer entry at 5DC6
 g$5DC6 DEFB $3A,$D9,$30,$0E
 
 ; Game status buffer entry at 5DCA
@@ -3064,59 +3070,90 @@ c$6FFC LD D,(IX+$01)   ;
  $709F DEC E           ;
  $70A0 JP NZ,$704D     ;
  $70A3 RET             ;
-; This entry point is used by the routines at #R$60A9, #R$616A and #R$6707.
-*$70A4 LD HL,$0040     ; #REGhl=$0040
- $70A7 CALL $7308      ; Call the routine at #R$7308
- $70AA CALL $70E3      ; Call the routine at #R$70E3
- $70AD AND A           ;
- $70AE JR Z,$70CC      ;
- $70B0 CALL $70BF      ;
-*$70B3 LD HL,$00B0     ;
- $70B6 CALL $7308      ;
- $70B9 CALL $70F1      ;
- $70BC AND A           ;
- $70BD JR Z,$70D1      ;
-*$70BF ADD A,$30       ;
- $70C1 CALL $714C      ;
- $70C4 LD DE,$70DB     ;
- $70C7 PUSH BC         ;
- $70C8 PUSH DE         ;
- $70C9 JP $715C        ;
-*$70CC CALL $70D1      ;
- $70CF JR $70B3        ;
-*$70D1 LD A,$20        ;
- $70D3 CALL $714C      ;
- $70D6 LD A,$20        ;
- $70D8 JP $714C        ;
 
-; Lives UDG
+; Display Lives
 ;
-; The graphic for the lives icon
-@label=UDG_Lives
-b$70DB DEFB $18,$24,$3C,$7E,$5A,$3C,$3C,$66 ; #UDG#(#PC),attr=7
+; Used by the routines at #R$60A9, #R$616A and #R$6707.
+;
+; .
+;
+; Controller for 1UP lives.
+@label=DisplayPlayerLives
+c$70A4 LD HL,$0040    ; {Call #R$7308 with #N($0040, $04, $04) (screen buffer
+ $70A7 CALL $7308     ; address) for 1UP lives.}
+ $70AA CALL $70E3     ; #REGa=1UP lives remaining (by calling #R$70E3).
+ $70AD AND A          ; {If 1UP lives are zero, jump to #R$70CC.
+ $70AE JR Z,$70CC     ; }
+ $70B0 CALL $70BF     ; Else, there are lives to display so call #R$70BF.
+; Controller for 2UP lives.
+@label=Controller2UPLives
+*$70B3 LD HL,$00B0    ; {Call #R$7308 with #N($00B0, $04, $04) (screen buffer
+ $70B6 CALL $7308     ; address) for 2UP lives.}
+ $70B9 CALL $70F1     ; #REGa=2UP lives remaining (by calling #R$70F1).
+ $70BC AND A          ; {If 2UP lives are zero, jump to #R$70D1.
+ $70BD JR Z,$70D1     ; }
+; Handles displaying the lives count and UDG character.
+@label=HandlerDisplayLives
+*$70BF ADD A,$30      ; Add #N$30 to convert to an ASCII character (starting at
+                      ; "0" character).
+ $70C1 CALL $714C     ; Call #R$714C.
+ $70C4 LD DE,$70DB    ; #REGde=#R$70DB.
+ $70C7 PUSH BC        ; {Stash #REGbc and #REGde on the stack.
+ $70C8 PUSH DE        ; }
+ $70C9 JP $715C       ; Jump to #R$715C.
+; 1UP has no lives.
+@label=Handler1UPNoLives
+*$70CC CALL $70D1     ; Call #R$70D1.
+ $70CF JR $70B3       ; Jump to #R$70B3.
+; 2UP has no lives.
+@label=Handler2UPNoLives
+*$70D1 LD A,$20       ; #REGa=ASCII " " (SPACE).
+ $70D3 CALL $714C     ; Call #R$714C.
+ $70D6 LD A,$20       ; #REGa=ASCII " " (SPACE).
+ $70D8 JP $714C       ; Jump to #R$714C.
+; The UDG for the lives icon.
+@label=UDG_Life
+ $70DB DEFB %00011000 ; {#UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 }
+ $70DC DEFB %00100100 ; UDGTABLE#
+ $70DD DEFB %00111100 ;
+ $70DE DEFB %01111110 ;
+ $70DF DEFB %01011010 ;
+ $70E0 DEFB %00111100 ;
+ $70E1 DEFB %00111100 ;
+ $70E2 DEFB %01100110 ; }
+; Controller for the currently active player.
+@label=ControllerActiveLives
+*$70E3 LD A,($5DD1)   ; {If #R$5DD1 is not zero then jump to #R$70ED.
+ $70E6 AND A          ;
+ $70E7 JR NZ,$70ED    ; }
+; Return currently active players lives left.
+@label=ActivePlayerLives
+*$70E9 LD A,($5DF1)   ; #REGa=#R$5DF1.
+ $70EC RET            ; Return.
+; Return inactive players lives left.
+@label=InactivePlayerLives
+*$70ED LD A,($5DF9)   ; #REGa=#R$5DF9.
+ $70F0 RET            ; Return.
+; Controller for the inactive player.
+@label=ControllerInactiveLives
+*$70F1 LD A,($5DD1)   ; {If #R$5DD1 is zero then jump to #R$70ED.
+ $70F4 AND A          ;
+ $70F5 JR Z,$70ED     ; }
+ $70F7 JR $70E9       ; Jump to #R$70E9.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$0000 }
+; { #COOKIE$0000 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$7325 }
+; { #TRANZAM$0000 }
+; LIST#
 
-; Lives left for active player
+; Routine at 70F9
 ;
-; Loads the number of lives left for the active player into #REGa.
-@label=ACTIVE_PLAYER_LIVES
-c$70E3 LD A,($5DD1)  ; {Evaluate #R$5DD1
- $70E6 AND A         ; }
- $70E7 JR NZ,$70ED   ; Jump to #R$70ED if 2UP is active player
-@label=1UP_PLAYER_LIVES
-*$70E9 LD A,($5DF1)  ; #REGa=#R$5DF1
- $70EC RET           ; Return
-@label=2UP_PLAYER_LIVES
-*$70ED LD A,($5DF9)  ; #REGa=#R$5DF9
- $70F0 RET           ; Return
-; This entry point is used by the routine at #R$6FFC.
-@label=INACTIVE_PLAYER_LIVES
-*$70F1 LD A,($5DD1)  ; {Evaluate #R$5DD1
- $70F4 AND A         ; }
- $70F5 JR Z,$70ED    ; Jump to #R$70ED if 1UP is active player
- $70F7 JR $70E9      ; Jump to #R$70E9
-; This entry point is used by the routines at #R$63DA, #R$6498, #R$651F,
-; #R$6A6C, #R$6AEF, #R$6CF5 and #R$6DD3.
-*$70F9 LD A,($5DD1)  ; {Evaluate #R$5DD1
+; Used by the routines at #R$63DA, #R$6498, #R$651F, #R$6A6C, #R$6AEF, #R$6CF5
+; and #R$6DD3.
+c$70F9 LD A,($5DD1)  ; {Evaluate #R$5DD1
  $70FC AND A         ; }
  $70FD JR NZ,$7104   ; Jump to #R$7104 if 2UP is active player
  $70FF LD HL,$5CF6   ; #REGhl=#R$5CF4(#N$5CF6).
@@ -3190,7 +3227,7 @@ c$711C LD HL,$4021   ; #REGhl=#N$4021 (screen buffer address).
 
 ; Print Character
 ;
-; Used by the routines at #R$6FFC, #R$711C and #R$716C.
+; Used by the routines at #R$70A4, #R$711C and #R$716C.
 ;
 ; A ASCII value to print
 ; HL Screen address
@@ -3215,7 +3252,7 @@ c$714C PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
 ; Print the character to the screen.
  $715B POP HL        ; Restore #REGhl, containing the screen buffer location,
                      ; from the stack.
-; This entry point is used by the routine at #R$6FFC.
+; This entry point is used by the routine at #R$70A4.
 *$715C LD B,$08      ; #REGb=#N$08 (#N$08 rows of pixels).
 ; This entry point is used by the routine at #R$7571.
 @label=PrintScreen_Loop
@@ -3388,73 +3425,94 @@ c$71C6 LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
 ; { #TRANZAM$7200 }
 ; LIST#
 
-; Routine at 71CF
+; Colourise sprite.
 ;
 ; Used by the routines at #R$63DA, #R$6498, #R$651F, #R$6707, #R$68B1, #R$6CF5,
 ; #R$6DD3 and #R$73B2.
-c$71CF EXX           ;
- $71D0 LD HL,($5DCF) ;
- $71D3 CALL $720E    ;
- $71D6 LD A,($5DC4)  ;
- $71D9 LD B,A        ;
- $71DA LD A,($5DC3)  ;
- $71DD RRCA          ;
- $71DE RRCA          ;
- $71DF INC A         ;
- $71E0 RRCA          ;
- $71E1 AND $1F       ;
- $71E3 INC A         ;
- $71E4 LD C,A        ;
- $71E5 LD D,(IX+$03) ;
- $71E8 LD E,B        ;
-*$71E9 PUSH HL       ;
-*$71EA LD A,H        ;
- $71EB CP $5B        ;
- $71ED JR NC,$7200   ;
- $71EF CP $58        ;
- $71F1 JR C,$7200    ;
- $71F3 LD (HL),D     ;
- $71F4 INC L         ;
- $71F5 LD A,L        ;
- $71F6 AND $1F       ;
- $71F8 JR NZ,$71FE   ;
- $71FA LD A,L        ;
- $71FB SUB $20       ;
- $71FD LD L,A        ;
-*$71FE DJNZ $71EA    ;
-*$7200 POP HL        ;
- $7201 PUSH BC       ;
- $7202 AND A         ;
- $7203 LD BC,$0020   ;
- $7206 SBC HL,BC     ;
- $7208 POP BC        ;
- $7209 LD B,E        ;
- $720A DEC C         ;
- $720B JR NZ,$71E9   ;
- $720D RET           ;
+@label=ColouriseSprite
+c$71CF EXX                     ; Switch to the shadow registers.
+ $71D0 LD HL,($5DCF)           ; #REGhl'=actor co-ordinates.
+ $71D3 CALL $720E              ; Call #R$720E - #REGhl' now holds the
+                               ; co-ordinates to an attribute file address.
+ $71D6 LD A,($5DC4)            ; {#REGb'=width loop counter (in pixels).
+ $71D9 LD B,A                  ; }
+ $71DA LD A,($5DC3)            ; #REGa=#R$5DC3.
+ $71DD RRCA                    ; {#REGa=((#REGa / #N$04) + #N$01) / #N$02.
+ $71DE RRCA                    ;
+ $71DF INC A                   ;
+ $71E0 RRCA                    ; }
+ $71E1 AND %00011111           ; Keep only bits 0-4.
+ $71E3 INC A                   ; Increment #REGa by one.
+ $71E4 LD C,A                  ; #REGc=height loop counter (in pixels).
+ $71E5 LD D,(IX+$03)           ; #REGd=object colour attribute.
+ $71E8 LD E,B                  ; #REGe=width loop counter (in pixels).
+@label=ColouriseSprite_Loop1
+*$71E9 PUSH HL                 ; Stash #REGhl on the stack.
+@label=ColouriseSprite_Loop2
+*$71EA LD A,H                  ; #REGa=actor Y position.
+ $71EB CP $5B                  ; {Decrement position if address is outside of
+ $71ED JR NC,$7200             ; attribute file address range.
+ $71EF CP $58                  ;
+ $71F1 JR C,$7200              ; }
+ $71F3 LD (HL),D               ; Otherwise, set the colour at this location.
+ $71F4 INC L                   ; Next tile column.
+ $71F5 LD A,L                  ; {Next tile if column < screen width (32
+ $71F6 AND %00011111           ; chars).
+ $71F8 JR NZ,%0111000111111110 ; }
+ $71FA LD A,L                  ; {Else, wrap-around and continue applying
+ $71FB SUB $20                 ; colour.}
+ $71FD LD L,A                  ; #REGl=start of current row.
+*$71FE DJNZ $71EA              ; Decrease counter by one and loop back to
+                               ; #R$71EA until counter is zero.
+*$7200 POP HL                  ; Restore #REGhl from the stack.
+ $7201 PUSH BC                 ; Stash #REGbc on the stack.
+ $7202 AND A                   ; Clear the carry flag.
+ $7203 LD BC,$0020             ; {#REGhl -= 32 tiles. Places address pointer
+ $7206 SBC HL,BC               ; previous line.}
+ $7208 POP BC                  ; Restore #REGbc from the stack.
+ $7209 LD B,E                  ; #REGb=reset to original width counter.
+ $720A DEC C                   ; Decrement height counter.
+ $720B JR NZ,$71E9             ; Repeat until all tiles have been coloured.
+ $720D RET                     ; Return.
 
-; Routine at 720E
+; Calculate Attribute Address
 ;
 ; Used by the routines at #R$616A, #R$62FF, #R$6FFC, #R$716C, #R$71CF and
 ; #R$7571.
-c$720E LD A,L        ;
- $720F RRCA          ;
+;
+;   HL Pixel address co-ordinates
+; O:HL Attribute buffer address
+;
+; Converts a given pixel address to the associated attribute buffer address.
+@label=AttributeAddress
+c$720E LD A,L        ; Horizontal co-ordinate.
+ $720F RRCA          ; {Divide by #N$08.
  $7210 RRCA          ;
- $7211 RRCA          ;
- $7212 AND $1F       ;
- $7214 LD L,A        ;
- $7215 LD A,H        ;
- $7216 RLCA          ;
- $7217 RLCA          ;
- $7218 LD C,A        ;
- $7219 AND $E0       ;
- $721B OR L          ;
- $721C LD L,A        ;
- $721D LD A,C        ;
- $721E AND $03       ;
- $7220 OR $58        ;
- $7222 LD H,A        ;
- $7223 RET           ;
+ $7211 RRCA          ; }
+ $7212 AND %00011111 ; Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum
+                     ; horizontal screen values).
+ $7214 LD L,A        ; Store this back in #REGl.
+ $7215 LD A,H        ; Vertical co-ordinate.
+ $7216 RLCA          ; {Multiply by #N$04.
+ $7217 RLCA          ; }
+ $7218 LD C,A        ; Store this in #REGc temporarily.
+ $7219 AND %11100000 ; Keep only bits 5-7.
+ $721B OR L          ; Set the bits from #REGl.
+ $721C LD L,A        ; #REGl=#REGa.
+ $721D LD A,C        ; Fetch the stored value from #REGc.
+ $721E AND %00000011 ; Keep only bits 0-1.
+ $7220 OR %01011000  ; Set MSB of the attribute buffer #N58. This ensures our
+                     ; value is >= #R$5800.
+ $7222 LD H,A        ; Store this back in #REGh.
+ $7223 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9BD2 }
+; { #COOKIE$7534 }
+; { #LUNARJETMAN$8506 }
+; { #PSSST$748F }
+; { #TRANZAM$7097 }
+; LIST#
 
 ; Routine at 7224
 ;
@@ -3614,8 +3672,8 @@ c$72EE DEC H         ;
 
 ; Calculate Screen Address
 ;
-; Used by the routines at #R$62FF, #R$6FFC, #R$716C, #R$7224, #R$723C and
-; #R$7571.
+; Used by the routines at #R$62FF, #R$6FFC, #R$70A4, #R$716C, #R$7224, #R$723C
+; and #R$7571.
 @label=ScreenAddress
 c$7308 LD A,L        ; #REGa=#REGl.
  $7309 RRCA          ; {#REGa=#REGa / #N$08.

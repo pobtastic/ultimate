@@ -120,19 +120,26 @@ g $5E22 "Get Ready" Delay Counter
 g $5E23
   $5E23,$0A,$01
 
-g $5E37 Current Player Level
+g $5E37 Active Player Level
 D $5E37 Note that level 1 is #N$00.
-@ $5E37 label=CurrentPlayer_Level
+@ $5E37 label=ActivePlayer_Level
+B $5E37,$01
 
-g $5E38 Current Player Lives
-D $5E38 Current players remaining lives.
+g $5E38 Active Player Lives
+D $5E38 The currently active players remaining lives.
 @ $5E38 label=CurrentPlayer_Lives
+B $5E38,$01
 
-g $5E39 2UP Level
-@ $5E39 label=2UP_Level
+g $5E39 Inactive Player Level
+D $5E39 Note that level 1 is #N$00.
+@ $5E39 label=InactivePlayer_Level
+B $5E39,$01
 
-g $5E3A 2UP Lives
-@ $5E3A label=2UP_Lives
+g $5E3A Inactive Player Lives
+D $5E3A The inactive players remaining lives.
+@ $5E3A label=InactivePlayer_Lives
+B $5E3A,$01
+
 g $5E3B
 g $5E3C
 
@@ -1232,45 +1239,62 @@ N $7322 A collision has been detected.
   $7324,$01 Return.
 
 c $7325 Display Lives
+E $7325 View the equivalent code in;
+. #LIST
+. { #ATICATAC$0000 }
+. { #COOKIE$7378 }
+. { #JETPAC$70A4 }
+. { #LUNARJETMAN$0000 }
+. { #TRANZAM$0000 }
+. LIST#
 @ $7325 label=DisplayPlayerLives
-  $7325,$06 Call #R$759A with #N($0040, 4, 4) for 1UP lives.
-  $732B,$03 Call #R$7364.
-  $732E,$03 Display an empty space if no lives are remaining.
-  $7331,$03 Call #R$7340.
-@ $7334 label=DisplayPlayerLives_2UP
-  $7334,$06 Call #R$759A with #N($00B0, 4, 4) for 2UP lives.
-  $733A,$03 Call #R$7372.
-  $733D,$03 Display an empty space if no lives are remaining.
-@ $7340 label=DisplayPlayerLives_Print
-  $7340,$02 Add #N$30 to convert to an ASCII character (starting at 0 character).
+N $7325 Controller for 1UP lives.
+  $7325,$06 Call #R$759A with #N($0040, $04, $04) (screen buffer address) for 1UP lives.
+  $732B,$03 #REGa=1UP lives remaining (by calling #R$7364).
+  $732E,$03 If 1UP lives are zero, jump to #R$734D.
+  $7331,$03 Else, there are lives to display so call #R$7340.
+N $7334 Controller for 2UP lives.
+@ $7334 label=Controller2UPLives
+  $7334,$06 Call #R$759A with #N($00B0, $04, $04) (screen buffer address) for 2UP lives.
+  $733A,$03 #REGa=2UP lives remaining (by calling #R$7372).
+  $733D,$03 If 2UP lives are zero, jump to #R$7352.
+N $7340 Handles displaying the lives count and UDG character.
+@ $7340 label=HandlerDisplayLives
+  $7340,$02 Add #N$30 to convert to an ASCII character (starting at "0" character).
   $7342,$03 Call #R$73CD.
   $7345,$03 #REGde=#R$735C.
   $7348,$02 Stash #REGbc and #REGde on the stack.
   $734A,$03 Jump to #R$73DD.
+N $734D 1UP has no lives.
+@ $734D label=Handler1UPNoLives
   $734D,$03 Call #R$7352.
   $7350,$02 Jump to #R$7334.
+N $7352 2UP has no lives.
+@ $7352 label=Handler2UPNoLives
   $7352,$02 #REGa=ASCII " " (SPACE).
   $7354,$03 Call #R$73CD.
   $7357,$02 #REGa=ASCII " " (SPACE).
   $7359,$03 Jump to #R$73CD.
-@ $735C label=UDG_Life
-B $735C,$08,b$01 #UDG(#PC)
 
-N $7364 Check which player is current in a one player game.
-@ $7364 label=ReturnLives_1UPController
-  $7364,$06 If #R$5E1E is 2UP, jump to #R$736E.
-N $736A Handle 1UP.
-@ $736A label=ReturnLives_1UP
+N $735C The UDG for the lives icon.
+@ $735C label=UDG_Life
+B $735C,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
+
+N $7364 Controller for the currently active player.
+@ $7364 label=ControllerActiveLives
+  $7364,$06 If #R$5E1E is not zero then jump to #R$736E.
+N $736A Return currently active players Lives left.
+@ $736A label=ActivePlayerLives
   $736A,$03 #REGa=#R$5E38.
   $736D,$01 Return.
-N $736E Handle 2UP.
-@ $736E label=ReturnLives_2UP
+N $736E Return inactive players Lives left.
+@ $736E label=InactivePlayerLives
   $736E,$03 #REGa=#R$5E3A.
   $7371,$01 Return.
-N $7372 Check which player is current in a two player game.
-@ $7372 label=ReturnLives_2UPController
-  $7372,$06 If #R$5E1E is 1UP, jump to #R$736E.
-  $7378,$02 Else, it's 2UP so jump to #R$736A.
+N $7372 Controller for the inactive player.
+@ $7372 label=ControllerInactiveLives
+  $7372,$06 If #R$5E1E is zero then jump to #R$736E.
+  $7378,$02 Jump to #R$736A.
 
 c $737A
 

@@ -221,9 +221,11 @@ g $5D88
 
 g $5D98 ???
 
-g $5DC5 ???
+g $5DC3
+g $5DC4
+g $5DC5
 
-g $5DC6 ???
+g $5DC6
 g $5DCA
 g $5DCB ???
 g $5DCC ????
@@ -801,33 +803,65 @@ c $6FFC
 
   $706E,$03 #REGa=(IX+$06)
 
-C $70A4,$03 #REGhl=$0040
-  $70A7,$03 Call the routine at #R$7308
-  $70AA,$03 Call the routine at #R$70E3
+c $70A4 Display Lives
+E $70A4 View the equivalent code in;
+. #LIST
+. { #ATICATAC$0000 }
+. { #COOKIE$7378 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$7325 }
+. { #TRANZAM$0000 }
+. LIST#
+@ $70A4 label=DisplayPlayerLives
+N $70A4 Controller for 1UP lives.
+  $70A4,$06 Call #R$7308 with #N($0040, $04, $04) (screen buffer address) for 1UP lives.
+  $70AA,$03 #REGa=1UP lives remaining (by calling #R$70E3).
+  $70AD,$03 If 1UP lives are zero, jump to #R$70CC.
+  $70B0,$03 Else, there are lives to display so call #R$70BF.
+N $70B3 Controller for 2UP lives.
+@ $70B3 label=Controller2UPLives
+  $70B3,$06 Call #R$7308 with #N($00B0, $04, $04) (screen buffer address) for 2UP lives.
+  $70B9,$03 #REGa=2UP lives remaining (by calling #R$70F1).
+  $70BC,$03 If 2UP lives are zero, jump to #R$70D1.
+N $70BF Handles displaying the lives count and UDG character.
+@ $70BF label=HandlerDisplayLives
+  $70BF,$02 Add #N$30 to convert to an ASCII character (starting at "0" character).
+  $70C1,$03 Call #R$714C.
+  $70C4,$03 #REGde=#R$70DB.
+  $70C7,$02 Stash #REGbc and #REGde on the stack.
+  $70C9,$03 Jump to #R$715C.
+N $70CC 1UP has no lives.
+@ $70CC label=Handler1UPNoLives
+  $70CC,$03 Call #R$70D1.
+  $70CF,$02 Jump to #R$70B3.
+N $70D1 2UP has no lives.
+@ $70D1 label=Handler2UPNoLives
+  $70D1,$02 #REGa=ASCII " " (SPACE).
+  $70D3,$03 Call #R$714C.
+  $70D6,$02 #REGa=ASCII " " (SPACE).
+  $70D8,$03 Jump to #R$714C.
 
+N $70DB The UDG for the lives icon.
+@ $70DB label=UDG_Life
+B $70DB,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
 
-b $70DB Lives UDG
-D $70DB The graphic for the lives icon
-B $70DB #UDG#(#PC),attr=7
-@ $70DB label=UDG_Lives
+N $70E3 Controller for the currently active player.
+@ $70E3 label=ControllerActiveLives
+  $70E3,$06 If #R$5DD1 is not zero then jump to #R$70ED.
+N $70E9 Return currently active players lives left.
+@ $70E9 label=ActivePlayerLives
+  $70E9,$03 #REGa=#R$5DF1.
+  $70EC,$01 Return.
+N $70ED Return inactive players lives left.
+@ $70ED label=InactivePlayerLives
+  $70ED,$03 #REGa=#R$5DF9.
+  $70F0,$01 Return.
+N $70F1 Controller for the inactive player.
+@ $70F1 label=ControllerInactiveLives
+  $70F1,$06 If #R$5DD1 is zero then jump to #R$70ED.
+  $70F7,$02 Jump to #R$70E9.
 
-c $70E3 Lives left for active player
-@ $70E3 label=ACTIVE_PLAYER_LIVES
-D $70E3 Loads the number of lives left for the active player into #REGa.
-C $70E3,$04 Evaluate #R$5DD1
-  $70E7,$02 Jump to #R$70ED if 2UP is active player
-  $70E9,$03 #REGa=#R$5DF1
-@ $70E9 label=1UP_PLAYER_LIVES
-  $70EC,$01 Return
-  $70ED,$03 #REGa=#R$5DF9
-@ $70ED label=2UP_PLAYER_LIVES
-  $70F0,$01 Return
-
-  $70F1,$04 Evaluate #R$5DD1
-@ $70F1 label=INACTIVE_PLAYER_LIVES
-  $70F5,$02 Jump to #R$70ED if 1UP is active player
-  $70F7,$02 Jump to #R$70E9
-
+c $70F9
   $70F9,$04 Evaluate #R$5DD1
   $70FD,$02 Jump to #R$7104 if 2UP is active player
 
@@ -1036,7 +1070,39 @@ E $71C6 View the equivalent code in;
   $71CB,$02 #REGc=#N$47 (value to write).
   $71CD,$02 Jump to #R$71BF.
 
-c $71CF
+c $71CF Colourise sprite.
+@ $71CF label=ColouriseSprite
+  $71CF,$01 Switch to the shadow registers.
+  $71D0,$03 #REGhl'=actor co-ordinates.
+  $71D3,$03 Call #R$720E - #REGhl' now holds the co-ordinates to an attribute file address.
+  $71D6,$04 #REGb'=width loop counter (in pixels).
+  $71DA,$03 #REGa=#R$5DC3.
+  $71DD,$04 #REGa=((#REGa / #N$04) + #N$01) / #N$02.
+  $71E1,$02,b$01 Keep only bits 0-4.
+  $71E3,$01 Increment #REGa by one.
+  $71E4,$01 #REGc=height loop counter (in pixels).
+  $71E5,$03 #REGd=object colour attribute.
+  $71E8,$01 #REGe=width loop counter (in pixels).
+@ $71E9 label=ColouriseSprite_Loop1
+  $71E9,$01 Stash #REGhl on the stack.
+@ $71EA label=ColouriseSprite_Loop2
+  $71EA,$01 #REGa=actor Y position.
+  $71EB,$08 Decrement position if address is outside of attribute file address range.
+  $71F3,$01 Otherwise, set the colour at this location.
+  $71F4,$01 Next tile column.
+  $71F5,$05,b$01 Next tile if column < screen width (32 chars).
+  $71FA,$03 Else, wrap-around and continue applying colour.
+  $71FD,$01 #REGl=start of current row.
+  $71FE,$02 Decrease counter by one and loop back to #R$71EA until counter is zero.
+  $7200,$01 Restore #REGhl from the stack.
+  $7201,$01 Stash #REGbc on the stack.
+  $7202,$01 Clear the carry flag.
+  $7203,$05 #REGhl -= 32 tiles. Places address pointer previous line.
+  $7208,$01 Restore #REGbc from the stack.
+  $7209,$01 #REGb=reset to original width counter.
+  $720A,$01 Decrement height counter.
+  $720B,$02 Repeat until all tiles have been coloured.
+  $720D,$01 Return.
 
 c $720E Calculate Attribute Address
 E $720E View the equivalent code in;

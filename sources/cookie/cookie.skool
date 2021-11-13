@@ -498,7 +498,10 @@ g$5F27 DEFB $00
 g$5F28 DEFB $00
 
 ; Game status buffer entry at 5F29
-g$5F29 DEFB $00,$00,$02,$00
+g$5F29 DEFB $00,$00
+
+; Game status buffer entry at 5F2B
+g$5F2B DEFW $0002
 
 ; 1UP Player
 @label=1UP_Level
@@ -3128,112 +3131,148 @@ c$7198 CALL $7186                           ; Call #R$7186.
  $7370 CALL $6FA4                           ;
  $7373 POP IX                               ;
  $7375 JP $683E                             ;
-; This entry point is used by the routines at #R$5FE1 and #R$6FFD.
-*$7378 LD HL,$0002                          ;
- $737B LD ($5F2B),HL                        ;
- $737E LD HL,$0040                          ;
- $7381 CALL $76E3                           ;
- $7384 CALL $73BD                           ;
- $7387 AND A                                ;
- $7388 JR Z,$73A6                           ;
- $738A CALL $7399                           ;
-*$738D LD HL,$00B0                          ;
- $7390 CALL $76E3                           ;
- $7393 CALL $73CB                           ;
- $7396 AND A                                ;
- $7397 JR Z,$73AB                           ;
-*$7399 ADD A,$30                            ;
- $739B CALL $7468                           ;
- $739E LD DE,$73B5                          ;
- $73A1 PUSH BC                              ;
- $73A2 PUSH DE                              ;
- $73A3 JP $7478                             ;
-*$73A6 CALL $73AB                           ;
- $73A9 JR $738D                             ;
-*$73AB LD A,$20                             ;
- $73AD CALL $7468                           ;
- $73B0 LD A,$20                             ;
- $73B2 JP $7468                             ;
- $73B5 JR $73DB                             ;
- $73B7 INC A                                ;
- $73B8 LD A,(HL)                            ;
- $73B9 LD E,D                               ;
- $73BA INC A                                ;
- $73BB INC A                                ;
- $73BC LD H,(HL)                            ;
-*$73BD LD A,($5F21)                         ;
- $73C0 AND A                                ;
- $73C1 JR NZ,$73C7                          ;
-*$73C3 LD A,($5F2E)                         ;
- $73C6 RET                                  ;
-*$73C7 LD A,($5F32)                         ;
- $73CA RET                                  ;
-*$73CB LD A,($5F21)                         ;
- $73CE AND A                                ;
- $73CF JR Z,$73C7                           ;
- $73D1 JR $73C3                             ;
-; This entry point is used by the routine at #R$6BE0.
-*$73D3 LD HL,($5F0E)                        ;
- $73D6 LD DE,($5F11)                        ;
- $73DA LD A,L                               ;
-*$73DB LD L,H                               ;
- $73DC LD H,A                               ;
- $73DD LD A,E                               ;
- $73DE LD E,D                               ;
- $73DF LD D,A                               ;
- $73E0 AND A                                ;
- $73E1 SBC HL,DE                            ;
- $73E3 JR C,$73F1                           ;
- $73E5 JR NZ,$7410                          ;
- $73E7 LD A,($5F10)                         ;
- $73EA LD E,A                               ;
- $73EB LD A,($5F13)                         ;
- $73EE CP E                                 ;
- $73EF JR C,$7410                           ;
-*$73F1 LD HL,$5F11                          ;
-*$73F4 PUSH HL                              ;
- $73F5 LD DE,$5F09                          ;
- $73F8 LD B,$03                             ;
-*$73FA LD A,(DE)                            ;
- $73FB CP (HL)                              ;
- $73FC JR C,$7406                           ;
- $73FE JR NZ,$7404                          ;
- $7400 INC HL                               ;
- $7401 INC DE                               ;
- $7402 DJNZ $73FA                           ;
-*$7404 POP HL                               ;
- $7405 RET                                  ;
-*$7406 POP HL                               ;
- $7407 LD DE,$5F09                          ;
- $740A LD BC,$0003                          ;
- $740D LDIR                                 ;
- $740F RET                                  ;
-*$7410 LD HL,$5F0E                          ;
- $7413 JR $73F4                             ;
+
+; Display Lives
+;
+; Used by the routines at #R$5FE1 and #R$6FFD.
+c$7378 LD HL,$0002    ; {Write #N($0002, $04, $04) to #R$5F2B.
+ $737B LD ($5F2B),HL  ; }
+; Controller for 1UP lives.
+@label=DisplayPlayerLives
+ $737E LD HL,$0040    ; {Call #R$76E3 with #N($0040, $04, $04) (screen buffer
+ $7381 CALL $76E3     ; address) for 1UP lives.}
+ $7384 CALL $73BD     ; #REGa=1UP lives remaining (by calling #R$73BD).
+ $7387 AND A          ; {If 1UP lives are zero, jump to #R$73A6.
+ $7388 JR Z,$73A6     ; }
+ $738A CALL $7399     ; Else, there are lives to display so call #R$7399.
+; Controller for 2UP lives.
+@label=Controller2UPLives
+*$738D LD HL,$00B0    ; {Call #R$76E3 with #N($00B0, $04, $04) (screen buffer
+ $7390 CALL $76E3     ; address) for 2UP lives.}
+ $7393 CALL $73CB     ; #REGa=2UP lives remaining (by calling #R$73CB).
+ $7396 AND A          ; {If 2UP lives are zero, jump to #R$73AB.
+ $7397 JR Z,$73AB     ; }
+; Handles displaying the lives count and UDG character.
+@label=HandlerDisplayLives
+*$7399 ADD A,$30      ; Add #N$30 to convert to an ASCII character (starting at
+                      ; "0" character).
+ $739B CALL $7468     ; Call #R$7468.
+ $739E LD DE,$73B5    ; #REGde=#R$73B5.
+ $73A1 PUSH BC        ; {Stash #REGbc and #REGde on the stack.
+ $73A2 PUSH DE        ; }
+ $73A3 JP $7478       ; Jump to #R$7478.
+; 1UP has no lives.
+@label=Handler1UPNoLives
+*$73A6 CALL $73AB     ; Call #R$73AB.
+ $73A9 JR $738D       ; Jump to #R$738D.
+; 2UP has no lives.
+@label=Handler2UPNoLives
+*$73AB LD A,$20       ; #REGa=ASCII " " (SPACE).
+ $73AD CALL $7468     ; Call #R$7468.
+ $73B0 LD A,$20       ; #REGa=ASCII " " (SPACE).
+ $73B2 JP $7468       ; Jump to #R$7468.
+; The UDG for the lives icon.
+@label=UDG_Life
+ $73B5 DEFB %00011000 ; {#UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 }
+ $73B6 DEFB %00100100 ; UDGTABLE#
+ $73B7 DEFB %00111100 ;
+ $73B8 DEFB %01111110 ;
+ $73B9 DEFB %01011010 ;
+ $73BA DEFB %00111100 ;
+ $73BB DEFB %00111100 ;
+ $73BC DEFB %01100110 ; }
+; Controller for the currently active player.
+@label=ControllerActiveLives
+*$73BD LD A,($5F21)   ; {If #R$5F21 is not zero then jump to #R$73C7.
+ $73C0 AND A          ;
+ $73C1 JR NZ,$73C7    ; }
+; Return currently active players lives left.
+@label=ActivePlayerLives
+*$73C3 LD A,($5F2E)   ; #REGa=#R$5F2E.
+ $73C6 RET            ; Return.
+; Return inactive players lives left.
+@label=InactivePlayerLives
+*$73C7 LD A,($5F32)   ; #REGa=#R$5F32.
+ $73CA RET            ; Return.
+; Controller for the inactive player.
+@label=ControllerInactiveLives
+*$73CB LD A,($5F21)   ; {If #R$5F21 is zero then jump to #R$73C7.
+ $73CE AND A          ;
+ $73CF JR Z,$73C7     ; }
+ $73D1 JR $73C3       ; Jump to #R$73C3.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$0000 }
+; { #JETPAC$70A4 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$7325 }
+; { #TRANZAM$0000 }
+; LIST#
+
+; Routine at 73D3
+;
+; Used by the routine at #R$6BE0.
+c$73D3 LD HL,($5F0E) ;
+ $73D6 LD DE,($5F11) ;
+ $73DA LD A,L        ;
+ $73DB LD L,H        ;
+ $73DC LD H,A        ;
+ $73DD LD A,E        ;
+ $73DE LD E,D        ;
+ $73DF LD D,A        ;
+ $73E0 AND A         ;
+ $73E1 SBC HL,DE     ;
+ $73E3 JR C,$73F1    ;
+ $73E5 JR NZ,$7410   ;
+ $73E7 LD A,($5F10)  ;
+ $73EA LD E,A        ;
+ $73EB LD A,($5F13)  ;
+ $73EE CP E          ;
+ $73EF JR C,$7410    ;
+*$73F1 LD HL,$5F11   ;
+*$73F4 PUSH HL       ;
+ $73F5 LD DE,$5F09   ;
+ $73F8 LD B,$03      ;
+*$73FA LD A,(DE)     ;
+ $73FB CP (HL)       ;
+ $73FC JR C,$7406    ;
+ $73FE JR NZ,$7404   ;
+ $7400 INC HL        ;
+ $7401 INC DE        ;
+ $7402 DJNZ $73FA    ;
+*$7404 POP HL        ;
+ $7405 RET           ;
+*$7406 POP HL        ;
+ $7407 LD DE,$5F09   ;
+ $740A LD BC,$0003   ;
+ $740D LDIR          ;
+ $740F RET           ;
+*$7410 LD HL,$5F0E   ;
+ $7413 JR $73F4      ;
 ; This entry point is used by the routines at #R$65E8, #R$6C3C and #R$6E25.
-*$7415 LD A,($5F21)                         ;
- $7418 AND A                                ;
- $7419 JR NZ,$7420                          ;
- $741B LD HL,$5F10                          ;
- $741E JR $7423                             ;
-*$7420 LD HL,$5F13                          ;
-*$7423 LD A,(HL)                            ;
- $7424 ADD A,C                              ;
- $7425 DAA                                  ;
- $7426 LD (HL),A                            ;
- $7427 DEC HL                               ;
- $7428 LD A,(HL)                            ;
- $7429 ADC A,B                              ;
- $742A DAA                                  ;
- $742B LD (HL),A                            ;
- $742C DEC HL                               ;
- $742D LD A,(HL)                            ;
- $742E ADC A,$00                            ;
- $7430 DAA                                  ;
- $7431 LD (HL),A                            ;
- $7432 LD A,($5F21)                         ;
- $7435 AND A                                ;
- $7436 JR NZ,$7440                          ;
+*$7415 LD A,($5F21)  ;
+ $7418 AND A         ;
+ $7419 JR NZ,$7420   ;
+ $741B LD HL,$5F10   ;
+ $741E JR $7423      ;
+*$7420 LD HL,$5F13   ;
+*$7423 LD A,(HL)     ;
+ $7424 ADD A,C       ;
+ $7425 DAA           ;
+ $7426 LD (HL),A     ;
+ $7427 DEC HL        ;
+ $7428 LD A,(HL)     ;
+ $7429 ADC A,B       ;
+ $742A DAA           ;
+ $742B LD (HL),A     ;
+ $742C DEC HL        ;
+ $742D LD A,(HL)     ;
+ $742E ADC A,$00     ;
+ $7430 DAA           ;
+ $7431 LD (HL),A     ;
+ $7432 LD A,($5F21)  ;
+ $7435 AND A         ;
+ $7436 JR NZ,$7440   ;
 
 ; Print Scores
 ;
@@ -3286,7 +3325,7 @@ c$7438 LD HL,$4021   ; #REGhl=#N$4021 (screen buffer address).
 
 ; Print Character
 ;
-; Used by the routines at #R$5FE1, #R$7198, #R$7438 and #R$7488.
+; Used by the routines at #R$5FE1, #R$7378, #R$7438 and #R$7488.
 ;
 ; A ASCII value to print
 ; HL Screen address
@@ -3311,7 +3350,7 @@ c$7468 PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
 ; Print the character to the screen.
  $7477 POP HL        ; Restore #REGhl, containing the screen buffer location,
                      ; from the stack.
-; This entry point is used by the routine at #R$7198.
+; This entry point is used by the routine at #R$7378.
 *$7478 LD B,$08      ; #REGb=#N$08 (#N$08 rows of pixels).
 @label=PrintScreen_Loop
 *$747A LD A,(DE)     ; {Copy a byte from the font data to the screen buffer.
@@ -3543,7 +3582,7 @@ c$7534 LD A,L        ; Horizontal co-ordinate.
                      ; horizontal screen values).
  $753A LD L,A        ; Store this back in #REGl.
  $753B LD A,H        ; Vertical co-ordinate.
- $753C RLCA          ; {Times by #N$04.
+ $753C RLCA          ; {Multiply by #N$04.
  $753D RLCA          ; }
  $753E LD C,A        ; Store this in #REGc temporarily.
  $753F AND %11100000 ; Keep only bits 5-7.
@@ -3555,6 +3594,14 @@ c$7534 LD A,L        ; Horizontal co-ordinate.
                      ; value is >= #R$5800.
  $7548 LD H,A        ; Store this back in #REGh.
  $7549 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9BD2 }
+; { #JETPAC$720E }
+; { #LUNARJETMAN$8506 }
+; { #PSSST$748F }
+; { #TRANZAM$7097 }
+; LIST#
 
 ; Routine at 754A
 ;
@@ -3841,7 +3888,7 @@ c$76D0 LD A,(IX+$01) ; {Copy actor X position to active actor X position.
 
 ; Calculate Screen Address
 ;
-; Used by the routines at #R$5FE1, #R$63E0, #R$7198, #R$7488, #R$7557 and
+; Used by the routines at #R$5FE1, #R$63E0, #R$7378, #R$7488, #R$7557 and
 ; #R$7584.
 @label=ScreenAddress
 c$76E3 LD A,L        ; #REGa=#REGl.

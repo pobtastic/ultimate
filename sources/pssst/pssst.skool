@@ -461,24 +461,28 @@ g$5E23 DEFB $33
  $5E2D DEFB $00,$00,$00,$00,$00,$3A,$EF,$22
  $5E35 DEFB $22,$AF
 
-; Current Player Level
+; Active Player Level
 ;
 ; Note that level 1 is #N$00.
-@label=CurrentPlayer_Level
+@label=ActivePlayer_Level
 g$5E37 DEFB $3A
 
-; Current Player Lives
+; Active Player Lives
 ;
-; Current players remaining lives.
+; The currently active players remaining lives.
 @label=CurrentPlayer_Lives
 g$5E38 DEFB $F5
 
-; 2UP Level
-@label=2UP_Level
+; Inactive Player Level
+;
+; Note that level 1 is #N$00.
+@label=InactivePlayer_Level
 g$5E39 DEFB $C0
 
-; 2UP Lives
-@label=2UP_Lives
+; Inactive Player Lives
+;
+; The inactive players remaining lives.
+@label=InactivePlayer_Lives
 g$5E3A DEFB $32
 
 ; Game status buffer entry at 5E3B
@@ -3484,61 +3488,80 @@ c$72F5 LD HL,$5E6C   ; #REGhl=#R$5E6C.
 ; Display Lives
 ;
 ; Used by the routines at #R$5F80 and #R$6176.
+;
+; .
+;
+; Controller for 1UP lives.
 @label=DisplayPlayerLives
-c$7325 LD HL,$0040    ; {Call #R$759A with #N($0040, 4, 4) for 1UP lives.
- $7328 CALL $759A     ; }
- $732B CALL $7364     ; Call #R$7364.
- $732E AND A          ; {Display an empty space if no lives are remaining.
+c$7325 LD HL,$0040    ; {Call #R$759A with #N($0040, $04, $04) (screen buffer
+ $7328 CALL $759A     ; address) for 1UP lives.}
+ $732B CALL $7364     ; #REGa=1UP lives remaining (by calling #R$7364).
+ $732E AND A          ; {If 1UP lives are zero, jump to #R$734D.
  $732F JR Z,$734D     ; }
- $7331 CALL $7340     ; Call #R$7340.
-@label=DisplayPlayerLives_2UP
-*$7334 LD HL,$00B0    ; {Call #R$759A with #N($00B0, 4, 4) for 2UP lives.
- $7337 CALL $759A     ; }
- $733A CALL $7372     ; Call #R$7372.
- $733D AND A          ; {Display an empty space if no lives are remaining.
+ $7331 CALL $7340     ; Else, there are lives to display so call #R$7340.
+; Controller for 2UP lives.
+@label=Controller2UPLives
+*$7334 LD HL,$00B0    ; {Call #R$759A with #N($00B0, $04, $04) (screen buffer
+ $7337 CALL $759A     ; address) for 2UP lives.}
+ $733A CALL $7372     ; #REGa=2UP lives remaining (by calling #R$7372).
+ $733D AND A          ; {If 2UP lives are zero, jump to #R$7352.
  $733E JR Z,$7352     ; }
-@label=DisplayPlayerLives_Print
+; Handles displaying the lives count and UDG character.
+@label=HandlerDisplayLives
 *$7340 ADD A,$30      ; Add #N$30 to convert to an ASCII character (starting at
-                      ; 0 character).
+                      ; "0" character).
  $7342 CALL $73CD     ; Call #R$73CD.
  $7345 LD DE,$735C    ; #REGde=#R$735C.
  $7348 PUSH BC        ; {Stash #REGbc and #REGde on the stack.
  $7349 PUSH DE        ; }
  $734A JP $73DD       ; Jump to #R$73DD.
+; 1UP has no lives.
+@label=Handler1UPNoLives
 *$734D CALL $7352     ; Call #R$7352.
  $7350 JR $7334       ; Jump to #R$7334.
+; 2UP has no lives.
+@label=Handler2UPNoLives
 *$7352 LD A,$20       ; #REGa=ASCII " " (SPACE).
  $7354 CALL $73CD     ; Call #R$73CD.
  $7357 LD A,$20       ; #REGa=ASCII " " (SPACE).
  $7359 JP $73CD       ; Jump to #R$73CD.
+; The UDG for the lives icon.
 @label=UDG_Life
- $735C DEFB %00011000 ; {#UDG(#PC)
- $735D DEFB %00100100 ;
+ $735C DEFB %00011000 ; {#UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 }
+ $735D DEFB %00100100 ; UDGTABLE#
  $735E DEFB %00111100 ;
  $735F DEFB %01111110 ;
  $7360 DEFB %01011010 ;
  $7361 DEFB %00111100 ;
  $7362 DEFB %00111100 ;
  $7363 DEFB %01100110 ; }
-; Check which player is current in a one player game.
-@label=ReturnLives_1UPController
-*$7364 LD A,($5E1E)   ; {If #R$5E1E is 2UP, jump to #R$736E.
+; Controller for the currently active player.
+@label=ControllerActiveLives
+*$7364 LD A,($5E1E)   ; {If #R$5E1E is not zero then jump to #R$736E.
  $7367 AND A          ;
  $7368 JR NZ,$736E    ; }
-; Handle 1UP.
-@label=ReturnLives_1UP
+; Return currently active players Lives left.
+@label=ActivePlayerLives
 *$736A LD A,($5E38)   ; #REGa=#R$5E38.
  $736D RET            ; Return.
-; Handle 2UP.
-@label=ReturnLives_2UP
+; Return inactive players Lives left.
+@label=InactivePlayerLives
 *$736E LD A,($5E3A)   ; #REGa=#R$5E3A.
  $7371 RET            ; Return.
-; Check which player is current in a two player game.
-@label=ReturnLives_2UPController
-*$7372 LD A,($5E1E)   ; {If #R$5E1E is 1UP, jump to #R$736E.
+; Controller for the inactive player.
+@label=ControllerInactiveLives
+*$7372 LD A,($5E1E)   ; {If #R$5E1E is zero then jump to #R$736E.
  $7375 AND A          ;
  $7376 JR Z,$736E     ; }
- $7378 JR $736A       ; Else, it's 2UP so jump to #R$736A.
+ $7378 JR $736A       ; Jump to #R$736A.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$0000 }
+; { #COOKIE$0000 }
+; { #JETPAC$70A4 }
+; { #LUNARJETMAN$0000 }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Routine at 737A
 ;
@@ -3867,7 +3890,7 @@ c$748F LD A,L        ; Horizontal co-ordinate.
                      ; horizontal screen values).
  $7495 LD L,A        ; Store this back in #REGl.
  $7496 LD A,H        ; Vertical co-ordinate.
- $7497 RLCA          ; {Times by #N$04.
+ $7497 RLCA          ; {Multiply by #N$04.
  $7498 RLCA          ; }
  $7499 LD C,A        ; Store this in #REGc temporarily.
  $749A AND %11100000 ; Keep only bits 5-7.
@@ -3879,6 +3902,14 @@ c$748F LD A,L        ; Horizontal co-ordinate.
                      ; value is >= #R$5800.
  $74A3 LD H,A        ; Store this back in #REGh.
  $74A4 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9BD2 }
+; { #COOKIE$7534 }
+; { #JETPAC$720E }
+; { #LUNARJETMAN$8506 }
+; { #TRANZAM$7097 }
+; LIST#
 
 ; Routine at 74A5
 ;
