@@ -1031,7 +1031,6 @@ c$613B LD HL,$5E37   ; #REGhl=#R$5E37.
 ; { #COOKIE$6416 }
 ; { #JETPAC$0000 }
 ; { #LUNARJETMAN$0000 }
-; { #PSSST$613B }
 ; { #TRANZAM$0000 }
 ; LIST#
 
@@ -1423,6 +1422,14 @@ c$631E DEFM $47                     ; {"SPRAY THE BUGS"
  $637A LD L,A                       ; }
  $637B JP $5CB0                     ; Jump to #R$5CB0 which does an indirect
                                     ; jump to the jump address.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7D9A }
+; { #COOKIE$6428 }
+; { #JETPAC$6333 }
+; { #LUNARJETMAN$81BB }
+; { #TRANZAM$5FEF }
+; LIST#
 
 ; Main Jump Table
 @label=JumpTable_Main
@@ -3143,6 +3150,10 @@ c$70DF LD A,($5E20)  ; {Return if #R$5E20 is not marked as being updated.
  $70E9 OR H          ;
  $70EA JR NZ,$70E7   ; }
  $70EC RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$691B }
+; LIST#
 
 ; Frame Update
 ;
@@ -3596,6 +3607,13 @@ c$739D LD HL,$4021   ; #REGhl=#N$4021 (screen buffer address).
  $73CA DJNZ $73B5    ; Decrease counter by one and loop back to #R$73B5 until
                      ; counter is zero.
  $73CC RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$7438 }
+; { #JETPAC$711C }
+; { #LUNARJETMAN$89BF }
+; { #TRANZAM$6CB6 }
+; LIST#
 
 ; Print Character
 ;
@@ -3641,6 +3659,14 @@ c$73CD PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
  $73EA LD H,A        ; }
  $73EB INC L         ; Increment screen column by one.
  $73EC RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$A1D3 }
+; { #COOKIE$7468 }
+; { #JETPAC$714C }
+; { #LUNARJETMAN$89EF }
+; { #TRANZAM$6C96 }
+; LIST#
 
 ; Print String
 ;
@@ -3719,6 +3745,15 @@ c$7439 LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
  $743C LD B,$58      ; #REGb=#N$58 (i.e. finish once we reach the start of
                      ; #R$5800(attribute buffer)).
  $743E LD C,$00      ; #REGc=#N$00 (value to write).
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$80B4 }
+; { #COOKIE$74D4 }
+; { #JETPAC$71B8 }
+; { #LUNARJETMAN$84AD }
+; { #TRANZAM$7211 }
+; LIST#
+; .
 ; Continue on to #R$7440 to blank the screen buffer.
 
 ; Reset Routine
@@ -3737,6 +3772,14 @@ c$7440 LD (HL),C     ; Write #REGc to the target address.
  $7444 JR C,$7440    ; Keep looping back to #R$7440 until there is no
                      ; carry-over.
  $7446 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$80BB }
+; { #COOKIE$74DB }
+; { #JETPAC$71B8 }
+; { #LUNARJETMAN$84B4 }
+; { #TRANZAM$7218 }
+; LIST#
 
 ; Reset Attribute Buffer
 ;
@@ -3747,6 +3790,14 @@ c$7447 LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
                      ; #R$5800(attribute buffer)).
  $744C LD C,$00      ; #REGc=#N$00 (value to write).
  $744E JR $7440      ; Jump to #R$7440.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$80C2 }
+; { #COOKIE$74E2 }
+; { #JETPAC$71C6 }
+; { #LUNARJETMAN$84BB }
+; { #TRANZAM$7200 }
+; LIST#
 
 ; Colourise sprite.
 ;
@@ -4021,13 +4072,13 @@ c$7585 DEC H         ; Decrement #REGh to move up one pixel on screen.
 ; Used by the routines at #R$62E7, #R$6D0C, #R$7325, #R$73ED and #R$74A5.
 @label=ScreenAddress
 c$759A LD A,L        ; #REGa=#REGl.
- $759B RRCA          ; {#REGa=#REGa / 4.
+ $759B RRCA          ; {#REGa=#REGa / #N$08.
  $759C RRCA          ;
  $759D RRCA          ; }
  $759E AND %00011111 ; Keep only bits 0-4.
  $75A0 LD L,A        ; #REGl=#REGa.
  $75A1 LD A,H        ; #REGa=#REGh.
- $75A2 RLCA          ; {#REGa=#REGa * 2.
+ $75A2 RLCA          ; {#REGa=#REGa * #N$04.
  $75A3 RLCA          ; }
  $75A4 AND %11100000 ; Keep only bits 5-7.
  $75A6 OR L          ;
@@ -4036,16 +4087,24 @@ c$759A LD A,L        ; #REGa=#REGl.
  $75A9 AND %00000111 ; Keep only bits 0-2.
  $75AB EX AF,AF'     ; Switch to the shadow #REGaf register.
  $75AC LD A,H        ; #REGa=#REGh.
- $75AD RRCA          ; {#REGa=#REGa / 4.
+ $75AD RRCA          ; {#REGa=#REGa / #N$08.
  $75AE RRCA          ;
  $75AF RRCA          ; }
  $75B0 AND %00011000 ; Keep only bits 3-4.
- $75B2 OR $40        ;
+ $75B2 OR %01000000  ; Set bit 6.
  $75B4 LD H,A        ; #REGh=#REGa.
  $75B5 EX AF,AF'     ; Switch to the shadow #REGaf register.
  $75B6 OR H          ;
  $75B7 LD H,A        ; #REGh=#REGa.
  $75B8 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9BA2 }
+; { #COOKIE$76E3 }
+; { #JETPAC$7308 }
+; { #LUNARJETMAN$851E }
+; { #TRANZAM$6F10 }
+; LIST#
 
 ; Store Entity
 ;

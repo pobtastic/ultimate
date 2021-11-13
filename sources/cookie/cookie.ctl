@@ -544,6 +544,14 @@ N $641E This looks complicated but it's just grabbing the data from #REGde, grab
   $6427,$01 Return.
 
 c $6428 Start Game
+E $6428 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D9A }
+. { #JETPAC$6333 }
+. { #LUNARJETMAN$81BB }
+. { #PSSST$631E }
+. { #TRANZAM$5FEF }
+. LIST#
 @ $6428 label=StartGame
   $6428,$03 Call #R$74E2.
   $642B,$03 Call #R$74D4.
@@ -954,6 +962,13 @@ B $7279
   $72A3
 
 c $7438 Print Scores
+E $7438 View the equivalent code in;
+. #LIST
+. { #JETPAC$711C }
+. { #LUNARJETMAN$89BF }
+. { #PSSST$739D }
+. { #TRANZAM$6CB6 }
+. LIST#
 @ $7438 label=Score_1UP
 N $7438 Sets up the 1UP score.
   $7438,$03 #REGhl=#N$4021 (screen buffer address).
@@ -989,6 +1004,14 @@ N $744E Prints the score.
   $7467,$01 Return.
 
 c $7468 Print Character
+E $7468 View the equivalent code in;
+. #LIST
+. { #ATICATAC$A1D3 }
+. { #JETPAC$714C }
+. { #LUNARJETMAN$89EF }
+. { #PSSST$73CD }
+. { #TRANZAM$6C96 }
+. LIST#
 @ $7468 label=PrintScreen
 R $7468 A ASCII value to print
 R $7468 HL Screen address
@@ -1051,6 +1074,12 @@ N $74A5 Because the last character contains the terminator, it needs to be handl
   $74AD,$01 Return.
 
 c $74AE Print Banner
+E $74AE View the equivalent code in;
+. #LIST
+. { #JETPAC$7192 }
+. { #LUNARJETMAN$8A37 }
+. { #PSSST$7413 }
+. LIST#
 @ $74AE label=PrintBanner
 N $74AE Prints "1UP".
   $74AE,$03 #REGhl=#N($0018, 4, 4).
@@ -1073,6 +1102,14 @@ T $74CD,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
 T $74D1,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
 
 c $74D4 Reset Screen Buffer
+E $74D4 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80B4 }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84AD }
+. { #PSSST$7439 }
+. { #TRANZAM$7211 }
+. LIST#
 @ $74D4 label=ResetScreen
 E $74D4 Continue on to #R$74DB to blank the screen buffer.
   $74D4,$03 #REGhl=#R$4000(screen buffer).
@@ -1080,6 +1117,14 @@ E $74D4 Continue on to #R$74DB to blank the screen buffer.
   $74D9,$02 #REGc=#N$00 (value to write).
 
 c $74DB Reset Routine
+E $74DB View the equivalent code in;
+. #LIST
+. { #ATICATAC$80BB }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84B4 }
+. { #PSSST$7440 }
+. { #TRANZAM$7218 }
+. LIST#
 R $74DB HL Target address
 R $74DB B Single byte representing the MSB of the end address (will always end on LSB #N$00)
 R $74DB C Value to write
@@ -1091,6 +1136,14 @@ R $74DB C Value to write
   $74E1,$01 Return.
 
 c $74E2 Reset Attribute Buffer
+E $74E2 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80C2 }
+. { #JETPAC$71C6 }
+. { #LUNARJETMAN$84BB }
+. { #PSSST$7447 }
+. { #TRANZAM$7200 }
+. LIST#
 @ $74E2 label=ResetAttributes
   $74E2,$03 Set the border to black.
   $74E5,$03 #REGhl=#R$5800(attribute buffer).
@@ -1110,6 +1163,14 @@ c $74EE
   $7533,$01 Return.
 
 c $7534 Calculate Attribute Address
+E $7534 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BD2 }
+. { #JETPAC$720E }
+. { #LUNARJETMAN$8506 }
+. { #PSSST$748F }
+. { #TRANZAM$7097 }
+. LIST#
 @ $7534 label=AttributeAddress
 N $7534 Converts a given pixel address to the associated attribute buffer address.
 R $7534 HL Pixel address co-ordinates
@@ -1119,7 +1180,7 @@ R $7534 O:HL Attribute buffer address
   $7538,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
   $753A,$01 Store this back in #REGl.
   $753B,$01 Vertical co-ordinate.
-  $753C,$02 Times by #N$04.
+  $753C,$02 Multiply by #N$04.
   $753E,$01 Store this in #REGc temporarily.
   $753F,$02,b$01 Keep only bits 5-7.
   $7541,$01 Set the bits from #REGl.
@@ -1185,13 +1246,21 @@ c $76D0 Test...
   $76E2,$01 Return.
 
 c $76E3 Calculate Screen Address
+E $76E3 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BA2 }
+. { #JETPAC$7308 }
+. { #LUNARJETMAN$851E }
+. { #PSSST$759A }
+. { #TRANZAM$6F10 }
+. LIST#
 @ $76E3 label=ScreenAddress
   $76E3,$01 #REGa=#REGl.
-  $76E4,$03 #REGa=#REGa / 4.
+  $76E4,$03 #REGa=#REGa / #N$08.
   $76E7,$02,b$01 Keep only bits 0-4.
   $76E9,$01 #REGl=#REGa.
   $76EA,$01 #REGa=#REGh.
-  $76EB,$02 #REGa=#REGa * 2.
+  $76EB,$02 #REGa=#REGa * #N$04.
   $76ED,$02,b$01 Keep only bits 5-7.
   $76EF,$01
   $76F0,$01 #REGl=#REGa.
@@ -1199,8 +1268,9 @@ c $76E3 Calculate Screen Address
   $76F2,$02,b$01 Keep only bits 0-2.
   $76F4,$01 Switch to the shadow #REGaf register.
   $76F5,$01 #REGa=#REGh.
-  $76F6,$03 #REGa=#REGa / 4.
+  $76F6,$03 #REGa=#REGa / #N$08.
   $76F9,$02,b$01 Keep only bits 3-4.
+  $76FB,$02,b$01 Set bit 6.
   $76FD,$01 #REGh=#REGa.
   $76FE,$01 Switch to the shadow #REGaf register.
   $76FF,$01

@@ -90,6 +90,8 @@ g $5E68
 
 g $5E71 Number of players?
 
+g $5E7C
+
 g $5EA0 1UP Fuel
 @ $5EA0 label=1UP_Fuel
 B $5EA0,$01
@@ -164,6 +166,36 @@ E $800A View the equivalent code in;
   $803F,$01 #REGe=#REGa.
   $8040,$03 #REGa=#R$5E00.
 
+N $8046 Handle 1UP selection.
+@ $8046 label=GameSelect_CheckP1
+  $8046,$02 Has key "1" been pressed? ("1 PLAYER GAME").
+  $8048,$02 If not jump to #R$804C.
+  $804A,$02 Set player count = 1.
+N $804C Handle 2UP selection.
+@ $804C label=GameSelect_CheckP2
+  $804C,$02 Has key "2" been pressed? ("2 PLAYER GAME").
+  $804E,$02 If not jump to #R$8052.
+  $8050,$02 Set player count = 2.
+N $8052 Handle Keyboard selection.
+@ $8052 label=GameSelect_CheckKeyboard
+  $8052,$02 Has key "3" been pressed? ("3 KEYBOARD").
+  $8054,$02 If not jump to #R$8058.
+  $8056,$02,b$01 Set control method = keyboard.
+N $8058 Handle Kempston Joystick selection.
+@ $8058 label=GameSelect_CheckKempston
+  $8058,$02 Has key "4" been pressed? ("4 KEMPSTON JOYSTICK").
+  $805A,$02 If not jump to #R$8060.
+  $805C,$02,b$01 Strip out the control method bits.
+  $805E,$02,b$01 Set control method = kempston.
+N $8060 Handle Cursor Joystick selection.
+@ $8060 label=GameSelect_CheckCursor
+  $8060,$02 Has key "5" been pressed? ("5 CURSOR JOYSTICK").
+  $8062,$02 If not jump to #R$8068.
+  $8064,$02,b$01 Strip out the control method bits.
+  $8066,$02,b$01 Set control method = cursor.
+N $8068 Handle starting a new game.
+@ $8068 label=GameSelect_StartGame
+  $8068,$03 Store #REGa at #R$5E00.
   $806B,$06 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
@@ -171,6 +203,11 @@ E $800A View the equivalent code in;
 . { #N$EF | 0 | 9 | 8 | 7 | 6 }
 . TABLE#
   $8071,$01 Flip the bits.
+  $8072,$02 Has key "6" been pressed? ("6 START GAME").
+  $8074,$03 If so, jump to #R$81BB.
+
+  $8077,$04 #REGc=#R$5E00.
+  $807B,$03 #REGa=#R$5E7C.
 
   $80C9,$01 Return.
 
@@ -300,6 +337,14 @@ E $81AB View the equivalent code in;
   $81B8,$03 Jump to #R$8A1D.
 
 c $81BB Start Game
+E $81BB View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D9A }
+. { #COOKIE$6428 }
+. { #JETPAC$6333 }
+. { #PSSST$631E }
+. { #TRANZAM$5FEF }
+. LIST#
 @ $81BB label=StartGame
   $81BB,$03 #REGde=#R$BA35.
   $81BE,$03 Call #R$B9BC.
@@ -338,6 +383,14 @@ c $824A
 w $82C5
 
 c $84AD Reset Screen Buffer
+E $84AD View the equivalent code in;
+. #LIST
+. { #ATICATAC$80B4 }
+. { #COOKIE$74D4 }
+. { #JETPAC$71B8 }
+. { #PSSST$7439 }
+. { #TRANZAM$7211 }
+. LIST#
 @ $84AD label=ResetScreen
 E $84AD Continue on to #R$84B4 to blank the screen buffer.
 E $84AD View the equivalent code in #ATICATAC$80B4.
@@ -346,6 +399,14 @@ E $84AD View the equivalent code in #ATICATAC$80B4.
   $84B2,$02 #REGc=#N$00 (value to write).
 
 c $84B4 Reset Routine
+E $84B4 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80BB }
+. { #COOKIE$74DB }
+. { #JETPAC$71B8 }
+. { #PSSST$7440 }
+. { #TRANZAM$7218 }
+. LIST#
 R $84B4 HL Target address
 R $84B4 B Single byte representing the MSB of the end address (will always end on LSB #N$00)
 R $84B4 C Value to write
@@ -358,8 +419,15 @@ E $84B4 View the equivalent code in #ATICATAC$80BB.
   $84BA,$01 Return.
 
 c $84BB Reset Attribute Buffer
+E $84BB View the equivalent code in;
+. #LIST
+. { #ATICATAC$80C2 }
+. { #COOKIE$74E2 }
+. { #JETPAC$71C6 }
+. { #PSSST$7447 }
+. { #TRANZAM$7200 }
+. LIST#
 @ $84BB label=ResetAttributes
-E $84BB View the equivalent code in #ATICATAC$80C2.
   $84BB,$03 Set the border to black.
   $84BE,$03 #REGhl=#R$5800(attribute buffer).
   $84C1,$02 #REGb=#N$5B (i.e. finish once we reach the end of the #R$5800(attribute buffer)).
@@ -406,9 +474,9 @@ E $8506 View the equivalent code in;
 . #LIST
 . { #ATICATAC$9BD2 }
 . { #COOKIE$7534 }
-. { #JETPAC$0000 }
+. { #JETPAC$720E }
 . { #PSSST$748F }
-. { #TRANZAM$0000 }
+. { #TRANZAM$7097 }
 . LIST#
 N $8506 Converts a given pixel address to the associated attribute buffer address.
 R $8506 HL Pixel address co-ordinates
@@ -420,7 +488,7 @@ R $8506 O:HL Attribute buffer address
   $850B,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
   $850D,$01 Store this back in #REGl.
   $850E,$01 Vertical co-ordinate.
-  $850F,$02 Times by #N$04.
+  $850F,$02 Multiply by #N$04.
   $8511,$01 Store this in #REGc temporarily.
   $8512,$02,b$01 Keep only bits 5-7.
   $8514,$01 Set the bits from #REGl.
@@ -433,7 +501,36 @@ R $8506 O:HL Attribute buffer address
   $851D,$01 Return.
 
 c $851E Calculate Screen Address
+E $851E View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BA2 }
+. { #COOKIE$76E3 }
+. { #JETPAC$7308 }
+. { #PSSST$759A }
+. { #TRANZAM$6F10 }
+. LIST#
 @ $851E label=ScreenAddress
+  $851E,$01 #REGa=#REGl.
+  $851F,$03 #REGa=#REGa / #N$08.
+  $8522,$02,b$01 Keep only bits 0-4.
+  $8524,$01 #REGl=#REGa.
+  $8525,$01 #REGa=#REGh.
+  $8526,$02 #REGa=#REGa * #N$04.
+  $8528,$02,b$01 Keep only bits 5-7.
+  $852A,$01
+  $852B,$01 #REGl=#REGa.
+  $852C,$01 #REGa=#REGh.
+  $852D,$02,b$01 Keep only bits 0-2.
+  $852F,$01 Switch to the shadow #REGaf register.
+  $8530,$01 #REGa=#REGh.
+  $8531,$03 #REGa=#REGa / #N$08.
+  $8534,$02,b$01 Keep only bits 3-4.
+  $8536,$02,b$01 Set bit 6.
+  $8538,$01 #REGh=#REGa.
+  $8539,$01 Switch to the shadow #REGaf register.
+  $853A,$01
+  $853B,$01 #REGh=#REGa.
+  $853C,$01 Return.
 
 c $853D
 
@@ -477,7 +574,9 @@ c $89BF Print Scores
 E $89BF View the equivalent code in;
 . #LIST
 . { #COOKIE$7438 }
+. { #JETPAC$711C }
 . { #PSSST$739D }
+. { #TRANZAM$6CB6 }
 . LIST#
 @ $89BF label=Score_1UP
 N $89BF Sets up the 1UP score.
@@ -516,8 +615,11 @@ N $89D5 Prints the score.
 c $89EF Print Character
 E $89EF View the equivalent code in;
 . #LIST
+. { #ATICATAC$A1D3 }
 . { #COOKIE$7468 }
+. { #JETPAC$714C }
 . { #PSSST$73CD }
+. { #TRANZAM$6C96 }
 . LIST#
 @ $89EF label=PrintScreen
 R $89EF A ASCII value to print
@@ -592,6 +694,7 @@ c $8A37 Print Banner
 E $8A37 View the equivalent code in;
 . #LIST
 . { #COOKIE$74AE }
+. { #JETPAC$7192 }
 . { #PSSST$7413 }
 . LIST#
 @ $8A37 label=PrintBanner
@@ -971,13 +1074,23 @@ L $BB12,$02,$3D
 w $BB8C Graphics Table
 @ $BB8C label=GraphicsTable
   $BB8C,$02 Graphic ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BB8C) / 2)).
-L $BB8C,$02,$10
+L $BB8C,$02,$09
+
+w $BB9E Attribute Table?
+@ $BB9E label=AttributeTable
+  $BB9E,$02 Graphic ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BB9E) / 2)).
+L $BB9E,$02,$09
+
+w $BBB0 Graphics Table 2
+@ $BBB0 label=GraphicsTable2
+  $BBB0,$02 Graphic ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BBB0) / 2)).
+L $BBB0,$02,$09
 
 b $BC9E
 
 b $BCBC Sprite: None
   $BCBC,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BCBD
+  $BCBD,$01
 
 b $BCBE Sprite: Jetman Walking
 N $BCBE Walking left frame 1.
@@ -1332,8 +1445,6 @@ b $D87E
 
 b $D888
 
-b $DB8F
-
 b $D894 Sprite: Spinning Top Alien
 N $D894 Frame 1.
   $D894,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -1371,7 +1482,7 @@ b $D976 Sprite: Platform
   $D976,$01 Height = #N(#PEEK(#PC)) pixels.
   $D977,$10,$02 #SPRITE$04(platform)
 
-b $D987
+b $D987 Frame 8.
 
 b $D9C8
 
@@ -1387,46 +1498,98 @@ b $DB0D
 
 b $DB4E
 
-b $DF13 Graphic: Explosion
+b $DB8F
+
+b $DBD0
+
+b $DC11
+
+b $DC52
+
+b $DC93
+
+b $DCD4
+
+b $DD15
+
+b $DD56
+
+b $DF13 Graphic: Alien Base
 N $DF13 Frame 1.
   $DF13,$01 Width = #N(#PEEK(#PC)) bytes.
   $DF14,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DF15,$40,$04 #GRAPHIC$01(huuh-01)
+  $DF15,$40,$04 #GRAPHIC$01(base-01)
 
 N $DF55 Frame 2.
   $DF55,$01 Width = #N(#PEEK(#PC)) bytes.
   $DF56,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DF57,$50,$05 #GRAPHIC$02(huuh-02)
+  $DF57,$50,$05 #GRAPHIC$02(base-02)
 
 N $DFA7 Frame 3.
   $DFA7,$01 Width = #N(#PEEK(#PC)) bytes.
   $DFA8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DFA9,$50,$05 #GRAPHIC$03(huuh-03)
+  $DFA9,$50,$05 #GRAPHIC$03(base-03)
 
 N $DFF9 Frame 4.
   $DFF9,$01 Width = #N(#PEEK(#PC)) bytes.
   $DFFA,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DFFB,$50,$05 #GRAPHIC$04(huuh-04)
+  $DFFB,$50,$05 #GRAPHIC$04(base-04)
 
 N $E04B Frame 5.
   $E04B,$01 Width = #N(#PEEK(#PC)) bytes.
   $E04C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E04D,$50,$05 #GRAPHIC$05(huuh-05)
+  $E04D,$50,$05 #GRAPHIC$05(base-05)
 
 N $E09D Frame 6.
   $E09D,$01 Width = #N(#PEEK(#PC)) bytes.
   $E09E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E09F,$50,$05 #GRAPHIC$06(huuh-06)
+  $E09F,$50,$05 #GRAPHIC$06(base-06)
 
 N $E0EF Frame 7.
   $E0EF,$01 Width = #N(#PEEK(#PC)) bytes.
   $E0F0,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E0F1,$50,$05 #GRAPHIC$07(huuh-07)
+  $E0F1,$50,$05 #GRAPHIC$07(base-07)
 
 N $E141 Frame 8.
   $E141,$01 Width = #N(#PEEK(#PC)) bytes.
   $E142,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E143,$50,$05 #GRAPHIC$08(huuh-08)
+  $E143,$50,$05 #GRAPHIC$08(base-08)
+
+b $E193
+
+b $E1B4
+
+b $E23B
+
+b $E256
+
+b $E271
+
+b $E28C
+
+b $E2A7
+
+b $E2C8
+
+b $E2E9
+
+b $E306
+
+b $E31F
+
+b $E338
+
+b $E351
+
+b $E36E
+
+b $E533
+
+b $E55E
+
+b $E589
+
+b $E5B4
 
 b $EB67 Graphic: Explosion
 N $EB67 Frame 1.

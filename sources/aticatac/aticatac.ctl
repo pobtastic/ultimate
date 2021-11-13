@@ -1817,6 +1817,14 @@ E $7D8A View the equivalent code in;
   $7D97,$03 Jump to #R$A1FF.
 
 c $7D9A Start Game
+E $7D9A View the equivalent code in;
+. #LIST
+. { #COOKIE$6428 }
+. { #JETPAC$6333 }
+. { #LUNARJETMAN$81BB }
+. { #PSSST$631E }
+. { #TRANZAM$5FEF }
+. LIST#
 @ $7D9A label=StartGame
   $7D9A,$03 Call #R$80CB.
   $7D9D,$05 Write starting lives to #R$5E21.
@@ -1900,6 +1908,14 @@ E $80AA View the equivalent code in #PSSST$5F53.
   $80B3,$01 Return.
 
 c $80B4 Reset Screen Buffer
+E $80B4 View the equivalent code in;
+. #LIST
+. { #COOKIE$74D4 }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84AD }
+. { #PSSST$7439 }
+. { #TRANZAM$7211 }
+. LIST#
 @ $80B4 label=ResetScreen
 E $80B4 Continue on to #R$80BB to blank the screen buffer.
   $80B4,$03 #REGhl=#R$4000(screen buffer).
@@ -1907,6 +1923,14 @@ E $80B4 Continue on to #R$80BB to blank the screen buffer.
   $80B9,$02 #REGc=#N$00 (value to write).
 
 c $80BB Reset Routine
+E $80BB View the equivalent code in;
+. #LIST
+. { #COOKIE$74DB }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84B4 }
+. { #PSSST$7440 }
+. { #TRANZAM$7218 }
+. LIST#
 R $80BB HL Target address
 R $80BB B Single byte representing the MSB of the end address (will always end on LSB #N$00)
 R $80BB C Value to write
@@ -1918,6 +1942,14 @@ R $80BB C Value to write
   $80C1,$01 Return.
 
 c $80C2 Reset Attribute Buffer
+E $80C2 View the equivalent code in;
+. #LIST
+. { #COOKIE$74E2 }
+. { #JETPAC$71C6 }
+. { #LUNARJETMAN$84BB }
+. { #PSSST$7447 }
+. { #TRANZAM$7200 }
+. LIST#
 @ $80C2 label=ResetAttributes
   $80C2,$03 #REGhl=#R$5800(attribute buffer).
   $80C5,$02 #REGb=#N$5B (i.e. finish once we reach the end of the #R$5800(attribute buffer)).
@@ -2264,16 +2296,47 @@ c $98D2 Set Key Positions
 @ $98D2 label=SetKeyPositions
 
 c $9BA2 Calculate Screen Address
+E $9BA2 View the equivalent code in;
+. #LIST
+. { #COOKIE$76E3 }
+. { #JETPAC$7308 }
+. { #LUNARJETMAN$851E }
+. { #PSSST$759A }
+. { #TRANZAM$6F10 }
+. LIST#
 @ $9BA2 label=ScreenAddress
+  $9BA2,$01 #REGa=#REGl.
+  $9BA3,$03 #REGa=#REGa / #N$08.
+  $9BA6,$02,b$01 Keep only bits 0-4.
+  $9BA8,$01 #REGl=#REGa.
+  $9BA9,$01 #REGa=#REGh.
+  $9BAA,$02 #REGa=#REGa * #N$04.
+  $9BAC,$02,b$01 Keep only bits 5-7.
+  $9BAE,$01
+  $9BAF,$01 #REGl=#REGa.
+  $9BB0,$01 #REGa=#REGh.
+  $9BB1,$02,b$01 Keep only bits 0-2.
+  $9BB3,$01 Switch to the shadow #REGaf register.
+  $9BB4,$01 #REGa=#REGh.
+  $9BB5,$03 #REGa=#REGa / #N$08.
+  $9BB8,$02,b$01 Keep only bits 3-4.
+  $9BBA,$02,b$01 Set bit 6.
+  $9BBC,$01 #REGh=#REGa.
+  $9BBD,$01 Switch to the shadow #REGaf register.
+  $9BBE,$01
+  $9BBF,$01 #REGh=#REGa.
+  $9BC0,$01 Return.
+
+c $9BC1
 
 c $9BD2 Calculate Attribute Address
 E $9BD2 View the equivalent code in;
 . #LIST
 . { #COOKIE$7534 }
-. { #JETPAC$0000 }
+. { #JETPAC$720E }
 . { #LUNARJETMAN$8506 }
 . { #PSSST$748F }
-. { #TRANZAM$0000 }
+. { #TRANZAM$7097 }
 . LIST#
 N $9BD2 Converts a given pixel address to the associated attribute buffer address.
 R $9BD2 HL Pixel address co-ordinates
@@ -2285,7 +2348,7 @@ R $9BD2 O:HL Attribute buffer address
   $9BD7,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
   $9BD9,$01 Store this back in #REGl.
   $9BDA,$01 Vertical co-ordinate.
-  $9BDB,$02 Times by #N$04.
+  $9BDB,$02 Multiply by #N$04.
   $9BDD,$01 Store this in #REGc temporarily.
   $9BDE,$02,b$01 Keep only bits 5-7.
   $9BE0,$01 Set the bits from #REGl.
@@ -2451,13 +2514,21 @@ c $A19C Add To Score
 @ $A1B7 label=PrintScore
 
 c $A1D3 Print Character
+E $A1D3 View the equivalent code in;
+. #LIST
+. { #COOKIE$7468 }
+. { #JETPAC$714C }
+. { #LUNARJETMAN$89EF }
+. { #PSSST$73CD }
+. { #TRANZAM$6C96 }
+. LIST#
 @ $A1D3 label=PrintCharacter
 
 c $A1F3 Print Colour String
 E $A1F3 View the equivalent code in;
 . #LIST
 . { #COOKIE$7488 }
-. { #JETPAC$0000 }
+. { #JETPAC$716C }
 . { #LUNARJETMAN$0000 }
 . { #PSSST$73ED }
 . { #TRANZAM$0000 }

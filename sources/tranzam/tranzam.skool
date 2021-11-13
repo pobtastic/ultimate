@@ -563,7 +563,7 @@ c$5F6C LD A,$68      ; {Write #N$68 to #R$5E48.
 ; This entry point is used by the routine at #R$6046.
 @label=GameMenu_Loop
 *$5F7D EXX           ; Switch.
- $5F7E LD A,(DE)     ; Copy a byte from DE to #R$5E3F.
+ $5F7E LD A,(DE)     ; Copy a byte from #REGde to #R$5E3F.
  $5F7F LD ($5E3F),A  ;
  $5F82 INC DE        ;
  $5F83 EXX           ; Switch to the shadow registers.
@@ -601,6 +601,14 @@ b$5FA7 DEFB $60      ; {#TABLE(default,centre)
                      ; { #N$04 | 3 Start Game }
                      ; { #N$05 | © 1983 A.C.G. }
                      ; TABLE#}
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7CEA }
+; { #COOKIE$635E }
+; { #JETPAC$628D }
+; { #LUNARJETMAN$810E }
+; { #PSSST$627C }
+; LIST#
 
 ; Game Select Y Position Table
 @label=GameSelection_Position
@@ -612,6 +620,14 @@ b$5FAC DEFB $20      ; {#TABLE(default,centre,centre)
                      ; { #N$04 | #EVAL(#PEEK(#PC+$03) / $08) | 3 Start Game }
                      ; { #N$05 | #EVAL(#PEEK(#PC+$04) / $08) | © 1983 A.C.G. }
                      ; TABLE#}
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7CF1 }
+; { #COOKIE$6365 }
+; { #JETPAC$6293 }
+; { #LUNARJETMAN$8115 }
+; { #PSSST$6282 }
+; LIST#
 
 ; Game Selection Screen Text
 @label=GameSelection_Text
@@ -621,6 +637,14 @@ t$5FB1 DEFM "GAME SELECTIO","N"+$80 ; "GAME SELECTION".
  $5FD5 DEFM "3  START GAM","E"+$80  ; "3  START GAME".
  $5FE2 DEFM $7F                     ; {"© 1983 A.C.G.".
  $5FE3 DEFM " 1983 A.C.G","."+$80   ; }
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7CF8 }
+; { #COOKIE$636C }
+; { #JETPAC$6299 }
+; { #LUNARJETMAN$811C }
+; { #PSSST$6288 }
+; LIST#
 
 ; Start Game
 ;
@@ -658,6 +682,14 @@ c$5FEF XOR A         ; {#HTML(Write #N$00 to #LIST { <a
  $6023 LD H,(HL)     ;
  $6024 LD L,A        ; }
  $6025 JP $5CB0      ; Jump to #R$5CB0.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7D9A }
+; { #COOKIE$6428 }
+; { #JETPAC$6333 }
+; { #LUNARJETMAN$81BB }
+; { #PSSST$631E }
+; LIST#
 
 ; Data block at 6028
 w$6028 DEFW $6030
@@ -2329,6 +2361,14 @@ c$6C96 PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
  $6CB3 LD H,A        ; }
  $6CB4 INC L         ; Increment screen column by one.
  $6CB5 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$A1D3 }
+; { #COOKIE$7468 }
+; { #JETPAC$714C }
+; { #LUNARJETMAN$89EF }
+; { #PSSST$73CD }
+; LIST#
 
 ; Print Scores
 ;
@@ -2368,10 +2408,9 @@ c$6CB6 LD HL,$400D   ; #REGhl=#N$400D.
  $6CDD RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
-; { #ATICATAC$0000 }
-; { #COOKIE$0000 }
-; { #JETPAC$0000 }
-; { #LUNARJETMAN$0000 }
+; { #COOKIE$7438 }
+; { #JETPAC$711C }
+; { #LUNARJETMAN$89BF }
 ; { #PSSST$739D }
 ; LIST#
 
@@ -2689,32 +2728,40 @@ c$6EDE SRL A                                ;
 ; Used by the routines at #R$5F6C, #R$63FF, #R$646C, #R$6518, #R$6557, #R$6919,
 ; #R$6998, #R$70B2 and #R$70D2.
 @label=ScreenAddress
-c$6F10 LD A,L        ;
- $6F11 RRCA          ;
+c$6F10 LD A,L        ; #REGa=#REGl.
+ $6F11 RRCA          ; {#REGa=#REGa / #N$08.
  $6F12 RRCA          ;
- $6F13 RRCA          ;
- $6F14 AND $1F       ;
- $6F16 LD L,A        ;
- $6F17 LD A,H        ;
- $6F18 RLCA          ;
- $6F19 RLCA          ;
- $6F1A AND $E0       ;
+ $6F13 RRCA          ; }
+ $6F14 AND %00011111 ; Keep only bits 0-4.
+ $6F16 LD L,A        ; #REGl=#REGa.
+ $6F17 LD A,H        ; #REGa=#REGh.
+ $6F18 RLCA          ; {#REGa=#REGa * #N$04.
+ $6F19 RLCA          ; }
+ $6F1A AND %11100000 ; Keep only bits 5-7.
  $6F1C OR L          ;
- $6F1D LD L,A        ;
- $6F1E LD A,H        ;
- $6F1F AND $07       ;
- $6F21 EX AF,AF'     ;
- $6F22 LD A,H        ;
- $6F23 RRCA          ;
+ $6F1D LD L,A        ; #REGl=#REGa.
+ $6F1E LD A,H        ; #REGa=#REGh.
+ $6F1F AND %00000111 ; Keep only bits 0-2.
+ $6F21 EX AF,AF'     ; Switch to the shadow #REGaf register.
+ $6F22 LD A,H        ; #REGa=#REGh.
+ $6F23 RRCA          ; {#REGa=#REGa / #N$08.
  $6F24 RRCA          ;
- $6F25 RRCA          ;
- $6F26 AND $18       ;
- $6F28 OR $40        ;
- $6F2A LD H,A        ;
- $6F2B EX AF,AF'     ;
+ $6F25 RRCA          ; }
+ $6F26 AND %00011000 ; Keep only bits 3-4.
+ $6F28 OR %01000000  ; Set bit 6.
+ $6F2A LD H,A        ; #REGh=#REGa.
+ $6F2B EX AF,AF'     ; Switch to the shadow #REGaf register.
  $6F2C OR H          ;
- $6F2D LD H,A        ;
- $6F2E RET           ;
+ $6F2D LD H,A        ; #REGh=#REGa.
+ $6F2E RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9BA2 }
+; { #COOKIE$76E3 }
+; { #JETPAC$7308 }
+; { #LUNARJETMAN$851E }
+; { #PSSST$759A }
+; LIST#
 
 ; Routine at 6F2F
 ;
@@ -3235,6 +3282,14 @@ c$7200 XOR A         ; {Set the border to black.
  $720B LD A,($5E44)  ; {#REGc=#R$5E44.
  $720E LD C,A        ; }
  $720F JR $7218      ; Jump to #R$7218.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$80C2 }
+; { #COOKIE$74E2 }
+; { #JETPAC$71C6 }
+; { #LUNARJETMAN$84BB }
+; { #PSSST$7447 }
+; LIST#
 
 ; Reset Screen Buffer
 ;
@@ -3244,6 +3299,15 @@ c$7211 LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
  $7214 LD B,$58      ; #REGb=#N$58 (i.e. finish once we reach the start of
                      ; #R$5800(attribute buffer)).
  $7216 LD C,$00      ; #REGc=#N$00 (value to write).
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$80B4 }
+; { #COOKIE$74D4 }
+; { #JETPAC$71B8 }
+; { #LUNARJETMAN$84AD }
+; { #PSSST$7439 }
+; LIST#
+; .
 ; Continue on to #R$7218 to blank the screen buffer.
 
 ; Reset Routine
@@ -3262,6 +3326,14 @@ c$7218 LD (HL),C     ; Write #REGc to the target address.
  $721C JR C,$7218    ; Keep looping back to #R$7218 until there is no
                      ; carry-over.
  $721E RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$80BB }
+; { #COOKIE$74DB }
+; { #JETPAC$71B8 }
+; { #LUNARJETMAN$84B4 }
+; { #PSSST$7440 }
+; LIST#
 
 ; Data block at 721F
 b$721F DEFB $3B,$78,$B6,$78,$6D,$79,$0F,$7A

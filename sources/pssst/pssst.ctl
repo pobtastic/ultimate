@@ -468,7 +468,6 @@ E $613B View the equivalent code in;
 . { #COOKIE$6416 }
 . { #JETPAC$0000 }
 . { #LUNARJETMAN$0000 }
-. { #PSSST$613B }
 . { #TRANZAM$0000 }
 . LIST#
 @ $613B label=ChangePlayer
@@ -759,6 +758,14 @@ N $630F 2UP has one "extra" life, due to the way the game "spends" a life when y
 c $631E New Game
 @ $631E label=Message_SprayBugs
 T $631E,$0F,h$01,$0D:$01 "SPRAY THE BUGS"
+E $631E View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D9A }
+. { #COOKIE$6428 }
+. { #JETPAC$6333 }
+. { #LUNARJETMAN$81BB }
+. { #TRANZAM$5FEF }
+. LIST#
 N $632D Start New Game.
 @ $632D label=GameStart
   $632D,$03 Call #R$5F53.
@@ -1093,6 +1100,10 @@ R $70D6 HL Object to be updated
   $70DE,$01 Return.
 
 c $70DF Limit Frame Rate
+E $70DF View the equivalent code in;
+. #LIST
+. { #JETPAC$691B }
+. LIST#
 @ $70DF label=LimitFrameRate
   $70DF,$05 Return if #R$5E20 is not marked as being updated.
   $70E4,$03 Introduce a counter for a slight pause.
@@ -1264,6 +1275,13 @@ N $7372 Check which player is current in a two player game.
 c $737A
 
 c $739D Print Scores
+E $739D View the equivalent code in;
+. #LIST
+. { #COOKIE$7438 }
+. { #JETPAC$711C }
+. { #LUNARJETMAN$89BF }
+. { #TRANZAM$6CB6 }
+. LIST#
 @ $739D label=Score_1UP
 N $739D Sets up the 1UP score.
   $739D,$03 #REGhl=#N$4021 (screen buffer address).
@@ -1299,6 +1317,14 @@ N $73B3 Prints the score.
   $73CC,$01 Return.
 
 c $73CD Print Character
+E $73CD View the equivalent code in;
+. #LIST
+. { #ATICATAC$A1D3 }
+. { #COOKIE$7468 }
+. { #JETPAC$714C }
+. { #LUNARJETMAN$89EF }
+. { #TRANZAM$6C96 }
+. LIST#
 @ $73CD label=PrintScreen
 R $73CD A ASCII value to print
 R $73CD HL Screen address
@@ -1361,6 +1387,12 @@ N $740A Because the last character contains the terminator, it needs to be handl
   $7412,$01 Return.
 
 c $7413 Print Banner
+E $74AE View the equivalent code in;
+. #LIST
+. { #COOKIE$74AE }
+. { #JETPAC$7192 }
+. { #LUNARJETMAN$8A37 }
+. LIST#
 @ $7413 label=PrintBanner
 N $7413 Prints "1UP".
   $7413,$03 #REGhl=#N($0018, 4, 4).
@@ -1383,6 +1415,14 @@ T $7432,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
 T $7436,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
 
 c $7439 Reset Screen Buffer
+E $7439 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80B4 }
+. { #COOKIE$74D4 }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84AD }
+. { #TRANZAM$7211 }
+. LIST#
 @ $7439 label=ResetScreen
 E $7439 Continue on to #R$7440 to blank the screen buffer.
   $7439,$03 #REGhl=#R$4000(screen buffer).
@@ -1390,6 +1430,14 @@ E $7439 Continue on to #R$7440 to blank the screen buffer.
   $743E,$02 #REGc=#N$00 (value to write).
 
 c $7440 Reset Routine
+E $7440 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80BB }
+. { #COOKIE$74DB }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84B4 }
+. { #TRANZAM$7218 }
+. LIST#
 R $7440 HL Target address
 R $7440 B Single byte representing the MSB of the end address (will always end on LSB #N$00)
 R $7440 C Value to write
@@ -1401,6 +1449,14 @@ R $7440 C Value to write
   $7446,$01 Return.
 
 c $7447 Reset Attribute Buffer
+E $7447 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80C2 }
+. { #COOKIE$74E2 }
+. { #JETPAC$71C6 }
+. { #LUNARJETMAN$84BB }
+. { #TRANZAM$7200 }
+. LIST#
 @ $7447 label=ResetAttributes
   $7447,$03 #REGhl=#R$5800(attribute buffer).
   $744A,$02 #REGb=#N$5B (i.e. finish once we reach the end of the #R$5800(attribute buffer)).
@@ -1442,6 +1498,14 @@ c $7450 Colourise sprite.
   $748E,$01 Return.
 
 c $748F Calculate Attribute Address
+E $748F View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BD2 }
+. { #COOKIE$7534 }
+. { #JETPAC$720E }
+. { #LUNARJETMAN$8506 }
+. { #TRANZAM$7097 }
+. LIST#
 @ $748F label=AttributeAddress
 N $748F Converts a given pixel address to the associated attribute buffer address.
 R $748F HL Pixel address co-ordinates
@@ -1451,7 +1515,7 @@ R $748F O:HL Attribute buffer address
   $7493,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
   $7495,$01 Store this back in #REGl.
   $7496,$01 Vertical co-ordinate.
-  $7497,$02 Times by #N$04.
+  $7497,$02 Multiply by #N$04.
   $7499,$01 Store this in #REGc temporarily.
   $749A,$02,b$01 Keep only bits 5-7.
   $749C,$01 Set the bits from #REGl.
@@ -1517,13 +1581,21 @@ R $7585 O:HL Address for new position
   $7595,$05 Else add #N$08 to #REGh and return.
 
 c $759A Calculate Screen Address
+E $759A View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BA2 }
+. { #COOKIE$76E3 }
+. { #JETPAC$7308 }
+. { #LUNARJETMAN$851E }
+. { #TRANZAM$6F10 }
+. LIST#
 @ $759A label=ScreenAddress
   $759A,$01 #REGa=#REGl.
-  $759B,$03 #REGa=#REGa / 4.
+  $759B,$03 #REGa=#REGa / #N$08.
   $759E,$02,b$01 Keep only bits 0-4.
   $75A0,$01 #REGl=#REGa.
   $75A1,$01 #REGa=#REGh.
-  $75A2,$02 #REGa=#REGa * 2.
+  $75A2,$02 #REGa=#REGa * #N$04.
   $75A4,$02,b$01 Keep only bits 5-7.
   $75A6,$01
   $75A7,$01 #REGl=#REGa.
@@ -1531,8 +1603,9 @@ c $759A Calculate Screen Address
   $75A9,$02,b$01 Keep only bits 0-2.
   $75AB,$01 Switch to the shadow #REGaf register.
   $75AC,$01 #REGa=#REGh.
-  $75AD,$03 #REGa=#REGa / 4.
+  $75AD,$03 #REGa=#REGa / #N$08.
   $75B0,$02,b$01 Keep only bits 3-4.
+  $75B2,$02,b$01 Set bit 6.
   $75B4,$01 #REGh=#REGa.
   $75B5,$01 Switch to the shadow #REGaf register.
   $75B6,$01

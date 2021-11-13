@@ -276,6 +276,14 @@ E $5FB1 View the equivalent code in;
   $5FE2,$0D,h$01,$0B:$01 "© 1983 A.C.G.".
 
 c $5FEF Start Game
+E $5FEF View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D9A }
+. { #COOKIE$6428 }
+. { #JETPAC$6333 }
+. { #LUNARJETMAN$81BB }
+. { #PSSST$631E }
+. LIST#
 @ $5FEF label=StartGame
   $5FEF,$07 #HTML(Write #N$00 to #LIST { <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> } { #R$5E74 } LIST#)
   $5FF6,$05 Write starting lives to #R$5E3D.
@@ -584,6 +592,14 @@ c $6AF5
 B $6BD6,$20
 
 c $6C96 Print Character
+E $6C96 View the equivalent code in;
+. #LIST
+. { #ATICATAC$A1D3 }
+. { #COOKIE$7468 }
+. { #JETPAC$714C }
+. { #LUNARJETMAN$89EF }
+. { #PSSST$73CD }
+. LIST#
 @ $6C96 label=PrintScreen
 R $6C96 A ASCII value to print
 R $6C96 HL Screen address
@@ -612,14 +628,12 @@ N $6CB0 Reset #REGhl and move to the next column, ready to print the next charac
   $6CB4,$01 Increment screen column by one.
   $6CB5,$01 Return.
 
-
 c $6CB6 Print Scores
 E $6CB6 View the equivalent code in;
 . #LIST
-. { #ATICATAC$0000 }
-. { #COOKIE$0000 }
-. { #JETPAC$0000 }
-. { #LUNARJETMAN$0000 }
+. { #COOKIE$7438 }
+. { #JETPAC$711C }
+. { #LUNARJETMAN$89BF }
 . { #PSSST$739D }
 . LIST#
 N $6CB6 Sets up the player score.
@@ -675,7 +689,36 @@ c $6EDE
 B $6F07
 
 c $6F10 Calculate Screen Address
+E $6F10 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BA2 }
+. { #COOKIE$76E3 }
+. { #JETPAC$7308 }
+. { #LUNARJETMAN$851E }
+. { #PSSST$759A }
+. LIST#
 @ $6F10 label=ScreenAddress
+  $6F10,$01 #REGa=#REGl.
+  $6F11,$03 #REGa=#REGa / #N$08.
+  $6F14,$02,b$01 Keep only bits 0-4.
+  $6F16,$01 #REGl=#REGa.
+  $6F17,$01 #REGa=#REGh.
+  $6F18,$02 #REGa=#REGa * #N$04.
+  $6F1A,$02,b$01 Keep only bits 5-7.
+  $6F1C,$01
+  $6F1D,$01 #REGl=#REGa.
+  $6F1E,$01 #REGa=#REGh.
+  $6F1F,$02,b$01 Keep only bits 0-2.
+  $6F21,$01 Switch to the shadow #REGaf register.
+  $6F22,$01 #REGa=#REGh.
+  $6F23,$03 #REGa=#REGa / #N$08.
+  $6F26,$02,b$01 Keep only bits 3-4.
+  $6F28,$02,b$01 Set bit 6.
+  $6F2A,$01 #REGh=#REGa.
+  $6F2B,$01 Switch to the shadow #REGaf register.
+  $6F2C,$01
+  $6F2D,$01 #REGh=#REGa.
+  $6F2E,$01 Return.
 
 c $6F2F
   $6F2F,$03 #REGhl=#N($0000, $04, $04).
@@ -709,7 +752,18 @@ c $7024
 c $704B
 
 c $7097 Calculate Attribute Address
+E $7097 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BD2 }
+. { #COOKIE$7534 }
+. { #JETPAC$720E }
+. { #LUNARJETMAN$8506 }
+. { #PSSST$748F }
+. LIST#
 @ $7097 label=AttributeAddress
+N $7097 Converts a given pixel address to the associated attribute buffer address.
+R $7097 HL Pixel address co-ordinates
+R $7097 O:HL Attribute buffer address
   $7097,$01 Horizontal co-ordinate.
   $7098,$03 Divide by #N$08.
   $709B,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
@@ -772,6 +826,14 @@ E $71ED View the equivalent code in;
 
 
 c $7200 Reset Attribute Buffer
+E $7200 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80C2 }
+. { #COOKIE$74E2 }
+. { #JETPAC$71C6 }
+. { #LUNARJETMAN$84BB }
+. { #PSSST$7447 }
+. LIST#
 @ $7200 label=ResetAttributes
   $7200,$03 Set the border to black.
   $7203,$03 Call #R$7211.
@@ -781,6 +843,14 @@ c $7200 Reset Attribute Buffer
   $720F,$02 Jump to #R$7218.
 
 c $7211 Reset Screen Buffer
+E $7211 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80B4 }
+. { #COOKIE$74D4 }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84AD }
+. { #PSSST$7439 }
+. LIST#
 @ $7211 label=ResetScreen
 E $7211 Continue on to #R$7218 to blank the screen buffer.
   $7211,$03 #REGhl=#R$4000(screen buffer).
@@ -788,6 +858,14 @@ E $7211 Continue on to #R$7218 to blank the screen buffer.
   $7216,$02 #REGc=#N$00 (value to write).
 
 c $7218 Reset Routine
+E $7218 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80BB }
+. { #COOKIE$74DB }
+. { #JETPAC$71B8 }
+. { #LUNARJETMAN$84B4 }
+. { #PSSST$7440 }
+. LIST#
 R $7218 HL Target address
 R $7218 B Single byte representing the MSB of the end address (will always end on LSB #N$00)
 R $7218 C Value to write

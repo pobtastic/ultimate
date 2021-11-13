@@ -40,34 +40,26 @@ B $5CF0,$03
 g $5CF3 Game Type
 @ $5CF3 label=GAME_TYPE
 D $5CF3 Holds the number of players and the chosen control method.
-. #TABLE(default,centre,:w) { =h Bit(n) | =h Unset(0) | =h Set(1) } { 0 | 1up | 2up } { 1 | Keyboard | Kempston } TABLE#
-  $5CF3 #TABLE(default,centre,:w) { =h Value | =h Num Players | =h Control Method }
+. #TABLE(default,centre) { =h Bit(n) | =h Unset(0) | =h Set(1) } { 0 | 1up | 2up } { 1 | Keyboard | Kempston } TABLE#
+  $5CF3 #TABLE(default,centre) { =h Value | =h Num Players | =h Control Method }
 . { 0 | 1UP | Keyboard }
 . { 1 | 2UP | Keyboard }
 . { 2 | 1UP | Kempston }
 . { 3 | 2UP | Kempston }
 . TABLE#
 
+g $5CF4 1UP Score
+D $5CF4 3-byte representation of the score.
+@ $5CF4 label=1UP_Score
+B $5CF4,$03
 
-g $5CF4 Player 1 Score
-@ $5CF4 label=1UP_SCORE_1ST
-D $5CF4 The current score for player 1.
-B $5CF4 Upper scoring byte
-B $5CF5 Middle scoring byte
-@ $5CF5 label=1UP_SCORE_2ND
-B $5CF6 Lower scoring byte
-@ $5CF6 label=1UP_SCORE_3RD
-
-g $5CF7 Player 2 Score
-@ $5CF7 label=2UP_SCORE_1ST
-D $5CF7 The current score for player 2.
-B $5CF7 Upper scoring byte
-B $5CF8 Middle scoring byte
-@ $5CF8 label=2UP_SCORE_2ND
-B $5CF9 Lower scoring byte
-@ $5CF9 label=2UP_SCORE_3RD
+g $5CF7 2UP Score
+D $5CF7 3-byte representation of the score.
+@ $5CF7 label=2UP_Score
+B $5CF7,$03
 
 b $5CFA Buffer
+
 g $5D00 Jetman Frame
 @ $5D00 label=JETMAN_FRAME
 D $5D00 Relates to which frame to display.
@@ -81,27 +73,82 @@ B $5D00 #TABLE(default,centre,centre,centre,centre,centre) { =h Value | =h Walki
 E $5D00 "None" is used to not show Jetman at all i.e. at the start of a game and while "inside the rocket".
 
 g $5D01 Jetman X Co-ordinate
-@ $5D01 label=JETMAN_POS_X
+D $5D01 The default starting position is #N$80.
+@ $5D01 label=Jetman_Pos_X
+B $5D01,$01
+
 g $5D02 Jetman Y Co-ordinate
-@ $5D02 label=JETMAN_POS_Y
+D $5D02 The default start position is #N$B7.
+@ $5D02 label=Jetman_Pos_Y
+B $5D02,$01
 
-b $5D03
+g $5D03 Jetman Attribute
+D $5D03 The default colour on game start is #N$47.
+@ $5D03 label=Jetman_Colour
+B $5D03,$01
 
-g $5D0E
+g $5D04 Jetman Direction
+@ $5D04 label=Jetman_Direction
+B $5D04,$01
 
-g $5D30 PARAM1
-g $5D31 PARAM2
-g $5D32 PARAM3
-g $5D33 PARAM4
-g $5D34 PARAM5
+g $5D05 Jetman Speed: Horizontal
+D $5D05 #TABLE(default,centre,centre) { =h,c2 Maximum Value } { =h Walking | =h Flying } { #N$20 | #N$40 } TABLE#
+@ $5D05 label=Jetman_Speed_X
+B $5D05,$01
 
-g $5D35 Number of collected fuel pods for current level
-@ $5D35 label=NUM_FUEL_PODS
+g $5D06 Jetman Speed: Vertical
+D $5D06 Maximum Value: #N$3F.
+@ $5D06 label=Jetman_Speed_Y
+B $5D06,$01
 
-g $5D36 PARAM7
-g $5D37 PARAM8
+g $5D07 Jetman Height
+D $5D07 Jetman sprite height, always #N$24.
+@ $5D07 label=Jetman_Height
+
+g $5D08 Laser Beam Parameters
+D $5D08 #TABLE(default,centre) { =h Bytes(n) | =h Variable }
+. { 0 | Unused=#N$00, Used=#N$10 }
+. { 1 | Y Position }
+. { 2 | X position pulse #1 }
+. { 3 | X position pulse #2 }
+. { 4 | X position pulse #3 }
+. { 5 | X position pulse #4 }
+. { 6 | Beam length }
+. { 7 | Colour attribute }
+. TABLE#
+@ $5D08 label=Laser_Param_1
+B $5D08,$08 Laser Beam #1.
+@ $5D10 label=Laser_Param_2
+B $5D10,$08 Laser Beam #2.
+@ $5D18 label=Laser_Param_3
+B $5D18,$08 Laser Beam #3.
+@ $5D20 label=Laser_Param_4
+B $5D20,$08 Laser Beam #4.
+
+g $5D28 Explosion Sound Parameters
+D $5D28 Explosion sound parameters for frequency and duration.
+@ $5D28 label=Explosion_Param_SFX
+B $5D28,$01 Frequency is #N$0C or #N$0D.
+B $5D29,$01 Length is always set to #N$04.
+S $5D2A,$06 Unused.
+
+g $5D30 Rocket Parameters
+@ $5D30 label=Rocket_State
+B $5D30,$01 Movement: #TABLE(default,centre,centre,centre) { =h On Pad | =h Up | =h Down } { #N$09 | #N$0A | #N$0B } TABLE#
+@ $5D31 label=Rocket_Pos_X
+B $5D31,$01 X Position.
+@ $5D32 label=Rocket_Base_Pos_Y
+B $5D32,$01 Y Position (base module).
+@ $5D33 label=Rocket_Attribute
+B $5D33,$01 Colour Attribute.
+@ $5D34 label=Num_Rocket_Pieces
+B $5D34,$01 Number of rocket pieces on the pad.
+@ $5D35 label=Num_Fuel_Pods
+B $5D35,$01 Number of collected fuel pods.
+B $5D36,$01 Unused.
+B $5D37,$01 Unused (always #N$1C).
+
 g $5D38 Fuel 00 when not on screen, $04 when visible
-g $5D38 PARAM10
 g $5D39 Ship top section X position
 g $5D3A Fuel (height)
 g $5D3B PARAM12
@@ -180,6 +227,11 @@ g $5DC6 ???
 g $5DCA
 g $5DCB ???
 g $5DCC ????
+
+g $5DCE Random Number
+@ $5DCE label=Random_Number
+B $5DCE,$01
+
 g $5DCF LOOKING2
 
 g $5DD1 Active Player
@@ -217,7 +269,14 @@ b $5E00
 
 b $5FC0
 
-b $6010
+g $6000 Platform Graphics
+@ $6000 label=Platform_Buffer
+B $6000,$04 Middle.
+B $6004,$04 Bottom.
+B $6008,$04 Left.
+B $600C,$04 Right.
+
+g $6010
 
 g $6018 New Game Parameters
 @ $6018 label=INIT_GAME_ENV
@@ -236,19 +295,31 @@ t $6061 Copyright Messaging
 @ $6061 label=Message_Copyright
   $6061,$2A "COPYRIGHT 1983 A.C.G. ALL RIGHTS RESERVED".
 
-c $608A
-@ $608A label=LEVEL_INIT
-C $608A,$03 Black Border
-  $608D,$03 Clear the screen
-  $6090,$03 Reset the screen colours
-  $6093,$03 Display score labels
-  $6096,$03 Attribute file address
-  $6099,$03 #REGb=loop counter, #REGc=Cyan/Yellow
-  $609C,$01 Reset bytes in the attribute file
-  $609E,$02 Decrease #REGb by one, jump to #R$609C if not zero
-  $60A0,$03 Update display with player 1 score
-  $60A3,$03 Update display with player 2 score
-  $60A6,$03 Update display with high score
+c $608A Create Game Window
+E $608A View the equivalent code in;
+. #LIST
+. { #ATICATAC$80AA }
+. { #COOKIE$5FB7 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$5F53 }
+. { #TRANZAM$0000 }
+. LIST#
+@ $608A label=CreateWindow
+N $608A Blank the screen and write the banner.
+  $608A,$03 Set the border to black.
+  $608D,$03 Call #R$71B8.
+  $6090,$03 Call #R$71C6.
+  $6093,$03 Call #R$7192.
+  $6096,$03 Attribute buffer address.
+  $6099,$03 #REGb=loop counter, #REGc=Cyan/Yellow.
+  $609C,$01 Reset bytes in the attribute buffer.
+  $609D,$01 Increment #REGl by one (move to the next address in the attribute buffer).
+  $609E,$02 Decrease counter by one and loop back to #R$609C until counter is zero.
+  $60A0,$03 Call #R$711C.
+  $60A3,$03 Call #R$7124.
+  $60A6,$03 Jump to #R$712C.
+
+c $60A9
   $60A9,$03 #REGa=#R$5DF0
   $60AC,$04 If #R$5DF0 is divisible by $03 ... jump to init with a "broken ship"
   $60B3,$04 Increase the live counter #R$5DF1 by one
@@ -256,18 +327,22 @@ C $608A,$03 Black Border
   $60C9,$03 Write #REGa to #R$5DD4
   $60CC,$01 Return
 
-C $60CD,$03 #REGhl Source address: #R$6018
+c $60CD
+  $60CD,$03 #REGhl Source address: #R$6018
   $60D0,$03 #REGde Target address: #R$5D30
   $60D3,$03 #REGbc=loop counter
   $60D6,$02 Action! Copy source to target, decrease counter, repeat until zero
   $60D8,$02 #REGa=$08
   $60DA,$03 Jump to #R$6EF9
 
+c $60DD
+
 C $6103,$03 #REGa=#R$5DF9
 
   $6146,$02 Decrease #REGb by one, jump to #R$6141 if not zero
 
-C $616A,$03 #REGhl=#R$5DF0
+c $616A
+  $616A,$03 #REGhl=#R$5DF0
   $616D,$03 #REGde=#R$5DF8
   $6170,$02 #REGb=$02
   $6172,$03
@@ -498,6 +573,16 @@ C $6313,$03 #R$5DF0=#REGa
   $632F,$03 Sets #R$5DF9 to zero (as a 1UP game is in progress)
   $6332,$01 Return
 
+c $6333 Start Game
+E $6333 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D9A }
+. { #COOKIE$6428 }
+. { #LUNARJETMAN$81BB }
+. { #PSSST$631E }
+. { #TRANZAM$5FEF }
+. LIST#
+@ $6333 label=StartGame
   $6333,$03 #REGhl=#R$5CF4
   $6336,$03 #REGbc=#R$6000
   $6339,$03
@@ -508,9 +593,13 @@ C $6313,$03 #R$5DF0=#REGa
   $634D,$01 Clear #REGa (sets to $00)
   $634E,$03 Writes #REGa to #R$5DCB
 
-  $63AC,$04 #REGe=#R$5CF6
+w $6374
 
-  $63B0,$04 Compare #REGe with #R$5CF9
+c $6398
+@ $6398 label=NewHighScore
+  $63AC,$04 #REGe=#R$5CF4(#N$5CF6).
+
+  $63B0,$04 Compare #REGe with #R$5CF7(#N$5CF9).
   $63B4,$02 Jump if carry flag is set to #R$63D5
 
   $63B6,$03 #REGhl=#R$5CF7
@@ -546,7 +635,10 @@ N $63D5 Tests to see if the highscore has been beaten by 1UP.
 
 c $63DA
 
-C $653F,$06 Drop #REGix+$02 (fuel Y co-ordinate) by two pixels
+c $6498
+
+c $651F
+  $653F,$06 Drop #REGix+$02 (fuel Y co-ordinate) by two pixels
 
 C $65CE,$03 #REGa=(#REGix+$02) (fuel Y co-ordinate)
 C $65D1,$02 Is #REGa=$B0? (has the fuel reached the ship yet?)
@@ -578,6 +670,12 @@ C $65F1,$01 #REGa=(#REGde)
   $6666,$02 Decrease #REGb by one, and loop back to #R$6663 until zero
   $6668,$01 Return
 
+c $66C7
+
+c $66EB
+
+c $6707
+
   $6766,$02 Decrease #REGb by one, and loop back to #R$6740 until zero
 
 C $671A,$02 Store #REGix on the stack
@@ -602,8 +700,14 @@ c $67ED
   $6818,$02 Decrease #REGb by one, and loop back to #R$6818 until zero
   $6821,$02 Decrease #REGb by one, and loop back to #R$6821 until zero
   $6828,$02 Decrease #REGb by one, and loop back to #R$6828 until zero
+
+c $684B
+
+c $6854
   $6864,$02 Decrease #REGb by one, and loop back to #R$6864 until zero
   $686A,$02 Decrease #REGb by one, and loop back to #R$686A until zero
+
+c $68B1
 
 w $690F Explosion Sprite Table
 E $690F View the equivalent code in;
@@ -618,10 +722,20 @@ E $690F View the equivalent code in;
   $690F,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $690F) / 2)) #EXPLOSIONNAME((#PC - $690F) / 2).
 L $690F,$02,$06
 
-c $691B
-  $6920,$03 #REGhl=$00C0
-  $6923,$01 Decrease #REGhl by one
-  $6928,$01 Return
+c $691B Limit Frame Rate
+E $691B View the equivalent code in;
+. #LIST
+. { #PSSST$70DF }
+. LIST#
+@ $691B label=LimitFrameRate
+  $691B,$05 Return if #R$5DD5 is not marked as being updated.
+  $6920,$03 Introduce a counter for a slight pause.
+@ $6923 label=LimitFrameRate_Loop
+  $6923,$01 Decrease counter by one.
+  $6924,$04 Keep looping back to #R$6923 until the counter is zero.
+  $6928,$01 Return.
+
+c $6929
 
   $6929,$03 #REGhl=#R$6945
   $692C,$03 #REGa=#R$5DF0
@@ -660,21 +774,32 @@ c $6965
 
   $6A16,$03 Jump to #R$6345
 
-C $6DD6,$03 #REGhl=$5DCB
+c $6A6C
 
-  $6E98,$02 Decrease #REGb by one, and loop back to #R$6E5A until zero
-  $6EAE,$02 Decrease #REGb by one, and loop back to #R$6EA8 until zero
-  $6EB9,$02 Decrease #REGb by one, and loop back to #R$6EB6 until zero
-  $6ED7,$02 Decrease #REGb by one, and loop back to #R$6ED1 until zero
-  $6EF1,$02 Decrease #REGb by one, and loop back to #R$6EDC until zero
+c $6AEF
+
+c $6C2F
+
+c $6CF5
+
+c $6DD3 Meteor Update
+  $6DD6,$03 #REGhl=$5DCB.
+
+  $6E98,$02 Decrease #REGb by one, and loop back to #R$6E5A until zero.
+  $6EAE,$02 Decrease #REGb by one, and loop back to #R$6EA8 until zero.
+  $6EB9,$02 Decrease #REGb by one, and loop back to #R$6EB6 until zero.
+  $6ED7,$02 Decrease #REGb by one, and loop back to #R$6ED1 until zero.
+  $6EF1,$02 Decrease #REGb by one, and loop back to #R$6EDC until zero.
 
 C $6EFA,$03 #REGa=#R$5DF0
   $6F91,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
 
-  $6FA4,$02 Decrease #REGb by one, and loop back to #R$6F9F until zero
-  $6FCB,$02 Decrease #REGb by one, and loop back to #R$6FC9 until zero
+  $6FA4,$02 Decrease #REGb by one, and loop back to #R$6F9F until zero.
+  $6FCB,$02 Decrease #REGb by one, and loop back to #R$6FC9 until zero.
 
-  $706E,$03 #REGa=(IX+$06) #R$5D0E
+c $6FFC
+
+  $706E,$03 #REGa=(IX+$06)
 
 C $70A4,$03 #REGhl=$0040
   $70A7,$03 Call the routine at #R$7308
@@ -684,7 +809,7 @@ C $70A4,$03 #REGhl=$0040
 b $70DB Lives UDG
 D $70DB The graphic for the lives icon
 B $70DB #UDG#(#PC),attr=7
-@ $70DB label=UDG_LIVES
+@ $70DB label=UDG_Lives
 
 c $70E3 Lives left for active player
 @ $70E3 label=ACTIVE_PLAYER_LIVES
@@ -706,102 +831,299 @@ C $70E3,$04 Evaluate #R$5DD1
   $70F9,$04 Evaluate #R$5DD1
   $70FD,$02 Jump to #R$7104 if 2UP is active player
 
-  $70FF,$03 #REGhl=#R$5CF6
+  $70FF,$03 #REGhl=#R$5CF4(#N$5CF6).
   $7102,$02 Jump forward to #R$7107
-  $7104,$03 #REGhl=#R$5CF9
+  $7104,$03 #REGhl=#R$5CF7(#N$5CF9).
   $7107,$01 #REGa=#REGhl
   $7115,$01 Writes #REGa to the memory location currently in #REGhl
   $7116,$04 Evaluate #R$5DD1
   $711A,$02 Jump to #R$7124 if 2UP is active player
 
-c $711C Scoring Display Routines
-N $711C Point to Player 1 score and display
-C $711C,$03 #REGhl=Screen location for output
-@ $711C label=DISPLAY_1UP_SCORE
-  $711F,$03 #REGde=#R$5CF4
-  $7122 Generate scores and output to screen
-N $7124 Point to Player 2 score and display
-C $7124,$03 #REGhl=Screen location for output
-@ $7124 label=DISPLAY_2UP_SCORE
-  $7127,$03 #REGde=#R$5CF7
-  $712A Generate scores and output to screen
-N $712C Point to Highscore and display
-C $712C,$03 #REGhl=Screen location for output
-@ $712C label=DISPLAY_HIGHSCORE
-  $712F,$03 #REGde=#R$5CF0
-N $7132 Display routine
-C $7132,$02 #REGb=3
-@ $7132 label=DISPLAY_SCORE
-  $7134,$01 #REGa=Loads the accumulator with the contents of #REGde
-@ $7134 label=DISPLAY_SCORE_LOOP
-  $7135,$04 #REGa=Shift 4 bits to the right
-  $7139,$02
-  $713B,$02 Adds $30 to #REGa
-  $713D,$03 Call routine @#R$714C
-  $7140,$01 Loads #REGa with the contents of the memory location held by #REGde
-  $7141,$02
-  $7143,$02 Adds $30 to #REGa
-  $7145,$03 Call routine @#R$714C
-  $7148,$01 Increments #REGde by one
-  $7149,$02 Decrease #REGb by one, and loop back to #R$7134 until zero
-  $714B,$01 Return
+c $711C Print Scores
+E $711C View the equivalent code in;
+. #LIST
+. { #COOKIE$7438 }
+. { #LUNARJETMAN$89BF }
+. { #PSSST$739D }
+. { #TRANZAM$6CB6 }
+. LIST#
+@ $711C label=Score_1UP
+N $711C Sets up the 1UP score.
+  $711C,$03 #REGhl=#N$4021 (screen buffer address).
+  $711F,$03 #REGde=#R$5CF4.
+  $7122,$02 Jump to #R$7132.
 
-  $714C,$03 Push #REGbc, #REGde and #REGhl onto the stack
-  $714F,$01 #REGl=#REGa
-  $7150,$02 #REGh=$00
-  $7152,$03 Add #REGhl to itself 3 times
-  $7155,$04 #HTML(#REGde=<a href="https://skoolkid.github.io/rom/asm/5C36.html">CHARS</a>.)
-  $7159,$01 Add #REGde to #REGhl
-  $715A,$01 Exchanges #REGhl with #REGde
-  $715B,$01 Fetch #REGhl off the stack
-  $715C,$02 #REGb=$08
+N $7124 Sets up the 2UP score.
+@ $7124 label=Score_2UP
+  $7124,$03 #REGhl=#N$4039 (screen buffer address).
+  $7127,$03 #REGde=#R$5CF7.
+  $712A,$02 Jump to #R$7132.
 
-  $7162,$02 Decrease #REGb by one, and loop back to #R$715E until zero
-  $7164,$02 Fetch #REGde and #REGbc back off the stack
-  $716B,$01 Return
+N $712C Sets up the HI score.
+@ $712C label=Score_HI
+  $712C,$03 #REGhl=#N$402D (screen buffer address).
+  $712F,$03 #REGde=#R$5CF0.
 
-  $7178,$01 Exchange #REGbc, #REGde, and #REGhl with shadow registers with #REGbc', #REGde', and #REGhl'
-  $7179,$01
-  $7191,$01 Return
+N $7132 Prints the score.
+@ $7132 label=PrintScore
+  $7132,$02 #REGb=#N$03.
+@ $7134 label=PrintScore_Loop
+  $7134,$01 #REGa=#REGde.
+  $7135,$04 #REGa=#REGa / #N$10.
+  $7139,$02,b$01 Keep only bits 0-3.
+  $713B,$02 #REGa=#REGa + #N$30 (convert to ASCII).
+  $713D,$03 Call #R$714C.
+  $7140,$01 #REGa=#REGde.
+  $7141,$02,b$01 Keep only bits 0-3.
+  $7143,$02 #REGa=#REGa + #N$30 (convert to ASCII).
+  $7145,$03 Call #R$714C.
+  $7148,$01 Increment #REGde by one.
+  $7149,$02 Decrease counter by one and loop back to #R$7134 until counter is zero.
+  $714B,$01 Return.
 
-c $7192
-@ $7192 label=SCORE_LABELS
-C $7192,$03 #REGhl=$0018
-  $7195,$03 #REGde=$71AD
+c $714C Print Character
+E $714C View the equivalent code in;
+. #LIST
+. { #ATICATAC$A1D3 }
+. { #COOKIE$7468 }
+. { #LUNARJETMAN$89EF }
+. { #PSSST$73CD }
+. { #TRANZAM$6C96 }
+. LIST#
+@ $714C label=PrintScreen
+R $714C A ASCII value to print
+R $714C HL Screen address
+  $714C,$03 Stash #REGbc, #REGde and #REGhl on the stack.
+  $714F,$03 Create an offset in #REGhl.
+  $7152,$03 #REGhl=#REGhl * #N08.
+  $7155,$04 #HTML(#REGde=<a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $7159,$02 #REGde=#REGhl + #N$3C00. For examples of usage;
+. #TABLE(default,centre,centre,centre,centre,centre)
+. { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
+. #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
+. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * $08) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
+. )
+. TABLE#
+N $715B Print the character to the screen.
+  $715B,$01 Restore #REGhl, containing the screen buffer location, from the stack.
+  $715C,$02 #REGb=#N$08 (#N$08 rows of pixels).
+@ $715E label=PrintScreen_Loop
+  $715E,$02 Copy a byte from the font data to the screen buffer.
+  $7160,$01 Increment the font data by one.
+  $7161,$01 Move onto the next pixel line.
+  $7162,$02 Decrease counter by one and loop back to #R$715E until counter is zero.
+  $7164,$02 Restore #REGde and #REGbc from the stack.
+N $7166 Reset #REGhl and move to the next column, ready to print the next character.
+  $7166,$04 #REGh=#REGh - #N$08 (reset the display line).
+  $716A,$01 Increment screen column by one.
+  $716B,$01 Return.
 
-  $719B,$03 #REGhl=$0078
-  $719E,$03 #REGde=$71B5
+c $716C Print String
+E $716C View the equivalent code in;
+. #LIST
+. { #ATICATAC$A1F3 }
+. { #COOKIE$7488 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$73ED }
+. { #TRANZAM$0000 }
+. LIST#
+@ $716C label=PrintString
+R $716C DE Pointer to string data
+  $716C,$01 Stash #REGhl on the stack.
+  $716D,$03 Call #R$7308.
+  $7170,$01 Fetch the attribute byte.
+  $7171,$01 Switch to the shadow #REGaf register.
+  $7172,$01 Increment #REGde by one to point to the text of the string.
+  $7173,$01 Switch to the shadow registers.
+  $7174,$01 Restore #REGhl' from the stack.
+  $7175,$03 Call #R$720E.
 
-  $71A4,$03 #REGhl=$00D8
-  $71A7,$03 #REGde=$71B1
+@ $7178 label=PrintString_Loop
+  $7178,$01 Switch back to the normal registers.
+  $7179,$01 Fetch the character to print.
+  $717A,$04 If bit 7 is set (which signifies the end of the string), jump to #R$7189.
+  $717E,$03 Call #R$714C.
+  $7181,$01 Increment #REGde by one.
+  $7182,$01 Switch to the shadow registers.
+  $7183,$01 Switch to the shadow #REGaf register.
+  $7184,$01 Copy the attribute byte to the screen.
+  $7185,$01 Increment #REGl by one.
+  $7186,$01 Switch to the shadow #REGaf register.
+  $7187,$02 Jump to #R$7178.
+N $7189 Because the last character contains the terminator, it needs to be handled separately.
+@ $7189 label=PrintString_LastCharacter
+  $7189,$02,b$01 Keep only bits 0-6 (i.e. strip the bit 7 terminator).
+  $718B,$03 Call #R$714C.
+  $718E,$01 Switch to the shadow registers.
+  $718F,$01 Switch to the shadow #REGaf register.
+  $7190,$01 Copy the attribute byte to the screen.
+  $7191,$01 Return.
 
-c $71B8
-D $71B8 Clears the screen
-@ $71B8 label=CLEAR_PIXELS
-C $71B8,$03 #REGhl=Start of the screen buffer
-C $71BB,$02 #REGb=$58
-C $71BD,$02 #REGc=0
-C $71BF,$01 Send #REGc (0) to #REGhl (clearing the screen)
-C $71C0,$01
-C $71C1,$04 Loop back when #REGh=#REGb (i.e. when #REGhl reaches $5800)
-C $71C5,$01 Return
+c $7192 Print Banner
+E $7192 View the equivalent code in;
+. #LIST
+. { #COOKIE$74AE }
+. { #LUNARJETMAN$8A37 }
+. { #PSSST$7413 }
+. LIST#
+@ $7192 label=PrintBanner
+N $7192 Prints "1UP".
+  $7192,$03 #REGhl=#N($0018, 4, 4).
+  $7195,$03 #REGde=#R$71AD.
+  $7198,$03 Call #R$711C.
+N $719B Prints "HI".
+  $719B,$03 #REGhl=#N($0078, 4, 4).
+  $719E,$03 #REGde=#R$71B5.
+  $71A1,$03 Call #R$711C.
+N $71A4 Prints "2UP".
+  $71A4,$03 #REGhl=#N($00D8, 4, 4).
+  $71A7,$03 #REGde=#R$71B1.
+  $71AA,$03 Jump to #R$711C.
+N $71AD Banner text data.
+@ $71AD label=1UP_Text
+T $71AD,$04,h$01,$02:$01 "1UP" (#N(#PEEK(#PC)) is the attribute).
+@ $71B1 label=2UP_Text
+T $71B1,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
+@ $71B5 label=HI_Text
+T $71B5,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
 
-N $71C6 Reset the screen colours
-@ $71C6 label=CLEAR_ATTRIBUTES
-C $71C6,$03 #REGhl=Start of the attribute buffer
-C $71C9,$02 #REGb=$5B End of the attribute space
-C $71CB,$02 #REGc=$47
-C $71CD,$02 Runs the #R$71BF loop again to set all the attributes to #REGc ($47=PAPER:Black;INK:While;BRIGHT)
-  $71FE,$02 Decrease #REGb by one, and loop back to #R$71EA until zero
+c $71B8 Reset Screen Buffer
+E $71B8 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80B4 }
+. { #COOKIE$74D4 }
+. { #LUNARJETMAN$84AD }
+. { #PSSST$7439 }
+. { #TRANZAM$7211 }
+. LIST#
+@ $71B8 label=ResetScreen
+E $71B8 Continue on to #R$71BF to blank the screen buffer.
+  $71B8,$03 #REGhl=#R$4000(screen buffer).
+  $71BB,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
+  $71BD,$02 #REGc=#N$00 (value to write).
 
+c $71BF Reset Routine
+E $71BF View the equivalent code in;
+. #LIST
+. { #ATICATAC$80BB }
+. { #COOKIE$74DB }
+. { #LUNARJETMAN$84B4 }
+. { #PSSST$7440 }
+. { #TRANZAM$7218 }
+. LIST#
+R $71BF HL Target address
+R $71BF B Single byte representing the MSB of the end address (will always end on LSB #N$00)
+R $71BF C Value to write
+@ $71BF label=ResetCopier
+  $71BF,$01 Write #REGc to the target address.
+  $71C0,$01 Increment the target address by one.
+  $71C1,$02 Are we finished yet? Check the MSB of the target vs. #REGb.
+  $71C3,$02 Keep looping back to #R$71BF until there is no carry-over.
+  $71C5,$01 Return.
+
+c $71C6 Reset Attribute Buffer
+E $71C6 View the equivalent code in;
+. #LIST
+. { #ATICATAC$80C2 }
+. { #COOKIE$74E2 }
+. { #LUNARJETMAN$84BB }
+. { #PSSST$7447 }
+. { #TRANZAM$7200 }
+. LIST#
+@ $71C6 label=ResetAttributes
+  $71C6,$03 #REGhl=#R$5800(attribute buffer).
+  $71C9,$02 #REGb=#N$5B (i.e. finish once we reach the end of the #R$5800(attribute buffer)).
+  $71CB,$02 #REGc=#N$47 (value to write).
+  $71CD,$02 Jump to #R$71BF.
+
+c $71CF
+
+c $720E Calculate Attribute Address
+E $720E View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BD2 }
+. { #COOKIE$7534 }
+. { #LUNARJETMAN$8506 }
+. { #PSSST$748F }
+. { #TRANZAM$7097 }
+. LIST#
+@ $720E label=AttributeAddress
+N $720E Converts a given pixel address to the associated attribute buffer address.
+R $720E HL Pixel address co-ordinates
+R $720E O:HL Attribute buffer address
+  $720E,$01 Horizontal co-ordinate.
+  $720F,$03 Divide by #N$08.
+  $7212,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
+  $7214,$01 Store this back in #REGl.
+  $7215,$01 Vertical co-ordinate.
+  $7216,$02 Multiply by #N$04.
+  $7218,$01 Store this in #REGc temporarily.
+  $7219,$02,b$01 Keep only bits 5-7.
+  $721B,$01 Set the bits from #REGl.
+  $721C,$01 #REGl=#REGa.
+  $721D,$01 Fetch the stored value from #REGc.
+  $721E,$02,b$01 Keep only bits 0-1.
+  $7220,$02,b$01 Set MSB of the attribute buffer #N58. This ensures our value is >= #R$5800.
+  $7222,$01 Store this back in #REGh.
+  $7223,$01 Return.
+
+c $7224
+
+c $723C
+
+c $725E
+
+c $726A
+
+c $72EE
+
+c $7308 Calculate Screen Address
+E $7308 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9BA2 }
+. { #COOKIE$76E3 }
+. { #LUNARJETMAN$851E }
+. { #PSSST$759A }
+. { #TRANZAM$6F10 }
+. LIST#
+@ $7308 label=ScreenAddress
+  $7308,$01 #REGa=#REGl.
+  $7309,$03 #REGa=#REGa / #N$08.
+  $730C,$02,b$01 Keep only bits 0-4.
+  $730E,$01 #REGl=#REGa.
+  $730F,$01 #REGa=#REGh.
+  $7310,$02 #REGa=#REGa * #N$04.
+  $7312,$02,b$01 Keep only bits 5-7.
+  $7314,$01
+  $7315,$01 #REGl=#REGa.
+  $7316,$01 #REGa=#REGh.
+  $7317,$02,b$01 Keep only bits 0-2.
+  $7319,$01 Switch to the shadow #REGaf register.
+  $731A,$01 #REGa=#REGh.
+  $731B,$03 #REGa=#REGa / #N$08.
+  $731E,$02,b$01 Keep only bits 3-4.
+  $7320,$02,b$01 Set bit 6.
+  $7322,$01 #REGh=#REGa.
+  $7323,$01 Switch to the shadow #REGaf register.
+  $7324,$01
+  $7325,$01 #REGh=#REGa.
+  $7326,$01 Return.
+
+c $7327
 @ $7327 label=MOVE_JETMAN_POS
-C $7327,$06 Copy #R$5D01 to $5DC0
-C $732D,$06 Copy #R$5D02 to $5DC1
-C $7333,$06 Copy #R$5D00 to $5DC2
-C $7339,$01 Return
+  $7327,$06 Copy #R$5D01 to $5DC0
+  $732D,$06 Copy #R$5D02 to $5DC1
+  $7333,$06 Copy #R$5D00 to $5DC2
+  $7339,$01 Return
   $738B,$02 Decrease #REGb by one, and loop back to #R$737F until zero
   $73AA,$02 Decrease #REGb by one, and loop back to #R$739E until zero
+
+c $73B2 Jetman Fly
+
   $7445,$02 Decrease #REGb by one, and loop back to #R$7439 until zero
+
+c $7571 Jetman Walk
+
   $766A,$02 Decrease #REGb by one, and loop back to #R$7622 until zero
   $76A1,$02 Decrease #REGb by one, and loop back to #R$769E until zero
   $76CC,$02 Decrease #REGb by one, and loop back to #R$76CA until zero
