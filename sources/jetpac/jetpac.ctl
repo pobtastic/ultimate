@@ -132,18 +132,18 @@ B $5D28,$01 Frequency is #N$0C or #N$0D.
 B $5D29,$01 Length is always set to #N$04.
 S $5D2A,$06 Unused.
 
-g $5D30 Rocket Parameters
-@ $5D30 label=Rocket_State
+g $5D30 Active Player Rocket Parameters
+@ $5D30 label=ActivePlayerRocket_State
 B $5D30,$01 Movement: #TABLE(default,centre,centre,centre) { =h On Pad | =h Up | =h Down } { #N$09 | #N$0A | #N$0B } TABLE#
-@ $5D31 label=Rocket_Pos_X
+@ $5D31 label=ActivePlayerRocket_Pos_X
 B $5D31,$01 X Position.
-@ $5D32 label=Rocket_Base_Pos_Y
+@ $5D32 label=ActivePlayerRocket_Base_Pos_Y
 B $5D32,$01 Y Position (base module).
-@ $5D33 label=Rocket_Attribute
+@ $5D33 label=ActivePlayerRocket_Attribute
 B $5D33,$01 Colour Attribute.
-@ $5D34 label=Num_Rocket_Pieces
+@ $5D34 label=ActivePlayerNum_Rocket_Pieces
 B $5D34,$01 Number of rocket pieces on the pad.
-@ $5D35 label=Num_Fuel_Pods
+@ $5D35 label=ActivePlayerNum_Fuel_Pods
 B $5D35,$01 Number of collected fuel pods.
 B $5D36,$01 Unused.
 B $5D37,$01 Unused (always #N$1C).
@@ -219,25 +219,73 @@ g $5D78 Alien 6
 
 g $5D88
 
-g $5D98 ???
+g $5D98 Inactive Player Rocket Parameters
+@ $5D98 label=InactivePlayerRocket_State
+B $5D98,$01 Movement: #TABLE(default,centre,centre,centre) { =h On Pad | =h Up | =h Down } { #N$09 | #N$0A | #N$0B } TABLE#
+@ $5D99 label=InactivePlayerRocket_Pos_X
+B $5D99,$01 X Position.
+@ $5D9A label=InactivePlayerRocket_Base_Pos_Y
+B $5D9A,$01 Y Position (base module).
+@ $5D9B label=InactivePlayerRocket_Attribute
+B $5D9B,$01 Colour Attribute.
+@ $5D9C label=InactivePlayerNum_Rocket_Pieces
+B $5D9C,$01 Number of rocket pieces on the pad.
+@ $5D9D label=InactivePlayerNum_Fuel_Pods
+B $5D9D,$01 Number of collected fuel pods.
+B $5D9E,$01 Unused.
+B $5D9F,$01 Unused (always #N$1C).
 
-g $5DC3
-g $5DC4
-g $5DC5
+g $5DA0 Inactive Player Rocket module (fuel/part)
+B $5DA0,$08
 
-g $5DC6
-g $5DCA
-g $5DCB ???
-g $5DCC ????
+g $5DA8 Inactive Player Collectible/ Rocket middle
+B $5DA8,$08
+
+g $5DC0 Actor Buffer
+@ $5DC0 label=Buffer_Actor
+B $5DC0,$01 X Position.
+B $5DC1,$01 Y Position.
+B $5DC2,$01 Movement direction.
+B $5DC3,$01 Height (in pixels).
+B $5DC4,$01 Width (in bytes).
+B $5DC5,$01 Height?
+B $5DC6,$01 Height?
+B $5DC7,$01 Flying movement/ direction?
+
+g $5DC8 Jetman Fly Counter?
+@ $5DC8 label=JetmanFlyCounter
+B $5DC8,$01
+
+g $5DC9 Alien Direction
+@ $5DC9 label=AlienDirection
+B $5DC9,$01
+
+g $5DCA Jetman Speed Modifier
+@ $5DCA label=JetmanSpeedModifier
+B $5DCA,$01
+
+g $5DCB Current Alien ID
+@ $5DCB label=ActiveAlien
+B $5DCB,$01
+
+g $5DCC Game Timer
+D $5DCC 16-bit counter starting at 0x0000 and counting +1 (each time a sprite is moved or redrawn), although sometimes
+.       it will increment + #N$02. This continues until the whole game is over - for both 1 and 2 player games. Counter
+.       loops around after reaching #N$FFFF.
+@ $5DCC label=GameTimer
+W $5DCC,$02
 
 g $5DCE Random Number
+D $5DCE Value is calculated using the 16-bit game timer LSB value, which is used to fetch a byte from the ROM (between addresses #N$00 and #N$FF), then by adding the current #REGr.
 @ $5DCE label=Random_Number
 B $5DCE,$01
 
-g $5DCF LOOKING2
+g $5DCF Actor Screen Position
+B $5DCF,$01 X Position.
+B $5DD0,$01 Y Position.
 
 g $5DD1 Active Player
-@ $5DD1 label=ACTIVE_PLAYER
+@ $5DD1 label=Flag_ActivePlayer
 D $5DD1 Which player is currently active.
 B $5DD1 #TABLE(default,centre,centre) { =h Value | =h Player }
 . { $00 | 1UP }
@@ -246,26 +294,43 @@ B $5DD1 #TABLE(default,centre,centre) { =h Value | =h Player }
 
 g $5DD2 ???
 g $5DD3 ???
-g $5DD4 ???
-g $5DD5 ???
-g $5DD6 $C7 / $47 before game starts then $00?
 
-g $5DD7 Countdown timer for interval before game starts
-@ $5DD7 label=INTERVAL_COUNTDOWN
+g $5DD4 Last Frame
+D $5DD4 #HTML(Holds a copy of the last <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+@ $5DD4 label=LastFrame
+B $5DD4,$01
 
-g $5DF0 Player Current Level
-@ $5DF0 label=CURRENT_LEVEL
+g $5DD5 Frame Updated
+@ $5DD5 label=FrameUpdated
+D $5DD5 Has the frame been updated? #N$00=No #N$01=Yes.
+B $5DD5,$01
 
-g $5DF1 Player 1 Lives
-@ $5DF1 label=1UP_CURRENT_LIVES
+g $5DD6 Menu Item Attribute
+D $5DD6 Current menu item colour attribute.
+@ $5DD6 label=Current_MenuAttr
+B $5DD6,$01
 
-g $5DF2 LOOKING3
-@ $5DF2 label=LOOKING3
+g $5DD7 "Get Ready" Delay Counter
+@ $5DD7 label=PlayDelay_Counter
+B $5DD7,$01
 
-g $5DF8 ?????
+g $5DF0 Active Player Level
+@ $5DF0 label=ActivePlayer_Level
+B $5DF0,$01
 
-g $5DF9 Player 2 Lives
-@ $5DF9 label=2UP_CURRENT_LIVES
+g $5DF1 Active Player Lives
+@ $5DF1 label=ActivePlayer_Lives
+B $5DF1,$01
+
+s $5DF2
+
+g $5DF8 Inactive Player Level
+@ $5DF8 label=InactivePlayer_Level
+B $5DF8,$01
+
+g $5DF9 Inactive Player Lives
+@ $5DF9 label=InactivePlayer_Lives
+B $5DF9,$01
 
 b $5E00
 
@@ -278,15 +343,24 @@ B $6004,$04 Bottom.
 B $6008,$04 Left.
 B $600C,$04 Right.
 
-g $6010
+g $6010 Player Initialisation Data
+@ $6010 label=Initialisation_Player
+  $6010,$08
 
-g $6018 New Game Parameters
-@ $6018 label=INIT_GAME_ENV
-B $6019,$11,$01
+g $6018 Rocket Initialisation Data
+@ $6018 label=Initialisation_Rocket_Base
+B $6018,$08,$01
+@ $6020 label=Initialisation_Rocket_Top
+B $6020,$08,$01
+@ $6028 label=Initialisation_Rocket_Middle
+B $6028,$08,$01
 
-b $602A
+g $6030 Fuel Pod Initialisation Data
+@ $6030 label=Initialisation_FuelPod
+B $6030,$08
 
-b $6038
+g $6038 Collectible Initialisation Data
+@ $6038 label=Initialisation_Collectible
 B $6038,$08
 
 t $6040 Rights Messaging
@@ -321,49 +395,65 @@ N $608A Blank the screen and write the banner.
   $60A3,$03 Call #R$7124.
   $60A6,$03 Jump to #R$712C.
 
-c $60A9
-  $60A9,$03 #REGa=#R$5DF0
-  $60AC,$04 If #R$5DF0 is divisible by $03 ... jump to init with a "broken ship"
-  $60B3,$04 Increase the live counter #R$5DF1 by one
+c $60A9 Initialise New Level
+@ $60A9 label=LevelNew
+  $60A9,$03 #REGa=#R$5DF0.
+M $60AC,$04 If #R$5DF0 % $04 (every 4th level) ... then continue and reset the rocket else jump to #R$60BA.
+  $60AC,$02,b$01
+  $60B0,$03 Call #R$60CD.
+  $60B3,$04 Increase the live counter #R$5DF1 by one.
+  $60B7,$03 Call #R$619A.
+@ $60BA label=LevelInitialisation
+  $60BA,$03 Call #R$6929.
+  $60BD,$03 Call #R$608A.
+  $60C0,$03 Call #R$766D.
+  $60C3,$03 Call #R$70A4.
   $60C6,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
-  $60C9,$03 Write #REGa to #R$5DD4
-  $60CC,$01 Return
+  $60C9,$03 Write #REGa to #R$5DD4.
+  $60CC,$01 Return.
 
-c $60CD
-  $60CD,$03 #REGhl Source address: #R$6018
-  $60D0,$03 #REGde Target address: #R$5D30
-  $60D3,$03 #REGbc=loop counter
-  $60D6,$02 Action! Copy source to target, decrease counter, repeat until zero
-  $60D8,$02 #REGa=$08
-  $60DA,$03 Jump to #R$6EF9
+c $60CD Reset Rocket
+@ $60CD label=RocketReset
+  $60CD,$0B Copy #N$18 bytes of data from #R$6018 to #R$5D30.
+  $60D8,$02 #REGa=#N$08.
+  $60DA,$03 Jump to #R$6EF9.
 
-c $60DD
+c $60DD Reset Player
+@ $60DD label=PlayerReset
 
 C $6103,$03 #REGa=#R$5DF9
 
   $6146,$02 Decrease #REGb by one, jump to #R$6141 if not zero
 
-c $616A
-  $616A,$03 #REGhl=#R$5DF0
-  $616D,$03 #REGde=#R$5DF8
-  $6170,$02 #REGb=$02
-  $6172,$03
-  $6175,$03 #REGhl=#R$5D30
-  $6178,$03 #REGde=#R$5D98
-  $617B,$02 #REGb=$18
-  $617D,$01 #REGa=#REGde
-  $617E,$01 #REGc=#REGhl
-  $617F,$01 Writes #REGa to #REGhl
-  $6180,$01 #REGa=#REGc
-  $6181,$01 Writes #REGa to #REGde
-  $6182,$01 Increase #REGhl by one
-  $6183,$01 Increase #REGde by one
-  $6184,$02 Decrease #REGb by one, jump to #R$617D if not zero
-  $6186,$01 Return
-B $6187,$01
-T $6188,$12,$11:1 GAME OVER PLAYER 1
+c $616A  1UP/ 2UP Swapper.
+E $616A View the equivalent code in;
+. #LIST
+. { #COOKIE$6416 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$613B }
+. LIST#
+@ $616A label=ChangePlayer
+N $616A This routine "swaps" the data between #REGde and #REGhl.
+  $616A,$03 #REGhl=#R$5DF0.
+  $616D,$03 #REGde=#R$5DF8.
+  $6170,$02 #REGb=#N$02 (counter).
+  $6172,$03 Call #R$617D.
+  $6175,$03 #REGhl=#R$5D30.
+  $6178,$03 #REGde=#R$5D98.
+  $617B,$02 #REGb=#N$18 (counter).
+N $617D This looks complicated but it's just grabbing the data from #REGde, grabbing the data from #REGhl, and writing the others data to each one.
+@ $617D label=ChangePlayer_Loop
+  $617D,$01 #REGa=#REGde.
+  $617E,$01 #REGc=#REGhl.
+  $617F,$01 Store #REGa at #REGhl.
+  $6180,$02 Store #REGc at #REGde.
+  $6182,$02 Increment both #REGhl and #REGde by one.
+  $6184,$02 Decrease counter by one and loop back to #R$617D until counter is zero.
+  $6186,$01 Return.
 
-C $619A,$03 #REGhl Source address: #R$6010
+c $6187
+T $6187,$13,h$01,$11:$01 "GAME OVER PLAYER 1" (#N(#PEEK(#PC)) is the attribute).
+  $619A,$03 #REGhl Source address: #R$6010
   $619D,$03 #REGde Target address: #R$5D00
   $61A0,$03 #REGbc=loop counter
   $61A3,$02 Action! Copy source to target, decrease counter, repeat until zero
@@ -373,6 +463,7 @@ C $619A,$03 #REGhl Source address: #R$6010
   $61B3,$07 Decrease #R$5DF1 by 1
   $61BA,$03 Jump to #R$70A4
 
+c $61BD
   $61BD,$03 #REGa=#R$5DD1
   $61C0,$01
   $61C1,$02
@@ -386,6 +477,7 @@ C $619A,$03 #REGhl Source address: #R$6010
   $61D0,$02 Decrease #REGb by one, jump to #R$61CB if not zero
   $61D2,$01 Return
 
+c $61D3
   $61DD,$02 Decrease #REGb by one, jump to #R$61D8 if not zero
 
 c $61E5 Security Check
@@ -594,8 +686,18 @@ E $6333 View the equivalent code in;
   $6349,$04 #REGix=#R$5D30
   $634D,$01 Clear #REGa (sets to $00)
   $634E,$03 Writes #REGa to #R$5DCB
+  $6351,$07 #HTML(Compare <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> and #R$5DD4.)
+  $635C,$04 Stash #R$69A8 on the stack.
+  $6360,$03 #REGhl=#R$6374.
+  $6366,$01 #REGa=#REGa * #N$02.
+  $6367,$02,b$01 Keep only bits 1-6.
+  $6369,$03 Create an offset in #REGbc.
+  $636C,$05 #REGhl=the address held at #R$6374 + offset.
+  $6371,$03 #HTML(Jump to <a href="https://skoolkid.github.io/rom/asm/5CB0.html">NMIADD</a> which will jump to the address in #REGhl.)
 
-w $6374
+w $6374 Jump Table
+@ $6374 label=JumpTable
+  $6374,$24,$02
 
 c $6398
 @ $6398 label=NewHighScore
@@ -697,11 +799,39 @@ E $67C3 View the equivalent code in;
   $67C3,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $67C3) / $02)) #COLLECTABLENAME((#PC - $67C3) / 2).
 L $67C3,$02,$15
 
-c $67ED
-  $6812,$02 Decrease #REGb by one, and loop back to #R$6812 until zero
-  $6818,$02 Decrease #REGb by one, and loop back to #R$6818 until zero
+c $67ED Sounds: Thrusters
+@ $67ED label=SoundsThrusters
+
+c $67FD Sounds: Rocket Build
+@ $67FD label=SoundsRocketBuild
+
+c $6803 Sounds: Pickup Fuel
+@ $6803 label=SoundsPickupFuel
+
+c $6809 Sounds: Pickup Item
+@ $6809 label=SoundsPickupItem
+
+c $680D Play square wave sound
+@ $680D label=PlaySquareWave
+R $680D D Duration of wave
+  $680D,$04 #REGa=#N$10 (speaker on = bit 4).
+  $6811,$03 Decrease duration by one and loop back to #R$6812 until counter is zero.
+@ $6812 label=PlaySquareWave_Loop
+  $6814,$03 Speaker off.
+  $6817,$03 Decrease duration by one and loop back to #R$6818 until counter is zero.
+@ $6818 label=Silence_Loop
+  $681D,$01 Return.
+
+c $681E
   $6821,$02 Decrease #REGb by one, and loop back to #R$6821 until zero
   $6828,$02 Decrease #REGb by one, and loop back to #R$6828 until zero
+
+c $681E Sounds: Laser Beam
+@ $681E label=SoundsLaserBeam
+  $6833,$01 Return.
+
+c $6834 Set Explosion Sound Defaults
+B $6847,$04
 
 c $684B
 
@@ -793,13 +923,55 @@ c $6DD3 Meteor Update
   $6ED7,$02 Decrease #REGb by one, and loop back to #R$6ED1 until zero.
   $6EF1,$02 Decrease #REGb by one, and loop back to #R$6EDC until zero.
 
-C $6EFA,$03 #REGa=#R$5DF0
+  $6EFA,$03 #REGa=#R$5DF0
+
+c $6F91 Handler: Laser Beam
+@ $6F91 label=Handler_LaserBeam
+N $6F91 Only handle the laser beam on every 4th frame.
   $6F91,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $6F94,$02,b$01 Keep only bits 0-1.
+  $6F96,$01 #HTML(Return if <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> is non-zero.)
+N $6F97 Search for a "free" laser beam slot.
+  $6F97,$03 #REGhl=#R$5D08.
+  $6F9A,$03 #REGde=#N($0008, $04, $04) (each slot is #N$08 bytes).
+  $6F9D,$02 #REGb=#N$04 (counter; there are 4 "slots").
+@ $6F9F label=LaserBeam_Slot
+  $6F9F,$04 If the slot is not in use, jump to #R$6FA7.
+  $6FA3,$01 #REGhl=#REGhl+#REGde (move onto the next slot).
+  $6FA4,$02 Decrease counter by one and loop back to #R$6F9F until counter is zero.
+N $6FA6 All laser beam slots are in use so just return...
+  $6FA6,$01 Return.
+N $6FA7 Initialise a new laser beam.
+@ $6FA7 label=Init_LaserBeam
+  $6FA7,$02 Mark the laser beam slot as "in-use".
+  $6FA9,$01 #REGhl=Laser beam Y position.
+  $6FAA,$05 #REGb=#R$5D00.
+  $6FAF,$02 #REGa=#R$5D01.
+  $6FB1,$02,b$01 Keep only bits 3-7.
+  $6FB3,$02,b$01 Set bits 0 and 2.
+@ $6FBD label=LaserBeam_Left
+  $6FCE,$03 #REGa=#R$5DCE.
+  $6FD1,$02,b$01 Keep only bits 3-5.
+  $6FD3,$02,b$01 Set bits 2 and 7.
+  $6FD8,$03 #REGhl=#R$6FE9.
+  $6FDB,$03 #REGa=#R$5DCE.
+  $6FDE,$02,b$01 Keep only bits 0-1.
+  $6FE6,$03 Jump to #R$681E.
+N $6FE9 All the attributes a laser beam can be.
+@ $6FE9 label=LaserBeam_Attributes
+B $6FE9,$04
 
-  $6FA4,$02 Decrease #REGb by one, and loop back to #R$6F9F until zero.
-  $6FCB,$02 Decrease #REGb by one, and loop back to #R$6FC9 until zero.
+N $6FED Handle drawing the laser beam moving to the right.
+@ $6FED label=LaserBeam_Right
+  $6FED,$01 #REGa=Jetman X position.
+  $6FEE,$02,b$01 Keep only bits 0-2.
+  $6FF0,$01 #REGa=.
+  $6FF7,$02,b$01 Keep only bits 1-7.
+  $6FF9,$01 Store the result in #REGc.
+  $6FFA,$02 Jump to #R$6FBD.
 
-c $6FFC
+c $6FFC Animate: Laser Beam
+@ $6FFC label=LaserBeam_Animate
 
   $706E,$03 #REGa=(IX+$06)
 
@@ -1175,16 +1347,133 @@ E $7308 View the equivalent code in;
   $7325,$01 #REGh=#REGa.
   $7326,$01 Return.
 
-c $7327
-@ $7327 label=MOVE_JETMAN_POS
-  $7327,$06 Copy #R$5D01 to $5DC0
-  $732D,$06 Copy #R$5D02 to $5DC1
-  $7333,$06 Copy #R$5D00 to $5DC2
-  $7339,$01 Return
-  $738B,$02 Decrease #REGb by one, and loop back to #R$737F until zero
-  $73AA,$02 Decrease #REGb by one, and loop back to #R$739E until zero
+c $7327 Store Entity
+E $7327 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9FFB }
+. { #COOKIE$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$75B9 }
+. { #TRANZAM$71ED }
+. LIST#
+@ $7327 label=StoreEntity
+  $7327,$06 Copy actor X position to active actor X position.
+  $732D,$06 Copy actor Y position to active actor Y position.
+  $7333,$06 Copy actor movement to active actor movement.
+  $7339,$01 Return.
 
-c $73B2 Jetman Fly
+c $733A Controls: Kempston Joystick
+E $733A View the equivalent code in;
+. #LIST
+. { #ATICATAC$0000 }
+. { #COOKIE$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$75CC }
+. { #TRANZAM$0000 }
+. LIST#
+@ $733A label=ReadKempstonJoystick
+R $733A A Joystick controls
+  $733A,$03 #REGa=controls.
+  $733C,$01 Flip the bits.
+  $733D,$01 Return.
+
+c $733E Input: Left/ Right
+N $733E Check if this should be read from the Kempston joystick instead?
+@ $733E label=ReadInputLR
+  $733E,$07 If #R$5CF3 indicates the control method is via the Kempston joystick then jump to #R$733A.
+N $7345 Check for "Left" and "Right" button inputs for port #N$FE.
+  $7345,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$FE | SHIFT | Z | X | C | V }
+. TABLE#
+  $734B,$02,b$01 Strip out the SHIFT key.
+  $734D,$04 If none of these keys have been pressed, jump to #R$7359.
+  $7351,$02,b$01 Keep only bits 2 ("X") and 4 ("V").
+  $7353,$04 If neither key is pressed jump to #R$736B.
+  $7357,$02 Jump to #R$736E.
+N $7359 Check for "Left" and "Right" button input for port #N$7F.
+@ $7359 label=ReadInputLR_7F
+  $7359,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7F | SPACE | FULL-STOP | M | N | B }
+. TABLE#
+  $735F,$02,b$01 Strip out the SPACE key.
+  $7361,$04 If none of these keys have been pressed, jump to #R$7371.
+  $7365,$02,b$01 Keep only bits 2 ("M") and 4 ("B").
+  $7367,$04 If neither key is pressed jump to #R$736E.
+N $736B Return "Left" button pressed.
+@ $736B label=Input_Left
+  $736B,$02 #REGa=#EVAL($FD, $02, $08).
+  $736D,$01 Return.
+N $736E Return "Right" button pressed.
+@ $736E label=Input_Right
+  $736E,$02 #REGa=#EVAL($FE, $02, $08).
+  $7370,$01 Return.
+N $7371 Return "no input".
+@ $7371 label=Input_None
+  $7371,$02 #REGa=#EVAL($FF, $02, $08).
+  $7373,$01 Return.
+
+c $7374 Input: Fire
+N $7374 Check if this should be read from the Kempston joystick instead?
+@ $7374 label=ReadInputFire
+  $7374,$07 If #R$5CF3 indicates the control method is via the Kempston joystick then jump to #R$733A.
+N $737B Check for "Fire" button input.
+  $737B,$02 #REGb=#N$02 (counter for checking two ports).
+  $737D,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { $FD | A | S | D | F | G }
+. { $BF | ENTER | L | K | J | H }
+. TABLE#
+@ $737F label=ReadInputFire_Loop
+  $7383,$02,b$01 Keep only bits 0-4.
+  $7385,$04 If any buttons were pressed jump to #R$7390.
+  $7389,$02 #REGa=switch to port #N$BF.
+  $738B,$02 Decrease counter by one and loop back to #R$737F until counter is zero.
+N $738D Return "no input".
+  $738D,$02 #REGa=#EVAL($FF, $02, $08).
+  $738F,$01 Return.
+N $7390 Return "Fire" button pressed.
+@ $7390 label=Input_Fire
+  $7390,$02 #REGa=#EVAL($EF, $02, $08).
+  $7392,$01 Return.
+
+c $7393 Input: Thrust
+N $7393 Check if this should be read from the Kempston joystick instead?
+@ $7393 label=ReadInputThrust
+  $7393,$07 If #R$5CF3 indicates the control method is via the Kempston joystick then jump to #R$733A.
+  $739A,$02 #REGb=#N$02 (counter for checking two ports).
+  $739C,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { $FB | Q | W | E | R | T }
+. { $DF | P | O | I | U | Y }
+. TABLE#
+@ $739E label=ReadInputThrust_Loop
+  $73A2,$02,b$01 Keep only bits 0-4.
+  $73A4,$04 If any buttons were pressed jump to #R$73AF.
+  $73A8,$02 #REGa=switch to port #N$DF.
+  $73AA,$02 Decrease counter by one and loop back to #R$737F until counter is zero.
+N $73AC Return "no input".
+  $73AC,$02 #REGa=#EVAL($FF, $02, $08).
+  $73AE,$01 Return.
+N $73AF Return "Thrust" button pressed.
+@ $73AF label=Input_Thrust
+  $73AF,$02 #REGa=#EVAL($F7, $02, $08).
+  $73B1,$01 Return.
+
+c $73B2 Game Play Starts
+@ $73B2 label=GamePlayStarts
+
+c $73D3 Jetman Fly
+@ $73D3 label=JetmanThrust
 
   $7445,$02 Decrease #REGb by one, and loop back to #R$7439 until zero
 
@@ -1217,12 +1506,17 @@ E $76FA View the equivalent code in;
 . { #TRANZAM$0000 }
 . LIST#
 @ $76FA label=JetmanSpritesTable
-  $76FA,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $76FA) / 2)).
+  $76FA,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) / $02).
 L $76FA,$02,$10
 
 w $771A
 
-c $7758
+c $773A Mask Sprite
+@ $773A label=MaskSprite
+
+@ $777C label=ActorUpdateSizeFlipReg
+@ $777D label=ActorUpdateSize
+@ $7790 label=ActorUpdateHeightAndMask
 
 b $7796 JetMan Graphics
 N $7796 Flying Frame Right 1

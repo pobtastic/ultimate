@@ -116,6 +116,7 @@ B $5E21,$01
 
 g $5E22 "Get Ready" Delay Counter
 @ $5E22 label=PlayDelay_Counter
+B $5E22,$01
 
 g $5E23
   $5E23,$0A,$01
@@ -485,11 +486,11 @@ N $613B This routine "swaps" the data between #REGde and #REGhl.
   $6143,$03 Call #R$6159.
   $6146,$03 #REGhl=#R$5E23.
   $6149,$03 #REGde=#R$5E2D.
-  $614C,$02 #REGb=#N$0A.
+  $614C,$02 #REGb=#N$0A (counter).
   $614E,$03 Call #R$6159.
   $6151,$03 #REGhl=#R$5E44.
   $6154,$03 #REGde=#R$5E8C.
-  $6157,$02 #REGb=#N$28.
+  $6157,$02 #REGb=#N$28 (counter).
 N $6159 This looks complicated but it's just grabbing the data from #REGde, grabbing the data from #REGhl, and writing the others data to each one.
 @ $6159 label=ChangePlayer_Loop
   $6159,$01 #REGa=#REGde.
@@ -1000,7 +1001,10 @@ c $679C
 
 c $67AE
 c $698F
+c $69A8
 c $69E8
+
+c $6A1A
 
 c $6A98
   $6A98,$03 Call #R$64ED.

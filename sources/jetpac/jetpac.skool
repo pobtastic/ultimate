@@ -374,19 +374,19 @@ g$5D28 DEFB $7D                     ; Frequency is #N$0C or #N$0D.
  $5D29 DEFB $4C                     ; Length is always set to #N$04.
  $5D2A DEFB $CC,$CC,$CC,$2C,$35,$0E ; Unused.
 
-; Rocket Parameters
-@label=Rocket_State
+; Active Player Rocket Parameters
+@label=ActivePlayerRocket_State
 g$5D30 DEFB $00      ; Movement: #TABLE(default,centre,centre,centre) { =h On
                      ; Pad | =h Up | =h Down } { #N$09 | #N$0A | #N$0B } TABLE#
-@label=Rocket_Pos_X
+@label=ActivePlayerRocket_Pos_X
  $5D31 DEFB $00      ; X Position.
-@label=Rocket_Base_Pos_Y
+@label=ActivePlayerRocket_Base_Pos_Y
  $5D32 DEFB $05      ; Y Position (base module).
-@label=Rocket_Attribute
+@label=ActivePlayerRocket_Attribute
  $5D33 DEFB $00      ; Colour Attribute.
-@label=Num_Rocket_Pieces
+@label=ActivePlayerNum_Rocket_Pieces
  $5D34 DEFB $00      ; Number of rocket pieces on the pad.
-@label=Num_Fuel_Pods
+@label=ActivePlayerNum_Fuel_Pods
  $5D35 DEFB $3A      ; Number of collected fuel pods.
  $5D36 DEFB $DA      ; Unused.
  $5D37 DEFB $30      ; Unused (always #N$1C).
@@ -489,46 +489,82 @@ g$5D78 DEFB $4A
 g$5D88 DEFB $47,$22,$3B,$AC,$31,$32,$0E,$00
  $5D90 DEFB $00,$0C,$00,$00,$2C,$31,$30,$0E
 
-; ???
-g$5D98 DEFB $00,$00,$0A,$00,$00,$3B,$22,$14
- $5DA0 DEFB $01,$50,$4C,$45,$41,$53,$45,$20
- $5DA8 DEFB $57,$41,$49,$54,$22,$14,$00,$3A
+; Inactive Player Rocket Parameters
+@label=InactivePlayerRocket_State
+g$5D98 DEFB $00      ; Movement: #TABLE(default,centre,centre,centre) { =h On
+                     ; Pad | =h Up | =h Down } { #N$09 | #N$0A | #N$0B } TABLE#
+@label=InactivePlayerRocket_Pos_X
+ $5D99 DEFB $00      ; X Position.
+@label=InactivePlayerRocket_Base_Pos_Y
+ $5D9A DEFB $0A      ; Y Position (base module).
+@label=InactivePlayerRocket_Attribute
+ $5D9B DEFB $00      ; Colour Attribute.
+@label=InactivePlayerNum_Rocket_Pieces
+ $5D9C DEFB $00      ; Number of rocket pieces on the pad.
+@label=InactivePlayerNum_Fuel_Pods
+ $5D9D DEFB $3B      ; Number of collected fuel pods.
+ $5D9E DEFB $22      ; Unused.
+ $5D9F DEFB $14      ; Unused (always #N$1C).
+
+; Inactive Player Rocket module (fuel/part)
+g$5DA0 DEFB $01,$50,$4C,$45,$41,$53,$45,$20
+
+; Inactive Player Collectible/ Rocket middle
+g$5DA8 DEFB $57,$41,$49,$54,$22,$14,$00,$3A
  $5DB0 DEFB $F5,$AC,$30,$0E,$00,$00,$00,$00
  $5DB8 DEFB $00,$2C,$30,$0E,$00,$00,$00,$00
- $5DC0 DEFB $00,$3A,$EF
 
-; Game status buffer entry at 5DC3
-g$5DC3 DEFB $22
+; Actor Buffer
+@label=Buffer_Actor
+g$5DC0 DEFB $00      ; X Position.
+ $5DC1 DEFB $3A      ; Y Position.
+ $5DC2 DEFB $EF      ; Movement direction.
+ $5DC3 DEFB $22      ; Height (in pixels).
+ $5DC4 DEFB $22      ; Width (in bytes).
+ $5DC5 DEFB $AA      ; Height?
+ $5DC6 DEFB $3A      ; Height?
+ $5DC7 DEFB $D9      ; Flying movement/ direction?
 
-; Game status buffer entry at 5DC4
-g$5DC4 DEFB $22
+; Jetman Fly Counter?
+@label=JetmanFlyCounter
+g$5DC8 DEFB $30
 
-; Game status buffer entry at 5DC5
-g$5DC5 DEFB $AA
+; Alien Direction
+@label=AlienDirection
+g$5DC9 DEFB $0E
 
-; Game status buffer entry at 5DC6
-g$5DC6 DEFB $3A,$D9,$30,$0E
-
-; Game status buffer entry at 5DCA
+; Jetman Speed Modifier
+@label=JetmanSpeedModifier
 g$5DCA DEFB $00
 
-; ???
+; Current Alien ID
+@label=ActiveAlien
 g$5DCB DEFB $00
 
-; ????
-g$5DCC DEFB $00,$00
+; Game Timer
+;
+; 16-bit counter starting at 0x0000 and counting +1 (each time a sprite is moved or redrawn), although sometimes
+;       it will increment + #N$02. This continues until the whole game is over - for both 1 and 2 player games. Counter
+;       loops around after reaching #N$FFFF.
+@label=GameTimer
+g$5DCC DEFW $0000
 
 ; Random Number
+;
+; Value is calculated using the 16-bit game timer LSB value, which is used to
+; fetch a byte from the ROM (between addresses #N$00 and #N$FF), then by adding
+; the current #REGr.
 @label=Random_Number
 g$5DCE DEFB $00
 
-; LOOKING2
-g$5DCF DEFB $3A,$DA
+; Actor Screen Position
+g$5DCF DEFB $3A      ; X Position.
+ $5DD0 DEFB $DA      ; Y Position.
 
 ; Active Player
 ;
 ; Which player is currently active.
-@label=ACTIVE_PLAYER
+@label=Flag_ActivePlayer
 g$5DD1 DEFB $30      ; #TABLE(default,centre,centre) { =h Value | =h Player }
                      ; { $00 | 1UP }
                      ; { $FF | 2UP }
@@ -540,40 +576,51 @@ g$5DD2 DEFB $0E
 ; ???
 g$5DD3 DEFB $00
 
-; ???
+; Last Frame
+;
+; #HTML(Holds a copy of the last <a
+; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+@label=LastFrame
 g$5DD4 DEFB $00
 
-; ???
+; Frame Updated
+;
+; Has the frame been updated? #N$00=No #N$01=Yes.
+@label=FrameUpdated
 g$5DD5 DEFB $00
 
-; $C7 / $47 before game starts then $00?
+; Menu Item Attribute
+;
+; Current menu item colour attribute.
+@label=Current_MenuAttr
 g$5DD6 DEFB $00
 
-; Countdown timer for interval before game starts
-@label=INTERVAL_COUNTDOWN
-g$5DD7 DEFB $00,$3A,$F5,$AC,$35,$0E,$00,$00
- $5DDF DEFB $05,$00,$00,$2C,$30,$0E,$00,$00
- $5DE7 DEFB $00,$00,$00,$3A,$EF,$22,$22,$AF
- $5DEF DEFB $3A
+; "Get Ready" Delay Counter
+@label=PlayDelay_Counter
+g$5DD7 DEFB $00
+ $5DD8 DEFB $3A,$F5,$AC,$35,$0E,$00,$00,$05
+ $5DE0 DEFB $00,$00,$2C,$30,$0E,$00,$00,$00
+ $5DE8 DEFB $00,$00,$3A,$EF,$22,$22,$AF,$3A
 
-; Player Current Level
-@label=CURRENT_LEVEL
+; Active Player Level
+@label=ActivePlayer_Level
 g$5DF0 DEFB $F5
 
-; Player 1 Lives
-@label=1UP_CURRENT_LIVES
+; Active Player Lives
+@label=ActivePlayer_Lives
 g$5DF1 DEFB $AC
 
-; LOOKING3
-@label=LOOKING3
-g$5DF2 DEFB $35,$0E,$00,$00,$05,$00
+; Unused
+s$5DF2 DEFB $35,$0E,$00,$00,$05,$00
 
-; ?????
+; Inactive Player Level
+@label=InactivePlayer_Level
 g$5DF8 DEFB $00
 
-; Player 2 Lives
-@label=2UP_CURRENT_LIVES
-g$5DF9 DEFB $2C,$30,$0E,$00,$00,$00,$00
+; Inactive Player Lives
+@label=InactivePlayer_Lives
+g$5DF9 DEFB $2C
+ $5DFA DEFB $30,$0E,$00,$00,$00,$00
 
 ; Data block at 5E00
 b$5E00 DEFB $00,$3A,$EF,$22,$22,$AF,$3A,$F5
@@ -650,11 +697,12 @@ g$6000 DEFB $04,$80,$60,$1B ; Middle.
  $6008 DEFB $04,$30,$48,$23 ; Left.
  $600C DEFB $04,$D0,$30,$23 ; Right.
 
-; Game status buffer entry at 6010
+; Player Initialisation Data
+@label=Initialisation_Player
 g$6010 DEFB $01,$80,$B7,$47,$00,$00,$00,$24
 
-; New Game Parameters
-@label=INIT_GAME_ENV
+; Rocket Initialisation Data
+@label=Initialisation_Rocket_Base
 g$6018 DEFB $09
  $6019 DEFB $A8
  $601A DEFB $B7
@@ -663,6 +711,7 @@ g$6018 DEFB $09
  $601D DEFB $00
  $601E DEFB $00
  $601F DEFB $1C
+@label=Initialisation_Rocket_Top
  $6020 DEFB $04
  $6021 DEFB $30
  $6022 DEFB $47
@@ -671,15 +720,23 @@ g$6018 DEFB $09
  $6025 DEFB $00
  $6026 DEFB $10
  $6027 DEFB $18
+@label=Initialisation_Rocket_Middle
  $6028 DEFB $04
  $6029 DEFB $80
+ $602A DEFB $5F
+ $602B DEFB $47
+ $602C DEFB $01
+ $602D DEFB $00
+ $602E DEFB $08
+ $602F DEFB $18
 
-; Data block at 602A
-b$602A DEFB $5F,$47,$01,$00,$08,$18,$04,$00
- $6032 DEFB $20,$43,$01,$00,$18,$18
+; Fuel Pod Initialisation Data
+@label=Initialisation_FuelPod
+g$6030 DEFB $04,$00,$20,$43,$01,$00,$18,$18
 
-; Data block at 6038
-b$6038 DEFB $0E,$00,$20,$00,$00,$00,$00,$18
+; Collectible Initialisation Data
+@label=Initialisation_Collectible
+g$6038 DEFB $0E,$00,$20,$00,$00,$00,$00,$18
 
 ; Rights Messaging
 @label=Message_Rights
@@ -725,40 +782,43 @@ c$608A XOR A         ; Set the border to black.
 ; { #TRANZAM$0000 }
 ; LIST#
 
-; Routine at 60A9
+; Initialise New Level
 ;
 ; Used by the routines at #R$6333 and #R$66C7.
-c$60A9 LD A,($5DF0)  ; #REGa=#R$5DF0
- $60AC AND $03       ; {If #R$5DF0 is divisible by $03 ... jump to init with a
- $60AE JR NZ,$60BA   ; "broken ship"}
- $60B0 CALL $60CD    ;
- $60B3 LD HL,$5DF1   ; {Increase the live counter #R$5DF1 by one
+@label=LevelNew
+c$60A9 LD A,($5DF0)  ; #REGa=#R$5DF0.
+ $60AC AND %00000011 ; {If #R$5DF0 % $04 (every 4th level) ... then continue
+ $60AE JR NZ,$60BA   ; and reset the rocket else jump to #R$60BA.}
+ $60B0 CALL $60CD    ; Call #R$60CD.
+ $60B3 LD HL,$5DF1   ; {Increase the live counter #R$5DF1 by one.
  $60B6 INC (HL)      ; }
- $60B7 CALL $619A    ;
+ $60B7 CALL $619A    ; Call #R$619A.
 ; This entry point is used by the routine at #R$60DD.
-*$60BA CALL $6929    ;
- $60BD CALL $608A    ;
- $60C0 CALL $766D    ;
- $60C3 CALL $70A4    ;
+@label=LevelInitialisation
+*$60BA CALL $6929    ; Call #R$6929.
+ $60BD CALL $608A    ; Call #R$608A.
+ $60C0 CALL $766D    ; Call #R$766D.
+ $60C3 CALL $70A4    ; Call #R$70A4.
  $60C6 LD A,($5C78)  ; #HTML(#REGa=<a
                      ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
- $60C9 LD ($5DD4),A  ; Write #REGa to #R$5DD4
- $60CC RET           ; Return
+ $60C9 LD ($5DD4),A  ; Write #REGa to #R$5DD4.
+ $60CC RET           ; Return.
 
-; Routine at 60CD
+; Reset Rocket
 ;
 ; Used by the routines at #R$60A9 and #R$630F.
-c$60CD LD HL,$6018   ; #REGhl Source address: #R$6018
- $60D0 LD DE,$5D30   ; #REGde Target address: #R$5D30
- $60D3 LD BC,$0018   ; #REGbc=loop counter
- $60D6 LDIR          ; Action! Copy source to target, decrease counter, repeat
-                     ; until zero
- $60D8 LD A,$08      ; #REGa=$08
- $60DA JP $6EF9      ; Jump to #R$6EF9
+@label=RocketReset
+c$60CD LD HL,$6018   ; {Copy #N$18 bytes of data from #R$6018 to #R$5D30.
+ $60D0 LD DE,$5D30   ;
+ $60D3 LD BC,$0018   ;
+ $60D6 LDIR          ; }
+ $60D8 LD A,$08      ; #REGa=#N$08.
+ $60DA JP $6EF9      ; Jump to #R$6EF9.
 
-; Routine at 60DD
+; Reset Player
 ;
 ; Used by the routine at #R$68B1.
+@label=PlayerReset
 c$60DD LD HL,$5D48   ;
  $60E0 LD B,$0A      ;
  $60E2 CALL $6660    ;
@@ -821,28 +881,44 @@ c$60DD LD HL,$5D48   ;
 *$6164 CALL $6149    ;
  $6167 JP $61F5      ;
 
-; Routine at 616A
+; 1UP/ 2UP Swapper.
 ;
 ; Used by the routines at #R$60DD and #R$630F.
-c$616A LD HL,$5DF0                      ; #REGhl=#R$5DF0
- $616D LD DE,$5DF8                      ; #REGde=#R$5DF8
- $6170 LD B,$02                         ; #REGb=$02
- $6172 CALL $617D                       ;
- $6175 LD HL,$5D30                      ; #REGhl=#R$5D30
- $6178 LD DE,$5D98                      ; #REGde=#R$5D98
- $617B LD B,$18                         ; #REGb=$18
-*$617D LD A,(DE)                        ; #REGa=#REGde
- $617E LD C,(HL)                        ; #REGc=#REGhl
- $617F LD (HL),A                        ; Writes #REGa to #REGhl
- $6180 LD A,C                           ; #REGa=#REGc
- $6181 LD (DE),A                        ; Writes #REGa to #REGde
- $6182 INC HL                           ; Increase #REGhl by one
- $6183 INC DE                           ; Increase #REGde by one
- $6184 DJNZ $617D                       ; Decrease #REGb by one, jump to
-                                        ; #R$617D if not zero
- $6186 RET                              ; Return
- $6187 DEFB $47                         ;
- $6188 DEFM "GAME OVER PLAYER ","1"+$80 ; GAME OVER PLAYER 1
+;
+; .
+;
+; This routine "swaps" the data between #REGde and #REGhl.
+@label=ChangePlayer
+c$616A LD HL,$5DF0   ; #REGhl=#R$5DF0.
+ $616D LD DE,$5DF8   ; #REGde=#R$5DF8.
+ $6170 LD B,$02      ; #REGb=#N$02 (counter).
+ $6172 CALL $617D    ; Call #R$617D.
+ $6175 LD HL,$5D30   ; #REGhl=#R$5D30.
+ $6178 LD DE,$5D98   ; #REGde=#R$5D98.
+ $617B LD B,$18      ; #REGb=#N$18 (counter).
+; This looks complicated but it's just grabbing the data from #REGde, grabbing
+; the data from #REGhl, and writing the others data to each one.
+@label=ChangePlayer_Loop
+*$617D LD A,(DE)     ; #REGa=#REGde.
+ $617E LD C,(HL)     ; #REGc=#REGhl.
+ $617F LD (HL),A     ; Store #REGa at #REGhl.
+ $6180 LD A,C        ; {Store #REGc at #REGde.
+ $6181 LD (DE),A     ; }
+ $6182 INC HL        ; {Increment both #REGhl and #REGde by one.
+ $6183 INC DE        ; }
+ $6184 DJNZ $617D    ; Decrease counter by one and loop back to #R$617D until
+                     ; counter is zero.
+ $6186 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$6416 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$613B }
+; LIST#
+
+; Routine at 6187
+c$6187 DEFM $47                         ; {"GAME OVER PLAYER 1" (#N(#PEEK(#PC))
+ $6188 DEFM "GAME OVER PLAYER ","1"+$80 ; is the attribute).}
 ; This entry point is used by the routines at #R$60A9, #R$60DD and #R$66EB.
 *$619A LD HL,$6010                      ; #REGhl Source address: #R$6010
  $619D LD DE,$5D00                      ; #REGde Target address: #R$5D00
@@ -859,33 +935,38 @@ c$616A LD HL,$5DF0                      ; #REGhl=#R$5DF0
  $61B6 DEC A                            ;
  $61B7 LD ($5DF1),A                     ; }
  $61BA JP $70A4                         ; Jump to #R$70A4
-; This entry point is used by the routine at #R$73B2.
-*$61BD LD A,($5DD1)                     ; #REGa=#R$5DD1
- $61C0 AND A                            ;
- $61C1 JR NZ,$61E0                      ;
- $61C3 LD HL,$0018                      ; #REGhl=$0018
-*$61C6 CALL $720E                       ;
- $61C9 LD B,$03                         ; #REGb=$03
-*$61CB LD A,(HL)                        ; #REGa=(#REGhl)
- $61CC OR $80                           ;
- $61CE LD (HL),A                        ; Push #REGa into the memory location
-                                        ; at #REGhl
- $61CF INC HL                           ; Increase #REGhl by one
- $61D0 DJNZ $61CB                       ; Decrease #REGb by one, jump to
-                                        ; #R$61CB if not zero
- $61D2 RET                              ; Return
-; This entry point is used by the routine at #R$73B2.
-*$61D3 CALL $720E                       ;
- $61D6 LD B,$03                         ;
-*$61D8 LD A,(HL)                        ;
- $61D9 AND $7F                          ;
- $61DB LD (HL),A                        ;
- $61DC INC HL                           ;
- $61DD DJNZ $61D8                       ; Decrease #REGb by one, jump to
-                                        ; #R$61D8 if not zero
- $61DF RET                              ;
-*$61E0 LD HL,$00D8                      ;
- $61E3 JR $61C6                         ;
+
+; Routine at 61BD
+;
+; Used by the routine at #R$73B2.
+c$61BD LD A,($5DD1)  ; #REGa=#R$5DD1
+ $61C0 AND A         ;
+ $61C1 JR NZ,$61E0   ;
+ $61C3 LD HL,$0018   ; #REGhl=$0018
+; This entry point is used by the routine at #R$61D3.
+*$61C6 CALL $720E    ;
+ $61C9 LD B,$03      ; #REGb=$03
+*$61CB LD A,(HL)     ; #REGa=(#REGhl)
+ $61CC OR $80        ;
+ $61CE LD (HL),A     ; Push #REGa into the memory location at #REGhl
+ $61CF INC HL        ; Increase #REGhl by one
+ $61D0 DJNZ $61CB    ; Decrease #REGb by one, jump to #R$61CB if not zero
+ $61D2 RET           ; Return
+
+; Routine at 61D3
+;
+; Used by the routine at #R$73B2.
+c$61D3 CALL $720E    ;
+ $61D6 LD B,$03      ;
+*$61D8 LD A,(HL)     ;
+ $61D9 AND $7F       ;
+ $61DB LD (HL),A     ;
+ $61DC INC HL        ;
+ $61DD DJNZ $61D8    ; Decrease #REGb by one, jump to #R$61D8 if not zero
+ $61DF RET           ;
+; This entry point is used by the routine at #R$61BD.
+*$61E0 LD HL,$00D8   ;
+ $61E3 JR $61C6      ;
 
 ; Security Check
 ;
@@ -1147,26 +1228,28 @@ c$6333 LD HL,$5CF4   ; #REGhl=#R$5CF4
  $634D XOR A         ; Clear #REGa (sets to $00)
  $634E LD ($5DCB),A  ; Writes #REGa to #R$5DCB
 ; This entry point is used by the routine at #R$6965.
-*$6351 LD A,($5C78)  ;
- $6354 LD C,A        ;
- $6355 LD A,($5DD4)  ;
+*$6351 LD A,($5C78)  ; {#HTML(Compare <a
+ $6354 LD C,A        ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>
+ $6355 LD A,($5DD4)  ; and #R$5DD4.)}
  $6358 CP C          ;
  $6359 CALL NZ,$6965 ;
- $635C LD HL,$69A8   ;
- $635F PUSH HL       ;
- $6360 LD HL,$6374   ;
+ $635C LD HL,$69A8   ; {Stash #R$69A8 on the stack.
+ $635F PUSH HL       ; }
+ $6360 LD HL,$6374   ; #REGhl=#R$6374.
  $6363 LD A,(IX+$00) ;
- $6366 RLCA          ;
- $6367 AND $7E       ;
+ $6366 RLCA          ; #REGa=#REGa * #N$02.
+ $6367 AND %01111110 ; Keep only bits 1-6.
 ; This entry point is used by the routine at #R$6498.
-*$6369 LD C,A        ;
- $636A LD B,$00      ;
- $636C ADD HL,BC     ;
+*$6369 LD C,A        ; {Create an offset in #REGbc.
+ $636A LD B,$00      ; }
+ $636C ADD HL,BC     ; {#REGhl=the address held at #R$6374 + offset.
  $636D LD A,(HL)     ;
  $636E INC HL        ;
  $636F LD H,(HL)     ;
- $6370 LD L,A        ;
- $6371 JP $5CB0      ;
+ $6370 LD L,A        ; }
+ $6371 JP $5CB0      ; #HTML(Jump to <a
+                     ; href="https://skoolkid.github.io/rom/asm/5CB0.html">NMIADD</a>
+                     ; which will jump to the address in #REGhl.)
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$7D9A }
@@ -1176,7 +1259,8 @@ c$6333 LD HL,$5CF4   ; #REGhl=#R$5CF4
 ; { #TRANZAM$5FEF }
 ; LIST#
 
-; Data block at 6374
+; Jump Table
+@label=JumpTable
 w$6374 DEFW $691B
  $6376 DEFW $73B2
  $6378 DEFW $7571
@@ -1795,9 +1879,10 @@ w$67C3 DEFW $7CCE    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
 ; { #TRANZAM$0000 }
 ; LIST#
 
-; Routine at 67ED
+; Sounds: Thrusters
 ;
 ; Used by the routines at #R$63DA, #R$66C7 and #R$66EB.
+@label=SoundsThrusters
 c$67ED LD A,(IX+$02) ;
  $67F0 RRCA          ;
  $67F1 RRCA          ;
@@ -1808,32 +1893,56 @@ c$67ED LD A,(IX+$02) ;
  $67F8 LD D,A        ;
  $67F9 LD C,$10      ;
  $67FB JR $6812      ;
-; This entry point is used by the routine at #R$651F.
-*$67FD LD D,$20      ;
+
+; Sounds: Rocket Build
+;
+; Used by the routine at #R$651F.
+@label=SoundsRocketBuild
+c$67FD LD D,$20      ;
  $67FF LD C,$50      ;
  $6801 JR $6812      ;
-; This entry point is used by the routine at #R$651F.
-*$6803 LD D,$50      ;
+
+; Sounds: Pickup Fuel
+;
+; Used by the routine at #R$651F.
+@label=SoundsPickupFuel
+c$6803 LD D,$50      ;
  $6805 LD C,$28      ;
  $6807 JR $6812      ;
-; This entry point is used by the routines at #R$6498 and #R$73B2.
-*$6809 LD D,$30      ;
+
+; Sounds: Pickup Item
+;
+; Used by the routines at #R$6498 and #R$73B2.
+@label=SoundsPickupItem
+c$6809 LD D,$30      ;
  $680B LD C,$40      ;
-*$680D LD A,$10      ;
- $680F OUT ($FE),A   ;
- $6811 LD B,D        ;
-*$6812 DJNZ $6812    ; Decrease #REGb by one, and loop back to #R$6812 until
-                     ; zero
- $6814 XOR A         ;
- $6815 OUT ($FE),A   ;
- $6817 LD B,D        ;
-*$6818 DJNZ $6818    ; Decrease #REGb by one, and loop back to #R$6818 until
-                     ; zero
+
+; Play square wave sound
+;
+; .
+;
+; D Duration of wave
+@label=PlaySquareWave
+c$680D LD A,$10      ; {#REGa=#N$10 (speaker on = bit 4).
+ $680F OUT ($FE),A   ; }
+ $6811 LD B,D        ; {Decrease duration by one and loop back to #R$6812 until
+; This entry point is used by the routines at #R$67ED, #R$67FD and #R$6803.
+@label=PlaySquareWave_Loop
+*$6812 DJNZ $6812    ; counter is zero.}
+ $6814 XOR A         ; {Speaker off.
+ $6815 OUT ($FE),A   ; }
+ $6817 LD B,D        ; {Decrease duration by one and loop back to #R$6818 until
+@label=Silence_Loop
+*$6818 DJNZ $6818    ; counter is zero.}
  $681A DEC C         ;
  $681B JR NZ,$680D   ;
- $681D RET           ;
-; This entry point is used by the routine at #R$6DD3.
-*$681E LD C,$08      ;
+ $681D RET           ; Return.
+
+; Sounds: Laser Beam
+;
+; Used by the routine at #R$6F91.
+@label=SoundsLaserBeam
+c$681E LD C,$08      ;
 *$6820 LD B,C        ;
 *$6821 DJNZ $6821    ; Decrease #REGb by one, and loop back to #R$6821 until
                      ; zero
@@ -1848,26 +1957,25 @@ c$67ED LD A,(IX+$02) ;
  $682E LD A,C        ;
  $682F CP $38        ;
  $6831 JR NZ,$6820   ;
- $6833 RET           ;
-; This entry point is used by the routines at #R$63DA, #R$6AEF, #R$6CF5 and
-; #R$6DD3.
-*$6834 LD C,A        ;
- $6835 SLA C         ;
- $6837 LD B,$00      ;
- $6839 LD DE,$5D28   ;
- $683C LD HL,$6847   ;
- $683F ADD HL,BC     ;
- $6840 LD A,(HL)     ;
- $6841 LD (DE),A     ;
- $6842 INC HL        ;
- $6843 INC DE        ;
- $6844 LD A,(HL)     ;
- $6845 LD (DE),A     ;
- $6846 RET           ;
- $6847 INC C         ;
- $6848 INC B         ;
- $6849 DEC C         ;
- $684A INC B         ;
+ $6833 RET           ; Return.
+
+; Set Explosion Sound Defaults
+;
+; Used by the routines at #R$63DA, #R$6AEF, #R$6CF5 and #R$6DD3.
+c$6834 LD C,A               ;
+ $6835 SLA C                ;
+ $6837 LD B,$00             ;
+ $6839 LD DE,$5D28          ;
+ $683C LD HL,$6847          ;
+ $683F ADD HL,BC            ;
+ $6840 LD A,(HL)            ;
+ $6841 LD (DE),A            ;
+ $6842 INC HL               ;
+ $6843 INC DE               ;
+ $6844 LD A,(HL)            ;
+ $6845 LD (DE),A            ;
+ $6846 RET                  ;
+ $6847 DEFB $0C,$04,$0D,$04 ;
 
 ; Routine at 684B
 c$684B DEC (IX+$01)  ;
@@ -2901,79 +3009,97 @@ c$6DD3 CALL $7327     ;
  $6F8D DEC C          ;
  $6F8E JR NZ,$6F5A    ;
  $6F90 RET            ;
-; This entry point is used by the routine at #R$73B2.
-*$6F91 LD A,($5C78)   ; #HTML(#REGa=<a
-                      ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
- $6F94 AND $03        ;
- $6F96 RET NZ         ;
- $6F97 LD HL,$5D08    ;
- $6F9A LD DE,$0008    ;
- $6F9D LD B,$04       ;
-*$6F9F LD A,(HL)      ;
- $6FA0 AND A          ;
- $6FA1 JR Z,$6FA7     ;
- $6FA3 ADD HL,DE      ;
- $6FA4 DJNZ $6F9F     ; Decrease #REGb by one, and loop back to #R$6F9F until
-                      ; zero.
- $6FA6 RET            ;
-*$6FA7 LD (HL),$10    ;
- $6FA9 INC HL         ;
- $6FAA LD DE,$5D00    ;
- $6FAD LD A,(DE)      ;
- $6FAE LD B,A         ;
- $6FAF INC DE         ;
- $6FB0 LD A,(DE)      ;
- $6FB1 AND $F8        ;
- $6FB3 OR $05         ;
- $6FB5 LD C,A         ;
- $6FB6 BIT 6,B        ;
- $6FB8 JR Z,$6FED     ;
- $6FBA SUB $08        ;
- $6FBC LD C,A         ;
-*$6FBD INC DE         ;
- $6FBE LD A,(DE)      ;
- $6FBF SUB $0D        ;
- $6FC1 LD (HL),A      ;
- $6FC2 INC HL         ;
- $6FC3 LD B,$03       ;
- $6FC5 LD (HL),C      ;
- $6FC6 LD A,C         ;
- $6FC7 AND $FB        ;
-*$6FC9 INC HL         ;
- $6FCA LD (HL),A      ;
- $6FCB DJNZ $6FC9     ; Decrease #REGb by one, and loop back to #R$6FC9 until
-                      ; zero.
- $6FCD INC HL         ;
- $6FCE LD A,($5DCE)   ;
- $6FD1 AND $38        ;
- $6FD3 OR $84         ;
- $6FD5 LD (HL),A      ;
- $6FD6 INC HL         ;
- $6FD7 EX DE,HL       ;
- $6FD8 LD HL,$6FE9    ;
- $6FDB LD A,($5DCE)   ;
- $6FDE AND $03        ;
- $6FE0 LD C,A         ;
- $6FE1 LD B,$00       ;
- $6FE3 ADD HL,BC      ;
- $6FE4 LD A,(HL)      ;
- $6FE5 LD (DE),A      ;
- $6FE6 JP $681E       ;
- $6FE9 LD B,A         ;
- $6FEA LD B,E         ;
- $6FEB LD B,E         ;
- $6FEC LD B,L         ;
-*$6FED LD A,(DE)      ;
- $6FEE AND $07        ;
- $6FF0 LD A,C         ;
- $6FF1 JR Z,$6FF5     ;
- $6FF3 ADD A,$08      ;
-*$6FF5 ADD A,$10      ;
- $6FF7 AND $FE        ;
- $6FF9 LD C,A         ;
- $6FFA JR $6FBD       ;
 
-; Routine at 6FFC
+; Handler: Laser Beam
+;
+; Used by the routine at #R$73D3.
+;
+; .
+;
+; Only handle the laser beam on every 4th frame.
+@label=Handler_LaserBeam
+c$6F91 LD A,($5C78)         ; #HTML(#REGa=<a
+                            ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+ $6F94 AND %00000011        ; Keep only bits 0-1.
+ $6F96 RET NZ               ; #HTML(Return if <a
+                            ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>
+                            ; is non-zero.)
+; Search for a "free" laser beam slot.
+ $6F97 LD HL,$5D08          ; #REGhl=#R$5D08.
+ $6F9A LD DE,$0008          ; #REGde=#N($0008, $04, $04) (each slot is #N$08
+                            ; bytes).
+ $6F9D LD B,$04             ; #REGb=#N$04 (counter; there are 4 "slots").
+@label=LaserBeam_Slot
+*$6F9F LD A,(HL)            ; {If the slot is not in use, jump to #R$6FA7.
+ $6FA0 AND A                ;
+ $6FA1 JR Z,$6FA7           ; }
+ $6FA3 ADD HL,DE            ; #REGhl=#REGhl+#REGde (move onto the next slot).
+ $6FA4 DJNZ $6F9F           ; Decrease counter by one and loop back to #R$6F9F
+                            ; until counter is zero.
+; All laser beam slots are in use so just return...
+ $6FA6 RET                  ; Return.
+; Initialise a new laser beam.
+@label=Init_LaserBeam
+*$6FA7 LD (HL),$10          ; Mark the laser beam slot as "in-use".
+ $6FA9 INC HL               ; #REGhl=Laser beam Y position.
+ $6FAA LD DE,$5D00          ; {#REGb=#R$5D00.
+ $6FAD LD A,(DE)            ;
+ $6FAE LD B,A               ; }
+ $6FAF INC DE               ; {#REGa=#R$5D01.
+ $6FB0 LD A,(DE)            ; }
+ $6FB1 AND %11111000        ; Keep only bits 3-7.
+ $6FB3 OR %00000101         ; Set bits 0 and 2.
+ $6FB5 LD C,A               ;
+ $6FB6 BIT 6,B              ;
+ $6FB8 JR Z,$6FED           ;
+ $6FBA SUB $08              ;
+ $6FBC LD C,A               ;
+@label=LaserBeam_Left
+*$6FBD INC DE               ;
+ $6FBE LD A,(DE)            ;
+ $6FBF SUB $0D              ;
+ $6FC1 LD (HL),A            ;
+ $6FC2 INC HL               ;
+ $6FC3 LD B,$03             ;
+ $6FC5 LD (HL),C            ;
+ $6FC6 LD A,C               ;
+ $6FC7 AND $FB              ;
+*$6FC9 INC HL               ;
+ $6FCA LD (HL),A            ;
+ $6FCB DJNZ $6FC9           ;
+ $6FCD INC HL               ;
+ $6FCE LD A,($5DCE)         ; #REGa=#R$5DCE.
+ $6FD1 AND %00111000        ; Keep only bits 3-5.
+ $6FD3 OR %10000100         ; Set bits 2 and 7.
+ $6FD5 LD (HL),A            ;
+ $6FD6 INC HL               ;
+ $6FD7 EX DE,HL             ;
+ $6FD8 LD HL,$6FE9          ; #REGhl=#R$6FE9.
+ $6FDB LD A,($5DCE)         ; #REGa=#R$5DCE.
+ $6FDE AND %00000011        ; Keep only bits 0-1.
+ $6FE0 LD C,A               ;
+ $6FE1 LD B,$00             ;
+ $6FE3 ADD HL,BC            ;
+ $6FE4 LD A,(HL)            ;
+ $6FE5 LD (DE),A            ;
+ $6FE6 JP $681E             ; Jump to #R$681E.
+; All the attributes a laser beam can be.
+@label=LaserBeam_Attributes
+ $6FE9 DEFB $47,$43,$43,$45 ;
+; Handle drawing the laser beam moving to the right.
+@label=LaserBeam_Right
+*$6FED LD A,(DE)            ; #REGa=Jetman X position.
+ $6FEE AND %00000111        ; Keep only bits 0-2.
+ $6FF0 LD A,C               ; #REGa=.
+ $6FF1 JR Z,$6FF5           ;
+ $6FF3 ADD A,$08            ;
+*$6FF5 ADD A,$10            ;
+ $6FF7 AND %11111110        ; Keep only bits 1-7.
+ $6FF9 LD C,A               ; Store the result in #REGc.
+ $6FFA JR $6FBD             ; Jump to #R$6FBD.
+
+; Animate: Laser Beam
+@label=LaserBeam_Animate
 c$6FFC LD D,(IX+$01)   ;
  $6FFF LD A,(IX+$02)   ;
  $7002 BIT 2,A         ;
@@ -3073,7 +3199,7 @@ c$6FFC LD D,(IX+$01)   ;
 
 ; Display Lives
 ;
-; Used by the routines at #R$60A9, #R$616A and #R$6707.
+; Used by the routines at #R$60A9, #R$6187 and #R$6707.
 ;
 ; .
 ;
@@ -3143,7 +3269,7 @@ c$70A4 LD HL,$0040    ; {Call #R$7308 with #N($0040, $04, $04) (screen buffer
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$0000 }
-; { #COOKIE$0000 }
+; { #COOKIE$7378 }
 ; { #LUNARJETMAN$0000 }
 ; { #PSSST$7325 }
 ; { #TRANZAM$0000 }
@@ -3428,7 +3554,7 @@ c$71C6 LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
 ; Colourise sprite.
 ;
 ; Used by the routines at #R$63DA, #R$6498, #R$651F, #R$6707, #R$68B1, #R$6CF5,
-; #R$6DD3 and #R$73B2.
+; #R$6DD3 and #R$73D3.
 @label=ColouriseSprite
 c$71CF EXX                     ; Switch to the shadow registers.
  $71D0 LD HL,($5DCF)           ; #REGhl'=actor co-ordinates.
@@ -3477,8 +3603,8 @@ c$71CF EXX                     ; Switch to the shadow registers.
 
 ; Calculate Attribute Address
 ;
-; Used by the routines at #R$616A, #R$62FF, #R$6FFC, #R$716C, #R$71CF and
-; #R$7571.
+; Used by the routines at #R$61BD, #R$61D3, #R$62FF, #R$6FFC, #R$716C, #R$71CF
+; and #R$7571.
 ;
 ;   HL Pixel address co-ordinates
 ; O:HL Attribute buffer address
@@ -3571,7 +3697,7 @@ c$725E PUSH DE       ;
 
 ; Routine at 726A
 ;
-; Used by the routines at #R$63DA, #R$651F, #R$6CF5, #R$6DD3 and #R$73B2.
+; Used by the routines at #R$63DA, #R$651F, #R$6CF5, #R$6DD3 and #R$73D3.
 c$726A CALL $723C    ;
  $726D EXX           ;
  $726E CALL $7224    ;
@@ -3649,7 +3775,7 @@ c$726A CALL $723C    ;
 
 ; Routine at 72EE
 ;
-; Used by the routine at #R$7758.
+; Used by the routine at #R$773A.
 c$72EE DEC H         ;
  $72EF LD A,H        ;
  $72F0 AND $07       ;
@@ -3710,105 +3836,189 @@ c$7308 LD A,L        ; #REGa=#REGl.
 ; { #TRANZAM$6F10 }
 ; LIST#
 
-; Routine at 7327
+; Store Entity
 ;
 ; Used by the routines at #R$6498, #R$651F, #R$66C7, #R$66EB, #R$6707, #R$68B1,
-; #R$6C2F, #R$6DD3, #R$73B2 and #R$7571.
-@label=MOVE_JETMAN_POS
-c$7327 LD A,(IX+$01) ; {Copy #R$5D01 to $5DC0
+; #R$6C2F, #R$6DD3, #R$73D3 and #R$7571.
+@label=StoreEntity
+c$7327 LD A,(IX+$01) ; {Copy actor X position to active actor X position.
  $732A LD ($5DC0),A  ; }
- $732D LD A,(IX+$02) ; {Copy #R$5D02 to $5DC1
+ $732D LD A,(IX+$02) ; {Copy actor Y position to active actor Y position.
  $7330 LD ($5DC1),A  ; }
- $7333 LD A,(IX+$00) ; {Copy #R$5D00 to $5DC2
+ $7333 LD A,(IX+$00) ; {Copy actor movement to active actor movement.
  $7336 LD ($5DC2),A  ; }
- $7339 RET           ; Return
-; This entry point is used by the routine at #R$73B2.
-*$733A IN A,($1F)    ;
- $733C CPL           ;
- $733D RET           ;
-; This entry point is used by the routines at #R$73B2 and #R$7571.
-*$733E LD A,($5CF3)  ;
- $7341 BIT 1,A       ;
- $7343 JR NZ,$733A   ;
- $7345 LD A,$FE      ;
- $7347 OUT ($FD),A   ;
- $7349 IN A,($FE)    ;
- $734B AND $1E       ;
- $734D CP $1E        ;
- $734F JR Z,$7359    ;
- $7351 AND $14       ;
- $7353 CP $14        ;
- $7355 JR Z,$736B    ;
- $7357 JR $736E      ;
-*$7359 LD A,$7F      ;
- $735B OUT ($FD),A   ;
- $735D IN A,($FE)    ;
- $735F AND $1E       ;
- $7361 CP $1E        ;
- $7363 JR Z,$7371    ;
- $7365 AND $14       ;
- $7367 CP $14        ;
- $7369 JR Z,$736E    ;
-*$736B LD A,$FD      ;
- $736D RET           ;
-*$736E LD A,$FE      ;
- $7370 RET           ;
-*$7371 LD A,$FF      ;
- $7373 RET           ;
-; This entry point is used by the routine at #R$73B2.
-*$7374 LD A,($5CF3)  ;
- $7377 BIT 1,A       ;
- $7379 JR NZ,$733A   ;
- $737B LD B,$02      ;
- $737D LD A,$FD      ;
-*$737F OUT ($FD),A   ;
- $7381 IN A,($FE)    ;
- $7383 AND $1F       ;
- $7385 CP $1F        ;
- $7387 JR NZ,$7390   ;
- $7389 LD A,$BF      ;
- $738B DJNZ $737F    ; Decrease #REGb by one, and loop back to #R$737F until
-                     ; zero
- $738D LD A,$FF      ;
- $738F RET           ;
-*$7390 LD A,$EF      ;
- $7392 RET           ;
-; This entry point is used by the routines at #R$73B2 and #R$7571.
-*$7393 LD A,($5CF3)  ;
- $7396 BIT 1,A       ;
- $7398 JR NZ,$733A   ;
- $739A LD B,$02      ;
- $739C LD A,$FB      ;
-*$739E OUT ($FD),A   ;
- $73A0 IN A,($FE)    ;
- $73A2 AND $1F       ;
- $73A4 CP $1F        ;
- $73A6 JR NZ,$73AF   ;
- $73A8 LD A,$DF      ;
- $73AA DJNZ $739E    ; Decrease #REGb by one, and loop back to #R$739E until
-                     ; zero
- $73AC LD A,$FF      ;
- $73AE RET           ;
-*$73AF LD A,$F7      ;
- $73B1 RET           ;
+ $7339 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9FFB }
+; { #COOKIE$0000 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$75B9 }
+; { #TRANZAM$71ED }
+; LIST#
+
+; Controls: Kempston Joystick
+;
+; Used by the routines at #R$733E, #R$7374, #R$7393 and #R$73D3.
+;
+; A Joystick controls
+@label=ReadKempstonJoystick
+c$733A IN A,($1F)    ; #REGa=controls.
+ $733C CPL           ; Flip the bits.
+ $733D RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$0000 }
+; { #COOKIE$0000 }
+; { #LUNARJETMAN$0000 }
+; { #PSSST$75CC }
+; { #TRANZAM$0000 }
+; LIST#
+
+; Input: Left/ Right
+;
+; Used by the routines at #R$73D3 and #R$7571.
+;
+; .
+;
+; Check if this should be read from the Kempston joystick instead?
+@label=ReadInputLR
+c$733E LD A,($5CF3)  ; {If #R$5CF3 indicates the control method is via the
+ $7341 BIT 1,A       ; Kempston joystick then jump to #R$733A.
+ $7343 JR NZ,$733A   ; }
+; Check for "Left" and "Right" button inputs for port #N$FE.
+ $7345 LD A,$FE      ; {Read from the keyboard;
+ $7347 OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $7349 IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$FE | SHIFT | Z | X | C | V }
+                     ; TABLE#}
+ $734B AND %00011110 ; Strip out the SHIFT key.
+ $734D CP $1E        ; {If none of these keys have been pressed, jump to
+ $734F JR Z,$7359    ; #R$7359.}
+ $7351 AND %00010100 ; Keep only bits 2 ("X") and 4 ("V").
+ $7353 CP $14        ; {If neither key is pressed jump to #R$736B.
+ $7355 JR Z,$736B    ; }
+ $7357 JR $736E      ; Jump to #R$736E.
+; Check for "Left" and "Right" button input for port #N$7F.
+@label=ReadInputLR_7F
+*$7359 LD A,$7F      ; {Read from the keyboard;
+ $735B OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $735D IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$7F | SPACE | FULL-STOP | M | N | B }
+                     ; TABLE#}
+ $735F AND %00011110 ; Strip out the SPACE key.
+ $7361 CP $1E        ; {If none of these keys have been pressed, jump to
+ $7363 JR Z,$7371    ; #R$7371.}
+ $7365 AND %00010100 ; Keep only bits 2 ("M") and 4 ("B").
+ $7367 CP $14        ; {If neither key is pressed jump to #R$736E.
+ $7369 JR Z,$736E    ; }
+; Return "Left" button pressed.
+@label=Input_Left
+*$736B LD A,$FD      ; #REGa=#EVAL($FD, $02, $08).
+ $736D RET           ; Return.
+; Return "Right" button pressed.
+@label=Input_Right
+*$736E LD A,$FE      ; #REGa=#EVAL($FE, $02, $08).
+ $7370 RET           ; Return.
+; Return "no input".
+@label=Input_None
+*$7371 LD A,$FF      ; #REGa=#EVAL($FF, $02, $08).
+ $7373 RET           ; Return.
+
+; Input: Fire
+;
+; Used by the routine at #R$73D3.
+;
+; .
+;
+; Check if this should be read from the Kempston joystick instead?
+@label=ReadInputFire
+c$7374 LD A,($5CF3)  ; {If #R$5CF3 indicates the control method is via the
+ $7377 BIT 1,A       ; Kempston joystick then jump to #R$733A.
+ $7379 JR NZ,$733A   ; }
+; Check for "Fire" button input.
+ $737B LD B,$02      ; #REGb=#N$02 (counter for checking two ports).
+ $737D LD A,$FD      ; {Read from the keyboard;
+@label=ReadInputFire_Loop
+*$737F OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $7381 IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { $FD | A | S | D | F | G }
+                     ; { $BF | ENTER | L | K | J | H }
+                     ; TABLE#}
+ $7383 AND %00011111 ; Keep only bits 0-4.
+ $7385 CP $1F        ; {If any buttons were pressed jump to #R$7390.
+ $7387 JR NZ,$7390   ; }
+ $7389 LD A,$BF      ; #REGa=switch to port #N$BF.
+ $738B DJNZ $737F    ; Decrease counter by one and loop back to #R$737F until
+                     ; counter is zero.
+; Return "no input".
+ $738D LD A,$FF      ; #REGa=#EVAL($FF, $02, $08).
+ $738F RET           ; Return.
+; Return "Fire" button pressed.
+@label=Input_Fire
+*$7390 LD A,$EF      ; #REGa=#EVAL($EF, $02, $08).
+ $7392 RET           ; Return.
+
+; Input: Thrust
+;
+; Used by the routines at #R$73D3 and #R$7571.
+;
+; .
+;
+; Check if this should be read from the Kempston joystick instead?
+@label=ReadInputThrust
+c$7393 LD A,($5CF3)  ; {If #R$5CF3 indicates the control method is via the
+ $7396 BIT 1,A       ; Kempston joystick then jump to #R$733A.
+ $7398 JR NZ,$733A   ; }
+ $739A LD B,$02      ; #REGb=#N$02 (counter for checking two ports).
+ $739C LD A,$FB      ; {Read from the keyboard;
+@label=ReadInputThrust_Loop
+*$739E OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $73A0 IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { $FB | Q | W | E | R | T }
+                     ; { $DF | P | O | I | U | Y }
+                     ; TABLE#}
+ $73A2 AND %00011111 ; Keep only bits 0-4.
+ $73A4 CP $1F        ; {If any buttons were pressed jump to #R$73AF.
+ $73A6 JR NZ,$73AF   ; }
+ $73A8 LD A,$DF      ; #REGa=switch to port #N$DF.
+ $73AA DJNZ $739E    ; Decrease counter by one and loop back to #R$737F until
+                     ; counter is zero.
+; Return "no input".
+ $73AC LD A,$FF      ; #REGa=#EVAL($FF, $02, $08).
+ $73AE RET           ; Return.
+; Return "Thrust" button pressed.
+@label=Input_Thrust
+*$73AF LD A,$F7      ; #REGa=#EVAL($F7, $02, $08).
+ $73B1 RET           ; Return.
+
+; Game Play Starts
+@label=GamePlayStarts
+c$73B2 LD HL,$5DD7   ;
+ $73B5 LD A,(HL)     ;
+ $73B6 AND A         ;
+ $73B7 JR Z,$73D3    ;
+ $73B9 DEC (HL)      ;
+ $73BA JP NZ,$61BD   ;
+ $73BD CALL $6809    ;
+ $73C0 LD A,($5DD1)  ;
+ $73C3 AND A         ;
+ $73C4 JR NZ,$73CE   ;
+ $73C6 LD HL,$0018   ;
+*$73C9 CALL $61D3    ;
+ $73CC JR $73D3      ;
+*$73CE LD HL,$00D8   ;
+ $73D1 JR $73C9      ;
 
 ; Jetman Fly
-c$73B2 LD HL,$5DD7     ;
- $73B5 LD A,(HL)       ;
- $73B6 AND A           ;
- $73B7 JR Z,$73D3      ;
- $73B9 DEC (HL)        ;
- $73BA JP NZ,$61BD     ;
- $73BD CALL $6809      ;
- $73C0 LD A,($5DD1)    ;
- $73C3 AND A           ;
- $73C4 JR NZ,$73CE     ;
- $73C6 LD HL,$0018     ;
-*$73C9 CALL $61D3      ;
- $73CC JR $73D3        ;
-*$73CE LD HL,$00D8     ;
- $73D1 JR $73C9        ;
-*$73D3 CALL $7327      ;
+;
+; Used by the routine at #R$73B2.
+@label=JetmanThrust
+c$73D3 CALL $7327      ;
  $73D6 CALL $733E      ;
  $73D9 BIT 0,A         ;
  $73DB JP Z,$73ED      ;
@@ -4042,7 +4252,7 @@ c$7571 CALL $7327      ;
  $7619 ADD A,$09       ;
  $761B JR $7631        ;
 ; This entry point is used by the routines at #R$63DA, #R$6498, #R$651F,
-; #R$6A6C, #R$6AEF, #R$6C2F, #R$6CF5, #R$6DD3 and #R$73B2.
+; #R$6A6C, #R$6AEF, #R$6C2F, #R$6CF5, #R$6DD3 and #R$73D3.
 *$761D LD B,$04        ;
  $761F LD HL,$6000     ;
 *$7622 LD E,$00        ;
@@ -4193,37 +4403,53 @@ b$76E2 DEFB $2F,$7F,$FF,$DD,$FB,$7B,$71,$21 ; #UDG#(#PC),attr=4
 ; Jetman Sprite Table
 @label=JetmanSpritesTable
 w$76FA DEFW $7796    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $76FC DEFW $77C9    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $76FE DEFW $7814    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7700 DEFW $785F    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7702 DEFW $795B    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7704 DEFW $7910    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7706 DEFW $78DD    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7708 DEFW $78AA    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $770A DEFW $7AA2    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $770C DEFW $7AD5    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $770E DEFW $7B08    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7710 DEFW $7B53    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7712 DEFW $7A57    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7714 DEFW $7A0C    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7716 DEFW $79D9    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
  $7718 DEFW $79A6    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $76FA) / 2)).
+                     ; $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) /
+                     ; $02).
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$A4BE }
@@ -4250,24 +4476,35 @@ w$771A DEFW $5E00
  $7734 DEFW $5F32
  $7736 DEFW $5EFF
  $7738 DEFW $5ECC
-*$773A DEFW $A779
- $773C DEFW $3928
- $773E DEFW $C50D
- $7740 DEFW $1AE5
- $7742 DEFW $A62F
- $7744 DEFW $1377
- $7746 DEFW $7D2C
- $7748 DEFW $1FE6
- $774A DEFW $0420
- $774C DEFW $D67D
- $774E DEFW $6F20
- $7750 DEFW $EF10
- $7752 DEFW $CDE1
- $7754 DEFW $72EE
- $7756 DEFW $D9C1
 
-; Routine at 7758
-c$7758 LD A,C        ;
+; Mask Sprite
+;
+; Used by the routine at #R$726A.
+@label=MaskSprite
+c$773A LD A,C        ;
+ $773B AND A         ;
+ $773C JR Z,$7777    ;
+ $773E DEC C         ;
+ $773F PUSH BC       ;
+ $7740 PUSH HL       ;
+*$7741 LD A,(DE)     ;
+ $7742 CPL           ;
+ $7743 AND (HL)      ;
+ $7744 LD (HL),A     ;
+ $7745 INC DE        ;
+ $7746 INC L         ;
+ $7747 LD A,L        ;
+ $7748 AND $1F       ;
+ $774A JR NZ,$7750   ;
+ $774C LD A,L        ;
+ $774D SUB $20       ;
+ $774F LD L,A        ;
+*$7750 DJNZ $7741    ;
+ $7752 POP HL        ;
+ $7753 CALL $72EE    ;
+ $7756 POP BC        ;
+ $7757 EXX           ;
+ $7758 LD A,C        ;
  $7759 AND A         ;
  $775A JR Z,$7774    ;
 *$775C DEC C         ;
@@ -4290,13 +4527,15 @@ c$7758 LD A,C        ;
  $7773 POP BC        ;
 *$7774 EXX           ;
  $7775 JR $773A      ;
- $7777 EXX           ;
+*$7777 EXX           ;
  $7778 LD A,C        ;
  $7779 AND A         ;
  $777A JR NZ,$775C   ;
 ; This entry point is used by the routine at #R$726A.
+@label=ActorUpdateSizeFlipReg
 *$777C EXX           ;
 ; This entry point is used by the routine at #R$726A.
+@label=ActorUpdateSize
 *$777D LD A,($5DC5)  ;
  $7780 LD C,A        ;
  $7781 LD A,($5DC6)  ;
@@ -4309,6 +4548,7 @@ c$7758 LD A,C        ;
  $778E LD C,A        ;
  $778F XOR A         ;
 ; This entry point is used by the routine at #R$726A.
+@label=ActorUpdateHeightAndMask
 *$7790 LD ($5DC6),A  ;
  $7793 EXX           ;
  $7794 JR $773A      ;
