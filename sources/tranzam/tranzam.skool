@@ -560,7 +560,7 @@ c$5F6C LD A,$68      ; {Write #N$68 to #R$5E48.
  $5F78 LD DE,$5FB1   ; #REGde'=#R$5FB1.
 ; There are five lines of text.
  $5F7B LD B,$05      ; #REGb'=#N$05 (counter).
-; This entry point is used by the routine at #R$6046.
+; This entry point is used by the routine at #R$607D.
 @label=GameMenu_Loop
 *$5F7D EXX           ; Switch.
  $5F7E LD A,(DE)     ; Copy a byte from #REGde to #R$5E3F.
@@ -724,8 +724,11 @@ c$6046 LD HL,$5E4E   ;
  $6056 DAA           ;
  $6057 LD (HL),A     ;
  $6058 JP $6CB6      ;
-; This entry point is used by the routine at #R$6353.
-*$605B LD DE,$5E48   ;
+
+; Routine at 605B
+;
+; Used by the routine at #R$6353.
+c$605B LD DE,$5E48   ;
  $605E LD HL,$5E4B   ;
  $6061 LD B,$03      ;
 *$6063 INC HL        ;
@@ -745,21 +748,20 @@ c$6046 LD HL,$5E4E   ;
  $6079 INC DE        ;
  $607A DJNZ $6076    ;
  $607C RET           ;
-; This entry point is used by the routine at #R$63FF.
-*$607D LD A,$50      ;
- $607F LD ($5E48),A  ;
- $6082 LD DE,$6091   ;
- $6085 EXX           ;
- $6086 LD HL,$6095   ;
- $6089 LD DE,$6099   ;
- $608C LD B,$04      ;
- $608E JP $5F7D      ;
- $6091 LD (HL),B     ;
- $6092 LD (HL),B     ;
- $6093 LD (HL),B     ;
- $6094 LD (HL),B     ;
- $6095 DJNZ $60B7    ;
- $6097 JR NC,$60D9   ;
+
+; Routine at 607D
+;
+; Used by the routine at #R$63FF.
+c$607D LD A,$50             ; {Write #N$50 to #R$5E48.
+ $607F LD ($5E48),A         ; }
+ $6082 LD DE,$6091          ; #REGde=#R$6091.
+ $6085 EXX                  ; Switch to the shadow registers.
+ $6086 LD HL,$6095          ; #REGhl'=#R$6095.
+ $6089 LD DE,$6099          ; #REGde'=#R$6099.
+ $608C LD B,$04             ; #REGb'=#N$04.
+ $608E JP $5F7D             ; Jump to #R$5F7D.
+ $6091 DEFB $70,$70,$70,$70 ;
+ $6095 DEFB $10,$20,$30,$40 ;
 
 ; Message at 6099
 t$6099 DEFM "CONGRATULATIONS YO","U"+$80 ; "CONGRATULATIONS YOU".
@@ -899,90 +901,166 @@ c$617F LD A,$01      ;
  $6181 LD ($5E43),A  ;
  $6184 LD A,$40      ;
  $6186 JR $617B      ;
-; This entry point is used by the routines at #R$61C2 and #R$61E0.
-*$6188 IN A,($1F)    ;
- $618A CPL           ;
- $618B RET           ;
-; This entry point is used by the routine at #R$6D12.
-*$618C LD A,($5E3E)  ;
- $618F BIT 1,A       ;
- $6191 JR NZ,$6188   ;
- $6193 LD A,$FE      ;
- $6195 OUT ($FD),A   ;
- $6197 IN A,($FE)    ;
- $6199 AND $1E       ;
- $619B CP $1E        ;
- $619D JR Z,$61A7    ;
- $619F AND $14       ;
- $61A1 CP $14        ;
- $61A3 JR Z,$61B9    ;
- $61A5 JR $61BC      ;
-*$61A7 LD A,$7F      ;
- $61A9 OUT ($FD),A   ;
- $61AB IN A,($FE)    ;
- $61AD AND $1E       ;
- $61AF CP $1E        ;
- $61B1 JR Z,$61BF    ;
- $61B3 AND $14       ;
- $61B5 CP $14        ;
- $61B7 JR Z,$61BC    ;
-*$61B9 LD A,$FD      ;
- $61BB RET           ;
-*$61BC LD A,$FE      ;
- $61BE RET           ;
-; This entry point is used by the routines at #R$61C2 and #R$61E0.
-*$61BF LD A,$FF      ;
- $61C1 RET           ;
 
-; Routine at 61C2
+; Controls: Kempston Joystick
+;
+; Used by the routines at #R$618C, #R$61C2 and #R$61E0.
+;
+; A Joystick controls
+@label=ReadKempstonJoystick
+c$6188 IN A,($1F)    ; #REGa=controls.
+ $618A CPL           ; Flip the bits.
+ $618B RET           ; Return.
+
+; Input: Left/ Right
 ;
 ; Used by the routine at #R$6D12.
-c$61C2 LD A,($5E3E)  ;
- $61C5 BIT 1,A       ;
- $61C7 JR NZ,$6188   ;
- $61C9 LD B,$02      ;
- $61CB LD A,$FD      ;
-*$61CD OUT ($FD),A   ;
- $61CF IN A,($FE)    ;
- $61D1 AND $1F       ;
- $61D3 CP $1F        ;
- $61D5 JR NZ,$61DD   ;
- $61D7 LD A,$BF      ;
- $61D9 DJNZ $61CD    ;
- $61DB JR $61BF      ;
-*$61DD LD A,$FB      ;
- $61DF RET           ;
+;
+; .
+;
+; Check if this should be read from the Kempston joystick instead?
+@label=ReadInputLR
+c$618C LD A,($5E3E)  ; {If #R$5E3E indicates the control method is via the
+ $618F BIT 1,A       ; Kempston joystick then jump to #R$6188.
+ $6191 JR NZ,$6188   ; }
+; Check for "Left" and "Right" button inputs for port #N$FE.
+ $6193 LD A,$FE      ; {Read from the keyboard;
+ $6195 OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $6197 IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { $FE | SHIFT | Z | X | C | V }
+                     ; TABLE#}
+ $6199 AND %00011110 ; Strip out the SHIFT key.
+ $619B CP $1E        ; {If none of these keys have been pressed, jump to
+ $619D JR Z,$61A7    ; #R$61A7.}
+ $619F AND %00010100 ; Keep only bits 2 ("X") and 4 ("V").
+ $61A1 CP $14        ; {If neither key is pressed jump to #R$61B9.
+ $61A3 JR Z,$61B9    ; }
+ $61A5 JR $61BC      ; Jump to #R$61BC.
+; Check for "Left" and "Right" button input for port #N$7F.
+@label=ReadInputLR_7F
+*$61A7 LD A,$7F      ; {Read from the keyboard;
+ $61A9 OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $61AB IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { $7F | SPACE | FULL-STOP | M | N | B }
+                     ; TABLE#}
+ $61AD AND %00011110 ; Strip out the SPACE key.
+ $61AF CP $1E        ; {If none of these keys have been pressed, jump to
+ $61B1 JR Z,$61BF    ; #R$61BF.}
+ $61B3 AND %00010100 ; Keep only bits 2 ("M") and 4 ("B").
+ $61B5 CP $14        ; {If neither key is pressed jump to #R$61BC.
+ $61B7 JR Z,$61BC    ; }
+; Return "Left" button pressed.
+@label=Input_Left
+*$61B9 LD A,$FD      ; #REGa=#EVAL($FD, $02, $08).
+ $61BB RET           ; Return.
+; Return "Right" button pressed.
+@label=Input_Right
+*$61BC LD A,$FE      ; #REGa=#EVAL($FE, $02, $08).
+ $61BE RET           ; Return.
+; Return "no input".
+@label=Input_None
+*$61BF LD A,$FF      ; #REGa=#EVAL($FF, $02, $08).
+ $61C1 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$733E }
+; LIST#
 
-; Routine at 61E0
+; Input: Brake
 ;
 ; Used by the routine at #R$6D12.
-c$61E0 LD A,($5E3E)  ;
- $61E3 BIT 1,A       ;
- $61E5 JR NZ,$6188   ;
- $61E7 LD B,$02      ;
- $61E9 LD A,$FB      ;
-*$61EB OUT ($FD),A   ;
- $61ED IN A,($FE)    ;
- $61EF AND $1F       ;
- $61F1 CP $1F        ;
- $61F3 JR NZ,$61FB   ;
- $61F5 LD A,$DF      ;
- $61F7 DJNZ $61EB    ;
- $61F9 JR $61BF      ;
-*$61FB LD A,$F7      ;
- $61FD RET           ;
-*$61FE CALL $6253    ;
+;
+; .
+;
+; Check if this should be read from the Kempston joystick instead?
+@label=ReadInputBrake
+c$61C2 LD A,($5E3E)  ; {If #R$5E3E indicates the control method is via the
+ $61C5 BIT 1,A       ; Kempston joystick then jump to #R$6188.
+ $61C7 JR NZ,$6188   ; }
+; Check for "Brake" button input.
+ $61C9 LD B,$02      ; #REGb=#N$02 (counter for checking two ports).
+ $61CB LD A,$FD      ; {Read from the keyboard;
+@label=ReadInputBrake_Loop
+*$61CD OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $61CF IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { $FD | A | S | D | F | G }
+                     ; { $BF | ENTER | L | K | J | H }
+                     ; TABLE#}
+ $61D1 AND %00011111 ; Keep only bits 0-4.
+ $61D3 CP $1F        ; {If any buttons were pressed jump to #R$61DD.
+ $61D5 JR NZ,$61DD   ; }
+ $61D7 LD A,$BF      ; #REGa=switch to port #N$BF.
+ $61D9 DJNZ $61CD    ; Decrease counter by one and loop back to #R$61CD until
+                     ; counter is zero.
+ $61DB JR $61BF      ; Jump to #R$61BF.
+; Return "Brake" button pressed.
+@label=Input_Brake
+*$61DD LD A,$FB      ; #REGa=#EVAL($FB, $02, $08).
+ $61DF RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$7374 }
+; LIST#
+
+; Input: Accelerate
+;
+; Used by the routine at #R$6D12.
+;
+; .
+;
+; Check if this should be read from the Kempston joystick instead?
+@label=ReadInputAccelerate
+c$61E0 LD A,($5E3E)  ; {If #R$5E3E indicates the control method is via the
+ $61E3 BIT 1,A       ; Kempston joystick then jump to #R$6188.
+ $61E5 JR NZ,$6188   ; }
+; Check for "Accelerator" button input.
+ $61E7 LD B,$02      ; #REGb=#N$02 (counter for checking two ports).
+ $61E9 LD A,$FB      ; {Read from the keyboard;
+@label=ReadInputAccelerate_Loop
+*$61EB OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $61ED IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { $FB | Q | W | E | R | T }
+                     ; { $DF | P | O | I | U | Y }
+                     ; TABLE#}
+ $61EF AND %00011111 ; Keep only bits 0-4.
+ $61F1 CP $1F        ; {If any buttons were pressed jump to #R$61FB.
+ $61F3 JR NZ,$61FB   ; }
+ $61F5 LD A,$DF      ; #REGa=switch to port #N$DF.
+ $61F7 DJNZ $61EB    ; Decrease counter by one and loop back to #R$61EB until
+                     ; counter is zero.
+ $61F9 JR $61BF      ; Jump to #R$61BF.
+; Return "Accelerator" button pressed.
+@label=Input_Accelerate
+*$61FB LD A,$F7      ; #REGa=#EVAL($F7, $02, $08).
+ $61FD RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$7393 }
+; LIST#
+
+; Routine at 61FE
+;
+; Used by the routine at #R$6212.
+c$61FE CALL $6253    ;
  $6201 LD A,$0C      ;
  $6203 SUB H         ;
  $6204 JR C,$624D    ;
  $6206 JR $622A      ;
+; This entry point is used by the routine at #R$6212.
 *$6208 CALL $6253    ;
  $620B LD A,$0E      ;
  $620D SUB H         ;
  $620E JR C,$624D    ;
  $6210 JR $6245      ;
-; This entry point is used by the routine at #R$625C.
-*$6212 LD HL,($5E05) ;
+
+; Routine at 6212
+;
+; Used by the routine at #R$625C.
+c$6212 LD HL,($5E05) ;
  $6215 SLA L         ;
  $6217 RL H          ;
  $6219 AND A         ;
@@ -994,6 +1072,7 @@ c$61E0 LD A,($5E3E)  ;
  $6226 CP H          ;
  $6227 JR C,$624D    ;
  $6229 ADD A,H       ;
+; This entry point is used by the routine at #R$61FE.
 *$622A LD (IX+$02),A ;
  $622D LD HL,($5E08) ;
  $6230 SLA L         ;
@@ -1007,15 +1086,16 @@ c$61E0 LD A,($5E3E)  ;
  $6241 CP H          ;
  $6242 JR C,$624D    ;
  $6244 ADD A,H       ;
+; This entry point is used by the routine at #R$61FE.
 *$6245 NEG           ;
  $6247 ADD A,$1C     ;
 *$6249 LD (IX+$03),A ;
  $624C RET           ;
-; This entry point is used by the routine at #R$625C.
+; This entry point is used by the routines at #R$61FE and #R$625C.
 *$624D XOR A         ;
  $624E LD (IX+$02),A ;
  $6251 JR $6249      ;
-; This entry point is used by the routine at #R$625C.
+; This entry point is used by the routines at #R$61FE and #R$625C.
 *$6253 LD B,$02      ;
 *$6255 RL L          ;
  $6257 RL H          ;
@@ -2224,7 +2304,7 @@ c$6AF5 LD HL,$5E50                          ; #REGhl=#R$5E50.
  $6BDE DEFB $44,$44,$45,$47,$44,$45,$46,$47 ;
  $6BE6 DEFB $43,$40,$41,$42,$42,$41,$40,$40 ;
  $6BEE DEFB $40,$40,$41,$42,$42,$41,$40,$41 ;
-; This entry point is used by the routine at #R$61E0.
+; This entry point is used by the routine at #R$6212.
 *$6BF6 LD A,L                               ;
  $6BF7 CPL                                  ;
  $6BF8 LD L,A                               ;
@@ -3279,7 +3359,6 @@ c$71ED LD A,(IX+$01) ; {Copy actor X position to active actor X position.
 ; { #JETPAC$0000 }
 ; { #LUNARJETMAN$0000 }
 ; { #PSSST$75B9 }
-; { #TRANZAM$71ED }
 ; LIST#
 
 ; Reset Attribute Buffer
@@ -4741,7 +4820,7 @@ w$7F06 DEFW $7352    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
 ; { #COOKIE$7702 }
 ; { #JETPAC$0000 }
 ; { #LUNARJETMAN$0000 }
-; { #TRANZAM$0000 }
+; { #PSSST$0000 }
 ; LIST#
 
 ; Player Sprite Table

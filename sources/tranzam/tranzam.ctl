@@ -317,6 +317,18 @@ t $6031 Score/ Hi-Score Text
 
 c $6046
 
+c $605B
+
+c $607D
+  $607D,$05 Write #N$50 to #R$5E48.
+  $6082,$03 #REGde=#R$6091.
+  $6085,$01 Switch to the shadow registers.
+  $6086,$03 #REGhl'=#R$6095.
+  $6089,$03 #REGde'=#R$6099.
+  $608C,$02 #REGb'=#N$04.
+  $608E,$03 Jump to #R$5F7D.
+B $6091,$08,$04
+
 t $6099
   $6099,$13,$12:$01 "CONGRATULATIONS YOU".
   $60AC,$12,$11:$01 " HAVE SUCCESSFULLY".
@@ -351,9 +363,117 @@ R $617B A Background attribute
 
 c $617F
 
-c $61C2
+c $6188 Controls: Kempston Joystick
+@ $6188 label=ReadKempstonJoystick
+R $6188 A Joystick controls
+  $6188,$03 #REGa=controls.
+  $618A,$01 Flip the bits.
+  $618B,$01 Return.
 
-c $61E0
+c $618C Input: Left/ Right
+E $618C View the equivalent code in;
+. #LIST
+. { #JETPAC$733E }
+. LIST#
+N $618C Check if this should be read from the Kempston joystick instead?
+@ $618C label=ReadInputLR
+  $618C,$07 If #R$5E3E indicates the control method is via the Kempston joystick then jump to #R$6188.
+N $6193 Check for "Left" and "Right" button inputs for port #N$FE.
+  $6193,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { $FE | SHIFT | Z | X | C | V }
+. TABLE#
+  $6199,$02,b$01 Strip out the SHIFT key.
+  $619B,$04 If none of these keys have been pressed, jump to #R$61A7.
+  $619F,$02,b$01 Keep only bits 2 ("X") and 4 ("V").
+  $61A1,$04 If neither key is pressed jump to #R$61B9.
+  $61A5,$02 Jump to #R$61BC.
+N $61A7 Check for "Left" and "Right" button input for port #N$7F.
+@ $61A7 label=ReadInputLR_7F
+  $61A7,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { $7F | SPACE | FULL-STOP | M | N | B }
+. TABLE#
+  $61AD,$02,b$01 Strip out the SPACE key.
+  $61AF,$04 If none of these keys have been pressed, jump to #R$61BF.
+  $61B3,$02,b$01 Keep only bits 2 ("M") and 4 ("B").
+  $61B5,$04 If neither key is pressed jump to #R$61BC.
+N $61B9 Return "Left" button pressed.
+@ $61B9 label=Input_Left
+  $61B9,$02 #REGa=#EVAL($FD, $02, $08).
+  $61BB,$01 Return.
+N $61BC Return "Right" button pressed.
+@ $61BC label=Input_Right
+  $61BC,$02 #REGa=#EVAL($FE, $02, $08).
+  $61BE,$01 Return.
+N $61BF Return "no input".
+@ $61BF label=Input_None
+  $61BF,$02 #REGa=#EVAL($FF, $02, $08).
+  $61C1,$01 Return.
+
+c $61C2 Input: Brake
+E $61C2 View the equivalent code in;
+. #LIST
+. { #JETPAC$7374 }
+. LIST#
+N $61C2 Check if this should be read from the Kempston joystick instead?
+@ $61C2 label=ReadInputBrake
+  $61C2,$07 If #R$5E3E indicates the control method is via the Kempston joystick then jump to #R$6188.
+N $61C9 Check for "Brake" button input.
+  $61C9,$02 #REGb=#N$02 (counter for checking two ports).
+  $61CB,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { $FD | A | S | D | F | G }
+. { $BF | ENTER | L | K | J | H }
+. TABLE#
+@ $61CD label=ReadInputBrake_Loop
+  $61D1,$02,b$01 Keep only bits 0-4.
+  $61D3,$04 If any buttons were pressed jump to #R$61DD.
+  $61D7,$02 #REGa=switch to port #N$BF.
+  $61D9,$02 Decrease counter by one and loop back to #R$61CD until counter is zero.
+  $61DB,$02 Jump to #R$61BF.
+N $61DD Return "Brake" button pressed.
+@ $61DD label=Input_Brake
+  $61DD,$02 #REGa=#EVAL($FB, $02, $08).
+  $61DF,$01 Return.
+
+c $61E0 Input: Accelerate
+E $61E0 View the equivalent code in;
+. #LIST
+. { #JETPAC$7393 }
+. LIST#
+N $61E0 Check if this should be read from the Kempston joystick instead?
+@ $61E0 label=ReadInputAccelerate
+  $61E0,$07 If #R$5E3E indicates the control method is via the Kempston joystick then jump to #R$6188.
+N $61E7 Check for "Accelerator" button input.
+  $61E7,$02 #REGb=#N$02 (counter for checking two ports).
+  $61E9,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { $FB | Q | W | E | R | T }
+. { $DF | P | O | I | U | Y }
+. TABLE#
+@ $61EB label=ReadInputAccelerate_Loop
+  $61EF,$02,b$01 Keep only bits 0-4.
+  $61F1,$04 If any buttons were pressed jump to #R$61FB.
+  $61F5,$02 #REGa=switch to port #N$DF.
+  $61F7,$02 Decrease counter by one and loop back to #R$61EB until counter is zero.
+  $61F9,$02 Jump to #R$61BF.
+N $61FB Return "Accelerator" button pressed.
+@ $61FB label=Input_Accelerate
+  $61FB,$02 #REGa=#EVAL($F7, $02, $08).
+  $61FD,$01 Return.
+
+c $61FE
+
+c $6212
 
 c $625C
 
@@ -816,7 +936,6 @@ E $71ED View the equivalent code in;
 . { #JETPAC$0000 }
 . { #LUNARJETMAN$0000 }
 . { #PSSST$75B9 }
-. { #TRANZAM$71ED }
 . LIST#
 @ $71ED label=StoreEntity
   $71ED,$06 Copy actor X position to active actor X position.
@@ -1015,7 +1134,7 @@ E $7F06 View the equivalent code in;
 . { #COOKIE$7702 }
 . { #JETPAC$0000 }
 . { #LUNARJETMAN$0000 }
-. { #TRANZAM$0000 }
+. { #PSSST$0000 }
 . LIST#
 @ $7F06 label=SpritesTable
   $7F06,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) / 2).

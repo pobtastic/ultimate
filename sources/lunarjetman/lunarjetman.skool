@@ -307,9 +307,14 @@ g$5E50 DEFB $00,$00
 ; Game status buffer entry at 5E52
 g$5E52 DEFB $00
 
-; Game status buffer entry at 5E53
-g$5E53 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5E5B DEFB $00,$00
+; Last Frame
+;
+; #HTML(Holds a copy of the last <a
+; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+@label=LastFrame
+g$5E53 DEFB $00
+ $5E54 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $5E5C DEFB $00
 
 ; Game status buffer entry at 5E5D
 g$5E5D DEFB $00
@@ -1523,7 +1528,7 @@ c$800A LD HL,$5E00   ; {Write #N$00 to #N$2200 bytes starting from #R$5E00.
  $803E CPL           ; Flip the bits.
  $803F LD E,A        ; #REGe=#REGa.
  $8040 LD A,($5E00)  ; #REGa=#R$5E00.
- $8043 LD ($5E7C),A  ;
+ $8043 LD ($5E7C),A  ; Write #REGa to #R$5E7C.
 ; Handle 1UP selection.
 @label=GameSelect_CheckP1
  $8046 BIT 0,E       ; Has key "1" been pressed? ("1 PLAYER GAME").
@@ -1567,56 +1572,66 @@ c$800A LD HL,$5E00   ; {Write #N$00 to #N$2200 bytes starting from #R$5E00.
  $807A LD C,A        ; }
  $807B LD A,($5E7C)  ; #REGa=#R$5E7C.
  $807E XOR C         ;
- $807F PUSH AF       ;
+ $807F PUSH AF       ; Stash #REGaf on the stack.
  $8080 BIT 0,A       ;
  $8082 CALL NZ,$80FD ;
- $8085 POP AF        ;
- $8086 AND $06       ;
+ $8085 POP AF        ; Restore #REGaf from the stack.
+ $8086 AND %00000110 ; Keep only bits 1-2.
  $8088 JR Z,$809A    ;
- $808A LD DE,$BA9E   ;
- $808D LD A,C        ;
- $808E AND $06       ;
- $8090 LD L,A        ;
- $8091 LD H,$00      ;
- $8093 ADD HL,DE     ;
- $8094 LD E,(HL)     ;
+ $808A LD DE,$BA9E   ; #REGde=#R$BA9E.
+ $808D LD A,C        ; #REGa=#REGc.
+ $808E AND %00000110 ; Keep only bits 1-2.
+ $8090 LD L,A        ; {Create an offset in #REGhl.
+ $8091 LD H,$00      ; }
+ $8093 ADD HL,DE     ; #REGhl=#R$BA9E + offset.
+ $8094 LD E,(HL)     ; {#REGde=address held at #REGhl.
  $8095 INC HL        ;
- $8096 LD D,(HL)     ;
- $8097 CALL $B9BC    ;
-*$809A LD HL,$810F   ;
- $809D LD A,($5E00)  ;
- $80A0 LD C,A        ;
+ $8096 LD D,(HL)     ; }
+ $8097 CALL $B9BC    ; Call #R$B9BC.
+; Handle flashing each selection.
+*$809A LD HL,$810F   ; #REGhl=#R$810F(GameSelection_Attributes)+#N$01 (i.e.
+                     ; ignoring "Game Selection" as it doesn't flash).
+ $809D LD A,($5E00)  ; {#REGc=#R$5E00.
+ $80A0 LD C,A        ; }
  $80A1 BIT 0,C       ;
  $80A3 JR NZ,$80BE   ;
  $80A5 CALL $80C3    ;
-*$80A8 LD B,$03      ;
+@label=MenuAttrHandler
+*$80A8 LD B,$03      ; #REGb=#N$03.
  $80AA LD A,C        ;
  $80AB RRCA          ;
-*$80AC AND $03       ;
+@label=MenuAttrHandler_Loop
+*$80AC AND %00000011 ;
  $80AE JR Z,$80B9    ;
  $80B0 CALL $80C6    ;
 *$80B3 DEC A         ;
  $80B4 DJNZ $80AC    ;
- $80B6 JP $8035      ;
-*$80B9 CALL $80CD    ;
- $80BC JR $80B3      ;
-*$80BE CALL $80CA    ;
- $80C1 JR $80A8      ;
-*$80C3 SET 7,(HL)    ;
- $80C5 INC HL        ;
-*$80C6 RES 7,(HL)    ;
- $80C8 INC HL        ;
+ $80B6 JP $8035      ; Jump to #R$8035.
+*$80B9 CALL $80CD    ; Call #R$80CD.
+ $80BC JR $80B3      ; Jump to #R$80B3.
+*$80BE CALL $80CA    ; Call #R$80CA.
+ $80C1 JR $80A8      ; Jump to #R$80A8.
+; Set the first menu item, unset the second.
+@label=MenuAttributeSetUnset
+*$80C3 SET 7,(HL)    ; Set the FLASH attribute for the menu attribute.
+ $80C5 INC HL        ; Move onto the next menu attribute.
+@label=MenuAttributeUnSetFirst
+*$80C6 RES 7,(HL)    ; Unset the FLASH attribute for the menu attribute.
+ $80C8 INC HL        ; Move onto the next menu attribute.
  $80C9 RET           ; Return.
-*$80CA RES 7,(HL)    ;
- $80CC INC HL        ;
-*$80CD SET 7,(HL)    ;
- $80CF INC HL        ;
+; Unset the first menu item, set the second.
+@label=MenuAttributeUnsetSet
+*$80CA RES 7,(HL)    ; Unset the FLASH attribute for the menu attribute.
+ $80CC INC HL        ; Move onto the next menu attribute.
+@label=MenuAttributeSetFirst
+*$80CD SET 7,(HL)    ; Set the FLASH attribute for the menu attribute.
+ $80CF INC HL        ; Move onto the next menu attribute.
  $80D0 RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$7C19 }
 ; { #COOKIE$6298 }
-; { #LUNARJETMAN$800A }
+; { #JETPAC$61EB }
 ; { #PSSST$61CD }
 ; { #TRANZAM$5F07 }
 ; LIST#
@@ -1641,7 +1656,7 @@ c$80D1 LD DE,$810E   ; #REGde=#R$810E.
  $80E5 LD A,(HL)     ; #REGa=#REGhl' (grab the position data).
  $80E6 INC HL        ; Increment #REGhl' (position data pointer) by one.
  $80E7 PUSH HL       ; Stash #REGhl' (position data pointer) on the stack.
- $80E8 LD H,A        ; {#REGh'=#REGa #REGl'=#N$58.
+ $80E8 LD H,A        ; {#REGh'=#REGa #REGl'=#N$38.
  $80E9 LD L,$38      ; }
  $80EB CALL $81AB    ; Call #R$81AB.
  $80EE EXX           ; Switch back to the normal registers.
@@ -1842,23 +1857,25 @@ c$8209 DI            ; Disable interrupts.
 
 ; Routine at 822F
 ;
-; Used by the routine at #R$81BB.
-c$822F LD HL,$6240   ;
- $8232 LD ($8262),HL ;
- $8235 LD HL,$826A   ;
+; Used by the routines at #R$81BB and #R$823F.
+c$822F LD HL,$6240   ; {Write #R$6240 to #R$8261(#N$8262).
+ $8232 LD ($8262),HL ; }
+ $8235 LD HL,$826A   ; {Write #N$00 to #R$826A, #R$826B and #R$826C.
  $8238 XOR A         ;
  $8239 LD (HL),A     ;
  $823A INC HL        ;
  $823B LD (HL),A     ;
  $823C INC HL        ;
- $823D LD (HL),A     ;
- $823E RET           ;
- $823F CALL $822F    ;
+ $823D LD (HL),A     ; }
+ $823E RET           ; Return.
+
+; Routine at 823F
+c$823F CALL $822F    ; Call #R$822F.
  $8242 POP IX        ;
  $8244 XOR A         ;
  $8245 LD ($5E52),A  ;
- $8248 EI            ;
- $8249 RET           ;
+ $8248 EI            ; Enable interrupts.
+ $8249 RET           ; Return.
 
 ; Routine at 824A
 c$824A LD A,($5E52)  ;
@@ -1879,9 +1896,9 @@ c$824A LD A,($5E52)  ;
  $8264 AND A         ;
  $8265 SBC HL,BC     ;
  $8267 JP C,$81E9    ;
- $826A NOP           ;
- $826B NOP           ;
- $826C NOP           ;
+ $826A DEFB $00      ;
+ $826B DEFB $00      ;
+ $826C DEFB $00      ;
  $826D LD HL,($5E42) ;
  $8270 INC HL        ;
  $8271 LD ($5E42),HL ;
@@ -1899,8 +1916,11 @@ c$824A LD A,($5E52)  ;
  $828F CALL $9F70    ;
  $8292 CALL $B731    ;
  $8295 JP $81D6      ;
-; This entry point is used by the routine at #R$B460.
-*$8298 DI            ;
+
+; Routine at 8298
+;
+; Used by the routines at #R$824A and #R$B460.
+c$8298 DI            ;
  $8299 LD A,$DF      ;
  $829B OUT ($FD),A   ;
  $829D IN A,($FE)    ;
@@ -2181,6 +2201,8 @@ c$84AD LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
                      ; #R$5800(attribute buffer)).
 ; This entry point is used by the routine at #R$81BB.
 *$84B2 LD C,$00      ; #REGc=#N$00 (value to write).
+; Continue on to #R$84B4 to blank the screen buffer.
+; .
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$80B4 }
@@ -2189,10 +2211,6 @@ c$84AD LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
 ; { #PSSST$7439 }
 ; { #TRANZAM$7211 }
 ; LIST#
-; .
-; Continue on to #R$84B4 to blank the screen buffer.
-; .
-; View the equivalent code in #ATICATAC$80B4.
 
 ; Reset Routine
 ;
@@ -2252,7 +2270,7 @@ c$84BB XOR A         ; {Set the border to black.
 
 ; Create Game Window
 ;
-; Used by the routines at #R$800A, #R$A0F8, #R$A880 and #R$F535.
+; Used by the routines at #R$800A, #R$A826, #R$A880 and #R$F535.
 ;
 ; .
 ;
@@ -3074,7 +3092,7 @@ c$8947 LD A,L        ;
 
 ; Display Lives
 ;
-; Used by the routines at #R$8FF4, #R$9EDC and #R$A0F8.
+; Used by the routines at #R$8FF4, #R$9EDC and #R$A826.
 ;
 ; .
 ;
@@ -3571,7 +3589,7 @@ c$8BA5 LD HL,$57BF   ;
 
 ; Routine at 8BBB
 ;
-; Used by the routine at #R$A0F8.
+; Used by the routine at #R$A826.
 c$8BBB LD HL,($5E04) ;
  $8BBE PUSH HL       ;
  $8BBF LD HL,$DD97   ;
@@ -4232,7 +4250,7 @@ c$8FF4 LD A,(IX+$00)   ;
  $9017 DEC (IX+$04)    ;
  $901A DEC (IX+$04)    ;
  $901D JP $8DD9        ;
-; This entry point is used by the routine at #R$A0F8.
+; This entry point is used by the routine at #R$A826.
 *$9020 LD A,($5E6C)    ;
  $9023 AND A           ;
  $9024 RET NZ          ;
@@ -4669,7 +4687,7 @@ c$933E LD A,$7E      ; {Read from the keyboard;
 
 ; Routine at 9356
 ;
-; Used by the routine at #R$A0F8.
+; Used by the routines at #R$A0F8 and #R$A826.
 c$9356 LD HL,($607A)   ;
  $9359 LD DE,$FF88     ;
  $935C ADD HL,DE       ;
@@ -6425,7 +6443,7 @@ c$A0F8 CALL $945C      ;
  $A2F0 XOR A           ;
  $A2F1 LD ($5E68),A    ;
  $A2F4 RET             ;
-; This entry point is used by the routine at #R$B460.
+; This entry point is used by the routines at #R$A826 and #R$B460.
 *$A2F5 LD HL,$6009     ;
  $A2F8 LD BC,$0718     ;
  $A2FB LD DE,$0011     ;
@@ -6445,7 +6463,7 @@ c$A0F8 CALL $945C      ;
  $A314 LD B,H          ;
  $A315 LD B,L          ;
  $A316 LD B,(HL)       ;
-; This entry point is used by the routine at #R$B460.
+; This entry point is used by the routines at #R$A826 and #R$B460.
 *$A317 LD HL,$6000     ;
  $A31A LD DE,$0018     ;
  $A31D LD B,$04        ;
@@ -7108,22 +7126,28 @@ c$A0F8 CALL $945C      ;
  $A81F CALL $8733      ;
  $A822 INC (IX+$00)    ;
  $A825 RET             ;
-; This entry point is used by the routine at #R$81BB.
-*$A826 LD HL,$5EA1     ;
- $A829 INC (HL)        ;
+
+; Initialise New Level
+;
+; Used by the routine at #R$81BB.
+@label=LevelNew
+c$A826 LD HL,$5EA1   ; {Increase the lives counter #R$5EA1 by one.
+ $A829 INC (HL)      ; }
 ; This entry point is used by the routine at #R$A880.
-*$A82A CALL $B385      ;
- $A82D CALL $9020      ;
- $A830 CALL $84D8      ;
- $A833 CALL $A2F5      ;
- $A836 CALL $A317      ;
- $A839 CALL $894F      ;
- $A83C CALL $9356      ;
- $A83F CALL $8BBB      ;
- $A842 CALL $B2F9      ;
- $A845 LD A,($5C78)    ;
- $A848 LD ($5E53),A    ;
- $A84B RET             ;
+@label=LevelInitialisation
+*$A82A CALL $B385    ; Call #R$B385.
+ $A82D CALL $9020    ; Call #R$9020.
+ $A830 CALL $84D8    ; Call #R$84D8.
+ $A833 CALL $A2F5    ; Call #R$A2F5.
+ $A836 CALL $A317    ; Call #R$A317.
+ $A839 CALL $894F    ; Call #R$894F.
+ $A83C CALL $9356    ; Call #R$9356.
+ $A83F CALL $8BBB    ; Call #R$8BBB.
+ $A842 CALL $B2F9    ; Call #R$B2F9.
+ $A845 LD A,($5C78)  ; #HTML(#REGa=<a
+                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+ $A848 LD ($5E53),A  ; Write #REGa to #R$5E53.
+ $A84B RET           ; Return.
 
 ; Initialise New Game
 ;
@@ -8637,7 +8661,7 @@ c$A880 LD HL,$5EA0     ;
  $B2F4 LD (HL),$06     ;
  $B2F6 INC HL          ;
  $B2F7 LD (HL),$06     ;
-; This entry point is used by the routine at #R$A0F8.
+; This entry point is used by the routine at #R$A826.
 *$B2F9 LD A,($60B0)    ;
  $B2FC BIT 3,A         ;
  $B2FE JR NZ,$B305     ;
@@ -8698,7 +8722,7 @@ c$A880 LD HL,$5EA0     ;
 *$B37B LD (IX+$04),$AF ;
  $B37F CALL $A75D      ;
  $B382 JP $ABB4        ;
-; This entry point is used by the routines at #R$A0F8 and #R$B460.
+; This entry point is used by the routines at #R$A826 and #R$B460.
 *$B385 LD HL,$61B0     ;
  $B388 LD B,$90        ;
 *$B38A LD (HL),$00     ;
@@ -9505,7 +9529,7 @@ c$B9A1 LD HL,$B9A6                          ;
 ; Used by the routines at #R$800A, #R$80FD, #R$81BB, #R$8D06, #R$91E2, #R$9EDC,
 ; #R$A0F8, #R$A880 and #R$B460.
 c$B9BC DI            ; Disable interrupts.
- $B9BD LD HL,$FF51   ; #REGhl=#N$FF51.
+ $B9BD LD HL,$FF51   ; #REGhl=#R$FF51.
 *$B9C0 LD A,(DE)     ;
  $B9C1 INC DE        ;
  $B9C2 BIT 7,A       ;
@@ -9523,14 +9547,16 @@ c$B9BC DI            ; Disable interrupts.
 b$B9D2 DEFB $44,$14,$10,$03,$35,$28,$33,$83
  $B9DA DEFB $10,$0C,$37,$06,$2D,$03,$28,$46
  $B9E2 DEFB $31,$34,$15,$11,$83,$3D,$17,$11
- $B9EA DEFB $03,$19,$1F,$83,$6E,$17,$0B,$03
- $B9F2 DEFB $09,$2D,$14,$31,$33,$03,$3D,$14
- $B9FA DEFB $10,$83,$51,$1F,$03,$09,$2D,$14
- $BA02 DEFB $31,$33,$03,$3D,$14,$10,$83,$6A
- $BA0A DEFB $13,$5C,$3A,$55,$83,$6A,$07,$10
- $BA12 DEFB $37,$11,$0B,$03,$4A,$05,$37,$11
- $BA1A DEFB $0C,$41,$83,$48,$33,$37,$37,$33
- $BA22 DEFB $03,$4A,$05,$37,$11,$0C,$41,$83
+ $B9EA DEFB $03,$19,$1F,$83
+ $B9EE DEFB $6E,$17,$0B,$03,$09,$2D,$14,$31
+ $B9F6 DEFB $33,$03,$3D,$14,$10,$83
+ $B9FC DEFB $51,$1F,$03,$09,$2D,$14,$31,$33
+ $BA04 DEFB $03,$3D,$14,$10,$83
+ $BA09 DEFB $6A,$13,$5C,$3A,$55,$83
+ $BA0F DEFB $6A,$07,$10,$37,$11,$0B,$03,$4A
+ $BA17 DEFB $05,$37,$11,$0C,$41,$83
+ $BA1D DEFB $48,$33,$37,$37,$33,$03,$4A,$05
+ $BA25 DEFB $37,$11,$0C,$41,$83
  $BA2A DEFB $03,$00,$83,$78,$35,$03,$68,$19
  $BA32 DEFB $2E,$3E,$83
  $BA35 DEFB $77,$11,$3B,$11,$03,$3D,$14,$10
@@ -9546,7 +9572,12 @@ b$B9D2 DEFB $44,$14,$10,$03,$35,$28,$33,$83
  $BA85 DEFB $78,$75,$83,$61,$0C,$37,$11,$27
  $BA8D DEFB $05,$03,$07,$0B,$0C,$10,$13,$10
  $BA95 DEFB $0C,$37,$06,$2D,$03,$3F,$14,$37
- $BA9D DEFB $83,$09,$BA,$0F,$BA,$1D,$BA
+ $BA9D DEFB $83
+
+; Data block at BA9E
+w$BA9E DEFW $BA09
+ $BAA0 DEFW $BA0F
+ $BAA2 DEFW $BA1D
 
 ; Data block at BAA4
 w$BAA4 DEFW $B9EE
@@ -13850,4 +13881,27 @@ b$F66E DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; #UDG(#PC)
  $FBEE DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $FBF6 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $FBFE DEFB $69,$3D
+
+i$FC00
+
+; Data block at FF44
+b$FF44 DEFB $00
+ $FF45 DEFB $00
+ $FF46 DEFB $00
+ $FF47 DEFB $00
+ $FF48 DEFB $00
+ $FF49 DEFB $00
+ $FF4A DEFB $00
+ $FF4B DEFB $00
+ $FF4C DEFB $00
+ $FF4D DEFB $00
+ $FF4E DEFB $00
+ $FF4F DEFB $00
+ $FF50 DEFB $00
+ $FF51 DEFB $00
+ $FF52 DEFB $00
+ $FF53 DEFB $00
+
+; Data block at FF54
+w$FF54 DEFW $0000
 

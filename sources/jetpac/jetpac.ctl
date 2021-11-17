@@ -410,7 +410,7 @@ c $60A9 Initialise New Level
 M $60AC,$04 If #R$5DF0 % $04 (every 4th level) ... then continue and reset the rocket else jump to #R$60BA.
   $60AC,$02,b$01
   $60B0,$03 Call #R$60CD.
-  $60B3,$04 Increase the live counter #R$5DF1 by one.
+  $60B3,$04 Increase the lives counter #R$5DF1 by one.
   $60B7,$03 Call #R$619A.
 @ $60BA label=LevelInitialisation
   $60BA,$03 Call #R$6929.
@@ -1389,6 +1389,10 @@ R $733A A Joystick controls
   $733D,$01 Return.
 
 c $733E Input: Left/ Right
+E $733E View the equivalent code in;
+. #LIST
+. { #TRANZAM$618C }
+. LIST#
 N $733E Check if this should be read from the Kempston joystick instead?
 @ $733E label=ReadInputLR
   $733E,$07 If #R$5CF3 indicates the control method is via the Kempston joystick then jump to #R$733A.
@@ -1430,6 +1434,10 @@ N $7371 Return "no input".
   $7373,$01 Return.
 
 c $7374 Input: Fire
+E $7374 View the equivalent code in;
+. #LIST
+. { #TRANZAM$61C2 }
+. LIST#
 N $7374 Check if this should be read from the Kempston joystick instead?
 @ $7374 label=ReadInputFire
   $7374,$07 If #R$5CF3 indicates the control method is via the Kempston joystick then jump to #R$733A.
@@ -1456,6 +1464,10 @@ N $7390 Return "Fire" button pressed.
   $7392,$01 Return.
 
 c $7393 Input: Thrust
+E $7393 View the equivalent code in;
+. #LIST
+. { #TRANZAM$61E0 }
+. LIST#
 N $7393 Check if this should be read from the Kempston joystick instead?
 @ $7393 label=ReadInputThrust
   $7393,$07 If #R$5CF3 indicates the control method is via the Kempston joystick then jump to #R$733A.

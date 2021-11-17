@@ -65,7 +65,10 @@ g $5E50
 
 g $5E52
 
-g $5E53
+g $5E53 Last Frame
+D $5E53 #HTML(Holds a copy of the last <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+@ $5E53 label=LastFrame
+B $5E53,$01
 
 g $5E5D
 g $5E5E
@@ -159,7 +162,7 @@ E $800A View the equivalent code in;
 . #LIST
 . { #ATICATAC$7C19 }
 . { #COOKIE$6298 }
-. { #LUNARJETMAN$800A }
+. { #JETPAC$61EB }
 . { #PSSST$61CD }
 . { #TRANZAM$5F07 }
 . LIST#
@@ -187,6 +190,7 @@ E $800A View the equivalent code in;
   $803E,$01 Flip the bits.
   $803F,$01 #REGe=#REGa.
   $8040,$03 #REGa=#R$5E00.
+  $8043,$03 Write #REGa to #R$5E7C.
 
 N $8046 Handle 1UP selection.
 @ $8046 label=GameSelect_CheckP1
@@ -231,8 +235,43 @@ N $8068 Handle starting a new game.
   $8077,$04 #REGc=#R$5E00.
   $807B,$03 #REGa=#R$5E7C.
 
+  $807F,$01 Stash #REGaf on the stack.
+  $8085,$01 Restore #REGaf from the stack.
+  $8086,$02,b$01 Keep only bits 1-2.
+  $808A,$03 #REGde=#R$BA9E.
+  $808D,$01 #REGa=#REGc.
+  $808E,$02,b$01 Keep only bits 1-2.
+  $8090,$03 Create an offset in #REGhl.
+  $8093,$01 #REGhl=#R$BA9E + offset.
+  $8094,$03 #REGde=address held at #REGhl.
+  $8097,$03 Call #R$B9BC.
+N $809A Handle flashing each selection.
+  $809A,$03 #REGhl=#R$810F(GameSelection_Attributes)+#N$01 (i.e. ignoring "Game Selection" as it doesn't flash).
+  $809D,$04 #REGc=#R$5E00.
+@ $80A8 label=MenuAttrHandler
+  $80A8,$02 #REGb=#N$03.
+@ $80AC label=MenuAttrHandler_Loop
+  $80AC,$02,b$01
+  $80B6,$03 Jump to #R$8035.
+  $80B9,$03 Call #R$80CD.
+  $80BC,$02 Jump to #R$80B3.
+  $80BE,$03 Call #R$80CA.
+  $80C1,$02 Jump to #R$80A8.
+N $80C3 Set the first menu item, unset the second.
+@ $80C3 label=MenuAttributeSetUnset
+  $80C3,$02 Set the FLASH attribute for the menu attribute.
+  $80C5,$01 Move onto the next menu attribute.
+@ $80C6 label=MenuAttributeUnSetFirst
+  $80C6,$02 Unset the FLASH attribute for the menu attribute.
+  $80C8,$01 Move onto the next menu attribute.
   $80C9,$01 Return.
-
+N $80CA Unset the first menu item, set the second.
+@ $80CA label=MenuAttributeUnsetSet
+  $80CA,$02 Unset the FLASH attribute for the menu attribute.
+  $80CC,$01 Move onto the next menu attribute.
+@ $80CD label=MenuAttributeSetFirst
+  $80CD,$02 Set the FLASH attribute for the menu attribute.
+  $80CF,$01 Move onto the next menu attribute.
   $80D0,$01 Return.
 
 c $80D1 Game Selection Menu
@@ -260,7 +299,7 @@ N $80DB There are seven lines of text.
   $80E5,$01 #REGa=#REGhl' (grab the position data).
   $80E6,$01 Increment #REGhl' (position data pointer) by one.
   $80E7,$01 Stash #REGhl' (position data pointer) on the stack.
-  $80E8,$03 #REGh'=#REGa #REGl'=#N$58.
+  $80E8,$03 #REGh'=#REGa #REGl'=#N$38.
   $80EB,$03 Call #R$81AB.
   $80EE,$01 Switch back to the normal registers.
   $80EF,$02 Restore #REGhl and #REGbc from the stack.
@@ -405,12 +444,24 @@ c $8209
   $822C,$03 Jump to #R$81E9.
 
 c $822F
+  $822F,$06 Write #R$6240 to #R$8261(#N$8262).
+  $8235,$09 Write #N$00 to #R$826A, #R$826B and #R$826C.
+  $823E,$01 Return.
+
+c $823F
+  $823F,$03 Call #R$822F.
+  $8248,$01 Enable interrupts.
+  $8249,$01 Return.
 
 c $824A
+B $826A,$03,$01
+
+c $8298
 
 w $82C5
 
 c $84AD Reset Screen Buffer
+E $84AD Continue on to #R$84B4 to blank the screen buffer.
 E $84AD View the equivalent code in;
 . #LIST
 . { #ATICATAC$80B4 }
@@ -420,8 +471,6 @@ E $84AD View the equivalent code in;
 . { #TRANZAM$7211 }
 . LIST#
 @ $84AD label=ResetScreen
-E $84AD Continue on to #R$84B4 to blank the screen buffer.
-E $84AD View the equivalent code in #ATICATAC$80B4.
   $84AD,$03 #REGhl=#R$4000(screen buffer).
   $84B0,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
   $84B2,$02 #REGc=#N$00 (value to write).
@@ -1010,6 +1059,23 @@ B $A068,$90
 
 c $A0F8
 
+c $A826 Initialise New Level
+@ $A826 label=LevelNew
+  $A826,$04 Increase the lives counter #R$5EA1 by one.
+@ $A82A label=LevelInitialisation
+  $A82A,$03 Call #R$B385.
+  $A82D,$03 Call #R$9020.
+  $A830,$03 Call #R$84D8.
+  $A833,$03 Call #R$A2F5.
+  $A836,$03 Call #R$A317.
+  $A839,$03 Call #R$894F.
+  $A83C,$03 Call #R$9356.
+  $A83F,$03 Call #R$8BBB.
+  $A842,$03 Call #R$B2F9.
+  $A845,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $A848,$03 Write #REGa to #R$5E53.
+  $A84B,$01 Return.
+
 c $A84C Initialise New Game
 @ $A84C label=NewGame
   $A84C,$02 #REGb=#N$02 (counter for our two players).
@@ -1193,14 +1259,22 @@ B $B9A6
 
 c $B9BC
   $B9BC,$01 Disable interrupts.
-  $B9BD,$03 #REGhl=#N$FF51.
+  $B9BD,$03 #REGhl=#R$FF51.
   $B9C8,$02 Jump to #R$B9C0.
   $B9CA,$02,b$01 Keep only bits 0-6.
   $B9D0,$01 Enable interrupts.
   $B9D1,$01 Return.
 
 b $B9D2
+  $B9EE
+  $B9FC
+  $BA09
+  $BA0F
+  $BA1D
+  $BA2A
   $BA35
+
+w $BA9E
 
 w $BAA4
   $BAA4,$04,$02
@@ -1910,3 +1984,11 @@ b $F66E Terrain UDGs
 L $F66E,$08,$90
 
 i $FC00
+
+b $FF44
+  $FF44,$10,$01
+
+w $FF54
+  $FF54,$02
+
+i $FF56
