@@ -41,20 +41,29 @@ E $5E00 View the equivalent code in;
 . { #COOKIE$5F09 }
 . { #JETPAC$5CF0 }
 . { #LUNARJETMAN$5E06 }
-. { #PSSST$5E00 }
 . LIST#
 D $5E00 3-byte representation of the score.
 @ $5E00 label=High_Score
 
 g $5E03 Game Options
+E $5E03 View the equivalent code in;
+. #LIST
+. { #ATICATAC$5E00 }
+. { #COOKIE$5F0C }
+. { #JETPAC$5CF3 }
+. { #LUNARJETMAN$5E00 }
+. LIST#
 @ $5E03 label=GameOptions
-D $5E03 #TABLE(default,centre,centre)
+D $5E03 Holds the number of players and the chosen control method.
+. #TABLE(default,centre,centre)
 . { =h Byte | =h Binary | =h Option }
-. { #N$00 | #EVAL($00, 2, 8) | 1UP Game + Keyboard }
-. { #N$01 | #EVAL($01, 2, 8) | 2UP Game + Keyboard }
-. { #N$02 | #EVAL($02, 2, 8) | 1UP Game + Kempston Joystick }
-. { #N$03 | #EVAL($03, 2, 8) | 2UP Game + Kempston Joystick }
+. { #N$00 | #EVAL($00, $02, $08) | 1UP Game + Keyboard }
+. { #N$01 | #EVAL($01, $02, $08) | 2UP Game + Keyboard }
+. { #N$02 | #EVAL($02, $02, $08) | 1UP Game + Kempston Joystick }
+. { #N$03 | #EVAL($03, $02, $08) | 2UP Game + Kempston Joystick }
 . TABLE#
+N $5E03 "Number of Players" on Bit #N$00.
+N $5E03 "Control Method" on Bit #N$01.
 
 g $5E04 Sound On/ Off
 D $5E04 Either #N$00 or #N$01.
@@ -1001,10 +1010,7 @@ c $679C
 
 c $67AE
 c $698F
-c $69A8
 c $69E8
-
-c $6A1A
 
 c $6A98
   $6A98,$03 Call #R$64ED.

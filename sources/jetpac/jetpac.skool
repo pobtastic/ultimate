@@ -260,17 +260,31 @@ g$5CF0 DEFB $31,$0E,$7D
 ; { #PSSST$5E00 }
 ; LIST#
 
-; Game Type
+; Game Options
 ;
 ; Holds the number of players and the chosen control method.
-; #TABLE(default,centre) { =h Bit(n) | =h Unset(0) | =h Set(1) } { 0 | 1up | 2up } { 1 | Keyboard | Kempston } TABLE#
-@label=GAME_TYPE
-g$5CF3 DEFB $4C      ; #TABLE(default,centre) { =h Value | =h Num Players | =h Control Method }
-                     ; { 0 | 1UP | Keyboard }
-                     ; { 1 | 2UP | Keyboard }
-                     ; { 2 | 1UP | Kempston }
-                     ; { 3 | 2UP | Kempston }
-                     ; TABLE#
+; #TABLE(default,centre,centre)
+; { =h Byte | =h Binary | =h Option }
+; { #N$00 | #EVAL($00, $02, $08) | 1UP Game + Keyboard }
+; { #N$01 | #EVAL($01, $02, $08) | 2UP Game + Keyboard }
+; { #N$02 | #EVAL($02, $02, $08) | 1UP Game + Kempston Joystick }
+; { #N$03 | #EVAL($03, $02, $08) | 2UP Game + Kempston Joystick }
+; TABLE#
+;
+; .
+;
+; "Number of Players" on Bit #N$00.
+; .
+; "Control Method" on Bit #N$01.
+@label=GameOptions
+g$5CF3 DEFB $4C
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$5E00 }
+; { #COOKIE$5F0C }
+; { #LUNARJETMAN$5E00 }
+; { #PSSST$5E03 }
+; LIST#
 
 ; 1UP Score
 ;
@@ -1320,7 +1334,7 @@ c$6398 LD HL,($5CF4) ;
 *$63C9 POP HL        ; Fetch #REGhl off the stack (to clear it)
  $63CA RET           ; Return
 
-; Updates the highscore
+; Update Highscore
 ;
 ; The top of the stack will contain either #R$5CF4 or #R$5CF7. The three bytes which make up the players score are
 ;       copied over to the #R$5CF0 memory location.
@@ -3380,7 +3394,7 @@ c$714C PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
                      ; from the stack.
 ; This entry point is used by the routine at #R$70A4.
 *$715C LD B,$08      ; #REGb=#N$08 (#N$08 rows of pixels).
-; This entry point is used by the routine at #R$7571.
+; This entry point is used by the routine at #R$766D.
 @label=PrintScreen_Loop
 *$715E LD A,(DE)     ; {Copy a byte from the font data to the screen buffer.
  $715F LD (HL),A     ; }
@@ -3604,7 +3618,7 @@ c$71CF EXX                     ; Switch to the shadow registers.
 ; Calculate Attribute Address
 ;
 ; Used by the routines at #R$61BD, #R$61D3, #R$62FF, #R$6FFC, #R$716C, #R$71CF
-; and #R$7571.
+; and #R$766D.
 ;
 ;   HL Pixel address co-ordinates
 ; O:HL Attribute buffer address
@@ -3799,7 +3813,7 @@ c$72EE DEC H         ;
 ; Calculate Screen Address
 ;
 ; Used by the routines at #R$62FF, #R$6FFC, #R$70A4, #R$716C, #R$7224, #R$723C
-; and #R$7571.
+; and #R$766D.
 @label=ScreenAddress
 c$7308 LD A,L        ; #REGa=#REGl.
  $7309 RRCA          ; {#REGa=#REGa / #N$08.
@@ -4239,6 +4253,7 @@ c$7571 CALL $7327      ;
  $75FB SET 6,(IX+$04)  ;
  $75FF LD (IX+$05),$20 ;
  $7603 JP $7584        ;
+; This entry point is used by the routine at #R$761D.
 *$7606 EX AF,AF'       ;
  $7607 LD A,(IX+$00)   ;
  $760A AND $3F         ;
@@ -4251,136 +4266,143 @@ c$7571 CALL $7327      ;
  $7616 JP P,$7631      ;
  $7619 ADD A,$09       ;
  $761B JR $7631        ;
-; This entry point is used by the routines at #R$63DA, #R$6498, #R$651F,
-; #R$6A6C, #R$6AEF, #R$6C2F, #R$6CF5, #R$6DD3 and #R$73D3.
-*$761D LD B,$04        ;
- $761F LD HL,$6000     ;
-*$7622 LD E,$00        ;
- $7624 PUSH HL         ;
- $7625 INC HL          ;
- $7626 LD A,(HL)       ;
- $7627 SUB (IX+$01)    ;
- $762A JP P,$7606      ;
- $762D NEG             ;
- $762F SET 6,E         ;
-*$7631 INC HL          ;
- $7632 INC HL          ;
- $7633 CP (HL)         ;
- $7634 JP NC,$7665     ;
- $7637 ADD A,$12       ;
- $7639 CP (HL)         ;
- $763A JP C,$763F      ;
- $763D SET 3,E         ;
-*$763F DEC HL          ;
- $7640 LD A,(HL)       ;
- $7641 SUB (IX+$02)    ;
- $7644 NEG             ;
- $7646 INC A           ;
- $7647 INC A           ;
- $7648 JP M,$7665      ;
- $764B CP $02          ;
- $764D JR C,$7661      ;
- $764F CP (IX+$07)     ;
- $7652 JR C,$765D      ;
- $7654 DEC A           ;
- $7655 DEC A           ;
- $7656 CP (IX+$07)     ;
- $7659 JR NC,$7665     ;
- $765B SET 4,E         ;
-*$765D SET 2,E         ;
- $765F POP HL          ;
- $7660 RET             ;
-*$7661 SET 7,E         ;
- $7663 JR $765D        ;
-*$7665 POP HL          ;
- $7666 INC HL          ;
- $7667 INC HL          ;
- $7668 INC HL          ;
- $7669 INC HL          ;
- $766A DJNZ $7622      ; Decrease #REGb by one, and loop back to #R$7622 until
-                       ; zero
- $766C RET             ;
-; This entry point is used by the routine at #R$60A9.
-*$766D LD B,$04        ;
- $766F LD HL,$6000     ;
-*$7672 PUSH BC         ;
- $7673 LD A,(HL)       ;
- $7674 AND A           ;
- $7675 JP Z,$76D3      ;
- $7678 INC HL          ;
- $7679 LD C,(HL)       ;
- $767A INC HL          ;
- $767B INC HL          ;
- $767C LD A,(HL)       ;
- $767D AND $FC         ;
- $767F NEG             ;
- $7681 ADD A,C         ;
- $7682 ADD A,$10       ;
- $7684 PUSH HL         ;
- $7685 DEC HL          ;
- $7686 LD H,(HL)       ;
- $7687 LD L,A          ;
- $7688 CALL $7308      ;
- $768B LD DE,$76E2     ;
- $768E CALL $76DB      ;
- $7691 EX (SP),HL      ;
- $7692 LD A,(HL)       ;
- $7693 EX (SP),HL      ;
- $7694 SRL A           ;
- $7696 SRL A           ;
- $7698 SUB $04         ;
- $769A LD B,A          ;
- $769B LD DE,$76EA     ;
-*$769E CALL $76DB      ;
- $76A1 DJNZ $769E      ; Decrease #REGb by one, and loop back to #R$769E until
-                       ; zero
- $76A3 LD DE,$76F2     ;
- $76A6 CALL $76DB      ;
- $76A9 POP HL          ;
- $76AA LD A,(HL)       ;
- $76AB AND $FC         ;
- $76AD NEG             ;
- $76AF ADD A,C         ;
- $76B0 ADD A,$10       ;
- $76B2 PUSH HL         ;
- $76B3 DEC HL          ;
- $76B4 LD B,(HL)       ;
- $76B5 DEC HL          ;
- $76B6 DEC HL          ;
- $76B7 LD C,(HL)       ;
- $76B8 LD H,B          ;
- $76B9 LD L,A          ;
- $76BA PUSH BC         ;
- $76BB CALL $720E      ;
- $76BE POP BC          ;
- $76BF EX (SP),HL      ;
- $76C0 LD A,(HL)       ;
- $76C1 EX (SP),HL      ;
- $76C2 SRL A           ;
- $76C4 SRL A           ;
- $76C6 SUB $02         ;
- $76C8 LD B,A          ;
- $76C9 LD A,C          ;
-*$76CA LD (HL),A       ;
- $76CB INC HL          ;
- $76CC DJNZ $76CA      ; Decrease #REGb by one, and loop back to #R$76CA until
-                       ; zero
- $76CE POP HL          ;
- $76CF INC HL          ;
- $76D0 POP BC          ;
- $76D1 JR $76D8        ;
-*$76D3 POP BC          ;
- $76D4 INC HL          ;
- $76D5 INC HL          ;
- $76D6 INC HL          ;
- $76D7 INC HL          ;
-*$76D8 DJNZ $7672      ; Decrease #REGb by one, and loop back to #R$7672 until
-                       ; zero
- $76DA RET             ;
-*$76DB PUSH BC         ;
- $76DC PUSH DE         ;
- $76DD LD B,$08        ;
- $76DF JP $715E        ;
+
+; Routine at 761D
+;
+; Used by the routines at #R$63DA, #R$6498, #R$651F, #R$6A6C, #R$6AEF, #R$6C2F,
+; #R$6CF5, #R$6DD3, #R$73D3 and #R$7571.
+c$761D LD B,$04      ;
+ $761F LD HL,$6000   ;
+*$7622 LD E,$00      ;
+ $7624 PUSH HL       ;
+ $7625 INC HL        ;
+ $7626 LD A,(HL)     ;
+ $7627 SUB (IX+$01)  ;
+ $762A JP P,$7606    ;
+ $762D NEG           ;
+ $762F SET 6,E       ;
+; This entry point is used by the routine at #R$7571.
+*$7631 INC HL        ;
+ $7632 INC HL        ;
+ $7633 CP (HL)       ;
+ $7634 JP NC,$7665   ;
+ $7637 ADD A,$12     ;
+ $7639 CP (HL)       ;
+ $763A JP C,$763F    ;
+ $763D SET 3,E       ;
+*$763F DEC HL        ;
+ $7640 LD A,(HL)     ;
+ $7641 SUB (IX+$02)  ;
+ $7644 NEG           ;
+ $7646 INC A         ;
+ $7647 INC A         ;
+ $7648 JP M,$7665    ;
+ $764B CP $02        ;
+ $764D JR C,$7661    ;
+ $764F CP (IX+$07)   ;
+ $7652 JR C,$765D    ;
+ $7654 DEC A         ;
+ $7655 DEC A         ;
+ $7656 CP (IX+$07)   ;
+ $7659 JR NC,$7665   ;
+ $765B SET 4,E       ;
+*$765D SET 2,E       ;
+ $765F POP HL        ;
+ $7660 RET           ;
+*$7661 SET 7,E       ;
+ $7663 JR $765D      ;
+*$7665 POP HL        ;
+ $7666 INC HL        ;
+ $7667 INC HL        ;
+ $7668 INC HL        ;
+ $7669 INC HL        ;
+ $766A DJNZ $7622    ; Decrease #REGb by one, and loop back to #R$7622 until
+                     ; zero
+ $766C RET           ;
+
+; Routine at 766D
+;
+; Used by the routine at #R$60A9.
+c$766D LD B,$04      ;
+ $766F LD HL,$6000   ;
+*$7672 PUSH BC       ;
+ $7673 LD A,(HL)     ;
+ $7674 AND A         ;
+ $7675 JP Z,$76D3    ;
+ $7678 INC HL        ;
+ $7679 LD C,(HL)     ;
+ $767A INC HL        ;
+ $767B INC HL        ;
+ $767C LD A,(HL)     ;
+ $767D AND $FC       ;
+ $767F NEG           ;
+ $7681 ADD A,C       ;
+ $7682 ADD A,$10     ;
+ $7684 PUSH HL       ;
+ $7685 DEC HL        ;
+ $7686 LD H,(HL)     ;
+ $7687 LD L,A        ;
+ $7688 CALL $7308    ;
+ $768B LD DE,$76E2   ;
+ $768E CALL $76DB    ;
+ $7691 EX (SP),HL    ;
+ $7692 LD A,(HL)     ;
+ $7693 EX (SP),HL    ;
+ $7694 SRL A         ;
+ $7696 SRL A         ;
+ $7698 SUB $04       ;
+ $769A LD B,A        ;
+ $769B LD DE,$76EA   ;
+*$769E CALL $76DB    ;
+ $76A1 DJNZ $769E    ; Decrease #REGb by one, and loop back to #R$769E until
+                     ; zero
+ $76A3 LD DE,$76F2   ;
+ $76A6 CALL $76DB    ;
+ $76A9 POP HL        ;
+ $76AA LD A,(HL)     ;
+ $76AB AND $FC       ;
+ $76AD NEG           ;
+ $76AF ADD A,C       ;
+ $76B0 ADD A,$10     ;
+ $76B2 PUSH HL       ;
+ $76B3 DEC HL        ;
+ $76B4 LD B,(HL)     ;
+ $76B5 DEC HL        ;
+ $76B6 DEC HL        ;
+ $76B7 LD C,(HL)     ;
+ $76B8 LD H,B        ;
+ $76B9 LD L,A        ;
+ $76BA PUSH BC       ;
+ $76BB CALL $720E    ;
+ $76BE POP BC        ;
+ $76BF EX (SP),HL    ;
+ $76C0 LD A,(HL)     ;
+ $76C1 EX (SP),HL    ;
+ $76C2 SRL A         ;
+ $76C4 SRL A         ;
+ $76C6 SUB $02       ;
+ $76C8 LD B,A        ;
+ $76C9 LD A,C        ;
+*$76CA LD (HL),A     ;
+ $76CB INC HL        ;
+ $76CC DJNZ $76CA    ; Decrease #REGb by one, and loop back to #R$76CA until
+                     ; zero
+ $76CE POP HL        ;
+ $76CF INC HL        ;
+ $76D0 POP BC        ;
+ $76D1 JR $76D8      ;
+*$76D3 POP BC        ;
+ $76D4 INC HL        ;
+ $76D5 INC HL        ;
+ $76D6 INC HL        ;
+ $76D7 INC HL        ;
+*$76D8 DJNZ $7672    ; Decrease #REGb by one, and loop back to #R$7672 until
+                     ; zero
+ $76DA RET           ;
+*$76DB PUSH BC       ;
+ $76DC PUSH DE       ;
+ $76DD LD B,$08      ;
+ $76DF JP $715E      ;
 
 ; Platform Graphics
 ;
@@ -4388,17 +4410,17 @@ c$7571 CALL $7327      ;
 ;
 ; .
 ;
-; #UDGARRAY6,attr=4,scale=4;(#PC);(#PC+$08)x4;(#PC+$10)(platform)
+; #UDGARRAY6,attr=$04,scale=$04;(#PC);(#PC+$08)x$04;(#PC + $10)(platform)
 ; .
-; #UDGARRAY6,attr=6,scale=4;(#PC);(#PC+$08)x2;(#PC+$10)(floor)
+; #UDGARRAY6,attr=$06,scale=$04;(#PC);(#PC+$08)x$02;(#PC + $10)(floor)
 ; .
 ; Left-hand Platform UDG
-@label=PLATFORM
-b$76E2 DEFB $2F,$7F,$FF,$DD,$FB,$7B,$71,$21 ; #UDG#(#PC),attr=4
+@label=UDG_Platform
+b$76E2 DEFB $2F,$7F,$FF,$DD,$FB,$7B,$71,$21 ; #UDG#(#PC),attr=$04
 ; Middle Platform UDG
- $76EA DEFB $BD,$FF,$FF,$F7,$EB,$DD,$AD,$04 ; #UDG#(#PC),attr=4
+ $76EA DEFB $BD,$FF,$FF,$F7,$EB,$DD,$AD,$04 ; #UDG#(#PC),attr=$04
 ; Right-hand Platform UDG
- $76F2 DEFB $4C,$FE,$FF,$3E,$FF,$FE,$9C,$08 ; #UDG#(#PC),attr=4
+ $76F2 DEFB $4C,$FE,$FF,$3E,$FF,$FE,$9C,$08 ; #UDG#(#PC),attr=$04
 
 ; Jetman Sprite Table
 @label=JetmanSpritesTable

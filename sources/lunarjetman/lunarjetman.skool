@@ -329,8 +329,14 @@ g$5E5F DEFB $00,$00,$00
 @label=2UP_Score
 g$5E62 DEFB $00,$00,$00
 
-; Game status buffer entry at 5E65
-g$5E65 DEFB $00
+; Active Player
+;
+; Which player is currently active.
+@label=Flag_ActivePlayer
+g$5E65 DEFB $00      ; #TABLE(default,centre,centre) { =h Value | =h Player }
+                     ; { $00 | 1UP }
+                     ; { $FF | 2UP }
+                     ; TABLE#
 
 ; Current menu item colour attribute
 @label=Current_MenuAttr
@@ -352,12 +358,12 @@ g$5E7C DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $5E94 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $5E9C DEFB $00,$00,$00,$00
 
-; 1UP Fuel
-@label=1UP_Fuel
+; Active Player Fuel
+@label=ActivePlayer_Fuel
 g$5EA0 DEFB $00
 
-; 1UP Lives
-@label=1UP_Lives
+; Active Player Lives
+@label=ActivePlayer_Lives
 g$5EA1 DEFB $00
 
 ; Game status buffer entry at 5EA2
@@ -366,12 +372,12 @@ g$5EA2 DEFB $00
 ; Game status buffer entry at 5EA3
 g$5EA3 DEFB $00
 
-; 2UP Fuel
-@label=2UP_Fuel
+; Inactive Player Fuel
+@label=InactivePlayer_Fuel
 g$5EA4 DEFB $00
 
-; 2UP Lives
-@label=2UP_Lives
+; Inactive Player Lives
+@label=InactivePlayer_Lives
 g$5EA5 DEFB $00
 
 ; Game status buffer entry at 5EA6
@@ -423,20 +429,33 @@ g$5EA7 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $5FF7 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $5FFF DEFB $00
 
-; Data block at 6000
-b$6000 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6008 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6010 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6018 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6020 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6028 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6030 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6038 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6040 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6048 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6050 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6058 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $6060 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; Laser Beam Parameters
+;
+; #TABLE(default,centre) { =h Bytes(n) | =h Variable }
+; TABLE#
+@label=Laser_Param_1
+g$6000 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; {Laser Beam #1.
+ $6008 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $6010 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Laser_Param_2
+ $6018 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; {Laser Beam #2.
+ $6020 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $6028 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Laser_Param_3
+ $6030 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; {Laser Beam #3.
+ $6038 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $6040 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Laser_Param_4
+ $6048 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; {Laser Beam #4.
+ $6050 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $6058 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$5D08 }
+; LIST#
+
+; Data block at 6060
+b$6060 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $6068 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $6070 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $6078 DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -1465,7 +1484,7 @@ c$8000 DI            ; Disable interrupts.
 ; #LIST
 ; { #ATICATAC$6000 }
 ; { #COOKIE$5F00 }
-; { #LUNARJETMAN$8000 }
+; { #JETPAC$61E5 }
 ; { #PSSST$61C6 }
 ; { #TRANZAM$5F00 }
 ; LIST#
@@ -1646,16 +1665,16 @@ c$80D1 LD DE,$810E   ; #REGde=#R$810E.
 ; Routine at 80FD
 ;
 ; Used by the routine at #R$800A.
-c$80FD LD DE,$BAA4   ;
+c$80FD LD DE,$BAA4   ; #REGde=#R$BAA4.
  $8100 LD A,C        ;
  $8101 RLCA          ;
- $8102 AND $02       ;
- $8104 LD L,A        ;
- $8105 LD H,$00      ;
- $8107 ADD HL,DE     ;
- $8108 LD E,(HL)     ;
+ $8102 AND %00000010 ; Keep only bit 1.
+ $8104 LD L,A        ; {Create an offset in #REGhl.
+ $8105 LD H,$00      ; }
+ $8107 ADD HL,DE     ; #REGhl=#R$BAA4 + offset.
+ $8108 LD E,(HL)     ; {#REGde=
  $8109 INC HL        ;
- $810A LD D,(HL)     ;
+ $810A LD D,(HL)     ; }
  $810B JP $B9BC      ; Jump to #R$B9BC.
 
 ; Game Select Attribute Table
@@ -3053,43 +3072,73 @@ c$8947 LD A,L        ;
  $894D INC HL        ;
  $894E RET           ;
 
-; Routine at 894F
+; Display Lives
 ;
 ; Used by the routines at #R$8FF4, #R$9EDC and #R$A0F8.
-c$894F LD HL,$0040   ;
- $8952 CALL $851E    ;
- $8955 CALL $8986    ;
- $8958 AND A         ;
- $8959 JR Z,$8977    ;
- $895B CALL $896A    ;
-*$895E LD HL,$00B0   ;
- $8961 CALL $851E    ;
- $8964 CALL $8994    ;
- $8967 AND A         ;
- $8968 JR Z,$897C    ;
-*$896A ADD A,$30     ;
- $896C CALL $89EF    ;
- $896F LD DE,$D151   ;
- $8972 PUSH BC       ;
- $8973 PUSH DE       ;
- $8974 JP $8A01      ;
-*$8977 CALL $897C    ;
- $897A JR $895E      ;
-*$897C LD A,$20      ;
- $897E CALL $89EF    ;
- $8981 LD A,$20      ;
- $8983 JP $89EF      ;
-*$8986 LD A,($5E65)  ;
+;
+; .
+;
+; Controller for 1UP lives.
+@label=DisplayPlayerLives
+c$894F LD HL,$0040   ; {Call #R$851E with #N($0040, $04, $04) (screen buffer
+ $8952 CALL $851E    ; address) for 1UP lives.}
+ $8955 CALL $8986    ; #REGa=1UP lives remaining (by calling #R$8986).
+ $8958 AND A         ; {If 1UP lives are zero, jump to #R$8977.
+ $8959 JR Z,$8977    ; }
+ $895B CALL $896A    ; Else, there are lives to display so call #R$896A.
+; Controller for 2UP lives.
+@label=Controller2UPLives
+*$895E LD HL,$00B0   ; {Call #R$851E with #N($00B0, $04, $04) (screen buffer
+ $8961 CALL $851E    ; address) for 2UP lives.}
+ $8964 CALL $8994    ; #REGa=2UP lives remaining (by calling #R$8994).
+ $8967 AND A         ; {If 2UP lives are zero, jump to #R$897C.
+ $8968 JR Z,$897C    ; }
+; Handles displaying the lives count and UDG character.
+@label=HandlerDisplayLives
+*$896A ADD A,$30     ; Add #N$30 to convert to an ASCII character (starting at
+                     ; "0" character).
+ $896C CALL $89EF    ; Call #R$89EF.
+ $896F LD DE,$D151   ; #REGde=#R$D151.
+ $8972 PUSH BC       ; {Stash #REGbc and #REGde on the stack.
+ $8973 PUSH DE       ; }
+ $8974 JP $8A01      ; Jump to #R$8A01.
+; 1UP has no lives.
+@label=Handler1UPNoLives
+*$8977 CALL $897C    ; Call #R$897C.
+ $897A JR $895E      ; Jump to #R$895E.
+; 2UP has no lives.
+@label=Handler2UPNoLives
+*$897C LD A,$20      ; #REGa=ASCII " " (SPACE).
+ $897E CALL $89EF    ; Call #R$89EF.
+ $8981 LD A,$20      ; #REGa=ASCII " " (SPACE).
+ $8983 JP $89EF      ; Jump to #R$89EF.
+; Controller for the currently active player.
+@label=ControllerActiveLives
+*$8986 LD A,($5E65)  ; {If #R$5E65 is not zero then jump to #R$8990.
  $8989 AND A         ;
- $898A JR NZ,$8990   ;
-*$898C LD A,($5EA1)  ;
- $898F RET           ;
-*$8990 LD A,($5EA5)  ;
- $8993 RET           ;
-*$8994 LD A,($5E65)  ;
+ $898A JR NZ,$8990   ; }
+; Return currently active players lives left.
+@label=ActivePlayerLives
+*$898C LD A,($5EA1)  ; #REGa=#R$5EA1.
+ $898F RET           ; Return.
+; Return inactive players lives left.
+@label=InactivePlayerLives
+*$8990 LD A,($5EA5)  ; #REGa=#R$5EA5.
+ $8993 RET           ; Return.
+; Controller for the inactive player.
+@label=ControllerInactiveLives
+*$8994 LD A,($5E65)  ; {If #R$5E65 is zero then jump to #R$8990.
  $8997 AND A         ;
- $8998 JR Z,$8990    ;
- $899A JR $898C      ;
+ $8998 JR Z,$8990    ; }
+ $899A JR $898C      ; Jump to #R$898C.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$0000 }
+; { #COOKIE$7378 }
+; { #JETPAC$70A4 }
+; { #PSSST$7325 }
+; { #TRANZAM$0000 }
+; LIST#
 
 ; Routine at 899C
 ;
@@ -5797,79 +5846,95 @@ b$9D98 DEFB $10,$51,$40,$08,$53,$10,$06,$37
 b$9DB0 DEFB $88,$BA,$3E,$BA,$53,$BA,$5E,$BA
  $9DB8 DEFB $6F,$BA,$7A,$BA,$83,$BA,$88,$BA
 
-; Routine at 9DC0
+; Handler: Laser Beam
 ;
 ; Used by the routine at #R$8D06.
-c$9DC0 LD A,($5E42)  ;
- $9DC3 AND $01       ;
- $9DC5 RET NZ        ;
- $9DC6 LD HL,$6000   ;
- $9DC9 LD DE,$0018   ;
- $9DCC LD B,$04      ;
-*$9DCE LD A,(HL)     ;
- $9DCF AND A         ;
- $9DD0 JR Z,$9DDE    ;
- $9DD2 ADD HL,DE     ;
- $9DD3 DJNZ $9DCE    ;
- $9DD5 RET           ;
-*$9DD6 ADD A,$10     ;
- $9DD8 OR $04        ;
- $9DDA AND $FE       ;
- $9DDC JR $9DFA      ;
-*$9DDE LD (HL),$11   ;
- $9DE0 INC HL        ;
- $9DE1 LD DE,$6078   ;
- $9DE4 LD B,$0D      ;
- $9DE6 LD A,(DE)     ;
- $9DE7 INC DE        ;
- $9DE8 DEC A         ;
- $9DE9 BIT 3,A       ;
- $9DEB JR Z,$9DEF    ;
- $9DED DEC B         ;
- $9DEE DEC B         ;
-*$9DEF AND $04       ;
- $9DF1 LD A,(DE)     ;
- $9DF2 JR NZ,$9DD6   ;
- $9DF4 SUB $08       ;
- $9DF6 AND $F8       ;
- $9DF8 OR $05        ;
-*$9DFA LD C,A        ;
- $9DFB INC DE        ;
- $9DFC INC DE        ;
- $9DFD INC DE        ;
- $9DFE LD A,(DE)     ;
- $9DFF SUB B         ;
- $9E00 LD (HL),A     ;
- $9E01 INC HL        ;
- $9E02 LD B,$03      ;
- $9E04 LD (HL),C     ;
- $9E05 LD A,C        ;
- $9E06 AND $FB       ;
-*$9E08 INC HL        ;
- $9E09 LD (HL),A     ;
- $9E0A DJNZ $9E08    ;
- $9E0C INC HL        ;
- $9E0D LD A,($5E40)  ;
- $9E10 AND $18       ;
- $9E12 ADD A,$60     ;
- $9E14 LD (HL),A     ;
- $9E15 INC HL        ;
- $9E16 EX DE,HL      ;
- $9E17 LD HL,$9E28   ;
- $9E1A LD A,($5E40)  ;
- $9E1D AND $03       ;
- $9E1F LD C,A        ;
- $9E20 LD B,$00      ;
- $9E22 ADD HL,BC     ;
- $9E23 LD A,(HL)     ;
- $9E24 LD (DE),A     ;
- $9E25 JP $B8A8      ;
- $9E28 LD B,A        ;
- $9E29 LD B,E        ;
- $9E2A LD B,E        ;
- $9E2B LD B,L        ;
+;
+; .
+;
+; Only handle the laser beam on every 4th frame.
+@label=Handler_LaserBeam
+c$9DC0 LD A,($5E42)         ;
+ $9DC3 AND %00000001        ; Keep only bit 0.
+ $9DC5 RET NZ               ;
+; Search for a "free" laser beam slot.
+ $9DC6 LD HL,$6000          ; #REGhl=#R$6000.
+ $9DC9 LD DE,$0018          ; #REGde=#N($0018, $04, $04) (each slot is #N$18
+                            ; bytes).
+ $9DCC LD B,$04             ; #REGb=#N$04 (counter; there are 4 "slots").
+@label=LaserBeam_Slot
+*$9DCE LD A,(HL)            ; {If the slot is not in use, jump to #R$9DDE.
+ $9DCF AND A                ;
+ $9DD0 JR Z,$9DDE           ; }
+ $9DD2 ADD HL,DE            ; #REGhl=#REGhl+#REGde (move onto the next slot).
+ $9DD3 DJNZ $9DCE           ; Decrease counter by one and loop back to #R$9DCE
+                            ; until counter is zero.
+; All laser beam slots are in use so just return...
+ $9DD5 RET                  ; Return.
+; Possibly the "shoot right" code?
+*$9DD6 ADD A,$10            ; #REGa=#REGa+#N$10.
+ $9DD8 OR %00000100         ; Set bit 2.
+ $9DDA AND %11111110        ; Keep only bits 1-7.
+ $9DDC JR $9DFA             ; Jump to #R$9DFA.
+; Initialise a new laser beam.
+@label=Init_LaserBeam
+*$9DDE LD (HL),$11          ; Mark the laser beam slot as "in-use".
+ $9DE0 INC HL               ; #REGhl=Laser beam Y position.
+ $9DE1 LD DE,$6078          ; #REGde=#R$6078.
+ $9DE4 LD B,$0D             ;
+ $9DE6 LD A,(DE)            ;
+ $9DE7 INC DE               ;
+ $9DE8 DEC A                ;
+ $9DE9 BIT 3,A              ;
+ $9DEB JR Z,$9DEF           ;
+ $9DED DEC B                ;
+ $9DEE DEC B                ;
+*$9DEF AND $04              ;
+ $9DF1 LD A,(DE)            ;
+ $9DF2 JR NZ,$9DD6          ;
+ $9DF4 SUB $08              ;
+ $9DF6 AND $F8              ;
+ $9DF8 OR $05               ;
+*$9DFA LD C,A               ;
+ $9DFB INC DE               ;
+ $9DFC INC DE               ;
+ $9DFD INC DE               ;
+ $9DFE LD A,(DE)            ;
+ $9DFF SUB B                ;
+ $9E00 LD (HL),A            ;
+ $9E01 INC HL               ;
+ $9E02 LD B,$03             ;
+ $9E04 LD (HL),C            ;
+ $9E05 LD A,C               ;
+ $9E06 AND $FB              ;
+*$9E08 INC HL               ;
+ $9E09 LD (HL),A            ;
+ $9E0A DJNZ $9E08           ;
+ $9E0C INC HL               ;
+ $9E0D LD A,($5E40)         ;
+ $9E10 AND $18              ;
+ $9E12 ADD A,$60            ;
+ $9E14 LD (HL),A            ;
+ $9E15 INC HL               ;
+ $9E16 EX DE,HL             ;
+ $9E17 LD HL,$9E28          ;
+ $9E1A LD A,($5E40)         ;
+ $9E1D AND $03              ;
+ $9E1F LD C,A               ;
+ $9E20 LD B,$00             ;
+ $9E22 ADD HL,BC            ;
+ $9E23 LD A,(HL)            ;
+ $9E24 LD (DE),A            ;
+ $9E25 JP $B8A8             ; Jump to #R$B8A8.
+; All the attributes a laser beam can be.
+ $9E28 DEFB $47,$43,$43,$45 ;
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$6F91 }
+; LIST#
 
-; Routine at 9E2C
+; Animate: Laser Beam
+@label=LaserBeam_Animate
 c$9E2C CALL $A796      ;
  $9E2F LD D,(IX+$01)   ;
  $9E32 LD A,(IX+$02)   ;
@@ -9239,55 +9304,84 @@ c$B731 LD DE,$6198                          ;
  $B8A1 LD (IX+$11),A                        ;
  $B8A4 INC (IX+$06)                         ;
  $B8A7 RET                                  ;
-; This entry point is used by the routine at #R$9DC0.
-*$B8A8 LD C,$08                             ;
-*$B8AA CALL $B8DA                           ;
- $B8AD INC C                                ;
- $B8AE LD A,C                               ;
- $B8AF CP $38                               ;
- $B8B1 JR NZ,$B8AA                          ;
- $B8B3 RET                                  ;
-; This entry point is used by the routine at #R$A880.
-*$B8B4 LD C,$38                             ;
-*$B8B6 CALL $B8DA                           ;
- $B8B9 DEC C                                ;
- $B8BA JR NZ,$B8B6                          ;
- $B8BC RET                                  ;
-; This entry point is used by the routines at #R$8D06, #R$91E2, #R$A0F8,
-; #R$B6CF and #R$F295.
-*$B8BD LD D,$20                             ;
- $B8BF LD C,$50                             ;
- $B8C1 JR $B8CD                             ;
-; This entry point is used by the routines at #R$91E2, #R$9356, #R$A0F8 and
-; #R$F295.
-*$B8C3 LD D,$30                             ;
- $B8C5 LD C,$40                             ;
- $B8C7 JR $B8CD                             ;
-; This entry point is used by the routine at #R$8C71.
-*$B8C9 LD D,$40                             ;
- $B8CB LD C,$30                             ;
-; This entry point is used by the routines at #R$A880 and #R$B460.
-*$B8CD CALL $B8DA                           ;
- $B8D0 DEC D                                ;
- $B8D1 JR NZ,$B8CD                          ;
- $B8D3 RET                                  ;
- $B8D4 LD D,$10                             ;
- $B8D6 LD C,$60                             ;
- $B8D8 JR $B8CD                             ;
 
-; Routine at B8DA
+; Sounds: Laser Beam
 ;
-; Used by the routines at #R$B460, #R$B731, #R$B8E8, #R$B8F2, #R$B8FF and
-; #R$B918.
-c$B8DA LD B,C        ;
-*$B8DB DJNZ $B8DB    ;
- $B8DD LD A,$10      ;
- $B8DF OUT ($FE),A   ;
- $B8E1 LD B,C        ;
-*$B8E2 DJNZ $B8E2    ;
- $B8E4 XOR A         ;
- $B8E5 OUT ($FE),A   ;
- $B8E7 RET           ;
+; Used by the routine at #R$9DC0.
+@label=SoundsLaserBeam
+c$B8A8 LD C,$08      ;
+*$B8AA CALL $B8DA    ;
+ $B8AD INC C         ;
+ $B8AE LD A,C        ;
+ $B8AF CP $38        ;
+ $B8B1 JR NZ,$B8AA   ;
+ $B8B3 RET           ; Return.
+
+; Routine at B8B4
+;
+; Used by the routine at #R$A880.
+c$B8B4 LD C,$38      ;
+*$B8B6 CALL $B8DA    ;
+ $B8B9 DEC C         ;
+ $B8BA JR NZ,$B8B6   ;
+ $B8BC RET           ; Return.
+
+; Routine at B8BD
+;
+; Used by the routines at #R$8D06, #R$91E2, #R$A0F8, #R$B6CF, #R$B731 and
+; #R$F295.
+c$B8BD LD D,$20      ;
+ $B8BF LD C,$50      ;
+ $B8C1 JR $B8CD      ; Jump to #R$B8CD.
+
+; Routine at B8C3
+;
+; Used by the routines at #R$91E2, #R$9356, #R$A0F8, #R$B731 and #R$F295.
+c$B8C3 LD D,$30      ;
+ $B8C5 LD C,$40      ;
+ $B8C7 JR $B8CD      ; Jump to #R$B8CD.
+
+; Sounds: Pickup Item
+;
+; Used by the routine at #R$8C71.
+@label=SoundsPickupItem
+c$B8C9 LD D,$40      ; #REGd=#N$40 (duration).
+ $B8CB LD C,$30      ; #REGc=#N$30 (pitch).
+; This entry point is used by the routines at #R$A880, #R$B460, #R$B8BD,
+; #R$B8C3 and #R$B8D4.
+@label=SquareWave_Loop
+*$B8CD CALL $B8DA    ; Call #R$B8DA.
+ $B8D0 DEC D         ; {Decrease duration by one and loop back to #R$B8CD until
+ $B8D1 JR NZ,$B8CD   ; duration is zero.}
+ $B8D3 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$6809 }
+; LIST#
+
+; Routine at B8D4
+c$B8D4 LD D,$10      ;
+ $B8D6 LD C,$60      ;
+ $B8D8 JR $B8CD      ; Jump to #R$B8CD.
+
+; Play square wave sound
+;
+; Used by the routines at #R$B460, #R$B8A8, #R$B8B4, #R$B8C9, #R$B8E8, #R$B8F2,
+; #R$B8FF, #R$B918 and #R$B922.
+;
+; C Duration of wave
+@label=PlaySquareWave
+c$B8DA LD B,C        ; {Decrease duration by one and loop back to #R$B8DB until
+@label=Silence_Loop
+*$B8DB DJNZ $B8DB    ; duration is zero.}
+ $B8DD LD A,$10      ; {#REGa=#N$10 (speaker on = bit 4).
+ $B8DF OUT ($FE),A   ; }
+ $B8E1 LD B,C        ; {Decrease duration by one and loop back to #R$B8E2 until
+@label=PlaySquareWave_Loop
+*$B8E2 DJNZ $B8E2    ; duration is zero.}
+ $B8E4 XOR A         ; {Speaker off.
+ $B8E5 OUT ($FE),A   ; }
+ $B8E7 RET           ; Return.
 
 ; Routine at B8E8
 ;
@@ -9335,22 +9429,27 @@ c$B8FF LD D,$07      ;
 ; Routine at B918
 ;
 ; Used by the routine at #R$9EDC.
-c$B918 CALL $B8DA      ;
- $B91B LD A,C          ;
- $B91C CPL             ;
- $B91D LD C,A          ;
- $B91E DEC D           ;
- $B91F JR NZ,$B918     ;
- $B921 RET             ;
- $B922 DEC (IX+$03)    ;
- $B925 JR Z,$B94B      ;
- $B927 LD C,(IX+$03)   ;
- $B92A LD D,(IX+$02)   ;
-*$B92D CALL $B8DA      ;
- $B930 DEC D           ;
- $B931 JR NZ,$B92D     ;
- $B933 RET             ;
- $B934 DEC (IX+$01)    ;
+c$B918 CALL $B8DA    ;
+ $B91B LD A,C        ;
+ $B91C CPL           ;
+ $B91D LD C,A        ;
+ $B91E DEC D         ;
+ $B91F JR NZ,$B918   ;
+ $B921 RET           ;
+
+; Routine at B922
+c$B922 DEC (IX+$03)  ;
+ $B925 JR Z,$B94B    ;
+ $B927 LD C,(IX+$03) ;
+ $B92A LD D,(IX+$02) ;
+; This entry point is used by the routine at #R$B934.
+*$B92D CALL $B8DA    ;
+ $B930 DEC D         ;
+ $B931 JR NZ,$B92D   ;
+ $B933 RET           ;
+
+; Routine at B934
+c$B934 DEC (IX+$01)    ;
  $B937 JR Z,$B94B      ;
  $B939 LD C,(IX+$01)   ;
  $B93C LD B,$00        ;
@@ -9360,6 +9459,7 @@ c$B918 CALL $B8DA      ;
  $B945 LD C,(HL)       ;
  $B946 LD D,(IX+$04)   ;
  $B949 JR $B92D        ;
+; This entry point is used by the routine at #R$B922.
 *$B94B LD (IX+$00),$00 ;
  $B94F RET             ;
 
@@ -9446,11 +9546,16 @@ b$B9D2 DEFB $44,$14,$10,$03,$35,$28,$33,$83
  $BA85 DEFB $78,$75,$83,$61,$0C,$37,$11,$27
  $BA8D DEFB $05,$03,$07,$0B,$0C,$10,$13,$10
  $BA95 DEFB $0C,$37,$06,$2D,$03,$3F,$14,$37
- $BA9D DEFB $83,$09,$BA,$0F,$BA,$1D,$BA,$EE
- $BAA5 DEFB $B9,$FC,$B9,$4A,$17,$2D,$13,$03
- $BAAD DEFB $3D,$1E,$15,$03,$25,$35,$83,$47
- $BAB5 DEFB $08,$37,$11,$27,$58,$03,$10,$18
- $BABD DEFB $18,$4B,$83
+ $BA9D DEFB $83,$09,$BA,$0F,$BA,$1D,$BA
+
+; Data block at BAA4
+w$BAA4 DEFW $B9EE
+ $BAA6 DEFW $B9FC
+
+; Data block at BAA8
+b$BAA8 DEFB $4A,$17,$2D,$13,$03,$3D,$1E,$15
+ $BAB0 DEFB $03,$25,$35,$83,$47,$08,$37,$11
+ $BAB8 DEFB $27,$58,$03,$10,$18,$18,$4B,$83
 
 ; Jetman Sprite Table
 @label=JetmanSpritesTable
@@ -10997,8 +11102,18 @@ b$D074 DEFB $1B      ; Height = #N(#PEEK(#PC)) pixels.
 ; UDGTABLE#
 
 ; Data block at D150
-b$D150 DEFB $08,$18,$24,$3C,$7E,$5A,$3C,$3C
- $D158 DEFB $66
+b$D150 DEFB $08
+
+; The UDG for the lives icon.
+@label=UDG_Life
+b$D151 DEFB %00011000 ; {#UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 }
+ $D152 DEFB %00100100 ; UDGTABLE#
+ $D153 DEFB %00111100 ;
+ $D154 DEFB %01111110 ;
+ $D155 DEFB %01011010 ;
+ $D156 DEFB %00111100 ;
+ $D157 DEFB %00111100 ;
+ $D158 DEFB %01100110 ; }
 
 ; Data block at D159
 b$D159 DEFB $06,$0C,$64,$40,$02,$26,$30

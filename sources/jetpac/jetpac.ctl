@@ -37,16 +37,25 @@ D $5CF0 3-byte representation of the score.
 @ $5CF0 label=High_Score
 B $5CF0,$03
 
-g $5CF3 Game Type
-@ $5CF3 label=GAME_TYPE
+g $5CF3 Game Options
+E $5CF3 View the equivalent code in;
+. #LIST
+. { #ATICATAC$5E00 }
+. { #COOKIE$5F0C }
+. { #LUNARJETMAN$5E00 }
+. { #PSSST$5E03 }
+. LIST#
+@ $5CF3 label=GameOptions
 D $5CF3 Holds the number of players and the chosen control method.
-. #TABLE(default,centre) { =h Bit(n) | =h Unset(0) | =h Set(1) } { 0 | 1up | 2up } { 1 | Keyboard | Kempston } TABLE#
-  $5CF3 #TABLE(default,centre) { =h Value | =h Num Players | =h Control Method }
-. { 0 | 1UP | Keyboard }
-. { 1 | 2UP | Keyboard }
-. { 2 | 1UP | Kempston }
-. { 3 | 2UP | Kempston }
+. #TABLE(default,centre,centre)
+. { =h Byte | =h Binary | =h Option }
+. { #N$00 | #EVAL($00, $02, $08) | 1UP Game + Keyboard }
+. { #N$01 | #EVAL($01, $02, $08) | 2UP Game + Keyboard }
+. { #N$02 | #EVAL($02, $02, $08) | 1UP Game + Kempston Joystick }
+. { #N$03 | #EVAL($03, $02, $08) | 2UP Game + Kempston Joystick }
 . TABLE#
+N $5CF3 "Number of Players" on Bit #N$00.
+N $5CF3 "Control Method" on Bit #N$01.
 
 g $5CF4 1UP Score
 D $5CF4 3-byte representation of the score.
@@ -722,7 +731,7 @@ N $63B6 Tests to see if the highscore has been beaten by 2UP.
   $63C9,$01 Fetch #REGhl off the stack (to clear it)
   $63CA,$01 Return
 
-c $63CB Updates the highscore
+c $63CB Update Highscore
 @ $63CB label=UPDATE_HIGHSCORE
 D $63CB The top of the stack will contain either #R$5CF4 or #R$5CF7. The three bytes which make up the players score are
 .       copied over to the #R$5CF0 memory location.
@@ -809,25 +818,27 @@ c $6803 Sounds: Pickup Fuel
 @ $6803 label=SoundsPickupFuel
 
 c $6809 Sounds: Pickup Item
+E $6809 View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$B8C9 }
+. LIST#
 @ $6809 label=SoundsPickupItem
 
 c $680D Play square wave sound
 @ $680D label=PlaySquareWave
 R $680D D Duration of wave
   $680D,$04 #REGa=#N$10 (speaker on = bit 4).
-  $6811,$03 Decrease duration by one and loop back to #R$6812 until counter is zero.
+  $6811,$03 Decrease duration by one and loop back to #R$6812 until duration is zero.
 @ $6812 label=PlaySquareWave_Loop
   $6814,$03 Speaker off.
-  $6817,$03 Decrease duration by one and loop back to #R$6818 until counter is zero.
+  $6817,$03 Decrease duration by one and loop back to #R$6818 until duration is zero.
 @ $6818 label=Silence_Loop
   $681D,$01 Return.
 
-c $681E
-  $6821,$02 Decrease #REGb by one, and loop back to #R$6821 until zero
-  $6828,$02 Decrease #REGb by one, and loop back to #R$6828 until zero
-
 c $681E Sounds: Laser Beam
 @ $681E label=SoundsLaserBeam
+  $6821,$02 Decrease #REGb by one, and loop back to #R$6821 until zero
+  $6828,$02 Decrease #REGb by one, and loop back to #R$6828 until zero
   $6833,$01 Return.
 
 c $6834 Set Explosion Sound Defaults
@@ -980,7 +991,7 @@ E $70A4 View the equivalent code in;
 . #LIST
 . { #ATICATAC$0000 }
 . { #COOKIE$7378 }
-. { #LUNARJETMAN$0000 }
+. { #LUNARJETMAN$894F }
 . { #PSSST$7325 }
 . { #TRANZAM$0000 }
 . LIST#
@@ -1479,22 +1490,25 @@ c $73D3 Jetman Fly
 
 c $7571 Jetman Walk
 
+c $761D
   $766A,$02 Decrease #REGb by one, and loop back to #R$7622 until zero
+
+c $766D
   $76A1,$02 Decrease #REGb by one, and loop back to #R$769E until zero
   $76CC,$02 Decrease #REGb by one, and loop back to #R$76CA until zero
   $76D8,$02 Decrease #REGb by one, and loop back to #R$7672 until zero
 
 b $76E2 Platform Graphics
-@ $76E2 label=PLATFORM
+@ $76E2 label=UDG_Platform
 D $76E2 Middle section repeats for both floor and platforms
-N $76E2 #UDGARRAY6,attr=4,scale=4;(#PC);(#PC+$08)x4;(#PC+$10)(platform)
-N $76E2 #UDGARRAY6,attr=6,scale=4;(#PC);(#PC+$08)x2;(#PC+$10)(floor)
+N $76E2 #UDGARRAY6,attr=$04,scale=$04;(#PC);(#PC+$08)x$04;(#PC + $10)(platform)
+N $76E2 #UDGARRAY6,attr=$06,scale=$04;(#PC);(#PC+$08)x$02;(#PC + $10)(floor)
 N $76E2 Left-hand Platform UDG
-B $76E2 #UDG#(#PC),attr=4
+B $76E2 #UDG#(#PC),attr=$04
 N $76EA Middle Platform UDG
-B $76EA #UDG#(#PC),attr=4
+B $76EA #UDG#(#PC),attr=$04
 N $76F2 Right-hand Platform UDG
-B $76F2 #UDG#(#PC),attr=4
+B $76F2 #UDG#(#PC),attr=$04
 
 w $76FA Jetman Sprite Table
 E $76FA View the equivalent code in;

@@ -54,12 +54,19 @@ D $5E01 Holds a pointer to the currently used font data.
 W $5E01,$02
 
 g $5E03 Last FRAMES
+B $5E03,$01
+
 g $5E04 In Handlers
 g $5E05 Rand8
 W $5E05,$02
+
 s $5E07
+
 g $5E10 Width Bytes
+B $5E10,$01
+
 g $5E11 Height Lines
+B $5E11,$01
 
 g $5E12 Counter Low
 @ $5E12 label=CounterLow
@@ -74,6 +81,7 @@ g $5E14 Game Flags
 B $5E14,$01
 
 g $5E15 Saved Graphic
+B $5E15,$01
 
 g $5E16 Saved X
 @ $5E16 label=Saved_X
@@ -84,7 +92,10 @@ g $5E17 Saved Y
 B $5E17,$01
 
 g $5E18 Some Width
+B $5E18,$01
+
 g $5E19 Some Height
+B $5E19,$01
 
 g $5E1A Room Attribute
 @ $5E1A label=CurrentRoom_Attribute
@@ -96,9 +107,11 @@ W $5E1B,$02
 
 g $5E1D Room Width
 @ $5E1D label=CurrentRoom_Width
+B $5E1D,$01
 
 g $5E1E Room Height
 @ $5E1E label=CurrentRoom_Height
+B $5E1E,$01
 
 g $5E1F Pickup Flags
 g $5E20 Pickup Pressed

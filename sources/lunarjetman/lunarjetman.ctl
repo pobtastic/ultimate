@@ -80,7 +80,13 @@ D $5E62 3-byte representation of the score.
 @ $5E62 label=2UP_Score
 B $5E62,$03
 
-g $5E65
+g $5E65 Active Player
+@ $5E65 label=Flag_ActivePlayer
+D $5E65 Which player is currently active.
+B $5E65 #TABLE(default,centre,centre) { =h Value | =h Player }
+. { $00 | 1UP }
+. { $FF | 2UP }
+. TABLE#
 
 g $5E66 Current menu item colour attribute
 @ $5E66 label=Current_MenuAttr
@@ -92,29 +98,45 @@ g $5E71 Number of players?
 
 g $5E7C
 
-g $5EA0 1UP Fuel
-@ $5EA0 label=1UP_Fuel
+g $5EA0 Active Player Fuel
+@ $5EA0 label=ActivePlayer_Fuel
 B $5EA0,$01
 
-g $5EA1 1UP Lives
-@ $5EA1 label=1UP_Lives
+g $5EA1 Active Player Lives
+@ $5EA1 label=ActivePlayer_Lives
 B $5EA1,$01
 
 g $5EA2
 g $5EA3
 
-g $5EA4 2UP Fuel
-@ $5EA4 label=2UP_Fuel
+g $5EA4 Inactive Player Fuel
+@ $5EA4 label=InactivePlayer_Fuel
 B $5EA4,$01
 
-g $5EA5 2UP Lives
-@ $5EA5 label=2UP_Lives
+g $5EA5 Inactive Player Lives
+@ $5EA5 label=InactivePlayer_Lives
 B $5EA5,$01
 
 g $5EA6
 g $5EA7
 
-b $6000
+g $6000 Laser Beam Parameters
+E $6000 View the equivalent code in;
+. #LIST
+. { #JETPAC$5D08 }
+. LIST#
+D $6000 #TABLE(default,centre) { =h Bytes(n) | =h Variable }
+. TABLE#
+@ $6000 label=Laser_Param_1
+B $6000,$18 Laser Beam #1.
+@ $6018 label=Laser_Param_2
+B $6018,$18 Laser Beam #2.
+@ $6030 label=Laser_Param_3
+B $6030,$18 Laser Beam #3.
+@ $6048 label=Laser_Param_4
+B $6048,$18 Laser Beam #4.
+
+b $6060
 
 c $8000 Security Check
 E $8000 Continue on to #R$800A.
@@ -122,7 +144,7 @@ E $8000 View the equivalent code in;
 . #LIST
 . { #ATICATAC$6000 }
 . { #COOKIE$5F00 }
-. { #LUNARJETMAN$8000 }
+. { #JETPAC$61E5 }
 . { #PSSST$61C6 }
 . { #TRANZAM$5F00 }
 . LIST#
@@ -249,6 +271,12 @@ N $80DB There are seven lines of text.
   $80FA,$03 Jump to #R$8A11.
 
 c $80FD
+  $80FD,$03 #REGde=#R$BAA4.
+  $8100,$01
+  $8102,$02,b$01 Keep only bit 1.
+  $8104,$03 Create an offset in #REGhl.
+  $8107,$01 #REGhl=#R$BAA4 + offset.
+  $8108,$03 #REGde=
   $810B,$03 Jump to #R$B9BC.
 
 b $810E Game Select Attribute Table
@@ -566,7 +594,59 @@ c $8931
 
 c $8947
 
-c $894F
+c $894F Display Lives
+E $894F View the equivalent code in;
+. #LIST
+. { #ATICATAC$0000 }
+. { #COOKIE$7378 }
+. { #JETPAC$70A4 }
+. { #PSSST$7325 }
+. { #TRANZAM$0000 }
+. LIST#
+@ $894F label=DisplayPlayerLives
+N $894F Controller for 1UP lives.
+  $894F,$06 Call #R$851E with #N($0040, $04, $04) (screen buffer address) for 1UP lives.
+  $8955,$03 #REGa=1UP lives remaining (by calling #R$8986).
+  $8958,$03 If 1UP lives are zero, jump to #R$8977.
+  $895B,$03 Else, there are lives to display so call #R$896A.
+N $895E Controller for 2UP lives.
+@ $895E label=Controller2UPLives
+  $895E,$06 Call #R$851E with #N($00B0, $04, $04) (screen buffer address) for 2UP lives.
+  $8964,$03 #REGa=2UP lives remaining (by calling #R$8994).
+  $8967,$03 If 2UP lives are zero, jump to #R$897C.
+N $896A Handles displaying the lives count and UDG character.
+@ $896A label=HandlerDisplayLives
+  $896A,$02 Add #N$30 to convert to an ASCII character (starting at "0" character).
+  $896C,$03 Call #R$89EF.
+  $896F,$03 #REGde=#R$D151.
+  $8972,$02 Stash #REGbc and #REGde on the stack.
+  $8974,$03 Jump to #R$8A01.
+N $8977 1UP has no lives.
+@ $8977 label=Handler1UPNoLives
+  $8977,$03 Call #R$897C.
+  $897A,$02 Jump to #R$895E.
+N $897C 2UP has no lives.
+@ $897C label=Handler2UPNoLives
+  $897C,$02 #REGa=ASCII " " (SPACE).
+  $897E,$03 Call #R$89EF.
+  $8981,$02 #REGa=ASCII " " (SPACE).
+  $8983,$03 Jump to #R$89EF.
+
+N $8986 Controller for the currently active player.
+@ $8986 label=ControllerActiveLives
+  $8986,$06 If #R$5E65 is not zero then jump to #R$8990.
+N $898C Return currently active players lives left.
+@ $898C label=ActivePlayerLives
+  $898C,$03 #REGa=#R$5EA1.
+  $898F,$01 Return.
+N $8990 Return inactive players lives left.
+@ $8990 label=InactivePlayerLives
+  $8990,$03 #REGa=#R$5EA5.
+  $8993,$01 Return.
+N $8994 Controller for the inactive player.
+@ $8994 label=ControllerInactiveLives
+  $8994,$06 If #R$5E65 is zero then jump to #R$8990.
+  $899A,$02 Jump to #R$898C.
 
 c $899C
 
@@ -886,9 +966,41 @@ b $9D98
   $9D98,$18
 b $9DB0
 
-c $9DC0
+c $9DC0 Handler: Laser Beam
+E $9DC0 View the equivalent code in;
+. #LIST
+. { #JETPAC$6F91 }
+. LIST#
+@ $9DC0 label=Handler_LaserBeam
+N $9DC0 Only handle the laser beam on every 4th frame.
+  $9DC0
+  $9DC3,$02,b$01 Keep only bit 0.
+N $9DC6 Search for a "free" laser beam slot.
+  $9DC6,$03 #REGhl=#R$6000.
+  $9DC9,$03 #REGde=#N($0018, $04, $04) (each slot is #N$18 bytes).
+  $9DCC,$02 #REGb=#N$04 (counter; there are 4 "slots").
+@ $9DCE label=LaserBeam_Slot
+  $9DCE,$04 If the slot is not in use, jump to #R$9DDE.
+  $9DD2,$01 #REGhl=#REGhl+#REGde (move onto the next slot).
+  $9DD3,$02 Decrease counter by one and loop back to #R$9DCE until counter is zero.
+N $9DD5 All laser beam slots are in use so just return...
+  $9DD5,$01 Return.
+N $9DD6 Possibly the "shoot right" code?
+  $9DD6,$02 #REGa=#REGa+#N$10.
+  $9DD8,$02,b$01 Set bit 2.
+  $9DDA,$02,b$01 Keep only bits 1-7.
+  $9DDC,$02 Jump to #R$9DFA.
+N $9DDE Initialise a new laser beam.
+@ $9DDE label=Init_LaserBeam
+  $9DDE,$02 Mark the laser beam slot as "in-use".
+  $9DE0,$01 #REGhl=Laser beam Y position.
+  $9DE1,$03 #REGde=#R$6078.
+  $9E25,$03 Jump to #R$B8A8.
+N $9E28 All the attributes a laser beam can be.
+B $9E28,$04
 
-c $9E2C
+c $9E2C Animate: Laser Beam
+@ $9E2C label=LaserBeam_Animate
 
 c $9ECA
 
@@ -1015,7 +1127,45 @@ c $B6CF
 c $B731
 B $B76D,$18
 
-c $B8DA
+c $B8A8 Sounds: Laser Beam
+@ $B8A8 label=SoundsLaserBeam
+  $B8B3,$01 Return.
+
+c $B8B4
+  $B8BC,$01 Return.
+
+c $B8BD
+  $B8C1,$02 Jump to #R$B8CD.
+
+c $B8C3
+  $B8C7,$02 Jump to #R$B8CD.
+
+c $B8C9 Sounds: Pickup Item
+E $B8C9 View the equivalent code in;
+. #LIST
+. { #JETPAC$6809 }
+. LIST#
+@ $B8C9 label=SoundsPickupItem
+  $B8C9,$02 #REGd=#N$40 (duration).
+  $B8CB,$02 #REGc=#N$30 (pitch).
+@ $B8CD label=SquareWave_Loop
+  $B8CD,$03 Call #R$B8DA.
+  $B8D0,$03 Decrease duration by one and loop back to #R$B8CD until duration is zero.
+  $B8D3,$01 Return.
+
+c $B8D4
+  $B8D8,$02 Jump to #R$B8CD.
+
+c $B8DA Play square wave sound
+@ $B8DA label=PlaySquareWave
+R $B8DA C Duration of wave
+  $B8DA,$03 Decrease duration by one and loop back to #R$B8DB until duration is zero.
+@ $B8DB label=Silence_Loop
+  $B8DD,$04 #REGa=#N$10 (speaker on = bit 4).
+  $B8E1,$03 Decrease duration by one and loop back to #R$B8E2 until duration is zero.
+@ $B8E2 label=PlaySquareWave_Loop
+  $B8E4,$03 Speaker off.
+  $B8E7,$01 Return.
 
 c $B8E8
 
@@ -1024,9 +1174,13 @@ c $B8F2
 c $B8FF
 
 c $B918
+c $B922
+c $B934
 
 c $B950
-B $B95C
+B $B95C,$08
+B $B964,$08
+B $B96C,$07
 
 c $B973
 B $B978
@@ -1047,6 +1201,11 @@ c $B9BC
 
 b $B9D2
   $BA35
+
+w $BAA4
+  $BAA4,$04,$02
+
+b $BAA8
 
 w $BAC0 Jetman Sprite Table
 E $BAC0 View the equivalent code in;
@@ -1264,6 +1423,9 @@ N $D119 Frame 4.
   $D11A,$36,$02 #SPRITE$03(teleporter-04*)
 
 b $D150
+b $D151 The UDG for the lives icon.
+@ $D151 label=UDG_Life
+  $D151,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
 
 b $D159
 
