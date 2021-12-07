@@ -394,7 +394,7 @@ E $6332 View the equivalent code in;
 . { #JETPAC$6260 }
 . { #LUNARJETMAN$80D1 }
 . { #PSSST$6250 }
-. { #TRANZAM$0000 }
+. { #TRANZAM$5F6C }
 . LIST#
 @ $6332 label=GameMenu
   $6332,$03 #REGde=#R$635E.
@@ -489,7 +489,7 @@ E $63E0 View the equivalent code in;
 . { #JETPAC$0000 }
 . { #LUNARJETMAN$0000 }
 . { #PSSST$62E7 }
-. { #TRANZAM$0000 }
+. { #TRANZAM$5F97 }
 . LIST#
 @ $63E0 label=MenuWriteText
   $63E0,$01 Stash #REGhl containing the co-ordinate on the stack.

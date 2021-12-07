@@ -1312,7 +1312,7 @@ R $720E O:HL Attribute buffer address
   $721C,$01 #REGl=#REGa.
   $721D,$01 Fetch the stored value from #REGc.
   $721E,$02,b$01 Keep only bits 0-1.
-  $7220,$02,b$01 Set MSB of the attribute buffer #N58. This ensures our value is >= #R$5800.
+  $7220,$02,b$01 Set MSB of the attribute buffer #N$58. This ensures our value is >= #R$5800.
   $7222,$01 Store this back in #REGh.
   $7223,$01 Return.
 

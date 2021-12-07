@@ -34,6 +34,20 @@ i $5CB1
 g $5E00
 g $5E03
 
+g $5E0B Fuel
+@ $5E0B label=Fuel
+B $5E0B,$01
+
+g $5E0C Temperature
+@ $5E0C label=Temperature
+B $5E0C,$01
+
+g $5E0D Speed
+@ $5E0D label=Speed
+B $5E0D,$01
+
+g $5E0E
+
 g $5E17 Player X
 @ $5E17 label=Player_X
 B $5E17,$01
@@ -48,6 +62,8 @@ g $5E20
 W $5E20,$02
 
 g $5E22
+
+g $5E23
 
 g $5E24 Width Bytes
 @ $5E24 label=WidthBytes
@@ -69,8 +85,15 @@ W $5E29,$02
 
 g $5E2B
 g $5E2C
-g $5E2D
-g $5E31
+
+g $5E2D Miles
+@ $5E2D label=Miles
+B $5E2D,$03
+
+g $5E31 Time
+@ $5E31 label=Time
+B $5E31,$02
+
 g $5E33
 
 g $5E34
@@ -201,6 +224,14 @@ N $5F65 Unset the first menu item, set the second.
   $5F6A,$02 Jump to #R$5F29.
 
 c $5F6C Game Selection Menu
+E $5F6C View the equivalent code in;
+. #LIST
+. { #ATICATAC$7CAF }
+. { #COOKIE$6332 }
+. { #JETPAC$6260 }
+. { #LUNARJETMAN$80D1 }
+. { #PSSST$6250 }
+. LIST#
 @ $5F6C label=GameMenu
   $5F6C,$05 Write #N$68 to #R$5E48.
   $5F71,$03 #REGde=#R$5FA7.
@@ -210,14 +241,39 @@ c $5F6C Game Selection Menu
 N $5F7B There are five lines of text.
   $5F7B,$02 #REGb'=#N$05 (counter).
 @ $5F7D label=GameMenu_Loop
-  $5F7D,$01 Switch.
-  $5F7E,$01 Copy a byte from #REGde to #R$5E3F.
+  $5F7D,$01 Switch back to the normal registers.
+  $5F7E,$04 Copy a byte from #REGde to #R$5E3F.
+  $5F82,$01 Increment #REGde by one.
   $5F83,$01 Switch to the shadow registers.
+  $5F84,$01 Stash #REGbc' on the stack.
+  $5F85,$01 #REGa=#REGhl' (grab the position data).
+  $5F86,$01 Increment #REGhl' (position data pointer) by one.
+  $5F87,$01 Stash #REGhl' (position data pointer) on the stack.
+  $5F88,$01 #REGh'=#REGa.
+  $5F89,$04 #REGl'=#R$5E48.
   $5F8D,$03 Call #R$5F97.
-  $5F90,$01 Switch.
+  $5F90,$01 Switch back to the normal registers.
+  $5F91,$02 Restore #REGhl and #REGbc from the stack.
+  $5F93,$01 Increase #REGde by one.
+  $5F94,$02 Decrease counter by one and loop back to #R$5F7D until counter is zero.
   $5F96,$01 Return.
+
+c $5F97 Write Menu Line
+E $5F97 View the equivalent code in;
+. #LIST
+. { #ATICATAC$7D8A }
+. { #COOKIE$63E0 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$62E7 }
+. LIST#
+@ $5F97 label=MenuWriteText
+  $5F97,$01 Stash #REGhl containing the co-ordinate on the stack.
   $5F98,$03 Call #R$6F10.
-  $5F9F,$01 Switch.
+  $5F9B,$03 #REGa=the menu attribute byte from #R$5E3F.
+  $5F9E,$01 Switch to the shadow #REGaf register.
+  $5F9F,$01 Switch to the shadow registers.
+  $5FA0,$01 Restore #REGhl from the stack.
   $5FA1,$03 Call #R$7097.
   $5FA4,$03 Jump to #R$6524.
 
@@ -306,10 +362,13 @@ E $5FEF View the equivalent code in;
   $6021,$04 #REGhl=address from #R$6028 + offset.
   $6025,$03 Jump to #R$5CB0.
 
-w $6028
+w $6028 Main Jump Table
+@ $6028 label=JumpTable_Main
   $6028,$08,$02
 
-c $6030
+c $6030 Instant Return
+@ $6030 label=Return
+  $6030,$01 Return.
 
 t $6031 Score/ Hi-Score Text
 @ $6031 label=Text_ScoreHi
@@ -329,7 +388,8 @@ c $607D
   $608E,$03 Jump to #R$5F7D.
 B $6091,$08,$04
 
-t $6099
+t $6099 Text: Congratulations
+@ $6099 label=Message_Congrats
   $6099,$13,$12:$01 "CONGRATULATIONS YOU".
   $60AC,$12,$11:$01 " HAVE SUCCESSFULLY".
   $60BE,$13,$12:$01 "COLLECTED THE EIGHT".
@@ -362,6 +422,9 @@ R $617B A Background attribute
   $617E,$01 Return.
 
 c $617F
+  $617F,$05 Write #N$01 to #R$5E43.
+  $6184,$02 #REGa=#N$40.
+  $6186,$02 Jump to #R$617B.
 
 c $6188 Controls: Kempston Joystick
 @ $6188 label=ReadKempstonJoystick
@@ -476,18 +539,35 @@ c $61FE
 c $6212
 
 c $625C
+  $6315,$03 Jump to #R$6212.
+
+c $6318
+  $631E,$03 Call #R$71ED.
+  $6321,$03 Call #R$6557.
+  $632C,$02,b$01 Keep only bits 0-1.
+  $633A,$02 Jump to #R$6340.
+
+c $633C
+
+  $6340,$03
+  $6346,$03 Call #R$7101.
+  $634D,$05 Write #N$01 to #R$5E0D.
+  $6352,$01 Return.
 
 c $6353 Game Over
   $6353,$03 Call #R$7139.
   $6356,$03 Call #R$617F.
-  $635B,$02,b$01 Keep only bit 1.
+  $635B,$02,b$01 Keep only bit 0.
   $635F,$03 Call #R$6175.
   $6362,$03 #REGhl=#R$5E3D.
   $6365,$01 Decrease #R$5E3D by one.
   $636C,$03 Call #R$605B.
   $636F,$03 Call #R$6175.
   $6372,$03 Call #R$68A0.
+  $6375,$03 #REGhl=#N($5878, $04, $04).
+  $6378,$03 #REGde=#R$63DA.
   $637B,$03 Call #R$5F97.
+  $637E,$02 #REGb=#N$04.
   $6380,$03 Call #R$6386.
   $6383,$03 Jump to #R$5F1A.
 
@@ -504,12 +584,16 @@ N $6389 From #REGhl being set above (and for each loop), decrementing #N($0000, 
 
 c $6391
 
-t $63DA
+t $63DA Text: Game Over
+@ $63DA label=Message_GameOver
   $63DA,$09,$08:$01 "GAME OVER".
   $63E3,$0D,$0C:$01 "YOUR TIME WAS".
   $63F0,$0F,$0E:$01 "BEST TIME TODAY".
 
 c $63FF
+  $641D,$03 #REGhl=#N($5868, $04, $04).
+  $6420,$03 #REGde=#R$63E3.
+  $6423,$03 Call #R$5F97.
 
 c $646C
   $646C,$03 #REGhl=#R$672E.
@@ -520,6 +604,24 @@ c $646C
   $647B,$03 #REGhl=#N$48C6.
   $647E,$02 #REGb=#N$01.
   $6480,$03 Jump to #R$6CD2.
+
+  $6483,$03 #REGhl=#N($9060, $04, $04).
+  $6486,$03 #REGde=#R$63F0.
+  $6489,$03 Call #R$5F97.
+  $648C,$03 #REGhl=#N($A080, $04, $04).
+  $648F,$03 Call #R$6F10.
+  $6492,$03 #REGde=#R$5E00.
+  $6495,$03 Jump to #R$6CFD.
+
+c $64C7
+  $64C7,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $64D2,$03 #REGhl=#R$5E33.
+  $64EC,$02,b$01 Keep only bits 0-3.
+  $64EF,$01 Return.
+
+c $64F0
+  $64F5,$03 #REGde=#N($0005, $04, $04).
+  $64F8,$03 #REGhl=#R$722F.
 
 c $6518 Print Colour String
 @ $6518 label=PrintStringColour
@@ -542,6 +644,9 @@ c $6557
 c $6588
 
 b $65FD
+
+c $6633
+
 c $672E
 
 c $6826
@@ -709,7 +814,26 @@ T $6AE4,$11,h$01,$0F:$01
 
 c $6AF5
   $6AF5,$03 #REGhl=#R$5E50.
+  $6AF8,$02 #REGb=#N$07.
+  $6B00,$02 Jump to #R$6B0C.
+
+c $6B02
+  $6B03,$03 #REGhl=#N($0118, $04, $04).
+
+c $6B12
+
+c $6B2B
+
+c $6B30
+
+c $6B47
 B $6BD6,$20
+
+c $6BF6
+
+c $6BFE
+
+c $6C2D
 
 c $6C96 Print Character
 E $6C96 View the equivalent code in;
@@ -775,20 +899,43 @@ N $6CC4 Prints the score.
   $6CD7,$03 Call #R$6C96.
   $6CDD,$01 Return.
 
-c $6CDE
-  $6CDE,$03 #REGhl=#N$4061.
+c $6CDE Display Miles/ Time.
+@ $6CDE label=Display_Miles
+  $6CDE,$03 #REGhl=#N$4061 (screen position).
   $6CE1,$03 #REGde=#R$5E2D.
+  $6CE4,$02 #REGb=#N$03 ("miles" is #N$03 digits).
   $6CE6,$03 Call #R$6CC6.
-  $6CE9,$03 #REGhl=#N$4021.
+  $6CE9,$03 #REGhl=#N$4021 (screen position).
+@ $6CEC label=Display_Time_Minutes
   $6CEC,$03 #REGde=#R$5E31.
+  $6CEF,$02 #REGb=#N$02 ("time/ minutes" is #N$02 digits).
   $6CF1,$03 Call #R$6CD2.
   $6CF4,$03 #REGde=#R$5E33.
+@ $6CF7 label=Display_Time_Seconds
+  $6CF7,$01 Increment #REGhl (screen position) by one.
+  $6CF8,$02 #REGb=#N$01 ("time/ seconds" is #N$01 digit).
   $6CFA,$03 Jump to #R$6CC6.
 
 c $6CFD
 
 
 c $6D12
+N $6D43 Check fuel.
+  $6D43,$03 #REGa=#R$5E0B.
+
+N $6D56 Check temperature.
+  $6D56,$03 #REGa=#R$5E0C.
+
+  $6D5D,$03 Call #R$61E0.
+  $6D64,$03 Call #R$61C2.
+
+  $6D90,$02,b$01 Unset bits 0-4.
+  $6D92,$03 Create an offset; #REGe=#REGa and #REGd=#N$00.
+  $6D95,$01 Stash #REGde on the stack.
+  $6D96,$04,$03 #REGhl=#R$7F6B + offset.
+  $6D9A,$06 Create an offset; #REGe=#R$5E0D and #REGd=#N$00.
+  $6DA0,$01 Stash #REGde on the stack.
+  $6DA2,$03 Call #R$6F2F.
 
 c $6ECB Screen Address One Pixel Above
 R $6ECB HL Current position
@@ -896,7 +1043,7 @@ R $7097 O:HL Attribute buffer address
   $70A5,$01 #REGl=#REGa.
   $70A6,$01 Fetch the stored value from #REGc.
   $70A7,$02,b$01 Keep only bits 0-1.
-  $70A9,$02,b$01 Set MSB of the attribute buffer #N58. This ensures our value is >= #R$5800.
+  $70A9,$02,b$01 Set MSB of the attribute buffer #N$58. This ensures our value is >= #R$5800.
   $70AB,$01 Store this back in #REGh.
   $70AC,$01 Return.
 
@@ -919,6 +1066,16 @@ c $70D2
 c $7101
 
 c $7139
+  $7139,$03 Call #R$70B2.
+  $713D,$02 #REGc=#N$00.
+  $713F,$06 Write #N$00 to; #LIST { #R$5E26 } { #R$5E23 } LIST#
+  $7146,$03 Jump to #R$7170.
+
+c $7149
+  $7149,$03 Call #R$70D2.
+  $714D,$04 Write #N$00 to #R$5E25.
+  $7151,$01 #REGc=#N$00.
+  $7152,$03 Jump to #R$7170.
 
 c $7155
   $7155,$03 #REGa=#R$5E22.
