@@ -31,8 +31,19 @@ c $5CB0
 
 i $5CB1
 
-g $5E00
+g $5E00 Best Time
+@ $5E00 label=BestTime_1
+B $5E00,$01
+@ $5E01 label=BestTime_2
+B $5E01,$01
+@ $5E02 label=BestTime_3
+B $5E02,$01
+
 g $5E03
+g $5E04
+
+g $5E05
+W $5E05,$02
 
 g $5E0B Fuel
 @ $5E0B label=Fuel
@@ -48,6 +59,8 @@ B $5E0D,$01
 
 g $5E0E
 
+g $5E10
+
 g $5E17 Player X
 @ $5E17 label=Player_X
 B $5E17,$01
@@ -58,23 +71,23 @@ B $5E18,$01
 
 g $5E1F
 
-g $5E20
-W $5E20,$02
-
-g $5E22
-
-g $5E23
-
-g $5E24 Width Bytes
+g $5E20 Actor Buffer
+@ $5E20 label=Buffer_Actor
+B $5E20,$01 X Position.
+B $5E21,$01 Y Position.
+B $5E22,$01 Movement direction.
+@ $5E23 label=HeightPixels
+B $5E23,$01 Height (in pixels).
 @ $5E24 label=WidthBytes
-B $5E24,$01
-
-g $5E26 Height Lines
+B $5E24,$01 Width (in bytes).
+B $5E25,$01 Height?
 @ $5E26 label=HeightLines
-B $5E26,$01
+B $5E26,$01 Height lines.
 
-g $5E27
-W $5E27,$02
+g $5E27 Actor Screen Position
+@ $5E27 label=ActorScreenPosition
+B $5E27,$01 X Position.
+B $5E28,$01 Y Position.
 
 g $5E29 Game Timer
 D $5E29 16-bit counter starting at 0x0000 and counting +1 (each time a sprite is moved or redrawn), although sometimes
@@ -91,10 +104,12 @@ g $5E2D Miles
 B $5E2D,$03
 
 g $5E31 Time
-@ $5E31 label=Time
-B $5E31,$02
-
-g $5E33
+@ $5E31 label=Time_1
+B $5E31,$01
+@ $5E32 label=Time_2
+B $5E32,$01
+@ $5E33 label=Time_3
+B $5E33,$01
 
 g $5E34
 W $5E34,$02
@@ -137,7 +152,15 @@ g $5E47
 g $5E48
 g $5E49
 
-g $5E4C Score?
+g $5E4C Score
+@ $5E4C label=Score_1
+B $5E4C,$01 Byte #1.
+@ $5E4D label=Score_2
+B $5E4D,$01 Byte #2.
+@ $5E4E label=Score_3
+B $5E4E,$01 Byte #3.
+
+g $5E4F
 
 g $5E50
 
@@ -351,7 +374,7 @@ E $5FEF View the equivalent code in;
   $6005,$01 Enable interrupts.
   $6006,$03 Call #R$6391.
   $6009,$04 #REGix=#R$5E80.
-  $600D,$03 Set the stack pointer to #R$5E00.
+  $600D,$03 Set the stack pointer to #N($5E00, $04, $04).
 @ $6010 label=MainLoop
   $6010,$03 #REGhl=#R$6A73.
   $6013,$01 Stash #REGhl on the stack.
@@ -374,7 +397,26 @@ t $6031 Score/ Hi-Score Text
 @ $6031 label=Text_ScoreHi
   $6031,$15,h$01,$13:$01
 
-c $6046
+c $6046 Add Points To Score
+E $6046 View the equivalent code in;
+. #LIST
+. { #JETPAC$70F9 }
+. LIST#
+R $6046 BC Points to add to score
+@ $6046 label=AddPointsToScore
+  $6046,$03 #REGhl=#R$5E4E.
+  $6049,$01 #REGa=score byte #3.
+  $604A,$02 Add #REGc to score byte #3 with BCD conversion.
+  $604C,$01 Update score byte #3.
+  $604D,$01 Move onto the next score byte.
+  $604E,$01 #REGa=score byte #2.
+  $604F,$02 Add (with carry) #REGb to score byte #2 with BCD conversion.
+  $6051,$01 Update score byte #2.
+  $6052,$01 Move onto the next score byte.
+  $6053,$01 #REGa=score byte #1.
+  $6054,$02 Add #N$00 (i.e. just the carry flag) to score byte #1 with BCD conversion.
+  $6057,$01 Update score byte #1.
+  $6058,$03 Jump to #R$6CB6.
 
 c $605B
 
@@ -591,9 +633,44 @@ t $63DA Text: Game Over
   $63F0,$0F,$0E:$01 "BEST TIME TODAY".
 
 c $63FF
+  $63FF,$03 #REGa=#R$5E3C.
+  $6402,$03 #REGa=(#REGa + #N$01) * #N$02 with BCD conversion.
+N $6405 Update score.
+  $6405,$03 #REGb=#N$00 #REGc=#REGa.
+  $6408,$03 Call #R$6046.
+  $640B,$04 Increment #R$5E3C by one.
+  $640F,$01 #REGa=#R$5E3C.
+  $6410,$04 If #REGa is more than #N$08 jump to #R$646C.
+  $6414,$03 Call #R$6175.
+  $6417,$03 Call #R$68A0.
+  $641A,$03 Call #R$607D.
   $641D,$03 #REGhl=#N($5868, $04, $04).
   $6420,$03 #REGde=#R$63E3.
   $6423,$03 Call #R$5F97.
+  $6426,$03 #REGhl=#N($6880, $04, $04).
+  $6429,$03 Call #R$6F10.
+  $642C,$03 Call #R$6CEC.
+  $642F,$06 If #R$5E03 is zero then jump to #R$645A.
+  $6435,$03 Call #R$6483.
+  $6438,$03 #REGhl=#R$5E00.
+  $643B,$03 #REGde=#R$5E31.
+  $643E,$02 #REGb=#N$03 (counter).
+  $6440,$02 Compare #REGde against #REGhl.
+  $6442,$02 If it's higher than #REGa then jump to #R$645E.
+  $6444,$02 If zero then jump to #R$6448.
+  $6446,$02 Jump to #R$644C.
+  $644A,$02 Decrease counter by one and loop back to #R$6440 until counter is zero.
+N $644C Create a short pause.
+  $644C,$02 #REGb=#N$0C.
+  $644E,$03 Call #R$6386.
+  $6451,$03 Call #R$6396.
+  $6454,$03 Set the stack pointer to #N($5E00, $04, $04).
+  $6457,$03 Jump to #R$6009.
+N $645A Update "Best Time Today".
+  $645A,$01 Increment #REGa by one.
+  $645B,$03 Store #REGa at #R$5E03.
+  $645E,$0C Write #R$5E31(Time) to #R$5E00(BestTime).
+  $646A,$02 Jump to #R$644C.
 
 c $646C
   $646C,$03 #REGhl=#R$672E.
@@ -781,7 +858,26 @@ c $6A09
 B $6A15,$24
 
 
-c $6A39
+c $6A39 Draw Player
+@ $6A39 label=DrawPlayer
+  $6A39,$03 #REGhl=#R$5E10.
+  $6A3C,$03 #REGbc=#N($0020, $04, $04).
+  $6A41,$02,b$01 Keep only bits 0-1.
+  $6A4B,$03 #REGhl=#R$7F24.
+  $6A4E,$03 Create an offset in #REGbc.
+  $6A51,$01 #REGhl=#R$7F24 + offset.
+  $6A52,$03 #REGde=pointer to the player sprite for this direction.
+  $6A55,$03 #REGhl=#N$4F93.
+  $6A58,$05 Write #N$02 to #R$5E2C.
+  $6A5D,$01 #REGa=height of the sprite in pixels.
+  $6A5E,$01 Increment #REGde by one to point to the sprite data.
+  $6A5F,$01 #REGc=#REGa (height of the sprite).
+  $6A60,$04 #REGb=#R$5E2C.
+  $6A64,$01 Push #REGhl on the stack.
+  $6A6B,$01 Restore #REGhl from the stack.
+  $6A6C,$03 Call #R$6ECB.
+  $6A6F,$03 Decrease #REGc (height) by one and jump to #R$6A60 if it is not zero.
+  $6A72,$01 Return.
 
 c $6A73
   $6A73,$03 #REGde=#N($000C, $04, $04).
@@ -823,17 +919,58 @@ c $6B02
 c $6B12
 
 c $6B2B
+  $6B2B,$01 Stash #REGbc on the stack.
+  $6B2C,$02 #REGb=#N$02.
+  $6B2E,$02 Jump to #R$6B33.
 
-c $6B30
+  $6B30,$01 Stash #REGbc on the stack.
+  $6B31,$02 #REGb=#N$03.
+
+  $6B33,$02 #REGe=#N$00.
+  $6B39,$02 Decrease counter by one and loop back to #R$6B35 until counter is zero.
+  $6B3B,$01 Restore #REGbc from the stack.
+  $6B3C,$01 Return.
+
+  $6B3D,$01 Stash #REGbc on the stack.
+  $6B3E,$02 #REGb=#N$04.
+  $6B40,$02 Jump to #R$6B33.
+
+c $6B42
+  $6B42,$03 #REGhl=#R$6BE6.
+  $6B45,$02 Jump to #R$6B7F.
 
 c $6B47
+  $6BBB,$03 #REGhl=#R$6BCF.
 B $6BD6,$20
 
 c $6BF6
 
 c $6BFE
+  $6BFE,$03 #REGbc=#R$7811.
+  $6C01,$03 #REGhl=#R$5E05.
+  $6C04,$03 #REGde=#N($0060, $04, $04).
+  $6C07,$01 Clear the carry flag.
+  $6C0C,$01
+  $6C0D,$01
+  $6C0E,$01 #REGd=#REGa.
+  $6C0F,$03 Call #R$6B30.
+  $6C18,$02 Increment #REGbc twice (move onto the next record).
+  $6C1A,$03 #REGhl=#R$7CD6.
+  $6C29,$01 Return.
+  $6C22,$07 Write #R$7811 to #R$5E19.
+  $6C2A,$01 Decrease #REGbc by one.
+  $6C2B,$02 Jump to #R$6C25.
 
 c $6C2D
+  $6C81,$01 Return.
+
+c $6C82
+  $6C82,$03 #REGhl=#R$5E05.
+  $6C85,$01 Clear the carry flag.
+  $6C8A,$03 Call #R$6BF6.
+  $6C8E,$03 #REGde=#N($0060, $04, $04).
+  $6C91,$01 Clear the carry flag.
+  $6C95,$01 Return.
 
 c $6C96 Print Character
 E $6C96 View the equivalent code in;
@@ -920,14 +1057,39 @@ c $6CFD
 
 
 c $6D12
+  $6D12,$02 #REGc=#N$00.
+  $6D14,$03 #REGa=#R$5E0D.
+  $6D1D,$03 #REGhl=#R$5E30.
+N $6D23 Working backwards, add onto the odometer.
+  $6D23,$02 #REGb=#N$03 (counter - miles are stored in three bytes).
+@ $6D25 label=CalcMiles
+  $6D25,$01 Decrease the pointer to the miles counter held by #REGhl by one.
+  $6D26,$02 Adds #REGa to the miles byte held at #REGhl.
+  $6D28,$01 Write #REGa to #REGhl.
+  $6D29,$02 Reset #REGa to #N$00 while maintaining the carry flag.
+  $6D2B,$02 Decrease counter by one and loop back to #R$6D25 until counter is zero.
+  $6D2D,$04 #REGl=#R$5E74.
+  $6D31,$03 #REGa=#R$5E2D(#N$5E2E).
+  $6D3A,$03 #REGbc=#N($0010, $04, $04).
+  $6D3D,$03 Call #R$6046.
+  $6D40,$03 #REGhl=#R$5E05.
 N $6D43 Check fuel.
-  $6D43,$03 #REGa=#R$5E0B.
+  $6D43,$06 If #R$5E0B(Fuel level) is not zero then jump to #R$6D56.
+N $6D49 Handle being out of fuel.
+  $6D49,$03 #REGa=#R$5E0D.
+  $6D54,$02 Jump to #R$6D64.
 
 N $6D56 Check temperature.
   $6D56,$03 #REGa=#R$5E0C.
 
   $6D5D,$03 Call #R$61E0.
   $6D64,$03 Call #R$61C2.
+  $6D6B,$03 #REGa=#R$5E0D.
+  $6D72,$01 #REGa=#N$00.
+  $6D73,$03 Write #REGa to #R$5E0D.
+  $6D76,$03 #REGa=#R$5E0D.
+  $6D79,$03 #REGhl=#N($49E2, $04, $04).
+  $6D7C,$03 Call #R$6EDE.
 
   $6D90,$02,b$01 Unset bits 0-4.
   $6D92,$03 Create an offset; #REGe=#REGa and #REGd=#N$00.
@@ -936,6 +1098,22 @@ N $6D56 Check temperature.
   $6D9A,$06 Create an offset; #REGe=#R$5E0D and #REGd=#N$00.
   $6DA0,$01 Stash #REGde on the stack.
   $6DA2,$03 Call #R$6F2F.
+
+N $6E9B Handle the temperature gauge.
+  $6E9B,$03 #REGa=#R$5E0C.
+  $6EA0,$03 #REGhl=#N($5162, $04, $04).
+  $6EA3,$03 Call #R$6EDE.
+N $6EA6 Handle the fuel gauge.
+  $6EA6,$03 #REGa=#R$5E0B.
+  $6EA9,$03 #REGhl=#N($5122, $04, $04).
+  $6EAC,$03 Jump to #R$6EDE.
+N $6EAF Handle the temperature gauge.
+  $6EAF,$03 #REGa=#R$5E0C.
+  $6EBA,$02 Jump to #R$6EA0.
+  $6EC0,$02 Jump to #R$6EB7.
+  $6EC2,$02 #REGb=#N$05.
+  $6EC8,$02 Decrease counter by one and loop back to #R$6EC4 until counter is zero.
+  $6ECA,$01 Return.
 
 c $6ECB Screen Address One Pixel Above
 R $6ECB HL Current position
@@ -952,7 +1130,24 @@ N $6ECB Calculates the new address for writing a sprite pixel, in an upward dire
   $6ED8,$01 If a new section of the screen has not been crossed then return.
   $6ED9,$05 Else add #N$08 to #REGh and return.
 
-c $6EDE
+c $6EDE Draw Gauge Line
+@ $6EDE label=DrawGaugeLine
+  $6EDE,$04 Shift #REGa right two times (#REGa / #N$04).
+  $6EE2,$01 Store the result in #REGc.
+  $6EEB,$03 Call #R$6EFD.
+  $6EEE,$02 Jump to #R$6EE3.
+  $6EF0,$02 #REGb=#N$00.
+  $6EF2,$01 Stash #REGhl on the stack.
+  $6EF3,$03 #REGhl=#R$6F07.
+  $6EF8,$01 Restore #REGhl from the stack.
+  $6EF9,$03 Call #R$6EFD.
+  $6EFC,$01 #REGa=#N$00.
+  $6EFD,$01 Stash #REGhl on the stack.
+  $6EFE,$02 #REGb=#N$07.
+  $6F02,$02 Decrease counter by one and loop back to #R$6F00 until counter is zero.
+  $6F04,$01 Restore #REGhl from the stack.
+  $6F06,$01 Return.
+
 B $6F07
 
 c $6F10 Calculate Screen Address
@@ -1016,7 +1211,39 @@ c $6FAC
 
 c $7024
 
-c $704B
+c $704B Colourise sprite
+@ $704B label=ColouriseSprite
+  $704B,$01 Switch to the shadow registers.
+  $704C,$03 #REGhl'=#R$5E27(actor co-ordinates).
+  $704F,$03 #REGd'=object colour attribute.
+  $7052,$03 Call #R$7097 - #REGhl' now holds the co-ordinates to an attribute file address.
+  $7055,$04 #REGb'=#R$5E24(width loop counter (in pixels)).
+  $7059,$03 #REGa=#R$5E23.
+  $705C,$04 #REGa=((#REGa / #N$04) + #N$01) / #N$02.
+  $7060,$02,b$01 Keep only bits 0-4.
+  $7062,$01 Increment #REGa by one.
+  $7063,$01 #REGc'=height loop counter (in pixels).
+  $7064,$01 #REGe'=width loop counter (in pixels).
+@ $7065 label=ColouriseSprite_Loop1
+  $7065,$01 Stash #REGhl on the stack.
+@ $7066 label=ColouriseSprite_Loop2
+  $7066,$01 #REGa=actor Y position.
+  $7067,$04 Decrement position if address is outside of attribute file address range.
+  $706B,$02 Stash #REGhl and #REGbc on the stack.
+  $706D,$03 #REGbc'=#N$5820.
+  $7070,$01 Clear the carry flag.
+  $7073,$02 Restore #REGbc and #REGhl from the stack.
+  $707F,$02,b$01 Keep only bits 0-4.
+  $7087,$02 Decrease counter by one and loop back to #R$7066 until counter is zero.
+  $7089,$01 Restore #REGhl from the stack.
+  $708A,$01 Stash #REGbc on the stack.
+  $708B,$01 Clear the carry flag.
+  $708C,$05 #REGhl -= 32 tiles. Places address pointer previous line.
+  $7091,$01 Restore #REGbc from the stack.
+  $7092,$01 #REGb=reset to original width counter.
+  $7093,$01 Decrement height counter.
+  $7094,$02 Repeat until all tiles have been coloured.
+  $7096,$01 Return.
 
 c $7097 Calculate Attribute Address
 E $7097 View the equivalent code in;
@@ -1050,6 +1277,7 @@ R $7097 O:HL Attribute buffer address
 c $70AD
 
 c $70B2
+E $70B2 Continue on to #R$70CE.
   $70B2,$03 Call #R$7155.
   $70B5,$03 #REGhl=#R$5E20.
   $70B8,$01 #REGa=#REGl.
@@ -1057,18 +1285,44 @@ c $70B2
   $70C0,$03 Call #R$70AD.
   $70C3,$03 Call #R$6F10.
   $70CA,$01 #REGa=#REGc.
+
+c $70CE
+@ $70CE label=NextSprite
   $70CE,$02 #REGc=#N$00.
-  $70D0,$01 Increment #REGde by one.
+  $70D0,$01 Increment #REGde by one to point to the next sprite header value.
   $70D1,$01 Return.
 
 c $70D2
+  $70D2,$03 Call #R$7168.
+  $70D5,$06 Fetch actor co-ordinates.
+  $70DE,$02,b$01 Keep only bits 0-2.
+  $70E0,$03 Write this to #R$5E41.
+  $70E3,$02 #REGa=#N$02.
+  $70E7,$01 Increment #REGa by one.
+  $70E8,$03 Write #REGa to #R$5E24.
+  $70EB,$03 Write #REGhl to #R$5E27.
+  $70EE,$03 Call #R$70AD.
+  $70F1,$03 Call #R$6F10.
+  $70FF,$02 Jump to #R$70CE.
 
 c $7101
+@ $7101 label=ActorEraseMovedSprite
+  $7101,$07 #R$5E22.
+  $7108,$03 Call #R$70D2.
+  $710C,$03 Call #R$70B2.
+  $710F,$03 #REGa=#R$5E21.
+  $711C,$03 #REGa=#R$5E25.
+  $7127,$03 Jump to #R$7170.
+  $712E,$03 #REGa=#R$5E26.
+  $7136,$03 Jump to #R$71E4.
 
-c $7139
+c $7139 Erase Destroyed Actor
+@ $7139 label=ActorEraseDestroyed
   $7139,$03 Call #R$70B2.
+  $713C,$01
   $713D,$02 #REGc=#N$00.
   $713F,$06 Write #N$00 to; #LIST { #R$5E26 } { #R$5E23 } LIST#
+  $7145,$01
   $7146,$03 Jump to #R$7170.
 
 c $7149
@@ -1083,7 +1337,11 @@ c $7155
   $715D,$03 #REGhl=#R$7F06.
   $7167,$01 Return.
 
-c $7170
+c $7170 Mask Sprite
+@ $7170 label=MaskSprite
+@ $71D0 label=ActorUpdateSizeFlipReg
+@ $71D1 label=ActorUpdateSize
+@ $71E4 label=ActorUpdateHeightAndMask
 
 c $71ED Store Entity
 E $71ED View the equivalent code in;
@@ -1099,7 +1357,6 @@ E $71ED View the equivalent code in;
   $71F3,$06 Copy actor Y position to active actor Y position.
   $71F9,$06 Copy actor movement to active actor movement.
   $71FF,$01 Return.
-
 
 c $7200 Reset Attribute Buffer
 E $7200 View the equivalent code in;
@@ -1152,7 +1409,37 @@ R $7218 C Value to write
   $721C,$02 Keep looping back to #R$7218 until there is no carry-over.
   $721E,$01 Return.
 
-b $721F
+w $721F
+  $721F,$02,$10
+
+t $722F Place Names
+@ $722F label=PlaceNames
+  $722F,$0C,$0B:$01 "LOS ANGELES".
+  $723B,$0D,$0C:$01 "SAN FRANCISCO".
+  $7248,$0B,$0A:$01 "SAN DIEGO".
+  $7253,$0A,$09:$01 "SEATTLE".
+  $725D,$0B,$0A:$01 "LAS VEGAS".
+  $7268,$0A,$09:$01 "TUCSON".
+  $7272,$0E,$0D:$01 "SALT LAKE CITY".
+  $7280,$0A,$09:$01 "EL PASO".
+  $728A,$0C,$0B:$01 "GREAT FALLS".
+  $7296,$0C,$0B:$01 "ALBUQUERQUE".
+  $72A2,$0A,$09:$01 "DENVER".
+  $72AC,$0A,$09:$01 "DALLAS".
+  $72B6,$0A,$09:$01 "WICHITA".
+  $72C0,$0C,$0B:$01 "KANSAS CITY".
+  $72CC,$0A,$09:$01 "HUSTON".
+  $72D6,$0C,$0B:$01 "MINNEAPOLIS".
+  $72E2,$0B,$0A:$01 "ST. LOUIS".
+  $72ED,$0A,$09:$01 "CHICAGO".
+  $72F7,$0C,$0B:$01 "NEW ORLEANS".
+  $7303,$0B,$0A:$01 "NASHVILLE".
+  $730E,$0C,$0B:$01 "CINCINNATI".
+  $731A,$0A,$09:$01 "DETROIT".
+  $7324,$0A,$09:$01 "ATLANTA".
+  $732E,$0C,$0B:$01 "WASHINGTON".
+  $733A,$0D,$0C:$01 "JACKSONVILLE".
+  $7347,$0B,$0A:$01 "NEW YORK".
 
 b $7352 Sprite: Cactus
   $7352,$01 Height = #N(#PEEK(#PC)) pixels.

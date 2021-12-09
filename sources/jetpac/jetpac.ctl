@@ -290,6 +290,7 @@ D $5DCE Value is calculated using the 16-bit game timer LSB value, which is used
 B $5DCE,$01
 
 g $5DCF Actor Screen Position
+@ $5DCF label=ActorScreenPos
 B $5DCF,$01 X Position.
 B $5DD0,$01 Y Position.
 
@@ -1044,7 +1045,12 @@ N $70F1 Controller for the inactive player.
   $70F1,$06 If #R$5DD1 is zero then jump to #R$70ED.
   $70F7,$02 Jump to #R$70E9.
 
-c $70F9
+c $70F9 Add Points To Score
+E $70F9 View the equivalent code in;
+. #LIST
+. { #TRANZAM$6046 }
+. LIST#
+@ $70F9 label=AddPointsToScore
   $70F9,$04 Evaluate #R$5DD1
   $70FD,$02 Jump to #R$7104 if 2UP is active player
 
