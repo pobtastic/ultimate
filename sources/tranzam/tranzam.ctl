@@ -116,6 +116,14 @@ W $5E34,$02
 
 g $5E36
 
+g $5E39 Current Place
+@ $5E39 label=CurrentPlaceID
+D $5E39 This value will either be the current Place ID or #N$FF to indicate being open to entering a new place (to
+.       avoid repetition).
+B $5E39,$01 Current Place ID or #N$FF.
+
+g $5E3A
+
 g $5E3C
 
 g $5E3D Player Lives
@@ -696,9 +704,36 @@ c $64C7
   $64EC,$02,b$01 Keep only bits 0-3.
   $64EF,$01 Return.
 
-c $64F0
-  $64F5,$03 #REGde=#N($0005, $04, $04).
+c $64F0 Display Place Name
+@ $64F0 label=DisplayPlaceName
+  $64F0,$03 Return if bit 6 of #REGa is set.
+N $64F3 Strip out the bit which indicates the need to display the place name.
+  $64F3,$02,b$01 Keep only bits 0-5.
+  $64F5,$03 #REGde=#N($0005, $04, $04) (the minimum length of a place name without the "end-of-string" bit e.g.
+.           "TUCSO(N)").
   $64F8,$03 #REGhl=#R$722F.
+  $64FB,$04 Write #REGa + #N$01 to #R$5E39.
+  $64FF,$02 #REGb=original value of #REGa (used as a counter for finding the place name text).
+  $6501,$02 If #REGa is zero there's no need to search so jump immediately to #R$650B.
+N $6503 Speed up (slightly) searching through place names by adding #REGde (#N($0005, $04, $04)) to the start address.
+@ $6503 label=DisplayPlaceName_Search
+  $6503,$01 Adds #REGde (#N($0005, $04, $04)) to the place name pointer.
+N $6504 Search for the end of the current place name.
+@ $6504 label=DisplayPlaceName_Loop
+  $6504,$02 If bit 7 (the "end-of-string" flag) is not set...
+  $6506,$01 Increment #REGhl by one.
+  $6507,$02 ...then jump to #R$6504.
+N $6509 #REGb stores the entry number of the place name, so keep going until we find it.
+  $6509,$02 Decrease counter by one and loop back to #R$6503 until counter is zero.
+N $650B Output the place name to the screen.
+@ $650B label=DisplayPlaceName_Print
+  $650B,$01 Switch the #REGde and #REGhl registers.
+  $650C,$03 #REGhl=#N$B868 (screen location).
+  $650F,$01 Stash #REGhl on the stack.
+  $6510,$03 Call #R$6F10.
+  $6513,$02 #REGa=#N$70 (attribute byte - BLACK ink on YELLOW paper).
+  $6515,$01 Switch to the shadow #REGaf register.
+  $6516,$02 Jump to #R$651F.
 
 c $6518 Print Colour String
 @ $6518 label=PrintStringColour

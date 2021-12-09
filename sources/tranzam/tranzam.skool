@@ -390,7 +390,17 @@ g$5E31 DEFB $00
 g$5E34 DEFW $000E
 
 ; Game status buffer entry at 5E36
-g$5E36 DEFB $00,$00,$00,$00,$3A,$EF
+g$5E36 DEFB $00,$00,$00
+
+; Current Place
+;
+; This value will either be the current Place ID or #N$FF to indicate being open to entering a new place (to
+;       avoid repetition).
+@label=CurrentPlaceID
+g$5E39 DEFB $00      ; Current Place ID or #N$FF.
+
+; Game status buffer entry at 5E3A
+g$5E3A DEFB $3A,$EF
 
 ; Game status buffer entry at 5E3C
 g$5E3C DEFB $22
@@ -1519,31 +1529,47 @@ c$64C7 LD A,($5C78)  ; #HTML(#REGa=<a
  $64EE LD (HL),A     ;
  $64EF RET           ; Return.
 
-; Routine at 64F0
+; Display Place Name
 ;
 ; Used by the routine at #R$6FAC.
-c$64F0 BIT 6,A       ;
- $64F2 RET Z         ;
- $64F3 AND $3F       ;
- $64F5 LD DE,$0005   ; #REGde=#N($0005, $04, $04).
+@label=DisplayPlaceName
+c$64F0 BIT 6,A       ; {Return if bit 6 of #REGa is set.
+ $64F2 RET Z         ; }
+; Strip out the bit which indicates the need to display the place name.
+ $64F3 AND %00111111 ; Keep only bits 0-5.
+ $64F5 LD DE,$0005   ; #REGde=#N($0005, $04, $04) (the minimum length of a place name without the "end-of-string" bit e.g.
+                     ;           "TUCSO(N)").
  $64F8 LD HL,$722F   ; #REGhl=#R$722F.
- $64FB INC A         ;
- $64FC LD ($5E39),A  ;
- $64FF DEC A         ;
- $6500 LD B,A        ;
- $6501 JR Z,$650B    ;
-*$6503 ADD HL,DE     ;
-*$6504 BIT 7,(HL)    ;
- $6506 INC HL        ;
- $6507 JR Z,$6504    ;
- $6509 DJNZ $6503    ;
-*$650B EX DE,HL      ;
- $650C LD HL,$B868   ;
- $650F PUSH HL       ;
- $6510 CALL $6F10    ;
- $6513 LD A,$70      ;
- $6515 EX AF,AF'     ;
- $6516 JR $651F      ;
+ $64FB INC A         ; {Write #REGa + #N$01 to #R$5E39.
+ $64FC LD ($5E39),A  ; }
+ $64FF DEC A         ; {#REGb=original value of #REGa (used as a counter for
+ $6500 LD B,A        ; finding the place name text).}
+ $6501 JR Z,$650B    ; If #REGa is zero there's no need to search so jump
+                     ; immediately to #R$650B.
+; Speed up (slightly) searching through place names by adding #REGde (#N($0005,
+; $04, $04)) to the start address.
+@label=DisplayPlaceName_Search
+*$6503 ADD HL,DE     ; Adds #REGde (#N($0005, $04, $04)) to the place name
+                     ; pointer.
+; Search for the end of the current place name.
+@label=DisplayPlaceName_Loop
+*$6504 BIT 7,(HL)    ; If bit 7 (the "end-of-string" flag) is not set...
+ $6506 INC HL        ; Increment #REGhl by one.
+ $6507 JR Z,$6504    ; ...then jump to #R$6504.
+; #REGb stores the entry number of the place name, so keep going until we find
+; it.
+ $6509 DJNZ $6503    ; Decrease counter by one and loop back to #R$6503 until
+                     ; counter is zero.
+; Output the place name to the screen.
+@label=DisplayPlaceName_Print
+*$650B EX DE,HL      ; Switch the #REGde and #REGhl registers.
+ $650C LD HL,$B868   ; #REGhl=#N$B868 (screen location).
+ $650F PUSH HL       ; Stash #REGhl on the stack.
+ $6510 CALL $6F10    ; Call #R$6F10.
+ $6513 LD A,$70      ; #REGa=#N$70 (attribute byte - BLACK ink on YELLOW
+                     ; paper).
+ $6515 EX AF,AF'     ; Switch to the shadow #REGaf register.
+ $6516 JR $651F      ; Jump to #R$651F.
 
 ; Print Colour String
 ;
