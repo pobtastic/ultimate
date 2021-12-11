@@ -48,10 +48,15 @@ E $5F09 View the equivalent code in;
 . { #JETPAC$5CF0 }
 . { #LUNARJETMAN$5E06 }
 . { #PSSST$5E00 }
+. { #TRANZAM$5E49 }
 . LIST#
 D $5F09 3-byte representation of the score.
-@ $5F09 label=High_Score
-B $5F09,$03
+@ $5F09 label=HighScore_1
+B $5F09,$01 Byte #1.
+@ $5F0A label=HighScore_2
+B $5F0A,$01 Byte #2.
+@ $5F0B label=HighScore_3
+B $5F0B,$01 Byte #3.
 
 g $5F0C Game Options
 @ $5F0C label=GameOptions
@@ -67,12 +72,24 @@ D $5F0C #TABLE(default,centre,centre)
 g $5F0D Sound On/ Off
 D $5F0D Either #N$00 or #N$01.
 @ $5F0D label=Sound_Enable
+
 g $5F0E 1UP Score
 D $5F0E 3-byte representation of the score.
-@ $5F0E label=1UP_Score
+@ $5F0E label=1UP_Score_1
+B $5F0E,$01 Byte #1.
+@ $5F0F label=1UP_Score_2
+B $5F0F,$01 Byte #2.
+@ $5F10 label=1UP_Score_3
+B $5F10,$01 Byte #3.
+
 g $5F11 2UP Score
 D $5F11 3-byte representation of the score.
-@ $5F11 label=2UP_Score
+@ $5F11 label=2UP_Score_1
+B $5F11,$01 Byte #1.
+@ $5F12 label=2UP_Score_2
+B $5F12,$01 Byte #2.
+@ $5F13 label=2UP_Score_3
+B $5F13,$01 Byte #3.
 
 g $5F14
 @ $5F14 label=
@@ -1024,7 +1041,30 @@ N $73CB Controller for the inactive player.
   $73CB,$06 If #R$5F21 is zero then jump to #R$73C7.
   $73D1,$02 Jump to #R$73C3.
 
-c $73D3
+c $73D3 Check High Score
+E $73D3 View the equivalent code in;
+. #LIST
+. { #JETPAC$6398 }
+. { #TRANZAM$605B }
+. LIST#
+@ $73D3 label=CheckHighScore
+  $73D3,$03 #REGhl=#R$5F0E.
+  $73D6,$04 #REGde=#R$5F11.
+  $73E7,$08 Compare #R$5F10 against #R$5F13.
+  $73F1,$03 #REGhl=#R$5F11.
+  $73F4,$01 Stash #REGhl on the stack.
+  $73F5,$03 #REGde=#R$5F09.
+  $73F8,$02 #REGb=#N$03 (scores are held in three digits).
+  $7404,$01 Restore #REGhl from the stack.
+  $7405,$01 Return.
+  $7406,$01 Restore #REGhl from the stack.
+  $7407,$03 #REGde=#R$5F09.
+  $740A,$03 #REGbc=#N($0003, $04, $04) (scores are held in three digits).
+  $740F,$01 Return.
+  $7410,$03 #REGhl=#R$5F0E.
+  $7413,$02 Jump to #R$73F4.
+
+c $7415
 
 c $7438 Print Scores
 E $7438 View the equivalent code in;

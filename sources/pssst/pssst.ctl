@@ -1703,7 +1703,7 @@ E $761A View the equivalent code in;
 . { #TRANZAM$0000 }
 . LIST#
 @ $761A label=SpritesTable
-  $761A,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#EVAL((#PC - $761A) / 2)).
+  $761A,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $761A) / $02)).
 L $761A,$02,$40
 
 b $769A Sprite: Flower (Bud)

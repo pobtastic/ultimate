@@ -382,13 +382,18 @@ c$5F00 LD A,($5C79)  ; #HTML(#REGa=<a
 ; High Score
 ;
 ; 3-byte representation of the score.
-@label=High_Score
-g$5F09 DEFB $00,$00,$00
+@label=HighScore_1
+g$5F09 DEFB $00      ; Byte #1.
+@label=HighScore_2
+ $5F0A DEFB $00      ; Byte #2.
+@label=HighScore_3
+ $5F0B DEFB $00      ; Byte #3.
 ; View the equivalent code in;
 ; #LIST
 ; { #JETPAC$5CF0 }
 ; { #LUNARJETMAN$5E06 }
 ; { #PSSST$5E00 }
+; { #TRANZAM$5E49 }
 ; LIST#
 
 ; Game Options
@@ -414,14 +419,22 @@ g$5F0D DEFB $00
 ; 1UP Score
 ;
 ; 3-byte representation of the score.
-@label=1UP_Score
-g$5F0E DEFB $00,$00,$00
+@label=1UP_Score_1
+g$5F0E DEFB $00      ; Byte #1.
+@label=1UP_Score_2
+ $5F0F DEFB $00      ; Byte #2.
+@label=1UP_Score_3
+ $5F10 DEFB $00      ; Byte #3.
 
 ; 2UP Score
 ;
 ; 3-byte representation of the score.
-@label=2UP_Score
-g$5F11 DEFB $00,$00,$00
+@label=2UP_Score_1
+g$5F11 DEFB $00      ; Byte #1.
+@label=2UP_Score_2
+ $5F12 DEFB $00      ; Byte #2.
+@label=2UP_Score_3
+ $5F13 DEFB $00      ; Byte #3.
 
 ; Game status buffer entry at 5F14
 @label=
@@ -1090,7 +1103,7 @@ c$6332 LD DE,$635E   ; #REGde=#R$635E.
 ; { #JETPAC$6260 }
 ; { #LUNARJETMAN$80D1 }
 ; { #PSSST$6250 }
-; { #TRANZAM$0000 }
+; { #TRANZAM$5F6C }
 ; LIST#
 
 ; Game Select Attribute Table
@@ -1171,7 +1184,7 @@ c$63E0 PUSH HL       ; Stash #REGhl containing the co-ordinate on the stack.
 ; { #JETPAC$0000 }
 ; { #LUNARJETMAN$0000 }
 ; { #PSSST$62E7 }
-; { #TRANZAM$0000 }
+; { #TRANZAM$5F97 }
 ; LIST#
 
 ; Initialise Players
@@ -3209,11 +3222,12 @@ c$7378 LD HL,$0002    ; {Write #N($0002, $04, $04) to #R$5F2B.
 ; { #TRANZAM$0000 }
 ; LIST#
 
-; Routine at 73D3
+; Check High Score
 ;
 ; Used by the routine at #R$6BE0.
-c$73D3 LD HL,($5F0E) ;
- $73D6 LD DE,($5F11) ;
+@label=CheckHighScore
+c$73D3 LD HL,($5F0E) ; #REGhl=#R$5F0E.
+ $73D6 LD DE,($5F11) ; #REGde=#R$5F11.
  $73DA LD A,L        ;
  $73DB LD L,H        ;
  $73DC LD H,A        ;
@@ -3224,15 +3238,15 @@ c$73D3 LD HL,($5F0E) ;
  $73E1 SBC HL,DE     ;
  $73E3 JR C,$73F1    ;
  $73E5 JR NZ,$7410   ;
- $73E7 LD A,($5F10)  ;
+ $73E7 LD A,($5F10)  ; {Compare #R$5F10 against #R$5F13.
  $73EA LD E,A        ;
  $73EB LD A,($5F13)  ;
- $73EE CP E          ;
+ $73EE CP E          ; }
  $73EF JR C,$7410    ;
-*$73F1 LD HL,$5F11   ;
-*$73F4 PUSH HL       ;
- $73F5 LD DE,$5F09   ;
- $73F8 LD B,$03      ;
+*$73F1 LD HL,$5F11   ; #REGhl=#R$5F11.
+*$73F4 PUSH HL       ; Stash #REGhl on the stack.
+ $73F5 LD DE,$5F09   ; #REGde=#R$5F09.
+ $73F8 LD B,$03      ; #REGb=#N$03 (scores are held in three digits).
 *$73FA LD A,(DE)     ;
  $73FB CP (HL)       ;
  $73FC JR C,$7406    ;
@@ -3240,17 +3254,26 @@ c$73D3 LD HL,($5F0E) ;
  $7400 INC HL        ;
  $7401 INC DE        ;
  $7402 DJNZ $73FA    ;
-*$7404 POP HL        ;
- $7405 RET           ;
-*$7406 POP HL        ;
- $7407 LD DE,$5F09   ;
- $740A LD BC,$0003   ;
+*$7404 POP HL        ; Restore #REGhl from the stack.
+ $7405 RET           ; Return.
+*$7406 POP HL        ; Restore #REGhl from the stack.
+ $7407 LD DE,$5F09   ; #REGde=#R$5F09.
+ $740A LD BC,$0003   ; #REGbc=#N($0003, $04, $04) (scores are held in three
+                     ; digits).
  $740D LDIR          ;
- $740F RET           ;
-*$7410 LD HL,$5F0E   ;
- $7413 JR $73F4      ;
-; This entry point is used by the routines at #R$65E8, #R$6C3C and #R$6E25.
-*$7415 LD A,($5F21)  ;
+ $740F RET           ; Return.
+*$7410 LD HL,$5F0E   ; #REGhl=#R$5F0E.
+ $7413 JR $73F4      ; Jump to #R$73F4.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$6398 }
+; { #TRANZAM$605B }
+; LIST#
+
+; Routine at 7415
+;
+; Used by the routines at #R$65E8, #R$6C3C and #R$6E25.
+c$7415 LD A,($5F21)  ;
  $7418 AND A         ;
  $7419 JR NZ,$7420   ;
  $741B LD HL,$5F10   ;

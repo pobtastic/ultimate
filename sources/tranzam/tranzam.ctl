@@ -39,11 +39,20 @@ B $5E01,$01
 @ $5E02 label=BestTime_3
 B $5E02,$01
 
-g $5E03
+g $5E03 Flag: Best Time
+@ $5E03 label=Flag_BestTime
+D $5E03 When a value for "Best Time" exists this will be #N$01 else it'll be #N$00.
+B $5E03,$01
+
 g $5E04
 
 g $5E05
 W $5E05,$02
+
+g $5E08
+W $5E08,$02
+
+g $5E0A
 
 g $5E0B Fuel
 @ $5E0B label=Fuel
@@ -61,6 +70,8 @@ g $5E0E
 
 g $5E10
 
+g $5E13
+
 g $5E17 Player X
 @ $5E17 label=Player_X
 B $5E17,$01
@@ -68,6 +79,8 @@ B $5E17,$01
 g $5E18 Player Y
 @ $5E18 label=Player_Y
 B $5E18,$01
+
+g $5E1E
 
 g $5E1F
 
@@ -124,7 +137,9 @@ B $5E39,$01 Current Place ID or #N$FF.
 
 g $5E3A
 
-g $5E3C
+g $5E3C Cups Collected
+@ $5E3C label=Cups_Collected
+B $5E3C,$01
 
 g $5E3D Player Lives
 @ $5E3D label=Player_Lives
@@ -139,7 +154,7 @@ D $5E3E #TABLE(default,centre,centre)
 @ $5E3E label=GameOptions
 B $5E3E,$01
 
-g $5E3F Current menu item colour attribute
+g $5E3F Current Menu Item Colour attribute
 @ $5E3F label=Current_MenuAttr
 B $5E3F,$01
 
@@ -157,10 +172,30 @@ B $5E44,$01
 g $5E45
 g $5E46
 g $5E47
-g $5E48
-g $5E49
+
+g $5E48 Temporary Text Item X Position
+D $5E48 Used for the indent for; #LIST { #R$5F6C(Game Menu items) } { #R$607D(Congratulations Messaging) } LIST#
+@ $5E48 label=Temp_Text_Pos_X
+B $5E48,$01
+
+g $5E49 High Score
+E $5E49 View the equivalent code in;
+. #LIST
+. { #COOKIE$5F09 }
+. { #JETPAC$5CF0 }
+. { #LUNARJETMAN$5E06 }
+. { #PSSST$5E00 }
+. LIST#
+D $5E49 3-byte representation of the score.
+@ $5E49 label=HighScore_1
+B $5E49,$01 Byte #1.
+@ $5E4A label=HighScore_2
+B $5E4A,$01 Byte #2.
+@ $5E4B label=HighScore_3
+B $5E4B,$01 Byte #3.
 
 g $5E4C Score
+D $5E4C 3-byte representation of the score.
 @ $5E4C label=Score_1
 B $5E4C,$01 Byte #1.
 @ $5E4D label=Score_2
@@ -170,12 +205,26 @@ B $5E4E,$01 Byte #3.
 
 g $5E4F
 
-g $5E50
+g $5E50 Object 1
+B $5E50,$01 Sprite ID.
+B $5E51,$01 X Position.
+B $5E52,$01 Y Position.
+g $5E53 Object 2
+B $5E53,$01 Sprite ID.
+B $5E54,$01 X Position.
+B $5E55,$01 Y Position.
 
 g $5E68
 g $5E74
 
 g $5E80
+
+g $5E8C
+
+g $5E98 Black Car?
+B $5E98,$01 Sprite ID.
+B $5E99,$01 X Position.
+B $5E9A,$01 Y Position.
 
 g $5EA4
 
@@ -204,15 +253,16 @@ E $5F07 View the equivalent code in;
 . { #PSSST$61CD }
 . LIST#
 @ $5F07 label=GameInitialisation
-  $5F07,$0D Write #N$00 to #N$00A3 bytes starting from #R$5E00.
-  $5F14,$06 Write #N$FFFF to #R$5E00.
+  $5F07,$0D Write #N$00 to #N$00A3 bytes starting from #N($5E00, $04, $04).
+  $5F14,$06 Write #N$FFFF to #R$5E00(BestTime) - this isn't used anywhere until #R$5E03 is set.
 @ $5F1A label=Game_Restart
   $5F1A,$06 Write #N$FFFF to #R$5E34.
-  $5F20,$03 Set the stack pointer to #R$5E00.
+  $5F20,$03 Set the stack pointer to #N($5E00, $04, $04).
   $5F23,$03 Call #R$6175.
   $5F26,$03 Call #R$68A0.
 @ $5F29 label=GameSelect_Loop
   $5F29,$03 Call #R$5F6C.
+N $5F2C The "Best Time Today" banner only shows when one is set. The flag at #R$5E03 toggles it on/ off.
   $5F2C,$07 If #R$5E03 is not zero, call #R$6483.
   $5F33,$04 #REGd=#R$5E3E.
   $5F37,$06 Read from the keyboard;
@@ -238,7 +288,7 @@ N $5F4A Handle starting a new game.
   $5F4C,$03 If it has then jump to #R$5FEF.
 N $5F4F Handle flashing each selection.
   $5F4F,$04 Write #REGd to #R$5E3E.
-  $5F53,$03 #REGhl=#R$5FA8(GameSelection_Attributes)+#N$01 (i.e. ignoring "Game Selection" as it doesn't flash).
+  $5F53,$03 #REGhl=#R$5FA8(GameSelection_Attributes) + #N$01 (i.e. ignoring "Game Selection" as it doesn't flash).
   $5F56,$04 #REGc=#R$5E3E.
   $5F5A,$04 If the joystick option is selected, jump to #R$5F65.
 N $5F5E Set the first menu item, unset the second.
@@ -373,9 +423,12 @@ E $5FEF View the equivalent code in;
 . LIST#
 @ $5FEF label=StartGame
   $5FEF,$07 #HTML(Write #N$00 to #LIST { <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> } { #R$5E74 } LIST#)
+N $5FF6 Reset the players life count.
   $5FF6,$05 Write starting lives to #R$5E3D.
+N $5FFB Reset the players score (#N$03 digits).
   $5FFB,$03 #REGhl=#R$5E4C.
   $5FFE,$02 #REGb=#N$03.
+@ $6000 label=ResetScore_Loop
   $6000,$02 Write #N$00 to #REGhl.
   $6002,$01 Increment #REGhl by one.
   $6003,$02 Decrease counter by one and loop back to #R$6000 until counter is zero.
@@ -426,9 +479,39 @@ R $6046 BC Points to add to score
   $6057,$01 Update score byte #1.
   $6058,$03 Jump to #R$6CB6.
 
-c $605B
+c $605B Check High Score
+E $605B View the equivalent code in;
+. #LIST
+. { #COOKIE$73D3 }
+. { #JETPAC$6398 }
+. LIST#
+@ $605B label=CheckHighScore
+  $605B,$03 #REGde=#R$5E49(#N$5E48) noting due to the INC below this is #R$5E49 - #N$01.
+  $605E,$03 #REGhl=#R$5E4C(#N$5E4B) noting due to the INC below this is #R$5E4C - #N$01.
+  $6061,$02 #REGb=#N$03 (scores are held in three digits).
+@ $6063 label=CheckHighScore_Loop
+  $6063,$01 Increment #REGhl by one.
+  $6064,$01 Increment #REGde by one.
+  $6065,$02 Check #REGde against #REGhl.
+  $6067,$02 If the current score digit is higher than the same digit of the high score then jump to #R$606E.
+  $6069,$02 If both the same digits of the current score and high score are the same number jump straight onto #R$606C.
+  $606B,$01 Return if the current score digit is less than the same high score digit.
+@ $606C label=CheckHighScore_Skip
+  $606C,$02 Decrease counter by one and loop back to #R$6063 until counter is zero.
+N $606E A new High Score has been made, so update #R$5E49(HighScore).
+@ $606E label=NewHighScore
+  $606E,$02 #REGb=#N$03 (scores are held in three digits).
+  $6070,$03 #REGhl=#R$5E4C.
+  $6073,$03 #REGde=#R$5E49.
+@ $6076 label=NewHighScore_CopyLoop
+  $6076,$02 Copy the byte from #REGhl to #REGde.
+  $6078,$01 Increment #REGhl by one.
+  $6079,$01 Increment #REGde by one.
+  $607A,$02 Decrease counter by one and loop back to #R$6076 until counter is zero.
+  $607C,$01 Return.
 
-c $607D
+c $607D Display Congratulations Messaging
+@ $607D label=DisplayCongratsMessaging
   $607D,$05 Write #N$50 to #R$5E48.
   $6082,$03 #REGde=#R$6091.
   $6085,$01 Switch to the shadow registers.
@@ -436,7 +519,16 @@ c $607D
   $6089,$03 #REGde'=#R$6099.
   $608C,$02 #REGb'=#N$04.
   $608E,$03 Jump to #R$5F7D.
-B $6091,$08,$04
+@ $6091 label=CongratsMessaging_Attributes
+B $6091,$04
+@ $6095 label=CongratsMessaging_Position
+B $6095,$04,$01 #TABLE(default,centre,centre)
+. { =h Byte(n) | =h Position | =h Menu Item }
+. { #N$01 | #EVAL(#PEEK(#PC+$00) / $08) | "CONGRATULATIONS YOU" }
+. { #N$02 | #EVAL(#PEEK(#PC+$01) / $08) | " HAVE SUCCESSFULLY" }
+. { #N$03 | #EVAL(#PEEK(#PC+$02) / $08) | "COLLECTED THE EIGHT" }
+. { #N$04 | #EVAL(#PEEK(#PC+$03) / $08) | " CUPS OF ULTIMATE" }
+. TABLE#
 
 t $6099 Text: Congratulations
 @ $6099 label=Message_Congrats
@@ -446,6 +538,21 @@ t $6099 Text: Congratulations
   $60D1,$11,$10:$01 " CUPS OF ULTIMATE".
 
 c $60E2
+  $60E2,$01 Write #N$00 to #REGhl.
+  $60E3,$03 #REGhl=#N($0000, $04, $04).
+  $60E6,$02 #REGc=#N$08.
+  $60E8,$02 #REGe=#N$04.
+  $60EA,$01 #REGa=the byte pointed to by #REGhl.
+  $60EB,$01 Increment #REGhl by one.
+  $60EC,$02,b$01 Keep only bits 0-6.
+  $60EE,$02,b$01 Set bit 7.
+  $60F0,$01 Store the result in #REGd.
+  $60F1,$03 Call #R$614B.
+  $60F4,$01 Decrease #REGe by one.
+  $60F5,$02 If #REGe is not zero, jump to #R$60F1.
+  $60F7,$01 Decrease #REGc by one.
+  $60F8,$02 If #REGc is not zero, jump to #R$60E8.
+  $60FA,$01 Return.
 
 c $60FB
   $60FB,$03 #REGa=#R$5E47.
@@ -456,8 +563,30 @@ c $6106
   $611A,$01 Return.
 
 c $611B
+  $611B,$03 #REGa=#R$5E29.
+  $6121,$03 #REGhl=#R$5E46.
+  $6135,$02 #REGc=#N$20.
+  $6137,$03 Call #R$614B.
+  $613D,$01 Return.
+
+  $613E,$02,b$01 Keep only bits 0-6.
+  $6145,$02,b$01 Keep only bits 0-6.
+  $6149,$02 Jump to #R$612E.
+
+  $614B,$03 Call #R$60FB.
+  $6151,$03 Call #R$60FB.
+  $6157,$01 Return.
 
 c $6158
+  $6158,$03 #REGa=#R$5E0D.
+  $6160,$02,b$01 Keep only bits 0-5.
+  $6163,$02 #REGc=#N$04.
+  $6165,$07 If #R$5E80 is #N$03 then jump to #R$616E.
+  $616C,$02 #REGb=#N$0C.
+  $616E,$03 Call #R$614B.
+  $6171,$01 Decrease #REGc by one.
+  $6172,$02 If #REGc is not zero, jump to #R$616E.
+  $6174,$01 Return.
 
 c $6175 Set Default Playarea Attributes
 @ $6175 label=SetDefaultAttributes
@@ -633,55 +762,94 @@ N $6389 From #REGhl being set above (and for each loop), decrementing #N($0000, 
   $6390,$01 Return.
 
 c $6391
+  $6391,$05 Write starting lives to #R$5E3D (duplicate of #R$5FF6 - possibly so POKEs would appear to not work?)
+  $6396,$04 Write #N$00 to #R$5E3C.
+  $639A,$03 Call #R$6498.
+N $639D Reset miles and time.
+  $639D,$03 #REGhl=#R$5E2D.
+  $63A0,$02 #REGb=#N$07 (counter).
+  $63A2,$02 Write #N$00 to #REGhl.
+  $63A4,$01 Increment #REGhl by one.
+  $63A5,$02 Decrease counter by one and loop back to #R$63A2 until counter is zero.
+  $63A7,$03 Call #R$68A0.
+  $63AA,$03 Call #R$653E.
+  $63AD,$03 Call #R$656E.
+  $63B0,$03 Call #R$6BFE.
+  $63B3,$03 Call #R$6A09.
+  $63B6,$06 Write #N($C000, $04, $04) to #R$5E0A.
+  $63BC,$0B Write #N($0000, $04, $04) to; #LIST { #R$5E0C } { #R$5E0E } { #R$5E10 } LIST#
+  $63C7,$06 Write #N($0C40, $04, $04) to #R$5E05.
+  $63CD,$06 Write #N($0640, $04, $04) to #R$5E08.
+  $63D3,$04 Write #N$00 to #R$5E4F.
+  $63D7,$03 Jump to #R$6BFE.
 
 t $63DA Text: Game Over
 @ $63DA label=Message_GameOver
   $63DA,$09,$08:$01 "GAME OVER".
+@ $63E3 label=Message_YourTime
   $63E3,$0D,$0C:$01 "YOUR TIME WAS".
+@ $63F0 label=Message_BestTime
   $63F0,$0F,$0E:$01 "BEST TIME TODAY".
 
-c $63FF
+c $63FF Handler: Pick Up Cup
+@ $63FF label=HandlerCup
+N $63FF Calculate number of points to award.
   $63FF,$03 #REGa=#R$5E3C.
   $6402,$03 #REGa=(#REGa + #N$01) * #N$02 with BCD conversion.
-N $6405 Update score.
-  $6405,$03 #REGb=#N$00 #REGc=#REGa.
+N $6405 Adds points to score.
+  $6405,$03 #REGbc=number of points to award.
   $6408,$03 Call #R$6046.
+N $640B Handle incrementing the cup counter.
   $640B,$04 Increment #R$5E3C by one.
+N $640F Have all the cups been collected?
   $640F,$01 #REGa=#R$5E3C.
-  $6410,$04 If #REGa is more than #N$08 jump to #R$646C.
+  $6410,$04 If #REGa is less than #N$08 jump to #R$646C.
+N $6414 All cups have been collected, display the "congratulations" messaging.
   $6414,$03 Call #R$6175.
   $6417,$03 Call #R$68A0.
   $641A,$03 Call #R$607D.
-  $641D,$03 #REGhl=#N($5868, $04, $04).
+N $641D Writes the line "YOUR TIME WAS".
+  $641D,$03 #REGhl=#N($5868, $04, $04) (screen location).
   $6420,$03 #REGde=#R$63E3.
   $6423,$03 Call #R$5F97.
-  $6426,$03 #REGhl=#N($6880, $04, $04).
+N $6426 Set #REGhl to where the time itself will display.
+  $6426,$03 #REGhl=#N($6880, $04, $04) (screen location).
   $6429,$03 Call #R$6F10.
   $642C,$03 Call #R$6CEC.
+N $642F Has a new "Best Time" been made?
   $642F,$06 If #R$5E03 is zero then jump to #R$645A.
   $6435,$03 Call #R$6483.
   $6438,$03 #REGhl=#R$5E00.
   $643B,$03 #REGde=#R$5E31.
   $643E,$02 #REGb=#N$03 (counter).
+@ $6440 label=BestTime_Compare
   $6440,$02 Compare #REGde against #REGhl.
   $6442,$02 If it's higher than #REGa then jump to #R$645E.
   $6444,$02 If zero then jump to #R$6448.
   $6446,$02 Jump to #R$644C.
+@ $6448 label=BestTime_Compare_Next
+  $6448,$01 Move onto the next #R$5E00(BestTime) digit.
+  $6449,$01 Move onto the next #R$5E31(Time) digit.
   $644A,$02 Decrease counter by one and loop back to #R$6440 until counter is zero.
+@ $644C label=HandlerCup_Delay
 N $644C Create a short pause.
   $644C,$02 #REGb=#N$0C.
   $644E,$03 Call #R$6386.
   $6451,$03 Call #R$6396.
   $6454,$03 Set the stack pointer to #N($5E00, $04, $04).
   $6457,$03 Jump to #R$6009.
-N $645A Update "Best Time Today".
+
+c $645A Update "Best Time Today"
+@ $645A label=BestTime_Set
   $645A,$01 Increment #REGa by one.
   $645B,$03 Store #REGa at #R$5E03.
+@ $645E label=BestTime_Update
   $645E,$0C Write #R$5E31(Time) to #R$5E00(BestTime).
   $646A,$02 Jump to #R$644C.
 
-c $646C
-  $646C,$03 #REGhl=#R$672E.
+c $646C Display Cups Collected
+@ $646C label=DisplayCupsCollected
+  $646C,$03 #REGhl=#R$672D(#N$672E).
   $646F,$03 #REGde=#R$7F4A.
   $6472,$03 Call #R$70DB.
   $6475,$03 Call #R$714C.
@@ -690,21 +858,36 @@ c $646C
   $647E,$02 #REGb=#N$01.
   $6480,$03 Jump to #R$6CD2.
 
-  $6483,$03 #REGhl=#N($9060, $04, $04).
+c $6483 Display Best Time
+@ $6483 label=DisplayBestTime
+N $6483 Writes the line "BEST TIME TODAY".
+  $6483,$03 #REGhl=#N($9060, $04, $04) (screen location).
   $6486,$03 #REGde=#R$63F0.
   $6489,$03 Call #R$5F97.
-  $648C,$03 #REGhl=#N($A080, $04, $04).
+N $648C Set #REGhl to where the time itself will display.
+  $648C,$03 #REGhl=#N($A080, $04, $04) (screen location).
   $648F,$03 Call #R$6F10.
+N $6492 Point to Best Time.
   $6492,$03 #REGde=#R$5E00.
   $6495,$03 Jump to #R$6CFD.
 
-c $64C7
+c $6498
+  $6498,$03 #REGbc=#R$7CD6.
+  $649D,$02,b$01 Keep only bits 0-3.
+  $64A0,$03 #REGhl=#N($0000, $04, $04).
+  $64A5,$03 #REGhl=#R$7811(#N$7813).
+  $64B6,$02,b$01 Keep only bits 0-5.
+  $64C6,$01 Return.
+
+c $64C7 Handler: Update Time
+@ $64C7 label=HandlerTime
   $64C7,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
   $64D2,$03 #REGhl=#R$5E33.
   $64EC,$02,b$01 Keep only bits 0-3.
   $64EF,$01 Return.
 
 c $64F0 Display Place Name
+R $64F0 A Bits 0-6 of #R$5E1F
 @ $64F0 label=DisplayPlaceName
   $64F0,$03 Return if bit 6 of #REGa is set.
 N $64F3 Strip out the bit which indicates the need to display the place name.
@@ -750,16 +933,48 @@ R $6518 DE Pointer to string data
   $653D,$01 Return.
 
 c $653E
+  $653E,$04 #REGde=#R$5E08.
+  $654A,$03 #REGde=#R$5E05.
+  $6556,$01 Return.
 
 c $6557
 
 c $6588
+  $6588,$03 #REGhl=#R$5E34.
+  $658B,$03 #REGa=#R$5E05.
+  $6590,$03 #REGa=#R$5E08.
+  $6595,$01 Stash #REGhl on the stack.
+  $6598,$01 Restore #REGhl from the stack.
+  $659A,$01 Stash #REGde on the stack.
+  $659B,$04 #REGix=#R$65FD.
+  $659F,$02 #REGb=#N$10.
+  $65A1,$01 Stash #REGbc on the stack.
+  $65A2,$03 Call #R$65B1.
+  $65A9,$01 Restore #REGbc from the stack.
+  $65AC,$01 Restore #REGhl from the stack.
+  $65AD,$03 Write #REGhl to #R$5E34.
+  $65B0,$01 Return.
+
+c $65B1
+  $65B1,$03 #REGbc=#N$0202.
+  $65BE,$02,b$01 Keep only bits 1-7.
+  $65D9,$03 #REGbc=#N$0202.
+  $65DC,$01 Stash #REGhl on the stack.
+  $65DD,$03 Call #R$6998.
+  $65E0,$01 Restore #REGhl from the stack.
+  $65E1,$01 Stash #REGde on the stack.
+  $65E2,$03 Call #R$7097.
+  $65E5,$01 Restore #REGde from the stack.
+  $65E6,$06 Jump to #R$65F8 if #R$5E43 is zero.
+  $65EC,$03 #REGa=#R$5E44.
+  $65EF,$02,b$01 Set bits 0-2.
+  $65F7,$01 Return.
+  $65F8,$03 #REGa=#R$5E44.
+  $65FB,$02 Jump to #R$65F1.
 
 b $65FD
 
 c $6633
-
-c $672E
 
 c $6826
 
@@ -937,7 +1152,30 @@ N $6A87 Holding "SHIFT" pauses the game.
   $6A98,$03 Jump to #R$6009.
 
 c $6A9B
-
+  $6A9B,$02 Stash #REGix on the stack.
+  $6A9D,$05 Write #N$FF to #R$5E39.
+  $6AA2,$03 Call #R$6B47.
+  $6AA5,$03 Call #R$6AF5.
+  $6AA8,$03 Call #R$6D12.
+  $6AAB,$03 Call #R$6557.
+  $6AAE,$03 Call #R$625C.
+  $6AB1,$03 Call #R$6588.
+  $6AB4,$03 Call #R$611B.
+  $6AB7,$02 Restore #REGix from the stack.
+  $6AB9,$03 Call #R$6A39.
+  $6ABC,$03 #REGhl=#N$5993.
+  $6ABF,$03 #REGbc=#N($0202, $04, $04).
+  $6AC2,$03 #REGa=#R$5E44.
+  $6AC5,$02,b$01 Set bit 1.
+  $6AC7,$01 Store the result in #REGd.
+  $6AC8,$03 Call #R$7064.
+  $6ACB,$03 Call #R$64C7.
+  $6ACE,$03 Call #R$6CDE.
+  $6AD1,$03 #REGa=#R$5E39.
+  $6AD4,$02 Return if #R$5E39(#REGa) is zero.
+  $6AD6,$01 Increment #R$5E39(#REGa) by one.
+  $6AD7,$01 Return if #R$5E39(#REGa) if anything other than zero (see #R$6A9D; #N$FF + #N$01 = #N$00).
+  $6AD8,$03 Write #REGa to #R$5E39.
   $6ADB,$03 #REGhl=#N$B868.
   $6ADE,$03 #REGde=#R$6AE4.
   $6AE1,$03 Call #R$6518.
@@ -975,7 +1213,28 @@ c $6B42
   $6B45,$02 Jump to #R$6B7F.
 
 c $6B47
+  $6B47,$04 #REGbc=#R$5E19.
+  $6B50,$03 Call #R$6B30.
+  $6B53,$03 #REGhl=#R$5E05.
+  $6B5B,$03 Call #R$6BF6.
+  $6B62,$01 Stash #REGhl on the stack.
+  $6B64,$03 #REGhl=#N($0060, $04, $04).
+  $6B6A,$01 Restore #REGhl from the stack.
+  $6B6D,$03 Store #REGa at #R$5E17.
+  $6B71,$01 Increment #REGbc by one.
+  $6B73,$03 Call #R$6B3D.
+  $6B7C,$03 #REGhl=#R$6BD6.
+  $6B81,$03 Store #REGa at #R$5E1F.
+  $6B92,$03 #REGa=#R$5E44.
+  $6B99,$03 #REGhl=#R$5E08.
+  $6BA1,$03 Call #R$6BF6.
+  $6BAA,$03 #REGhl=#N($0060, $04, $04).
+  $6BB4,$03 Store #REGa at #R$5E18.
   $6BBB,$03 #REGhl=#R$6BCF.
+  $6BC0,$03 Store #REGa at #R$5E13.
+  $6BC3,$04 Store #REGbc at #R$5E3A.
+  $6BD1,$03 #REGbc=#N($AF00, $04, $04).
+  $6BD4,$02 Jump to #R$6B92.
 B $6BD6,$20
 
 c $6BF6
@@ -1072,24 +1331,35 @@ N $6CC4 Prints the score.
   $6CDD,$01 Return.
 
 c $6CDE Display Miles/ Time.
-@ $6CDE label=Display_Miles
+@ $6CDE label=DisplayMiles
   $6CDE,$03 #REGhl=#N$4061 (screen position).
   $6CE1,$03 #REGde=#R$5E2D.
   $6CE4,$02 #REGb=#N$03 ("miles" is #N$03 digits).
   $6CE6,$03 Call #R$6CC6.
   $6CE9,$03 #REGhl=#N$4021 (screen position).
-@ $6CEC label=Display_Time_Minutes
+@ $6CEC label=DisplayTime_Minutes
   $6CEC,$03 #REGde=#R$5E31.
   $6CEF,$02 #REGb=#N$02 ("time/ minutes" is #N$02 digits).
   $6CF1,$03 Call #R$6CD2.
   $6CF4,$03 #REGde=#R$5E33.
-@ $6CF7 label=Display_Time_Seconds
+@ $6CF7 label=DisplayTime_Seconds
   $6CF7,$01 Increment #REGhl (screen position) by one.
   $6CF8,$02 #REGb=#N$01 ("time/ seconds" is #N$01 digit).
   $6CFA,$03 Jump to #R$6CC6.
 
-c $6CFD
+c $6CFD Print Best Time
+@ $6CFD label=PrintBestTime
+N $6CFD Print the first two digits.
+  $6CFD,$02 #REGb=#N$02.
+  $6CFF,$03 Call #R$6CD2.
+N $6D02 Print the final digit.
+  $6D02,$03 #REGde=#R$5E02.
+  $6D05,$02 Jump to #R$6CF7.
 
+c $6D07
+  $6D07,$05 #REGa=#R$5E0D + #N$04.
+  $6D0C,$04 If #REGa is less than #N$C0 jump to #R$6D76.
+  $6D10,$02 Else, jump to #R$6D73.
 
 c $6D12
   $6D12,$02 #REGc=#N$00.
@@ -1230,6 +1500,14 @@ c $6F2F
 c $6F3C
 
 c $6FAC
+  $6FB2,$03 #REGhl=#R$5E50.
+  $6FB5,$02 #REGb=#N$07.
+  $6FB7,$04 Write #N$00 to #R$5E22.
+  $6FC5,$03 #REGa=#R$5E1E.
+  $6FC8,$02,b$01 Set bit 7.
+  $6FCA,$01 Write this back to #REGhl.
+  $6FCB,$03 #REGix=#REGhl (using the stack to do so).
+  $6FCE,$03 #REGa=#R$5E1F.
   $6FD5,$02,b$01 Keep only bits 0-6.
   $6FD7,$03 Call #R$64F0.
   $6FDA,$03 Call #R$7101.
@@ -1239,12 +1517,30 @@ c $6FAC
   $6FE7,$03 Call #R$7052.
   $6FEA,$06 Return if too far from #R$5E17 (i.e. more than #N$0A pixels).
   $6FF0,$06 Return if too far from #R$5E18 (i.e. more than #N$0A pixels).
-  $6FF6,$07
+  $6FF6,$03 #REGa=#R$5E1F.
+  $6FF9,$04
+  $7002,$03 #REGa=#R$5E4F.
+N $700C Add #N($0050, $04, $04) points to the score.
+  $700C,$03 #REGbc=#N($0050, $04, $04).
+  $700F,$03 Call #R$6046.
+  $7012,$06 Write #N$C0FF to #R$5E0A.
+  $7018,$03 #REGa=#R$5E46.
   $701B,$02,b$01 Keep only bits 0-6.
   $701E,$05 Write #N$07 to #R$5E46.
   $7023,$01 Return.
 
 c $7024
+
+c $702A
+  $702A,$03 #REGhl=#R$5E3A.
+  $7030,$05 Write #N$87 to #R$5E46.
+  $7035,$03 Jump to #R$63FF.
+
+c $7038
+  $7038,$03 #REGhl=#R$5E3A.
+  $703E,$07 Write #N$00 to #LIST { #R$5E8C } { #R$5E98 } LIST#
+  $7045,$05 Write #N$03 to #R$5E80.
+  $704A,$01 Return.
 
 c $704B Colourise sprite
 @ $704B label=ColouriseSprite
@@ -1311,7 +1607,8 @@ R $7097 O:HL Attribute buffer address
 
 c $70AD
 
-c $70B2
+c $70B2 Get Actor Position/ Direction
+@ $70B2 label=ActorFindPosDir
 E $70B2 Continue on to #R$70CE.
   $70B2,$03 Call #R$7155.
   $70B5,$03 #REGhl=#R$5E20.
@@ -1366,11 +1663,26 @@ c $7149
   $7151,$01 #REGc=#N$00.
   $7152,$03 Jump to #R$7170.
 
-c $7155
+c $7155 Fetch Sprite
+@ $7155 label=GetDefaultSprite
   $7155,$03 #REGa=#R$5E22.
+@ $7158 label=GetSprite
+  $7158,$03 Calculate offset for sprite lookup table.
   $715B,$02,b$01 Keep only bits 1-6.
   $715D,$03 #REGhl=#R$7F06.
+  $7160,$03 Create an offset in #REGbc.
+  $7163,$01 #REGhl=#R$7F06 + offset.
+  $7164,$03 #REGde=fetch sprite address pointed to by #REGhl.
   $7167,$01 Return.
+
+N $7168 .
+@ $7168 label=ActorGetSprite
+  $7168,$03 Load the sprite ID from the currently active actor.
+  $716B,$02 Jump to #R$7158.
+
+c $716D
+  $716D,$01 .
+  $716E,$02 Jump to #R$718F.
 
 c $7170 Mask Sprite
 @ $7170 label=MaskSprite
