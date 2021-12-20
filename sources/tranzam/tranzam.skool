@@ -335,8 +335,12 @@ g$5E0D DEFB $EF
 ; Game status buffer entry at 5E0E
 g$5E0E DEFB $22,$22
 
-; Game status buffer entry at 5E10
-g$5E10 DEFB $AF,$3A,$F5
+; Player Direction
+@label=Player_Direction
+g$5E10 DEFW $3AAF
+
+; Game status buffer entry at 5E12
+g$5E12 DEFB $F5
 
 ; Game status buffer entry at 5E13
 g$5E13 DEFB $AC,$36,$0E,$00
@@ -357,8 +361,9 @@ g$5E1E DEFB $00
 g$5E1F DEFB $00
 
 ; Actor Buffer
-@label=Buffer_Actor
+@label=Actor_Position_X
 g$5E20 DEFB $00      ; X Position.
+@label=Actor_Position_Y
  $5E21 DEFB $00      ; Y Position.
  $5E22 DEFB $00      ; Movement direction.
 @label=HeightPixels
@@ -385,7 +390,10 @@ g$5E29 DEFW $ACF5
 ; Game status buffer entry at 5E2B
 g$5E2B DEFB $36
 
-; Game status buffer entry at 5E2C
+; Width Counter
+;
+; Temporary counter used when drawing sprites.
+@label=WidthCounter
 g$5E2C DEFB $0E
 
 ; Miles
@@ -1590,35 +1598,37 @@ c$6483 LD HL,$9060   ; #REGhl=#N($9060, $04, $04) (screen location).
 ; Routine at 6498
 ;
 ; Used by the routine at #R$6391.
-c$6498 LD BC,$7CD6   ; #REGbc=#R$7CD6.
- $649B LD A,R        ;
- $649D AND %00111111 ; Keep only bits 0-3.
- $649F LD D,A        ;
+c$6498 LD BC,$7CD6   ; #REGbc=#R$7CD6 (one byte past the end of #R$7811).
+ $649B LD A,R        ; #REGa=random number.
+; Limit the number to 0-63.
+ $649D AND %00111111 ; Keep only bits 0-5.
+ $649F LD D,A        ; Store the result in #REGd.
  $64A0 LD HL,$0000   ; #REGhl=#N($0000, $04, $04).
- $64A3 ADD HL,DE     ;
- $64A4 EX DE,HL      ;
+ $64A3 ADD HL,DE     ; {#REGde=#REGhl + #REGde.
+ $64A4 EX DE,HL      ; }
  $64A5 LD HL,$7813   ; #REGhl=#R$7811(#N$7813).
-*$64A8 LD A,(HL)     ;
- $64A9 CP $20        ;
- $64AB JR Z,$64B3    ;
- $64AD CP $60        ;
- $64AF JR NZ,$64BC   ;
+*$64A8 LD A,(HL)     ; #REGa=#REGhl.
+ $64A9 CP $20        ; {If #REGa is #N$20 jump to #R$64B3.
+ $64AB JR Z,$64B3    ; }
+ $64AD CP $60        ; {If #REGa is not #N$60 jump to #R$64BC.
+ $64AF JR NZ,$64BC   ; }
  $64B1 LD (HL),$20   ;
-*$64B3 DEC HL        ;
- $64B4 LD A,(DE)     ;
- $64B5 INC DE        ;
- $64B6 AND %01111111 ; Keep only bits 0-5.
- $64B8 ADD A,$20     ;
- $64BA LD (HL),A     ;
- $64BB INC HL        ;
-*$64BC INC HL        ;
+@label=HandlerSpriteCup
+*$64B3 DEC HL        ; Decrease #REGhl by one.
+ $64B4 LD A,(DE)     ; #REGa=#REGde.
+ $64B5 INC DE        ; Increment #REGde by one.
+ $64B6 AND %01111111 ; Keep only bits 0-6.
+ $64B8 ADD A,$20     ; #REGa=#REGa + #N$20.
+ $64BA LD (HL),A     ; Store #REGa at #REGhl.
+ $64BB INC HL        ; Increment #REGhl by one.
+*$64BC INC HL        ; {Increment #REGhl by three.
  $64BD INC HL        ;
- $64BE INC HL        ;
- $64BF PUSH HL       ;
+ $64BE INC HL        ; }
+ $64BF PUSH HL       ; Stash #REGhl on the stack.
  $64C0 AND A         ;
  $64C1 SBC HL,BC     ;
- $64C3 POP HL        ;
- $64C4 JR C,$64A8    ;
+ $64C3 POP HL        ; Restore #REGhl from the stack.
+ $64C4 JR C,$64A8    ; If ... jump to #R$64A8.
  $64C6 RET           ; Return.
 
 ; Handler: Update Time
@@ -1627,32 +1637,38 @@ c$6498 LD BC,$7CD6   ; #REGbc=#R$7CD6.
 @label=HandlerTime
 c$64C7 LD A,($5C78)  ; #HTML(#REGa=<a
                      ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
- $64CA CP $32        ;
- $64CC RET C         ;
- $64CD SUB $32       ;
- $64CF LD ($5C78),A  ;
+ $64CA CP $32        ; {Return if #REGa < #N$32.
+ $64CC RET C         ; }
+ $64CD SUB $32       ; #REGa = #REGa - #N$32.
+ $64CF LD ($5C78),A  ; #HTML(Write #REGa back to <a
+                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+; Update the time from the smallest unit upwards.
+; .
+; Handles the "seconds".
  $64D2 LD HL,$5E33   ; #REGhl=#R$5E33.
- $64D5 LD A,(HL)     ;
- $64D6 INC A         ;
- $64D7 DAA           ;
- $64D8 LD (HL),A     ;
- $64D9 CP $60        ;
- $64DB RET NZ        ;
- $64DC LD (HL),$00   ;
- $64DE DEC HL        ;
- $64DF LD A,(HL)     ;
- $64E0 INC A         ;
- $64E1 DAA           ;
- $64E2 LD (HL),A     ;
- $64E3 CP $60        ;
- $64E5 RET NZ        ;
- $64E6 LD (HL),$00   ;
- $64E8 DEC HL        ;
- $64E9 LD A,(HL)     ;
- $64EA INC A         ;
- $64EB DAA           ;
- $64EC AND %00001111 ; Keep only bits 0-3.
- $64EE LD (HL),A     ;
+ $64D5 LD A,(HL)     ; Grab the seconds.
+ $64D6 INC A         ; Increase seconds by one.
+ $64D7 DAA           ; {Write seconds back to #R$5E33.
+ $64D8 LD (HL),A     ; }
+ $64D9 CP $60        ; {Return unless seconds have reached #N$60.
+ $64DB RET NZ        ; }
+ $64DC LD (HL),$00   ; Reset seconds to #N$00.
+; Handles the "minutes".
+ $64DE DEC HL        ; #REGhl=#R$5E32.
+ $64DF LD A,(HL)     ; Grab the minutes.
+ $64E0 INC A         ; Increase minutes by one.
+ $64E1 DAA           ; {Write minutes back to #R$5E32.
+ $64E2 LD (HL),A     ; }
+ $64E3 CP $60        ; {Return unless minutes have reached #N$60.
+ $64E5 RET NZ        ; }
+ $64E6 LD (HL),$00   ; Reset minutes to #N$00.
+; Handles the "hours".
+ $64E8 DEC HL        ; #REGhl=#R$5E31.
+ $64E9 LD A,(HL)     ; Grab the hours.
+ $64EA INC A         ; Increase hours by one.
+ $64EB DAA           ; {Keeping only bits 0-3, write hours back to #R$5E31.
+ $64EC AND %00001111 ;
+ $64EE LD (HL),A     ; }
  $64EF RET           ; Return.
 
 ; Display Place Name
@@ -1717,24 +1733,35 @@ c$6518 PUSH HL       ; Stash #REGhl on the stack.
  $6521 CALL $7097    ; Call #R$7097.
 ; This entry point is used by the routine at #R$5F97.
 @label=PrintString_Loop
-*$6524 EXX           ;
- $6525 LD A,(DE)     ;
- $6526 BIT 7,A       ;
- $6528 JR NZ,$6535   ;
- $652A CALL $6C96    ;
- $652D INC DE        ;
- $652E EXX           ;
- $652F EX AF,AF'     ;
- $6530 LD (HL),A     ;
- $6531 INC L         ;
- $6532 EX AF,AF'     ;
- $6533 JR $6524      ;
-*$6535 AND $7F       ;
- $6537 CALL $6C96    ;
- $653A EXX           ;
- $653B EX AF,AF'     ;
- $653C LD (HL),A     ;
+*$6524 EXX           ; Switch back to the normal registers.
+ $6525 LD A,(DE)     ; Fetch the character to print.
+ $6526 BIT 7,A       ; {If bit 7 is set (which signifies the end of the
+ $6528 JR NZ,$6535   ; string), jump to #R$6535.}
+ $652A CALL $6C96    ; Call #R$6C96.
+ $652D INC DE        ; Increment #REGde by one.
+ $652E EXX           ; Switch to the shadow registers.
+ $652F EX AF,AF'     ; Switch to the shadow #REGaf register.
+ $6530 LD (HL),A     ; Copy the attribute byte to the screen.
+ $6531 INC L         ; Increment #REGl by one.
+ $6532 EX AF,AF'     ; Switch to the shadow #REGaf register.
+ $6533 JR $6524      ; Jump to #R$6524.
+; Because the last character contains the terminator, it needs to be handled
+; separately.
+@label=PrintString_LastCharacter
+*$6535 AND %01111111 ; Keep only bits 0-6 (i.e. strip the bit 7 terminator).
+ $6537 CALL $6C96    ; Call #R$6C96.
+ $653A EXX           ; Switch to the shadow registers.
+ $653B EX AF,AF'     ; Switch to the shadow #REGaf register.
+ $653C LD (HL),A     ; Copy the attribute byte to the screen.
  $653D RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$A1F3 }
+; { #COOKIE$7488 }
+; { #JETPAC$0000 }
+; { #LUNARJETMAN$8A11 }
+; { #PSSST$73ED }
+; LIST#
 
 ; Routine at 653E
 ;
@@ -2124,30 +2151,44 @@ b$6837 DEFB $71,$44,$70,$43,$FF,$04,$04,$04
  $686F DEFB $01,$02,$02,$02,$00,$00,$01,$01
  $6877 DEFB $01,$02,$02,$02
 
-; Routine at 687B
+; Display Lives
 ;
 ; Used by the routine at #R$68A0.
-c$687B LD A,($5E3D)  ;
+@label=DisplayPlayerLives
+c$687B LD A,($5E3D)  ; {Return if #R$5E3D is zero.
  $687E AND A         ;
- $687F RET Z         ;
- $6880 LD B,A        ;
- $6881 LD HL,$BC08   ;
- $6884 XOR A         ;
- $6885 LD ($5E41),A  ;
-*$6888 LD DE,$7CD6   ;
- $688B CALL $6891    ;
- $688E DJNZ $6888    ;
- $6890 RET           ;
-*$6891 PUSH BC       ;
- $6892 PUSH HL       ;
- $6893 CALL $70DB    ;
- $6896 CALL $714C    ;
- $6899 POP HL        ;
- $689A POP BC        ;
- $689B LD A,L        ;
+ $687F RET Z         ; }
+ $6880 LD B,A        ; #REGb=#R$5E3D.
+ $6881 LD HL,$BC08   ; #REGhl=#N$BC08.
+ $6884 XOR A         ; {Write #N$00 to #R$5E41.
+ $6885 LD ($5E41),A  ; }
+@label=DisplayPlayerLives_Loop
+*$6888 LD DE,$7CD6   ; #REGde=#R$7CD6(SpriteCar_1).
+ $688B CALL $6891    ; Call #R$6891.
+ $688E DJNZ $6888    ; Decrease counter by one and loop back to #R$6888 until
+                     ; counter is zero.
+ $6890 RET           ; Return.
+; Print the player sprite.
+@label=DisplayPlayerLives_Print
+*$6891 PUSH BC       ; {Stash #REGbc and #REGhl on the stack.
+ $6892 PUSH HL       ; }
+ $6893 CALL $70DB    ; Call #R$70DB.
+ $6896 CALL $714C    ; Call #R$714C.
+ $6899 POP HL        ; {Restore #REGhl and #REGbc from the stack.
+ $689A POP BC        ; }
+; Move onto the next life "slot".
+ $689B LD A,L        ; {#REGl=#REGl + #N$10.
  $689C ADD A,$10     ;
- $689E LD L,A        ;
- $689F RET           ;
+ $689E LD L,A        ; }
+ $689F RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$0000 }
+; { #COOKIE$7378 }
+; { #JETPAC$70A4 }
+; { #LUNARJETMAN$894F }
+; { #PSSST$7325 }
+; LIST#
 
 ; Create Game Window
 ;
@@ -2193,19 +2234,25 @@ c$68A0 LD HL,$5E68   ; {Write #N$00 to #N$0C bytes starting from #R$5E68.
  $68FB CALL $6CBE    ; Call #R$6CBE.
  $68FE JR $6919      ; Jump to #R$6919.
 
-; Routine at 6900
+; Set PlayArea Attributes
 ;
 ; Used by the routine at #R$68A0.
-c$6900 LD E,B        ;
-*$6901 LD B,E        ;
- $6902 PUSH HL       ;
-*$6903 LD (HL),$76   ;
- $6905 INC HL        ;
- $6906 DJNZ $6903    ;
- $6908 POP HL        ;
- $6909 CALL $6910    ;
- $690C DEC C         ;
- $690D JR NZ,$6901   ;
+;
+; B Count for width
+; C Count for height
+; HL Attribute address
+@label=AttributesPlayArea
+c$6900 LD E,B        ; #REGe=#REGb.
+*$6901 LD B,E        ; #REGb=#REGe.
+ $6902 PUSH HL       ; Stash #REGhl on the stack.
+*$6903 LD (HL),$76   ; Write #N$76 to #REGhl.
+ $6905 INC HL        ; Increment #REGhl by one.
+ $6906 DJNZ $6903    ; Decrease counter by one and loop back to #R$6903 until
+                     ; counter is zero.
+ $6908 POP HL        ; Restore #REGhl from the stack.
+ $6909 CALL $6910    ; Call #R$6910.
+ $690C DEC C         ; Decrease #REGc by one.
+ $690D JR NZ,$6901   ; Jump back to #R$6901 until #REGc is zero.
  $690F RET           ; Return.
 
 ; Screen Address One Pixel Below
@@ -2217,32 +2264,33 @@ c$6900 LD E,B        ;
 ;
 ; Calculates the new address for writing a sprite pixel, in an downwards
 ; direction.
-c$6910 LD A,L        ; {#REGl=#REGl=#N$20 (one line).
+c$6910 LD A,L        ; {#REGl=#REGl + #N$20 (one line).
  $6911 ADD A,$20     ;
  $6913 LD L,A        ; }
- $6914 LD A,H        ; {#REGh=#REGh+#N$00 (but include the carry from above).
+ $6914 LD A,H        ; {#REGh=#REGh + #N$00 (but include the carry from above).
  $6915 ADC A,$00     ;
  $6917 LD H,A        ; }
  $6918 RET           ; Return.
 
-; Routine at 6919
+; Display Night Driver Text
 ;
 ; Used by the routine at #R$68A0.
+@label=DisplayNightDriver
 c$6919 LD A,($5E43)               ; {Return if #R$5E43 is zero.
  $691C AND A                      ;
  $691D RET Z                      ; }
- $691E LD HL,$4070                ; #REGhl=#N$4070.
+ $691E LD HL,$4070                ; #REGhl=#N$4070 (screen location).
  $6921 LD DE,$693C                ; #REGde=#R$693C.
  $6924 CALL $6518                 ; Call #R$6518.
- $6927 LD B,$04                   ;
- $6929 CALL $6386                 ;
- $692C LD HL,$4070                ;
- $692F PUSH HL                    ;
- $6930 CALL $6F10                 ;
- $6933 LD A,$00                   ;
- $6935 EX AF,AF'                  ;
+ $6927 LD B,$04                   ; #REGb=#N$04 (delay length).
+ $6929 CALL $6386                 ; Call #R$6386.
+ $692C LD HL,$4070                ; #REGhl=#N$4070 (screen location).
+ $692F PUSH HL                    ; Stash #REGhl on the stack.
+ $6930 CALL $6F10                 ; Call #R$6F10.
+ $6933 LD A,$00                   ; #REGa=#N$00.
+ $6935 EX AF,AF'                  ; Switch to the shadow #REGaf register.
  $6936 LD DE,$6AE5                ; #REGde=#R$6AE4(#N$6AE5).
- $6939 JP $651F                   ;
+ $6939 JP $651F                   ; Jump to #R$651F.
 @label=NightDriver_Text
  $693C DEFM $47                   ;
  $693D DEFM "NIGHT DRIVE","R"+$80 ;
@@ -2432,20 +2480,27 @@ c$6A39 LD HL,($5E10) ; #REGhl=#R$5E10.
  $6A52 LD E,(HL)     ; {#REGde=pointer to the player sprite for this direction.
  $6A53 INC HL        ;
  $6A54 LD D,(HL)     ; }
- $6A55 LD HL,$4F93   ; #REGhl=#N$4F93.
+; The player is drawn statically in the centre of the play area.
+ $6A55 LD HL,$4F93   ; #REGhl=#N$4F93 (screen location).
+; The player sprite is #N$02 bytes in width.
  $6A58 LD A,$02      ; {Write #N$02 to #R$5E2C.
  $6A5A LD ($5E2C),A  ; }
  $6A5D LD A,(DE)     ; #REGa=height of the sprite in pixels.
  $6A5E INC DE        ; Increment #REGde by one to point to the sprite data.
  $6A5F LD C,A        ; #REGc=#REGa (height of the sprite).
+@label=DrawPlayer_NextRow
 *$6A60 LD A,($5E2C)  ; {#REGb=#R$5E2C.
  $6A63 LD B,A        ; }
  $6A64 PUSH HL       ; Push #REGhl on the stack.
-*$6A65 LD A,(DE)     ;
- $6A66 LD (HL),A     ;
- $6A67 INC DE        ;
- $6A68 INC L         ;
- $6A69 DJNZ $6A65    ;
+@label=DrawPlayer_NextCol
+*$6A65 LD A,(DE)     ; {Copy a byte from #REGde (the player sprite data) to
+ $6A66 LD (HL),A     ; #REGhl (the screen position).}
+ $6A67 INC DE        ; Increment #REGde (the player sprite data pointer) by
+                     ; one.
+ $6A68 INC L         ; Increment #REGl by one, this moves onto the next
+                     ; adjacent screen byte.
+ $6A69 DJNZ $6A65    ; Decrease counter by one and loop back to #R$6A65 until
+                     ; counter is zero.
  $6A6B POP HL        ; Restore #REGhl from the stack.
  $6A6C CALL $6ECB    ; Call #R$6ECB.
  $6A6F DEC C         ; {Decrease #REGc (height) by one and jump to #R$6A60 if
@@ -2489,13 +2544,18 @@ c$6A9B PUSH IX                        ; Stash #REGix on the stack.
  $6AB1 CALL $6588                     ; Call #R$6588.
  $6AB4 CALL $611B                     ; Call #R$611B.
  $6AB7 POP IX                         ; Restore #REGix from the stack.
+; Draw and colourize the player sprite.
  $6AB9 CALL $6A39                     ; Call #R$6A39.
- $6ABC LD HL,$5993                    ; #REGhl=#N$5993.
- $6ABF LD BC,$0202                    ; #REGbc=#N($0202, $04, $04).
+ $6ABC LD HL,$5993                    ; #REGhl=#N$5993 (attribute buffer
+                                      ; location).
+ $6ABF LD BC,$0202                    ; #REGbc=#N($0202, $04, $04) (height *
+                                      ; width in bytes).
+; Merge the player sprite colour in with the current background colour.
  $6AC2 LD A,($5E44)                   ; #REGa=#R$5E44.
- $6AC5 OR %00000010                   ; Set bit 1.
+ $6AC5 OR %00000010                   ; Set bit 1 (RED).
  $6AC7 LD D,A                         ; Store the result in #REGd.
  $6AC8 CALL $7064                     ; Call #R$7064.
+; Handles updating the dashboard values.
  $6ACB CALL $64C7                     ; Call #R$64C7.
  $6ACE CALL $6CDE                     ; Call #R$6CDE.
  $6AD1 LD A,($5E39)                   ; #REGa=#R$5E39.
@@ -2544,24 +2604,26 @@ c$6B02 PUSH HL       ;
 ; Routine at 6B12
 ;
 ; Used by the routine at #R$6AF5.
-c$6B12 LD A,(HL)     ;
+;
+; HL Entity
+c$6B12 LD A,(HL)     ; {If the byte held at #REGhl is zero, jump to #R$6B02.
  $6B13 AND A         ;
- $6B14 JR Z,$6B02    ;
- $6B16 PUSH BC       ;
- $6B17 PUSH HL       ;
- $6B18 PUSH HL       ;
- $6B19 POP IX        ;
- $6B1B CALL $71ED    ;
- $6B1E CALL $7139    ;
- $6B21 POP HL        ;
- $6B22 XOR A         ;
- $6B23 LD (HL),A     ;
- $6B24 INC HL        ;
- $6B25 LD (HL),A     ;
- $6B26 INC HL        ;
- $6B27 LD (HL),A     ;
- $6B28 POP BC        ;
- $6B29 JR $6B0E      ;
+ $6B14 JR Z,$6B02    ; }
+ $6B16 PUSH BC       ; {Push #REGbc and #REGhl on the stack.
+ $6B17 PUSH HL       ; }
+ $6B18 PUSH HL       ; {#REGix=#REGhl (using the stack to do so).
+ $6B19 POP IX        ; }
+ $6B1B CALL $71ED    ; Call #R$71ED.
+ $6B1E CALL $7139    ; Call #R$7139.
+ $6B21 POP HL        ; Restore #REGhl from the stack.
+ $6B22 XOR A         ; {Write #N$00 to #REGhl.
+ $6B23 LD (HL),A     ; }
+ $6B24 INC HL        ; Increment #REGhl by one.
+ $6B25 LD (HL),A     ; Write #N$00 to #REGhl.
+ $6B26 INC HL        ; Increment #REGhl by one.
+ $6B27 LD (HL),A     ; Write #N$00 to #REGhl.
+ $6B28 POP BC        ; Restore #REGbc from the stack.
+ $6B29 JR $6B0E      ; Jump to #R$6B0E.
 
 ; Routine at 6B2B
 ;
@@ -2595,7 +2657,7 @@ c$6B42 LD HL,$6BE6   ; #REGhl=#R$6BE6.
 ;
 ; Used by the routine at #R$6A9B.
 c$6B47 LD BC,($5E19)                        ; #REGbc=#R$5E19.
-*$6B4B XOR A                                ;
+*$6B4B XOR A                                ; #REGa=#N$00.
  $6B4C EX AF,AF'                            ;
  $6B4D LD A,(BC)                            ;
  $6B4E INC BC                               ;
@@ -2622,7 +2684,7 @@ c$6B47 LD BC,($5E19)                        ; #REGbc=#R$5E19.
  $6B71 INC BC                               ; Increment #REGbc by one.
  $6B72 LD D,A                               ;
  $6B73 CALL $6B3D                           ; Call #R$6B3D.
- $6B76 LD A,($5E43)                         ;
+ $6B76 LD A,($5E43)                         ; #REGa=#R$5E43.
  $6B79 AND A                                ;
  $6B7A JR Z,$6B42                           ;
  $6B7C LD HL,$6BD6                          ; #REGhl=#R$6BD6.
@@ -3273,12 +3335,12 @@ c$6F2F LD HL,$0000   ; #REGhl=#N($0000, $04, $04).
 ; Routine at 6F3C
 ;
 ; Used by the routine at #R$6B47.
-c$6F3C LD A,($5E13)  ;
+c$6F3C LD A,($5E13)  ; #REGa=#R$5E13.
  $6F3F LD C,A        ;
  $6F40 INC A         ;
- $6F41 AND $03       ;
+ $6F41 AND %00000011 ; Keep only bits 0-1.
  $6F43 BIT 1,A       ;
- $6F45 LD A,($5E18)  ;
+ $6F45 LD A,($5E18)  ; #REGa=#R$5E18.
  $6F48 JR NZ,$6F4C   ;
  $6F4A NEG           ;
 *$6F4C ADD A,$68     ;
@@ -3288,7 +3350,7 @@ c$6F3C LD A,($5E13)  ;
  $6F53 RET C         ;
  $6F54 LD ($5E15),A  ;
  $6F57 LD H,A        ;
- $6F58 LD A,($5E17)  ;
+ $6F58 LD A,($5E17)  ; #REGa=#R$5E17.
  $6F5B CP $58        ;
  $6F5D RET NC        ;
  $6F5E BIT 1,C       ;
@@ -3297,19 +3359,19 @@ c$6F3C LD A,($5E13)  ;
 *$6F64 ADD A,$98     ;
  $6F66 LD ($5E14),A  ;
  $6F69 LD L,A        ;
- $6F6A LD A,($5E1F)  ;
+ $6F6A LD A,($5E1F)  ; #REGa=#R$5E1F.
  $6F6D CP $60        ;
  $6F6F RET Z         ;
  $6F70 CP $20        ;
  $6F72 JR Z,$6F7A    ;
  $6F74 BIT 6,A       ;
  $6F76 JR Z,$6F7A    ;
- $6F78 LD A,$07      ;
+ $6F78 LD A,$07      ; #REGa=#N$07.
 *$6F7A LD ($5E1E),A  ;
- $6F7D PUSH HL       ;
+ $6F7D PUSH HL       ; Push #REGhl on the stack.
  $6F7E EX DE,HL      ;
- $6F7F LD B,$07      ;
- $6F81 LD HL,$5E51   ;
+ $6F7F LD B,$07      ; #REGb=#N$07.
+ $6F81 LD HL,$5E51   ; #REGhl=#R$5E51.
 ; This entry point is used by the routine at #R$6FAC.
 *$6F84 LD A,(HL)     ;
  $6F85 SUB E         ;
@@ -3324,17 +3386,17 @@ c$6F3C LD A,($5E13)  ;
  $6F95 NEG           ;
 *$6F97 CP $0A        ;
  $6F99 JR NC,$6FAD   ;
- $6F9B PUSH HL       ;
+ $6F9B PUSH HL       ; Push #REGhl on the stack.
  $6F9C DEC HL        ;
  $6F9D DEC HL        ;
- $6F9E PUSH HL       ;
- $6F9F POP IX        ;
- $6FA1 LD A,($5E1E)  ;
+ $6F9E PUSH HL       ; {#REGix=#REGhl (using the stack to do so).
+ $6F9F POP IX        ; }
+ $6FA1 LD A,($5E1E)  ; #REGa=#R$5E1E.
  $6FA4 LD (HL),A     ;
- $6FA5 CALL $71ED    ;
- $6FA8 POP HL        ;
- $6FA9 POP DE        ;
- $6FAA JR $6FC1      ;
+ $6FA5 CALL $71ED    ; Call #R$71ED.
+ $6FA8 POP HL        ; {Restore #REGhl and #REGde from the stack.
+ $6FA9 POP DE        ; }
+ $6FAA JR $6FC1      ; Jump to #R$6FC1.
 
 ; Routine at 6FAC
 ;
@@ -3575,7 +3637,9 @@ c$70CE LD C,$00      ; #REGc=#N$00.
 ; Routine at 70D2
 ;
 ; Used by the routines at #R$7101 and #R$7149.
+@label=FindActorSpriteAndUpdate
 c$70D2 CALL $7168    ; Call #R$7168.
+@label=ActorUpdate
  $70D5 LD L,(IX+$01) ; {Fetch actor co-ordinates.
  $70D8 LD H,(IX+$02) ; }
 ; This entry point is used by the routines at #R$646C and #R$687B.
@@ -3594,8 +3658,8 @@ c$70D2 CALL $7168    ; Call #R$7168.
  $70F5 CP C          ;
  $70F6 JR C,$70F9    ;
  $70F8 LD A,C        ;
-*$70F9 LD ($5E26),A  ;
- $70FC LD ($5E23),A  ;
+*$70F9 LD ($5E26),A  ; Set #R$5E26.
+ $70FC LD ($5E23),A  ; Set #R$5E23.
  $70FF JR $70CE      ; Jump to #R$70CE.
 
 ; Routine at 7101
@@ -3684,13 +3748,13 @@ c$716D EX (SP),HL    ; .
 ;
 ; Used by the routines at #R$7101, #R$7139 and #R$7149.
 @label=MaskSprite
-c$7170 LD A,C        ;
+c$7170 LD A,C        ; {Jump to #R$71CB if the vertical position is zero.
  $7171 AND A         ;
- $7172 JR Z,$71CB    ;
- $7174 DEC C         ;
- $7175 PUSH HL       ;
- $7176 LD A,($5E40)  ;
- $7179 LD B,A        ;
+ $7172 JR Z,$71CB    ; }
+ $7174 DEC C         ; Decrease #REGc by one.
+ $7175 PUSH HL       ; Stash #REGhl on the stack.
+ $7176 LD A,($5E40)  ; {#REGb=#R$5E40.
+ $7179 LD B,A        ; }
  $717A EX DE,HL      ;
  $717B PUSH DE       ;
  $717C LD D,(HL)     ;
@@ -3722,17 +3786,17 @@ c$7170 LD A,C        ;
  $7197 LD (HL),A     ;
  $7198 POP DE        ;
  $7199 POP HL        ;
- $719A CALL $6ECB    ;
+ $719A CALL $6ECB    ; Call #R$6ECB.
  $719D EXX           ;
  $719E LD A,C        ;
  $719F AND A         ;
  $71A0 JR Z,$71C8    ;
 *$71A2 DEC C         ;
  $71A3 PUSH HL       ;
- $71A4 LD A,($5E41)  ;
- $71A7 LD B,A        ;
+ $71A4 LD A,($5E41)  ; {#REGb=#R$5E41.
+ $71A7 LD B,A        ; }
  $71A8 EX DE,HL      ;
- $71A9 PUSH DE       ;
+ $71A9 PUSH DE       ; Stash #REGde on the stack.
  $71AA LD D,(HL)     ;
  $71AB INC HL        ;
  $71AC LD E,(HL)     ;
@@ -3758,9 +3822,9 @@ c$7170 LD A,C        ;
  $71C2 LD (HL),A     ;
  $71C3 POP DE        ;
  $71C4 POP HL        ;
- $71C5 CALL $6ECB    ;
+ $71C5 CALL $6ECB    ; Call #R$6ECB.
 *$71C8 EXX           ;
- $71C9 JR $7170      ;
+ $71C9 JR $7170      ; Jump to #R$7170.
 *$71CB EXX           ;
  $71CC LD A,C        ;
  $71CD AND A         ;
@@ -3770,22 +3834,22 @@ c$7170 LD A,C        ;
 *$71D0 EXX           ;
 ; This entry point is used by the routine at #R$7101.
 @label=ActorUpdateSize
-*$71D1 LD A,($5E25)  ;
- $71D4 LD C,A        ;
- $71D5 LD A,($5E26)  ;
+*$71D1 LD A,($5E25)  ; {#REGc=#R$5E25.
+ $71D4 LD C,A        ; }
+ $71D5 LD A,($5E26)  ; #REGa=#R$5E26.
  $71D8 OR C          ;
  $71D9 RET Z         ;
  $71DA XOR A         ;
  $71DB LD ($5E25),A  ;
  $71DE EXX           ;
- $71DF LD A,($5E26)  ;
- $71E2 LD C,A        ;
+ $71DF LD A,($5E26)  ; {#REGc=#R$5E26.
+ $71E2 LD C,A        ; }
  $71E3 XOR A         ;
 ; This entry point is used by the routine at #R$7101.
 @label=ActorUpdateHeightAndMask
 *$71E4 LD ($5E26),A  ;
  $71E7 EXX           ;
- $71E8 JR $7170      ;
+ $71E8 JR $7170      ; Jump to #R$7170.
 *$71EA EX (SP),HL    ;
  $71EB JR $71BC      ;
 
@@ -4065,9 +4129,9 @@ b$7437 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
  $7454 DEFB %00010000,%11111100 ;
  $7456 DEFB %00001111,%11110000 ; }
 
-; Sprite: Car
+; Sprite: Bush
 b$7458 DEFB $0D                 ; Height = #N(#PEEK(#PC)) pixels.
- $7459 DEFB %00000111,%11100000 ; {#SPRITE$0F(car)
+ $7459 DEFB %00000111,%11100000 ; {#SPRITE$02(bush)
  $745B DEFB %00001111,%11111000 ;
  $745D DEFB %00110111,%11111000 ;
  $745F DEFB %00001011,%11010000 ;
@@ -4081,9 +4145,15 @@ b$7458 DEFB $0D                 ; Height = #N(#PEEK(#PC)) pixels.
  $746F DEFB %00000010,%11000000 ;
  $7471 DEFB %00000000,%10100000 ; }
 
-; Sprite: Bush
+; Sprite: Explosion
+;
+; .
+;
+; .
+;
+; Frame 1
 b$7473 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
- $7474 DEFB %00000000,%00110000 ; {#SPRITE$09(bush)
+ $7474 DEFB %00000000,%00110000 ; {#SPRITE$20(explosion-01)
  $7476 DEFB %01110000,%01110000 ;
  $7478 DEFB %01110110,%11110000 ;
  $747A DEFB %00111111,%11011111 ;
@@ -4099,10 +4169,9 @@ b$7473 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
  $748E DEFB %00001111,%00001111 ;
  $7490 DEFB %00000110,%00000011 ;
  $7492 DEFB %00000100,%00000001 ; }
-
-; Sprite:
-b$7494 DEFB $0E                 ; Height = #N(#PEEK(#PC)) pixels.
- $7495 DEFB %00000000,%00000000 ; {SPRITE$0(tests-01)
+; Frame 2
+ $7494 DEFB $0E                 ; Height = #N(#PEEK(#PC)) pixels.
+ $7495 DEFB %00000000,%00000000 ; {#SPRITE$21(explosion-02)
  $7497 DEFB %00100001,%00001000 ;
  $7499 DEFB %00011011,%00111000 ;
  $749B DEFB %00011111,%11110000 ;
@@ -4493,413 +4562,820 @@ b$7751 DEFB $42,$42,$56,$56,$56,$56,$42,$42 ; #FOR($00,$07)||n|#UDG($74B1 +
 
 ; Map Points
 @label=MapPoints
-b$7811 DEFB $05,$22,$0D
- $7814 DEFB $06,$23,$0D
- $7817 DEFB $06,$2C,$40
- $781A DEFB $06,$54,$41
- $781D DEFB $06,$60,$06
- $7820 DEFB $07,$9C,$06
- $7823 DEFB $08,$38,$0D
- $7826 DEFB $08,$50,$06
- $7829 DEFB $09,$B0,$06
- $782C DEFB $0A,$14,$42
- $782F DEFB $0A,$9A,$0D
- $7832 DEFB $0A,$B4,$43
- $7835 DEFB $0B,$70,$0D
- $7838 DEFB $0B,$74,$0D
- $783B DEFB $0C,$00,$20
- $783E DEFB $0D,$70,$05
- $7841 DEFB $0E,$7C,$05
- $7844 DEFB $0F,$1C,$08
- $7847 DEFB $10,$28,$08
- $784A DEFB $10,$72,$05
- $784D DEFB $12,$2E,$08
- $7850 DEFB $12,$60,$0C
- $7853 DEFB $13,$3C,$08
- $7856 DEFB $14,$18,$01
- $7859 DEFB $14,$22,$08
- $785C DEFB $14,$50,$0C
- $785F DEFB $14,$90,$06
- $7862 DEFB $16,$32,$01
- $7865 DEFB $17,$2E,$01
- $7868 DEFB $17,$8A,$0D
- $786B DEFB $18,$1E,$01
- $786E DEFB $18,$28,$01
- $7871 DEFB $18,$44,$01
- $7874 DEFB $18,$56,$05
- $7877 DEFB $18,$A0,$02
- $787A DEFB $1A,$16,$01
- $787D DEFB $1A,$2C,$01
- $7880 DEFB $1A,$78,$09
- $7883 DEFB $1B,$32,$01
- $7886 DEFB $1C,$2A,$01
- $7889 DEFB $1C,$68,$0E
- $788C DEFB $1D,$26,$01
- $788F DEFB $1D,$8E,$06
- $7892 DEFB $1E,$1C,$01
- $7895 DEFB $1E,$30,$01
- $7898 DEFB $1E,$44,$44
- $789B DEFB $1E,$88,$0D
- $789E DEFB $1F,$12,$01
- $78A1 DEFB $20,$2A,$01
- $78A4 DEFB $20,$3A,$09
- $78A7 DEFB $20,$52,$01
- $78AA DEFB $20,$90,$0D
- $78AD DEFB $22,$5C,$01
- $78B0 DEFB $23,$50,$04
- $78B3 DEFB $23,$62,$04
- $78B6 DEFB $24,$00,$20
- $78B9 DEFB $25,$56,$01
- $78BC DEFB $25,$5A,$04
- $78BF DEFB $25,$80,$0A
- $78C2 DEFB $25,$84,$0A
- $78C5 DEFB $26,$14,$45
- $78C8 DEFB $26,$A8,$09
- $78CB DEFB $27,$4E,$04
- $78CE DEFB $27,$5E,$01
- $78D1 DEFB $27,$86,$0A
- $78D4 DEFB $28,$28,$01
- $78D7 DEFB $28,$40,$02
- $78DA DEFB $28,$70,$02
- $78DD DEFB $28,$82,$0A
- $78E0 DEFB $29,$B2,$0D
- $78E3 DEFB $2A,$10,$01
- $78E6 DEFB $2A,$54,$01
- $78E9 DEFB $2A,$86,$0A
- $78EC DEFB $2A,$8C,$46
- $78EF DEFB $2A,$AC,$0D
- $78F2 DEFB $2B,$5D,$04
- $78F5 DEFB $2B,$BA,$0D
- $78F8 DEFB $2C,$26,$01
- $78FB DEFB $2C,$30,$01
- $78FE DEFB $2C,$B0,$0D
- $7901 DEFB $2E,$8A,$0C
- $7904 DEFB $30,$60,$05
- $7907 DEFB $31,$84,$0C
- $790A DEFB $31,$8C,$0C
- $790D DEFB $31,$94,$0B
- $7910 DEFB $31,$B4,$0D
- $7913 DEFB $32,$34,$01
- $7916 DEFB $32,$46,$0C
- $7919 DEFB $32,$9A,$0B
- $791C DEFB $33,$54,$0C
- $791F DEFB $33,$90,$0B
- $7922 DEFB $33,$A0,$06
- $7925 DEFB $34,$28,$01
- $7928 DEFB $34,$4E,$0C
- $792B DEFB $34,$6E,$05
- $792E DEFB $34,$88,$0C
- $7931 DEFB $34,$98,$06
- $7934 DEFB $36,$48,$0C
- $7937 DEFB $36,$92,$0B
- $793A DEFB $36,$9E,$06
- $793D DEFB $36,$B0,$0B
- $7940 DEFB $37,$10,$08
- $7943 DEFB $37,$58,$0C
- $7946 DEFB $37,$9A,$06
- $7949 DEFB $38,$28,$08
- $794C DEFB $38,$50,$0C
- $794F DEFB $38,$60,$0C
- $7952 DEFB $38,$78,$0E
- $7955 DEFB $38,$8C,$0B
- $7958 DEFB $38,$96,$06
- $795B DEFB $39,$18,$08
- $795E DEFB $39,$A0,$06
- $7961 DEFB $3A,$34,$08
- $7964 DEFB $3A,$64,$0C
- $7967 DEFB $3A,$9C,$06
- $796A DEFB $3B,$96,$06
- $796D DEFB $3C,$00,$20
- $7970 DEFB $3D,$24,$08
- $7973 DEFB $3D,$68,$0C
- $7976 DEFB $3D,$9A,$06
- $7979 DEFB $3D,$9E,$06
- $797C DEFB $3E,$14,$47
- $797F DEFB $3E,$42,$0A
- $7982 DEFB $3E,$54,$0A
- $7985 DEFB $3E,$6C,$0C
- $7988 DEFB $3E,$A0,$06
- $798B DEFB $3E,$B4,$48
- $798E DEFB $3F,$10,$01
- $7991 DEFB $3F,$32,$01
- $7994 DEFB $3F,$98,$06
- $7997 DEFB $40,$20,$01
- $799A DEFB $40,$70,$0C
- $799D DEFB $41,$2A,$02
- $79A0 DEFB $41,$4C,$0A
- $79A3 DEFB $41,$74,$0C
- $79A6 DEFB $42,$1A,$01
- $79A9 DEFB $42,$3A,$04
- $79AC DEFB $42,$78,$0C
- $79AF DEFB $43,$41,$05
- $79B2 DEFB $43,$7C,$0C
- $79B5 DEFB $44,$30,$04
- $79B8 DEFB $44,$54,$0A
- $79BB DEFB $45,$12,$01
- $79BE DEFB $45,$24,$08
- $79C1 DEFB $45,$7E,$0C
- $79C4 DEFB $46,$44,$49
- $79C7 DEFB $46,$82,$0C
- $79CA DEFB $47,$4E,$0A
- $79CD DEFB $48,$84,$0C
- $79D0 DEFB $48,$9C,$02
- $79D3 DEFB $49,$18,$08
- $79D6 DEFB $4A,$28,$04
- $79D9 DEFB $4A,$38,$04
- $79DC DEFB $4A,$62,$0B
- $79DF DEFB $4A,$7C,$4A
- $79E2 DEFB $4B,$6E,$0B
- $79E5 DEFB $4C,$48,$0C
- $79E8 DEFB $4D,$1A,$0C
- $79EB DEFB $4D,$66,$0B
- $79EE DEFB $4D,$76,$0B
- $79F1 DEFB $4E,$24,$04
- $79F4 DEFB $4F,$2C,$04
- $79F7 DEFB $50,$3A,$0C
- $79FA DEFB $50,$60,$02
- $79FD DEFB $50,$72,$0D
- $7A00 DEFB $51,$14,$0C
- $7A03 DEFB $51,$6C,$0D
- $7A06 DEFB $51,$7E,$0B
- $7A09 DEFB $53,$22,$0C
- $7A0C DEFB $53,$74,$0D
- $7A0F DEFB $54,$00,$20
- $7A12 DEFB $55,$30,$02
- $7A15 DEFB $55,$84,$04
- $7A18 DEFB $56,$62,$0D
- $7A1B DEFB $56,$7A,$0D
- $7A1E DEFB $56,$94,$04
- $7A21 DEFB $57,$6C,$0D
- $7A24 DEFB $57,$8C,$04
- $7A27 DEFB $58,$12,$05
- $7A2A DEFB $58,$88,$04
- $7A2D DEFB $58,$9E,$04
- $7A30 DEFB $59,$50,$03
- $7A33 DEFB $59,$72,$0D
- $7A36 DEFB $5A,$16,$05
- $7A39 DEFB $5A,$82,$04
- $7A3C DEFB $5B,$5E,$03
- $7A3F DEFB $5C,$30,$0E
- $7A42 DEFB $5C,$58,$03
- $7A45 DEFB $5C,$68,$03
- $7A48 DEFB $5C,$90,$04
- $7A4B DEFB $5D,$4A,$03
- $7A4E DEFB $5D,$52,$03
- $7A51 DEFB $5D,$76,$0D
- $7A54 DEFB $5D,$9A,$04
- $7A57 DEFB $5E,$84,$04
- $7A5A DEFB $5E,$B4,$09
- $7A5D DEFB $60,$28,$0E
- $7A60 DEFB $60,$40,$0E
- $7A63 DEFB $60,$7A,$0D
- $7A66 DEFB $60,$9E,$04
- $7A69 DEFB $61,$36,$0E
- $7A6C DEFB $61,$5A,$03
- $7A6F DEFB $61,$76,$0D
- $7A72 DEFB $61,$8E,$04
- $7A75 DEFB $62,$52,$03
- $7A78 DEFB $63,$84,$04
- $7A7B DEFB $64,$8A,$04
- $7A7E DEFB $64,$96,$04
- $7A81 DEFB $65,$20,$0E
- $7A84 DEFB $65,$48,$0E
- $7A87 DEFB $65,$6C,$03
- $7A8A DEFB $65,$7C,$0D
- $7A8D DEFB $66,$2A,$0E
- $7A90 DEFB $66,$2C,$4B
- $7A93 DEFB $66,$3A,$0E
- $7A96 DEFB $66,$56,$03
- $7A99 DEFB $66,$5C,$4C
- $7A9C DEFB $66,$84,$02
- $7A9F DEFB $67,$2C,$0E
- $7AA2 DEFB $67,$5A,$02
- $7AA5 DEFB $67,$98,$04
- $7AA8 DEFB $68,$18,$0E
- $7AAB DEFB $68,$34,$0E
- $7AAE DEFB $68,$62,$03
- $7AB1 DEFB $68,$90,$04
- $7AB4 DEFB $69,$28,$0E
- $7AB7 DEFB $69,$6C,$03
- $7ABA DEFB $6A,$3E,$0E
- $7ABD DEFB $6A,$84,$04
- $7AC0 DEFB $6A,$9E,$04
- $7AC3 DEFB $6B,$68,$03
- $7AC6 DEFB $6B,$92,$04
- $7AC9 DEFB $6C,$00,$20
- $7ACC DEFB $6D,$20,$0E
- $7ACF DEFB $6E,$2E,$0E
- $7AD2 DEFB $6E,$58,$06
- $7AD5 DEFB $6F,$26,$0E
- $7AD8 DEFB $6F,$3E,$0E
- $7ADB DEFB $70,$1A,$0E
- $7ADE DEFB $71,$38,$0E
- $7AE1 DEFB $71,$48,$06
- $7AE4 DEFB $72,$30,$0E
- $7AE7 DEFB $72,$74,$4D
- $7AEA DEFB $74,$60,$02
- $7AED DEFB $74,$9C,$0A
- $7AF0 DEFB $75,$6C,$0D
- $7AF3 DEFB $75,$84,$0A
- $7AF6 DEFB $76,$0C,$4E
- $7AF9 DEFB $76,$58,$0D
- $7AFC DEFB $76,$90,$0A
- $7AFF DEFB $76,$B4,$4F
- $7B02 DEFB $78,$28,$0E
- $7B05 DEFB $78,$3C,$06
- $7B08 DEFB $78,$98,$0A
- $7B0B DEFB $79,$4C,$06
- $7B0E DEFB $79,$84,$0A
- $7B11 DEFB $7A,$8E,$0A
- $7B14 DEFB $7B,$7C,$0A
- $7B17 DEFB $7C,$26,$0B
- $7B1A DEFB $7C,$38,$05
- $7B1D DEFB $7C,$8C,$0A
- $7B20 DEFB $7C,$A8,$0E
- $7B23 DEFB $7D,$58,$0E
- $7B26 DEFB $7D,$7C,$0A
- $7B29 DEFB $7E,$16,$0B
- $7B2C DEFB $7E,$8A,$0A
- $7B2F DEFB $7E,$94,$0A
- $7B32 DEFB $7F,$20,$0B
- $7B35 DEFB $7F,$48,$0D
- $7B38 DEFB $7F,$70,$05
- $7B3B DEFB $7F,$74,$05
- $7B3E DEFB $7F,$9C,$0A
- $7B41 DEFB $80,$80,$0A
- $7B44 DEFB $81,$28,$0E
- $7B47 DEFB $81,$94,$0A
- $7B4A DEFB $82,$0C,$0B
- $7B4D DEFB $82,$1A,$0B
- $7B50 DEFB $82,$70,$02
- $7B53 DEFB $82,$9A,$0A
- $7B56 DEFB $83,$28,$0B
- $7B59 DEFB $83,$8A,$0A
- $7B5C DEFB $84,$00,$20
- $7B5F DEFB $85,$38,$05
- $7B62 DEFB $85,$95,$0A
- $7B65 DEFB $86,$16,$0B
- $7B68 DEFB $86,$7C,$0A
- $7B6B DEFB $87,$26,$0B
- $7B6E DEFB $88,$1E,$0B
- $7B71 DEFB $88,$30,$09
- $7B74 DEFB $88,$58,$0D
- $7B77 DEFB $88,$68,$02
- $7B7A DEFB $88,$8A,$0A
- $7B7D DEFB $89,$A8,$03
- $7B80 DEFB $8A,$74,$50
- $7B83 DEFB $8A,$93,$0A
- $7B86 DEFB $8B,$1C,$0B
- $7B89 DEFB $8B,$48,$06
- $7B8C DEFB $8C,$B8,$0A
- $7B8F DEFB $8D,$36,$03
- $7B92 DEFB $8D,$9C,$02
- $7B95 DEFB $8E,$2A,$03
- $7B98 DEFB $8E,$50,$0E
- $7B9B DEFB $8E,$9C,$51
- $7B9E DEFB $8E,$A6,$03
- $7BA1 DEFB $8E,$B4,$0A
- $7BA4 DEFB $8F,$22,$03
- $7BA7 DEFB $90,$34,$03
- $7BAA DEFB $90,$60,$09
- $7BAD DEFB $90,$88,$06
- $7BB0 DEFB $91,$24,$03
- $7BB3 DEFB $91,$70,$0D
- $7BB6 DEFB $92,$0C,$52
- $7BB9 DEFB $92,$36,$03
- $7BBC DEFB $92,$40,$06
- $7BBF DEFB $92,$AC,$03
- $7BC2 DEFB $93,$2E,$03
- $7BC5 DEFB $93,$B4,$0A
- $7BC8 DEFB $94,$28,$03
- $7BCB DEFB $94,$80,$06
- $7BCE DEFB $95,$30,$03
- $7BD1 DEFB $95,$6E,$0D
- $7BD4 DEFB $95,$90,$06
- $7BD7 DEFB $95,$A4,$03
- $7BDA DEFB $96,$34,$03
- $7BDD DEFB $96,$44,$53
- $7BE0 DEFB $96,$84,$0D
- $7BE3 DEFB $97,$22,$03
- $7BE6 DEFB $97,$76,$06
- $7BE9 DEFB $97,$AC,$0A
- $7BEC DEFB $98,$2C,$03
- $7BEF DEFB $98,$50,$02
- $7BF2 DEFB $98,$68,$0D
- $7BF5 DEFB $98,$B6,$03
- $7BF8 DEFB $99,$36,$03
- $7BFB DEFB $99,$98,$06
- $7BFE DEFB $99,$A4,$0A
- $7C01 DEFB $9A,$28,$03
- $7C04 DEFB $9A,$7C,$0D
- $7C07 DEFB $9B,$3A,$03
- $7C0A DEFB $9B,$8A,$06
- $7C0D DEFB $9C,$00,$20
- $7C10 DEFB $9D,$58,$05
- $7C13 DEFB $9D,$68,$0D
- $7C16 DEFB $9E,$7C,$54
- $7C19 DEFB $9E,$94,$06
- $7C1C DEFB $9F,$10,$05
- $7C1F DEFB $9F,$84,$0D
- $7C22 DEFB $A0,$40,$05
- $7C25 DEFB $A0,$5C,$0C
- $7C28 DEFB $A0,$78,$06
- $7C2B DEFB $A1,$22,$0C
- $7C2E DEFB $A1,$72,$0D
- $7C31 DEFB $A2,$62,$05
- $7C34 DEFB $A2,$88,$06
- $7C37 DEFB $A2,$A4,$55
- $7C3A DEFB $A3,$98,$0D
- $7C3D DEFB $A4,$30,$0E
- $7C40 DEFB $A4,$60,$02
- $7C43 DEFB $A5,$68,$0C
- $7C46 DEFB $A5,$6E,$05
- $7C49 DEFB $A5,$8C,$06
- $7C4C DEFB $A6,$14,$0C
- $7C4F DEFB $A6,$76,$0D
- $7C52 DEFB $A7,$4E,$0D
- $7C55 DEFB $A7,$B6,$0E
- $7C58 DEFB $A8,$20,$02
- $7C5B DEFB $A8,$48,$0D
- $7C5E DEFB $A8,$54,$0D
- $7C61 DEFB $A8,$72,$0C
- $7C64 DEFB $A9,$4A,$0D
- $7C67 DEFB $AA,$56,$0D
- $7C6A DEFB $AA,$78,$05
- $7C6D DEFB $AB,$1C,$05
- $7C70 DEFB $AB,$3C,$05
- $7C73 DEFB $AB,$4E,$0E
- $7C76 DEFB $AB,$80,$0C
- $7C79 DEFB $AB,$9E,$09
- $7C7C DEFB $AC,$48,$0D
- $7C7F DEFB $AC,$B0,$0E
- $7C82 DEFB $AD,$56,$0D
- $7C85 DEFB $AE,$0C,$0E
- $7C88 DEFB $AE,$2E,$0C
- $7C8B DEFB $AE,$4C,$0D
- $7C8E DEFB $AF,$52,$0D
- $7C91 DEFB $AF,$84,$05
- $7C94 DEFB $B0,$48,$0D
- $7C97 DEFB $B0,$8A,$0C
- $7C9A DEFB $B1,$18,$0C
- $7C9D DEFB $B1,$74,$02
- $7CA0 DEFB $B2,$34,$56
- $7CA3 DEFB $B2,$50,$0D
- $7CA6 DEFB $B2,$8E,$05
- $7CA9 DEFB $B3,$4A,$0D
- $7CAC DEFB $B4,$00,$20
- $7CAF DEFB $B5,$92,$0C
- $7CB2 DEFB $B6,$64,$57
- $7CB5 DEFB $B8,$20,$09
- $7CB8 DEFB $B8,$46,$05
- $7CBB DEFB $B8,$56,$05
- $7CBE DEFB $B8,$B0,$09
- $7CC1 DEFB $B9,$0C,$0C
- $7CC4 DEFB $B9,$2C,$0C
- $7CC7 DEFB $BA,$0C,$58
- $7CCA DEFB $BA,$8C,$59
- $7CCD DEFB $BB,$1C,$05
- $7CD0 DEFB $BB,$7A,$02
- $7CD3 DEFB $BC,$9A,$09
+b$7811 DEFB $05,$22,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7814 DEFB $06,$23,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7817 DEFB $06,$2C,$40 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $781A DEFB $06,$54,$41 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $781D DEFB $06,$60,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7820 DEFB $07,$9C,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7823 DEFB $08,$38,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7826 DEFB $08,$50,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7829 DEFB $09,$B0,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $782C DEFB $0A,$14,$42 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $782F DEFB $0A,$9A,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7832 DEFB $0A,$B4,$43 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7835 DEFB $0B,$70,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7838 DEFB $0B,$74,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $783B DEFB $0C,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $783E DEFB $0D,$70,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7841 DEFB $0E,$7C,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7844 DEFB $0F,$1C,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7847 DEFB $10,$28,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $784A DEFB $10,$72,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $784D DEFB $12,$2E,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7850 DEFB $12,$60,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7853 DEFB $13,$3C,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7856 DEFB $14,$18,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7859 DEFB $14,$22,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $785C DEFB $14,$50,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $785F DEFB $14,$90,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7862 DEFB $16,$32,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7865 DEFB $17,$2E,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7868 DEFB $17,$8A,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $786B DEFB $18,$1E,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $786E DEFB $18,$28,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7871 DEFB $18,$44,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7874 DEFB $18,$56,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7877 DEFB $18,$A0,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $787A DEFB $1A,$16,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $787D DEFB $1A,$2C,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7880 DEFB $1A,$78,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7883 DEFB $1B,$32,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7886 DEFB $1C,$2A,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7889 DEFB $1C,$68,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $788C DEFB $1D,$26,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $788F DEFB $1D,$8E,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7892 DEFB $1E,$1C,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7895 DEFB $1E,$30,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7898 DEFB $1E,$44,$44 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $789B DEFB $1E,$88,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $789E DEFB $1F,$12,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78A1 DEFB $20,$2A,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78A4 DEFB $20,$3A,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78A7 DEFB $20,$52,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78AA DEFB $20,$90,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78AD DEFB $22,$5C,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78B0 DEFB $23,$50,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78B3 DEFB $23,$62,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78B6 DEFB $24,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78B9 DEFB $25,$56,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78BC DEFB $25,$5A,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78BF DEFB $25,$80,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78C2 DEFB $25,$84,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78C5 DEFB $26,$14,$45 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78C8 DEFB $26,$A8,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78CB DEFB $27,$4E,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78CE DEFB $27,$5E,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78D1 DEFB $27,$86,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78D4 DEFB $28,$28,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78D7 DEFB $28,$40,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78DA DEFB $28,$70,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78DD DEFB $28,$82,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78E0 DEFB $29,$B2,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78E3 DEFB $2A,$10,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78E6 DEFB $2A,$54,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78E9 DEFB $2A,$86,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78EC DEFB $2A,$8C,$46 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78EF DEFB $2A,$AC,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78F2 DEFB $2B,$5D,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78F5 DEFB $2B,$BA,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78F8 DEFB $2C,$26,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78FB DEFB $2C,$30,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $78FE DEFB $2C,$B0,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7901 DEFB $2E,$8A,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7904 DEFB $30,$60,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7907 DEFB $31,$84,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $790A DEFB $31,$8C,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $790D DEFB $31,$94,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7910 DEFB $31,$B4,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7913 DEFB $32,$34,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7916 DEFB $32,$46,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7919 DEFB $32,$9A,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $791C DEFB $33,$54,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $791F DEFB $33,$90,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7922 DEFB $33,$A0,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7925 DEFB $34,$28,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7928 DEFB $34,$4E,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $792B DEFB $34,$6E,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $792E DEFB $34,$88,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7931 DEFB $34,$98,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7934 DEFB $36,$48,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7937 DEFB $36,$92,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $793A DEFB $36,$9E,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $793D DEFB $36,$B0,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7940 DEFB $37,$10,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7943 DEFB $37,$58,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7946 DEFB $37,$9A,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7949 DEFB $38,$28,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $794C DEFB $38,$50,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $794F DEFB $38,$60,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7952 DEFB $38,$78,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7955 DEFB $38,$8C,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7958 DEFB $38,$96,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $795B DEFB $39,$18,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $795E DEFB $39,$A0,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7961 DEFB $3A,$34,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7964 DEFB $3A,$64,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7967 DEFB $3A,$9C,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $796A DEFB $3B,$96,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $796D DEFB $3C,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7970 DEFB $3D,$24,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7973 DEFB $3D,$68,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7976 DEFB $3D,$9A,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7979 DEFB $3D,$9E,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $797C DEFB $3E,$14,$47 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $797F DEFB $3E,$42,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7982 DEFB $3E,$54,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7985 DEFB $3E,$6C,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7988 DEFB $3E,$A0,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $798B DEFB $3E,$B4,$48 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $798E DEFB $3F,$10,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7991 DEFB $3F,$32,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7994 DEFB $3F,$98,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7997 DEFB $40,$20,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $799A DEFB $40,$70,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $799D DEFB $41,$2A,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79A0 DEFB $41,$4C,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79A3 DEFB $41,$74,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79A6 DEFB $42,$1A,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79A9 DEFB $42,$3A,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79AC DEFB $42,$78,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79AF DEFB $43,$41,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79B2 DEFB $43,$7C,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79B5 DEFB $44,$30,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79B8 DEFB $44,$54,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79BB DEFB $45,$12,$01 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79BE DEFB $45,$24,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79C1 DEFB $45,$7E,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79C4 DEFB $46,$44,$49 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79C7 DEFB $46,$82,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79CA DEFB $47,$4E,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79CD DEFB $48,$84,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79D0 DEFB $48,$9C,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79D3 DEFB $49,$18,$08 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79D6 DEFB $4A,$28,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79D9 DEFB $4A,$38,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79DC DEFB $4A,$62,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79DF DEFB $4A,$7C,$4A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79E2 DEFB $4B,$6E,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79E5 DEFB $4C,$48,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79E8 DEFB $4D,$1A,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79EB DEFB $4D,$66,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79EE DEFB $4D,$76,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79F1 DEFB $4E,$24,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79F4 DEFB $4F,$2C,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79F7 DEFB $50,$3A,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79FA DEFB $50,$60,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $79FD DEFB $50,$72,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A00 DEFB $51,$14,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A03 DEFB $51,$6C,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A06 DEFB $51,$7E,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A09 DEFB $53,$22,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A0C DEFB $53,$74,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A0F DEFB $54,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A12 DEFB $55,$30,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A15 DEFB $55,$84,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A18 DEFB $56,$62,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A1B DEFB $56,$7A,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A1E DEFB $56,$94,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A21 DEFB $57,$6C,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A24 DEFB $57,$8C,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A27 DEFB $58,$12,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A2A DEFB $58,$88,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A2D DEFB $58,$9E,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A30 DEFB $59,$50,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A33 DEFB $59,$72,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A36 DEFB $5A,$16,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A39 DEFB $5A,$82,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A3C DEFB $5B,$5E,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A3F DEFB $5C,$30,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A42 DEFB $5C,$58,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A45 DEFB $5C,$68,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A48 DEFB $5C,$90,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A4B DEFB $5D,$4A,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A4E DEFB $5D,$52,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A51 DEFB $5D,$76,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A54 DEFB $5D,$9A,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A57 DEFB $5E,$84,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A5A DEFB $5E,$B4,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A5D DEFB $60,$28,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A60 DEFB $60,$40,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A63 DEFB $60,$7A,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A66 DEFB $60,$9E,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A69 DEFB $61,$36,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A6C DEFB $61,$5A,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A6F DEFB $61,$76,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A72 DEFB $61,$8E,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A75 DEFB $62,$52,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A78 DEFB $63,$84,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A7B DEFB $64,$8A,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A7E DEFB $64,$96,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A81 DEFB $65,$20,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A84 DEFB $65,$48,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A87 DEFB $65,$6C,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A8A DEFB $65,$7C,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A8D DEFB $66,$2A,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A90 DEFB $66,$2C,$4B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A93 DEFB $66,$3A,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A96 DEFB $66,$56,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A99 DEFB $66,$5C,$4C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A9C DEFB $66,$84,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7A9F DEFB $67,$2C,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AA2 DEFB $67,$5A,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AA5 DEFB $67,$98,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AA8 DEFB $68,$18,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AAB DEFB $68,$34,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AAE DEFB $68,$62,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AB1 DEFB $68,$90,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AB4 DEFB $69,$28,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AB7 DEFB $69,$6C,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7ABA DEFB $6A,$3E,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7ABD DEFB $6A,$84,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AC0 DEFB $6A,$9E,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AC3 DEFB $6B,$68,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AC6 DEFB $6B,$92,$04 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AC9 DEFB $6C,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7ACC DEFB $6D,$20,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7ACF DEFB $6E,$2E,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AD2 DEFB $6E,$58,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AD5 DEFB $6F,$26,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AD8 DEFB $6F,$3E,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7ADB DEFB $70,$1A,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7ADE DEFB $71,$38,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AE1 DEFB $71,$48,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AE4 DEFB $72,$30,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AE7 DEFB $72,$74,$4D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AEA DEFB $74,$60,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AED DEFB $74,$9C,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AF0 DEFB $75,$6C,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AF3 DEFB $75,$84,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AF6 DEFB $76,$0C,$4E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AF9 DEFB $76,$58,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AFC DEFB $76,$90,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7AFF DEFB $76,$B4,$4F ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B02 DEFB $78,$28,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B05 DEFB $78,$3C,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B08 DEFB $78,$98,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B0B DEFB $79,$4C,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B0E DEFB $79,$84,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B11 DEFB $7A,$8E,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B14 DEFB $7B,$7C,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B17 DEFB $7C,$26,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B1A DEFB $7C,$38,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B1D DEFB $7C,$8C,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B20 DEFB $7C,$A8,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B23 DEFB $7D,$58,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B26 DEFB $7D,$7C,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B29 DEFB $7E,$16,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B2C DEFB $7E,$8A,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B2F DEFB $7E,$94,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B32 DEFB $7F,$20,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B35 DEFB $7F,$48,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B38 DEFB $7F,$70,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B3B DEFB $7F,$74,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B3E DEFB $7F,$9C,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B41 DEFB $80,$80,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B44 DEFB $81,$28,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B47 DEFB $81,$94,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B4A DEFB $82,$0C,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B4D DEFB $82,$1A,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B50 DEFB $82,$70,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B53 DEFB $82,$9A,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B56 DEFB $83,$28,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B59 DEFB $83,$8A,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B5C DEFB $84,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B5F DEFB $85,$38,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B62 DEFB $85,$95,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B65 DEFB $86,$16,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B68 DEFB $86,$7C,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B6B DEFB $87,$26,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B6E DEFB $88,$1E,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B71 DEFB $88,$30,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B74 DEFB $88,$58,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B77 DEFB $88,$68,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B7A DEFB $88,$8A,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B7D DEFB $89,$A8,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B80 DEFB $8A,$74,$50 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B83 DEFB $8A,$93,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B86 DEFB $8B,$1C,$0B ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B89 DEFB $8B,$48,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B8C DEFB $8C,$B8,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B8F DEFB $8D,$36,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B92 DEFB $8D,$9C,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B95 DEFB $8E,$2A,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B98 DEFB $8E,$50,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B9B DEFB $8E,$9C,$51 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7B9E DEFB $8E,$A6,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BA1 DEFB $8E,$B4,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BA4 DEFB $8F,$22,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BA7 DEFB $90,$34,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BAA DEFB $90,$60,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BAD DEFB $90,$88,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BB0 DEFB $91,$24,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BB3 DEFB $91,$70,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BB6 DEFB $92,$0C,$52 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BB9 DEFB $92,$36,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BBC DEFB $92,$40,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BBF DEFB $92,$AC,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BC2 DEFB $93,$2E,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BC5 DEFB $93,$B4,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BC8 DEFB $94,$28,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BCB DEFB $94,$80,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BCE DEFB $95,$30,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BD1 DEFB $95,$6E,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BD4 DEFB $95,$90,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BD7 DEFB $95,$A4,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BDA DEFB $96,$34,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BDD DEFB $96,$44,$53 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BE0 DEFB $96,$84,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BE3 DEFB $97,$22,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BE6 DEFB $97,$76,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BE9 DEFB $97,$AC,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BEC DEFB $98,$2C,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BEF DEFB $98,$50,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BF2 DEFB $98,$68,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BF5 DEFB $98,$B6,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BF8 DEFB $99,$36,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BFB DEFB $99,$98,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7BFE DEFB $99,$A4,$0A ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C01 DEFB $9A,$28,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C04 DEFB $9A,$7C,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C07 DEFB $9B,$3A,$03 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C0A DEFB $9B,$8A,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C0D DEFB $9C,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C10 DEFB $9D,$58,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C13 DEFB $9D,$68,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C16 DEFB $9E,$7C,$54 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C19 DEFB $9E,$94,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C1C DEFB $9F,$10,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C1F DEFB $9F,$84,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C22 DEFB $A0,$40,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C25 DEFB $A0,$5C,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C28 DEFB $A0,$78,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C2B DEFB $A1,$22,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C2E DEFB $A1,$72,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C31 DEFB $A2,$62,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C34 DEFB $A2,$88,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C37 DEFB $A2,$A4,$55 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C3A DEFB $A3,$98,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C3D DEFB $A4,$30,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C40 DEFB $A4,$60,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C43 DEFB $A5,$68,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C46 DEFB $A5,$6E,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C49 DEFB $A5,$8C,$06 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C4C DEFB $A6,$14,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C4F DEFB $A6,$76,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C52 DEFB $A7,$4E,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C55 DEFB $A7,$B6,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C58 DEFB $A8,$20,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C5B DEFB $A8,$48,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C5E DEFB $A8,$54,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C61 DEFB $A8,$72,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C64 DEFB $A9,$4A,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C67 DEFB $AA,$56,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C6A DEFB $AA,$78,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C6D DEFB $AB,$1C,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C70 DEFB $AB,$3C,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C73 DEFB $AB,$4E,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C76 DEFB $AB,$80,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C79 DEFB $AB,$9E,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C7C DEFB $AC,$48,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C7F DEFB $AC,$B0,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C82 DEFB $AD,$56,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C85 DEFB $AE,$0C,$0E ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C88 DEFB $AE,$2E,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C8B DEFB $AE,$4C,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C8E DEFB $AF,$52,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C91 DEFB $AF,$84,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C94 DEFB $B0,$48,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C97 DEFB $B0,$8A,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C9A DEFB $B1,$18,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7C9D DEFB $B1,$74,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CA0 DEFB $B2,$34,$56 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CA3 DEFB $B2,$50,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CA6 DEFB $B2,$8E,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CA9 DEFB $B3,$4A,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CAC DEFB $B4,$00,$20 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CAF DEFB $B5,$92,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CB2 DEFB $B6,$64,$57 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CB5 DEFB $B8,$20,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CB8 DEFB $B8,$46,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CBB DEFB $B8,$56,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CBE DEFB $B8,$B0,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CC1 DEFB $B9,$0C,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CC4 DEFB $B9,$2C,$0C ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CC7 DEFB $BA,$0C,$58 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CCA DEFB $BA,$8C,$59 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CCD DEFB $BB,$1C,$05 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CD0 DEFB $BB,$7A,$02 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
+ $7CD3 DEFB $BC,$9A,$09 ; Map Point #N((#PC - $7811) / $03, $03, $03):
+                        ; #SPRITENAME(#PEEK(#PC + $02) - $01).
 
 ; Sprite: Car
 ;
@@ -5320,30 +5796,42 @@ w$7F24 DEFW $7CD6    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
                      ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
                      ; 2).
 
-; Data block at 7F44
-w$7F44 DEFW $7F4A
- $7F46 DEFW $7473
- $7F48 DEFW $7494
+; Sprites Table 2
+;
+; This isn't a separate table; it's a continuation of #R$7F06 just, the player sprites have a "special" zero-based
+;       reference of their own.
+@label=SpritesTable2
+w$7F44 DEFW $7F4A    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
+                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
+                     ; 2).
+ $7F46 DEFW $7473    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
+                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
+                     ; 2).
+ $7F48 DEFW $7494    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
+                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
+                     ; 2).
 
 ; Sprite: Cup
-b$7F4A DEFB $10                             ; Height = #N(#PEEK(#PC)) pixels.
- $7F4B DEFB %00110111,%11000000             ; {#CAR$10(cup)
- $7F4D DEFB %00001111,%00000000             ;
- $7F4F DEFB %00000110,%00000000             ;
- $7F51 DEFB %00000110,%00000000             ;
- $7F53 DEFB %00000110,%00000000             ;
- $7F55 DEFB %00001111,%00000000             ;
- $7F57 DEFB %00011011,%10000000             ;
- $7F59 DEFB %00111011,%11000000             ;
- $7F5B DEFB %00110111,%11000000             ;
- $7F5D DEFB %01010111,%10100000             ;
- $7F5F DEFB %01010111,%10100000             ;
- $7F61 DEFB %01010111,%10100000             ;
- $7F63 DEFB %10010111,%10010000             ;
- $7F65 DEFB %10010111,%10010000             ;
- $7F67 DEFB %10110111,%11010000             ;
- $7F69 DEFB %11011111,%10110000             ; }
- $7F6B DEFB $FF,$FF,$FE,$FC,$FA,$F7,$F4,$F0
+b$7F4A DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
+ $7F4B DEFB %00110111,%11000000 ; {#SPRITE$1F(cup)
+ $7F4D DEFB %00001111,%00000000 ;
+ $7F4F DEFB %00000110,%00000000 ;
+ $7F51 DEFB %00000110,%00000000 ;
+ $7F53 DEFB %00000110,%00000000 ;
+ $7F55 DEFB %00001111,%00000000 ;
+ $7F57 DEFB %00011011,%10000000 ;
+ $7F59 DEFB %00111011,%11000000 ;
+ $7F5B DEFB %00110111,%11000000 ;
+ $7F5D DEFB %01010111,%10100000 ;
+ $7F5F DEFB %01010111,%10100000 ;
+ $7F61 DEFB %01010111,%10100000 ;
+ $7F63 DEFB %10010111,%10010000 ;
+ $7F65 DEFB %10010111,%10010000 ;
+ $7F67 DEFB %10110111,%11010000 ;
+ $7F69 DEFB %11011111,%10110000 ; }
+
+; Data block at 7F6B
+b$7F6B DEFB $FF,$FF,$FE,$FC,$FA,$F7,$F4,$F0
  $7F73 DEFB $EB,$E6,$E1,$DA,$D3,$CC,$C4,$BC
  $7F7B DEFB $B3,$AA,$A1,$97,$8C,$82,$77,$6C
  $7F83 DEFB $60,$54,$48,$3C,$30,$24,$17,$0A

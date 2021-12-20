@@ -68,7 +68,11 @@ B $5E0D,$01
 
 g $5E0E
 
-g $5E10
+g $5E10 Player Direction
+@ $5E10 label=Player_Direction
+W $5E10,$02
+
+g $5E12
 
 g $5E13
 
@@ -85,8 +89,9 @@ g $5E1E
 g $5E1F
 
 g $5E20 Actor Buffer
-@ $5E20 label=Buffer_Actor
+@ $5E20 label=Actor_Position_X
 B $5E20,$01 X Position.
+@ $5E21 label=Actor_Position_Y
 B $5E21,$01 Y Position.
 B $5E22,$01 Movement direction.
 @ $5E23 label=HeightPixels
@@ -110,7 +115,11 @@ D $5E29 16-bit counter starting at 0x0000 and counting +1 (each time a sprite is
 W $5E29,$02
 
 g $5E2B
-g $5E2C
+
+g $5E2C Width Counter
+D $5E2C Temporary counter used when drawing sprites.
+@ $5E2C label=WidthCounter
+B $5E2C,$01
 
 g $5E2D Miles
 @ $5E2D label=Miles
@@ -872,18 +881,58 @@ N $6492 Point to Best Time.
   $6495,$03 Jump to #R$6CFD.
 
 c $6498
-  $6498,$03 #REGbc=#R$7CD6.
-  $649D,$02,b$01 Keep only bits 0-3.
+  $6498,$03 #REGbc=#R$7CD6 (one byte past the end of #R$7811).
+  $649B,$02 #REGa=random number.
+N $649D Limit the number to 0-63.
+  $649D,$02,b$01 Keep only bits 0-5.
+  $649F,$01 Store the result in #REGd.
   $64A0,$03 #REGhl=#N($0000, $04, $04).
+  $64A3,$02 #REGde=#REGhl + #REGde.
   $64A5,$03 #REGhl=#R$7811(#N$7813).
-  $64B6,$02,b$01 Keep only bits 0-5.
+  $64A8,$01 #REGa=#REGhl.
+  $64A9,$04 If #REGa is #N$20 jump to #R$64B3.
+  $64AD,$04 If #REGa is not #N$60 jump to #R$64BC.
+  $64B1,$02
+@ $64B3 label=HandlerSpriteCup
+  $64B3,$01 Decrease #REGhl by one.
+  $64B4,$01 #REGa=#REGde.
+  $64B5,$01 Increment #REGde by one.
+  $64B6,$02,b$01 Keep only bits 0-6.
+  $64B8,$02 #REGa=#REGa + #N$20.
+  $64BA,$01 Store #REGa at #REGhl.
+  $64BB,$01 Increment #REGhl by one.
+  $64BC,$03 Increment #REGhl by three.
+  $64BF,$01 Stash #REGhl on the stack.
+  $64C3,$01 Restore #REGhl from the stack.
+  $64C4,$02 If ... jump to #R$64A8.
   $64C6,$01 Return.
 
 c $64C7 Handler: Update Time
 @ $64C7 label=HandlerTime
   $64C7,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $64CA,$03 Return if #REGa < #N$32.
+  $64CD,$02 #REGa = #REGa - #N$32.
+  $64CF,$03 #HTML(Write #REGa back to <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+N $64D2 Update the time from the smallest unit upwards.
+N $64D2 Handles the "seconds".
   $64D2,$03 #REGhl=#R$5E33.
-  $64EC,$02,b$01 Keep only bits 0-3.
+  $64D5,$01 Grab the seconds.
+  $64D6,$01 Increase seconds by one.
+  $64D7,$02 Write seconds back to #R$5E33.
+  $64D9,$03 Return unless seconds have reached #N$60.
+  $64DC,$02 Reset seconds to #N$00.
+N $64DE Handles the "minutes".
+  $64DE,$01 #REGhl=#R$5E32.
+  $64DF,$01 Grab the minutes.
+  $64E0,$01 Increase minutes by one.
+  $64E1,$02 Write minutes back to #R$5E32.
+  $64E3,$03 Return unless minutes have reached #N$60.
+  $64E6,$02 Reset minutes to #N$00.
+N $64E8 Handles the "hours".
+  $64E8,$01 #REGhl=#R$5E31.
+  $64E9,$01 Grab the hours.
+  $64EA,$01 Increase hours by one.
+  $64EB,$04,b$01 Keeping only bits 0-3, write hours back to #R$5E31.
   $64EF,$01 Return.
 
 c $64F0 Display Place Name
@@ -919,6 +968,14 @@ N $650B Output the place name to the screen.
   $6516,$02 Jump to #R$651F.
 
 c $6518 Print Colour String
+E $6518 View the equivalent code in;
+. #LIST
+. { #ATICATAC$A1F3 }
+. { #COOKIE$7488 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$8A11 }
+. { #PSSST$73ED }
+. LIST#
 @ $6518 label=PrintStringColour
 R $6518 DE Pointer to string data
   $6518,$01 Stash #REGhl on the stack.
@@ -930,6 +987,24 @@ R $6518 DE Pointer to string data
   $6520,$01 Restore #REGhl from the stack.
   $6521,$03 Call #R$7097.
 @ $6524 label=PrintString_Loop
+  $6524,$01 Switch back to the normal registers.
+  $6525,$01 Fetch the character to print.
+  $6526,$04 If bit 7 is set (which signifies the end of the string), jump to #R$6535.
+  $652A,$03 Call #R$6C96.
+  $652D,$01 Increment #REGde by one.
+  $652E,$01 Switch to the shadow registers.
+  $652F,$01 Switch to the shadow #REGaf register.
+  $6530,$01 Copy the attribute byte to the screen.
+  $6531,$01 Increment #REGl by one.
+  $6532,$01 Switch to the shadow #REGaf register.
+  $6533,$02 Jump to #R$6524.
+N $6535 Because the last character contains the terminator, it needs to be handled separately.
+@ $6535 label=PrintString_LastCharacter
+  $6535,$02,b$01 Keep only bits 0-6 (i.e. strip the bit 7 terminator).
+  $6537,$03 Call #R$6C96.
+  $653A,$01 Switch to the shadow registers.
+  $653B,$01 Switch to the shadow #REGaf register.
+  $653C,$01 Copy the attribute byte to the screen.
   $653D,$01 Return.
 
 c $653E
@@ -980,7 +1055,34 @@ c $6826
 
 b $6837
 
-c $687B
+c $687B Display Lives
+E $687B View the equivalent code in;
+. #LIST
+. { #ATICATAC$0000 }
+. { #COOKIE$7378 }
+. { #JETPAC$70A4 }
+. { #LUNARJETMAN$894F }
+. { #PSSST$7325 }
+. LIST#
+@ $687B label=DisplayPlayerLives
+  $687B,$05 Return if #R$5E3D is zero.
+  $6880,$01 #REGb=#R$5E3D.
+  $6881,$03 #REGhl=#N$BC08.
+  $6884,$04 Write #N$00 to #R$5E41.
+@ $6888 label=DisplayPlayerLives_Loop
+  $6888,$03 #REGde=#R$7CD6(SpriteCar_1).
+  $688B,$03 Call #R$6891.
+  $688E,$02 Decrease counter by one and loop back to #R$6888 until counter is zero.
+  $6890,$01 Return.
+N $6891 Print the player sprite.
+@ $6891 label=DisplayPlayerLives_Print
+  $6891,$02 Stash #REGbc and #REGhl on the stack.
+  $6893,$03 Call #R$70DB.
+  $6896,$03 Call #R$714C.
+  $6899,$02 Restore #REGhl and #REGbc from the stack.
+N $689B Move onto the next life "slot".
+  $689B,$04 #REGl=#REGl + #N$10.
+  $689F,$01 Return.
 
 c $68A0 Create Game Window
 @ $68A0 label=CreateWindow
@@ -1014,23 +1116,46 @@ c $68A0 Create Game Window
   $68FB,$03 Call #R$6CBE.
   $68FE,$02 Jump to #R$6919.
 
-c $6900
+c $6900 Set PlayArea Attributes
+@ $6900 label=AttributesPlayArea
+R $6900 B Count for width
+R $6900 C Count for height
+R $6900 HL Attribute address
+  $6900,$01 #REGe=#REGb.
+  $6901,$01 #REGb=#REGe.
+  $6902,$01 Stash #REGhl on the stack.
+  $6903,$02 Write #N$76 to #REGhl.
+  $6905,$01 Increment #REGhl by one.
+  $6906,$02 Decrease counter by one and loop back to #R$6903 until counter is zero.
+  $6908,$01 Restore #REGhl from the stack.
+  $6909,$03 Call #R$6910.
+  $690C,$01 Decrease #REGc by one.
+  $690D,$02 Jump back to #R$6901 until #REGc is zero.
   $690F,$01 Return.
 
 c $6910 Screen Address One Pixel Below
 R $6910 HL Current position
 R $6910 O:HL Address for new position
 N $6910 Calculates the new address for writing a sprite pixel, in an downwards direction.
-  $6910,$04 #REGl=#REGl=#N$20 (one line).
-  $6914,$04 #REGh=#REGh+#N$00 (but include the carry from above).
+  $6910,$04 #REGl=#REGl + #N$20 (one line).
+  $6914,$04 #REGh=#REGh + #N$00 (but include the carry from above).
   $6918,$01 Return.
 
-c $6919
+c $6919 Display Night Driver Text
+@ $6919 label=DisplayNightDriver
   $6919,$05 Return if #R$5E43 is zero.
-  $691E,$03 #REGhl=#N$4070.
+  $691E,$03 #REGhl=#N$4070 (screen location).
   $6921,$03 #REGde=#R$693C.
   $6924,$03 Call #R$6518.
+  $6927,$02 #REGb=#N$04 (delay length).
+  $6929,$03 Call #R$6386.
+  $692C,$03 #REGhl=#N$4070 (screen location).
+  $692F,$01 Stash #REGhl on the stack.
+  $6930,$03 Call #R$6F10.
+  $6933,$02 #REGa=#N$00.
+  $6935,$01 Switch to the shadow #REGaf register.
   $6936,$03 #REGde=#R$6AE4(#N$6AE5).
+  $6939,$03 Jump to #R$651F.
 @ $693C label=NightDriver_Text
 T $693C,$0D,h$01,$0B:$01
 
@@ -1117,13 +1242,21 @@ c $6A39 Draw Player
   $6A4E,$03 Create an offset in #REGbc.
   $6A51,$01 #REGhl=#R$7F24 + offset.
   $6A52,$03 #REGde=pointer to the player sprite for this direction.
-  $6A55,$03 #REGhl=#N$4F93.
+N $6A55 The player is drawn statically in the centre of the play area.
+  $6A55,$03 #REGhl=#N$4F93 (screen location).
+N $6A58 The player sprite is #N$02 bytes in width.
   $6A58,$05 Write #N$02 to #R$5E2C.
   $6A5D,$01 #REGa=height of the sprite in pixels.
   $6A5E,$01 Increment #REGde by one to point to the sprite data.
   $6A5F,$01 #REGc=#REGa (height of the sprite).
+@ $6A60 label=DrawPlayer_NextRow
   $6A60,$04 #REGb=#R$5E2C.
   $6A64,$01 Push #REGhl on the stack.
+@ $6A65 label=DrawPlayer_NextCol
+  $6A65,$02 Copy a byte from #REGde (the player sprite data) to #REGhl (the screen position).
+  $6A67,$01 Increment #REGde (the player sprite data pointer) by one.
+  $6A68,$01 Increment #REGl by one, this moves onto the next adjacent screen byte.
+  $6A69,$02 Decrease counter by one and loop back to #R$6A65 until counter is zero.
   $6A6B,$01 Restore #REGhl from the stack.
   $6A6C,$03 Call #R$6ECB.
   $6A6F,$03 Decrease #REGc (height) by one and jump to #R$6A60 if it is not zero.
@@ -1162,13 +1295,16 @@ c $6A9B
   $6AB1,$03 Call #R$6588.
   $6AB4,$03 Call #R$611B.
   $6AB7,$02 Restore #REGix from the stack.
+N $6AB9 Draw and colourize the player sprite.
   $6AB9,$03 Call #R$6A39.
-  $6ABC,$03 #REGhl=#N$5993.
-  $6ABF,$03 #REGbc=#N($0202, $04, $04).
+  $6ABC,$03 #REGhl=#N$5993 (attribute buffer location).
+  $6ABF,$03 #REGbc=#N($0202, $04, $04) (height * width in bytes).
+N $6AC2 Merge the player sprite colour in with the current background colour.
   $6AC2,$03 #REGa=#R$5E44.
-  $6AC5,$02,b$01 Set bit 1.
+  $6AC5,$02,b$01 Set bit 1 (RED).
   $6AC7,$01 Store the result in #REGd.
   $6AC8,$03 Call #R$7064.
+N $6ACB Handles updating the dashboard values.
   $6ACB,$03 Call #R$64C7.
   $6ACE,$03 Call #R$6CDE.
   $6AD1,$03 #REGa=#R$5E39.
@@ -1190,6 +1326,20 @@ c $6B02
   $6B03,$03 #REGhl=#N($0118, $04, $04).
 
 c $6B12
+R $6B12 HL Entity
+  $6B12,$04 If the byte held at #REGhl is zero, jump to #R$6B02.
+  $6B16,$02 Push #REGbc and #REGhl on the stack.
+  $6B18,$03 #REGix=#REGhl (using the stack to do so).
+  $6B1B,$03 Call #R$71ED.
+  $6B1E,$03 Call #R$7139.
+  $6B21,$01 Restore #REGhl from the stack.
+  $6B22,$02 Write #N$00 to #REGhl.
+  $6B24,$01 Increment #REGhl by one.
+  $6B25,$01 Write #N$00 to #REGhl.
+  $6B26,$01 Increment #REGhl by one.
+  $6B27,$01 Write #N$00 to #REGhl.
+  $6B28,$01 Restore #REGbc from the stack.
+  $6B29,$02 Jump to #R$6B0E.
 
 c $6B2B
   $6B2B,$01 Stash #REGbc on the stack.
@@ -1214,6 +1364,7 @@ c $6B42
 
 c $6B47
   $6B47,$04 #REGbc=#R$5E19.
+  $6B4B,$01 #REGa=#N$00.
   $6B50,$03 Call #R$6B30.
   $6B53,$03 #REGhl=#R$5E05.
   $6B5B,$03 Call #R$6BF6.
@@ -1223,6 +1374,7 @@ c $6B47
   $6B6D,$03 Store #REGa at #R$5E17.
   $6B71,$01 Increment #REGbc by one.
   $6B73,$03 Call #R$6B3D.
+  $6B76,$03 #REGa=#R$5E43.
   $6B7C,$03 #REGhl=#R$6BD6.
   $6B81,$03 Store #REGa at #R$5E1F.
   $6B92,$03 #REGa=#R$5E44.
@@ -1498,6 +1650,21 @@ c $6F2F
   $6F3B,$01 Return.
 
 c $6F3C
+  $6F3C,$03 #REGa=#R$5E13.
+  $6F41,$02,b$01 Keep only bits 0-1.
+  $6F45,$03 #REGa=#R$5E18.
+  $6F58,$03 #REGa=#R$5E17.
+  $6F6A,$03 #REGa=#R$5E1F.
+  $6F78,$02 #REGa=#N$07.
+  $6F7D,$01 Push #REGhl on the stack.
+  $6F7F,$02 #REGb=#N$07.
+  $6F81,$03 #REGhl=#R$5E51.
+  $6F9B,$01 Push #REGhl on the stack.
+  $6F9E,$03 #REGix=#REGhl (using the stack to do so).
+  $6FA1,$03 #REGa=#R$5E1E.
+  $6FA5,$03 Call #R$71ED.
+  $6FA8,$02 Restore #REGhl and #REGde from the stack.
+  $6FAA,$02 Jump to #R$6FC1.
 
 c $6FAC
   $6FB2,$03 #REGhl=#R$5E50.
@@ -1625,7 +1792,9 @@ c $70CE
   $70D1,$01 Return.
 
 c $70D2
+@ $70D2 label=FindActorSpriteAndUpdate
   $70D2,$03 Call #R$7168.
+@ $70D5 label=ActorUpdate
   $70D5,$06 Fetch actor co-ordinates.
   $70DE,$02,b$01 Keep only bits 0-2.
   $70E0,$03 Write this to #R$5E41.
@@ -1635,6 +1804,8 @@ c $70D2
   $70EB,$03 Write #REGhl to #R$5E27.
   $70EE,$03 Call #R$70AD.
   $70F1,$03 Call #R$6F10.
+  $70F9,$03 Set #R$5E26.
+  $70FC,$03 Set #R$5E23.
   $70FF,$02 Jump to #R$70CE.
 
 c $7101
@@ -1686,9 +1857,22 @@ c $716D
 
 c $7170 Mask Sprite
 @ $7170 label=MaskSprite
+  $7170,$04 Jump to #R$71CB if the vertical position is zero.
+  $7174,$01 Decrease #REGc by one.
+  $7175,$01 Stash #REGhl on the stack.
+  $7176,$04 #REGb=#R$5E40.
+  $719A,$03 Call #R$6ECB.
+  $71A4,$04 #REGb=#R$5E41.
+  $71A9,$01 Stash #REGde on the stack.
+  $71C5,$03 Call #R$6ECB.
+  $71C9,$02 Jump to #R$7170.
 @ $71D0 label=ActorUpdateSizeFlipReg
 @ $71D1 label=ActorUpdateSize
+  $71D1,$04 #REGc=#R$5E25.
+  $71D5,$03 #REGa=#R$5E26.
+  $71DF,$04 #REGc=#R$5E26.
 @ $71E4 label=ActorUpdateHeightAndMask
+  $71E8,$02 Jump to #R$7170.
 
 c $71ED Store Entity
 E $71ED View the equivalent code in;
@@ -1820,17 +2004,17 @@ b $7437 Sprite: Tombstone
   $7437,$01 Height = #N(#PEEK(#PC)) pixels.
   $7438,$20,b$02 #SPRITE$0E(tombstone)
 
-b $7458 Sprite: Car
+b $7458 Sprite: Bush
   $7458,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7459,$1A,b$02 #SPRITE$0F(car)
+  $7459,$1A,b$02 #SPRITE$02(bush)
 
-b $7473 Sprite: Bush
+b $7473 Sprite: Explosion
+N $7473 Frame 1
   $7473,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7474,$20,b$02 #SPRITE$09(bush)
-
-b $7494 Sprite:
+  $7474,$20,b$02 #SPRITE$20(explosion-01)
+N $7494 Frame 2
   $7494,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7495,$1E,b$02 SPRITE$0(tests-01)
+  $7495,$1E,b$02 #SPRITE$21(explosion-02)
 
 b $74B1 UDG Graphics
 @ $74B1 label=UDG_Tiles
@@ -1850,7 +2034,8 @@ L $7751,$08,$18
 
 b $7811 Map Points
 @ $7811 label=MapPoints
-  $7811,$4C5,$03
+  $7811,$03 Map Point #N((#PC - $7811) / $03, $03, $03): #SPRITENAME(#PEEK(#PC + $02) - $01).
+L $7811,$03,$197
 
 b $7CD6 Sprite: Car
 E $7CD6 #UDGARRAY*car-01,10;car-02;car-03;car-04;car-05;car-06;car-07;car-08;car-09;car-0A;car-0B;car-0C;car-0D;car-0E;car-0F;car-10(car-ani)
@@ -1936,11 +2121,18 @@ w $7F24 Player Sprite Table
   $7F24,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) / 2).
 L $7F24,$02,$10
 
-w $7F44
+w $7F44 Sprites Table 2
+D $7F44 This isn't a separate table; it's a continuation of #R$7F06 just, the player sprites have a "special" zero-based
+.       reference of their own.
+@ $7F44 label=SpritesTable2
+  $7F44,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) / 2).
+L $7F44,$02,$03
 
 b $7F4A Sprite: Cup
   $7F4A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7F4B,$20,b$02 #CAR$10(cup)
+  $7F4B,$20,b$02 #SPRITE$1F(cup)
+
+b $7F6B
 
 i $8000
 b $B868
