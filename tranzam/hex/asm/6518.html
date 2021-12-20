@@ -30,7 +30,7 @@ Next: <a href="653E.html">653E</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="68A0.html">CreateWindow</a>, <a href="6919.html">6919</a> and <a href="6A9B.html">6A9B</a>.
+Used by the routines at <a href="68A0.html">CreateWindow</a>, <a href="6919.html">DisplayNightDriver</a> and <a href="6A9B.html">6A9B</a>.
 </div>
 </div>
 <table class="input">
@@ -79,7 +79,7 @@ Used by the routines at <a href="68A0.html">CreateWindow</a>, <a href="6919.html
 <span id="651f"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="64F0.html">DisplayPlaceName</a> and <a href="6919.html">6919</a>.
+This entry point is used by the routines at <a href="64F0.html">DisplayPlaceName</a> and <a href="6919.html">DisplayNightDriver</a>.
 </div>
 </div>
 </td>
@@ -116,109 +116,133 @@ This entry point is used by the routine at <a href="5F97.html">MenuWriteText</a>
 <td class="asm-label">PrintString_Loop</td>
 <td class="address-2"><span id="6524"></span>6524</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch back to the normal registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6525"></span>6525</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the character to print.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6526"></span>6526</td>
 <td class="instruction">BIT 7,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">If bit 7 is set (which signifies the end of the string), jump to <a href="6518.html#6535">PrintString_LastCharacter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6528"></span>6528</td>
-<td class="instruction">JR NZ,<a href="6518.html#6535">PrintStringColour_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="6518.html#6535">PrintString_LastCharacter</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="652a"></span>652A</td>
 <td class="instruction">CALL <a href="6C96.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="6C96.html">PrintScreen</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="652d"></span>652D</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment <span class="register">DE</span> by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="652e"></span>652E</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="652f"></span>652F</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow <span class="register">AF</span> register.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6530"></span>6530</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the attribute byte to the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6531"></span>6531</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment <span class="register">L</span> by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6532"></span>6532</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow <span class="register">AF</span> register.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6533"></span>6533</td>
 <td class="instruction">JR <a href="6518.html#6524">PrintString_Loop</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6518.html#6524">PrintString_Loop</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintStringColour_1</td>
+<td class="routine-comment" colspan="5">
+<span id="6535"></span>
+<div class="comments">
+<div class="paragraph">
+Because the last character contains the terminator, it needs to be handled separately.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrintString_LastCharacter</td>
 <td class="address-2"><span id="6535"></span>6535</td>
-<td class="instruction">AND $7F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-6 (i.e. strip the bit 7 terminator).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6537"></span>6537</td>
 <td class="instruction">CALL <a href="6C96.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="6C96.html">PrintScreen</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="653a"></span>653A</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="653b"></span>653B</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow <span class="register">AF</span> register.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="653c"></span>653C</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the attribute byte to the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="653d"></span>653D</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="../../../aticatac/hex/asm/A1F3.html">Atic Atac</a></li>
+<li><a href="../../../cookie/hex/asm/7488.html">Cookie</a></li>
+<li><a href="../../../jetpac/hex/asm/0000.html">Jetpac</a></li>
+<li><a href="../../../lunarjetman/hex/asm/8A11.html">Lunar Jetman</a></li>
+<li><a href="../../../pssst/hex/asm/73ED.html">Pssst</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

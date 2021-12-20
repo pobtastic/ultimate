@@ -39,7 +39,7 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="asm-label">DrawPlayer</td>
 <td class="address-2"><span id="27193"></span>27193</td>
 <td class="instruction">LD HL,(24080)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24080.html">24080</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24080.html">Player_Direction</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -135,16 +135,36 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="instruction">LD D,(HL)</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="27221"></span>
+<div class="comments">
+<div class="paragraph">
+The player is drawn statically in the centre of the play area.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="27221"></span>27221</td>
 <td class="instruction">LD HL,20371</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=20371.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=20371 (screen location).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="27224"></span>
+<div class="comments">
+<div class="paragraph">
+The player sprite is 2 bytes in width.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="27224"></span>27224</td>
 <td class="instruction">LD A,2</td>
-<td class="comment-1" rowspan="2">Write 2 to <a href="24108.html">24108</a>.</td>
+<td class="comment-1" rowspan="2">Write 2 to <a href="24108.html">WidthCounter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -170,10 +190,10 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">A</span> (height of the sprite).</td>
 </tr>
 <tr>
-<td class="asm-label">DrawPlayer_0</td>
+<td class="asm-label">DrawPlayer_NextRow</td>
 <td class="address-2"><span id="27232"></span>27232</td>
 <td class="instruction">LD A,(24108)</td>
-<td class="comment-1" rowspan="2"><span class="register">B</span>=<a href="24108.html">24108</a>.</td>
+<td class="comment-1" rowspan="2"><span class="register">B</span>=<a href="24108.html">WidthCounter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -187,34 +207,33 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="comment-1" rowspan="1">Push <span class="register">HL</span> on the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawPlayer_1</td>
+<td class="asm-label">DrawPlayer_NextCol</td>
 <td class="address-2"><span id="27237"></span>27237</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Copy a byte from <span class="register">DE</span> (the player sprite data) to <span class="register">HL</span> (the screen position).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="27238"></span>27238</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="27239"></span>27239</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment <span class="register">DE</span> (the player sprite data pointer) by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="27240"></span>27240</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increment <span class="register">L</span> by one, this moves onto the next adjacent screen byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="27241"></span>27241</td>
-<td class="instruction">DJNZ <a href="27193.html#27237">DrawPlayer_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="27193.html#27237">DrawPlayer_NextCol</a></td>
+<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="27193.html#27237">DrawPlayer_NextCol</a> until counter is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -232,12 +251,12 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="27247"></span>27247</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="2">Decrease <span class="register">C</span> (height) by one and jump to <a href="27193.html#27232">DrawPlayer_0</a> if it is not zero.</td>
+<td class="comment-1" rowspan="2">Decrease <span class="register">C</span> (height) by one and jump to <a href="27193.html#27232">DrawPlayer_NextRow</a> if it is not zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="27248"></span>27248</td>
-<td class="instruction">JR NZ,<a href="27193.html#27232">DrawPlayer_0</a></td>
+<td class="instruction">JR NZ,<a href="27193.html#27232">DrawPlayer_NextRow</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
