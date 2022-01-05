@@ -46,17 +46,20 @@ B $5E03,$01
 
 g $5E04
 
-g $5E05
-W $5E05,$02
+g $5E05 Player Map Co-ordinates
+@ $5E05 label=PlayerMapPosition
+B $5E05,$02
+
+g $5E07
+B $5E07,$01
 
 g $5E08
-W $5E08,$02
+B $5E08,$02,$01
 
-g $5E0A
-
-g $5E0B Fuel
-@ $5E0B label=Fuel
-B $5E0B,$01
+g $5E0A Fuel
+@ $5E0A label=Fuel_LSB
+@ $5E0B label=Fuel_MSB
+B $5E0A,$02,$01
 
 g $5E0C Temperature
 @ $5E0C label=Temperature
@@ -70,7 +73,7 @@ g $5E0E
 
 g $5E10 Player Direction
 @ $5E10 label=Player_Direction
-W $5E10,$02
+B $5E10,$02,$01
 
 g $5E12
 
@@ -84,9 +87,22 @@ g $5E18 Player Y
 @ $5E18 label=Player_Y
 B $5E18,$01
 
+g $5E19 Current Object
+@ $5E19 label=CurrentObject
+D $5E19 The currently processed #R$7811 entry.
+W $5E19,$02
+
+g $5E1B
+B $5E1B,$01
+
+g $5E1C
+W $5E1C,$02
+
 g $5E1E
+B $5E1E,$01
 
 g $5E1F
+B $5E1F,$01
 
 g $5E20 Actor Buffer
 @ $5E20 label=Actor_Position_X
@@ -98,7 +114,8 @@ B $5E22,$01 Movement direction.
 B $5E23,$01 Height (in pixels).
 @ $5E24 label=WidthBytes
 B $5E24,$01 Width (in bytes).
-B $5E25,$01 Height?
+@ $5E25 label=CurrentSpriteHeight
+B $5E25,$01 Current Sprite Height
 @ $5E26 label=HeightLines
 B $5E26,$01 Height lines.
 
@@ -125,6 +142,10 @@ g $5E2D Miles
 @ $5E2D label=Miles
 B $5E2D,$03
 
+g $5E30 Unknown
+@ $5E30 label=Unknown
+B $5E30,$01
+
 g $5E31 Time
 @ $5E31 label=Time_1
 B $5E31,$01
@@ -133,10 +154,13 @@ B $5E32,$01
 @ $5E33 label=Time_3
 B $5E33,$01
 
-g $5E34
-W $5E34,$02
+g $5E34 Player World Co-ordinates
+@ $5E34 label=PlayerWorldPosition
+B $5E34,$02 Player X/ Y position in relation to the whole "World".
 
 g $5E36
+
+g $5E38
 
 g $5E39 Current Place
 @ $5E39 label=CurrentPlaceID
@@ -179,8 +203,15 @@ g $5E44 Background Attribute
 B $5E44,$01
 
 g $5E45
-g $5E46
-g $5E47
+
+g $5E46 Sound Counter
+D $5E46 Used as a counter for the cup collection and refuelling sounds.
+@ $5E46 label=SoundCounter
+B $5E46,$01
+
+g $5E47 Sound Store
+@ $5E47 label=SoundStore
+B $5E47,$01
 
 g $5E48 Temporary Text Item X Position
 D $5E48 Used for the indent for; #LIST { #R$5F6C(Game Menu items) } { #R$607D(Congratulations Messaging) } LIST#
@@ -214,26 +245,46 @@ B $5E4E,$01 Byte #3.
 
 g $5E4F
 
-g $5E50 Object 1
+g $5E50 Objects
+@ $5E50 label=Object_1_State
+@ $5E53 label=Object_2_State
+@ $5E56 label=Object_3_State
+@ $5E59 label=Object_4_State
+@ $5E5C label=Object_5_State
+@ $5E5F label=Object_6_State
+@ $5E62 label=Object_7_State
+@ $5E65 label=Object_8_State
+N $5E50 Object #N($01 + (#PC - $5E50) / $03).
 B $5E50,$01 Sprite ID.
 B $5E51,$01 X Position.
 B $5E52,$01 Y Position.
-g $5E53 Object 2
-B $5E53,$01 Sprite ID.
-B $5E54,$01 X Position.
-B $5E55,$01 Y Position.
+L $5E50,$03,$08
 
 g $5E68
 g $5E74
 
-g $5E80
+g $5E80 Explosion Entity?
+B $5E80,$01 Frame ID.
+B $5E81,$01 X position.
+B $5E82,$01 Y position.
 
 g $5E8C
+
+g $5E90
+W $5E90,$02
+
+g $5E92
+W $5E92,$02
+
+g $5E94
 
 g $5E98 Black Car?
 B $5E98,$01 Sprite ID.
 B $5E99,$01 X Position.
 B $5E9A,$01 Y Position.
+
+g $5E9C
+g $5E9E
 
 g $5EA4
 
@@ -544,18 +595,20 @@ t $6099 Text: Congratulations
   $6099,$13,$12:$01 "CONGRATULATIONS YOU".
   $60AC,$12,$11:$01 " HAVE SUCCESSFULLY".
   $60BE,$13,$12:$01 "COLLECTED THE EIGHT".
-  $60D1,$11,$10:$01 " CUPS OF ULTIMATE".
+  $60D1,$12,$11:$01 " CUPS OF ULTIMATE".
 
-c $60E2
-  $60E2,$01 Write #N$00 to #REGhl.
+c $60E3 Sounds: Bounce
+@ $60E3 label=SoundsBounce
   $60E3,$03 #REGhl=#N($0000, $04, $04).
   $60E6,$02 #REGc=#N$08.
+@ $60E8 label=SoundsBounce_Loop
   $60E8,$02 #REGe=#N$04.
   $60EA,$01 #REGa=the byte pointed to by #REGhl.
   $60EB,$01 Increment #REGhl by one.
   $60EC,$02,b$01 Keep only bits 0-6.
   $60EE,$02,b$01 Set bit 7.
   $60F0,$01 Store the result in #REGd.
+@ $60F1 label=SoundsBounce_Play
   $60F1,$03 Call #R$614B.
   $60F4,$01 Decrease #REGe by one.
   $60F5,$02 If #REGe is not zero, jump to #R$60F1.
@@ -563,35 +616,76 @@ c $60E2
   $60F8,$02 If #REGc is not zero, jump to #R$60E8.
   $60FA,$01 Return.
 
-c $60FB
+c $60FB Play Sound
+@ $60FB label=PlaySound
   $60FB,$03 #REGa=#R$5E47.
+  $60FE,$02 Flip speaker on/ off (flip bit 4).
   $6100,$03 Write #REGa back to #R$5E47.
+  $6103,$02 Play sound.
   $6105,$01 Return.
 
 c $6106
   $611A,$01 Return.
 
-c $611B
+c $611B Sounds: Cup/ Refuel
+@ $611B label=SoundsCupRefuel
   $611B,$03 #REGa=#R$5E29.
+  $611E,$02,b$01 Keep only bit 0.
+  $6120,$01 Return every other frame.
   $6121,$03 #REGhl=#R$5E46.
+  $6124,$01 #REGa=item ID.
+  $6125,$04 Jump to #R$613E if bit 7 is not set.
+  $6129,$02 Return if item ID is zero.
+  $612B,$01 Decrease #REGa/ item ID by one.
+  $612C,$01 Store #REGa at #R$5E46.
+  $612D,$01 Return if the new item ID is zero.
+@ $612E label=SoundsRefuel
+  $612E,$02 #REGa=#REGa * #N$04.
+  $6130,$02,b$01 Keep only bits 2-4.
+  $6132,$02,b$01 Set bit 5.
+  $6134,$01 Store the result in #REGd.
   $6135,$02 #REGc=#N$20.
+@ $6137 label=SoundsCupRefuel_Loop
   $6137,$03 Call #R$614B.
+  $613A,$01 Decrease #REGc by one.
+  $613B,$02 Jump back to #R$6137 until #REGc is zero.
   $613D,$01 Return.
-
+@ $613E label=SoundsCup
   $613E,$02,b$01 Keep only bits 0-6.
+  $6140,$01 Return if #REGa is now zero.
+  $6141,$01 Decrease #REGa by one.
+  $6142,$02,b$01 Set bit 7.
+  $6144,$01 Store #REGa at #R$5E46.
   $6145,$02,b$01 Keep only bits 0-6.
+  $6147,$01 Return if #REGa is now zero.
+  $6148,$01 Flip the bits.
   $6149,$02 Jump to #R$612E.
 
+c $614B Play square wave sound
+@ $614B label=PlaySquareWave
+R $614B D Duration of wave
   $614B,$03 Call #R$60FB.
+  $614E,$01 #REGb=#REGd.
+@ $614F label=PlaySquareWave_Loop_1
+  $614F,$02 Decrease counter by one and loop back to #R$614F until counter is zero.
   $6151,$03 Call #R$60FB.
+  $6154,$01 #REGb=#REGd.
+@ $6155 label=PlaySquareWave_Loop_2
+  $6155,$02 Decrease counter by one and loop back to #R$6155 until counter is zero.
   $6157,$01 Return.
 
-c $6158
+c $6158 Sounds: Engine
+@ $6158 label=SoundsEngine
   $6158,$03 #REGa=#R$5E0D.
+  $615B,$02 Return if #R$5E0D is zero.
+  $615D,$02 #REGa=#R$5E0D / #N$04.
+  $615F,$01 Flip the bits.
   $6160,$02,b$01 Keep only bits 0-5.
+  $6162,$01 Store the result in #REGd.
   $6163,$02 #REGc=#N$04.
   $6165,$07 If #R$5E80 is #N$03 then jump to #R$616E.
   $616C,$02 #REGb=#N$0C.
+@ $616E label=SoundsEngine_Loop
   $616E,$03 Call #R$614B.
   $6171,$01 Decrease #REGc by one.
   $6172,$02 If #REGc is not zero, jump to #R$616E.
@@ -723,10 +817,96 @@ N $61FB Return "Accelerator" button pressed.
   $61FD,$01 Return.
 
 c $61FE
+  $61FE,$03 Call #R$6253.
+  $6201,$02 #REGa=#N$0C.
+  $6206,$02 Jump to #R$622A.
+
+  $6208,$03 Call #R$6253.
+  $620B,$02 #REGa=#N$0E.
+  $6210,$02 Jump to #R$6245.
 
 c $6212
+  $6212,$03 #REGhl=#R$5E05.
+  $621E,$03 Call #R$6BF6.
+  $6221,$03 Call #R$6253.
+  $6224,$02 #REGa=#N$0C.
+  $622D,$03 #REGhl=#R$5E08.
+  $6239,$03 Call #R$6BF6.
+  $623C,$03 Call #R$6253.
+  $623F,$02 #REGa=#N$0E.
+  $624C,$01 Return.
+  $6251,$02 Jump to #R$6249.
+  $6253,$02 #REGb=#N$02.
+  $625B,$01 Return.
 
 c $625C
+  $625C,$03 #REGhl=#R$6513.
+  $625F,$03 #REGbc=#N($0202, $04, $04).
+  $6262,$03 Call #R$6991.
+  $6265,$04 #REGix=#R$5E68.
+  $6269,$04 #REGbc=#R$5E90.
+  $626D,$04 #REGde=#R$5E92.
+  $6271,$03 Call #R$6212.
+  $6274,$03 #REGbc=#N($0004, $04, $04).
+  $6279,$04 #REGbc=#R$5E9C.
+  $627D,$04 #REGde=#R$5E9E.
+  $6281,$03 Call #R$6212.
+  $6284,$03 #REGbc=#N($0004, $04, $04).
+  $6289,$03 Call #R$62DA.
+  $628C,$04 #REGix=#R$5E68.
+  $6290,$02 #REGc=#N$03.
+  $6292,$02 #REGb=#N$02.
+  $62A7,$01 Stash #REGbc on the stack.
+  $62AA,$03 #REGbc=#N($0202, $04, $04).
+  $62AD,$03 Call #R$6991.
+  $62B0,$01 Restore #REGbc from the stack.
+  $62BD,$03 #REGde=#N($0004, $04, $04).
+  $62C5,$01 Return.
+  $62C6,$03 #REGbc=#N($0202, $04, $04).
+  $62C9,$03 Call #R$6998.
+  $62CC,$01 Stash #REGbc on the stack.
+  $62D8,$02 Jump to #R$62CD.
+
+c $62DA Collision: Cups
+E $62DA View the equivalent code in;
+. #LIST
+. { #PSSST$63AA }
+. LIST#
+@ $62DA label=CollisionCup
+  $62DA,$03 #REGhl=#R$5E05.
+  $62E1,$03 Call #R$6253.
+  $62E5,$03 #REGhl=pointer to #R$721F.
+  $62E8,$02 #REGb=#N$08 (set a counter for the #N$08 cups).
+N $62EA Fetch the address of the cup from #R$721F.
+@ $62EA label=CollisionCup_Loop
+  $62EA,$01 #REGe=LSB of the cup map address.
+  $62EB,$01 Increment #REGhl by one.
+  $62EC,$01 #REGd=MSB of the cup map address.
+  $62ED,$01 Increment #REGhl by one, ready to process the next cup.
+N $62EE Check this is still a valid cup (that it hasn't been collected already).
+  $62EE,$02 Increment #REGde by two (point to the sprite ID).
+  $62F0,$05 If this is not a cup (the sprite ID is not #N$20), then jump to #R$6301.
+N $62F5 This is still a valid cup, so process it.
+  $62F5,$02 Decrease #REGde by two (go back to the start of the map record).
+  $62F7,$01 Fetch the cup X position.
+  $62F9,$04 Make sure we have a positive byte.
+@ $62FD label=CollisionCup_Test_X
+  $62FD,$04 If #N$0C is jump to #R$6306.
+@ $6301 label=CollisionCup_Next
+  $6301,$02 Decrease counter by one and loop back to #R$62EA until counter is zero.
+  $6303,$03 Jump to #R$624D.
+@ $6306 label=CollisionCup_Test_Y
+  $6306,$01 Fetch the cup X position.
+  $6307,$01 Increment #REGde by one.
+  $6308,$01 #REGh=cup X position.
+  $6309,$01 Fetch the cup Y position.
+  $630A,$01 #REGd=cup Y position.
+  $630B,$03 Call #R$6B30.
+  $630E,$01 Swap the #REGde and #REGhl registers.
+  $630F,$03 Call #R$6B2B.
+  $6312,$01 Swap the #REGde and #REGhl registers.
+  $6313,$01 #REGb=#REGh.
+  $6314,$01 #REGc=#REGl.
   $6315,$03 Jump to #R$6212.
 
 c $6318
@@ -743,16 +923,21 @@ c $633C
   $6352,$01 Return.
 
 c $6353 Game Over
+@ $6353 label=GameOver
   $6353,$03 Call #R$7139.
   $6356,$03 Call #R$617F.
+N $6359 Give a 50/50 chance of "Night Driver" mode.
+  $6359,$02 #REGa=random number.
   $635B,$02,b$01 Keep only bit 0.
+  $635D,$02 If #REGa is zero jump to #R$6362.
   $635F,$03 Call #R$6175.
+@ $6362 label=GameOver_Skip
   $6362,$03 #REGhl=#R$5E3D.
   $6365,$01 Decrease #R$5E3D by one.
   $636C,$03 Call #R$605B.
   $636F,$03 Call #R$6175.
   $6372,$03 Call #R$68A0.
-  $6375,$03 #REGhl=#N($5878, $04, $04).
+  $6375,$03 #REGhl=#N($5878, $04, $04) (screen location).
   $6378,$03 #REGde=#R$63DA.
   $637B,$03 Call #R$5F97.
   $637E,$02 #REGb=#N$04.
@@ -770,22 +955,25 @@ N $6389 From #REGhl being set above (and for each loop), decrementing #N($0000, 
   $638E,$02 Decrease counter by one and loop back to #R$6389 until counter is zero.
   $6390,$01 Return.
 
-c $6391
+c $6391 Initialise New Game
+@ $6391 label=GameInit
   $6391,$05 Write starting lives to #R$5E3D (duplicate of #R$5FF6 - possibly so POKEs would appear to not work?)
   $6396,$04 Write #N$00 to #R$5E3C.
   $639A,$03 Call #R$6498.
 N $639D Reset miles and time.
   $639D,$03 #REGhl=#R$5E2D.
   $63A0,$02 #REGb=#N$07 (counter).
+@ $63A2 label=GameInit_Reset
   $63A2,$02 Write #N$00 to #REGhl.
   $63A4,$01 Increment #REGhl by one.
   $63A5,$02 Decrease counter by one and loop back to #R$63A2 until counter is zero.
+@ $63A7 label=PlayerInit
   $63A7,$03 Call #R$68A0.
   $63AA,$03 Call #R$653E.
   $63AD,$03 Call #R$656E.
   $63B0,$03 Call #R$6BFE.
   $63B3,$03 Call #R$6A09.
-  $63B6,$06 Write #N($C000, $04, $04) to #R$5E0A.
+  $63B6,$06 Write #N($C000, $04, $04) (the maximum value for fuel) to #R$5E0A.
   $63BC,$0B Write #N($0000, $04, $04) to; #LIST { #R$5E0C } { #R$5E0E } { #R$5E10 } LIST#
   $63C7,$06 Write #N($0C40, $04, $04) to #R$5E05.
   $63CD,$06 Write #N($0640, $04, $04) to #R$5E08.
@@ -858,10 +1046,12 @@ c $645A Update "Best Time Today"
 
 c $646C Display Cups Collected
 @ $646C label=DisplayCupsCollected
-  $646C,$03 #REGhl=#R$672D(#N$672E).
-  $646F,$03 #REGde=#R$7F4A.
+N $646C Prints the cup sprite to the screen.
+  $646C,$03 #REGhl=#N$672E (screen location).
+  $646F,$03 #REGde=#R$7F4A(SpriteCup).
   $6472,$03 Call #R$70DB.
   $6475,$03 Call #R$714C.
+N $6478 Print the "cups collected" count to the screen.
   $6478,$03 #REGde=#R$5E3C.
   $647B,$03 #REGhl=#N$48C6.
   $647E,$02 #REGb=#N$01.
@@ -1009,10 +1199,34 @@ N $6535 Because the last character contains the terminator, it needs to be handl
 
 c $653E
   $653E,$04 #REGde=#R$5E08.
-  $654A,$03 #REGde=#R$5E05.
+  $6546,$02 #REGa=#N$47.
+  $654A,$03 #REGhl=#R$5E05.
   $6556,$01 Return.
 
 c $6557
+  $6557,$03 Call #R$653E.
+  $655A,$01 Stash #REGhl on the stack.
+  $655B,$04 #REGde=#R$5E36.
+  $655F,$01 Reset the carry flag.
+  $6560,$02 #REGhl=#REGhl - #REGde.
+  $6562,$01 Restore #REGhl from the stack.
+  $6563,$02 Jump to #R$657A if the result was zero.
+  $6565,$01 Stash #REGhl on the stack.
+  $6566,$03 #REGhl=#R$5E36.
+  $6569,$03 #REGa=#R$5E38.
+  $656C,$01 Store #REGa at #REGhl.
+  $656D,$01 Restore #REGhl from the stack.
+  $656E,$01 Stash #REGhl on the stack.
+  $656F,$03 Call #R$6F10.
+  $6572,$03 Store #REGhl at #R$5E36.
+  $6575,$01 #REGa=the byte #REGhl is pointing at.
+  $6576,$03 Store #REGa at #R$5E38.
+  $6579,$01 Restore #REGhl from the stack.
+  $657A,$03 #REGbc=#N($0101, $04, $04).
+  $657D,$03 #REGa=#R$5E29.
+  $6580,$02,b$01 Keep only bit 3.
+  $6582,$03 If the result is not zero, jump to #R$6998.
+  $6585,$03 Jump to #R$6991.
 
 c $6588
   $6588,$03 #REGhl=#R$5E34.
@@ -1047,13 +1261,39 @@ c $65B1
   $65F8,$03 #REGa=#R$5E44.
   $65FB,$02 Jump to #R$65F1.
 
-b $65FD
+b $65FD Terrain Dots
+@ $65FD label=TerrainDots
+  $65FD,$02 Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+L $65FD,$02,$10
+
+c $661D
 
 c $6633
+  $6639,$03 Call #R$71ED.
+  $664D,$02,b$01 Keep only bits 0-3.
+  $664F,$03 Create an offset in #REGhl.
+
+  $6675,$02,b$01 Keep only bits 0-3.
+  $6677,$03 Create an offset in #REGhl.
+
+  $668B,$04 #REGde=#R$5E08.
+  $6695,$03 Call #R$6BF6.
+  $669D,$04 #REGde=#R$5E05.
+  $66A6,$03 Call #R$6BF6.
+  $66AA,$02,b$01 Set bit 1.
+
+  $66FF,$03 #REGhl=#R$683B.
+
+  $6720,$03 #REGa=#R$5E43.
+  $6728,$03 #REGhl=#R$6837.
+
+  $6802,$03 Call #R$6106.
+  $6805,$02 Jump to #R$681A.
 
 c $6826
 
 b $6837
+B $683B
 
 c $687B Display Lives
 E $687B View the equivalent code in;
@@ -1089,6 +1329,11 @@ c $68A0 Create Game Window
   $68A0,$0A Write #N$00 to #N$0C bytes starting from #R$5E68.
   $68AA,$06 Write #N$FFFF to #R$5E34.
   $68B0,$03 #REGhl=#R$65FD.
+  $68B3,$02 #REGb=#N$10.
+@ $68B5 label=CreateWindow_Terrain
+  $68B5,$02 Reset bit 0 of the byte #REGhl is pointing to.
+  $68B7,$02 Increment #REGhl by two.
+  $68B9,$02 Decrease counter by one and loop back to #R$68B5 until counter is zero.
   $68BB,$03 Call #R$7200.
   $68BE,$03 Call #R$69BC.
   $68C1,$03 Call #R$6949.
@@ -1167,16 +1412,36 @@ c $6949 Plot Map Points
   $6977,$03 #REGhl=#R$7CD6.
   $697F,$01 Return.
 
-c $6980
-
-c $6998
+c $6980 Handler: Terrain Dots
+@ $6980 label=HandlerTerrainDots
+R $6980 IX One of the #N$10 #R$65FD entities
+  $6980,$04 Reset bit 0 of the given Terrain Dot entity.
+  $6984,$03 #REGhl=#R$5E34.
+  $6987,$05 #REGl=player Y - terrain dot Y.
+  $698C,$05 #REGh=player X - terrain dot X.
+  $6991,$05 Write #N$86 to #R$69A6(#N$69A7).
+  $6996,$02 Jump to #R$699D.
+N $6998
   $6998,$05 Write #N$C6 to #R$69A6(#N$69A7).
   $699D,$02 Stash #REGbc and #REGhl on the stack.
+  $699F,$01 #REGa=#REGl.
+  $69A0,$01 Flip the bits.
+  $69A1,$03 #REGa=#REGa * #N$08.
   $69A4,$02,b$01 Keep only bits 3-5.
+N $69A6 #TABLE(default,centre,centre)
+. { =h,c3 Self modifying code }
+. { =h Altered From | =h Bytes | =h bits |  }
+. { #R$6991 | #N$86 | #EVAL($86, $02) }
+. { #R$6998 | #N$C6 | #EVAL($C6, $02) }
+. TABLE#
   $69A6,$02,b$01 Set bits 1-2, 6-7.
+  $69A8,$03 Store #REGa at #R$69AE(#N$69AF).
   $69AB,$03 Call #R$6F10.
+  $69AE,$02 Set bit 0 of #REGhl.
   $69B0,$03 Call #R$6ECB.
+  $69B3,$02 Decrease counter by one and loop back to #R$69AE until counter is zero.
   $69B5,$02 Restore #REGhl and #REGbc from the stack.
+  $69B7,$01 Increment #REGl by one.
   $69B8,$03 Decrease counter by one and loop back to #R$699D until counter is zero.
   $69BB,$01 Return.
 
@@ -1322,8 +1587,15 @@ c $6AF5
   $6AF8,$02 #REGb=#N$07.
   $6B00,$02 Jump to #R$6B0C.
 
-c $6B02
+  $6B02,$01 Stash #REGbc on the stack.
   $6B03,$03 #REGhl=#N($0118, $04, $04).
+  $6B06,$01 Decrease #REGhl by one.
+  $6B07,$04 If #REGhl is not zero, jump to #R$6B06.
+  $6B0B,$01 Restore #REGhl from the stack.
+  $6B0C,$02 Increment #REGhl by two.
+  $6B0E,$01 Increment #REGhl by one.
+  $6B0F,$02 Decrease counter by one and loop back to #R$6AFA until counter is zero.
+  $6B11,$01 Return.
 
 c $6B12
 R $6B12 HL Entity
@@ -1362,9 +1634,13 @@ c $6B42
   $6B42,$03 #REGhl=#R$6BE6.
   $6B45,$02 Jump to #R$6B7F.
 
-c $6B47
+c $6B47 Draw Objects
+@ $6B47 label=DrawObjects
   $6B47,$04 #REGbc=#R$5E19.
   $6B4B,$01 #REGa=#N$00.
+  $6B4D,$01 #REGa'=object X position.
+  $6B4E,$01 Increment #REGbc by one.
+  $6B4F,$01 #REGd=#REGa'.
   $6B50,$03 Call #R$6B30.
   $6B53,$03 #REGhl=#R$5E05.
   $6B5B,$03 Call #R$6BF6.
@@ -1408,6 +1684,28 @@ c $6BFE
   $6C2B,$02 Jump to #R$6C25.
 
 c $6C2D
+  $6C2D,$04 Write #N$00 to #R$5E1B.
+  $6C31,$04 #REGbc=#R$5E19.
+  $6C35,$03 Decrease #REGbc by three.
+  $6C38,$02 #REGd=#REGbc.
+  $6C3A,$03 Call #R$6B30.
+  $6C3D,$03 Call #R$6C82.
+  $6C42,$05 Write #N$01 to #R$5E1B.
+  $6C47,$02 Jump to #R$6C35.
+
+  $6C49,$06 Jump to #R$6C57 if #R$5E1B is zero.
+  $6C56,$01 Return.
+
+  $6C57,$04 #REGbc=#R$5E19.
+  $6C5B,$02 #REGd=#REGbc.
+  $6C5D,$03 Call #R$6B30.
+  $6C60,$03 Call #R$6C82.
+
+  $6C6C,$03 Call #R$6B30.
+  $6C6F,$03 Call #R$6C82.
+  $6C74,$01 Stash #REGhl on the stack.
+  $6C75,$04 #REGde=#R$5E1C.
+  $6C7C,$01 Restore #REGhl from the stack.
   $6C81,$01 Return.
 
 c $6C82
@@ -1510,7 +1808,7 @@ N $6D02 Print the final digit.
 
 c $6D07
   $6D07,$05 #REGa=#R$5E0D + #N$04.
-  $6D0C,$04 If #REGa is less than #N$C0 jump to #R$6D76.
+  $6D0C,$04 If #REGa is more than #N$C0 jump to #R$6D76.
   $6D10,$02 Else, jump to #R$6D73.
 
 c $6D12
@@ -1543,10 +1841,18 @@ N $6D56 Check temperature.
   $6D64,$03 Call #R$61C2.
   $6D6B,$03 #REGa=#R$5E0D.
   $6D72,$01 #REGa=#N$00.
+N $6D73 Increase speed (see #R$6D07).
+@ $6D73 label=Accelerate
   $6D73,$03 Write #REGa to #R$5E0D.
   $6D76,$03 #REGa=#R$5E0D.
   $6D79,$03 #REGhl=#N($49E2, $04, $04).
   $6D7C,$03 Call #R$6EDE.
+  $6D7F,$03 #REGa=#R$5E11.
+  $6D82,$01 Increment #REGa by one.
+  $6D83,$01 Store the result in #REGc.
+  $6D84,$03 #REGa=#R$5E10.
+  $6D87,$03 Shift #REGa right three times.
+  $6D8A,$02,b$01 Keep bits 0-4.
 
   $6D90,$02,b$01 Unset bits 0-4.
   $6D92,$03 Create an offset; #REGe=#REGa and #REGd=#N$00.
@@ -1555,18 +1861,58 @@ N $6D56 Check temperature.
   $6D9A,$06 Create an offset; #REGe=#R$5E0D and #REGd=#N$00.
   $6DA0,$01 Stash #REGde on the stack.
   $6DA2,$03 Call #R$6F2F.
+  $6DA5,$03 #REGa=#R$5E09.
+  $6DA8,$04 #REGde=#R$5E07.
+
+  $6E66,$02 #REGe=#N$00.
+  $6E68,$02 Jump to #R$6E7E.
+  $6E6A,$02 #REGe=#N$18.
+  $6E6C,$02 #REGd=#N$00.
+  $6E72,$02 Jump to #R$6E7E.
+  $6E74,$02 #REGe=#N$18.
+  $6E76,$02 #REGd=#N$00.
+N $6E7E Don't "use fuel" on every frame. This routine uses the last two bits of the #R$5E29(GameTimer) (i.e. a number
+.       between 0-3) to only process every fourth frame.
+@ $6E7E label=HandlerFuel
+  $6E7E,$03 #REGa=#R$5E29.
+  $6E81,$02,b$01 Keep only bits 0-1.
+  $6E83,$02 If the result is not zero then jump to #R$6E9B.
+N $6E85 Handles "using" fuel.
+  $6E85,$06 #REGb=#N$00, #REGc=#R$5E0D.
+  $6E8B,$03 #REGhl=#R$5E0A.
+N $6E8E A higher speed uses more fuel.
+  $6E8E,$02 #REGhl=#REGhl (fuel) - #REGbc (speed).
+  $6E90,$02 If there's "carry" (i.e. if the player has run out of fuel) jump to #R$6E95.
+  $6E92,$03 Write #REGhl to #R$5E0A.
+@ $6E95 label=FuelSkipWrite
+  $6E95,$04 If the current speed is more than #N$B0 (top speed) jump to #R$6EAF.
+  $6E99,$02 Compare current speed with #N$60.
 
 N $6E9B Handle the temperature gauge.
+@ $6E9B label=HandlerTemperatureGauge
   $6E9B,$03 #REGa=#R$5E0C.
-  $6EA0,$03 #REGhl=#N($5162, $04, $04).
+  $6E9E,$02 If there's carry set (this could be either from #R$6E99 or #R$6E81) then jump to #R$6EBC.
+@ $6EA0 label=DrawTemperatureGauge
+  $6EA0,$03 #REGhl=#N($5162, $04, $04) (screen location).
   $6EA3,$03 Call #R$6EDE.
 N $6EA6 Handle the fuel gauge.
   $6EA6,$03 #REGa=#R$5E0B.
-  $6EA9,$03 #REGhl=#N($5122, $04, $04).
+  $6EA9,$03 #REGhl=#N($5122, $04, $04) (screen location).
   $6EAC,$03 Jump to #R$6EDE.
-N $6EAF Handle the temperature gauge.
+N $6EAF Handle the temperature gauge at maximum speed.
+@ $6EAF label=TemperatureMaxSpeed
   $6EAF,$03 #REGa=#R$5E0C.
+N $6EB2 Check if the temperature is already at the upper limit.
+  $6EB2,$04 If the current temperature is more than #N$C0 jump to #R$6EA0.
+N $6EB6 Go ahead and increase the temperature...
+  $6EB6,$01 Increment #REGa by one.
+@ $6EB7 label=UpdateTemperature
+  $6EB7,$05 Write the updated #REGa (temperature) back to #R$5E0C.
   $6EBA,$02 Jump to #R$6EA0.
+N $6EBC Handles dropping the temperature gauge.
+@ $6EBC label=TemperatureDrop
+  $6EBC,$03 If the current temperature is at zero jump to #R$6EA0.
+  $6EBF,$01 Decrease #REGa (temperature) by one.
   $6EC0,$02 Jump to #R$6EB7.
   $6EC2,$02 #REGb=#N$05.
   $6EC8,$02 Decrease counter by one and loop back to #R$6EC4 until counter is zero.
@@ -1940,8 +2286,11 @@ R $7218 C Value to write
   $721C,$02 Keep looping back to #R$7218 until there is no carry-over.
   $721E,$01 Return.
 
-w $721F
-  $721F,$02,$10
+w $721F Cup Table
+D $721F Links to the entry in #R$7811 for every cup.
+@ $721F label=CupTable
+  $721F,$02 Cup #N((#PC - $721F) / 2).
+L $721F,$02,$08
 
 t $722F Place Names
 @ $722F label=PlaceNames

@@ -310,19 +310,22 @@ g$5E03 DEFB $00
 ; Game status buffer entry at 5E04
 g$5E04 DEFB $2C
 
-; Game status buffer entry at 5E05
-g$5E05 DEFW $0E30
- $5E07 DEFB $00
+; Player Map Co-ordinates
+@label=PlayerMapPosition
+g$5E05 DEFB $30,$0E
+
+; Game status buffer entry at 5E07
+g$5E07 DEFB $00
 
 ; Game status buffer entry at 5E08
-g$5E08 DEFW $0000
-
-; Game status buffer entry at 5E0A
-g$5E0A DEFB $00
+g$5E08 DEFB $00
+ $5E09 DEFB $00
 
 ; Fuel
-@label=Fuel
-g$5E0B DEFB $00
+@label=Fuel_LSB
+g$5E0A DEFB $00
+@label=Fuel_MSB
+ $5E0B DEFB $00
 
 ; Temperature
 @label=Temperature
@@ -337,7 +340,8 @@ g$5E0E DEFB $22,$22
 
 ; Player Direction
 @label=Player_Direction
-g$5E10 DEFW $3AAF
+g$5E10 DEFB $AF
+ $5E11 DEFB $3A
 
 ; Game status buffer entry at 5E12
 g$5E12 DEFB $F5
@@ -352,7 +356,18 @@ g$5E17 DEFB $00
 ; Player Y
 @label=Player_Y
 g$5E18 DEFB $06
- $5E19 DEFB $00,$00,$2C,$30,$0E
+
+; Current Object
+;
+; The currently processed #R$7811 entry.
+@label=CurrentObject
+g$5E19 DEFW $0000
+
+; Game status buffer entry at 5E1B
+g$5E1B DEFB $2C
+
+; Game status buffer entry at 5E1C
+g$5E1C DEFW $0E30
 
 ; Game status buffer entry at 5E1E
 g$5E1E DEFB $00
@@ -370,7 +385,8 @@ g$5E20 DEFB $00      ; X Position.
  $5E23 DEFB $3A      ; Height (in pixels).
 @label=WidthBytes
  $5E24 DEFB $EF      ; Width (in bytes).
- $5E25 DEFB $22      ; Height?
+@label=CurrentSpriteHeight
+ $5E25 DEFB $22      ; Current Sprite Height
 @label=HeightLines
  $5E26 DEFB $22      ; Height lines.
 
@@ -399,7 +415,10 @@ g$5E2C DEFB $0E
 ; Miles
 @label=Miles
 g$5E2D DEFB $00,$00,$06
- $5E30 DEFB $00
+
+; Unknown
+@label=Unknown
+g$5E30 DEFB $00
 
 ; Time
 @label=Time_1
@@ -409,11 +428,15 @@ g$5E31 DEFB $00
 @label=Time_3
  $5E33 DEFB $30
 
-; Game status buffer entry at 5E34
-g$5E34 DEFW $000E
+; Player World Co-ordinates
+@label=PlayerWorldPosition
+g$5E34 DEFB $0E,$00  ; Player X/ Y position in relation to the whole "World".
 
 ; Game status buffer entry at 5E36
-g$5E36 DEFB $00,$00,$00
+g$5E36 DEFB $00,$00
+
+; Game status buffer entry at 5E38
+g$5E38 DEFB $00
 
 ; Current Place
 ;
@@ -466,10 +489,14 @@ g$5E44 DEFB $34
 ; Game status buffer entry at 5E45
 g$5E45 DEFB $32
 
-; Game status buffer entry at 5E46
+; Sound Counter
+;
+; Used as a counter for the cup collection and refuelling sounds.
+@label=SoundCounter
 g$5E46 DEFB $34
 
-; Game status buffer entry at 5E47
+; Sound Store
+@label=SoundStore
 g$5E47 DEFB $0E
 
 ; Temporary Text Item X Position
@@ -512,18 +539,52 @@ g$5E4C DEFB $00      ; Byte #1.
 ; Game status buffer entry at 5E4F
 g$5E4F DEFB $00
 
-; Object 1
+; Objects
+;
+; .
+;
+; .
+;
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_1_State
 g$5E50 DEFB $00      ; Sprite ID.
  $5E51 DEFB $00      ; X Position.
  $5E52 DEFB $00      ; Y Position.
-
-; Object 2
-g$5E53 DEFB $00                             ; Sprite ID.
- $5E54 DEFB $00                             ; X Position.
- $5E55 DEFB $00                             ; Y Position.
- $5E56 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5E5E DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5E66 DEFB $00,$00
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_2_State
+ $5E53 DEFB $00      ; Sprite ID.
+ $5E54 DEFB $00      ; X Position.
+ $5E55 DEFB $00      ; Y Position.
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_3_State
+ $5E56 DEFB $00      ; Sprite ID.
+ $5E57 DEFB $00      ; X Position.
+ $5E58 DEFB $00      ; Y Position.
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_4_State
+ $5E59 DEFB $00      ; Sprite ID.
+ $5E5A DEFB $00      ; X Position.
+ $5E5B DEFB $00      ; Y Position.
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_5_State
+ $5E5C DEFB $00      ; Sprite ID.
+ $5E5D DEFB $00      ; X Position.
+ $5E5E DEFB $00      ; Y Position.
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_6_State
+ $5E5F DEFB $00      ; Sprite ID.
+ $5E60 DEFB $00      ; X Position.
+ $5E61 DEFB $00      ; Y Position.
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_7_State
+ $5E62 DEFB $00      ; Sprite ID.
+ $5E63 DEFB $00      ; X Position.
+ $5E64 DEFB $00      ; Y Position.
+; Object #N($01 + (#PC - $5E50) / $03).
+@label=Object_8_State
+ $5E65 DEFB $00      ; Sprite ID.
+ $5E66 DEFB $00      ; X Position.
+ $5E67 DEFB $00      ; Y Position.
 
 ; Game status buffer entry at 5E68
 g$5E68 DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -533,20 +594,36 @@ g$5E68 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 g$5E74 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $5E7C DEFB $00,$00,$00,$00
 
-; Game status buffer entry at 5E80
-g$5E80 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5E88 DEFB $00,$00,$00,$00
+; Explosion Entity?
+g$5E80 DEFB $00                             ; Frame ID.
+ $5E81 DEFB $00                             ; X position.
+ $5E82 DEFB $00                             ; Y position.
+ $5E83 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $5E8B DEFB $00
 
 ; Game status buffer entry at 5E8C
-g$5E8C DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5E94 DEFB $00,$00,$00,$00
+g$5E8C DEFB $00,$00,$00,$00
+
+; Game status buffer entry at 5E90
+g$5E90 DEFW $0000
+
+; Game status buffer entry at 5E92
+g$5E92 DEFW $0000
+
+; Game status buffer entry at 5E94
+g$5E94 DEFB $00,$00,$00,$00
 
 ; Black Car?
-g$5E98 DEFB $00                             ; Sprite ID.
- $5E99 DEFB $00                             ; X Position.
- $5E9A DEFB $00                             ; Y Position.
- $5E9B DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5EA3 DEFB $00
+g$5E98 DEFB $00      ; Sprite ID.
+ $5E99 DEFB $00      ; X Position.
+ $5E9A DEFB $00      ; Y Position.
+ $5E9B DEFB $00
+
+; Game status buffer entry at 5E9C
+g$5E9C DEFB $00,$00
+
+; Game status buffer entry at 5E9E
+g$5E9E DEFB $00,$00,$00,$00,$00,$00
 
 ; Game status buffer entry at 5EA4
 g$5EA4 DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -944,19 +1021,22 @@ c$607D LD A,$50             ; {Write #N$50 to #R$5E48.
 t$6099 DEFM "CONGRATULATIONS YO","U"+$80 ; "CONGRATULATIONS YOU".
  $60AC DEFM " HAVE SUCCESSFULL","Y"+$80  ; " HAVE SUCCESSFULLY".
  $60BE DEFM "COLLECTED THE EIGH","T"+$80 ; "COLLECTED THE EIGHT".
- $60D1 DEFM " CUPS OF ULTIMAT","E"       ; " CUPS OF ULTIMATE".
+ $60D1 DEFM " CUPS OF ULTIMATE","."+$80  ; " CUPS OF ULTIMATE".
 
-; Routine at 60E2
-c$60E2 XOR (HL)      ; Write #N$00 to #REGhl.
-; This entry point is used by the routine at #R$6D12.
-*$60E3 LD HL,$0000   ; #REGhl=#N($0000, $04, $04).
+; Sounds: Bounce
+;
+; Used by the routine at #R$6D12.
+@label=SoundsBounce
+c$60E3 LD HL,$0000   ; #REGhl=#N($0000, $04, $04).
  $60E6 LD C,$08      ; #REGc=#N$08.
+@label=SoundsBounce_Loop
 *$60E8 LD E,$04      ; #REGe=#N$04.
  $60EA LD A,(HL)     ; #REGa=the byte pointed to by #REGhl.
  $60EB INC HL        ; Increment #REGhl by one.
  $60EC AND %01111111 ; Keep only bits 0-6.
  $60EE OR %10000000  ; Set bit 7.
  $60F0 LD D,A        ; Store the result in #REGd.
+@label=SoundsBounce_Play
 *$60F1 CALL $614B    ; Call #R$614B.
  $60F4 DEC E         ; Decrease #REGe by one.
  $60F5 JR NZ,$60F1   ; If #REGe is not zero, jump to #R$60F1.
@@ -964,13 +1044,14 @@ c$60E2 XOR (HL)      ; Write #N$00 to #REGhl.
  $60F8 JR NZ,$60E8   ; If #REGc is not zero, jump to #R$60E8.
  $60FA RET           ; Return.
 
-; Routine at 60FB
+; Play Sound
 ;
-; Used by the routines at #R$6106 and #R$611B.
+; Used by the routines at #R$6106 and #R$614B.
+@label=PlaySound
 c$60FB LD A,($5E47)  ; #REGa=#R$5E47.
- $60FE XOR $10       ;
+ $60FE XOR $10       ; Flip speaker on/ off (flip bit 4).
  $6100 LD ($5E47),A  ; Write #REGa back to #R$5E47.
- $6103 OUT ($FE),A   ;
+ $6103 OUT ($FE),A   ; Play sound.
  $6105 RET           ; Return.
 
 ; Routine at 6106
@@ -989,65 +1070,81 @@ c$6106 LD HL,$0000   ;
  $6118 JR NZ,$610C   ;
  $611A RET           ; Return.
 
-; Routine at 611B
+; Sounds: Cup/ Refuel
 ;
 ; Used by the routine at #R$6A9B.
+@label=SoundsCupRefuel
 c$611B LD A,($5E29)  ; #REGa=#R$5E29.
- $611E AND $01       ;
- $6120 RET NZ        ;
+ $611E AND %00000001 ; Keep only bit 0.
+ $6120 RET NZ        ; Return every other frame.
  $6121 LD HL,$5E46   ; #REGhl=#R$5E46.
- $6124 LD A,(HL)     ;
- $6125 BIT 7,A       ;
- $6127 JR NZ,$613E   ;
- $6129 AND A         ;
- $612A RET Z         ;
- $612B DEC A         ;
- $612C LD (HL),A     ;
- $612D RET Z         ;
-*$612E RLCA          ;
- $612F RLCA          ;
- $6130 AND $1C       ;
- $6132 OR $20        ;
- $6134 LD D,A        ;
+ $6124 LD A,(HL)     ; #REGa=item ID.
+ $6125 BIT 7,A       ; {Jump to #R$613E if bit 7 is not set.
+ $6127 JR NZ,$613E   ; }
+ $6129 AND A         ; {Return if item ID is zero.
+ $612A RET Z         ; }
+ $612B DEC A         ; Decrease #REGa/ item ID by one.
+ $612C LD (HL),A     ; Store #REGa at #R$5E46.
+ $612D RET Z         ; Return if the new item ID is zero.
+@label=SoundsRefuel
+*$612E RLCA          ; {#REGa=#REGa * #N$04.
+ $612F RLCA          ; }
+ $6130 AND %00011100 ; Keep only bits 2-4.
+ $6132 OR %00100000  ; Set bit 5.
+ $6134 LD D,A        ; Store the result in #REGd.
  $6135 LD C,$20      ; #REGc=#N$20.
+@label=SoundsCupRefuel_Loop
 *$6137 CALL $614B    ; Call #R$614B.
- $613A DEC C         ;
- $613B JR NZ,$6137   ;
+ $613A DEC C         ; Decrease #REGc by one.
+ $613B JR NZ,$6137   ; Jump back to #R$6137 until #REGc is zero.
  $613D RET           ; Return.
+@label=SoundsCup
 *$613E AND %01111111 ; Keep only bits 0-6.
- $6140 RET Z         ;
- $6141 DEC A         ;
- $6142 OR $80        ;
- $6144 LD (HL),A     ;
+ $6140 RET Z         ; Return if #REGa is now zero.
+ $6141 DEC A         ; Decrease #REGa by one.
+ $6142 OR %10000000  ; Set bit 7.
+ $6144 LD (HL),A     ; Store #REGa at #R$5E46.
  $6145 AND %01111111 ; Keep only bits 0-6.
- $6147 RET Z         ;
- $6148 CPL           ;
+ $6147 RET Z         ; Return if #REGa is now zero.
+ $6148 CPL           ; Flip the bits.
  $6149 JR $612E      ; Jump to #R$612E.
-; This entry point is used by the routines at #R$60E2 and #R$6158.
-*$614B CALL $60FB    ; Call #R$60FB.
- $614E LD B,D        ;
-*$614F DJNZ $614F    ;
+
+; Play square wave sound
+;
+; Used by the routines at #R$60E3, #R$611B and #R$6158.
+;
+; D Duration of wave
+@label=PlaySquareWave
+c$614B CALL $60FB    ; Call #R$60FB.
+ $614E LD B,D        ; #REGb=#REGd.
+@label=PlaySquareWave_Loop_1
+*$614F DJNZ $614F    ; Decrease counter by one and loop back to #R$614F until
+                     ; counter is zero.
  $6151 CALL $60FB    ; Call #R$60FB.
- $6154 LD B,D        ;
-*$6155 DJNZ $6155    ;
+ $6154 LD B,D        ; #REGb=#REGd.
+@label=PlaySquareWave_Loop_2
+*$6155 DJNZ $6155    ; Decrease counter by one and loop back to #R$6155 until
+                     ; counter is zero.
  $6157 RET           ; Return.
 
-; Routine at 6158
+; Sounds: Engine
 ;
 ; Used by the routine at #R$6A73.
+@label=SoundsEngine
 c$6158 LD A,($5E0D)  ; #REGa=#R$5E0D.
- $615B AND A         ;
- $615C RET Z         ;
- $615D RRCA          ;
- $615E RRCA          ;
- $615F CPL           ;
+ $615B AND A         ; {Return if #R$5E0D is zero.
+ $615C RET Z         ; }
+ $615D RRCA          ; {#REGa=#R$5E0D / #N$04.
+ $615E RRCA          ; }
+ $615F CPL           ; Flip the bits.
  $6160 AND %00111111 ; Keep only bits 0-5.
- $6162 LD D,A        ;
+ $6162 LD D,A        ; Store the result in #REGd.
  $6163 LD C,$04      ; #REGc=#N$04.
  $6165 LD A,($5E80)  ; {If #R$5E80 is #N$03 then jump to #R$616E.
  $6168 CP $03        ;
  $616A JR Z,$616E    ; }
  $616C LD B,$0C      ; #REGb=#N$0C.
+@label=SoundsEngine_Loop
 *$616E CALL $614B    ; Call #R$614B.
  $6171 DEC C         ; Decrease #REGc by one.
  $6172 JR NZ,$616E   ; If #REGc is not zero, jump to #R$616E.
@@ -1222,44 +1319,44 @@ c$61E0 LD A,($5E3E)  ; {If #R$5E3E indicates the control method is via the
 ; Routine at 61FE
 ;
 ; Used by the routine at #R$6212.
-c$61FE CALL $6253    ;
- $6201 LD A,$0C      ;
+c$61FE CALL $6253    ; Call #R$6253.
+ $6201 LD A,$0C      ; #REGa=#N$0C.
  $6203 SUB H         ;
  $6204 JR C,$624D    ;
- $6206 JR $622A      ;
+ $6206 JR $622A      ; Jump to #R$622A.
 ; This entry point is used by the routine at #R$6212.
-*$6208 CALL $6253    ;
- $620B LD A,$0E      ;
+*$6208 CALL $6253    ; Call #R$6253.
+ $620B LD A,$0E      ; #REGa=#N$0E.
  $620D SUB H         ;
  $620E JR C,$624D    ;
- $6210 JR $6245      ;
+ $6210 JR $6245      ; Jump to #R$6245.
 
 ; Routine at 6212
 ;
-; Used by the routine at #R$625C.
-c$6212 LD HL,($5E05) ;
+; Used by the routines at #R$625C and #R$62DA.
+c$6212 LD HL,($5E05) ; #REGhl=#R$5E05.
  $6215 SLA L         ;
  $6217 RL H          ;
  $6219 AND A         ;
  $621A SBC HL,BC     ;
  $621C JR NC,$61FE   ;
- $621E CALL $6BF6    ;
- $6221 CALL $6253    ;
- $6224 LD A,$0C      ;
+ $621E CALL $6BF6    ; Call #R$6BF6.
+ $6221 CALL $6253    ; Call #R$6253.
+ $6224 LD A,$0C      ; #REGa=#N$0C.
  $6226 CP H          ;
  $6227 JR C,$624D    ;
  $6229 ADD A,H       ;
 ; This entry point is used by the routine at #R$61FE.
 *$622A LD (IX+$02),A ;
- $622D LD HL,($5E08) ;
+ $622D LD HL,($5E08) ; #REGhl=#R$5E08.
  $6230 SLA L         ;
  $6232 RL H          ;
  $6234 AND A         ;
  $6235 SBC HL,DE     ;
  $6237 JR NC,$6208   ;
- $6239 CALL $6BF6    ;
- $623C CALL $6253    ;
- $623F LD A,$0E      ;
+ $6239 CALL $6BF6    ; Call #R$6BF6.
+ $623C CALL $6253    ; Call #R$6253.
+ $623F LD A,$0E      ; #REGa=#N$0E.
  $6241 CP H          ;
  $6242 JR C,$624D    ;
  $6244 ADD A,H       ;
@@ -1267,39 +1364,39 @@ c$6212 LD HL,($5E05) ;
 *$6245 NEG           ;
  $6247 ADD A,$1C     ;
 *$6249 LD (IX+$03),A ;
- $624C RET           ;
-; This entry point is used by the routines at #R$61FE and #R$625C.
+ $624C RET           ; Return.
+; This entry point is used by the routines at #R$61FE and #R$62DA.
 *$624D XOR A         ;
  $624E LD (IX+$02),A ;
- $6251 JR $6249      ;
-; This entry point is used by the routines at #R$61FE and #R$625C.
-*$6253 LD B,$02      ;
+ $6251 JR $6249      ; Jump to #R$6249.
+; This entry point is used by the routines at #R$61FE and #R$62DA.
+*$6253 LD B,$02      ; #REGb=#N$02.
 *$6255 RL L          ;
  $6257 RL H          ;
  $6259 DJNZ $6255    ;
- $625B RET           ;
+ $625B RET           ; Return.
 
 ; Routine at 625C
 ;
 ; Used by the routine at #R$6A9B.
-c$625C LD HL,$6513   ;
- $625F LD BC,$0202   ;
- $6262 CALL $6991    ;
- $6265 LD IX,$5E68   ;
- $6269 LD BC,($5E90) ;
- $626D LD DE,($5E92) ;
- $6271 CALL $6212    ;
- $6274 LD BC,$0004   ;
+c$625C LD HL,$6513   ; #REGhl=#R$6513.
+ $625F LD BC,$0202   ; #REGbc=#N($0202, $04, $04).
+ $6262 CALL $6991    ; Call #R$6991.
+ $6265 LD IX,$5E68   ; #REGix=#R$5E68.
+ $6269 LD BC,($5E90) ; #REGbc=#R$5E90.
+ $626D LD DE,($5E92) ; #REGde=#R$5E92.
+ $6271 CALL $6212    ; Call #R$6212.
+ $6274 LD BC,$0004   ; #REGbc=#N($0004, $04, $04).
  $6277 ADD IX,BC     ;
- $6279 LD BC,($5E9C) ;
- $627D LD DE,($5E9E) ;
- $6281 CALL $6212    ;
- $6284 LD BC,$0004   ;
+ $6279 LD BC,($5E9C) ; #REGbc=#R$5E9C.
+ $627D LD DE,($5E9E) ; #REGde=#R$5E9E.
+ $6281 CALL $6212    ; Call #R$6212.
+ $6284 LD BC,$0004   ; #REGbc=#N($0004, $04, $04).
  $6287 ADD IX,BC     ;
- $6289 CALL $62DA    ;
- $628C LD IX,$5E68   ;
- $6290 LD C,$03      ;
-*$6292 LD B,$02      ;
+ $6289 CALL $62DA    ; Call #R$62DA.
+ $628C LD IX,$5E68   ; #REGix=#R$5E68.
+ $6290 LD C,$03      ; #REGc=#N$03.
+*$6292 LD B,$02      ; #REGb=#N$02.
  $6294 LD L,(IX+$00) ;
  $6297 LD H,(IX+$01) ;
 *$629A LD A,L        ;
@@ -1312,67 +1409,84 @@ c$625C LD HL,$6513   ;
  $62A3 ADD A,$57     ;
  $62A5 LD H,A        ;
  $62A6 DEC B         ;
- $62A7 PUSH BC       ;
+ $62A7 PUSH BC       ; Stash #REGbc on the stack.
  $62A8 JR NZ,$62C6   ;
- $62AA LD BC,$0202   ;
- $62AD CALL $6991    ;
- $62B0 POP BC        ;
+ $62AA LD BC,$0202   ; #REGbc=#N($0202, $04, $04).
+ $62AD CALL $6991    ; Call #R$6991.
+ $62B0 POP BC        ; Restore #REGbc from the stack.
 *$62B1 LD A,(IX+$02) ;
  $62B4 LD (IX+$00),A ;
  $62B7 LD A,(IX+$03) ;
  $62BA LD (IX+$01),A ;
- $62BD LD DE,$0004   ;
+ $62BD LD DE,$0004   ; #REGde=#N($0004, $04, $04).
  $62C0 ADD IX,DE     ;
  $62C2 DEC C         ;
  $62C3 JR NZ,$6292   ;
- $62C5 RET           ;
-*$62C6 LD BC,$0202   ;
- $62C9 CALL $6998    ;
- $62CC POP BC        ;
+ $62C5 RET           ; Return.
+*$62C6 LD BC,$0202   ; #REGbc=#N($0202, $04, $04).
+ $62C9 CALL $6998    ; Call #R$6998.
+ $62CC POP BC        ; Stash #REGbc on the stack.
 *$62CD LD L,(IX+$02) ;
  $62D0 LD H,(IX+$03) ;
  $62D3 JR $629A      ;
 *$62D5 DEC B         ;
  $62D6 JR Z,$62B1    ;
- $62D8 JR $62CD      ;
-*$62DA LD HL,($5E05) ;
+ $62D8 JR $62CD      ; Jump to #R$62CD.
+
+; Collision: Cups
+;
+; Used by the routine at #R$625C.
+@label=CollisionCup
+c$62DA LD HL,($5E05) ; #REGhl=#R$5E05.
  $62DD SLA L         ;
  $62DF RL H          ;
- $62E1 CALL $6253    ;
+ $62E1 CALL $6253    ; Call #R$6253.
  $62E4 LD C,H        ;
- $62E5 LD HL,$721F   ;
- $62E8 LD B,$08      ;
-*$62EA LD E,(HL)     ;
- $62EB INC HL        ;
- $62EC LD D,(HL)     ;
- $62ED INC HL        ;
- $62EE INC DE        ;
- $62EF INC DE        ;
- $62F0 LD A,(DE)     ;
- $62F1 CP $20        ;
- $62F3 JR NZ,$6301   ;
- $62F5 DEC DE        ;
- $62F6 DEC DE        ;
- $62F7 LD A,(DE)     ;
+ $62E5 LD HL,$721F   ; #REGhl=pointer to #R$721F.
+ $62E8 LD B,$08      ; #REGb=#N$08 (set a counter for the #N$08 cups).
+; Fetch the address of the cup from #R$721F.
+@label=CollisionCup_Loop
+*$62EA LD E,(HL)     ; #REGe=LSB of the cup map address.
+ $62EB INC HL        ; Increment #REGhl by one.
+ $62EC LD D,(HL)     ; #REGd=MSB of the cup map address.
+ $62ED INC HL        ; Increment #REGhl by one, ready to process the next cup.
+; Check this is still a valid cup (that it hasn't been collected already).
+ $62EE INC DE        ; {Increment #REGde by two (point to the sprite ID).
+ $62EF INC DE        ; }
+ $62F0 LD A,(DE)     ; {If this is not a cup (the sprite ID is not #N$20), then
+ $62F1 CP $20        ; jump to #R$6301.
+ $62F3 JR NZ,$6301   ; }
+; This is still a valid cup, so process it.
+ $62F5 DEC DE        ; {Decrease #REGde by two (go back to the start of the map
+ $62F6 DEC DE        ; record).}
+ $62F7 LD A,(DE)     ; Fetch the cup X position.
  $62F8 SUB C         ;
- $62F9 JR NC,$62FD   ;
- $62FB NEG           ;
-*$62FD CP $0C        ;
- $62FF JR C,$6306    ;
-*$6301 DJNZ $62EA    ;
- $6303 JP $624D      ;
-*$6306 LD A,(DE)     ;
- $6307 INC DE        ;
- $6308 LD H,A        ;
- $6309 LD A,(DE)     ;
- $630A LD D,A        ;
- $630B CALL $6B30    ;
- $630E EX DE,HL      ;
- $630F CALL $6B2B    ;
- $6312 EX DE,HL      ;
- $6313 LD B,H        ;
- $6314 LD C,L        ;
+ $62F9 JR NC,$62FD   ; {Make sure we have a positive byte.
+ $62FB NEG           ; }
+@label=CollisionCup_Test_X
+*$62FD CP $0C        ; {If #N$0C is jump to #R$6306.
+ $62FF JR C,$6306    ; }
+@label=CollisionCup_Next
+*$6301 DJNZ $62EA    ; Decrease counter by one and loop back to #R$62EA until
+                     ; counter is zero.
+ $6303 JP $624D      ; Jump to #R$624D.
+@label=CollisionCup_Test_Y
+*$6306 LD A,(DE)     ; Fetch the cup X position.
+ $6307 INC DE        ; Increment #REGde by one.
+ $6308 LD H,A        ; #REGh=cup X position.
+ $6309 LD A,(DE)     ; Fetch the cup Y position.
+ $630A LD D,A        ; #REGd=cup Y position.
+ $630B CALL $6B30    ; Call #R$6B30.
+ $630E EX DE,HL      ; Swap the #REGde and #REGhl registers.
+ $630F CALL $6B2B    ; Call #R$6B2B.
+ $6312 EX DE,HL      ; Swap the #REGde and #REGhl registers.
+ $6313 LD B,H        ; #REGb=#REGh.
+ $6314 LD C,L        ; #REGc=#REGl.
  $6315 JP $6212      ; Jump to #R$6212.
+; View the equivalent code in;
+; #LIST
+; { #PSSST$63AA }
+; LIST#
 
 ; Routine at 6318
 c$6318 LD A,(IX+$0B)   ;
@@ -1405,12 +1519,15 @@ c$633C LD (IX+$0B),$22 ;
 ; Game Over
 ;
 ; Used by the routine at #R$6318.
+@label=GameOver
 c$6353 CALL $7139    ; Call #R$7139.
  $6356 CALL $617F    ; Call #R$617F.
- $6359 LD A,R        ;
+; Give a 50/50 chance of "Night Driver" mode.
+ $6359 LD A,R        ; #REGa=random number.
  $635B AND %00000001 ; Keep only bit 0.
- $635D JR Z,$6362    ;
+ $635D JR Z,$6362    ; If #REGa is zero jump to #R$6362.
  $635F CALL $6175    ; Call #R$6175.
+@label=GameOver_Skip
 *$6362 LD HL,$5E3D   ; #REGhl=#R$5E3D.
  $6365 DEC (HL)      ; Decrease #R$5E3D by one.
  $6366 JP P,$63A7    ;
@@ -1419,7 +1536,7 @@ c$6353 CALL $7139    ; Call #R$7139.
  $636C CALL $605B    ; Call #R$605B.
  $636F CALL $6175    ; Call #R$6175.
  $6372 CALL $68A0    ; Call #R$68A0.
- $6375 LD HL,$5878   ; #REGhl=#N($5878, $04, $04).
+ $6375 LD HL,$5878   ; #REGhl=#N($5878, $04, $04) (screen location).
  $6378 LD DE,$63DA   ; #REGde=#R$63DA.
  $637B CALL $5F97    ; Call #R$5F97.
  $637E LD B,$04      ; #REGb=#N$04.
@@ -1444,9 +1561,10 @@ c$6386 LD HL,$0000   ; #REGhl=#N($0000, $04, $04) (large counter).
                      ; counter is zero.
  $6390 RET           ; Return.
 
-; Routine at 6391
+; Initialise New Game
 ;
 ; Used by the routine at #R$5FEF.
+@label=GameInit
 c$6391 LD A,$03      ; {Write starting lives to #R$5E3D (duplicate of #R$5FF6 -
  $6393 LD ($5E3D),A  ; possibly so POKEs would appear to not work?)}
 ; This entry point is used by the routine at #R$63FF.
@@ -1456,18 +1574,20 @@ c$6391 LD A,$03      ; {Write starting lives to #R$5E3D (duplicate of #R$5FF6 -
 ; Reset miles and time.
  $639D LD HL,$5E2D   ; #REGhl=#R$5E2D.
  $63A0 LD B,$07      ; #REGb=#N$07 (counter).
+@label=GameInit_Reset
 *$63A2 LD (HL),$00   ; Write #N$00 to #REGhl.
  $63A4 INC HL        ; Increment #REGhl by one.
  $63A5 DJNZ $63A2    ; Decrease counter by one and loop back to #R$63A2 until
                      ; counter is zero.
 ; This entry point is used by the routine at #R$6353.
+@label=PlayerInit
 *$63A7 CALL $68A0    ; Call #R$68A0.
  $63AA CALL $653E    ; Call #R$653E.
  $63AD CALL $656E    ; Call #R$656E.
  $63B0 CALL $6BFE    ; Call #R$6BFE.
  $63B3 CALL $6A09    ; Call #R$6A09.
- $63B6 LD HL,$C000   ; {Write #N($C000, $04, $04) to #R$5E0A.
- $63B9 LD ($5E0A),HL ; }
+ $63B6 LD HL,$C000   ; {Write #N($C000, $04, $04) (the maximum value for fuel)
+ $63B9 LD ($5E0A),HL ; to #R$5E0A.}
  $63BC LD H,$00      ; {Write #N($0000, $04, $04) to; #LIST { #R$5E0C } {
  $63BE LD ($5E0C),HL ; #R$5E0E } { #R$5E10 } LIST#
  $63C1 LD ($5E0E),HL ;
@@ -1567,11 +1687,16 @@ c$645A INC A         ; Increment #REGa by one.
 ; Display Cups Collected
 ;
 ; Used by the routines at #R$63FF and #R$68A0.
+;
+; .
+;
+; Prints the cup sprite to the screen.
 @label=DisplayCupsCollected
-c$646C LD HL,$672E   ; #REGhl=#R$672D(#N$672E).
- $646F LD DE,$7F4A   ; #REGde=#R$7F4A.
+c$646C LD HL,$672E   ; #REGhl=#N$672E (screen location).
+ $646F LD DE,$7F4A   ; #REGde=#R$7F4A(SpriteCup).
  $6472 CALL $70DB    ; Call #R$70DB.
  $6475 CALL $714C    ; Call #R$714C.
+; Print the "cups collected" count to the screen.
  $6478 LD DE,$5E3C   ; #REGde=#R$5E3C.
  $647B LD HL,$48C6   ; #REGhl=#N$48C6.
  $647E LD B,$01      ; #REGb=#N$01.
@@ -1769,10 +1894,10 @@ c$6518 PUSH HL       ; Stash #REGhl on the stack.
 c$653E LD DE,($5E08) ; #REGde=#R$5E08.
  $6542 SLA E         ;
  $6544 RL D          ;
- $6546 LD A,$47      ;
+ $6546 LD A,$47      ; #REGa=#N$47.
  $6548 SUB D         ;
  $6549 LD D,A        ;
- $654A LD HL,($5E05) ; #REGde=#R$5E05.
+ $654A LD HL,($5E05) ; #REGhl=#R$5E05.
  $654D SLA L         ;
  $654F RL H          ;
  $6551 LD A,H        ;
@@ -1784,30 +1909,30 @@ c$653E LD DE,($5E08) ; #REGde=#R$5E08.
 ; Routine at 6557
 ;
 ; Used by the routines at #R$6318 and #R$6A9B.
-c$6557 CALL $653E    ;
- $655A PUSH HL       ;
- $655B LD DE,($5E36) ;
- $655F AND A         ;
- $6560 SBC HL,DE     ;
- $6562 POP HL        ;
- $6563 JR Z,$657A    ;
- $6565 PUSH HL       ;
- $6566 LD HL,($5E36) ;
- $6569 LD A,($5E38)  ;
- $656C LD (HL),A     ;
- $656D POP HL        ;
+c$6557 CALL $653E    ; Call #R$653E.
+ $655A PUSH HL       ; Stash #REGhl on the stack.
+ $655B LD DE,($5E36) ; #REGde=#R$5E36.
+ $655F AND A         ; Reset the carry flag.
+ $6560 SBC HL,DE     ; #REGhl=#REGhl - #REGde.
+ $6562 POP HL        ; Restore #REGhl from the stack.
+ $6563 JR Z,$657A    ; Jump to #R$657A if the result was zero.
+ $6565 PUSH HL       ; Stash #REGhl on the stack.
+ $6566 LD HL,($5E36) ; #REGhl=#R$5E36.
+ $6569 LD A,($5E38)  ; #REGa=#R$5E38.
+ $656C LD (HL),A     ; Store #REGa at #REGhl.
+ $656D POP HL        ; Restore #REGhl from the stack.
 ; This entry point is used by the routine at #R$6391.
-*$656E PUSH HL       ;
- $656F CALL $6F10    ;
- $6572 LD ($5E36),HL ;
- $6575 LD A,(HL)     ;
- $6576 LD ($5E38),A  ;
- $6579 POP HL        ;
-*$657A LD BC,$0101   ;
- $657D LD A,($5E29)  ;
- $6580 AND $08       ;
- $6582 JP NZ,$6998   ;
- $6585 JP $6991      ;
+*$656E PUSH HL       ; Stash #REGhl on the stack.
+ $656F CALL $6F10    ; Call #R$6F10.
+ $6572 LD ($5E36),HL ; Store #REGhl at #R$5E36.
+ $6575 LD A,(HL)     ; #REGa=the byte #REGhl is pointing at.
+ $6576 LD ($5E38),A  ; Store #REGa at #R$5E38.
+ $6579 POP HL        ; Restore #REGhl from the stack.
+*$657A LD BC,$0101   ; #REGbc=#N($0101, $04, $04).
+ $657D LD A,($5E29)  ; #REGa=#R$5E29.
+ $6580 AND %00001000 ; Keep only bit 3.
+ $6582 JP NZ,$6998   ; If the result is not zero, jump to #R$6998.
+ $6585 JP $6991      ; Jump to #R$6991.
 
 ; Routine at 6588
 ;
@@ -1880,19 +2005,46 @@ c$65B1 LD BC,$0202    ; #REGbc=#N$0202.
 *$65F8 LD A,($5E44)   ; #REGa=#R$5E44.
  $65FB JR $65F1       ; Jump to #R$65F1.
 
-; Data block at 65FD
-b$65FD DEFB $00,$E0,$10,$A0,$20,$20,$30,$FF
- $6605 DEFB $40,$60,$60,$E0,$70,$10,$80,$70
- $660D DEFB $90,$B0,$A0,$20,$B0,$FF,$C0,$60
- $6615 DEFB $D0,$E0,$E0,$00,$F0,$40,$F0,$B0
-*$661D DEFB $EB,$A7,$ED,$52,$30,$36,$21,$00
- $6625 DEFB $00,$18,$31,$EB,$A7,$ED,$52,$30
- $662D DEFB $53,$21,$00,$00,$18,$4E
+; Terrain Dots
+@label=TerrainDots
+b$65FD DEFB $00,$E0  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $65FF DEFB $10,$A0  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6601 DEFB $20,$20  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6603 DEFB $30,$FF  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6605 DEFB $40,$60  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6607 DEFB $60,$E0  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6609 DEFB $70,$10  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $660B DEFB $80,$70  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $660D DEFB $90,$B0  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $660F DEFB $A0,$20  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6611 DEFB $B0,$FF  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6613 DEFB $C0,$60  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6615 DEFB $D0,$E0  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6617 DEFB $E0,$00  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $6619 DEFB $F0,$40  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+ $661B DEFB $F0,$B0  ; Entity #N($01 + (#PC - $65FD) / $02) X/ Y co-ordinates.
+
+; Routine at 661D
+;
+; Used by the routine at #R$6633.
+c$661D EX DE,HL      ;
+ $661E AND A         ;
+ $661F SBC HL,DE     ;
+ $6621 JR NC,$6659   ;
+ $6623 LD HL,$0000   ;
+ $6626 JR $6659      ;
+; This entry point is used by the routine at #R$6633.
+*$6628 EX DE,HL      ;
+ $6629 AND A         ;
+ $662A SBC HL,DE     ;
+ $662C JR NC,$6681   ;
+ $662E LD HL,$0000   ;
+ $6631 JR $6681      ;
 
 ; Routine at 6633
 c$6633 LD A,(IX+$0B)   ;
  $6636 LD (IX+$00),A   ;
- $6639 CALL $71ED      ;
+ $6639 CALL $71ED      ; Call #R$71ED.
  $663C LD D,(IX+$05)   ;
  $663F LD E,(IX+$04)   ;
  $6642 LD A,(IX+$08)   ;
@@ -1900,13 +2052,14 @@ c$6633 LD A,(IX+$0B)   ;
  $6649 JR NZ,$664C     ;
  $664B RRA             ;
 *$664C RRA             ;
- $664D AND $0F         ;
- $664F LD L,A          ;
- $6650 LD H,$00        ;
+ $664D AND %00001111   ; Keep only bits 0-3.
+ $664F LD L,A          ; {Create an offset in #REGhl.
+ $6650 LD H,$00        ; }
  $6652 BIT 7,(IX+$08)  ;
  $6656 JR NZ,$661D     ;
  $6658 ADD HL,DE       ;
- $6659 LD (IX+$05),H   ;
+; This entry point is used by the routine at #R$661D.
+*$6659 LD (IX+$05),H   ;
  $665C LD (IX+$04),L   ;
  $665F SRL H           ;
  $6661 RR L            ;
@@ -1918,33 +2071,34 @@ c$6633 LD A,(IX+$0B)   ;
  $6671 JR NZ,$6674     ;
  $6673 RRA             ;
 *$6674 RRA             ;
- $6675 AND $0F         ;
- $6677 LD L,A          ;
- $6678 LD H,$00        ;
+ $6675 AND %00001111   ; Keep only bits 0-3.
+ $6677 LD L,A          ; {Create an offset in #REGhl.
+ $6678 LD H,$00        ; }
  $667A BIT 7,(IX+$09)  ;
  $667E JR NZ,$6628     ;
  $6680 ADD HL,DE       ;
- $6681 LD (IX+$07),H   ;
+; This entry point is used by the routine at #R$661D.
+*$6681 LD (IX+$07),H   ;
  $6684 LD (IX+$06),L   ;
  $6687 SRL H           ;
  $6689 RR L            ;
- $668B LD DE,($5E08)   ;
+ $668B LD DE,($5E08)   ; #REGde=#R$5E08.
  $668F XOR A           ;
  $6690 EX AF,AF'       ;
  $6691 SBC HL,DE       ;
  $6693 JR NC,$669C     ;
- $6695 CALL $6BF6      ;
+ $6695 CALL $6BF6      ; Call #R$6BF6.
  $6698 EX AF,AF'       ;
  $6699 LD A,$01        ;
  $669B EX AF,AF'       ;
 *$669C EX (SP),HL      ;
- $669D LD DE,($5E05)   ;
+ $669D LD DE,($5E05)   ; #REGde=#R$5E05.
  $66A1 AND A           ;
  $66A2 SBC HL,DE       ;
  $66A4 JR NC,$66AD     ;
- $66A6 CALL $6BF6      ;
+ $66A6 CALL $6BF6      ; Call #R$6BF6.
  $66A9 EX AF,AF'       ;
- $66AA OR $02          ;
+ $66AA OR %00000010    ; Set bit 1.
  $66AC EX AF,AF'       ;
 *$66AD POP DE          ;
  $66AE EX AF,AF'       ;
@@ -1995,7 +2149,7 @@ c$6633 LD A,(IX+$0B)   ;
  $66FB OR B            ;
  $66FC LD E,A          ;
  $66FD LD D,$00        ;
- $66FF LD HL,$683B     ;
+ $66FF LD HL,$683B     ; #REGhl=#R$683B.
  $6702 ADD HL,DE       ;
  $6703 LD A,(HL)       ;
  $6704 CP $FF          ;
@@ -2013,12 +2167,12 @@ c$6633 LD A,(IX+$0B)   ;
  $6717 LD (IX+$0B),A   ;
  $671A LD (IX+$00),A   ;
 *$671D LD C,(IX+$03)   ;
- $6720 LD A,($5E43)    ;
+ $6720 LD A,($5E43)    ; #REGa=#R$5E43.
  $6723 PUSH BC         ;
  $6724 LD B,$00        ;
  $6726 ADD A,C         ;
  $6727 LD C,A          ;
- $6728 LD HL,$6837     ;
+ $6728 LD HL,$6837     ; #REGhl=#R$6837.
  $672B ADD HL,BC       ;
  $672C LD A,(HL)       ;
  $672D LD (IX+$03),A   ;
@@ -2112,8 +2266,8 @@ c$6633 LD A,(IX+$0B)   ;
  $67FA LD A,(IX+$08)   ;
  $67FD XOR $80         ;
  $67FF LD (IX+$08),A   ;
- $6802 CALL $6106      ;
- $6805 JR $681A        ;
+ $6802 CALL $6106      ; Call #R$6106.
+ $6805 JR $681A        ; Jump to #R$681A.
 *$6807 INC HL          ;
 *$6808 INC HL          ;
 *$6809 INC HL          ;
@@ -2141,15 +2295,15 @@ c$6826 RET NC        ;
  $6834 JP $703E      ;
 
 ; Data block at 6837
-b$6837 DEFB $71,$44,$70,$43,$FF,$04,$04,$04
- $683F DEFB $04,$04,$04,$04,$00,$02,$03,$03
- $6847 DEFB $03,$03,$04,$04,$00,$01,$02,$02
- $684F DEFB $03,$03,$03,$03,$00,$01,$01,$02
- $6857 DEFB $02,$03,$03,$03,$00,$01,$01,$02
- $685F DEFB $02,$02,$02,$03,$00,$01,$01,$01
- $6867 DEFB $02,$02,$02,$02,$00,$00,$01,$01
- $686F DEFB $01,$02,$02,$02,$00,$00,$01,$01
- $6877 DEFB $01,$02,$02,$02
+b$6837 DEFB $71,$44,$70,$43
+ $683B DEFB $FF,$04,$04,$04,$04,$04,$04,$04
+ $6843 DEFB $00,$02,$03,$03,$03,$03,$04,$04
+ $684B DEFB $00,$01,$02,$02,$03,$03,$03,$03
+ $6853 DEFB $00,$01,$01,$02,$02,$03,$03,$03
+ $685B DEFB $00,$01,$01,$02,$02,$02,$02,$03
+ $6863 DEFB $00,$01,$01,$01,$02,$02,$02,$02
+ $686B DEFB $00,$00,$01,$01,$01,$02,$02,$02
+ $6873 DEFB $00,$00,$01,$01,$01,$02,$02,$02
 
 ; Display Lives
 ;
@@ -2202,11 +2356,13 @@ c$68A0 LD HL,$5E68   ; {Write #N$00 to #N$0C bytes starting from #R$5E68.
  $68AA LD HL,$FFFF   ; {Write #N$FFFF to #R$5E34.
  $68AD LD ($5E34),HL ; }
  $68B0 LD HL,$65FD   ; #REGhl=#R$65FD.
- $68B3 LD B,$10      ;
-*$68B5 RES 0,(HL)    ;
- $68B7 INC HL        ;
- $68B8 INC HL        ;
- $68B9 DJNZ $68B5    ;
+ $68B3 LD B,$10      ; #REGb=#N$10.
+@label=CreateWindow_Terrain
+*$68B5 RES 0,(HL)    ; Reset bit 0 of the byte #REGhl is pointing to.
+ $68B7 INC HL        ; {Increment #REGhl by two.
+ $68B8 INC HL        ; }
+ $68B9 DJNZ $68B5    ; Decrease counter by one and loop back to #R$68B5 until
+                     ; counter is zero.
  $68BB CALL $7200    ; Call #R$7200.
  $68BE CALL $69BC    ; Call #R$69BC.
  $68C1 CALL $6949    ; Call #R$6949.
@@ -2334,48 +2490,53 @@ c$6949 LD BC,$7811   ; #REGbc=#R$7811.
  $697D JR NZ,$694C   ;
  $697F RET           ; Return.
 
-; Routine at 6980
+; Handler: Terrain Dots
 ;
 ; Used by the routine at #R$65B1.
-c$6980 RES 0,(IX+$00) ;
- $6984 LD HL,($5E34)  ;
- $6987 LD A,L         ;
- $6988 SUB (IX+$00)   ;
- $698B LD L,A         ;
- $698C LD A,H         ;
- $698D SUB (IX+$01)   ;
- $6990 LD H,A         ;
-; This entry point is used by the routines at #R$625C and #R$6557.
-*$6991 LD A,$86       ;
- $6993 LD ($69A7),A   ;
- $6996 JR $699D       ;
-
-; Routine at 6998
 ;
-; Used by the routines at #R$625C, #R$6557, #R$65B1 and #R$6949.
-c$6998 LD A,$C6      ; {Write #N$C6 to #R$69A6(#N$69A7).
- $699A LD ($69A7),A  ; }
-; This entry point is used by the routine at #R$6980.
-*$699D PUSH BC       ; {Stash #REGbc and #REGhl on the stack.
- $699E PUSH HL       ; }
- $699F LD A,L        ;
- $69A0 CPL           ;
- $69A1 RLCA          ;
- $69A2 RLCA          ;
- $69A3 RLCA          ;
- $69A4 AND %00111000 ; Keep only bits 3-5.
- $69A6 OR %11000110  ; Set bits 1-2, 6-7.
- $69A8 LD ($69AF),A  ;
- $69AB CALL $6F10    ; Call #R$6F10.
-*$69AE SET 0,(HL)    ;
- $69B0 CALL $6ECB    ; Call #R$6ECB.
- $69B3 DJNZ $69AE    ;
- $69B5 POP HL        ; {Restore #REGhl and #REGbc from the stack.
- $69B6 POP BC        ; }
- $69B7 INC L         ;
- $69B8 DEC C         ; {Decrease counter by one and loop back to #R$699D until
- $69B9 JR NZ,$699D   ; counter is zero.}
- $69BB RET           ; Return.
+; IX One of the #N$10 #R$65FD entities
+@label=HandlerTerrainDots
+c$6980 RES 0,(IX+$00) ; Reset bit 0 of the given Terrain Dot entity.
+ $6984 LD HL,($5E34)  ; #REGhl=#R$5E34.
+ $6987 LD A,L         ; {#REGl=player Y - terrain dot Y.
+ $6988 SUB (IX+$00)   ;
+ $698B LD L,A         ; }
+ $698C LD A,H         ; {#REGh=player X - terrain dot X.
+ $698D SUB (IX+$01)   ;
+ $6990 LD H,A         ; }
+; This entry point is used by the routines at #R$625C and #R$6557.
+*$6991 LD A,$86       ; {Write #N$86 to #R$69A6(#N$69A7).
+ $6993 LD ($69A7),A   ; }
+ $6996 JR $699D       ; Jump to #R$699D.
+*$6998 LD A,$C6       ; {Write #N$C6 to #R$69A6(#N$69A7).
+ $699A LD ($69A7),A   ; }
+*$699D PUSH BC        ; {Stash #REGbc and #REGhl on the stack.
+ $699E PUSH HL        ; }
+ $699F LD A,L         ; #REGa=#REGl.
+ $69A0 CPL            ; Flip the bits.
+ $69A1 RLCA           ; {#REGa=#REGa * #N$08.
+ $69A2 RLCA           ;
+ $69A3 RLCA           ; }
+ $69A4 AND %00111000  ; Keep only bits 3-5.
+; #TABLE(default,centre,centre)
+; { =h,c3 Self modifying code }
+; { =h Altered From | =h Bytes | =h bits |  }
+; { #R$6991 | #N$86 | #EVAL($86, $02) }
+; { #R$6998 | #N$C6 | #EVAL($C6, $02) }
+; TABLE#
+ $69A6 OR %11000110   ; Set bits 1-2, 6-7.
+ $69A8 LD ($69AF),A   ; Store #REGa at #R$69AE(#N$69AF).
+ $69AB CALL $6F10     ; Call #R$6F10.
+*$69AE SET 0,(HL)     ; Set bit 0 of #REGhl.
+ $69B0 CALL $6ECB     ; Call #R$6ECB.
+ $69B3 DJNZ $69AE     ; Decrease counter by one and loop back to #R$69AE until
+                      ; counter is zero.
+ $69B5 POP HL         ; {Restore #REGhl and #REGbc from the stack.
+ $69B6 POP BC         ; }
+ $69B7 INC L          ; Increment #REGl by one.
+ $69B8 DEC C          ; {Decrease counter by one and loop back to #R$699D until
+ $69B9 JR NZ,$699D    ; counter is zero.}
+ $69BB RET            ; Return.
 
 ; Draw PlayArea
 ;
@@ -2577,29 +2738,25 @@ c$6A9B PUSH IX                        ; Stash #REGix on the stack.
 ; Used by the routine at #R$6A9B.
 c$6AF5 LD HL,$5E50   ; #REGhl=#R$5E50.
  $6AF8 LD B,$07      ; #REGb=#N$07.
-; This entry point is used by the routine at #R$6B02.
 *$6AFA BIT 7,(HL)    ;
  $6AFC JR Z,$6B12    ;
  $6AFE RES 7,(HL)    ;
  $6B00 JR $6B0C      ; Jump to #R$6B0C.
-
-; Routine at 6B02
-;
-; Used by the routine at #R$6B12.
-c$6B02 PUSH HL       ;
- $6B03 LD HL,$0118   ; #REGhl=#N($0118, $04, $04).
-*$6B06 DEC HL        ;
- $6B07 LD A,H        ;
- $6B08 OR L          ;
- $6B09 JR NZ,$6B06   ;
- $6B0B POP HL        ;
-; This entry point is used by the routine at #R$6AF5.
-*$6B0C INC HL        ;
- $6B0D INC HL        ;
 ; This entry point is used by the routine at #R$6B12.
-*$6B0E INC HL        ;
- $6B0F DJNZ $6AFA    ;
- $6B11 RET           ;
+*$6B02 PUSH HL       ; Stash #REGbc on the stack.
+ $6B03 LD HL,$0118   ; #REGhl=#N($0118, $04, $04).
+*$6B06 DEC HL        ; Decrease #REGhl by one.
+ $6B07 LD A,H        ; {If #REGhl is not zero, jump to #R$6B06.
+ $6B08 OR L          ;
+ $6B09 JR NZ,$6B06   ; }
+ $6B0B POP HL        ; Restore #REGhl from the stack.
+*$6B0C INC HL        ; {Increment #REGhl by two.
+ $6B0D INC HL        ; }
+; This entry point is used by the routine at #R$6B12.
+*$6B0E INC HL        ; Increment #REGhl by one.
+ $6B0F DJNZ $6AFA    ; Decrease counter by one and loop back to #R$6AFA until
+                     ; counter is zero.
+ $6B11 RET           ; Return.
 
 ; Routine at 6B12
 ;
@@ -2627,11 +2784,11 @@ c$6B12 LD A,(HL)     ; {If the byte held at #REGhl is zero, jump to #R$6B02.
 
 ; Routine at 6B2B
 ;
-; Used by the routine at #R$625C.
+; Used by the routine at #R$62DA.
 c$6B2B PUSH BC       ; Stash #REGbc on the stack.
  $6B2C LD B,$02      ; #REGb=#N$02.
  $6B2E JR $6B33      ; Jump to #R$6B33.
-; This entry point is used by the routines at #R$625C, #R$6B47, #R$6BFE and
+; This entry point is used by the routines at #R$62DA, #R$6B47, #R$6BFE and
 ; #R$6C2D.
 *$6B30 PUSH BC       ; Stash #REGbc on the stack.
  $6B31 LD B,$03      ; #REGb=#N$03.
@@ -2653,15 +2810,16 @@ c$6B2B PUSH BC       ; Stash #REGbc on the stack.
 c$6B42 LD HL,$6BE6   ; #REGhl=#R$6BE6.
  $6B45 JR $6B7F      ; Jump to #R$6B7F.
 
-; Routine at 6B47
+; Draw Objects
 ;
 ; Used by the routine at #R$6A9B.
+@label=DrawObjects
 c$6B47 LD BC,($5E19)                        ; #REGbc=#R$5E19.
 *$6B4B XOR A                                ; #REGa=#N$00.
  $6B4C EX AF,AF'                            ;
- $6B4D LD A,(BC)                            ;
- $6B4E INC BC                               ;
- $6B4F LD D,A                               ;
+ $6B4D LD A,(BC)                            ; #REGa'=object X position.
+ $6B4E INC BC                               ; Increment #REGbc by one.
+ $6B4F LD D,A                               ; #REGd=#REGa'.
  $6B50 CALL $6B30                           ; Call #R$6B30.
  $6B53 LD HL,($5E05)                        ; #REGhl=#R$5E05.
  $6B56 AND A                                ;
@@ -2787,33 +2945,33 @@ c$6BFE LD BC,$7811   ; #REGbc=#R$7811.
 ; Routine at 6C2D
 ;
 ; Used by the routine at #R$6D12.
-c$6C2D XOR A         ;
- $6C2E LD ($5E1B),A  ;
- $6C31 LD BC,($5E19) ;
-*$6C35 DEC BC        ;
+c$6C2D XOR A         ; {Write #N$00 to #R$5E1B.
+ $6C2E LD ($5E1B),A  ; }
+ $6C31 LD BC,($5E19) ; #REGbc=#R$5E19.
+*$6C35 DEC BC        ; {Decrease #REGbc by three.
  $6C36 DEC BC        ;
- $6C37 DEC BC        ;
- $6C38 LD A,(BC)     ;
- $6C39 LD D,A        ;
- $6C3A CALL $6B30    ;
- $6C3D CALL $6C82    ;
+ $6C37 DEC BC        ; }
+ $6C38 LD A,(BC)     ; {#REGd=#REGbc.
+ $6C39 LD D,A        ; }
+ $6C3A CALL $6B30    ; Call #R$6B30.
+ $6C3D CALL $6C82    ; Call #R$6C82.
  $6C40 JR NC,$6C49   ;
- $6C42 LD A,$01      ;
- $6C44 LD ($5E1B),A  ;
- $6C47 JR $6C35      ;
-*$6C49 LD A,($5E1B)  ;
+ $6C42 LD A,$01      ; {Write #N$01 to #R$5E1B.
+ $6C44 LD ($5E1B),A  ; }
+ $6C47 JR $6C35      ; Jump to #R$6C35.
+*$6C49 LD A,($5E1B)  ; {Jump to #R$6C57 if #R$5E1B is zero.
  $6C4C AND A         ;
- $6C4D JR Z,$6C57    ;
+ $6C4D JR Z,$6C57    ; }
  $6C4F INC BC        ;
  $6C50 INC BC        ;
  $6C51 INC BC        ;
 *$6C52 LD ($5E19),BC ;
- $6C56 RET           ;
-*$6C57 LD BC,($5E19) ;
- $6C5B LD A,(BC)     ;
- $6C5C LD D,A        ;
- $6C5D CALL $6B30    ;
- $6C60 CALL $6C82    ;
+ $6C56 RET           ; Return.
+*$6C57 LD BC,($5E19) ; #REGbc=#R$5E19.
+ $6C5B LD A,(BC)     ; {#REGd=#REGbc.
+ $6C5C LD D,A        ; }
+ $6C5D CALL $6B30    ; Call #R$6B30.
+ $6C60 CALL $6C82    ; Call #R$6C82.
  $6C63 RET C         ;
 *$6C64 LD ($5E1C),HL ;
 *$6C67 INC BC        ;
@@ -2821,14 +2979,14 @@ c$6C2D XOR A         ;
  $6C69 INC BC        ;
  $6C6A LD A,(BC)     ;
  $6C6B LD D,A        ;
- $6C6C CALL $6B30    ;
- $6C6F CALL $6C82    ;
+ $6C6C CALL $6B30    ; Call #R$6B30.
+ $6C6F CALL $6C82    ; Call #R$6C82.
  $6C72 JR C,$6C52    ;
- $6C74 PUSH HL       ;
- $6C75 LD DE,($5E1C) ;
+ $6C74 PUSH HL       ; Stash #REGhl on the stack.
+ $6C75 LD DE,($5E1C) ; #REGde=#R$5E1C.
  $6C79 AND A         ;
  $6C7A SBC HL,DE     ;
- $6C7C POP HL        ;
+ $6C7C POP HL        ; Restore #REGhl from the stack.
  $6C7D JR Z,$6C67    ;
  $6C7F JR C,$6C64    ;
  $6C81 RET           ; Return.
@@ -2984,7 +3142,7 @@ c$6CFD LD B,$02      ; #REGb=#N$02.
 ; Used by the routine at #R$6D12.
 c$6D07 LD A,($5E0D)  ; {#REGa=#R$5E0D + #N$04.
  $6D0A ADD A,$04     ; }
- $6D0C CP $C0        ; {If #REGa is less than #N$C0 jump to #R$6D76.
+ $6D0C CP $C0        ; {If #REGa is more than #N$C0 jump to #R$6D76.
  $6D0E JR NC,$6D76   ; }
  $6D10 JR $6D73      ; Else, jump to #R$6D73.
 
@@ -3046,20 +3204,21 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6D6E SUB $10       ;
  $6D70 JR NC,$6D73   ;
  $6D72 XOR A         ; #REGa=#N$00.
-; This entry point is used by the routine at #R$6D07.
+; Increase speed (see #R$6D07).
+@label=Accelerate
 *$6D73 LD ($5E0D),A  ; Write #REGa to #R$5E0D.
 ; This entry point is used by the routine at #R$6D07.
 *$6D76 LD A,($5E0D)  ; #REGa=#R$5E0D.
  $6D79 LD HL,$49E2   ; #REGhl=#N($49E2, $04, $04).
  $6D7C CALL $6EDE    ; Call #R$6EDE.
- $6D7F LD A,($5E11)  ;
- $6D82 INC A         ;
- $6D83 LD C,A        ;
- $6D84 LD A,($5E10)  ;
- $6D87 RRA           ;
+ $6D7F LD A,($5E11)  ; #REGa=#R$5E11.
+ $6D82 INC A         ; Increment #REGa by one.
+ $6D83 LD C,A        ; Store the result in #REGc.
+ $6D84 LD A,($5E10)  ; #REGa=#R$5E10.
+ $6D87 RRA           ; {Shift #REGa right three times.
  $6D88 RRA           ;
- $6D89 RRA           ;
- $6D8A AND $1F       ;
+ $6D89 RRA           ; }
+ $6D8A AND %00011111 ; Keep bits 0-4.
  $6D8C BIT 0,C       ;
  $6D8E JR NZ,$6D92   ;
  $6D90 XOR %00011111 ; Unset bits 0-4.
@@ -3074,8 +3233,8 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6DA0 PUSH DE       ; Stash #REGde on the stack.
  $6DA1 LD A,(HL)     ;
  $6DA2 CALL $6F2F    ; Call #R$6F2F.
- $6DA5 LD A,($5E09)  ;
- $6DA8 LD DE,($5E07) ;
+ $6DA5 LD A,($5E09)  ; #REGa=#R$5E09.
+ $6DA8 LD DE,($5E07) ; #REGde=#R$5E07.
  $6DAC CALL $6EC2    ;
  $6DAF BIT 1,C       ;
  $6DB1 JR NZ,$6DEF   ;
@@ -3165,50 +3324,66 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6E5E JP Z,$6E76    ;
  $6E61 BIT 0,A       ;
  $6E63 JP Z,$6E6C    ;
- $6E66 LD E,$00      ;
- $6E68 JR $6E7E      ;
- $6E6A LD E,$18      ;
-*$6E6C LD D,$00      ;
+ $6E66 LD E,$00      ; #REGe=#N$00.
+ $6E68 JR $6E7E      ; Jump to #R$6E7E.
+ $6E6A LD E,$18      ; #REGe=#N$18.
+*$6E6C LD D,$00      ; #REGd=#N$00.
  $6E6E ADD HL,DE     ;
  $6E6F LD ($5E10),HL ;
- $6E72 JR $6E7E      ;
- $6E74 LD E,$18      ;
-*$6E76 LD D,$00      ;
+ $6E72 JR $6E7E      ; Jump to #R$6E7E.
+ $6E74 LD E,$18      ; #REGe=#N$18.
+*$6E76 LD D,$00      ; #REGd=#N$00.
  $6E78 AND A         ;
  $6E79 SBC HL,DE     ;
  $6E7B LD ($5E10),HL ;
-*$6E7E LD A,($5E29)  ;
- $6E81 AND $03       ;
- $6E83 JR NZ,$6E9B   ;
- $6E85 LD A,($5E0D)  ;
+; Don't "use fuel" on every frame. This routine uses the last two bits of the #R$5E29(GameTimer) (i.e. a number
+;       between 0-3) to only process every fourth frame.
+@label=HandlerFuel
+*$6E7E LD A,($5E29)  ; #REGa=#R$5E29.
+ $6E81 AND %00000011 ; Keep only bits 0-1.
+ $6E83 JR NZ,$6E9B   ; If the result is not zero then jump to #R$6E9B.
+; Handles "using" fuel.
+ $6E85 LD A,($5E0D)  ; {#REGb=#N$00, #REGc=#R$5E0D.
  $6E88 LD C,A        ;
- $6E89 LD B,$00      ;
- $6E8B LD HL,($5E0A) ;
- $6E8E SBC HL,BC     ;
- $6E90 JR C,$6E95    ;
- $6E92 LD ($5E0A),HL ;
-*$6E95 CP $B0        ;
- $6E97 JR NC,$6EAF   ;
- $6E99 CP $60        ;
+ $6E89 LD B,$00      ; }
+ $6E8B LD HL,($5E0A) ; #REGhl=#R$5E0A.
+; A higher speed uses more fuel.
+ $6E8E SBC HL,BC     ; #REGhl=#REGhl (fuel) - #REGbc (speed).
+ $6E90 JR C,$6E95    ; If there's "carry" (i.e. if the player has run out of
+                     ; fuel) jump to #R$6E95.
+ $6E92 LD ($5E0A),HL ; Write #REGhl to #R$5E0A.
+@label=FuelSkipWrite
+*$6E95 CP $B0        ; {If the current speed is more than #N$B0 (top speed)
+ $6E97 JR NC,$6EAF   ; jump to #R$6EAF.}
+ $6E99 CP $60        ; Compare current speed with #N$60.
 ; Handle the temperature gauge.
+@label=HandlerTemperatureGauge
 *$6E9B LD A,($5E0C)  ; #REGa=#R$5E0C.
- $6E9E JR C,$6EBC    ;
-*$6EA0 LD HL,$5162   ; #REGhl=#N($5162, $04, $04).
+ $6E9E JR C,$6EBC    ; If there's carry set (this could be either from #R$6E99
+                     ; or #R$6E81) then jump to #R$6EBC.
+@label=DrawTemperatureGauge
+*$6EA0 LD HL,$5162   ; #REGhl=#N($5162, $04, $04) (screen location).
  $6EA3 CALL $6EDE    ; Call #R$6EDE.
 ; Handle the fuel gauge.
  $6EA6 LD A,($5E0B)  ; #REGa=#R$5E0B.
- $6EA9 LD HL,$5122   ; #REGhl=#N($5122, $04, $04).
+ $6EA9 LD HL,$5122   ; #REGhl=#N($5122, $04, $04) (screen location).
  $6EAC JP $6EDE      ; Jump to #R$6EDE.
-; Handle the temperature gauge.
+; Handle the temperature gauge at maximum speed.
+@label=TemperatureMaxSpeed
 *$6EAF LD A,($5E0C)  ; #REGa=#R$5E0C.
- $6EB2 CP $C0        ;
- $6EB4 JR NC,$6EA0   ;
- $6EB6 INC A         ;
-*$6EB7 LD ($5E0C),A  ;
+; Check if the temperature is already at the upper limit.
+ $6EB2 CP $C0        ; {If the current temperature is more than #N$C0 jump to
+ $6EB4 JR NC,$6EA0   ; #R$6EA0.}
+; Go ahead and increase the temperature...
+ $6EB6 INC A         ; Increment #REGa by one.
+@label=UpdateTemperature
+*$6EB7 LD ($5E0C),A  ; Write the updated #REGa (temperature) back to #R$5E0C.
  $6EBA JR $6EA0      ; Jump to #R$6EA0.
-*$6EBC AND A         ;
- $6EBD JR Z,$6EA0    ;
- $6EBF DEC A         ;
+; Handles dropping the temperature gauge.
+@label=TemperatureDrop
+*$6EBC AND A         ; {If the current temperature is at zero jump to #R$6EA0.
+ $6EBD JR Z,$6EA0    ; }
+ $6EBF DEC A         ; Decrease #REGa (temperature) by one.
  $6EC0 JR $6EB7      ; Jump to #R$6EB7.
 *$6EC2 LD B,$05      ; #REGb=#N$05.
 *$6EC4 SRL H         ;
@@ -3219,7 +3394,7 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
 
 ; Screen Address One Pixel Above
 ;
-; Used by the routines at #R$6998, #R$6A39 and #R$7170.
+; Used by the routines at #R$6980, #R$6A39 and #R$7170.
 ;
 ;   HL Current position
 ; O:HL Address for new position
@@ -3282,7 +3457,7 @@ c$6EDE SRL A                                ; {Shift #REGa right two times
 ; Calculate Screen Address
 ;
 ; Used by the routines at #R$5F97, #R$63FF, #R$6483, #R$64F0, #R$6518, #R$6557,
-; #R$6919, #R$6998, #R$70B2 and #R$70D2.
+; #R$6919, #R$6980, #R$70B2 and #R$70D2.
 @label=ScreenAddress
 c$6F10 LD A,L        ; #REGa=#REGl.
  $6F11 RRCA          ; {#REGa=#REGa / #N$08.
@@ -3939,15 +4114,18 @@ c$7218 LD (HL),C     ; Write #REGc to the target address.
 ; { #PSSST$7440 }
 ; LIST#
 
-; Data block at 721F
-w$721F DEFW $783B
- $7221 DEFW $78B6
- $7223 DEFW $796D
- $7225 DEFW $7A0F
- $7227 DEFW $7AC9
- $7229 DEFW $7B5C
- $722B DEFW $7C0D
- $722D DEFW $7CAC
+; Cup Table
+;
+; Links to the entry in #R$7811 for every cup.
+@label=CupTable
+w$721F DEFW $783B    ; Cup #N((#PC - $721F) / 2).
+ $7221 DEFW $78B6    ; Cup #N((#PC - $721F) / 2).
+ $7223 DEFW $796D    ; Cup #N((#PC - $721F) / 2).
+ $7225 DEFW $7A0F    ; Cup #N((#PC - $721F) / 2).
+ $7227 DEFW $7AC9    ; Cup #N((#PC - $721F) / 2).
+ $7229 DEFW $7B5C    ; Cup #N((#PC - $721F) / 2).
+ $722B DEFW $7C0D    ; Cup #N((#PC - $721F) / 2).
+ $722D DEFW $7CAC    ; Cup #N((#PC - $721F) / 2).
 
 ; Place Names
 @label=PlaceNames
