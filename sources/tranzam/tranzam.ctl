@@ -181,8 +181,8 @@ B $5E3D,$01
 g $5E3E Game Options
 D $5E3E #TABLE(default,centre,centre)
 . { =h Byte | =h Binary | =h Option }
-. { #N$00 | #EVAL($00, 2, 8) | Keyboard }
-. { #N$02 | #EVAL($02, 2, 8) | Joystick }
+. { #N$00 | #EVAL($00, $02, $08) | Keyboard }
+. { #N$02 | #EVAL($02, $02, $08) | Joystick }
 . TABLE#
 @ $5E3E label=GameOptions
 B $5E3E,$01
@@ -195,7 +195,9 @@ g $5E40
 g $5E41
 g $5E42
 
-g $5E43
+g $5E43 Flag: Day or Night
+D $5E43 #TABLE(default,centre,centre) { =h Byte | =h Flag } { #N$00 | Day } { #N$01 | Night } TABLE#
+@ $5E43 label=Flag_DayNight
 B $5E43,$01
 
 g $5E44 Background Attribute
@@ -261,6 +263,9 @@ B $5E52,$01 Y Position.
 L $5E50,$03,$08
 
 g $5E68
+B $5E68,$04
+L $5E68,$04,$03
+
 g $5E74
 
 g $5E80 Explosion Entity?
@@ -691,10 +696,10 @@ c $6158 Sounds: Engine
   $6172,$02 If #REGc is not zero, jump to #R$616E.
   $6174,$01 Return.
 
-c $6175 Set Default Playarea Attributes
-@ $6175 label=SetDefaultAttributes
+c $6175 Set Day Playarea Attributes
+@ $6175 label=SetDayAttributes
 E $6175 Continue on to #R$617B.
-  $6175,$04 Write #N$00 to #R$5E43.
+  $6175,$04 Write #N$00 (day) to #R$5E43.
   $6179,$02 #REGa=#N$70.
 
 c $617B Set Background Attribute
@@ -703,8 +708,9 @@ R $617B A Background attribute
   $617B,$03 Write #REGa to #R$5E44.
   $617E,$01 Return.
 
-c $617F
-  $617F,$05 Write #N$01 to #R$5E43.
+c $617F Set Night Playarea Attributes
+@ $617F label=SetNightAttributes
+  $617F,$05 Write #N$01 (night) to #R$5E43.
   $6184,$02 #REGa=#N$40.
   $6186,$02 Jump to #R$617B.
 
@@ -930,16 +936,24 @@ N $6359 Give a 50/50 chance of "Night Driver" mode.
   $6359,$02 #REGa=random number.
   $635B,$02,b$01 Keep only bit 0.
   $635D,$02 If #REGa is zero jump to #R$6362.
+N $635F Else set "day" time.
   $635F,$03 Call #R$6175.
+N $6362 See #LINK:Pokes#infinite_lives(Infinite Lives).
 @ $6362 label=GameOver_Skip
   $6362,$03 #REGhl=#R$5E3D.
   $6365,$01 Decrease #R$5E3D by one.
+  $6366,$03 If lives are still a positive number jump to #R$63A7.
+N $6369 Else, trigger the game over events.
+  $6369,$03 Write #N$00 to #R$5E3D.
+  $636B,$01 Restore #REGhl from the stack.
   $636C,$03 Call #R$605B.
   $636F,$03 Call #R$6175.
   $6372,$03 Call #R$68A0.
+N $6375 Print the "Game Over" messaging.
   $6375,$03 #REGhl=#N($5878, $04, $04) (screen location).
   $6378,$03 #REGde=#R$63DA.
   $637B,$03 Call #R$5F97.
+N $637E Display the text for a short time.
   $637E,$02 #REGb=#N$04.
   $6380,$03 Call #R$6386.
   $6383,$03 Jump to #R$5F1A.
@@ -1388,28 +1402,62 @@ N $6910 Calculates the new address for writing a sprite pixel, in an downwards d
 
 c $6919 Display Night Driver Text
 @ $6919 label=DisplayNightDriver
-  $6919,$05 Return if #R$5E43 is zero.
+  $6919,$05 Return if #R$5E43 is zero (i.e. it is "day").
+N $691E Else it is night so handle the interlude to display "Night Driver".
   $691E,$03 #REGhl=#N$4070 (screen location).
   $6921,$03 #REGde=#R$693C.
   $6924,$03 Call #R$6518.
+N $6927 Display the text for a short time.
   $6927,$02 #REGb=#N$04 (delay length).
   $6929,$03 Call #R$6386.
+N $692C Remove the messaging.
   $692C,$03 #REGhl=#N$4070 (screen location).
   $692F,$01 Stash #REGhl on the stack.
   $6930,$03 Call #R$6F10.
   $6933,$02 #REGa=#N$00.
   $6935,$01 Switch to the shadow #REGaf register.
-  $6936,$03 #REGde=#R$6AE4(#N$6AE5).
+  $6936,$03 #REGde=#R$6AE5.
   $6939,$03 Jump to #R$651F.
+N $693C Messging data.
 @ $693C label=NightDriver_Text
-T $693C,$0D,h$01,$0B:$01
+T $693C,$0D,h$01,$0B:$01 "NIGHT DRIVER" (#N(#PEEK(#PC)) is the attribute).
 
 c $6949 Plot Map Points
 @ $6949 label=PlotMapPoints
   $6949,$03 #REGbc=#R$7811.
-  $694C,$03 #REGhl=#N$4708.
+@ $694C label=PlotMapPoints_Loop
+  $694C,$03 #REGhl=#N$4708 (screen buffer location).
+N $694F Handle the X co-ordinate.
+  $694F,$01 #REGa=X co-ordinate of map point.
+  $6950,$01 Increment the map pointer in #REGbc by one.
+N $6951 Scale the X co-ordinate for the smaller map display output.
+  $6951,$04 #REGa=#REGa / #N$04.
+  $6955,$01 Store the result in #REGe.
+N $6956 Handle the Y co-ordinate.
+  $6956,$01 #REGa=Y co-ordinate of map point.
+  $6957,$01 Increment the map pointer in #REGbc by one.
+N $6958 Scale the Y co-ordinate for the smaller map display output.
+  $6958,$06 #REGa=#REGa / #N$08.
+  $695E,$01 Store the result in #REGd.
+N $695F Calculate the map screen address of our currently processed map point.
+  $695F,$03 #REGh=#REGh - #REGd.
+  $6962,$03 #REGl=#REGl + #REGe.
+N $6965 Handle the map point "type" - place names are excluded.
+  $6965,$01 #REGa=sprite ID of map point.
+  $6966,$01 Increment the map pointer in #REGbc by one. Now pointing to the next record.
+  $6967,$01 Stash #REGbc on the stack.
+  $6968,$03 #REGbc=#N($0101, $04, $04) (used in #R$6998).
+N $696B Skip place names - they don't show a marker on the map.
+  $696B,$04 If bit 6 is set then this is a place name so skip and jump to #R$6976.
+  $696F,$04 If #REGa is #N$60, jump to #R$6976.
   $6973,$03 Call #R$6998.
-  $6977,$03 #REGhl=#R$7CD6.
+N $6976 Check if finished. The stack contains the start of the next record, or the first byte past the end of the map points.
+@ $6976 label=PlotMapPoints_Continue
+  $6976,$01 Restore #REGbc from the stack.
+  $6977,$03 #REGhl=#R$7CD6 (one byte past the end of #R$7811).
+  $697A,$01 Reset the carry flag.
+  $697B,$02 #REGhl=#REGhl - #REGbc.
+  $697D,$02 If the result is not zero then jump to #R$694C.
   $697F,$01 Return.
 
 c $6980 Handler: Terrain Dots
@@ -1580,7 +1628,10 @@ N $6ACB Handles updating the dashboard values.
   $6ADB,$03 #REGhl=#N$B868.
   $6ADE,$03 #REGde=#R$6AE4.
   $6AE1,$03 Call #R$6518.
-T $6AE4,$11,h$01,$0F:$01
+N $6AE4 Spacing "text" used for overwriting messaging.
+@ $6AE4 label=Blank_Text_Attribute
+@ $6AE5 label=Blank_Text
+T $6AE4,$11,h$01,$0F:$01 Contains #N$0F spaces (#N(#PEEK(#PC)) is the attribute).
 
 c $6AF5
   $6AF5,$03 #REGhl=#R$5E50.
@@ -1677,7 +1728,7 @@ c $6BFE
   $6C0E,$01 #REGd=#REGa.
   $6C0F,$03 Call #R$6B30.
   $6C18,$02 Increment #REGbc twice (move onto the next record).
-  $6C1A,$03 #REGhl=#R$7CD6.
+  $6C1A,$03 #REGhl=#R$7CD6 (one byte past the end of #R$7811).
   $6C29,$01 Return.
   $6C22,$07 Write #R$7811 to #R$5E19.
   $6C2A,$01 Decrease #REGbc by one.
@@ -1736,7 +1787,7 @@ R $6C96 HL Screen address
 . #TABLE(default,centre,centre,centre,centre,centre)
 . { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
 . #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, 2, 3, 1, 1)()">#N({result})) }
+. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
 . )
 . TABLE#
 N $6CA5 Print the character to the screen.
@@ -2154,13 +2205,20 @@ c $70D2
   $70FC,$03 Set #R$5E23.
   $70FF,$02 Jump to #R$70CE.
 
-c $7101
+c $7101 Erase Actor Sprite
 @ $7101 label=ActorEraseMovedSprite
-  $7101,$07 #R$5E22.
+R $7101 IX Actor Entity
+  $7101,$07 Jump to #R$7149 if #R$5E22 is zero.
   $7108,$03 Call #R$70D2.
   $710C,$03 Call #R$70B2.
   $710F,$03 #REGa=#R$5E21.
+  $7112,$03 Subtract the actor Y position.
+  $7115,$03 Jump to #R$71D1 if the result is zero.
+  $7118,$03 Jump to #R$712A if the result is negative.
+  $711B,$01 Else store the result in #REGc.
   $711C,$03 #REGa=#R$5E25.
+  $711F,$05 Jump to #R$71D1 if #REGa < #REGc.
+  $7124,$03 Store the result at #R$5E25.
   $7127,$03 Jump to #R$7170.
   $712E,$03 #REGa=#R$5E26.
   $7136,$03 Jump to #R$71E4.
@@ -2289,7 +2347,7 @@ R $7218 C Value to write
 w $721F Cup Table
 D $721F Links to the entry in #R$7811 for every cup.
 @ $721F label=CupTable
-  $721F,$02 Cup #N((#PC - $721F) / 2).
+  $721F,$02 Cup #N($01 + (#PC - $721F) / $02).
 L $721F,$02,$08
 
 t $722F Place Names
@@ -2358,12 +2416,13 @@ b $7458 Sprite: Bush
   $7459,$1A,b$02 #SPRITE$02(bush)
 
 b $7473 Sprite: Explosion
-N $7473 Frame 1
+E $7473 #UDGARRAY*explosion-01,$05;explosion-02(explosion-frames)
+N $7473 Frame #N$01
   $7473,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7474,$20,b$02 #SPRITE$20(explosion-01)
-N $7494 Frame 2
+  $7474,$20,b$02 #SPRITE$20(explosion-01*)
+N $7494 Frame #N$02
   $7494,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7495,$1E,b$02 #SPRITE$21(explosion-02)
+  $7495,$1E,b$02 #SPRITE$21(explosion-02*)
 
 b $74B1 UDG Graphics
 @ $74B1 label=UDG_Tiles
@@ -2388,67 +2447,67 @@ L $7811,$03,$197
 
 b $7CD6 Sprite: Car
 E $7CD6 #UDGARRAY*car-01,10;car-02;car-03;car-04;car-05;car-06;car-07;car-08;car-09;car-0A;car-0B;car-0C;car-0D;car-0E;car-0F;car-10(car-ani)
-N $7CD6 Frame 1.
+N $7CD6 Frame #N$01.
   $7CD6,$01 Width = #N(#PEEK(#PC)) bytes.
   $7CD7,$22,b$02 #CAR$00(car-01*)
 
-N $7CF9 Frame 2.
+N $7CF9 Frame #N$02.
   $7CF9,$01 Height = #N(#PEEK(#PC)) pixels.
   $7CFA,$22,b$02 #CAR$01(car-02*)
 
-N $7D1C Frame 3.
+N $7D1C Frame #N$03.
   $7D1C,$01 Height = #N(#PEEK(#PC)) pixels.
   $7D1D,$22,b$02 #CAR$02(car-03*)
 
-N $7D3F Frame 4.
+N $7D3F Frame #N$04.
   $7D3F,$01 Height = #N(#PEEK(#PC)) pixels.
   $7D40,$22,b$02 #CAR$03(car-04*)
 
-N $7D62 Frame 5.
+N $7D62 Frame #N$05.
   $7D62,$01 Height = #N(#PEEK(#PC)) pixels.
   $7D63,$22,b$02 #CAR$04(car-05*)
 
-N $7D85 Frame 6.
+N $7D85 Frame #N$06.
   $7D85,$01 Height = #N(#PEEK(#PC)) pixels.
   $7D86,$22,b$02 #CAR$05(car-06*)
 
-N $7DA8 Frame 7.
+N $7DA8 Frame #N$07.
   $7DA8,$01 Height = #N(#PEEK(#PC)) pixels.
   $7DA9,$22,b$02 #CAR$06(car-07*)
 
-N $7DCB Frame 8.
+N $7DCB Frame #N$08.
   $7DCB,$01 Height = #N(#PEEK(#PC)) pixels.
   $7DCC,$22,b$02 #CAR$07(car-08*)
 
-N $7DEE Frame 9.
+N $7DEE Frame #N$09.
   $7DEE,$01 Height = #N(#PEEK(#PC)) pixels.
   $7DEF,$22,b$02 #CAR$08(car-09*)
 
-N $7E11 Frame 10.
+N $7E11 Frame #N$0A.
   $7E11,$01 Height = #N(#PEEK(#PC)) pixels.
   $7E12,$22,b$02 #CAR$09(car-0A*)
 
-N $7E34 Frame 11.
+N $7E34 Frame #N$0B.
   $7E34,$01 Height = #N(#PEEK(#PC)) pixels.
   $7E35,$22,b$02 #CAR$0A(car-0B*)
 
-N $7E57 Frame 12.
+N $7E57 Frame #N$0C.
   $7E57,$01 Height = #N(#PEEK(#PC)) pixels.
   $7E58,$22,b$02 #CAR$0B(car-0C*)
 
-N $7E7A Frame 13.
+N $7E7A Frame #N$0D.
   $7E7A,$01 Height = #N(#PEEK(#PC)) pixels.
   $7E7B,$22,b$02 #CAR$0C(car-0D*)
 
-N $7E9D Frame 14.
+N $7E9D Frame #N$0E.
   $7E9D,$01 Height = #N(#PEEK(#PC)) pixels.
   $7E9E,$22,b$02 #CAR$0D(car-0E*)
 
-N $7EC0 Frame 15.
+N $7EC0 Frame #N$0F.
   $7EC0,$01 Height = #N(#PEEK(#PC)) pixels.
   $7EC1,$22,b$02 #CAR$0E(car-0F*)
 
-N $7EE3 Frame 16.
+N $7EE3 Frame #N$10.
   $7EE3,$01 Height = #N(#PEEK(#PC)) pixels.
   $7EE4,$22,b$02 #CAR$0F(car-10*)
 
@@ -2462,19 +2521,19 @@ E $7F06 View the equivalent code in;
 . { #PSSST$0000 }
 . LIST#
 @ $7F06 label=SpritesTable
-  $7F06,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) / 2).
+  $7F06,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06) / $02).
 L $7F06,$02,$0F
 
 w $7F24 Player Sprite Table
 @ $7F24 label=PlayerSpriteTable
-  $7F24,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) / 2).
+  $7F24,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) / $02).
 L $7F24,$02,$10
 
-w $7F44 Sprites Table 2
+w $7F44 Sprites Table #N$02
 D $7F44 This isn't a separate table; it's a continuation of #R$7F06 just, the player sprites have a "special" zero-based
 .       reference of their own.
 @ $7F44 label=SpritesTable2
-  $7F44,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) / 2).
+  $7F44,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06) / $02).
 L $7F44,$02,$03
 
 b $7F4A Sprite: Cup

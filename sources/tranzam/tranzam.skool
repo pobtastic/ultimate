@@ -460,8 +460,8 @@ g$5E3D DEFB $22
 ;
 ; #TABLE(default,centre,centre)
 ; { =h Byte | =h Binary | =h Option }
-; { #N$00 | #EVAL($00, 2, 8) | Keyboard }
-; { #N$02 | #EVAL($02, 2, 8) | Joystick }
+; { #N$00 | #EVAL($00, $02, $08) | Keyboard }
+; { #N$02 | #EVAL($02, $02, $08) | Joystick }
 ; TABLE#
 @label=GameOptions
 g$5E3E DEFB $AF
@@ -479,7 +479,14 @@ g$5E41 DEFB $C0
 ; Game status buffer entry at 5E42
 g$5E42 DEFB $32
 
-; Game status buffer entry at 5E43
+; Flag: Day or Night
+;
+; #TABLE(default,centre,centre)
+; { =h Byte | =h Flag }
+; { #N$00 | Day }
+; { #N$01 | Night }
+; TABLE#
+@label=Flag_DayNight
 g$5E43 DEFB $33
 
 ; Background Attribute
@@ -587,7 +594,8 @@ g$5E50 DEFB $00      ; Sprite ID.
  $5E67 DEFB $00      ; Y Position.
 
 ; Game status buffer entry at 5E68
-g$5E68 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+g$5E68 DEFB $00,$00,$00,$00
+ $5E6C DEFB $00,$00,$00,$00
  $5E70 DEFB $00,$00,$00,$00
 
 ; Game status buffer entry at 5E74
@@ -1150,11 +1158,11 @@ c$6158 LD A,($5E0D)  ; #REGa=#R$5E0D.
  $6172 JR NZ,$616E   ; If #REGc is not zero, jump to #R$616E.
  $6174 RET           ; Return.
 
-; Set Default Playarea Attributes
+; Set Day Playarea Attributes
 ;
 ; Used by the routines at #R$5F07, #R$6353 and #R$63FF.
-@label=SetDefaultAttributes
-c$6175 XOR A         ; {Write #N$00 to #R$5E43.
+@label=SetDayAttributes
+c$6175 XOR A         ; {Write #N$00 (day) to #R$5E43.
  $6176 LD ($5E43),A  ; }
  $6179 LD A,$70      ; #REGa=#N$70.
 ; Continue on to #R$617B.
@@ -1168,10 +1176,11 @@ c$6175 XOR A         ; {Write #N$00 to #R$5E43.
 c$617B LD ($5E44),A  ; Write #REGa to #R$5E44.
  $617E RET           ; Return.
 
-; Routine at 617F
+; Set Night Playarea Attributes
 ;
 ; Used by the routine at #R$6353.
-c$617F LD A,$01      ; {Write #N$01 to #R$5E43.
+@label=SetNightAttributes
+c$617F LD A,$01      ; {Write #N$01 (night) to #R$5E43.
  $6181 LD ($5E43),A  ; }
  $6184 LD A,$40      ; #REGa=#N$40.
  $6186 JR $617B      ; Jump to #R$617B.
@@ -1526,19 +1535,24 @@ c$6353 CALL $7139    ; Call #R$7139.
  $6359 LD A,R        ; #REGa=random number.
  $635B AND %00000001 ; Keep only bit 0.
  $635D JR Z,$6362    ; If #REGa is zero jump to #R$6362.
+; Else set "day" time.
  $635F CALL $6175    ; Call #R$6175.
+; See #LINK:Pokes#infinite_lives(Infinite Lives).
 @label=GameOver_Skip
 *$6362 LD HL,$5E3D   ; #REGhl=#R$5E3D.
  $6365 DEC (HL)      ; Decrease #R$5E3D by one.
- $6366 JP P,$63A7    ;
- $6369 LD (HL),$00   ;
- $636B POP HL        ;
+ $6366 JP P,$63A7    ; If lives are still a positive number jump to #R$63A7.
+; Else, trigger the game over events.
+ $6369 LD (HL),$00   ; Write #N$00 to #R$5E3D.
+ $636B POP HL        ; Restore #REGhl from the stack.
  $636C CALL $605B    ; Call #R$605B.
  $636F CALL $6175    ; Call #R$6175.
  $6372 CALL $68A0    ; Call #R$68A0.
+; Print the "Game Over" messaging.
  $6375 LD HL,$5878   ; #REGhl=#N($5878, $04, $04) (screen location).
  $6378 LD DE,$63DA   ; #REGde=#R$63DA.
  $637B CALL $5F97    ; Call #R$5F97.
+; Display the text for a short time.
  $637E LD B,$04      ; #REGb=#N$04.
  $6380 CALL $6386    ; Call #R$6386.
  $6383 JP $5F1A      ; Jump to #R$5F1A.
@@ -2432,62 +2446,78 @@ c$6910 LD A,L        ; {#REGl=#REGl + #N$20 (one line).
 ;
 ; Used by the routine at #R$68A0.
 @label=DisplayNightDriver
-c$6919 LD A,($5E43)               ; {Return if #R$5E43 is zero.
- $691C AND A                      ;
+c$6919 LD A,($5E43)               ; {Return if #R$5E43 is zero (i.e. it is
+ $691C AND A                      ; "day").
  $691D RET Z                      ; }
+; Else it is night so handle the interlude to display "Night Driver".
  $691E LD HL,$4070                ; #REGhl=#N$4070 (screen location).
  $6921 LD DE,$693C                ; #REGde=#R$693C.
  $6924 CALL $6518                 ; Call #R$6518.
+; Display the text for a short time.
  $6927 LD B,$04                   ; #REGb=#N$04 (delay length).
  $6929 CALL $6386                 ; Call #R$6386.
+; Remove the messaging.
  $692C LD HL,$4070                ; #REGhl=#N$4070 (screen location).
  $692F PUSH HL                    ; Stash #REGhl on the stack.
  $6930 CALL $6F10                 ; Call #R$6F10.
  $6933 LD A,$00                   ; #REGa=#N$00.
  $6935 EX AF,AF'                  ; Switch to the shadow #REGaf register.
- $6936 LD DE,$6AE5                ; #REGde=#R$6AE4(#N$6AE5).
+ $6936 LD DE,$6AE5                ; #REGde=#R$6AE5.
  $6939 JP $651F                   ; Jump to #R$651F.
+; Messging data.
 @label=NightDriver_Text
- $693C DEFM $47                   ;
- $693D DEFM "NIGHT DRIVE","R"+$80 ;
+ $693C DEFM $47                   ; {"NIGHT DRIVER" (#N(#PEEK(#PC)) is the
+ $693D DEFM "NIGHT DRIVE","R"+$80 ; attribute).}
 
 ; Plot Map Points
 ;
 ; Used by the routine at #R$68A0.
 @label=PlotMapPoints
 c$6949 LD BC,$7811   ; #REGbc=#R$7811.
-*$694C LD HL,$4708   ; #REGhl=#N$4708.
- $694F LD A,(BC)     ;
- $6950 INC BC        ;
- $6951 SRL A         ;
- $6953 SRL A         ;
- $6955 LD E,A        ;
- $6956 LD A,(BC)     ;
- $6957 INC BC        ;
- $6958 SRL A         ;
+@label=PlotMapPoints_Loop
+*$694C LD HL,$4708   ; #REGhl=#N$4708 (screen buffer location).
+; Handle the X co-ordinate.
+ $694F LD A,(BC)     ; #REGa=X co-ordinate of map point.
+ $6950 INC BC        ; Increment the map pointer in #REGbc by one.
+; Scale the X co-ordinate for the smaller map display output.
+ $6951 SRL A         ; {#REGa=#REGa / #N$04.
+ $6953 SRL A         ; }
+ $6955 LD E,A        ; Store the result in #REGe.
+; Handle the Y co-ordinate.
+ $6956 LD A,(BC)     ; #REGa=Y co-ordinate of map point.
+ $6957 INC BC        ; Increment the map pointer in #REGbc by one.
+; Scale the Y co-ordinate for the smaller map display output.
+ $6958 SRL A         ; {#REGa=#REGa / #N$08.
  $695A SRL A         ;
- $695C SRL A         ;
- $695E LD D,A        ;
- $695F LD A,H        ;
+ $695C SRL A         ; }
+ $695E LD D,A        ; Store the result in #REGd.
+; Calculate the map screen address of our currently processed map point.
+ $695F LD A,H        ; {#REGh=#REGh - #REGd.
  $6960 SUB D         ;
- $6961 LD H,A        ;
- $6962 LD A,L        ;
+ $6961 LD H,A        ; }
+ $6962 LD A,L        ; {#REGl=#REGl + #REGe.
  $6963 ADD A,E       ;
- $6964 LD L,A        ;
- $6965 LD A,(BC)     ;
- $6966 INC BC        ;
- $6967 PUSH BC       ;
- $6968 LD BC,$0101   ;
- $696B BIT 6,A       ;
- $696D JR Z,$6976    ;
- $696F CP $60        ;
- $6971 JR Z,$6976    ;
+ $6964 LD L,A        ; }
+; Handle the map point "type" - place names are excluded.
+ $6965 LD A,(BC)     ; #REGa=sprite ID of map point.
+ $6966 INC BC        ; Increment the map pointer in #REGbc by one. Now pointing
+                     ; to the next record.
+ $6967 PUSH BC       ; Stash #REGbc on the stack.
+ $6968 LD BC,$0101   ; #REGbc=#N($0101, $04, $04) (used in #R$6998).
+; Skip place names - they don't show a marker on the map.
+ $696B BIT 6,A       ; {If bit 6 is set then this is a place name so skip and
+ $696D JR Z,$6976    ; jump to #R$6976.}
+ $696F CP $60        ; {If #REGa is #N$60, jump to #R$6976.
+ $6971 JR Z,$6976    ; }
  $6973 CALL $6998    ; Call #R$6998.
-*$6976 POP BC        ;
- $6977 LD HL,$7CD6   ; #REGhl=#R$7CD6.
- $697A AND A         ;
- $697B SBC HL,BC     ;
- $697D JR NZ,$694C   ;
+; Check if finished. The stack contains the start of the next record, or the
+; first byte past the end of the map points.
+@label=PlotMapPoints_Continue
+*$6976 POP BC        ; Restore #REGbc from the stack.
+ $6977 LD HL,$7CD6   ; #REGhl=#R$7CD6 (one byte past the end of #R$7811).
+ $697A AND A         ; Reset the carry flag.
+ $697B SBC HL,BC     ; #REGhl=#REGhl - #REGbc.
+ $697D JR NZ,$694C   ; If the result is not zero then jump to #R$694C.
  $697F RET           ; Return.
 
 ; Handler: Terrain Dots
@@ -2730,8 +2760,11 @@ c$6A9B PUSH IX                        ; Stash #REGix on the stack.
  $6ADB LD HL,$B868                    ; #REGhl=#N$B868.
  $6ADE LD DE,$6AE4                    ; #REGde=#R$6AE4.
  $6AE1 JP $6518                       ; Call #R$6518.
- $6AE4 DEFM $76                       ;
- $6AE5 DEFM "               "," "+$80 ;
+; Spacing "text" used for overwriting messaging.
+@label=Blank_Text_Attribute
+ $6AE4 DEFM $76                       ; {Contains #N$0F spaces (#N(#PEEK(#PC))
+@label=Blank_Text
+ $6AE5 DEFM "               "," "+$80 ; is the attribute).}
 
 ; Routine at 6AF5
 ;
@@ -2932,7 +2965,7 @@ c$6BFE LD BC,$7811   ; #REGbc=#R$7811.
  $6C16 JR NC,$6C2A   ;
  $6C18 INC BC        ; {Increment #REGbc twice (move onto the next record).
  $6C19 INC BC        ; }
- $6C1A LD HL,$7CD6   ; #REGhl=#R$7CD6.
+ $6C1A LD HL,$7CD6   ; #REGhl=#R$7CD6 (one byte past the end of #R$7811).
  $6C1D AND A         ;
  $6C1E SBC HL,BC     ;
  $6C20 JR NZ,$6C0B   ;
@@ -3027,7 +3060,7 @@ c$6C96 PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
  $6CA4 EX DE,HL      ; #TABLE(default,centre,centre,centre,centre,centre)
                      ; { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
                      ; #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, 2, 3, 1, 1)()">#N({result})) }
+                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
                      ; )
                      ; TABLE#}
 ; Print the character to the screen.
@@ -3837,26 +3870,28 @@ c$70D2 CALL $7168    ; Call #R$7168.
  $70FC LD ($5E23),A  ; Set #R$5E23.
  $70FF JR $70CE      ; Jump to #R$70CE.
 
-; Routine at 7101
+; Erase Actor Sprite
 ;
 ; Used by the routines at #R$633C, #R$6633 and #R$6FAC.
+;
+; IX Actor Entity
 @label=ActorEraseMovedSprite
-c$7101 LD A,($5E22)  ; {#R$5E22.
+c$7101 LD A,($5E22)  ; {Jump to #R$7149 if #R$5E22 is zero.
  $7104 AND A         ;
  $7105 JP Z,$7149    ; }
  $7108 CALL $70D2    ; Call #R$70D2.
  $710B EXX           ;
  $710C CALL $70B2    ; Call #R$70B2.
  $710F LD A,($5E21)  ; #REGa=#R$5E21.
- $7112 SUB (IX+$02)  ;
- $7115 JP Z,$71D1    ;
- $7118 JP M,$712A    ;
- $711B LD C,A        ;
+ $7112 SUB (IX+$02)  ; Subtract the actor Y position.
+ $7115 JP Z,$71D1    ; Jump to #R$71D1 if the result is zero.
+ $7118 JP M,$712A    ; Jump to #R$712A if the result is negative.
+ $711B LD C,A        ; Else store the result in #REGc.
  $711C LD A,($5E25)  ; #REGa=#R$5E25.
- $711F CP C          ;
+ $711F CP C          ; {Jump to #R$71D1 if #REGa < #REGc.
  $7120 JP C,$71D1    ;
- $7123 SUB C         ;
- $7124 LD ($5E25),A  ;
+ $7123 SUB C         ; }
+ $7124 LD ($5E25),A  ; Store the result at #R$5E25.
  $7127 JP $7170      ; Jump to #R$7170.
 *$712A EXX           ;
  $712B NEG           ;
@@ -4118,14 +4153,14 @@ c$7218 LD (HL),C     ; Write #REGc to the target address.
 ;
 ; Links to the entry in #R$7811 for every cup.
 @label=CupTable
-w$721F DEFW $783B    ; Cup #N((#PC - $721F) / 2).
- $7221 DEFW $78B6    ; Cup #N((#PC - $721F) / 2).
- $7223 DEFW $796D    ; Cup #N((#PC - $721F) / 2).
- $7225 DEFW $7A0F    ; Cup #N((#PC - $721F) / 2).
- $7227 DEFW $7AC9    ; Cup #N((#PC - $721F) / 2).
- $7229 DEFW $7B5C    ; Cup #N((#PC - $721F) / 2).
- $722B DEFW $7C0D    ; Cup #N((#PC - $721F) / 2).
- $722D DEFW $7CAC    ; Cup #N((#PC - $721F) / 2).
+w$721F DEFW $783B    ; Cup #N($01 + (#PC - $721F) / $02).
+ $7221 DEFW $78B6    ; Cup #N($01 + (#PC - $721F) / $02).
+ $7223 DEFW $796D    ; Cup #N($01 + (#PC - $721F) / $02).
+ $7225 DEFW $7A0F    ; Cup #N($01 + (#PC - $721F) / $02).
+ $7227 DEFW $7AC9    ; Cup #N($01 + (#PC - $721F) / $02).
+ $7229 DEFW $7B5C    ; Cup #N($01 + (#PC - $721F) / $02).
+ $722B DEFW $7C0D    ; Cup #N($01 + (#PC - $721F) / $02).
+ $722D DEFW $7CAC    ; Cup #N($01 + (#PC - $721F) / $02).
 
 ; Place Names
 @label=PlaceNames
@@ -4329,9 +4364,9 @@ b$7458 DEFB $0D                 ; Height = #N(#PEEK(#PC)) pixels.
 ;
 ; .
 ;
-; Frame 1
+; Frame #N$01
 b$7473 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
- $7474 DEFB %00000000,%00110000 ; {#SPRITE$20(explosion-01)
+ $7474 DEFB %00000000,%00110000 ; {#SPRITE$20(explosion-01*)
  $7476 DEFB %01110000,%01110000 ;
  $7478 DEFB %01110110,%11110000 ;
  $747A DEFB %00111111,%11011111 ;
@@ -4347,9 +4382,9 @@ b$7473 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
  $748E DEFB %00001111,%00001111 ;
  $7490 DEFB %00000110,%00000011 ;
  $7492 DEFB %00000100,%00000001 ; }
-; Frame 2
+; Frame #N$02
  $7494 DEFB $0E                 ; Height = #N(#PEEK(#PC)) pixels.
- $7495 DEFB %00000000,%00000000 ; {#SPRITE$21(explosion-02)
+ $7495 DEFB %00000000,%00000000 ; {#SPRITE$21(explosion-02*)
  $7497 DEFB %00100001,%00001000 ;
  $7499 DEFB %00011011,%00111000 ;
  $749B DEFB %00011111,%11110000 ;
@@ -4363,6 +4398,7 @@ b$7473 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
  $74AB DEFB %00000011,%10111000 ;
  $74AD DEFB %00000011,%00011100 ;
  $74AF DEFB %00000010,%00000100 ; }
+; #UDGARRAY*explosion-01,$05;explosion-02(explosion-frames)
 
 ; UDG Graphics
 ;
@@ -5561,7 +5597,7 @@ b$7811 DEFB $05,$22,$0D ; Map Point #N((#PC - $7811) / $03, $03, $03):
 ;
 ; .
 ;
-; Frame 1.
+; Frame #N$01.
 b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7CD7 DEFB %00000010,%01000000 ; {#CAR$00(car-01*)
  $7CD9 DEFB %01111011,%11011110 ;
@@ -5580,7 +5616,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7CF3 DEFB %00011011,%11011000 ;
  $7CF5 DEFB %00000001,%10000000 ;
  $7CF7 DEFB %00000000,%00000000 ; }
-; Frame 2.
+; Frame #N$02.
  $7CF9 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7CFA DEFB %00000000,%00110000 ; {#CAR$01(car-02*)
  $7CFC DEFB %00000010,%01111000 ;
@@ -5599,7 +5635,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7D16 DEFB %00000011,%00111000 ;
  $7D18 DEFB %00000011,%10110000 ;
  $7D1A DEFB %00000001,%00000000 ; }
-; Frame 3.
+; Frame #N$03.
  $7D1C DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7D1D DEFB %00000000,%11100000 ; {#CAR$02(car-03*)
  $7D1F DEFB %00000001,%11110000 ;
@@ -5618,7 +5654,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7D39 DEFB %00000001,%11001100 ;
  $7D3B DEFB %00000000,%11100000 ;
  $7D3D DEFB %00000000,%01000000 ; }
-; Frame 4.
+; Frame #N$04.
  $7D3F DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7D40 DEFB %00001111,%00000000 ; {#CAR$03(car-04*)
  $7D42 DEFB %00001111,%10000000 ;
@@ -5637,7 +5673,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7D5C DEFB %00000000,%01111100 ;
  $7D5E DEFB %00000000,%00011000 ;
  $7D60 DEFB %00000000,%00000000 ; }
-; Frame 5.
+; Frame #N$05.
  $7D62 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7D63 DEFB %00000000,%00000000 ; {#CAR$04(car-05*)
  $7D65 DEFB %01111100,%00000000 ;
@@ -5656,7 +5692,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7D7F DEFB %01111100,%00000000 ;
  $7D81 DEFB %00000000,%00000000 ;
  $7D83 DEFB %00000000,%00000000 ; }
-; Frame 6.
+; Frame #N$06.
  $7D85 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7D86 DEFB %00000000,%00011000 ; {#CAR$05(car-06*)
  $7D88 DEFB %00000000,%01111100 ;
@@ -5675,7 +5711,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7DA2 DEFB %00001111,%10000000 ;
  $7DA4 DEFB %00001111,%00000000 ;
  $7DA6 DEFB %00000000,%00000000 ; }
-; Frame 7.
+; Frame #N$07.
  $7DA8 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7DA9 DEFB %00000000,%01000000 ; {#CAR$06(car-07*)
  $7DAB DEFB %00000000,%11100000 ;
@@ -5694,7 +5730,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7DC5 DEFB %00001000,%11110000 ;
  $7DC7 DEFB %00000001,%11110000 ;
  $7DC9 DEFB %00000000,%11100000 ; }
-; Frame 8.
+; Frame #N$08.
  $7DCB DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7DCC DEFB %00000001,%00000000 ; {#CAR$07(car-08*)
  $7DCE DEFB %00000001,%10110000 ;
@@ -5713,7 +5749,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7DE8 DEFB %00010111,%10111000 ;
  $7DEA DEFB %00000010,%01111000 ;
  $7DEC DEFB %00000000,%00110000 ; }
-; Frame 9.
+; Frame #N$09.
  $7DEE DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7DEF DEFB %00000001,%10000000 ; {#CAR$08(car-09*)
  $7DF1 DEFB %00011011,%11011000 ;
@@ -5732,7 +5768,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7E0B DEFB %01111011,%11011110 ;
  $7E0D DEFB %00000010,%01000000 ;
  $7E0F DEFB %00000000,%00000000 ; }
-; Frame 10.
+; Frame #N$0A.
  $7E11 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7E12 DEFB %00000000,%10000000 ; {#CAR$09(car-0A*)
  $7E14 DEFB %00001101,%11000000 ;
@@ -5751,7 +5787,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7E2E DEFB %00011101,%11101000 ;
  $7E30 DEFB %00011110,%01000000 ;
  $7E32 DEFB %00001100,%00000000 ; }
-; Frame 11.
+; Frame #N$0B.
  $7E34 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7E35 DEFB %00000010,%00000000 ; {#CAR$0A(car-0B*)
  $7E37 DEFB %00000111,%00000000 ;
@@ -5770,7 +5806,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7E51 DEFB %00001111,%00010000 ;
  $7E53 DEFB %00001111,%10000000 ;
  $7E55 DEFB %00000111,%00000000 ; }
-; Frame 12.
+; Frame #N$0C.
  $7E57 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7E58 DEFB %00011000,%00000000 ; {#CAR$0B(car-0C*)
  $7E5A DEFB %00111110,%00000000 ;
@@ -5789,7 +5825,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7E74 DEFB %00000001,%11110000 ;
  $7E76 DEFB %00000000,%11110000 ;
  $7E78 DEFB %00000000,%00000000 ; }
-; Frame 13.
+; Frame #N$0D.
  $7E7A DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7E7B DEFB %00000000,%00000000 ; {#CAR$0C(car-0D*)
  $7E7D DEFB %00000000,%00111110 ;
@@ -5808,7 +5844,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7E97 DEFB %00000000,%00111110 ;
  $7E99 DEFB %00000000,%00000000 ;
  $7E9B DEFB %00000000,%00000000 ; }
-; Frame 14.
+; Frame #N$0E.
  $7E9D DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7E9E DEFB %00000000,%11110000 ; {#CAR$0D(car-0E*)
  $7EA0 DEFB %00000001,%11110000 ;
@@ -5827,7 +5863,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7EBA DEFB %00111110,%00000000 ;
  $7EBC DEFB %00011000,%00000000 ;
  $7EBE DEFB %00000000,%00000000 ; }
-; Frame 15.
+; Frame #N$0F.
  $7EC0 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7EC1 DEFB %00000111,%00000000 ; {#CAR$0E(car-0F*)
  $7EC3 DEFB %00001111,%10000000 ;
@@ -5846,7 +5882,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7EDD DEFB %00110011,%10000000 ;
  $7EDF DEFB %00000111,%00000000 ;
  $7EE1 DEFB %00000010,%00000000 ; }
-; Frame 16.
+; Frame #N$10.
  $7EE3 DEFB $11                 ; Height = #N(#PEEK(#PC)) pixels.
  $7EE4 DEFB %00001100,%00000000 ; {#CAR$0F(car-10*)
  $7EE6 DEFB %00011110,%01000000 ;
@@ -5869,51 +5905,51 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
 
 ; Sprites Table
 @label=SpritesTable
-w$7F06 DEFW $7352    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F08 DEFW $7373    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F0A DEFW $7458    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F0C DEFW $7394    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F0E DEFW $73B5    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F10 DEFW $73D4    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F12 DEFW $73F5    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F14 DEFW $7352    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F16 DEFW $7373    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F18 DEFW $7458    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F1A DEFW $7394    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F1C DEFW $73B5    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F1E DEFW $73D4    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F20 DEFW $7416    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F22 DEFW $7437    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
+w$7F06 DEFW $7352    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F08 DEFW $7373    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F0A DEFW $7458    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F0C DEFW $7394    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F0E DEFW $73B5    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F10 DEFW $73D4    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F12 DEFW $73F5    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F14 DEFW $7352    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F16 DEFW $7373    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F18 DEFW $7458    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F1A DEFW $7394    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F1C DEFW $73B5    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F1E DEFW $73D4    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F20 DEFW $7416    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F22 DEFW $7437    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$A4BE }
@@ -5925,69 +5961,69 @@ w$7F06 DEFW $7352    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
 
 ; Player Sprite Table
 @label=PlayerSpriteTable
-w$7F24 DEFW $7CD6    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F26 DEFW $7CF9    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F28 DEFW $7D1C    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F2A DEFW $7D3F    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F2C DEFW $7D62    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F2E DEFW $7D85    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F30 DEFW $7DA8    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F32 DEFW $7DCB    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F34 DEFW $7DEE    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F36 DEFW $7E11    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F38 DEFW $7E34    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F3A DEFW $7E57    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F3C DEFW $7E7A    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F3E DEFW $7E9D    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F40 DEFW $7EC0    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
- $7F42 DEFW $7EE3    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F24) / 2)) #CARNAME((#PC - $7F24) /
-                     ; 2).
+w$7F24 DEFW $7CD6    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F26 DEFW $7CF9    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F28 DEFW $7D1C    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F2A DEFW $7D3F    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F2C DEFW $7D62    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F2E DEFW $7D85    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F30 DEFW $7DA8    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F32 DEFW $7DCB    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F34 DEFW $7DEE    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F36 DEFW $7E11    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F38 DEFW $7E34    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F3A DEFW $7E57    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F3C DEFW $7E7A    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F3E DEFW $7E9D    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F40 DEFW $7EC0    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
+ $7F42 DEFW $7EE3    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F24) / $02)) #CARNAME((#PC - $7F24) /
+                     ; $02).
 
-; Sprites Table 2
+; Sprites Table #N$02
 ;
 ; This isn't a separate table; it's a continuation of #R$7F06 just, the player sprites have a "special" zero-based
 ;       reference of their own.
 @label=SpritesTable2
-w$7F44 DEFW $7F4A    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F46 DEFW $7473    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
- $7F48 DEFW $7494    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
-                     ; $100)(#N((#PC - $7F06) / 2)) #SPRITENAME((#PC - $7F06) /
-                     ; 2).
+w$7F44 DEFW $7F4A    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F46 DEFW $7473    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
+ $7F48 DEFW $7494    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
+                     ; $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06)
+                     ; / $02).
 
 ; Sprite: Cup
 b$7F4A DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
