@@ -48,7 +48,7 @@ g $5E04
 
 g $5E05 Player Map Co-ordinates
 @ $5E05 label=PlayerMapPosition
-B $5E05,$02
+B $5E05,$02,$01
 
 g $5E07
 B $5E07,$01
@@ -101,7 +101,8 @@ W $5E1C,$02
 g $5E1E
 B $5E1E,$01
 
-g $5E1F
+g $5E1F Active Object
+@ $5E1F label=ActiveObject
 B $5E1F,$01
 
 g $5E20 Actor Buffer
@@ -1142,7 +1143,7 @@ N $64E8 Handles the "hours".
 c $64F0 Display Place Name
 R $64F0 A Bits 0-6 of #R$5E1F
 @ $64F0 label=DisplayPlaceName
-  $64F0,$03 Return if bit 6 of #REGa is set.
+  $64F0,$03 Return if bit 6 of #REGa is not set (i.e. not a place name).
 N $64F3 Strip out the bit which indicates the need to display the place name.
   $64F3,$02,b$01 Keep only bits 0-5.
   $64F5,$03 #REGde=#N($0005, $04, $04) (the minimum length of a place name without the "end-of-string" bit e.g.
@@ -1633,17 +1634,23 @@ N $6AE4 Spacing "text" used for overwriting messaging.
 @ $6AE5 label=Blank_Text
 T $6AE4,$11,h$01,$0F:$01 Contains #N$0F spaces (#N(#PEEK(#PC)) is the attribute).
 
-c $6AF5
+c $6AF5 Handler: Objects
+@ $6AF5 label=HandlerObjects
   $6AF5,$03 #REGhl=#R$5E50.
   $6AF8,$02 #REGb=#N$07.
+@ $6AFA label=CheckObjectActive
+  $6AFA,$04 If bit 7 is not set on the current objects sprite ID value, jump to #R$6B12.
+  $6AFE,$02 Reset bit 7 of the sprite ID.
   $6B00,$02 Jump to #R$6B0C.
-
-  $6B02,$01 Stash #REGbc on the stack.
+  $6B02,$01 Stash #REGhl on the stack.
   $6B03,$03 #REGhl=#N($0118, $04, $04).
+@ $6B06 label=ObjectPauseLoop
   $6B06,$01 Decrease #REGhl by one.
   $6B07,$04 If #REGhl is not zero, jump to #R$6B06.
   $6B0B,$01 Restore #REGhl from the stack.
+@ $6B0C label=NextObject
   $6B0C,$02 Increment #REGhl by two.
+@ $6B0E label=NextObject_2
   $6B0E,$01 Increment #REGhl by one.
   $6B0F,$02 Decrease counter by one and loop back to #R$6AFA until counter is zero.
   $6B11,$01 Return.
@@ -1681,7 +1688,8 @@ c $6B2B
   $6B3E,$02 #REGb=#N$04.
   $6B40,$02 Jump to #R$6B33.
 
-c $6B42
+c $6B42 Set Day Object Attributes Pointer
+@ $6B42 label=SetDayObjectAttributes
   $6B42,$03 #REGhl=#R$6BE6.
   $6B45,$02 Jump to #R$6B7F.
 
@@ -1701,7 +1709,7 @@ c $6B47 Draw Objects
   $6B6D,$03 Store #REGa at #R$5E17.
   $6B71,$01 Increment #REGbc by one.
   $6B73,$03 Call #R$6B3D.
-  $6B76,$03 #REGa=#R$5E43.
+  $6B76,$06 If #R$5E43 is set to "Day" jump to #R$6B42.
   $6B7C,$03 #REGhl=#R$6BD6.
   $6B81,$03 Store #REGa at #R$5E1F.
   $6B92,$03 #REGa=#R$5E44.
@@ -1712,9 +1720,12 @@ c $6B47 Draw Objects
   $6BBB,$03 #REGhl=#R$6BCF.
   $6BC0,$03 Store #REGa at #R$5E13.
   $6BC3,$04 Store #REGbc at #R$5E3A.
-  $6BD1,$03 #REGbc=#N($AF00, $04, $04).
-  $6BD4,$02 Jump to #R$6B92.
-B $6BD6,$20
+B $6BCF,$04
+  $6BD3,$03
+@ $6BD6 label=NightObjectAttributes
+B $6BD6,$10
+@ $6BE6 label=DayObjectAttributes
+B $6BE6,$10
 
 c $6BF6
 
@@ -1857,7 +1868,8 @@ N $6D02 Print the final digit.
   $6D02,$03 #REGde=#R$5E02.
   $6D05,$02 Jump to #R$6CF7.
 
-c $6D07
+c $6D07 Handler: Able To Accelerate?
+@ $6D07 label=HandlerCanAccelerate
   $6D07,$05 #REGa=#R$5E0D + #N$04.
   $6D0C,$04 If #REGa is more than #N$C0 jump to #R$6D76.
   $6D10,$02 Else, jump to #R$6D73.
@@ -1892,8 +1904,10 @@ N $6D56 Check temperature.
   $6D64,$03 Call #R$61C2.
   $6D6B,$03 #REGa=#R$5E0D.
   $6D72,$01 #REGa=#N$00.
+
+c $6D73 Handler: Accelerate
 N $6D73 Increase speed (see #R$6D07).
-@ $6D73 label=Accelerate
+@ $6D73 label=HandlerAccelerate
   $6D73,$03 Write #REGa to #R$5E0D.
   $6D76,$03 #REGa=#R$5E0D.
   $6D79,$03 #REGhl=#N($49E2, $04, $04).
@@ -1914,6 +1928,22 @@ N $6D73 Increase speed (see #R$6D07).
   $6DA2,$03 Call #R$6F2F.
   $6DA5,$03 #REGa=#R$5E09.
   $6DA8,$04 #REGde=#R$5E07.
+  $6DAC,$03 Call #R$6EC2.
+
+  $6DBA,$03 Store #REGa at #R$5E09.
+  $6DBD,$03 Store #REGhl at #R$5E07.
+
+  $6DC3,$03 #REGhl=#R$7F8A.
+  $6DCB,$03 Call #R$6F2F.
+  $6DCE,$03 #REGa=#R$5E06.
+  $6DD1,$04 #REGde=#R$5E04.
+  $6DD5,$03 Call #R$6EC2.
+
+  $6DEA,$03 Call #R$6C2D.
+  $6DED,$02 Jump to #R$6E43.
+
+c $6E32
+  $6E54,$03 Call #R$618C.
 
   $6E66,$02 #REGe=#N$00.
   $6E68,$02 Jump to #R$6E7E.
@@ -1986,23 +2016,41 @@ N $6ECB Calculates the new address for writing a sprite pixel, in an upward dire
 
 c $6EDE Draw Gauge Line
 @ $6EDE label=DrawGaugeLine
-  $6EDE,$04 Shift #REGa right two times (#REGa / #N$04).
-  $6EE2,$01 Store the result in #REGc.
+R $6EDE HL Screen location to draw the gauge
+R $6EDE A Current Gauge Level
+  $6EDE,$05 #REGc=#REGa / #N$04.
+N $6EE3 Decrease gauge count by #N$08 and keep looping around until what's left is < #N$08 - then handle this part separately.
+@ $6EE3 label=DrawGaugeLine_Loop
+  $6EE3,$03 #REGa=gauge count - #N$08.
+  $6EE6,$02 If gauge count < #N$08 then jump to #R$6EF0.
+  $6EE8,$01 #REGc=gauge count.
+  $6EE9,$02 #REGa=#N$FF (a full line of pixels to write to the screen).
   $6EEB,$03 Call #R$6EFD.
   $6EEE,$02 Jump to #R$6EE3.
-  $6EF0,$02 #REGb=#N$00.
-  $6EF2,$01 Stash #REGhl on the stack.
-  $6EF3,$03 #REGhl=#R$6F07.
-  $6EF8,$01 Restore #REGhl from the stack.
+N $6EF0 Handles drawing the last section of the gauge level.
+@ $6EF0 label=DrawGaugeScreen_Last
+  $6EF0,$02 Create an offset in #REGbc (#REGb=#N$00, #REGc=gauge count).
+  $6EF2,$01 Stash the gauge screen location temporarily.
+  $6EF3,$04 #REGhl=#R$6F07 + offset.
+  $6EF7,$01 #REGa=gauge data.
+  $6EF8,$01 Restore the gauge screen location from the stack.
   $6EF9,$03 Call #R$6EFD.
-  $6EFC,$01 #REGa=#N$00.
-  $6EFD,$01 Stash #REGhl on the stack.
-  $6EFE,$02 #REGb=#N$07.
+  $6EFC,$01 #REGa=#N$00 (no pixels - i.e. masking).
+N $6EFD Writes #REGa to the screen.
+@ $6EFD label=DrawGaugeScreen
+  $6EFD,$01 Stash the gauge screen location temporarily.
+  $6EFE,$02 #REGb=#N$07 (counter for number of lines to draw).
+@ $6F00 label=DrawGaugeScreen_Loop
+  $6F00,$01 Write #REGa to the screen location held by #REGhl.
+  $6F01,$01 Increment #REGh by one to move onto the next row.
   $6F02,$02 Decrease counter by one and loop back to #R$6F00 until counter is zero.
-  $6F04,$01 Restore #REGhl from the stack.
+  $6F04,$01 Restore the original gauge screen location from the stack.
+  $6F05,$01 Increment #REGl by one to move onto the next column.
   $6F06,$01 Return.
-
-B $6F07
+N $6F07 Gauge data; each value corresponds to a "full" line for #N$09 decreasing values. This completes the "end"
+.       section when drawing a gauge line.
+@ $6F07 label=GaugeData
+B $6F07,$09,$01 #UDG(#PC)
 
 c $6F10 Calculate Screen Address
 E $6F10 View the equivalent code in;
@@ -2072,6 +2120,7 @@ c $6FAC
   $6FCA,$01 Write this back to #REGhl.
   $6FCB,$03 #REGix=#REGhl (using the stack to do so).
   $6FCE,$03 #REGa=#R$5E1F.
+  $6FD1,$04 If this is a cup (#R$5E1F is #N$20) then jump to #R$6FDA.
   $6FD5,$02,b$01 Keep only bits 0-6.
   $6FD7,$03 Call #R$64F0.
   $6FDA,$03 Call #R$7101.
@@ -2082,7 +2131,8 @@ c $6FAC
   $6FEA,$06 Return if too far from #R$5E17 (i.e. more than #N$0A pixels).
   $6FF0,$06 Return if too far from #R$5E18 (i.e. more than #N$0A pixels).
   $6FF6,$03 #REGa=#R$5E1F.
-  $6FF9,$04
+  $6FF9,$04 If this is a cup (#R$5E1F is #N$20) then jump to #R$702A.
+  $6FFD,$04 If this is a place name then jump to #R$7038.
   $7002,$03 #REGa=#R$5E4F.
 N $700C Add #N($0050, $04, $04) points to the score.
   $700C,$03 #REGbc=#N($0050, $04, $04).
@@ -2170,6 +2220,8 @@ R $7097 O:HL Attribute buffer address
   $70AC,$01 Return.
 
 c $70AD
+  $70AD,$04 #REGc=#REGh - #N$08.
+  $70B1,$01 Return.
 
 c $70B2 Get Actor Position/ Direction
 @ $70B2 label=ActorFindPosDir
@@ -2178,9 +2230,11 @@ E $70B2 Continue on to #R$70CE.
   $70B5,$03 #REGhl=#R$5E20.
   $70B8,$01 #REGa=#REGl.
   $70BB,$02,b$01 Keep only bits 0-2.
+  $70BD,$03 Write #REGa to #R$5E40.
   $70C0,$03 Call #R$70AD.
   $70C3,$03 Call #R$6F10.
   $70CA,$01 #REGa=#REGc.
+  $70CB,$03 Write #REGa to #R$5E25.
 
 c $70CE
 @ $70CE label=NextSprite
@@ -2268,8 +2322,17 @@ c $7170 Mask Sprite
   $719A,$03 Call #R$6ECB.
   $71A4,$04 #REGb=#R$5E41.
   $71A9,$01 Stash #REGde on the stack.
+
+c $71BC Draw Two Bytes
+@ $71BC label=DrawTwoBytes
+  $71BC,$03 Merge the bits from #REGhl with #REGd and write the result back to #REGhl.
+  $71BF,$01 Increment #REGl by one.
+  $71C0,$03 Merge the bits from #REGhl with #REGe and write the result back to #REGhl.
+  $71C3,$02 Restore #REGde and #REGhl from the stack.
   $71C5,$03 Call #R$6ECB.
   $71C9,$02 Jump to #R$7170.
+
+c $71CB
 @ $71D0 label=ActorUpdateSizeFlipReg
 @ $71D1 label=ActorUpdateSize
   $71D1,$04 #REGc=#R$5E25.
@@ -2541,6 +2604,7 @@ b $7F4A Sprite: Cup
   $7F4B,$20,b$02 #SPRITE$1F(cup)
 
 b $7F6B
+B $7F8A
 
 i $8000
 b $B868

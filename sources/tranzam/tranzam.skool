@@ -312,7 +312,8 @@ g$5E04 DEFB $2C
 
 ; Player Map Co-ordinates
 @label=PlayerMapPosition
-g$5E05 DEFB $30,$0E
+g$5E05 DEFB $30
+ $5E06 DEFB $0E
 
 ; Game status buffer entry at 5E07
 g$5E07 DEFB $00
@@ -372,7 +373,8 @@ g$5E1C DEFW $0E30
 ; Game status buffer entry at 5E1E
 g$5E1E DEFB $00
 
-; Game status buffer entry at 5E1F
+; Active Object
+@label=ActiveObject
 g$5E1F DEFB $00
 
 ; Actor Buffer
@@ -1033,7 +1035,7 @@ t$6099 DEFM "CONGRATULATIONS YO","U"+$80 ; "CONGRATULATIONS YOU".
 
 ; Sounds: Bounce
 ;
-; Used by the routine at #R$6D12.
+; Used by the routine at #R$6D73.
 @label=SoundsBounce
 c$60E3 LD HL,$0000   ; #REGhl=#N($0000, $04, $04).
  $60E6 LD C,$08      ; #REGc=#N$08.
@@ -1197,7 +1199,7 @@ c$6188 IN A,($1F)    ; #REGa=controls.
 
 ; Input: Left/ Right
 ;
-; Used by the routine at #R$6D12.
+; Used by the routine at #R$6E32.
 ;
 ; .
 ;
@@ -1816,8 +1818,8 @@ c$64C7 LD A,($5C78)  ; #HTML(#REGa=<a
 ;
 ; A Bits 0-6 of #R$5E1F
 @label=DisplayPlaceName
-c$64F0 BIT 6,A       ; {Return if bit 6 of #REGa is set.
- $64F2 RET Z         ; }
+c$64F0 BIT 6,A       ; {Return if bit 6 of #REGa is not set (i.e. not a place
+ $64F2 RET Z         ; name).}
 ; Strip out the bit which indicates the need to display the place name.
  $64F3 AND %00111111 ; Keep only bits 0-5.
  $64F5 LD DE,$0005   ; #REGde=#N($0005, $04, $04) (the minimum length of a place name without the "end-of-string" bit e.g.
@@ -2766,26 +2768,31 @@ c$6A9B PUSH IX                        ; Stash #REGix on the stack.
 @label=Blank_Text
  $6AE5 DEFM "               "," "+$80 ; is the attribute).}
 
-; Routine at 6AF5
+; Handler: Objects
 ;
 ; Used by the routine at #R$6A9B.
+@label=HandlerObjects
 c$6AF5 LD HL,$5E50   ; #REGhl=#R$5E50.
  $6AF8 LD B,$07      ; #REGb=#N$07.
-*$6AFA BIT 7,(HL)    ;
- $6AFC JR Z,$6B12    ;
- $6AFE RES 7,(HL)    ;
+@label=CheckObjectActive
+*$6AFA BIT 7,(HL)    ; {If bit 7 is not set on the current objects sprite ID
+ $6AFC JR Z,$6B12    ; value, jump to #R$6B12.}
+ $6AFE RES 7,(HL)    ; Reset bit 7 of the sprite ID.
  $6B00 JR $6B0C      ; Jump to #R$6B0C.
 ; This entry point is used by the routine at #R$6B12.
-*$6B02 PUSH HL       ; Stash #REGbc on the stack.
+*$6B02 PUSH HL       ; Stash #REGhl on the stack.
  $6B03 LD HL,$0118   ; #REGhl=#N($0118, $04, $04).
+@label=ObjectPauseLoop
 *$6B06 DEC HL        ; Decrease #REGhl by one.
  $6B07 LD A,H        ; {If #REGhl is not zero, jump to #R$6B06.
  $6B08 OR L          ;
  $6B09 JR NZ,$6B06   ; }
  $6B0B POP HL        ; Restore #REGhl from the stack.
+@label=NextObject
 *$6B0C INC HL        ; {Increment #REGhl by two.
  $6B0D INC HL        ; }
 ; This entry point is used by the routine at #R$6B12.
+@label=NextObject_2
 *$6B0E INC HL        ; Increment #REGhl by one.
  $6B0F DJNZ $6AFA    ; Decrease counter by one and loop back to #R$6AFA until
                      ; counter is zero.
@@ -2837,9 +2844,10 @@ c$6B2B PUSH BC       ; Stash #REGbc on the stack.
  $6B3E LD B,$04      ; #REGb=#N$04.
  $6B40 JR $6B33      ; Jump to #R$6B33.
 
-; Routine at 6B42
+; Set Day Object Attributes Pointer
 ;
 ; Used by the routine at #R$6B47.
+@label=SetDayObjectAttributes
 c$6B42 LD HL,$6BE6   ; #REGhl=#R$6BE6.
  $6B45 JR $6B7F      ; Jump to #R$6B7F.
 
@@ -2875,9 +2883,9 @@ c$6B47 LD BC,($5E19)                        ; #REGbc=#R$5E19.
  $6B71 INC BC                               ; Increment #REGbc by one.
  $6B72 LD D,A                               ;
  $6B73 CALL $6B3D                           ; Call #R$6B3D.
- $6B76 LD A,($5E43)                         ; #REGa=#R$5E43.
- $6B79 AND A                                ;
- $6B7A JR Z,$6B42                           ;
+ $6B76 LD A,($5E43)                         ; {If #R$5E43 is set to "Day" jump
+ $6B79 AND A                                ; to #R$6B42.
+ $6B7A JR Z,$6B42                           ; }
  $6B7C LD HL,$6BD6                          ; #REGhl=#R$6BD6.
 ; This entry point is used by the routine at #R$6B42.
 *$6B7F LD A,(BC)                            ;
@@ -2924,12 +2932,13 @@ c$6B47 LD BC,($5E19)                        ; #REGbc=#R$5E19.
  $6BC8 CALL $6F3C                           ;
  $6BCB POP BC                               ;
  $6BCC JP $6B4B                             ;
- $6BCF LD (BC),A                            ;
- $6BD0 INC BC                               ;
- $6BD1 LD BC,$AF00                          ; #REGbc=#N($AF00, $04, $04).
- $6BD4 JR $6B92                             ; Jump to #R$6B92.
+ $6BCF DEFB $02,$03,$01,$00                 ;
+*$6BD3 XOR A                                ;
+ $6BD4 JR $6B92                             ;
+@label=NightObjectAttributes
  $6BD6 DEFB $43,$46,$45,$44,$47,$42,$44,$44 ;
  $6BDE DEFB $44,$44,$45,$47,$44,$45,$46,$47 ;
+@label=DayObjectAttributes
  $6BE6 DEFB $43,$40,$41,$42,$42,$41,$40,$40 ;
  $6BEE DEFB $40,$40,$41,$42,$42,$41,$40,$41 ;
 
@@ -2977,7 +2986,7 @@ c$6BFE LD BC,$7811   ; #REGbc=#R$7811.
 
 ; Routine at 6C2D
 ;
-; Used by the routine at #R$6D12.
+; Used by the routine at #R$6D73.
 c$6C2D XOR A         ; {Write #N$00 to #R$5E1B.
  $6C2E LD ($5E1B),A  ; }
  $6C31 LD BC,($5E19) ; #REGbc=#R$5E19.
@@ -3170,9 +3179,10 @@ c$6CFD LD B,$02      ; #REGb=#N$02.
  $6D02 LD DE,$5E02   ; #REGde=#R$5E02.
  $6D05 JR $6CF7      ; Jump to #R$6CF7.
 
-; Routine at 6D07
+; Handler: Able To Accelerate?
 ;
 ; Used by the routine at #R$6D12.
+@label=HandlerCanAccelerate
 c$6D07 LD A,($5E0D)  ; {#REGa=#R$5E0D + #N$04.
  $6D0A ADD A,$04     ; }
  $6D0C CP $C0        ; {If #REGa is more than #N$C0 jump to #R$6D76.
@@ -3237,10 +3247,17 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6D6E SUB $10       ;
  $6D70 JR NC,$6D73   ;
  $6D72 XOR A         ; #REGa=#N$00.
+
+; Handler: Accelerate
+;
+; Used by the routines at #R$6D07 and #R$6D12.
+;
+; .
+;
 ; Increase speed (see #R$6D07).
-@label=Accelerate
-*$6D73 LD ($5E0D),A  ; Write #REGa to #R$5E0D.
-; This entry point is used by the routine at #R$6D07.
+@label=HandlerAccelerate
+c$6D73 LD ($5E0D),A  ; Write #REGa to #R$5E0D.
+; This entry point is used by the routines at #R$6D07 and #R$6D12.
 *$6D76 LD A,($5E0D)  ; #REGa=#R$5E0D.
  $6D79 LD HL,$49E2   ; #REGhl=#N($49E2, $04, $04).
  $6D7C CALL $6EDE    ; Call #R$6EDE.
@@ -3268,27 +3285,27 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6DA2 CALL $6F2F    ; Call #R$6F2F.
  $6DA5 LD A,($5E09)  ; #REGa=#R$5E09.
  $6DA8 LD DE,($5E07) ; #REGde=#R$5E07.
- $6DAC CALL $6EC2    ;
+ $6DAC CALL $6EC2    ; Call #R$6EC2.
  $6DAF BIT 1,C       ;
  $6DB1 JR NZ,$6DEF   ;
  $6DB3 ADD HL,DE     ;
  $6DB4 ADC A,$00     ;
  $6DB6 CP $0C        ;
  $6DB8 JR NC,$6E00   ;
-*$6DBA LD ($5E09),A  ;
- $6DBD LD ($5E07),HL ;
+*$6DBA LD ($5E09),A  ; Store #REGa at #R$5E09.
+ $6DBD LD ($5E07),HL ; Store #REGhl at #R$5E07.
 *$6DC0 POP HL        ;
  $6DC1 POP DE        ;
  $6DC2 PUSH HL       ;
- $6DC3 LD HL,$7F8A   ;
+ $6DC3 LD HL,$7F8A   ; #REGhl=#R$7F8A.
  $6DC6 AND A         ;
  $6DC7 SBC HL,DE     ;
  $6DC9 LD A,(HL)     ;
  $6DCA POP DE        ;
- $6DCB CALL $6F2F    ;
- $6DCE LD A,($5E06)  ;
- $6DD1 LD DE,($5E04) ;
- $6DD5 CALL $6EC2    ;
+ $6DCB CALL $6F2F    ; Call #R$6F2F.
+ $6DCE LD A,($5E06)  ; #REGa=#R$5E06.
+ $6DD1 LD DE,($5E04) ; #REGde=#R$5E04.
+ $6DD5 CALL $6EC2    ; Call #R$6EC2.
  $6DD8 DEC C         ;
  $6DD9 BIT 1,C       ;
  $6DDB JR NZ,$6E32   ;
@@ -3296,10 +3313,11 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6DDE ADC A,$00     ;
  $6DE0 CP $18        ;
  $6DE2 JR NC,$6E19   ;
+; This entry point is used by the routine at #R$6E32.
 *$6DE4 LD ($5E04),HL ;
  $6DE7 LD ($5E06),A  ;
-*$6DEA CALL $6C2D    ;
- $6DED JR $6E43      ;
+*$6DEA CALL $6C2D    ; Call #R$6C2D.
+ $6DED JR $6E43      ; Jump to #R$6E43.
 *$6DEF EX DE,HL      ;
  $6DF0 AND A         ;
  $6DF1 SBC HL,DE     ;
@@ -3321,6 +3339,7 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6E11 LD ($5E45),A  ;
  $6E14 CALL $60E3    ;
  $6E17 JR $6DC0      ;
+; This entry point is used by the routine at #R$6E32.
 *$6E19 LD A,($5E11)  ;
  $6E1C XOR $03       ;
  $6E1E LD ($5E11),A  ;
@@ -3331,7 +3350,11 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6E2A LD ($5E45),A  ;
  $6E2D CALL $60E3    ;
  $6E30 JR $6DEA      ;
-*$6E32 EX DE,HL      ;
+
+; Routine at 6E32
+;
+; Used by the routine at #R$6D73.
+c$6E32 EX DE,HL      ;
  $6E33 AND A         ;
  $6E34 SBC HL,DE     ;
  $6E36 SBC A,$00     ;
@@ -3342,6 +3365,7 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6E3E JR C,$6E19    ;
  $6E40 EX AF,AF'     ;
  $6E41 JR $6DE4      ;
+; This entry point is used by the routine at #R$6D73.
 *$6E43 LD A,($5E45)  ;
  $6E46 AND A         ;
  $6E47 JR Z,$6E54    ;
@@ -3350,7 +3374,7 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6E4D JR Z,$6E51    ;
  $6E4F LD A,$02      ;
 *$6E51 LD ($5E47),A  ;
-*$6E54 CALL $618C    ;
+*$6E54 CALL $618C    ; Call #R$618C.
  $6E57 LD HL,($5E10) ;
  $6E5A LD E,$18      ;
  $6E5C BIT 1,A       ;
@@ -3418,6 +3442,7 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
  $6EBD JR Z,$6EA0    ; }
  $6EBF DEC A         ; Decrease #REGa (temperature) by one.
  $6EC0 JR $6EB7      ; Jump to #R$6EB7.
+; This entry point is used by the routine at #R$6D73.
 *$6EC2 LD B,$05      ; #REGb=#N$05.
 *$6EC4 SRL H         ;
  $6EC6 RR L          ;
@@ -3427,7 +3452,7 @@ c$6D12 LD C,$00      ; #REGc=#N$00.
 
 ; Screen Address One Pixel Above
 ;
-; Used by the routines at #R$6980, #R$6A39 and #R$7170.
+; Used by the routines at #R$6980, #R$6A39, #R$7170 and #R$71BC.
 ;
 ;   HL Current position
 ; O:HL Address for new position
@@ -3454,38 +3479,61 @@ c$6ECB DEC H         ; Decrement #REGh to move up one pixel on screen.
 
 ; Draw Gauge Line
 ;
-; Used by the routine at #R$6D12.
+; Used by the routines at #R$6D73 and #R$6E32.
+;
+; HL Screen location to draw the gauge
+; A Current Gauge Level
 @label=DrawGaugeLine
-c$6EDE SRL A                                ; {Shift #REGa right two times
- $6EE0 SRL A                                ; (#REGa / #N$04).}
- $6EE2 LD C,A                               ; Store the result in #REGc.
-*$6EE3 LD A,C                               ;
- $6EE4 SUB $08                              ;
- $6EE6 JR C,$6EF0                           ;
- $6EE8 LD C,A                               ;
- $6EE9 LD A,$FF                             ;
- $6EEB CALL $6EFD                           ; Call #R$6EFD.
- $6EEE JR $6EE3                             ; Jump to #R$6EE3.
-*$6EF0 LD B,$00                             ; #REGb=#N$00.
- $6EF2 PUSH HL                              ; Stash #REGhl on the stack.
- $6EF3 LD HL,$6F07                          ; #REGhl=#R$6F07.
- $6EF6 ADD HL,BC                            ;
- $6EF7 LD A,(HL)                            ;
- $6EF8 POP HL                               ; Restore #REGhl from the stack.
- $6EF9 CALL $6EFD                           ; Call #R$6EFD.
- $6EFC XOR A                                ; #REGa=#N$00.
-*$6EFD PUSH HL                              ; Stash #REGhl on the stack.
- $6EFE LD B,$07                             ; #REGb=#N$07.
-*$6F00 LD (HL),A                            ;
- $6F01 INC H                                ;
- $6F02 DJNZ $6F00                           ; Decrease counter by one and loop
-                                            ; back to #R$6F00 until counter is
-                                            ; zero.
- $6F04 POP HL                               ; Restore #REGhl from the stack.
- $6F05 INC L                                ;
- $6F06 RET                                  ; Return.
- $6F07 DEFB $00,$80,$C0,$E0,$F0,$F8,$FC,$FE ;
- $6F0F DEFB $FF                             ;
+c$6EDE SRL A         ; {#REGc=#REGa / #N$04.
+ $6EE0 SRL A         ;
+ $6EE2 LD C,A        ; }
+; Decrease gauge count by #N$08 and keep looping around until what's left is <
+; #N$08 - then handle this part separately.
+@label=DrawGaugeLine_Loop
+*$6EE3 LD A,C        ; {#REGa=gauge count - #N$08.
+ $6EE4 SUB $08       ; }
+ $6EE6 JR C,$6EF0    ; If gauge count < #N$08 then jump to #R$6EF0.
+ $6EE8 LD C,A        ; #REGc=gauge count.
+ $6EE9 LD A,$FF      ; #REGa=#N$FF (a full line of pixels to write to the
+                     ; screen).
+ $6EEB CALL $6EFD    ; Call #R$6EFD.
+ $6EEE JR $6EE3      ; Jump to #R$6EE3.
+; Handles drawing the last section of the gauge level.
+@label=DrawGaugeScreen_Last
+*$6EF0 LD B,$00      ; Create an offset in #REGbc (#REGb=#N$00, #REGc=gauge
+                     ; count).
+ $6EF2 PUSH HL       ; Stash the gauge screen location temporarily.
+ $6EF3 LD HL,$6F07   ; {#REGhl=#R$6F07 + offset.
+ $6EF6 ADD HL,BC     ; }
+ $6EF7 LD A,(HL)     ; #REGa=gauge data.
+ $6EF8 POP HL        ; Restore the gauge screen location from the stack.
+ $6EF9 CALL $6EFD    ; Call #R$6EFD.
+ $6EFC XOR A         ; #REGa=#N$00 (no pixels - i.e. masking).
+; Writes #REGa to the screen.
+@label=DrawGaugeScreen
+*$6EFD PUSH HL       ; Stash the gauge screen location temporarily.
+ $6EFE LD B,$07      ; #REGb=#N$07 (counter for number of lines to draw).
+@label=DrawGaugeScreen_Loop
+*$6F00 LD (HL),A     ; Write #REGa to the screen location held by #REGhl.
+ $6F01 INC H         ; Increment #REGh by one to move onto the next row.
+ $6F02 DJNZ $6F00    ; Decrease counter by one and loop back to #R$6F00 until
+                     ; counter is zero.
+ $6F04 POP HL        ; Restore the original gauge screen location from the
+                     ; stack.
+ $6F05 INC L         ; Increment #REGl by one to move onto the next column.
+ $6F06 RET           ; Return.
+; Gauge data; each value corresponds to a "full" line for #N$09 decreasing values. This completes the "end"
+;       section when drawing a gauge line.
+@label=GaugeData
+ $6F07 DEFB $00      ; {#UDG(#PC)
+ $6F08 DEFB $80      ;
+ $6F09 DEFB $C0      ;
+ $6F0A DEFB $E0      ;
+ $6F0B DEFB $F0      ;
+ $6F0C DEFB $F8      ;
+ $6F0D DEFB $FC      ;
+ $6F0E DEFB $FE      ;
+ $6F0F DEFB $FF      ; }
 
 ; Calculate Screen Address
 ;
@@ -3529,7 +3577,7 @@ c$6F10 LD A,L        ; #REGa=#REGl.
 
 ; Routine at 6F2F
 ;
-; Used by the routine at #R$6D12.
+; Used by the routine at #R$6D73.
 c$6F2F LD HL,$0000   ; #REGhl=#N($0000, $04, $04).
  $6F32 LD B,$08      ; #REGb=#N$08 (counter).
 *$6F34 ADD HL,HL     ;
@@ -3636,8 +3684,8 @@ c$6FAC INC HL        ;
  $6FCB PUSH HL       ; {#REGix=#REGhl (using the stack to do so).
  $6FCC POP IX        ; }
  $6FCE LD A,($5E1F)  ; #REGa=#R$5E1F.
- $6FD1 CP $20        ;
- $6FD3 JR Z,$6FDA    ;
+ $6FD1 CP $20        ; {If this is a cup (#R$5E1F is #N$20) then jump to
+ $6FD3 JR Z,$6FDA    ; #R$6FDA.}
  $6FD5 AND %01111111 ; Keep only bits 0-6.
  $6FD7 CALL $64F0    ; Call #R$64F0.
 *$6FDA CALL $7101    ; Call #R$7101.
@@ -3653,10 +3701,10 @@ c$6FAC INC HL        ;
  $6FF3 CP $0A        ; pixels).
  $6FF5 RET NC        ; }
  $6FF6 LD A,($5E1F)  ; #REGa=#R$5E1F.
- $6FF9 CP $20        ;
- $6FFB JR Z,$702A    ;
- $6FFD BIT 6,A       ;
- $6FFF JR Z,$7038    ;
+ $6FF9 CP $20        ; {If this is a cup (#R$5E1F is #N$20) then jump to
+ $6FFB JR Z,$702A    ; #R$702A.}
+ $6FFD BIT 6,A       ; {If this is a place name then jump to #R$7038.
+ $6FFF JR Z,$7038    ; }
  $7001 LD C,A        ;
  $7002 LD A,($5E4F)  ; #REGa=#R$5E4F.
  $7005 CP C          ;
@@ -3809,10 +3857,10 @@ c$7097 LD A,L        ; Horizontal co-ordinate.
 ; Routine at 70AD
 ;
 ; Used by the routines at #R$70B2 and #R$70D2.
-c$70AD LD A,H        ;
+c$70AD LD A,H        ; {#REGc=#REGh - #N$08.
  $70AE SUB $08       ;
- $70B0 LD C,A        ;
- $70B1 RET           ;
+ $70B0 LD C,A        ; }
+ $70B1 RET           ; Return.
 
 ; Get Actor Position/ Direction
 ;
@@ -3823,14 +3871,14 @@ c$70B2 CALL $7155    ; Call #R$7155.
  $70B8 LD A,L        ; #REGa=#REGl.
  $70B9 NEG           ;
  $70BB AND %00000111 ; Keep only bits 0-2.
- $70BD LD ($5E40),A  ;
+ $70BD LD ($5E40),A  ; Write #REGa to #R$5E40.
  $70C0 CALL $70AD    ; Call #R$70AD.
  $70C3 CALL $6F10    ; Call #R$6F10.
  $70C6 LD A,(DE)     ;
  $70C7 CP C          ;
  $70C8 JR C,$70CB    ;
  $70CA LD A,C        ; #REGa=#REGc.
-*$70CB LD ($5E25),A  ;
+*$70CB LD ($5E25),A  ; Write #REGa to #R$5E25.
 ; Continue on to #R$70CE.
 
 ; Routine at 70CE
@@ -3956,7 +4004,7 @@ c$716D EX (SP),HL    ; .
 
 ; Mask Sprite
 ;
-; Used by the routines at #R$7101, #R$7139 and #R$7149.
+; Used by the routines at #R$7101, #R$7139, #R$7149, #R$71BC and #R$71CB.
 @label=MaskSprite
 c$7170 LD A,C        ; {Jump to #R$71CB if the vertical position is zero.
  $7171 AND A         ;
@@ -4001,6 +4049,7 @@ c$7170 LD A,C        ; {Jump to #R$71CB if the vertical position is zero.
  $719E LD A,C        ;
  $719F AND A         ;
  $71A0 JR Z,$71C8    ;
+; This entry point is used by the routine at #R$71CB.
 *$71A2 DEC C         ;
  $71A3 PUSH HL       ;
  $71A4 LD A,($5E41)  ; {#REGb=#R$5E41.
@@ -4023,19 +4072,29 @@ c$7170 LD A,C        ; {Jump to #R$71CB if the vertical position is zero.
  $71B9 OR (HL)       ;
  $71BA LD (HL),A     ;
  $71BB INC L         ;
-*$71BC LD A,D        ;
- $71BD OR (HL)       ;
- $71BE LD (HL),A     ;
- $71BF INC L         ;
- $71C0 LD A,E        ;
- $71C1 OR (HL)       ;
- $71C2 LD (HL),A     ;
- $71C3 POP DE        ;
- $71C4 POP HL        ;
+
+; Draw Two Bytes
+;
+; Used by the routine at #R$71CB.
+@label=DrawTwoBytes
+c$71BC LD A,D        ; {Merge the bits from #REGhl with #REGd and write the
+ $71BD OR (HL)       ; result back to #REGhl.
+ $71BE LD (HL),A     ; }
+ $71BF INC L         ; Increment #REGl by one.
+ $71C0 LD A,E        ; {Merge the bits from #REGhl with #REGe and write the
+ $71C1 OR (HL)       ; result back to #REGhl.
+ $71C2 LD (HL),A     ; }
+ $71C3 POP DE        ; {Restore #REGde and #REGhl from the stack.
+ $71C4 POP HL        ; }
  $71C5 CALL $6ECB    ; Call #R$6ECB.
+; This entry point is used by the routine at #R$7170.
 *$71C8 EXX           ;
  $71C9 JR $7170      ; Jump to #R$7170.
-*$71CB EXX           ;
+
+; Routine at 71CB
+;
+; Used by the routine at #R$7170.
+c$71CB EXX           ;
  $71CC LD A,C        ;
  $71CD AND A         ;
  $71CE JR NZ,$71A2   ;
@@ -4060,6 +4119,7 @@ c$7170 LD A,C        ; {Jump to #R$71CB if the vertical position is zero.
 *$71E4 LD ($5E26),A  ;
  $71E7 EXX           ;
  $71E8 JR $7170      ; Jump to #R$7170.
+; This entry point is used by the routine at #R$7170.
 *$71EA EX (SP),HL    ;
  $71EB JR $71BC      ;
 
@@ -6048,22 +6108,22 @@ b$7F4A DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
 b$7F6B DEFB $FF,$FF,$FE,$FC,$FA,$F7,$F4,$F0
  $7F73 DEFB $EB,$E6,$E1,$DA,$D3,$CC,$C4,$BC
  $7F7B DEFB $B3,$AA,$A1,$97,$8C,$82,$77,$6C
- $7F83 DEFB $60,$54,$48,$3C,$30,$24,$17,$0A
- $7F8B DEFB $43,$4F,$50,$59,$52,$49,$47,$48
- $7F93 DEFB $54,$20,$31,$39,$38,$33,$20,$41
- $7F9B DEFB $2E,$43,$2E,$47,$2E,$20,$41,$4C
- $7FA3 DEFB $4C,$20,$52,$49,$47,$48,$54,$53
- $7FAB DEFB $20,$52,$45,$53,$45,$52,$56,$45
- $7FB3 DEFB $44,$77,$2C,$18,$BF,$DD,$7E,$01
- $7FBB DEFB $32,$14,$5F,$DD,$7E,$02,$32,$15
- $7FC3 DEFB $5F,$DD,$7E,$00,$32,$16,$5F,$C9
- $7FCB DEFB $7D,$0F,$0F,$0F,$E6,$1F,$6F,$7C
- $7FD3 DEFB $07,$07,$E6,$E0,$B5,$6F,$7C,$E6
- $7FDB DEFB $07,$08,$7C,$0F,$0F,$0F,$E6,$18
- $7FE3 DEFB $F6,$40,$67,$08,$B4,$67,$C9,$83
- $7FEB DEFB $78,$AC,$78,$1C,$79,$33,$79,$4E
- $7FF3 DEFB $79,$07,$78,$07,$78,$AF,$79,$CE
- $7FFB DEFB $79,$07,$78,$07,$07
+ $7F83 DEFB $60,$54,$48,$3C,$30,$24,$17
+ $7F8A DEFB $0A,$43,$4F,$50,$59,$52,$49,$47
+ $7F92 DEFB $48,$54,$20,$31,$39,$38,$33,$20
+ $7F9A DEFB $41,$2E,$43,$2E,$47,$2E,$20,$41
+ $7FA2 DEFB $4C,$4C,$20,$52,$49,$47,$48,$54
+ $7FAA DEFB $53,$20,$52,$45,$53,$45,$52,$56
+ $7FB2 DEFB $45,$44,$77,$2C,$18,$BF,$DD,$7E
+ $7FBA DEFB $01,$32,$14,$5F,$DD,$7E,$02,$32
+ $7FC2 DEFB $15,$5F,$DD,$7E,$00,$32,$16,$5F
+ $7FCA DEFB $C9,$7D,$0F,$0F,$0F,$E6,$1F,$6F
+ $7FD2 DEFB $7C,$07,$07,$E6,$E0,$B5,$6F,$7C
+ $7FDA DEFB $E6,$07,$08,$7C,$0F,$0F,$0F,$E6
+ $7FE2 DEFB $18,$F6,$40,$67,$08,$B4,$67,$C9
+ $7FEA DEFB $83,$78,$AC,$78,$1C,$79,$33,$79
+ $7FF2 DEFB $4E,$79,$07,$78,$07,$78,$AF,$79
+ $7FFA DEFB $CE,$79,$07,$78,$07,$07
 
 i$8000
 
