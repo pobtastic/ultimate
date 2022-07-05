@@ -15,6 +15,7 @@ TRANZAM_SKOOL = '{}/sources/tranzam/tranzam.skool'.format(ULTIMATE_HOME)
 UNDERWURLDE_SKOOL = '{}/sources/underwurlde/underwurlde.skool'.format(ULTIMATE_HOME)
 
 SKOOLKIT_HOME = os.environ.get('SKOOLKIT_HOME')
+SKOOLKIT_TOOLS = "{}/tools".format(SKOOLKIT_HOME)
 if SKOOLKIT_HOME:
     if not os.path.isdir(SKOOLKIT_HOME):
         sys.stderr.write('SKOOLKIT_HOME={}: directory not found\n'.format(SKOOLKIT_HOME))
@@ -42,49 +43,58 @@ def run_skool2asm():
     skool2asm.main(sys.argv[1:] + [UNDERWURLDE_SKOOL])
 
 def run_skool2html():
-    options = '-c Config/InitModule=sources:bases -d {}/build/html'.format(ULTIMATE_HOME)
+    options = '-c Config/InitModule={}:publish -d {}/build/html'.format(SKOOLKIT_TOOLS, ULTIMATE_HOME)
+
     art.tprint("ATIC ATAC")
-    hex = '-H -c Config/GameDir=ultimate/aticatac/hex'
-    dec = '-D -c Config/GameDir=ultimate/aticatac/dec'
+    hex = '-H -c Config/GameDir=ultimate/aticatac --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/aticatac/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [ATICATAC_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [ATICATAC_SKOOL])
+
     art.tprint("COOKIE")
-    hex = '-H -c Config/GameDir=ultimate/cookie/hex'
-    dec = '-D -c Config/GameDir=ultimate/cookie/dec'
+    hex = '-H -c Config/GameDir=ultimate/cookie --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/cookie/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [COOKIE_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [COOKIE_SKOOL])
+
     art.tprint("JETPAC")
-    hex = '-H -c Config/GameDir=ultimate/jetpac/hex'
-    dec = '-D -c Config/GameDir=ultimate/jetpac/dec'
+    hex = '-H -c Config/GameDir=ultimate/jetpac --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/jetpac/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [JETPAC_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [JETPAC_SKOOL])
+
     art.tprint("KNIGHT LORE")
-    hex = '-H -c Config/GameDir=ultimate/knightlore/hex'
-    dec = '-D -c Config/GameDir=ultimate/knightlore/dec'
+    hex = '-H -c Config/GameDir=ultimate/knightlore --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/knightlore/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [KNIGHTLORE_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [KNIGHTLORE_SKOOL])
+
     art.tprint("LUNAR JETMAN")
-    hex = '-H -c Config/GameDir=ultimate/lunarjetman/hex'
-    dec = '-D -c Config/GameDir=ultimate/lunarjetman/dec'
+    hex = '-H -c Config/GameDir=ultimate/lunarjetman --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/lunarjetman/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [LUNARJETMAN_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [LUNARJETMAN_SKOOL])
+
     art.tprint("PSSST")
-    hex = '-H -c Config/GameDir=ultimate/pssst/hex'
-    dec = '-D -c Config/GameDir=ultimate/pssst/dec'
+    hex = '-H -c Config/GameDir=ultimate/pssst --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/pssst/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [PSSST_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [PSSST_SKOOL])
+
     art.tprint("SABRE WULF")
-    hex = '-H -c Config/GameDir=ultimate/sabrewulf/hex'
-    dec = '-D -c Config/GameDir=ultimate/sabrewulf/dec'
+    hex = '-H -c Config/GameDir=ultimate/sabrewulf --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/sabrewulf/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [SABREWULF_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [SABREWULF_SKOOL])
+
     art.tprint("TRANZ AM")
-    hex = '-H -c Config/GameDir=ultimate/tranzam/hex'
-    dec = '-D -c Config/GameDir=ultimate/tranzam/dec'
+    hex = '-H -c Config/GameDir=ultimate/tranzam --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/tranzam/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [TRANZAM_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [TRANZAM_SKOOL])
+
     art.tprint("UNDERWURLDE")
-    hex = '-H -c Config/GameDir=ultimate/underwurlde/hex'
-    dec = '-D -c Config/GameDir=ultimate/underwurlde/dec'
+    hex = '-H -c Config/GameDir=ultimate/underwurlde --var pub=2'
+    dec = '-D -c Config/GameDir=ultimate/underwurlde/dec --var pub=4'
     skool2html.main(options.split() + hex.split() + sys.argv[1:] + [UNDERWURLDE_SKOOL])
     skool2html.main(options.split() + dec.split() + sys.argv[1:] + [UNDERWURLDE_SKOOL])

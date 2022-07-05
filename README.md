@@ -22,22 +22,22 @@ Browse the latest release:
 
 * [The "Ultimate Play the Game" disassemblies](https://pobtastic.github.io/ultimate/)
 
-* [Atic Atac disassembly](https://pobtastic.github.io/ultimate/aticatac/hex/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/aticatac/hex/))
+* [Atic Atac disassembly](https://pobtastic.github.io/ultimate/aticatac/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/aticatac/))
 * [Atic Atac disassembly](https://pobtastic.github.io/ultimate/aticatac/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/aticatac/dec/))
 
-* [Cookie disassembly](https://pobtastic.github.io/ultimate/cookie/hex/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/cookie/hex/))
+* [Cookie disassembly](https://pobtastic.github.io/ultimate/cookie/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/cookie/))
 * [Cookie disassembly](https://pobtastic.github.io/ultimate/cookie/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/cookie/dec/))
 
-* [Jetpac disassembly](https://pobtastic.github.io/ultimate/jetpac/hex/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/jetpac/hex/))
+* [Jetpac disassembly](https://pobtastic.github.io/ultimate/jetpac/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/jetpac/))
 * [Jetpac disassembly](https://pobtastic.github.io/ultimate/jetpac/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/jetpac/dec/))
 
-* [Lunar Jetman disassembly](https://pobtastic.github.io/ultimate/lunarjetman/hex/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/lunarjetman/hex/))
+* [Lunar Jetman disassembly](https://pobtastic.github.io/ultimate/lunarjetman/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/lunarjetman/))
 * [Lunar Jetman disassembly](https://pobtastic.github.io/ultimate/lunarjetman/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/lunarjetman/dec/))
 
-* [Pssst disassembly](https://pobtastic.github.io/ultimate/pssst/hex/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/pssst/hex/))
+* [Pssst disassembly](https://pobtastic.github.io/ultimate/pssst/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/pssst/))
 * [Pssst disassembly](https://pobtastic.github.io/ultimate/pssst/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/pssst/dec/))
 
-* [Tranz Am disassembly](https://pobtastic.github.io/ultimate/tranzam/hex/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/tranzam/hex/))
+* [Tranz Am disassembly](https://pobtastic.github.io/ultimate/tranzam/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/tranzam/))
 * [Tranz Am disassembly](https://pobtastic.github.io/ultimate/tranzam/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/tranzam/dec/))
 
 To build the current development version, first either install SkoolKit, or
@@ -45,3 +45,8 @@ make a clone of the [SkoolKit repository](https://github.com/skoolkid/skoolkit)
 and point the environment variable SKOOLKIT_HOME at it. Then:
 
     $ utils/mkhtml.py
+
+Disclaimer
+----------
+
+You will need to own the original game in order to disassemble the game code.
