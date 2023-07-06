@@ -5,7 +5,7 @@ OPTIONS  = -d build/html -t
 OPTIONS += $(foreach theme,$(THEMES),-T $(theme))
 OPTIONS += $(HTML_OPTS)
 
-.PHONY: usage clean aticatac cookie jetpac lunarjetman pssst tranzam
+.PHONY: usage clean aticatac cookie jetpac lunarjetman pssst sabrewulf tranzam
 usage:
 	@echo "Targets:"
 	@echo "  usage         show this help"
@@ -62,8 +62,8 @@ pssst:
 
 .PHONY: sabrewulf
 sabrewulf:
-	if [ ! -f SabreWulf.z80 ]; then tap2sna.py @sabrewulf.t2s; fi
-	sna2skool.py -H -c sources/sabrewulf/sabrewulf.ctl SabreWulf.z80 > sources/sabrewulf/sabrewulf.skool
+	if [ ! -f SabreWulf.sna ]; then curl -o SabreWulf.sna https://mdfs.net/Software/Spectrum/Games/Sabre.sna; fi
+	sna2skool.py -H -c sources/sabrewulf/sabrewulf.ctl SabreWulf.sna > sources/sabrewulf/sabrewulf.skool
 	skool2html.py $(OPTIONS) -D -c Config/GameDir=ultimate/sabrewulf/dec --var pub=4 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/sabrewulf/sabrewulf.skool sources/sabrewulf/sabrewulf.skool sources/sabrewulf/sabrewulf.ref
 	skool2html.py $(OPTIONS) -H -c Config/GameDir=ultimate/sabrewulf --var pub=2 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/sabrewulf/sabrewulf.skool sources/sabrewulf/sabrewulf.skool sources/sabrewulf/sabrewulf.ref
 
@@ -74,5 +74,5 @@ tranzam:
 	skool2html.py $(OPTIONS) -D -c Config/GameDir=ultimate/tranzam/dec --var pub=4 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/tranzam/tranzam.skool sources/tranzam/tranzam.ref
 	skool2html.py $(OPTIONS) -H -c Config/GameDir=ultimate/tranzam --var pub=2 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/tranzam/tranzam.skool sources/tranzam/tranzam.ref
 
-all : aticatac cookie jetpac lunarjetman pssst tranzam
+all : aticatac cookie jetpac lunarjetman pssst sabrewulf tranzam
 .PHONY : all

@@ -4,8 +4,9 @@
 ; Loading screen
 ;
 ; #UDGTABLE
-; { #SCR2(loading) | Cookie Loading Screen. }
-; TABLE#
+; { =h Cookie Loading Screen }
+; { #SCR$02(loading) }
+; UDGTABLE#
 @label=Loading
 b$4000 DEFB $00,$00,$00,$00,$00,$00,$0F,$FF,$C0,$00,$00,$00,$00,$00,$3F,$FF,$C0,$00,$00,$00,$00,$01,$FF,$F8,$00,$00,$00,$00,$00,$00,$00,$00 ; {Pixels
  $4020 DEFB $00,$00,$00,$00,$00,$3F,$8F,$FF,$FE,$78,$00,$00,$00,$F9,$CF,$FF,$39,$B0,$00,$00,$00,$1F,$FF,$FF,$80,$00,$00,$00,$00,$00,$00,$00 ;
@@ -3270,32 +3271,49 @@ c$73D3 LD HL,($5F0E) ; #REGhl=#R$5F0E.
 ; { #TRANZAM$605B }
 ; LIST#
 
-; Routine at 7415
+; Add Points To Score
 ;
 ; Used by the routines at #R$65E8, #R$6C3C and #R$6E25.
-c$7415 LD A,($5F21)  ;
+;
+; BC Points to add to score
+;
+; Check the active player.
+@label=AddPointsToScore
+c$7415 LD A,($5F21)  ; {If #R$5F21 is not zero, jump to #R$7420.
  $7418 AND A         ;
- $7419 JR NZ,$7420   ;
- $741B LD HL,$5F10   ;
- $741E JR $7423      ;
-*$7420 LD HL,$5F13   ;
-*$7423 LD A,(HL)     ;
- $7424 ADD A,C       ;
- $7425 DAA           ;
- $7426 LD (HL),A     ;
- $7427 DEC HL        ;
- $7428 LD A,(HL)     ;
- $7429 ADC A,B       ;
- $742A DAA           ;
- $742B LD (HL),A     ;
- $742C DEC HL        ;
- $742D LD A,(HL)     ;
- $742E ADC A,$00     ;
- $7430 DAA           ;
- $7431 LD (HL),A     ;
- $7432 LD A,($5F21)  ;
+ $7419 JR NZ,$7420   ; }
+; Set the score address for 1UP.
+ $741B LD HL,$5F10   ; #REGhl=#R$5F10.
+ $741E JR $7423      ; Jump to #R$7423.
+; Set the score address for 2UP.
+@label=AddPointsToScore_2UP
+*$7420 LD HL,$5F13   ; #REGhl=#R$5F13.
+; Process adding the points to the appropriate score.
+@label=AddPointsToScore_Start
+*$7423 LD A,(HL)     ; #REGa=score byte #3.
+ $7424 ADD A,C       ; {Add #REGc to score byte #3 with BCD conversion.
+ $7425 DAA           ; }
+ $7426 LD (HL),A     ; Update score byte #3.
+ $7427 DEC HL        ; Move onto the next score byte.
+ $7428 LD A,(HL)     ; #REGa=score byte #2.
+ $7429 ADC A,B       ; {Add (with carry) #REGb to score byte #2 with BCD
+ $742A DAA           ; conversion.}
+ $742B LD (HL),A     ; Update score byte #2.
+ $742C DEC HL        ; Move onto the next score byte.
+ $742D LD A,(HL)     ; #REGa=score byte #1.
+ $742E ADC A,$00     ; {Add #N$00 (i.e. just the carry flag) to score byte #1
+ $7430 DAA           ; with BCD conversion.}
+ $7431 LD (HL),A     ; Update score byte #1.
+; Check the active player.
+ $7432 LD A,($5F21)  ; {If #R$5F21 is not zero, jump to #R$7440.
  $7435 AND A         ;
- $7436 JR NZ,$7440   ;
+ $7436 JR NZ,$7440   ; }
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$70F9 }
+; { #PSSST$737A }
+; { #TRANZAM$6046 }
+; LIST#
 
 ; Print Scores
 ;

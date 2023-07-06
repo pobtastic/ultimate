@@ -1,10 +1,10 @@
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
-D $4000 #UDGTABLE { #SCR(loading) | Lunar Jetman Loading Screen. } TABLE#
+D $4000 #UDGTABLE { =h Lunar Jetman Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
 B $4000,$1800,$20 Pixels
-B $5800,$300,$20 Attributes
+B $5800,$0300,$20 Attributes
 
 i $5B00
 
@@ -1836,42 +1836,42 @@ N $EB67 Frame 1.
 N $EC49 Frame 2.
   $EC49,$01 Width = #N(#PEEK(#PC)) bytes.
   $EC4A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC4B,$D8,$07 #GRAPHIC$07(explosion-02)
+  $EC4B,$1F,$07 #GRAPHIC$07(explosion-02)
 
 N $EC6A Frame 3.
   $EC6A,$01 Width = #N(#PEEK(#PC)) bytes.
   $EC6B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC6C,$D8,$07 #GRAPHIC$07(explosion-03)
+  $EC6C,$1F,$07 #GRAPHIC$07(explosion-03)
 
 N $EC8B Frame 4.
   $EC8B,$01 Width = #N(#PEEK(#PC)) bytes.
   $EC8C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC8D,$D8,$07 #GRAPHIC$07(explosion-04)
+  $EC8D,$1F,$07 #GRAPHIC$07(explosion-04)
 
 N $ECAC Frame 5.
   $ECAC,$01 Width = #N(#PEEK(#PC)) bytes.
   $ECAD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECAE,$D8,$07 #GRAPHIC$07(explosion-05)
+  $ECAE,$1F,$07 #GRAPHIC$07(explosion-05)
 
 N $ECCD Frame 6.
   $ECCD,$01 Width = #N(#PEEK(#PC)) bytes.
   $ECCE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECCF,$D8,$07 #GRAPHIC$07(explosion-06)
+  $ECCF,$1F,$07 #GRAPHIC$07(explosion-06)
 
 N $ECEE Frame 7.
   $ECEE,$01 Width = #N(#PEEK(#PC)) bytes.
   $ECEF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECF0,$D8,$07 #GRAPHIC$07(explosion-07)
+  $ECF0,$1F,$07 #GRAPHIC$07(explosion-07)
 
 N $ED0F Frame 8.
   $ED0F,$01 Width = #N(#PEEK(#PC)) bytes.
   $ED10,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED11,$D8,$07 #GRAPHIC$07(explosion-08)
+  $ED11,$1F,$07 #GRAPHIC$07(explosion-08)
 
 N $ED30 Frame 9.
   $ED30,$01 Width = #N(#PEEK(#PC)) bytes.
   $ED31,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED32,$D8,$07 #GRAPHIC$07(explosion-09)
+  $ED32,$1F,$07 #GRAPHIC$07(explosion-09)
 
 b $EE17 Sprite: Bomb
 E $EE17 #UDGTABLE(default) { #UDGARRAY*bomb-01,25;bomb-02;bomb-03(bomb) } UDGTABLE#

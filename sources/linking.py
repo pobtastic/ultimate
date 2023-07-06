@@ -1,4 +1,4 @@
-# Copyright 2021 Paul Maddern
+# Copyright 2023 Paul Maddern
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -26,7 +26,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Atic Atac"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../aticatac/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/aticatac/{self._type}/{href}", link_text)
 
 	def expand_cookie(self, text, index, cwd):
 		# #COOKIEaddress[#anchor][(link text)]
@@ -34,7 +34,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Cookie"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../cookie/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/cookie/{self._type}/{href}", link_text)
 
 	def expand_jetpac(self, text, index, cwd):
 		# #JETPACaddress[#anchor][(link text)]
@@ -42,7 +42,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Jetpac"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../jetpac/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/jetpac/{self._type}/{href}", link_text)
 
 	def expand_knightlore(self, text, index, cwd):
 		# #KNIGHTLOREaddress[#anchor][(link text)]
@@ -50,7 +50,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Knight Lore"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../knightlore/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/knightlore/{self._type}/{href}", link_text)
 
 	def expand_lunarjetman(self, text, index, cwd):
 		# #LUNARJETMANaddress[#anchor][(link text)]
@@ -58,7 +58,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Lunar Jetman"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../lunarjetman/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/lunarjetman/{self._type}/{href}", link_text)
 
 	def expand_pssst(self, text, index, cwd):
 		# #PSSSTaddress[#anchor][(link text)]
@@ -66,7 +66,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Pssst"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../pssst/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/pssst/{self._type}/{href}", link_text)
 
 	def expand_sabrewulf(self, text, index, cwd):
 		# #SABREWULFaddress[#anchor][(link text)]
@@ -74,7 +74,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Sabre Wulf"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../sabrewulf/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/sabrewulf/{self._type}/{href}", link_text)
 
 	def expand_tranzam(self, text, index, cwd):
 		# #TRANZAMaddress[#anchor][(link text)]
@@ -82,7 +82,7 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Tranz Am"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../tranzam/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/tranzam/{self._type}/{href}", link_text)
 
 	def expand_underwurlde(self, text, index, cwd):
 		# #UNDERWURLDEaddress[#anchor][(link text)]
@@ -90,4 +90,4 @@ class UltimateHtmlWriter(HtmlWriter):
 		if not link_text:
 			link_text = "Underwurlde"
 		href = self._asm_relpath(cwd, address, code_id, True)
-		return end, self.format_link(f"../../underwurlde/{self._type}/{href}", link_text)
+		return end, self.format_link(f"/ultimate/underwurlde/{self._type}/{href}", link_text)

@@ -1,10 +1,10 @@
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
-D $4000 #UDGTABLE { #SCR2(loading) | Cookie Loading Screen. } TABLE#
+D $4000 #UDGTABLE { =h Cookie Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
 B $4000,$1800,$20 Pixels
-B $5800,$300,$20 Attributes
+B $5800,$0300,$20 Attributes
 
 i $5B00
 @ $5B00 expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2;($addr)-($addr+$11)-$01-$10{0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
@@ -371,7 +371,7 @@ N $62FB Handle flashing each selection.
   $6302,$04 If a 1UP game is selected, jump to #R$631F.
   $6306,$03 Call #R$6324.
 @ $6309 label=MenuAttrHandler
-  $6309,$03 #REGb=#N$03.
+  $6309,$02 #REGb=#N$03.
   $630B,$01 #REGa=#REGc.
 @ $630D label=MenuAttrHandler_Loop
   $630D,$02,b$01 Keep only bits 0-1.
@@ -1064,7 +1064,38 @@ E $73D3 View the equivalent code in;
   $7410,$03 #REGhl=#R$5F0E.
   $7413,$02 Jump to #R$73F4.
 
-c $7415
+c $7415 Add Points To Score
+E $7415 View the equivalent code in;
+. #LIST
+. { #JETPAC$70F9 }
+. { #PSSST$737A }
+. { #TRANZAM$6046 }
+. LIST#
+R $7415 BC Points to add to score
+N $7415 Check the active player.
+@ $7415 label=AddPointsToScore
+  $7415,$06 If #R$5F21 is not zero, jump to #R$7420.
+N $741B Set the score address for 1UP.
+  $741B,$03 #REGhl=#R$5F10.
+  $741E,$02 Jump to #R$7423.
+N $7420 Set the score address for 2UP.
+@ $7420 label=AddPointsToScore_2UP
+  $7420,$03 #REGhl=#R$5F13.
+N $7423 Process adding the points to the appropriate score.
+@ $7423 label=AddPointsToScore_Start
+  $7423,$01 #REGa=score byte #3.
+  $7424,$02 Add #REGc to score byte #3 with BCD conversion.
+  $7426,$01 Update score byte #3.
+  $7427,$01 Move onto the next score byte.
+  $7428,$01 #REGa=score byte #2.
+  $7429,$02 Add (with carry) #REGb to score byte #2 with BCD conversion.
+  $742B,$01 Update score byte #2.
+  $742C,$01 Move onto the next score byte.
+  $742D,$01 #REGa=score byte #1.
+  $742E,$03 Add #N$00 (i.e. just the carry flag) to score byte #1 with BCD conversion.
+  $7431,$01 Update score byte #1.
+N $7432 Check the active player.
+  $7432,$06 If #R$5F21 is not zero, jump to #R$7440.
 
 c $7438 Print Scores
 E $7438 View the equivalent code in;

@@ -1,10 +1,10 @@
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
-D $4000 #UDGTABLE { #SCR(loading) | Tranz Am Loading Screen. } TABLE#
+D $4000 #UDGTABLE { =h Tranz Am Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
 B $4000,$1800,$20 Pixels
-B $5800,$300,$20 Attributes
+B $5800,$0300,$20 Attributes
 
 i $5B00
 
@@ -527,7 +527,9 @@ t $6031 Score/ Hi-Score Text
 c $6046 Add Points To Score
 E $6046 View the equivalent code in;
 . #LIST
+. { #COOKIE$7415 }
 . { #JETPAC$70F9 }
+. { #PSSST$737A }
 . LIST#
 R $6046 BC Points to add to score
 @ $6046 label=AddPointsToScore
@@ -718,7 +720,7 @@ c $617F Set Night Playarea Attributes
 c $6188 Controls: Kempston Joystick
 @ $6188 label=ReadKempstonJoystick
 R $6188 A Joystick controls
-  $6188,$03 #REGa=controls.
+  $6188,$02 #REGa=controls.
   $618A,$01 Flip the bits.
   $618B,$01 Return.
 
@@ -945,7 +947,7 @@ N $6362 See #LINK:Pokes#infinite_lives(Infinite Lives).
   $6365,$01 Decrease #R$5E3D by one.
   $6366,$03 If lives are still a positive number jump to #R$63A7.
 N $6369 Else, trigger the game over events.
-  $6369,$03 Write #N$00 to #R$5E3D.
+  $6369,$02 Write #N$00 to #R$5E3D.
   $636B,$01 Restore #REGhl from the stack.
   $636C,$03 Call #R$605B.
   $636F,$03 Call #R$6175.
@@ -1836,10 +1838,17 @@ N $6CC4 Prints the score.
 @ $6CC4 label=PrintScore
   $6CC4,$02 #REGb=#N$03.
 @ $6CC6 label=PrintScore_Loop
+  $6CC6,$01 #REGa=#REGde.
+  $6CC7,$04 #REGa=#REGa / #N$10.
   $6CCB,$02,b$01 Keep only bits 0-3.
+  $6CCD #REGa=#REGa + #N$30 (convert to ASCII).
   $6CCF,$03 Call #R$6C96.
+  $6CD2,$01 #REGa=#REGde.
   $6CD3,$02,b$01 Keep only bits 0-3.
+  $6CD5,$02 #REGa=#REGa + #N$30 (convert to ASCII).
   $6CD7,$03 Call #R$6C96.
+  $6CDA,$01 Increment #REGde by one.
+  $6CDB,$02 Decrease counter by one and loop back to #R$6CC6 until counter is zero.
   $6CDD,$01 Return.
 
 c $6CDE Display Miles/ Time.
@@ -1988,7 +1997,7 @@ N $6EB2 Check if the temperature is already at the upper limit.
 N $6EB6 Go ahead and increase the temperature...
   $6EB6,$01 Increment #REGa by one.
 @ $6EB7 label=UpdateTemperature
-  $6EB7,$05 Write the updated #REGa (temperature) back to #R$5E0C.
+  $6EB7,$03 Write the updated #REGa (temperature) back to #R$5E0C.
   $6EBA,$02 Jump to #R$6EA0.
 N $6EBC Handles dropping the temperature gauge.
 @ $6EBC label=TemperatureDrop
@@ -2485,7 +2494,7 @@ N $7473 Frame #N$01
   $7474,$20,b$02 #SPRITE$20(explosion-01*)
 N $7494 Frame #N$02
   $7494,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7495,$1E,b$02 #SPRITE$21(explosion-02*)
+  $7495,$1C,b$02 #SPRITE$21(explosion-02*)
 
 b $74B1 UDG Graphics
 @ $74B1 label=UDG_Tiles

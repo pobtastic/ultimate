@@ -4,8 +4,9 @@
 ; Loading screen
 ;
 ; #UDGTABLE
-; { #SCR(loading) | PSSST Loading Screen. }
-; TABLE#
+; { =h PSSST Loading Screen }
+; { #SCR$02(loading) }
+; UDGTABLE#
 @label=Loading
 b$4000 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00 ; {Pixels
  $4020 DEFB $00,$00,$0F,$F1,$EA,$DD,$7B,$BE,$3F,$5D,$2F,$0D,$B3,$45,$8A,$78,$FF,$FF,$E7,$FF,$FC,$00,$03,$00,$00,$00,$00,$FB,$C0,$00,$00,$03 ;
@@ -385,14 +386,22 @@ g$5E04 DEFB $22
 ; 1UP Score
 ;
 ; 3-byte representation of the score.
-@label=1UP_Score
-g$5E05 DEFB $22,$AF,$3A
+@label=1UP_Score_1
+g$5E05 DEFB $22      ; Byte #1.
+@label=1UP_Score_2
+ $5E06 DEFB $AF      ; Byte #2.
+@label=1UP_Score_3
+ $5E07 DEFB $3A      ; Byte #3.
 
 ; 2UP Score
 ;
 ; 3-byte representation of the score.
-@label=2UP_Score
-g$5E08 DEFB $F5,$AC,$31
+@label=2UP_Score_1
+g$5E08 DEFB $F5      ; Byte #1.
+@label=2UP_Score_2
+ $5E09 DEFB $AC      ; Byte #2.
+@label=2UP_Score_3
+ $5E0A DEFB $31      ; Byte #3.
 
 ; Temporary Actor State
 @label=Actor
@@ -3576,32 +3585,49 @@ c$7325 LD HL,$0040    ; {Call #R$759A with #N($0040, $04, $04) (screen buffer
 ; { #TRANZAM$0000 }
 ; LIST#
 
-; Routine at 737A
+; Add Points To Score
 ;
 ; Used by the routines at #R$64FA, #R$6A98 and #R$7249.
-c$737A LD A,($5E1E)  ;
+;
+; BC Points to add to score
+;
+; Check the active player.
+@label=AddPointsToScore
+c$737A LD A,($5E1E)  ; {If #R$5E1E is not zero, jump to #R$7385.
  $737D AND A         ;
- $737E JR NZ,$7385   ;
- $7380 LD HL,$5E07   ;
- $7383 JR $7388      ;
-*$7385 LD HL,$5E0A   ;
-*$7388 LD A,(HL)     ;
- $7389 ADD A,C       ;
- $738A DAA           ;
- $738B LD (HL),A     ;
- $738C DEC HL        ;
- $738D LD A,(HL)     ;
- $738E ADC A,B       ;
- $738F DAA           ;
- $7390 LD (HL),A     ;
- $7391 DEC HL        ;
- $7392 LD A,(HL)     ;
- $7393 ADC A,$00     ;
- $7395 DAA           ;
- $7396 LD (HL),A     ;
- $7397 LD A,($5E1E)  ;
+ $737E JR NZ,$7385   ; }
+; Set the score address for 1UP.
+ $7380 LD HL,$5E07   ; #REGhl=#R$5E07.
+ $7383 JR $7388      ; Jump to #R$7388.
+; Set the score address for 2UP.
+@label=AddPointsToScore_2UP
+*$7385 LD HL,$5E0A   ; #REGhl=#R$5E0A.
+; Process adding the points to the appropriate score.
+@label=AddPointsToScore_Start
+*$7388 LD A,(HL)     ; #REGa=score byte #3.
+ $7389 ADD A,C       ; {Add #REGc to score byte #3 with BCD conversion.
+ $738A DAA           ; }
+ $738B LD (HL),A     ; Update score byte #3.
+ $738C DEC HL        ; Move onto the next score byte.
+ $738D LD A,(HL)     ; #REGa=score byte #2.
+ $738E ADC A,B       ; {Add (with carry) #REGb to score byte #2 with BCD
+ $738F DAA           ; conversion.}
+ $7390 LD (HL),A     ; Update score byte #2.
+ $7391 DEC HL        ; Move onto the next score byte.
+ $7392 LD A,(HL)     ; #REGa=score byte #1.
+ $7393 ADC A,$00     ; {Add #N$00 (i.e. just the carry flag) to score byte #1
+ $7395 DAA           ; with BCD conversion.}
+ $7396 LD (HL),A     ; Update score byte #1.
+; Check the active player.
+ $7397 LD A,($5E1E)  ; {If #R$5F21 is not zero, jump to #R$73A5.
  $739A AND A         ;
- $739B JR NZ,$73A5   ;
+ $739B JR NZ,$73A5   ; }
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$7415 }
+; { #JETPAC$70F9 }
+; { #TRANZAM$6046 }
+; LIST#
 
 ; Print Scores
 ;

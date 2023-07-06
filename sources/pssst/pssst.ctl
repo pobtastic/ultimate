@@ -1,10 +1,10 @@
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
-D $4000 #UDGTABLE { #SCR(loading) | PSSST Loading Screen. } TABLE#
+D $4000 #UDGTABLE { =h PSSST Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
 B $4000,$1800,$20 Pixels
-B $5800,$300,$20 Attributes
+B $5800,$0300,$20 Attributes
 
 i $5B00
 
@@ -71,10 +71,21 @@ D $5E04 Either #N$00 or #N$01.
 
 g $5E05 1UP Score
 D $5E05 3-byte representation of the score.
-@ $5E05 label=1UP_Score
+@ $5E05 label=1UP_Score_1
+B $5E05,$01 Byte #1.
+@ $5E06 label=1UP_Score_2
+B $5E06,$01 Byte #2.
+@ $5E07 label=1UP_Score_3
+B $5E07,$01 Byte #3.
+
 g $5E08 2UP Score
 D $5E08 3-byte representation of the score.
-@ $5E08 label=2UP_Score
+@ $5E08 label=2UP_Score_1
+B $5E08,$01 Byte #1.
+@ $5E09 label=2UP_Score_2
+B $5E09,$01 Byte #2.
+@ $5E0A label=2UP_Score_3
+B $5E0A,$01 Byte #3.
 
 g $5E0B Temporary Actor State
 @ $5E0B label=Actor
@@ -1306,7 +1317,38 @@ N $7372 Controller for the inactive player.
   $7372,$06 If #R$5E1E is zero then jump to #R$736E.
   $7378,$02 Jump to #R$736A.
 
-c $737A
+c $737A Add Points To Score
+E $737A View the equivalent code in;
+. #LIST
+. { #COOKIE$7415 }
+. { #JETPAC$70F9 }
+. { #TRANZAM$6046 }
+. LIST#
+R $737A BC Points to add to score
+N $737A Check the active player.
+@ $737A label=AddPointsToScore
+  $737A,$06 If #R$5E1E is not zero, jump to #R$7385.
+N $7380 Set the score address for 1UP.
+  $7380,$03 #REGhl=#R$5E07.
+  $7383,$02 Jump to #R$7388.
+N $7385 Set the score address for 2UP.
+@ $7385 label=AddPointsToScore_2UP
+  $7385,$03 #REGhl=#R$5E0A.
+N $7388 Process adding the points to the appropriate score.
+@ $7388 label=AddPointsToScore_Start
+  $7388,$01 #REGa=score byte #3.
+  $7389,$02 Add #REGc to score byte #3 with BCD conversion.
+  $738B,$01 Update score byte #3.
+  $738C,$01 Move onto the next score byte.
+  $738D,$01 #REGa=score byte #2.
+  $738E,$02 Add (with carry) #REGb to score byte #2 with BCD conversion.
+  $7390,$01 Update score byte #2.
+  $7391,$01 Move onto the next score byte.
+  $7392,$01 #REGa=score byte #1.
+  $7393,$03 Add #N$00 (i.e. just the carry flag) to score byte #1 with BCD conversion.
+  $7396,$01 Update score byte #1.
+N $7397 Check the active player.
+  $7397,$06 If #R$5F21 is not zero, jump to #R$73A5.
 
 c $739D Print Scores
 E $739D View the equivalent code in;
@@ -1664,7 +1706,7 @@ E $75B9 View the equivalent code in;
 c $75CC Controls: Kempston Joystick
 @ $75CC label=ReadKempstonJoystick
 R $75CC A Joystick controls
-  $75CC,$03 #REGa=controls.
+  $75CC,$02 #REGa=controls.
   $75CE,$01 Flip the bits.
   $75CF,$01 Return.
 

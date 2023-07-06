@@ -1,10 +1,10 @@
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
-D $4000 #UDGTABLE { #SCR2(loading) | JetPac Loading Screen. } TABLE#
+D $4000 #UDGTABLE { =h JetPac Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
 B $4000,$1800,$20 Pixels
-B $5800,$300,$20 Attributes
+B $5800,$0300,$20 Attributes
 
 i $5B00
 
@@ -379,7 +379,7 @@ t $6040 Rights Messaging
 
 t $6061 Copyright Messaging
 @ $6061 label=Message_Copyright
-  $6061,$2A "COPYRIGHT 1983 A.C.G. ALL RIGHTS RESERVED".
+  $6061,$29 "COPYRIGHT 1983 A.C.G. ALL RIGHTS RESERVED".
 
 c $608A Create Game Window
 E $608A View the equivalent code in;
@@ -1048,6 +1048,8 @@ N $70F1 Controller for the inactive player.
 c $70F9 Add Points To Score
 E $70F9 View the equivalent code in;
 . #LIST
+. { #COOKIE$7415 }
+. { #PSSST$737A }
 . { #TRANZAM$6046 }
 . LIST#
 @ $70F9 label=AddPointsToScore
@@ -1390,7 +1392,7 @@ E $733A View the equivalent code in;
 . LIST#
 @ $733A label=ReadKempstonJoystick
 R $733A A Joystick controls
-  $733A,$03 #REGa=controls.
+  $733A,$02 #REGa=controls.
   $733C,$01 Flip the bits.
   $733D,$01 Return.
 

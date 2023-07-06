@@ -1,10 +1,10 @@
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
-D $4000 #UDGTABLE { #SCR(loading) | Atic Atac Loading Screen. } TABLE#
+D $4000 #UDGTABLE { =h Atic Atac Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
 B $4000,$1800,$20 Pixels
-B $5800,$300,$20 Attributes
+B $5800,$0300,$20 Attributes
 
 i $5B00
 
@@ -142,16 +142,28 @@ g $5E29 Chicken Level
 B $5E29,$01
 
 g $5E2A Score
+D $5E2A 3-byte representation of the score.
+@ $5E2A label=Score_1
+B $5E2A,$01 Byte #1.
+@ $5E2B label=Score_2
+B $5E2B,$01 Byte #2.
+@ $5E2C label=Score_3
+B $5E2C,$01 Byte #3.
+
 g $5E2D In Doorway
+
 g $5E2E Door Timer
+
 g $5E2F Walk Counter
+
 g $5E30 Inventory 1
 B $5E30,$04,$01
 g $5E34 Inventory 2
 B $5E34,$04,$01
 g $5E38 Inventory 3
 B $5E38,$04,$01
-g $5E39 Flash Timer
+
+g $5E3C Flash Timer
 
 g $5E3D Clock Hours
 @ $5E3D label=ClockHours
@@ -167,7 +179,7 @@ B $5E3F,$01
 
 g $5E40 Visited Rooms
 @ $5E40 label=VisitedRooms
-B $5E40,$20,$01
+B $5E40,$14,$01
 
 g $5E54 Visited Percentage
 @ $5E54 label=VisitedPercentage
@@ -2521,10 +2533,55 @@ B $A17D,$08
 c $A185 Clear Sprite
 @ $A185 label=ClearSprite
 
-c $A19C Add To Score
-@ $A19C label=AddToScore
+c $A19C Add Points To Score
+E $A19C View the equivalent code in;
+. #LIST
+. { #COOKIE$7415 }
+. { #JETPAC$70F9 }
+. { #PSSST$737A }
+. { #TRANZAM$6046 }
+. LIST#
+R $A19C BC Points to add to score
+@ $A19C label=AddPointsToScore
+  $A19C,$03 #REGhl=#R$5E2C.
+  $A19F,$01 #REGa=score byte #3.
+  $A1A0,$02 Add #REGc to score byte #3 with BCD conversion.
+  $A1A2,$01 Update score byte #3.
+  $A1A3,$01 Move onto the next score byte.
+  $A1A4,$01 #REGa=score byte #2.
+  $A1A5,$02 Add (with carry) #REGb to score byte #2 with BCD conversion.
+  $A1A7,$01 Update score byte #2.
+  $A1A8,$01 Move onto the next score byte.
+  $A1A9,$01 #REGa=score byte #1.
+  $A1AA,$03 Add #N$00 (i.e. just the carry flag) to score byte #1 with BCD conversion.
+  $A1AD,$01 Update score byte #1.
+
+c $A1AE Print Scores
+E $A1AE View the equivalent code in;
+. #LIST
+. { #COOKIE$7438 }
+. { #JETPAC$711C }
+. { #LUNARJETMAN$89BF }
+. { #PSSST$739D }
+. LIST#
+N $A1AE Sets up the player score.
+@ $A1AE label=PrintScore
   $A1AE,$06 Write #R$BFCC to #R$5E01.
-@ $A1B7 label=PrintScore
+  $A1B4,$03 #REGhl=#N$50C8.
+  $A1B7,$03 Call #R$9BA2.
+  $A1BA,$03 #REGde=#N$5E2A.
+  $A1BD,$02 #REGb=#N$03.
+@ $A1BF label=PrintScore_Loop
+  $A1BF,$01 #REGa=#REGde.
+  $A1C0,$04 #REGa=#REGa / #N$10.
+  $A1C4,$02,b$01 Keep only bits 0-3.
+  $A1C6,$03 Call #R$A1D3.
+  $A1C9,$01 #REGa=#REGde.
+  $A1CA,$02,b$01 Keep only bits 0-3.
+  $A1CC,$03 Call #R$A1D3.
+  $A1CF,$01 Increment #REGde by one.
+  $A1D0,$02 Decrease counter by one and loop back to #R$A1BF until counter is zero.
+  $A1D2,$01 Return.
 
 c $A1D3 Print Character
 E $A1D3 View the equivalent code in;
@@ -2778,12 +2835,12 @@ b $A76E Graphic: Door Frame
 b $A7D0 Graphic Attributes: Door Frame
   $A7D0,$01 Width = #N(#PEEK(#PC)) bytes.
   $A7D1,$01 Height = #N(#PEEK(#PC)) bytes.
-  $A7D2,$0E,$04 #GRAPHIC$01,1(door-colour)
+  $A7D2,$0C,$04 #GRAPHIC$01,1(door-colour)
 
 b $A7DE Graphic Attributes: Cave Door Frame
   $A7DE,$01 Width = #N(#PEEK(#PC)) bytes.
   $A7DF,$01 Height = #N(#PEEK(#PC)) bytes.
-  $A7E0,$0E,$04 #GRAPHIC$00,1(cave-door-colour)
+  $A7E0,$0C,$04 #GRAPHIC$00,1(cave-door-colour)
 
 b $A7EC Graphic: Table
   $A7EC,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -3172,7 +3229,7 @@ N $BC9F Right.
 b $BCCE Graphic: Cave Door Frame
   $BCCE,$01 Width = #N(#PEEK(#PC)) bytes.
   $BCCF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BCD0,$C0,$04 #GRAPHIC$00(cave-door)
+  $BCD0,$60,$04 #GRAPHIC$00(cave-door)
 
 b $BD30 Sprite: Pumpkin
 N $BD30 Frame 1.
@@ -3574,7 +3631,7 @@ b $CFD5 Graphic: Barrel
 b $D057 Graphic Attributes: Barrel
   $D057,$01 Width = #N(#PEEK(#PC)) bytes.
   $D058,$01 Height = #N(#PEEK(#PC)) bytes.
-  $D059,$12,$04 #GRAPHIC$19,1(barrel-colour)
+  $D059,$10,$04 #GRAPHIC$19,1(barrel-colour)
 
 b $D069 Graphic: A.C.G. Door
   $D069,$01 Width = #N(#PEEK(#PC)) bytes.
