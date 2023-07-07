@@ -435,7 +435,7 @@ C $6103,$03 #REGa=#R$5DF9
 
   $6146,$02 Decrease #REGb by one, jump to #R$6141 if not zero
 
-c $616A  1UP/ 2UP Swapper.
+c $616A  1UP/ 2UP Swapper
 E $616A View the equivalent code in;
 . #LIST
 . { #COOKIE$6416 }

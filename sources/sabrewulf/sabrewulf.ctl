@@ -31,6 +31,16 @@ i $5B88
 
 b $5B8D
 
+c $5CB0 Indirect Jump
+E $5CB0 View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$5CB0 }
+. LIST#
+@ $5CB0 label=IndirectJump
+  $5CB0,$01 Jump to the address held in #REGhl.
+
+i $5CB1
+
 c $6000 Entry Point
 c $6000 Game entry point
 E $6000 View the equivalent code in;
@@ -48,10 +58,288 @@ t $6007
 
 b $6036
 
-b $70BC Graphics
+b $6066 Layout
+@ $6066 label=Layout
+
+w $6166 Screen Table
+@ $6166 label=ScreenTable
+  $6166,$60,$10
+
+w $61C6 Background Table
+N $61C6 Background Table #N$01.
+@ $61C6 label=BackgroundTable
+  $61C6,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $61C8,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $61CA,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $61CC,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $61CA,$04,$0D
+  $61FE,$02 Terminator.
+
+N $6200 Background Table #N$02.
+  $6200,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6202,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $6204,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6206,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6204,$04,$11
+  $6248,$02 Terminator.
+
+N $624A Background Table #N$03.
+  $624A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $624C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $624E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6250,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $624E,$04,$11
+  $6292,$02 Terminator.
+
+N $6294 Background Table #N$04.
+  $6294,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6296,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $6298,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $629A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6298,$04,$11
+  $62DC,$02 Terminator.
+
+N $62DE Background Table #N$05.
+  $62DE,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $62E0,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $62E2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $62E4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $62E2,$04,$13
+  $632E,$02 Terminator.
+
+N $6330 Background Table #N$06.
+  $6330,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6332,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $6334,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6336,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6334,$04,$10
+  $6374,$02 Terminator.
+
+N $6376 Background Table #N$07.
+  $6376,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6378,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $637A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $637C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $637A,$04,$15
+  $63CE,$02 Terminator.
+
+N $63D0 Background Table #N$08.
+  $63D0,$50,$10
+  $6420,$02 Terminator.
+
+N $6422 Background Table #N$09.
+  $6422,$58,$10
+  $647A,$02 Terminator.
+
+N $647C Background Table #N$0A.
+  $647C,$4C,$10
+  $64C8,$02 Terminator.
+
+N $64CA Background Table #N$0B.
+  $64CA,$54,$10
+  $651E,$02 Terminator.
+
+N $6520 Background Table #N$0C.
+  $6520,$64,$10
+  $6584,$02 Terminator.
+
+N $6586 Background Table #N$0D.
+  $6586,$38,$10
+  $65BE,$02 Terminator.
+
+N $65C0 Background Table #N$0E.
+  $65C0,$54,$10
+  $6614,$02 Terminator.
+
+N $6616 Background Table #N$0F.
+  $6616,$54,$10
+  $666A,$02 Terminator.
+
+N $666C Background Table #N$10.
+  $666C,$44,$10
+  $66B0,$02 Terminator.
+
+N $66B2 Background Table #N$11.
+  $66B2,$68,$10
+  $671A,$02 Terminator.
+
+N $671C Background Table #N$12.
+  $671C,$68,$10
+  $6784,$02 Terminator.
+
+N $6786 Background Table #N$13.
+  $6786,$60,$10
+  $67E6,$02 Terminator.
+
+N $67E8 Background Table #N$14.
+  $67E8,$34,$10
+  $681C,$02 Terminator.
+
+N $681E Background Table #N$15.
+  $681E,$44,$10
+  $6862,$02 Terminator.
+
+N $6864 Background Table #N$16.
+  $6864,$4C,$10
+  $68B0,$02 Terminator.
+
+N $68B2 Background Table #N$17.
+  $68B2,$48,$10
+  $68FA,$02 Terminator.
+
+N $68FC Background Table #N$18.
+  $68FC,$38,$10
+  $6938,$02 Terminator.
+
+N $693A Background Table #N$19.
+  $693A,$48,$10
+  $6986,$02 Terminator.
+
+N $6988 Background Table #N$1A.
+  $6988,$54,$10
+  $69DC,$02 Terminator.
+
+N $69DE Background Table #N$1B.
+  $69DE,$58,$10
+  $6A36,$02 Terminator.
+
+N $6A38 Background Table #N$1C.
+  $6A38,$44,$10
+  $6A7C,$02 Terminator.
+
+N $6A7E Background Table #N$1D.
+  $6A7E,$44,$10
+  $6AC2,$02 Terminator.
+
+N $6AC4 Background Table #N$1E.
+  $6AC4,$54,$10
+  $6B18,$02 Terminator.
+
+N $6B1A Background Table #N$1F.
+  $6B1A,$54,$10
+  $6B6E,$02 Terminator.
+
+N $6B70 Background Table #N$20.
+  $6B70,$48,$10
+  $6BB8,$02 Terminator.
+
+N $6BBA Background Table #N$21.
+  $6BBA,$4C,$10
+  $6C06,$02 Terminator.
+
+N $6C08 Background Table #N$22.
+  $6C08,$5C,$10
+  $6C64,$02 Terminator.
+
+N $6C66 Background Table #N$23.
+  $6C66,$54,$10
+  $6CBA,$02 Terminator.
+
+N $6CBC Background Table #N$24.
+  $6CBC,$50,$10
+  $6D0C,$02 Terminator.
+
+N $6D0E Background Table #N$25.
+  $6D0E,$48,$10
+  $6D56,$02 Terminator.
+
+N $6D58 Background Table #N$26.
+  $6D58,$58,$10
+  $6DB0,$02 Terminator.
+
+N $6DB2 Background Table #N$26.
+  $6DB2,$5C,$10
+  $6E0E,$02 Terminator.
+
+N $6E10 Background Table #N$27.
+  $6E10,$4C,$10
+  $6E5C,$02 Terminator.
+
+N $6E5E Background Table #N$28.
+  $6E5E,$40,$10
+  $6E9E,$02 Terminator.
+
+N $6EA0 Background Table #N$29.
+  $6EA0,$4C,$10
+  $6EEC,$02 Terminator.
+
+N $6EEE Background Table #N$2A.
+  $6EEE,$44,$10
+  $6F32,$02 Terminator.
+
+N $6F34 Background Table #N$2B.
+  $6F34,$38,$10
+  $6F6C,$02 Terminator.
+
+N $6F6E Background Table #N$2C.
+  $6F6E,$40,$10
+  $6FAE,$02 Terminator.
+
+N $6FB0 Background Table #N$2D.
+  $6FB0,$40,$10
+  $6FF0,$02 Terminator.
+
+N $6FF2 Background Table #N$2E.
+  $6FF2,$3C,$10
+  $702E,$02 Terminator.
+
+N $7030 Background Table #N$2F.
+  $7030,$44,$10
+  $7074,$02 Terminator.
+
+N $7076 Background Table #N$30.
+  $7076,$44,$10
+  $70BA,$02 Terminator.
+
+b $70BC Background Graphics
+  $70BC,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
+  $70BD,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
+  $70BE,$D8,$09 UDGARRAY#($02,attr=$07,scale=$04,step={width},flip=2)(background-01)
+  $7196,$1D,$09 Attributes.
+
+  $71B3
+  $7298
+  $72F6
+  $7462
+  $7523
+  $771F
+  $785E
+  $78F2
+  $7947
   $7981
+  $7B11
+  $7BB7
+  $7C0C
+  $7CCD
+  $7E4B
   $7F40
-  $9692
+  $8047
+  $81C5
+  $8382
+  $83AA
+  $83D2
+  $8427
+  $847C
+  $8558
+  $85C8
+  $86DA
+  $8702
+  $872A
+  $8806
+  $89C3
+  $8B80
+  $8C5C
+  $8CCC
+  $8D3C
+  $8E18
+  $8F2A
+  $90A8
+  $93C4
+  $955D
+  $95CD
+  $9673
+
+b $9692
 
 g $9698 1UP Score
 D $9698 3-byte representation of the score.
@@ -86,7 +374,14 @@ B $96A8,$01
 
 b $96A9
   $96B4
+  $96B7
+W $96B8
+  $96BA
+  $96BC
   $96BD
+  $96DF
+  $9702
+  $982E
 
 c $995A Security Check
 E $995A Continue on to #R$9960.
@@ -433,6 +728,80 @@ c $B16A
 
 c $B187
 
+c $B1D4
+  $B204,$01 Return.
+
+c $B235 1UP/ 2UP Swapper 
+E $B235 View the equivalent code in;
+. #LIST
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$613B }
+. { #TRANZAM$0000 }
+. LIST#
+@ $B235 label=ChangePlayer
+N $B235 This routine "swaps" the data between #REGde and #REGhl.
+  $B235,$03 #REGa=#R$969E.
+  $B238,$01 Flip the bits.
+  $B239,$03 Write this back to #R$969E.
+  $B23C,$03 #REGhl=#R$96BC
+  $B23F,$03 #REGde=#R$96DF.
+  $B242,$03 #REGbc=#N$0023 (counter).
+  $B245,$03 Call #R$B25D.
+  $B248,$03 #REGhl=#R$DDEC.
+  $B24B,$03 #REGde=#R$DFEC.
+  $B24E,$03 #REGbc=#N$0200 (counter).
+  $B251,$03 Call #R$B25D.
+  $B254,$03 #REGhl=#R$9702.
+  $B257,$03 #REGde=#R$982E.
+  $B25A,$03 #REGbc=#N$012C (counter).
+N $B25D This looks complicated but it's just grabbing the data from #REGde, grabbing the data from #REGhl, and writing the others data to each one.
+@ $B25D label=ChangePlayer_Loop
+  $B25D,$01 Fetch a byte from #REGde and store it in #REGa.
+  $B25E,$01 Switch to the shadow #REGaf register.
+  $B25F,$02 Copy a byte from #REGhl and write it to #REGde.
+  $B261,$01 Switch back to the normal #REGaf register.
+  $B262,$01 Write the byte held in #REGa (orginally from #REGde) into #REGhl.
+  $B263,$01 Increment #REGde by one.
+  $B264,$01 Increment #REGhl by one.
+  $B265,$01 Decrease #REGc by one.
+  $B266,$04 Loop back to #R$B25D until the counter in #REGbc is zero.
+  $B26A,$01 Return.
+
+c $B26B
+  $B26B,$06 Write #N$0300 to #R$96B8.
+  $B271,$01 Return.
+
+c $B272
+
+  $B29F,$03 Call #R$B2D8.
+  $B2A2,$03 #REGde=#R$B32E.
+  $B2A5,$01 Switch to the shadow registers.
+  $B2A6,$03 #REGhl'=#R$B336.
+  $B2A9,$03 #REGde'=#R$B346.
+N $B2AC There are eight lines of text.
+  $B2AC,$02 #REGb'=#N$08.
+  $B2AE,$03 Call #R$B47F.
+  $B2B1,$03 #REGbc=#N$0306.
+  $B2B4,$03 #REGde=#R$B304.
+  $B2B7,$03 #REGhl=#N$4868.
+
+  $B2BC,$03 Call #R$B8AD.
+  $B2BF,$03 Call #R$B5E4.
+  $B2C2,$02 #REGb=#N$03.
+  $B2C9,$03 Call #R$B589.
+
+  $B2D7,$01 Return.
+
+  $B2D8,$03 #REGhl=#N$58A4.
+  $B2DB,$03 #REGbc=#N$1810.
+  $B2DE,$03 #REGde=#N$0020.
+
+  $B2EE,$03 #REGhl=#N$40A4.
+  $B2F1,$03 #REGbc=#N$1880.
+
+  $B303,$01 Return.
+
 g $B304 High Score
 E $B304 View the equivalent code in;
 . #LIST
@@ -450,6 +819,12 @@ B $B305,$01 Byte #2.
 B $B306,$01 Byte #3.
 
 b $B307
+  $B322
+@ $B32E label=HallOfFame_Attributes
+  $B32E
+@ $B336 label=HallOfFame_Position
+  $B336
+@ $B346 label=HallOfFame_Text
 T $B346,$15,$14:$01 "#STR(#PC)".
 T $B35B,$12,$11:$01 "#STR(#PC)".
 T $B36D,$12,$11:$01 "#STR(#PC)".
@@ -460,6 +835,35 @@ T $B3B5,$12,$11:$01 "#STR(#PC)".
 T $B3C7,$0E,$0D:$01 "#STR(#PC)".
 
 c $B3D5
+  $B3D5,$05 Write #N$FF to #R$96B7.
+  $B3DA,$03 Call #R$BB7C.
+  $B3DD,$03 Call #R$BB5C.
+  $B3E0,$03 #REGhl=#R$61C6.
+  $B3E3,$03 Call #R$BBF7.
+  $B3E6,$03 Call #R$B473.
+  $B3E9,$03 Call #R$B43E.
+  $B3EC,$03 #REGhl=#R$BC67.
+  $B3EF,$03 Call #R$BD51.
+  $B3F2,$03 Call #R$B473.
+  $B3F5,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+  $B3FB,$01 Flip the bits.
+  $B3FC,$01 Store the result in #REGe.
+
+  $B423,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
+  $B429,$01 Flip the bits.
+  $B42A,$01 Store the result in #REGe.
+
+  $B472,$01 Return.
 
 c $B473 Game Selection Menu
 E $B473 View the equivalent code in;
@@ -758,12 +1162,26 @@ N $B5E2 Prints the score.
   $B5FB,$01 Return.
 
 c $B5FC
+  $B5FC,$03 #REGhl=#R$9698.
+  $B5FF,$03 #REGde=#R$969B.
+  $B602,$03 Call #R$B6B2.
+  $B605,$05 Write #N$00 to #R$96BA.
+  $B60E,$01 Flip the bits.
+  $B610,$03 Write #REGa to #R$969E.
+  $B613,$03 Call #R$B61E.
+  $B61A,$01 Flip the bits.
+  $B622,$03 #REGde=#R$B322.
+  $B625,$03 Call #R$B6B2.
+  $B62A,$03 Call #R$B6AB.
+  $B6C4,$01 Return.
 T $B6C5,$03 "#STR(#PC,$04,$03)".
 T $B6C8,$03 "#STR(#PC,$04,$03)".
 T $B6CB,$03 "#STR(#PC,$04,$03)".
 T $B6CE,$03 "#STR(#PC,$04,$03)".
 T $B6D1,$03 "#STR(#PC,$04,$03)".
 T $B6D4,$03 "#STR(#PC,$04,$03)".
+
+  $B754,$01 Return.
 
 b $B755
 T $B76D,$0F,$0E:$01 "#STR(#PC)".
@@ -1252,20 +1670,62 @@ N $DC22 Left Frame 2.
 
 b $DC6C Attributes?
 
-b $E770
+b $E770 Graphic: Amulet
+D $E770 #UDGTABLE(default,centre,centre)
+. { #GRAPHIC$93(testing-93) | #GRAPHIC$92(testing-92) }
+. { #GRAPHIC$91(testing-91) | #GRAPHIC$90(testing-90) }
+. UDGTABLE#
+N $E770 Top Left.
   $E770,$01 Width = #N(#PEEK(#PC)) bytes.
   $E771,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E772,$20,$02 #GRAPHIC$86(testing-0B)
+  $E772,$20,$02 #GRAPHIC$93(testing-93)
 
-b $E792
-b $E7B4
-b $E7D6
+N $E792 Top Right.
+  $E792,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E793,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E794,$20,$02 #GRAPHIC$92(testing-92)
+
+N $E7B4 Bottom Left.
+  $E7B4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E7B5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E7B6,$20,$02 #GRAPHIC$91(testing-91)
+
+N $E7D6 Bottom Right.
+  $E7D6,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E7D7,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E7D8,$20,$02 #GRAPHIC$90(testing-90)
+
 b $E7F8
-b $E87A
+D $E7F8 ...
+  $E7F8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E7F9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E7FA,$80,$04 #GRAPHIC$94(testing-94*)
+
+N $E87A
+  $E87A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E87B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E87C,$80,$04 #GRAPHIC$95(testing-95*)
+
 b $E8FC
-b $E92A
-b $E958
-b $E988
+  $E8FC,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E8FD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E8FE,$2C,$02 #GRAPHIC$34(testing-34)
+
+N $E92A
+  $E92A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E92B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E92C,$2C,$02 #GRAPHIC$35(testing-35)
+
+N $E958
+  $E958,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E959,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E95A,$2E,$02 #GRAPHIC$36(testing-36)
+
+N $E988
+  $E988,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E989,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E98A,$2E,$02 #GRAPHIC$37(testing-37)
+
 b $E9B8
 b $E9D5
 b $E9F2

@@ -490,7 +490,7 @@ N $6127 This is a controller with a jump to #R$61EA to return to the game select
   $6136,$03 Call #R$611B.
   $6139,$02 Jump to #R$6133.
 
-c $613B 1UP/ 2UP Swapper.
+c $613B 1UP/ 2UP Swapper
 E $613B View the equivalent code in;
 . #LIST
 . { #COOKIE$6416 }

@@ -541,7 +541,7 @@ M $640C,$06 Return if bit 0 of #R$5F0C is not set (i.e. if this is a 1UP game).
   $6412,$03 Else, write it to #R$5F32.
   $6415,$01 Return.
 
-c $6416 1UP/ 2UP Swapper.
+c $6416 1UP/ 2UP Swapper
 E $6416 View the equivalent code in;
 . #LIST
 . { #JETPAC$0000 }
