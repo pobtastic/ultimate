@@ -1851,7 +1851,7 @@ N $6CC4 Prints the score.
   $6CDB,$02 Decrease counter by one and loop back to #R$6CC6 until counter is zero.
   $6CDD,$01 Return.
 
-c $6CDE Display Miles/ Time.
+c $6CDE Display Miles/ Time
 @ $6CDE label=DisplayMiles
   $6CDE,$03 #REGhl=#N$4061 (screen position).
   $6CE1,$03 #REGde=#R$5E2D.

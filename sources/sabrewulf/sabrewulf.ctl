@@ -60,235 +60,354 @@ b $6036
 
 b $6066 Layout
 @ $6066 label=Layout
+  $6066,$10
 
-w $6166 Screen Table
-@ $6166 label=ScreenTable
-  $6166,$60,$10
+w $6166 Room Table
+@ $6166 label=RoomTable
+W $6166,$02 Room ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N(#EVAL((#PC - $6166) / $02))).
+L $6166,$02,$30
 
-w $61C6 Background Table
-N $61C6 Background Table #N$01.
-@ $61C6 label=BackgroundTable
+w $61C6 Special Room
+@ $61C6 label=Room_Special_00
   $61C6,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $61C8,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-  $61CA,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
-B $61CC,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-L $61CA,$04,$0D
+L $61C6,$04,$0E
   $61FE,$02 Terminator.
 
-N $6200 Background Table #N$02.
+w $6200 Room #N$00
+@ $6200 label=Room_00
   $6200,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6202,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-  $6204,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
-B $6206,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-L $6204,$04,$11
+L $6200,$04,$12
   $6248,$02 Terminator.
 
-N $624A Background Table #N$03.
+w $624A Room #N$01
+@ $624A label=Room_01
   $624A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $624C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-  $624E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
-B $6250,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-L $624E,$04,$11
+L $624A,$04,$12
   $6292,$02 Terminator.
 
-N $6294 Background Table #N$04.
+w $6294 Room #N$02
+@ $6294 label=Room_02
   $6294,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6296,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-  $6298,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
-B $629A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-L $6298,$04,$11
+L $6294,$04,$12
   $62DC,$02 Terminator.
 
-N $62DE Background Table #N$05.
+w $62DE Room #N$03
+@ $62DE label=Room_03
   $62DE,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $62E0,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-  $62E2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
-B $62E4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-L $62E2,$04,$13
+L $62DE,$04,$14
   $632E,$02 Terminator.
 
-N $6330 Background Table #N$06.
+w $6330 Room #N$04
+@ $6330 label=Room_04
   $6330,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6332,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-  $6334,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
-B $6336,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-L $6334,$04,$10
+L $6330,$04,$11
   $6374,$02 Terminator.
 
-N $6376 Background Table #N$07.
+w $6376 Room #N$05
+@ $6376 label=Room_05
   $6376,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6378,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-  $637A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
-B $637C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
-L $637A,$04,$15
+L $6376,$04,$16
   $63CE,$02 Terminator.
 
-N $63D0 Background Table #N$08.
-  $63D0,$50,$10
+w $63D0 Room #N$06
+@ $63D0 label=Room_06
+  $63D0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $63D2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $63D0,$04,$14
   $6420,$02 Terminator.
 
-N $6422 Background Table #N$09.
-  $6422,$58,$10
+w $6422 Room #N$07
+@ $6422 label=Room_07
+  $6422,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6424,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6422,$04,$16
   $647A,$02 Terminator.
 
-N $647C Background Table #N$0A.
-  $647C,$4C,$10
+w $647C Room #N$08
+@ $647C label=Room_08
+  $647C,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $647E,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $647C,$04,$13
   $64C8,$02 Terminator.
 
-N $64CA Background Table #N$0B.
-  $64CA,$54,$10
+w $64CA Room #N$09
+@ $64CA label=Room_09
+  $64CA,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $64CC,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $64CA,$04,$15
   $651E,$02 Terminator.
 
-N $6520 Background Table #N$0C.
-  $6520,$64,$10
+w $6520 Room #N$0A
+@ $6520 label=Room_0A
+  $6520,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6522,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6520,$04,$19
   $6584,$02 Terminator.
 
-N $6586 Background Table #N$0D.
-  $6586,$38,$10
+w $6586 Room #N$0B
+@ $6586 label=Room_0B
+  $6586,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6588,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6586,$04,$0E
   $65BE,$02 Terminator.
 
-N $65C0 Background Table #N$0E.
-  $65C0,$54,$10
+w $65C0 Room #N$0C
+@ $65C0 label=Room_0C
+  $65C0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $65C2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $65C0,$04,$15
   $6614,$02 Terminator.
 
-N $6616 Background Table #N$0F.
-  $6616,$54,$10
+w $6616 Room #N$0D
+@ $6616 label=Room_0D
+  $6616,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6618,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6616,$04,$15
   $666A,$02 Terminator.
 
-N $666C Background Table #N$10.
-  $666C,$44,$10
+w $666C Room #N$0E
+@ $666C label=Room_0E
+  $666C,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $666E,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $666C,$04,$11
   $66B0,$02 Terminator.
 
-N $66B2 Background Table #N$11.
-  $66B2,$68,$10
+w $66B2 Room #N$0F
+@ $66B2 label=Room_0F
+  $66B2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $66B4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $66B2,$04,$1A
   $671A,$02 Terminator.
 
-N $671C Background Table #N$12.
-  $671C,$68,$10
+w $671C Room #N$10
+@ $671C label=Room_10
+  $671C,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $671E,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $671C,$04,$1A
   $6784,$02 Terminator.
 
-N $6786 Background Table #N$13.
-  $6786,$60,$10
+w $6786 Room #N$11
+@ $6786 label=Room_11
+  $6786,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6788,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6786,$04,$18
   $67E6,$02 Terminator.
 
-N $67E8 Background Table #N$14.
-  $67E8,$34,$10
+w $67E8 Room #N$12
+@ $67E8 label=Room_12
+  $67E8,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $67EA,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $67E8,$04,$0D
   $681C,$02 Terminator.
 
-N $681E Background Table #N$15.
-  $681E,$44,$10
+w $681E Room #N$13
+@ $681E label=Room_13
+  $681E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6820,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $681E,$04,$11
   $6862,$02 Terminator.
 
-N $6864 Background Table #N$16.
-  $6864,$4C,$10
+w $6864 Room #N$14
+@ $6864 label=Room_14
+  $6864,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6866,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6864,$04,$13
   $68B0,$02 Terminator.
 
-N $68B2 Background Table #N$17.
-  $68B2,$48,$10
+w $68B2 Room #N$15
+@ $68B2 label=Room_15
+  $68B2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $68B4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $68B2,$04,$12
   $68FA,$02 Terminator.
 
-N $68FC Background Table #N$18.
-  $68FC,$38,$10
+w $68FC Room #N$16
+@ $68FC label=Room_16
+  $68FC,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $68FE,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $68FC,$04,$0F
   $6938,$02 Terminator.
 
-N $693A Background Table #N$19.
-  $693A,$48,$10
+w $693A Room #N$17
+@ $693A label=Room_17
+  $693A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $693C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $693A,$04,$13
   $6986,$02 Terminator.
 
-N $6988 Background Table #N$1A.
-  $6988,$54,$10
+w $6988 Room #N$18
+@ $6988 label=Room_18
+  $6988,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $698A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6988,$04,$15
   $69DC,$02 Terminator.
 
-N $69DE Background Table #N$1B.
-  $69DE,$58,$10
+w $69DE Room #N$19
+@ $69DE label=Room_19
+  $69DE,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $69E0,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $69DE,$04,$16
   $6A36,$02 Terminator.
 
-N $6A38 Background Table #N$1C.
-  $6A38,$44,$10
+w $6A38 Room #N$1A
+@ $6A38 label=Room_1A
+  $6A38,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6A3A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6A38,$04,$11
   $6A7C,$02 Terminator.
 
-N $6A7E Background Table #N$1D.
-  $6A7E,$44,$10
+w $6A7E Room #N$1B
+@ $6A7E label=Room_1B
+  $6A7E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6A80,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6A7E,$04,$11
   $6AC2,$02 Terminator.
 
-N $6AC4 Background Table #N$1E.
-  $6AC4,$54,$10
+w $6AC4 Room #N$1C
+@ $6AC4 label=Room_1C
+  $6AC4,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6AC6,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6AC4,$04,$15
   $6B18,$02 Terminator.
 
-N $6B1A Background Table #N$1F.
-  $6B1A,$54,$10
+w $6B1A Room #N$1D
+@ $6B1A label=Room_1D
+  $6B1A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6B1C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6B1A,$04,$15
   $6B6E,$02 Terminator.
 
-N $6B70 Background Table #N$20.
-  $6B70,$48,$10
+w $6B70 Room #N$1E
+@ $6B70 label=Room_1E
+  $6B70,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6B72,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6B70,$04,$12
   $6BB8,$02 Terminator.
 
-N $6BBA Background Table #N$21.
-  $6BBA,$4C,$10
+w $6BBA Room #N$1F
+@ $6BBA label=Room_1F
+  $6BBA,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6BBC,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6BBA,$04,$13
   $6C06,$02 Terminator.
 
-N $6C08 Background Table #N$22.
-  $6C08,$5C,$10
+w $6C08 Room #N$20
+@ $6C08 label=Room_20
+  $6C08,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6C0A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6C08,$04,$17
   $6C64,$02 Terminator.
 
-N $6C66 Background Table #N$23.
-  $6C66,$54,$10
+w $6C66 Room #N$21
+@ $6C66 label=Room_21
+  $6C66,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6C68,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6C66,$04,$15
   $6CBA,$02 Terminator.
 
-N $6CBC Background Table #N$24.
-  $6CBC,$50,$10
+w $6CBC Room #N$22
+@ $6CBC label=Room_22
+  $6CBC,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6CBE,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6CBC,$04,$14
   $6D0C,$02 Terminator.
 
-N $6D0E Background Table #N$25.
-  $6D0E,$48,$10
+w $6D0E Room #N$23
+@ $6D0E label=Room_23
+  $6D0E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6D10,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6D0E,$04,$12
   $6D56,$02 Terminator.
 
-N $6D58 Background Table #N$26.
-  $6D58,$58,$10
+w $6D58 Room #N$24
+@ $6D58 label=Room_24
+  $6D58,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6D5A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6D58,$04,$16
   $6DB0,$02 Terminator.
 
-N $6DB2 Background Table #N$26.
-  $6DB2,$5C,$10
+w $6DB2 Room #N$25
+@ $6DB2 label=Room_25
+  $6DB2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6DB4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6DB2,$04,$17
   $6E0E,$02 Terminator.
 
-N $6E10 Background Table #N$27.
-  $6E10,$4C,$10
+w $6E10 Room #N$26
+@ $6E10 label=Room_26
+  $6E10,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6E12,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6E10,$04,$13
   $6E5C,$02 Terminator.
 
-N $6E5E Background Table #N$28.
-  $6E5E,$40,$10
+w $6E5E Room #N$27
+@ $6E5E label=Room_27
+  $6E5E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6E60,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6E5E,$04,$10
   $6E9E,$02 Terminator.
 
-N $6EA0 Background Table #N$29.
-  $6EA0,$4C,$10
+w $6EA0 Room #N$28
+@ $6EA0 label=Room_28
+  $6EA0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6EA2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6EA0,$04,$13
   $6EEC,$02 Terminator.
 
-N $6EEE Background Table #N$2A.
-  $6EEE,$44,$10
+w $6EEE Room #N$29
+@ $6EEE label=Room_29
+  $6EEE,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6EF0,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6EEE,$04,$11
   $6F32,$02 Terminator.
 
-N $6F34 Background Table #N$2B.
-  $6F34,$38,$10
+w $6F34 Room #N$2A
+@ $6F34 label=Room_2A
+  $6F34,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6F36,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6F34,$04,$0E
   $6F6C,$02 Terminator.
 
-N $6F6E Background Table #N$2C.
-  $6F6E,$40,$10
+w $6F6E Room #N$2B
+@ $6F6E label=Room_2B
+  $6F6E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6F70,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6F6E,$04,$10
   $6FAE,$02 Terminator.
 
-N $6FB0 Background Table #N$2D.
-  $6FB0,$40,$10
+w $6FB0 Room #N$2C
+@ $6FB0 label=Room_2C
+  $6FB0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6FB2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6FB0,$04,$10
   $6FF0,$02 Terminator.
 
-N $6FF2 Background Table #N$2E.
-  $6FF2,$3C,$10
+w $6FF2 Room #N$2D
+@ $6FF2 label=Room_2D
+  $6FF2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $6FF4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $6FF2,$04,$0F
   $702E,$02 Terminator.
 
-N $7030 Background Table #N$2F.
-  $7030,$44,$10
+w $7030 Room #N$2E
+@ $7030 label=Room_2E
+  $7030,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $7032,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $7030,$04,$11
   $7074,$02 Terminator.
 
-N $7076 Background Table #N$30.
-  $7076,$44,$10
+w $7076 Room #N$2F
+@ $7076 label=Room_2F
+  $7076,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $7078,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+L $7076,$04,$11
   $70BA,$02 Terminator.
 
 b $70BC Background Graphics
@@ -297,7 +416,10 @@ b $70BC Background Graphics
   $70BE,$D8,$09 UDGARRAY#($02,attr=$07,scale=$04,step={width},flip=2)(background-01)
   $7196,$1D,$09 Attributes.
 
-  $71B3
+b $71B3
+  $71B3,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
+  $71B4,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
+
   $7298
   $72F6
   $7462
@@ -620,6 +742,7 @@ c $A1FF Pause
 c $A207
 
 b $A29D
+  $A29D,$04,$01
 
 c $A2BD
 

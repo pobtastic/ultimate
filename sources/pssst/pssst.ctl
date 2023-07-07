@@ -1539,7 +1539,7 @@ E $7447 View the equivalent code in;
   $744C,$02 #REGc=#N$00 (value to write).
   $744E,$02 Jump to #R$7440.
 
-c $7450 Colourise sprite.
+c $7450 Colourise Sprite
 @ $7450 label=ColouriseSprite
   $7450,$01 Switch to the shadow registers.
   $7451,$03 #REGhl'=actor co-ordinates.

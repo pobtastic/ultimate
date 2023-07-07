@@ -1261,7 +1261,7 @@ E $71C6 View the equivalent code in;
   $71CB,$02 #REGc=#N$47 (value to write).
   $71CD,$02 Jump to #R$71BF.
 
-c $71CF Colourise sprite.
+c $71CF Colourise Sprite
 @ $71CF label=ColouriseSprite
   $71CF,$01 Switch to the shadow registers.
   $71D0,$03 #REGhl'=actor co-ordinates.

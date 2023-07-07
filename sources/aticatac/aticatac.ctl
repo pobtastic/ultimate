@@ -120,7 +120,7 @@ g $5E21 Lives
 @ $5E21 label=PlayerLives
 B $5E21,$01
 
-g $5E22 Current menu item colour attribute.
+g $5E22 Current menu item colour attribute
 @ $5E22 label=Current_MenuAttr
 
 g $5E23 Line Counter
@@ -1016,605 +1016,605 @@ W $757D,$02 Room ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#EVAL((#PC - $757D) 
 L $757D,$02,$95
 W $76A7,$02 Room ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(None).
 
-w $76A9 Room: #N$00.
+w $76A9 Room: #N$00
 @ $76A9 label=Room_00
   $76C1,$02 Terminator.
 
-w $76C3 Room: #N$01.
+w $76C3 Room: #N$01
 @ $76C3 label=Room_01
   $76CB,$02 Terminator.
 
-w $76CD Room: #N$02.
+w $76CD Room: #N$02
 @ $76CD label=Room_02
   $76D5,$02 Terminator.
 
-w $76D7 Room: #N$03.
+w $76D7 Room: #N$03
 @ $76D7 label=Room_03
   $76E3,$02 Terminator.
 
-w $76E5 Room: #N$04.
+w $76E5 Room: #N$04
 @ $76E5 label=Room_04
   $76EF,$02 Terminator.
 
-w $76F1 Room: #N$05.
+w $76F1 Room: #N$05
 @ $76F1 label=Room_05
   $76F9,$02 Terminator.
 
-w $76FB Room: #N$06.
+w $76FB Room: #N$06
 @ $76FB label=Room_06
   $770B,$02 Terminator.
 
-w $770D Room: #N$07.
+w $770D Room: #N$07
 @ $770D label=Room_07
   $7715,$02 Terminator.
 
-w $7717 Room: #N$08.
+w $7717 Room: #N$08
 @ $7717 label=Room_08
   $771F,$02 Terminator.
 
-w $7721 Room: #N$09.
+w $7721 Room: #N$09
 @ $7721 label=Room_09
   $7731,$02 Terminator.
 
-w $7733 Room: #N$0A.
+w $7733 Room: #N$0A
 @ $7733 label=Room_0A
   $773B,$02 Terminator.
 
-w $773D Room: #N$0B.
+w $773D Room: #N$0B
 @ $773D label=Room_0B
   $7745,$02 Terminator.
 
-w $7747 Room: #N$0C.
+w $7747 Room: #N$0C
 @ $7747 label=Room_0C
   $774F,$02 Terminator.
 
-w $7751 Room: #N$0D.
+w $7751 Room: #N$0D
 @ $7751 label=Room_0D
   $775D,$02 Terminator.
 
-w $775F Room: #N$0E.
+w $775F Room: #N$0E
 @ $775F label=Room_0E
   $7769,$02 Terminator.
 
-w $776B Room: #N$0F.
+w $776B Room: #N$0F
 @ $776B label=Room_0F
   $7773,$02 Terminator.
 
-w $7775 Room: #N$10.
+w $7775 Room: #N$10
 @ $7775 label=Room_10
   $777B,$02 Terminator.
 
-w $777D Room: #N$11.
+w $777D Room: #N$11
 @ $777D label=Room_11
   $7785,$02 Terminator.
 
-w $7787 Room: #N$12.
+w $7787 Room: #N$12
 @ $7787 label=Room_12
   $778D,$02 Terminator.
 
-w $778F Room: #N$13.
+w $778F Room: #N$13
 @ $778F label=Room_13
   $779B,$02 Terminator.
 
-w $779D Room: #N$14.
+w $779D Room: #N$14
 @ $779D label=Room_14
   $77A5,$02 Terminator.
 
-w $77A7 Room: #N$15.
+w $77A7 Room: #N$15
 @ $77A7 label=Room_15
   $77B3,$02 Terminator.
 
-w $77B5 Room: #N$16.
+w $77B5 Room: #N$16
 @ $77B5 label=Room_16
   $77BD,$02 Terminator.
 
-w $77BF Room: #N$17.
+w $77BF Room: #N$17
 @ $77BF label=Room_17
   $77C9,$02 Terminator.
 
-w $77CB Room: #N$18.
+w $77CB Room: #N$18
 @ $77CB label=Room_18
   $77D7,$02 Terminator.
 
-w $77D9 Room: #N$19.
+w $77D9 Room: #N$19
 @ $77D9 label=Room_19
   $77E1,$02 Terminator.
 
-w $77E3 Room: #N$1A.
+w $77E3 Room: #N$1A
 @ $77E3 label=Room_1A
   $77E7,$02 Terminator.
 
-w $77E9 Room: #N$1B.
+w $77E9 Room: #N$1B
 @ $77E9 label=Room_1B
   $77F1,$02 Terminator.
 
-w $77F3 Room: #N$1C.
+w $77F3 Room: #N$1C
 @ $77F3 label=Room_1C
   $77F7,$02 Terminator.
 
-w $77F9 Room: #N$1D.
+w $77F9 Room: #N$1D
 @ $77F9 label=Room_1D
   $77FD,$02 Terminator.
 
-w $77FF Room: #N$1E.
+w $77FF Room: #N$1E
 @ $77FF label=Room_1E
   $7803,$02 Terminator.
 
-w $7805 Room: #N$1F.
+w $7805 Room: #N$1F
 @ $7805 label=Room_1F
   $780B,$02 Terminator.
 
-w $780D Room: #N$20.
+w $780D Room: #N$20
 @ $780D label=Room_20
   $7813,$02 Terminator.
 
-w $7815 Room: #N$21.
+w $7815 Room: #N$21
 @ $7815 label=Room_21
   $781F,$02 Terminator.
 
-w $7821 Room: #N$22.
+w $7821 Room: #N$22
 @ $7821 label=Room_22
   $7827,$02 Terminator.
 
-w $7829 Room: #N$23.
+w $7829 Room: #N$23
 @ $7829 label=Room_23
   $7831,$02 Terminator.
 
-w $7833 Room: #N$24.
+w $7833 Room: #N$24
 @ $7833 label=Room_24
   $783D,$02 Terminator.
 
-w $783F Room: #N$25.
+w $783F Room: #N$25
 @ $783F label=Room_25
   $7845,$02 Terminator.
 
-w $7847 Room: #N$26.
+w $7847 Room: #N$26
 @ $7847 label=Room_26
   $784B,$02 Terminator.
 
-w $784D Room: #N$27.
+w $784D Room: #N$27
 @ $784D label=Room_27
   $785B,$02 Terminator.
 
-w $785D Room: #N$28.
+w $785D Room: #N$28
 @ $785D label=Room_28
   $7861,$02 Terminator.
 
-w $7863 Room: #N$29.
+w $7863 Room: #N$29
 @ $7863 label=Room_29
   $786F,$02 Terminator.
 
-w $7871 Room: #N$2A.
+w $7871 Room: #N$2A
 @ $7871 label=Room_2A
   $7879,$02 Terminator.
 
-w $787B Room: #N$2B.
+w $787B Room: #N$2B
 @ $787B label=Room_2B
   $7883,$02 Terminator.
 
-w $7885 Room: #N$2C.
+w $7885 Room: #N$2C
 @ $7885 label=Room_2C
   $7889,$02 Terminator.
 
-w $788B Room: #N$2D.
+w $788B Room: #N$2D
 @ $788B label=Room_2D
   $7897,$02 Terminator.
 
-w $7899 Room: #N$2E.
+w $7899 Room: #N$2E
 @ $7899 label=Room_2E
   $78A1,$02 Terminator.
 
-w $78A3 Room: #N$2F.
+w $78A3 Room: #N$2F
 @ $78A3 label=Room_2F
   $78A7,$02 Terminator.
 
-w $78A9 Room: #N$30.
+w $78A9 Room: #N$30
 @ $78A9 label=Room_30
   $78AF,$02 Terminator.
 
-w $78B1 Room: #N$31.
+w $78B1 Room: #N$31
 @ $78B1 label=Room_31
   $78B5,$02 Terminator.
 
-w $78B7 Room: #N$32.
+w $78B7 Room: #N$32
 @ $78B7 label=Room_32
   $78BB,$02 Terminator.
 
-w $78BD Room: #N$33.
+w $78BD Room: #N$33
 @ $78BD label=Room_33
   $78C5,$02 Terminator.
 
-w $78C7 Room: #N$34.
+w $78C7 Room: #N$34
 @ $78C7 label=Room_34
   $78CB,$02 Terminator.
 
-w $78CD Room: #N$35.
+w $78CD Room: #N$35
 @ $78CD label=Room_35
   $78D3,$02 Terminator.
 
-w $78D5 Room: #N$36.
+w $78D5 Room: #N$36
 @ $78D5 label=Room_36
   $78D9,$02 Terminator.
 
-w $78DB Room: #N$37.
+w $78DB Room: #N$37
 @ $78DB label=Room_37
   $78DF,$02 Terminator.
 
-w $78E1 Room: #N$38.
+w $78E1 Room: #N$38
 @ $78E1 label=Room_38
   $78E9,$02 Terminator.
 
-w $78EB Room: #N$39.
+w $78EB Room: #N$39
 @ $78EB label=Room_39
   $78EF,$02 Terminator.
 
-w $78F1 Room: #N$3A.
+w $78F1 Room: #N$3A
 @ $78F1 label=Room_3A
   $78F7,$02 Terminator.
 
-w $78F9 Room: #N$3B.
+w $78F9 Room: #N$3B
 @ $78F9 label=Room_3B
   $7901,$02 Terminator.
 
-w $7903 Room: #N$3C.
+w $7903 Room: #N$3C
 @ $7903 label=Room_3C
   $7907,$02 Terminator.
 
-w $7909 Room: #N$3D.
+w $7909 Room: #N$3D
 @ $7909 label=Room_3D
   $7913,$02 Terminator.
 
-w $7915 Room: #N$3E.
+w $7915 Room: #N$3E
 @ $7915 label=Room_3E
   $791B,$02 Terminator.
 
-w $791D Room: #N$3F.
+w $791D Room: #N$3F
 @ $791D label=Room_3F
   $7921,$02 Terminator.
 
-w $7923 Room: #N$40.
+w $7923 Room: #N$40
 @ $7923 label=Room_40
   $792B,$02 Terminator.
 
-w $792D Room: #N$41.
+w $792D Room: #N$41
 @ $792D label=Room_41
   $7931,$02 Terminator.
 
-w $7933 Room: #N$42.
+w $7933 Room: #N$42
 @ $7933 label=Room_42
   $7937,$02 Terminator.
 
-w $7939 Room: #N$43.
+w $7939 Room: #N$43
 @ $7939 label=Room_43
   $7941,$02 Terminator.
 
-w $7943 Room: #N$44.
+w $7943 Room: #N$44
 @ $7943 label=Room_44
   $7947,$02 Terminator.
 
-w $7949 Room: #N$45.
+w $7949 Room: #N$45
 @ $7949 label=Room_45
   $794D,$02 Terminator.
 
-w $794F Room: #N$46.
+w $794F Room: #N$46
 @ $794F label=Room_46
   $7955,$02 Terminator.
 
-w $7957 Room: #N$47.
+w $7957 Room: #N$47
 @ $7957 label=Room_47
   $795B,$02 Terminator.
 
-w $795D Room: #N$48.
+w $795D Room: #N$48
 @ $795D label=Room_48
   $7965,$02 Terminator.
 
-w $7967 Room: #N$49.
+w $7967 Room: #N$49
 @ $7967 label=Room_49
   $796B,$02 Terminator.
 
-w $796D Room: #N$4A.
+w $796D Room: #N$4A
 @ $796D label=Room_4A
   $7971,$02 Terminator.
 
-w $7973 Room: #N$4B.
+w $7973 Room: #N$4B
 @ $7973 label=Room_4B
   $797B,$02 Terminator.
 
-w $797D Room: #N$4C.
+w $797D Room: #N$4C
 @ $797D label=Room_4C
   $7983,$02 Terminator.
 
-w $7985 Room: #N$4D.
+w $7985 Room: #N$4D
 @ $7985 label=Room_4D
   $7989,$02 Terminator.
 
-w $798B Room: #N$4E.
+w $798B Room: #N$4E
 @ $798B label=Room_4E
   $7991,$02 Terminator.
 
-w $7993 Room: #N$4F.
+w $7993 Room: #N$4F
 @ $7993 label=Room_4F
   $7997,$02 Terminator.
 
-w $7999 Room: #N$50.
+w $7999 Room: #N$50
 @ $7999 label=Room_50
   $799F,$02 Terminator.
 
-w $79A1 Room: #N$51.
+w $79A1 Room: #N$51
 @ $79A1 label=Room_51
   $79A5,$02 Terminator.
 
-w $79A7 Room: #N$52.
+w $79A7 Room: #N$52
 @ $79A7 label=Room_52
   $79AB,$02 Terminator.
 
-w $79AD Room: #N$53.
+w $79AD Room: #N$53
 @ $79AD label=Room_53
   $79B3,$02 Terminator.
 
-w $79B5 Room: #N$54.
+w $79B5 Room: #N$54
 @ $79B5 label=Room_54
   $79BB,$02 Terminator.
 
-w $79BD Room: #N$55.
+w $79BD Room: #N$55
 @ $79BD label=Room_55
   $79C3,$02 Terminator.
 
-w $79C5 Room: #N$56.
+w $79C5 Room: #N$56
 @ $79C5 label=Room_56
   $79D1,$02 Terminator.
 
-w $79D3 Room: #N$57.
+w $79D3 Room: #N$57
 @ $79D3 label=Room_57
   $79D9,$02 Terminator.
 
-w $79DB Room: #N$58.
+w $79DB Room: #N$58
 @ $79DB label=Room_58
   $79E1,$02 Terminator.
 
-w $79E3 Room: #N$59.
+w $79E3 Room: #N$59
 @ $79E3 label=Room_59
   $79E9,$02 Terminator.
 
-w $79EB Room: #N$5A.
+w $79EB Room: #N$5A
 @ $79EB label=Room_5A
   $79F5,$02 Terminator.
 
-w $79F7 Room: #N$5B.
+w $79F7 Room: #N$5B
 @ $79F7 label=Room_5B
   $7A03,$02 Terminator.
 
-w $7A05 Room: #N$5C.
+w $7A05 Room: #N$5C
 @ $7A05 label=Room_5C
   $7A11,$02 Terminator.
 
-w $7A13 Room: #N$5D.
+w $7A13 Room: #N$5D
 @ $7A13 label=Room_5D
   $7A1D,$02 Terminator.
 
-w $7A1F Room: #N$5E.
+w $7A1F Room: #N$5E
 @ $7A1F label=Room_5E
   $7A25,$02 Terminator.
 
-w $7A27 Room: #N$5F.
+w $7A27 Room: #N$5F
 @ $7A27 label=Room_5F
   $7A31,$02 Terminator.
 
-w $7A33 Room: #N$60.
+w $7A33 Room: #N$60
 @ $7A33 label=Room_60
   $7A3D,$02 Terminator.
 
-w $7A3F Room: #N$61.
+w $7A3F Room: #N$61
 @ $7A3F label=Room_61
   $7A49,$02 Terminator.
 
-w $7A4B Room: #N$62.
+w $7A4B Room: #N$62
 @ $7A4B label=Room_62
   $7A53,$02 Terminator.
 
-w $7A55 Room: #N$63.
+w $7A55 Room: #N$63
 @ $7A55 label=Room_63
   $7A5F,$02 Terminator.
 
-w $7A61 Room: #N$64.
+w $7A61 Room: #N$64
 @ $7A61 label=Room_64
   $7A69,$02 Terminator.
 
-w $7A6B Room: #N$65.
+w $7A6B Room: #N$65
 @ $7A6B label=Room_65
   $7A75,$02 Terminator.
 
-w $7A77 Room: #N$66.
+w $7A77 Room: #N$66
 @ $7A77 label=Room_66
   $7A89,$02 Terminator.
 
-w $7A8B Room: #N$67.
+w $7A8B Room: #N$67
 @ $7A8B label=Room_67
   $7A8F,$02 Terminator.
 
-w $7A91 Room: #N$68.
+w $7A91 Room: #N$68
 @ $7A91 label=Room_68
   $7A95,$02 Terminator.
 
-w $7A97 Room: #N$69.
+w $7A97 Room: #N$69
 @ $7A97 label=Room_69
   $7A9B,$02 Terminator.
 
-w $7A9D Room: #N$6A.
+w $7A9D Room: #N$6A
 @ $7A9D label=Room_6A
   $7AA3,$02 Terminator.
 
-w $7AA5 Room: #N$6B.
+w $7AA5 Room: #N$6B
 @ $7AA5 label=Room_6B
   $7AAB,$02 Terminator.
 
-w $7AAD Room: #N$6C.
+w $7AAD Room: #N$6C
 @ $7AAD label=Room_6C
   $7AB5,$02 Terminator.
 
-w $7AB7 Room: #N$6D.
+w $7AB7 Room: #N$6D
 @ $7AB7 label=Room_6D
   $7AC1,$02 Terminator.
 
-w $7AC3 Room: #N$6E.
+w $7AC3 Room: #N$6E
 @ $7AC3 label=Room_6E
   $7ACD,$02 Terminator.
 
-w $7ACF Room: #N$6F.
+w $7ACF Room: #N$6F
 @ $7ACF label=Room_6F
   $7AD5,$02 Terminator.
 
-w $7AD7 Room: #N$70.
+w $7AD7 Room: #N$70
 @ $7AD7 label=Room_70
   $7ADF,$02 Terminator.
 
-w $7AE1 Room: #N$71.
+w $7AE1 Room: #N$71
 @ $7AE1 label=Room_71
   $7AE5,$02 Terminator.
 
-w $7AE7 Room: #N$72.
+w $7AE7 Room: #N$72
 @ $7AE7 label=Room_72
   $7AEB,$02 Terminator.
 
-w $7AED Room: #N$73.
+w $7AED Room: #N$73
 @ $7AED label=Room_73
   $7AF5,$02 Terminator.
 
-w $7AF7 Room: #N$74.
+w $7AF7 Room: #N$74
 @ $7AF7 label=Room_74
   $7AFB,$02 Terminator.
 
-w $7AFD Room: #N$75.
+w $7AFD Room: #N$75
 @ $7AFD label=Room_75
   $7B03,$02 Terminator.
 
-w $7B05 Room: #N$76.
+w $7B05 Room: #N$76
 @ $7B05 label=Room_76
   $7B0F,$02 Terminator.
 
-w $7B11 Room: #N$77.
+w $7B11 Room: #N$77
 @ $7B11 label=Room_77
   $7B15,$02 Terminator.
 
-w $7B17 Room: #N$78.
+w $7B17 Room: #N$78
 @ $7B17 label=Room_78
   $7B1D,$02 Terminator.
 
-w $7B1F Room: #N$79.
+w $7B1F Room: #N$79
 @ $7B1F label=Room_79
   $7B23,$02 Terminator.
 
-w $7B25 Room: #N$7A.
+w $7B25 Room: #N$7A
 @ $7B25 label=Room_7A
   $7B31,$02 Terminator.
 
-w $7B33 Room: #N$7B.
+w $7B33 Room: #N$7B
 @ $7B33 label=Room_7B
   $7B37,$02 Terminator.
 
-w $7B39 Room: #N$7C.
+w $7B39 Room: #N$7C
 @ $7B39 label=Room_7C
   $7B41,$02 Terminator.
 
-w $7B43 Room: #N$7D.
+w $7B43 Room: #N$7D
 @ $7B43 label=Room_7D
   $7B4B,$02 Terminator.
 
-w $7B4D Room: #N$7E.
+w $7B4D Room: #N$7E
 @ $7B4D label=Room_7E
   $7B55,$02 Terminator.
 
-w $7B57 Room: #N$7F.
+w $7B57 Room: #N$7F
 @ $7B57 label=Room_7F
   $7B5F,$02 Terminator.
 
-w $7B61 Room: #N$80.
+w $7B61 Room: #N$80
 @ $7B61 label=Room_80
   $7B65,$02 Terminator.
 
-w $7B67 Room: #N$81.
+w $7B67 Room: #N$81
 @ $7B67 label=Room_81
   $7B6D,$02 Terminator.
 
-w $7B6F Room: #N$82.
+w $7B6F Room: #N$82
 @ $7B6F label=Room_82
   $7B79,$02 Terminator.
 
-w $7B7B Room: #N$83.
+w $7B7B Room: #N$83
 @ $7B7B label=Room_83
   $7B7F,$02 Terminator.
 
-w $7B81 Room: #N$84.
+w $7B81 Room: #N$84
 @ $7B81 label=Room_84
   $7B89,$02 Terminator.
 
-w $7B8B Room: #N$85.
+w $7B8B Room: #N$85
 @ $7B8B label=Room_85
   $7B8F,$02 Terminator.
 
-w $7B91 Room: #N$86.
+w $7B91 Room: #N$86
 @ $7B91 label=Room_86
   $7B95,$02 Terminator.
 
-w $7B97 Room: #N$87.
+w $7B97 Room: #N$87
 @ $7B97 label=Room_87
   $7BA1,$02 Terminator.
 
-w $7BA3 Room: #N$88.
+w $7BA3 Room: #N$88
 @ $7BA3 label=Room_88
   $7BAD,$02 Terminator.
 
-w $7BAF Room: #N$89.
+w $7BAF Room: #N$89
 @ $7BAF label=Room_89
   $7BB9,$02 Terminator.
 
-w $7BBB Room: #N$8A.
+w $7BBB Room: #N$8A
 @ $7BBB label=Room_8A
   $7BC7,$02 Terminator.
 
-w $7BC9 Room: #N$8B.
+w $7BC9 Room: #N$8B
 @ $7BC9 label=Room_8B
   $7BD1,$02 Terminator.
 
-w $7BD3 Room: #N$8C.
+w $7BD3 Room: #N$8C
 @ $7BD3 label=Room_8C
   $7BDB,$02 Terminator.
 
-w $7BDD Room: #N$8D.
+w $7BDD Room: #N$8D
 @ $7BDD label=Room_8D
   $7BE9,$02 Terminator.
 
-w $7BEB Room: #N$8E.
+w $7BEB Room: #N$8E
 @ $7BEB label=Room_8E
   $7BED,$02 Terminator.
 
-w $7BEF Room: #N$8F.
+w $7BEF Room: #N$8F
 @ $7BEF label=Room_8F
   $7BF5,$02 Terminator.
 
-w $7BF7 Room: #N$90.
+w $7BF7 Room: #N$90
 @ $7BF7 label=Room_90
   $7BFB,$02 Terminator.
 
-w $7BFD Room: #N$91.
+w $7BFD Room: #N$91
 @ $7BFD label=Room_91
   $7C03,$02 Terminator.
 
-w $7C05 Room: #N$92.
+w $7C05 Room: #N$92
 @ $7C05 label=Room_92
   $7C09,$02 Terminator.
 
-w $7C0B Room: #N$93.
+w $7C0B Room: #N$93
 @ $7C0B label=Room_93
   $7C0F,$02 Terminator.
 
-w $7C11 Room: #N$94.
+w $7C11 Room: #N$94
 @ $7C11 label=Room_94
   $7C11,$02
   $7C13,$02
   $7C15,$02 Terminator.
 
-w $7C17 Room: None.
+w $7C17 Room: None
 @ $7C17 label=Room_None
   $7C17,$02 Terminator.
 

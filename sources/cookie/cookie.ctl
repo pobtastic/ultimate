@@ -670,7 +670,7 @@ B $686A,$18
 
 c $6888
 
-c $68B1 Play square wave sound.
+c $68B1 Play square wave sound
 @ $68B1 label=PlaySquareWave
 R $68B1 D Duration of wave
   $68B1,$07 Play square wave sound.
