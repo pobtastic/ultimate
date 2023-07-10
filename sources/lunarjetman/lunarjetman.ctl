@@ -1497,7 +1497,7 @@ N $D119 Frame 4.
   $D11A,$36,$02 #SPRITE$03(teleporter-04*)
 
 b $D150
-b $D151 The UDG for the lives icon.
+b $D151 The UDG for the lives icon
 @ $D151 label=UDG_Life
   $D151,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
 
@@ -1718,7 +1718,7 @@ b $D976 Sprite: Platform
   $D976,$01 Height = #N(#PEEK(#PC)) pixels.
   $D977,$10,$02 #SPRITE$04(platform)
 
-b $D987 Frame 8.
+b $D987 Frame 8
 
 b $D9C8
 

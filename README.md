@@ -13,7 +13,7 @@ A disassembly of the [Spectrum](https://en.wikipedia.org/wiki/ZX_Spectrum) games
 
 ### 1984:
 * ~~[Knight Lore](https://en.wikipedia.org/wiki/Knight_Lore)~~
-* ~~[Sabre Wulf](https://en.wikipedia.org/wiki/Sabre_Wulf)~~
+* [Sabre Wulf](https://en.wikipedia.org/wiki/Sabre_Wulf)
 * ~~[Underwurlde](https://en.wikipedia.org/wiki/Underwurlde)~~
 
 Created using [SkoolKit](https://skoolkit.ca).
@@ -36,6 +36,9 @@ Browse the latest release:
 
 * [Pssst disassembly](https://pobtastic.github.io/ultimate/pssst/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/pssst/))
 * [Pssst disassembly](https://pobtastic.github.io/ultimate/pssst/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/pssst/dec/))
+
+* [Sabre Wulf disassembly](https://pobtastic.github.io/ultimate/sabrewulf/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/sabrewulf/))
+* [Sabre Wulf disassembly](https://pobtastic.github.io/ultimate/sabrewulf/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/sabrewulf/dec/))
 
 * [Tranz Am disassembly](https://pobtastic.github.io/ultimate/tranzam/) (hexadecimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/tranzam/))
 * [Tranz Am disassembly](https://pobtastic.github.io/ultimate/tranzam/dec/) (decimal; mirror [here](http://skoolkit.arcadegeek.co.uk/ultimate/tranzam/dec/))

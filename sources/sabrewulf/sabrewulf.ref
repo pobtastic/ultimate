@@ -29,6 +29,7 @@ DataTables
 Reference
 
 [Index:Graphics:Graphics]
+Backgrounds
 Graphics
 Sprites
 
@@ -39,13 +40,18 @@ Pokes
 Credits
 
 [Links]
+Backgrounds=[Backgrounds]
 Graphics=[Graphics]
 Sprites=[Sprites]
 
 [Paths]
 Credits=reference/credits.html
+Backgrounds=graphics/ackgrounds.html
 Graphics=graphics/graphics.html
 Sprites=graphics/sprites.html
+
+[Page:Backgrounds]
+SectionPrefix=Backgrounds
 
 [Page:Graphics]
 SectionPrefix=Graphics
@@ -93,12 +99,12 @@ LIST#
 
 #DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
 
-#DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height)($fname)
+#DEF(#COLOURNOCROP(addr,width,height,attr,awidth,aheight,flip=2)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=$flip);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attr-($attr + $awidth * $aheight)($fname)
 )
 
-#DEF(#COLOURCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height){$00, $04 * ($08 - ($height % $08)), $04 * $width * $08, $04 * $height}($fname)
+#DEF(#COLOURCROP(addr,width,height,attr,awidth,aheight,flip=2)(fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=$flip);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attr-($attr + $awidth * $aheight){$00, $04 * ($08 - ($aheight % $08)), $04 * $awidth * $08, $04 * $aheight}($fname)
 )
 
 #DEF(#GRAPHIC(id,base=$BF84,attributes=0)(fname)
@@ -108,11 +114,13 @@ LIST#
   #LET(height=#PEEK({addr} + $01))
   #IF($attributes > $00)||
     #LET(attr=#PEEK($A64E + {offset}) + #PEEK($A64E + {offset} + $01) * $100)
+    #LET(awidth=#PEEK({attr}))
+    #LET(aheight=#PEEK({attr} + $01))
     #PUSHS
     #CONVERTFF({attr})
     #IF({height} % $08)(
-      #COLOURCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname),
-      #COLOURNOCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname)
+      #COLOURCROP({addr} + $02, {width}, {height}, {attr} + $02, {awidth}, {aheight})($fname),
+      #COLOURNOCROP({addr} + $02, {width}, {height}, {attr} + $02, {awidth}, {aheight})($fname)
     )
     #POPS
   |
@@ -121,6 +129,22 @@ LIST#
       #NOCROP({addr} + $02, {width}, $07)($fname)
     )
   ||
+)
+
+#DEF(#BG(base)(fname)
+  #LET(height=#PEEK($base))
+  #LET(width=#PEEK($base + $01))
+  #LET(addr=$base + $02)
+  #LET(baseattr={addr} + ({height} * {width}))
+  #LET(aheight=#PEEK({baseattr}))
+  #LET(awidth=#PEEK({baseattr} + $01))
+  #LET(attr={baseattr} + $02)
+  #PUSHS
+  #FOR($00,({height} * {width}) - $01)||n|
+    #POKES({addr} + n, $FF - #PEEK({addr} + n))
+  ||
+  #COLOURNOCROP({addr},{width},{height},{attr},{awidth},{aheight},0)($fname)
+  #POPS
 )
 
 #DEF(#SPRITE(id,base=$BF84)(fname)

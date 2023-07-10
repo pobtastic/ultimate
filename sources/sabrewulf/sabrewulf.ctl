@@ -67,8 +67,9 @@ w $6166 Room Table
 W $6166,$02 Room ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N(#EVAL((#PC - $6166) / $02))).
 L $6166,$02,$30
 
-w $61C6 Special Room
-@ $61C6 label=Room_Special_00
+w $61C6 Special Room (Main Menu)
+D $61C6 This is the room data showing on the Main Menu screen. See #R$B3D5.
+@ $61C6 label=Room_Special_MainMenu
   $61C6,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $61C8,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
 L $61C6,$04,$0E
@@ -410,58 +411,325 @@ B $7078,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $
 L $7076,$04,$11
   $70BA,$02 Terminator.
 
-b $70BC Background Graphics
-  $70BC,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
-  $70BD,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $70BE,$D8,$09 UDGARRAY#($02,attr=$07,scale=$04,step={width},flip=2)(background-01)
-  $7196,$1D,$09 Attributes.
+b $70BC Background Graphic #N$01
+D $70BC #BG(#PC)(background-01)
+N $70BC Pixels.
+  $70BC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $70BD,$01 Width = #N(#PEEK(#PC)) bytes.
+  $70BE,$D8,$08 Pixel data.
+N $7196 Attributes.
+  $7196,$01 Height = #N(#PEEK(#PC)) bytes.
+  $7197,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7198,$1B,$08 Attribute data.
 
-b $71B3
-  $71B3,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
-  $71B4,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
+b $71B3 Background Graphic #N$02
+D $71B3 #BG(#PC)(background-02)
+N $71B3 Pixels.
+  $71B3,$01 Height = #N(#PEEK(#PC)) pixels.
+  $71B4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $71B5,$C8,$08 Pixel data.
+N $727D Attributes.
+  $727D,$01 Height = #N(#PEEK(#PC)) bytes.
+  $727E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $727F,$19,$08 Attribute data.
 
-  $7298
-  $72F6
-  $7462
-  $7523
-  $771F
-  $785E
-  $78F2
-  $7947
-  $7981
-  $7B11
-  $7BB7
-  $7C0C
-  $7CCD
-  $7E4B
-  $7F40
-  $8047
-  $81C5
-  $8382
-  $83AA
-  $83D2
-  $8427
-  $847C
-  $8558
-  $85C8
-  $86DA
-  $8702
-  $872A
-  $8806
-  $89C3
-  $8B80
-  $8C5C
-  $8CCC
-  $8D3C
-  $8E18
-  $8F2A
-  $90A8
-  $93C4
-  $955D
-  $95CD
-  $9673
+b $7298 Background Graphic #N$03
+D $7298 #BG(#PC)(background-03)
+N $7298 Pixels.
+  $7298,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7299,$01 Width = #N(#PEEK(#PC)) bytes.
+  $729A,$50,$08 Pixel data.
+N $72EA Attributes.
+  $72EA,$01 Height = #N(#PEEK(#PC)) bytes.
+  $72EB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $72EC,$0A,$08 Attribute data.
 
-b $9692
+b $72F6 Background Graphic #N$04
+D $72F6 #BG(#PC)(background-04)
+N $72F6 Pixels.
+  $72F6,$01 Height = #N(#PEEK(#PC)) pixels.
+  $72F7,$01 Width = #N(#PEEK(#PC)) bytes.
+  $72F8,$140,$08 Pixel data.
+N $7438 Attributes.
+  $7438,$01 Height = #N(#PEEK(#PC)) bytes.
+  $7439,$01 Width = #N(#PEEK(#PC)) bytes.
+  $743A,$28,$08 Attribute data.
+
+b $7462 Background Graphic #N$05
+D $7462 #BG(#PC)(background-05)
+  $7462,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7463,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7464,$A8,$08 Pixel data.
+N $750C Attributes.
+  $750C,$01 Height = #N(#PEEK(#PC)) bytes.
+  $750D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $750E,$15,$08 Attribute data.
+
+b $7523 Background Graphic #N$06
+D $7523 #BG(#PC)(background-06)
+  $7523,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7524,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7525,$1C0,$08 Pixel data.
+N $76E5 Attributes.
+  $76E5,$01 Height = #N(#PEEK(#PC)) bytes.
+  $76E6,$01 Width = #N(#PEEK(#PC)) bytes.
+  $76E7,$38,$08 Attribute data.
+
+b $771F Background Graphic #N$07
+D $771F #BG(#PC)(background-07)
+  $771F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7720,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7721,$118,$08 Pixel data.
+N $7839 Attributes.
+  $7839,$01 Height = #N(#PEEK(#PC)) bytes.
+  $783A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $783B,$23,$08 Attribute data.
+
+b $785E Background Graphic #N$08
+D $785E #BG(#PC)(background-08)
+  $785E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $785F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7860,$80,$08 Pixel data.
+N $78E0 Attributes.
+  $78E0,$01 Height = #N(#PEEK(#PC)) bytes.
+  $78E1,$01 Width = #N(#PEEK(#PC)) bytes.
+  $78E2,$10,$08 Attribute data.
+
+b $78F2 Background Graphic #N$09
+D $78F2 #BG(#PC)(background-09)
+  $78F2,$01 Height = #N(#PEEK(#PC)) pixels.
+  $78F3,$01 Width = #N(#PEEK(#PC)) bytes.
+  $78F4,$48,$08 Pixel data.
+N $793C Attributes.
+  $793C,$01 Height = #N(#PEEK(#PC)) bytes.
+  $793D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $793E,$09,$08 Attribute data.
+
+b $7947 Background Graphic #N$0A
+D $7947 #BG(#PC)(background-0A)
+  $7947,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7948,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7949,$30,$08 Pixel data.
+N $7979 Attributes.
+  $7979,$01 Height = #N(#PEEK(#PC)) bytes.
+  $797A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $797B,$06,$08 Attribute data.
+
+b $7981 Background Graphic #N$0B
+D $7981 #BG(#PC)(background-0B)
+N $7981 Pixels.
+  $7981,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7982,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7983,$160,$08 Pixel data.
+N $7AE3 Attributes.
+  $7AE3,$01 Height = #N(#PEEK(#PC)) bytes.
+  $7AE4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7AE5,$2C,$08 Attribute data.
+
+b $7B11 Background Graphic #N$0C
+D $7B11 #BG(#PC)(background-0C)
+  $7B11,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7B12,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7B13,$90,$08 Pixel data.
+N $7BA3 Attributes.
+  $7BA3,$01 Height = #N(#PEEK(#PC)) bytes.
+  $7BA4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7BA5,$12,$08 Attribute data.
+
+b $7BB7 Background Graphic #N$0D
+D $7BB7 #BG(#PC)(background-0D)
+  $7BB7,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7BB8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7BB9,$48,$08 Pixel data.
+N $7C01 Attributes.
+  $7C01,$01 Height = #N(#PEEK(#PC)) bytes.
+  $7C02,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7C03,$09,$08 Attribute data.
+
+b $7C0C Background Graphic #N$0E
+D $7C0C #BG(#PC)(background-0E)
+  $7C0C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7C0D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7C0E,$A8,$08 Pixel data.
+N $7CB6 Attributes.
+  $7CB6,$01 Height = #N(#PEEK(#PC)) bytes.
+  $7CB7,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7CB8,$15,$08 Attribute data.
+
+b $7CCD Background Graphic #N$0F
+D $7CCD #BG(#PC)(background-0F)
+  $7CCD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7CCE,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7CCF,$150,$08 Pixel data.
+
+b $7E4B Background Graphic #N$10
+D $7E4B #BG(#PC)(background-10)
+  $7E4B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $7E4C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7E4D,$1C0,$08 Pixel data.
+
+b $8047 Background Graphic #N$11
+D $8047 #BG(#PC)(background-11)
+  $8047,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8048,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8049,$150,$08 Pixel data.
+
+b $81C5 Background Graphic #N$12
+D $81C5 #BG(#PC)(background-12)
+  $81C5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $81C6,$01 Width = #N(#PEEK(#PC)) bytes.
+  $81C7,$188,$08 Pixel data.
+
+b $8382 Background Graphic #N$13
+D $8382 #BG(#PC)(background-13)
+  $8382,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8383,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8384,$20,$08 Pixel data.
+
+b $83AA Background Graphic #N$14
+D $83AA #BG(#PC)(background-14)
+  $83AA,$01 Height = #N(#PEEK(#PC)) pixels.
+  $83AB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $83AC,$20,$08 Pixel data.
+
+b $83D2 Background Graphic #N$15
+D $83D2 #BG(#PC)(background-15)
+  $83D2,$01 Height = #N(#PEEK(#PC)) pixels.
+  $83D3,$01 Width = #N(#PEEK(#PC)) bytes.
+  $83D4,$48,$08 Pixel data.
+
+b $8427 Background Graphic #N$16
+D $8427 #BG(#PC)(background-16)
+  $8427,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8428,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8429,$48,$08 Pixel data.
+
+b $847C Background Graphic #N$17
+D $847C #BG(#PC)(background-17)
+  $847C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $847D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $847E,$C0,$08 Pixel data.
+
+b $8558 Background Graphic #N$18
+D $8558 #BG(#PC)(background-18)
+  $8558,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8559,$01 Width = #N(#PEEK(#PC)) bytes.
+  $855A,$60,$08 Pixel data.
+
+b $85C8 Background Graphic #N$19
+D $85C8 #BG(#PC)(background-19)
+  $85C8,$01 Height = #N(#PEEK(#PC)) pixels.
+  $85C9,$01 Width = #N(#PEEK(#PC)) bytes.
+  $85CA,$F0,$08 Pixel data.
+
+b $86DA Background Graphic #N$1A
+D $86DA #BG(#PC)(background-1A)
+  $86DA,$01 Height = #N(#PEEK(#PC)) pixels.
+  $86DB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $86DC,$20,$08 Pixel data.
+
+b $8702 Background Graphic #N$1B
+D $8702 #BG(#PC)(background-1B)
+  $8702,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8703,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8704,$20,$08 Pixel data.
+
+b $872A Background Graphic #N$1C
+D $872A #BG(#PC)(background-1C)
+  $872A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $872B,$01 Width = #N(#PEEK(#PC)) bytes.
+  $872C,$C0,$08 Pixel data.
+
+b $8806 Background Graphic #N$1D
+D $8806 #BG(#PC)(background-1D)
+  $8806,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8807,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8808,$188,$08 Pixel data.
+
+b $89C3 Background Graphic #N$1E
+D $89C3 #BG(#PC)(background-1E)
+  $89C3,$01 Height = #N(#PEEK(#PC)) pixels.
+  $89C4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $89C5,$188,$08 Pixel data.
+
+b $8B80 Background Graphic #N$1F
+D $8B80 #BG(#PC)(background-1F)
+  $8B80,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8B81,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8B82,$C0,$08 Pixel data.
+
+b $8C5C Background Graphic #N$20
+D $8C5C #BG(#PC)(background-20)
+  $8C5C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8C5D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8C5E,$60,$08 Pixel data.
+
+b $8CCC Background Graphic #N$21
+D $8CCC #BG(#PC)(background-21)
+  $8CCC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8CCD,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8CCE,$60,$08 Pixel data.
+
+b $8D3C Background Graphic #N$22
+D $8D3C #BG(#PC)(background-22)
+  $8D3C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8D3D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8D3E,$C0,$08 Pixel data.
+
+b $8E18 Background Graphic #N$23
+D $8E18 #BG(#PC)(background-23)
+  $8E18,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8E19,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8E1A,$F0,$08 Pixel data.
+
+b $8F2A Background Graphic #N$24
+D $8F2A #BG(#PC)(background-24)
+  $8F2A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $8F2B,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8F2C,$150,$08 Pixel data.
+
+b $90A8 Background Graphic #N$25
+D $90A8 #BG(#PC)(background-25)
+  $90A8,$01 Height = #N(#PEEK(#PC)) pixels.
+  $90A9,$01 Width = #N(#PEEK(#PC)) bytes.
+  $90AA,$2C0,$08 Pixel data.
+
+b $93C4 Background Graphic #N$26
+D $93C4 #BG(#PC)(background-26)
+  $93C4,$01 Height = #N(#PEEK(#PC)) pixels.
+  $93C5,$01 Width = #N(#PEEK(#PC)) bytes.
+  $93C6,$168,$08 Pixel data.
+
+b $955D Background Graphic #N$27
+D $955D #BG(#PC)(background-27)
+  $955D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $955E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $955F,$60,$08 Pixel data.
+
+b $95CD Background Graphic #N$28
+D $95CD #BG(#PC)(background-28)
+  $95CD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $95CE,$01 Width = #N(#PEEK(#PC)) bytes.
+  $95CF,$90,$08 Pixel data.
+
+b $9673 Background Graphic #N$29
+D $9673 #BG(#PC)(background-29)
+  $9673,$01 Height = #N(#PEEK(#PC)) pixels.
+  $9674,$01 Width = #N(#PEEK(#PC)) bytes.
+  $9675,$18,$08 Pixel data.
+
+g $9692
+
+g $9693
+
+g $9695
+
+g $9696 Last Frame
+@ $9696 label=LastFrame
+
+g $9697 Frame Updated
+@ $9697 label=FrameUpdated
+D $9697 Has the frame been updated? #N$00=No #N$01=Yes.
 
 g $9698 1UP Score
 D $9698 3-byte representation of the score.
@@ -495,6 +763,7 @@ g $96A8 Current Menu Item Colour attribute
 B $96A8,$01
 
 b $96A9
+  $96B2
   $96B4
   $96B7
 W $96B8
@@ -503,7 +772,15 @@ W $96B8
   $96BD
   $96DF
   $9702
-  $982E
+  $970E
+
+b $97FE Amulet Data
+@ $97FE label=AmuletData
+N $97FE Amulet part: #N(#EVAL((#PC - $97FE) / $0C) + $01).
+  $97FE,$0C
+L $97FE,$0C,$04
+
+b $982E
 
 c $995A Security Check
 E $995A Continue on to #R$9960.
@@ -563,6 +840,26 @@ N $997C Set the attributes for the score line (the whole line is INK:#N$46).
   $99A4,$03 Call #R$BD6E.
   $99A7,$03 Call #R$B1D4.
 
+  $99AA,$03 #REGsp=#R$6000.
+  $99AD,$01 Enable interrupts.
+  $99AE,$04 #REGix=#R$970E.
+  $99B2,$04 #HTML(#REGc=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $99B6,$03 #REGa=#R$9696.
+@ $99BC label=FrameUpdate
+  $99BC,$01 Disable interrupts.
+  $99BD,$06 #HTML(Store <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> at #R$9696.)
+  $99C3,$05 Set #R$9697 to #N$01 (frame has updated).
+
+  $99CC,$04 #REGix=#R$9702.
+
+  $99DA,$04 Push #R$99F0 onto the stack.
+
+  $99DE,$03 #REGbc=#R$9B3E.
+
+c $99F0
+  $99F0,$03 #REGde=#N($000C, $04, $04).
+  $99FE,$03 #REGde=#R$982E.
+
 w $9B3E Jump Table
 @ $9B3E label=JumpTable
   $9B3E,$C4,$02
@@ -578,7 +875,7 @@ c $9F6A Game Complete
 @ $9F6A label=GameComplete
   $9F6A,$03 Call #R$BB7C.
   $9F6D,$03 Call #R$BB5C.
-  $9F70,$03 #REGhl=#N$C386.
+  $9F70,$03 #REGhl=#R$C386.
   $9F73,$03 Call #R$BBF7.
   $9F76,$03 #REGde=#R$9F91.
 N $9F79 There are six lines of text.
@@ -590,7 +887,9 @@ N $9F79 There are six lines of text.
   $9F87,$04 Write #N$00 to #R$96BD.
   $9F8B,$03 Call #R$B7CD.
   $9F8E,$03 Jump to #R$AA27.
-N $9F91 Congratulations messaging. #TABLE(default,centre,centre,centre)
+
+b $9F91 Congratulations Messaging
+D $9F91 #TABLE(default,centre,centre,centre)
 . { =h X Position | =h Y Position | =h Attribute | =h Text }
 . #FOREACH($9F91,$9F9C,$9FB6,$9FD1,$9FF0,$A003)(n,{ #N(#EVAL(#PEEKn / $08)) | #N(#EVAL(#PEEK(n + $01) / $08)) | #N(#PEEK(n + $02)) | #STR(n + $03) })
 . TABLE#
@@ -741,10 +1040,32 @@ c $A1FF Pause
 
 c $A207
 
-b $A29D
-  $A29D,$04,$01
+c $A255 Place Amulet Pieces
+@ $A255 label=PlaceAmuletPieces
+  $A255,$04 #REGix=#R$97FE.
+  $A259,$03 #REGa=#R$9695.
+  $A25C,$02,b$01 Keep only bits 0-2.
+  $A25E,$03 Create an offset.
+  $A266,$01 #REGhl=#R$A29D + (#REGa * #N$02).
+N $A268 There are four pieces of the amulet to collect.
+  $A268,$02 #REGb=#N$04.
+@ $A26A label=PlaceAmuletPieces_Loop
+  $A26A,$01 Stash the counter on the stack.
+  $A279,$03 #REGbc=#R$6066.
+  $A283,$03 #REGbc=#R$DC6C.
+  $A294,$03 #REGbc=#N$000C.
+  $A299,$01 Restore the counter from the stack.
+  $A29A,$02 Decrease counter by one and loop back to #R$A26A until counter is zero.
+  $A29C,$01 Return.
+@ $A29D label=Initialisation_Amulet
+B $A29D
 
 c $A2BD
+  $A2BD,$03 #REGhl=#R$DDEC.
+  $A2C0,$04 #HTML(#REGe=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $A2C4,$03 #REGa=#R$9693.
+  $A2C7,$02,b$01 Keep only bits 0-4.
+  $A2C9,$01 Store the result in #REGd.
 
 b $A3A7
 
@@ -804,9 +1125,12 @@ N $AAA4 This is a controller with a jump to #R$998F to return to the game select
   $AABC,$03 Call #R$AA98.
   $AABF,$02 Jump to #R$AAAD.
 
-N $AAC1 Game Over Messaging
+b $AAC1 Game Over Messaging
+D $AAC1 This message is altered directly to change from "1" to "2" for the correct player.
+.       See #R$AA6A and #R$AA98.
 @ $AAC1 label=GameOver_Text
-T $AAC1,$13,h$01,$11:$01 #HTML("GAME OVER PLAYER <em>X</em>" (#N(#PEEK(#PC)) is the attribute).)
+  $AAC1,$01 Attribute: #N(#PEEK(#PC)).
+T $AAC2,$12,$11:$01 #HTML("GAME OVER PLAYER <em>X</em>".)
 
 b $AAD4 Adventure Completed Messaging
 @ $AAD4 label=AdventureCompleted_Text
@@ -825,8 +1149,29 @@ c $AD07
 
 c $B0D9 Controls: Kempston Joystick
 @ $B0D9 label=ReadKempstonJoystick
-R $B0D9 A Joystick controls
+R $B0D9 O:C Joystick controls
   $B0D9,$02 #REGa=controls.
+  $B0DB,$02 #REGc=#N$00.
+N $B0DD Check joystick "RIGHT".
+@ $B0DD label=ReadKempstonJoystick_Right
+  $B0DD,$04 If bit 0 is set jump to #R$B0E3.
+  $B0E1,$02 Set bit 1 of #REGc.
+N $B0E3 Check joystick "LEFT".
+@ $B0E3 label=ReadKempstonJoystick_Left
+  $B0E3,$04 If bit 1 is set jump to #R$B0E9.
+  $B0E7,$02 Set bit 0 of #REGc.
+N $B0E9 Check joystick "DOWN".
+@ $B0E9 label=ReadKempstonJoystick_Down
+  $B0E9,$04 If bit 2 is set jump to #R$B0EF.
+  $B0ED,$02 Set bit 3 of #REGc.
+N $B0EF Check joystick "UP".
+@ $B0EF label=ReadKempstonJoystick_Up
+  $B0EF,$04 If bit 3 is set jump to #R$B0F5.
+  $B0F3,$02 Set bit 2 of #REGc.
+N $B0F5 Check joystick "FIRE".
+@ $B0F5 label=ReadKempstonJoystick_Fire
+  $B0F5,$02,b$01 Keep only bit 4.
+  $B0F7,$02 Merge the kept bit into #REGc.
   $B0F9,$01 Return.
 
 c $B0FA
@@ -1479,6 +1824,58 @@ c $BBAE
 
 c $BBBB
 
+c $BBF7 Draw Room
+@ $BBF7 label=DrawRoom
+R $BBF7 HL The Room Data memory address (e.g. #R$61C6, #R$6200)
+N $BBF7 The room data is held as: #TABLE(default,centre)
+. { =h Byte | =h Type }
+. { #N$01 | =r2 Room Graphic Data Address }
+. { #N$02 }
+. { #N$03 | X Position }
+. { #N$04 | Y Position }
+. TABLE#
+. And is terminated when #N($0000, $04, $04) is reached.
+N $BBF7 Fetch the room data graphic address.
+  $BBF7 #REGde=room data graphic address.
+  $BBFA,$03 Return if the terminator is found.
+N $BBFD Fetch the X/ Y position data.
+  $BBFD,$01 Increment #REGhl by one.
+  $BBFE,$03 #REGbc=X/ Y position data.
+  $BC01,$01 Increment #REGhl by one, ready for the next loop.
+  $BC02,$01 Stash #REGhl on the stack.
+  $BC03,$02 #REGhl=#REGbc.
+  $BC05,$03 Call #R$BC0B.
+  $BC08,$01 Restore #REGhl from the stack.
+  $BC09,$02 Jump back to #R$BBF7.
+N $BC0B Stash the X/ Y position on the stack.
+  $BC0B,$01 Stash #REGhl on the stack.
+  $BC0C,$03 Call #R$B8AD.
+  $BC0F,$02 #REGc=room graphic width byte.
+  $BC11,$01 Increment #REGde by one.
+  $BC12,$02 #REGb=room graphic height byte.
+  $BC14,$01 Increment #REGde by one.
+  $BC15,$01 Stash #REGbc on the stack.
+  $BC16,$01 #REGa=fetch a byte of graphics data.
+  $BC17,$01 Invert the bits.
+  $BC18,$01 Write the graphic data to #REGhl (screen buffer).
+  $BC19,$01 Move onto the next screen location.
+  $BC1A,$01 Increment #REGde by one.
+  $BC1B,$02 Decrease the width counter by one and loop back to #R$BC16 until counter is zero.
+  $BC1D,$01 Restore #REGbc from the stack.
+  $BC21,$03 Call #R$B8CC.
+  $BC24,$03 Decrease the height counter by one and loop back to #R$BC15 until counter is zero.
+  $BC27,$01 Restore #REGhl from the stack.
+  $BC28,$03 Call #R$B8DD.
+
+  $BC48,$01 Return.
+  $BC49,$01 Stash #REGbc on the stack.
+  $BC4A,$04 Write #N$00 to #R$96B2.
+
+  $BC5A,$03 #REGhl=#N($0000, $04, $04).
+  $BC5D,$02 #REGb=#N$08.
+
+  $BC66,$01 Return.
+
 b $BC67
   $BC77
   $BD33
@@ -1596,6 +1993,13 @@ N $C333
   $C335,$3F,$03 #GRAPHIC$BB(bb)
 
 b $C374 Attributes?
+
+w $C386 Special Room (Game Completed)
+D $C386 This is the room data showing on the Game Completed screen. See #R$9F6A.
+@ $C386 label=Room_Special_Complete
+  $C386,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
+B $C388,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
+  $C38A,$02 Terminator.
 
 b $C38C
   $C38C,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -1792,6 +2196,19 @@ N $DC22 Left Frame 2.
   $DC24,$48,$04 #GRAPHIC$A8(rhino-left-02)
 
 b $DC6C Attributes?
+
+b $E1EC Background Graphic Game Completed
+D $E1EC #BG(#PC)(background-complete)
+N $E1EC Pixels.
+  $E1EC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E1ED,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E1EE,$180,$08 Pixel data.
+N $E36E Attributes.
+  $E36E,$01 Height = #N(#PEEK(#PC)) bytes.
+  $E36F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E370,$30,$08 Attribute data.
+
+b $E3A0
 
 b $E770 Graphic: Amulet
 D $E770 #UDGTABLE(default,centre,centre)
