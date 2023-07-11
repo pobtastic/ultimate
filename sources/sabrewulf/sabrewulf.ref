@@ -22,6 +22,9 @@ AddressAnchor={address#IF({base}==16)(:04x)}
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
 
+[Paths]
+RoomImagePath={ImagePath}/room
+
 [Index]
 MemoryMaps
 Graphics
@@ -46,7 +49,7 @@ Sprites=[Sprites]
 
 [Paths]
 Credits=reference/credits.html
-Backgrounds=graphics/ackgrounds.html
+Backgrounds=graphics/backgrounds.html
 Graphics=graphics/graphics.html
 Sprites=graphics/sprites.html
 
@@ -151,6 +154,28 @@ LIST#
   #LET(offset=$id * $02)
   #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
   #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+
+#DEF(#ROOM(base,scale=$02)(fname)
+  #PUSHS
+  #FOR($4000,$57FF)||n|
+    #POKES(n, $00)
+  ||
+  #FOR($5800,$5B7F)||n|
+    #POKES(n, $47)
+  ||
+  #SCR$scale(*room-background)
+  #LET(data=$base)
+  #WHILE(#PEEK({data})>$00)(
+    #LET(addr=#PEEK({data}) + #PEEK({data} + $01) * $100)
+    #BG({addr})(*background-{addr})
+    #LET(x=#PEEK({data} + $02) / $08)
+    #LET(y=#PEEK({data} + $03) / $08)
+    #OVER({x},{y})(room-background,background-{addr})
+    #LET(data={data} + $04)
+  )
+  #UDGARRAY*room-background($fname)
+  #POPS
+)
 
 #DEF(#SPRITENAME(id)
   #MAP($id)(

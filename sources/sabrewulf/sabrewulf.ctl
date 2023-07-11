@@ -69,6 +69,7 @@ L $6166,$02,$30
 
 w $61C6 Special Room (Main Menu)
 D $61C6 This is the room data showing on the Main Menu screen. See #R$B3D5.
+D $61C6 #UDGTABLE { #ROOM(#PC)(room-mainmenu) } UDGTABLE#
 @ $61C6 label=Room_Special_MainMenu
   $61C6,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $61C8,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -76,6 +77,7 @@ L $61C6,$04,$0E
   $61FE,$02 Terminator.
 
 w $6200 Room #N$00
+D $6200 #UDGTABLE { #ROOM(#PC)(room-00) } UDGTABLE#
 @ $6200 label=Room_00
   $6200,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6202,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -83,6 +85,7 @@ L $6200,$04,$12
   $6248,$02 Terminator.
 
 w $624A Room #N$01
+D $624A #UDGTABLE { #ROOM(#PC)(room-01) } UDGTABLE#
 @ $624A label=Room_01
   $624A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $624C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -90,6 +93,7 @@ L $624A,$04,$12
   $6292,$02 Terminator.
 
 w $6294 Room #N$02
+D $6294 #UDGTABLE { #ROOM(#PC)(room-02) } UDGTABLE#
 @ $6294 label=Room_02
   $6294,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6296,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -97,6 +101,7 @@ L $6294,$04,$12
   $62DC,$02 Terminator.
 
 w $62DE Room #N$03
+D $62DE #UDGTABLE { #ROOM(#PC)(room-03) } UDGTABLE#
 @ $62DE label=Room_03
   $62DE,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $62E0,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -104,6 +109,7 @@ L $62DE,$04,$14
   $632E,$02 Terminator.
 
 w $6330 Room #N$04
+D $6330 #UDGTABLE { #ROOM(#PC)(room-04) } UDGTABLE#
 @ $6330 label=Room_04
   $6330,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6332,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -111,6 +117,7 @@ L $6330,$04,$11
   $6374,$02 Terminator.
 
 w $6376 Room #N$05
+D $6376 #UDGTABLE { #ROOM(#PC)(room-05) } UDGTABLE#
 @ $6376 label=Room_05
   $6376,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6378,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -118,6 +125,7 @@ L $6376,$04,$16
   $63CE,$02 Terminator.
 
 w $63D0 Room #N$06
+D $63D0 #UDGTABLE { #ROOM(#PC)(room-06) } UDGTABLE#
 @ $63D0 label=Room_06
   $63D0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $63D2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -125,6 +133,7 @@ L $63D0,$04,$14
   $6420,$02 Terminator.
 
 w $6422 Room #N$07
+D $6422 #UDGTABLE { #ROOM(#PC)(room-07) } UDGTABLE#
 @ $6422 label=Room_07
   $6422,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6424,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -132,6 +141,7 @@ L $6422,$04,$16
   $647A,$02 Terminator.
 
 w $647C Room #N$08
+D $647C #UDGTABLE { #ROOM(#PC)(room-08) } UDGTABLE#
 @ $647C label=Room_08
   $647C,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $647E,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -139,6 +149,7 @@ L $647C,$04,$13
   $64C8,$02 Terminator.
 
 w $64CA Room #N$09
+D $64CA #UDGTABLE { #ROOM(#PC)(room-09) } UDGTABLE#
 @ $64CA label=Room_09
   $64CA,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $64CC,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -146,6 +157,7 @@ L $64CA,$04,$15
   $651E,$02 Terminator.
 
 w $6520 Room #N$0A
+D $6520 #UDGTABLE { #ROOM(#PC)(room-0A) } UDGTABLE#
 @ $6520 label=Room_0A
   $6520,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6522,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -153,6 +165,7 @@ L $6520,$04,$19
   $6584,$02 Terminator.
 
 w $6586 Room #N$0B
+D $6586 #UDGTABLE { #ROOM(#PC)(room-0B) } UDGTABLE#
 @ $6586 label=Room_0B
   $6586,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6588,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -160,6 +173,7 @@ L $6586,$04,$0E
   $65BE,$02 Terminator.
 
 w $65C0 Room #N$0C
+D $65C0 #UDGTABLE { #ROOM(#PC)(room-0C) } UDGTABLE#
 @ $65C0 label=Room_0C
   $65C0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $65C2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -167,6 +181,7 @@ L $65C0,$04,$15
   $6614,$02 Terminator.
 
 w $6616 Room #N$0D
+D $6616 #UDGTABLE { #ROOM(#PC)(room-0D) } UDGTABLE#
 @ $6616 label=Room_0D
   $6616,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6618,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -174,6 +189,7 @@ L $6616,$04,$15
   $666A,$02 Terminator.
 
 w $666C Room #N$0E
+D $666C #UDGTABLE { #ROOM(#PC)(room-0E) } UDGTABLE#
 @ $666C label=Room_0E
   $666C,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $666E,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -181,6 +197,7 @@ L $666C,$04,$11
   $66B0,$02 Terminator.
 
 w $66B2 Room #N$0F
+D $66B2 #UDGTABLE { #ROOM(#PC)(room-0F) } UDGTABLE#
 @ $66B2 label=Room_0F
   $66B2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $66B4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -188,6 +205,7 @@ L $66B2,$04,$1A
   $671A,$02 Terminator.
 
 w $671C Room #N$10
+D $671C #UDGTABLE { #ROOM(#PC)(room-10) } UDGTABLE#
 @ $671C label=Room_10
   $671C,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $671E,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -195,6 +213,7 @@ L $671C,$04,$1A
   $6784,$02 Terminator.
 
 w $6786 Room #N$11
+D $6786 #UDGTABLE { #ROOM(#PC)(room-11) } UDGTABLE#
 @ $6786 label=Room_11
   $6786,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6788,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -202,6 +221,7 @@ L $6786,$04,$18
   $67E6,$02 Terminator.
 
 w $67E8 Room #N$12
+D $67E8 #UDGTABLE { #ROOM(#PC)(room-12) } UDGTABLE#
 @ $67E8 label=Room_12
   $67E8,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $67EA,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -209,6 +229,7 @@ L $67E8,$04,$0D
   $681C,$02 Terminator.
 
 w $681E Room #N$13
+D $681E #UDGTABLE { #ROOM(#PC)(room-13) } UDGTABLE#
 @ $681E label=Room_13
   $681E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6820,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -216,6 +237,7 @@ L $681E,$04,$11
   $6862,$02 Terminator.
 
 w $6864 Room #N$14
+D $6864 #UDGTABLE { #ROOM(#PC)(room-14) } UDGTABLE#
 @ $6864 label=Room_14
   $6864,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6866,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -223,6 +245,7 @@ L $6864,$04,$13
   $68B0,$02 Terminator.
 
 w $68B2 Room #N$15
+D $68B2 #UDGTABLE { #ROOM(#PC)(room-15) } UDGTABLE#
 @ $68B2 label=Room_15
   $68B2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $68B4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -230,6 +253,7 @@ L $68B2,$04,$12
   $68FA,$02 Terminator.
 
 w $68FC Room #N$16
+D $68FC #UDGTABLE { #ROOM(#PC)(room-16) } UDGTABLE#
 @ $68FC label=Room_16
   $68FC,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $68FE,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -237,6 +261,7 @@ L $68FC,$04,$0F
   $6938,$02 Terminator.
 
 w $693A Room #N$17
+D $693A #UDGTABLE { #ROOM(#PC)(room-17) } UDGTABLE#
 @ $693A label=Room_17
   $693A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $693C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -244,6 +269,7 @@ L $693A,$04,$13
   $6986,$02 Terminator.
 
 w $6988 Room #N$18
+D $6988 #UDGTABLE { #ROOM(#PC)(room-18) } UDGTABLE#
 @ $6988 label=Room_18
   $6988,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $698A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -251,6 +277,7 @@ L $6988,$04,$15
   $69DC,$02 Terminator.
 
 w $69DE Room #N$19
+D $69DE #UDGTABLE { #ROOM(#PC)(room-19) } UDGTABLE#
 @ $69DE label=Room_19
   $69DE,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $69E0,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -258,6 +285,7 @@ L $69DE,$04,$16
   $6A36,$02 Terminator.
 
 w $6A38 Room #N$1A
+D $6A38 #UDGTABLE { #ROOM(#PC)(room-1A) } UDGTABLE#
 @ $6A38 label=Room_1A
   $6A38,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6A3A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -265,6 +293,7 @@ L $6A38,$04,$11
   $6A7C,$02 Terminator.
 
 w $6A7E Room #N$1B
+D $6A7E #UDGTABLE { #ROOM(#PC)(room-1B) } UDGTABLE#
 @ $6A7E label=Room_1B
   $6A7E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6A80,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -272,6 +301,7 @@ L $6A7E,$04,$11
   $6AC2,$02 Terminator.
 
 w $6AC4 Room #N$1C
+D $6AC4 #UDGTABLE { #ROOM(#PC)(room-1C) } UDGTABLE#
 @ $6AC4 label=Room_1C
   $6AC4,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6AC6,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -279,6 +309,7 @@ L $6AC4,$04,$15
   $6B18,$02 Terminator.
 
 w $6B1A Room #N$1D
+D $6B1A #UDGTABLE { #ROOM(#PC)(room-1D) } UDGTABLE#
 @ $6B1A label=Room_1D
   $6B1A,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6B1C,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -286,6 +317,7 @@ L $6B1A,$04,$15
   $6B6E,$02 Terminator.
 
 w $6B70 Room #N$1E
+D $6B70 #UDGTABLE { #ROOM(#PC)(room-1E) } UDGTABLE#
 @ $6B70 label=Room_1E
   $6B70,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6B72,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -293,6 +325,7 @@ L $6B70,$04,$12
   $6BB8,$02 Terminator.
 
 w $6BBA Room #N$1F
+D $6BBA #UDGTABLE { #ROOM(#PC)(room-1F) } UDGTABLE#
 @ $6BBA label=Room_1F
   $6BBA,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6BBC,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -300,6 +333,7 @@ L $6BBA,$04,$13
   $6C06,$02 Terminator.
 
 w $6C08 Room #N$20
+D $6C08 #UDGTABLE { #ROOM(#PC)(room-20) } UDGTABLE#
 @ $6C08 label=Room_20
   $6C08,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6C0A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -307,6 +341,7 @@ L $6C08,$04,$17
   $6C64,$02 Terminator.
 
 w $6C66 Room #N$21
+D $6C66 #UDGTABLE { #ROOM(#PC)(room-21) } UDGTABLE#
 @ $6C66 label=Room_21
   $6C66,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6C68,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -314,6 +349,7 @@ L $6C66,$04,$15
   $6CBA,$02 Terminator.
 
 w $6CBC Room #N$22
+D $6CBC #UDGTABLE { #ROOM(#PC)(room-22) } UDGTABLE#
 @ $6CBC label=Room_22
   $6CBC,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6CBE,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -321,6 +357,7 @@ L $6CBC,$04,$14
   $6D0C,$02 Terminator.
 
 w $6D0E Room #N$23
+D $6D0E #UDGTABLE { #ROOM(#PC)(room-23) } UDGTABLE#
 @ $6D0E label=Room_23
   $6D0E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6D10,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -328,6 +365,7 @@ L $6D0E,$04,$12
   $6D56,$02 Terminator.
 
 w $6D58 Room #N$24
+D $6D58 #UDGTABLE { #ROOM(#PC)(room-24) } UDGTABLE#
 @ $6D58 label=Room_24
   $6D58,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6D5A,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -335,6 +373,7 @@ L $6D58,$04,$16
   $6DB0,$02 Terminator.
 
 w $6DB2 Room #N$25
+D $6DB2 #UDGTABLE { #ROOM(#PC)(room-25) } UDGTABLE#
 @ $6DB2 label=Room_25
   $6DB2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6DB4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -342,6 +381,7 @@ L $6DB2,$04,$17
   $6E0E,$02 Terminator.
 
 w $6E10 Room #N$26
+D $6E10 #UDGTABLE { #ROOM(#PC)(room-26) } UDGTABLE#
 @ $6E10 label=Room_26
   $6E10,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6E12,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -349,6 +389,7 @@ L $6E10,$04,$13
   $6E5C,$02 Terminator.
 
 w $6E5E Room #N$27
+D $6E5E #UDGTABLE { #ROOM(#PC)(room-27) } UDGTABLE#
 @ $6E5E label=Room_27
   $6E5E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6E60,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -356,6 +397,7 @@ L $6E5E,$04,$10
   $6E9E,$02 Terminator.
 
 w $6EA0 Room #N$28
+D $6EA0 #UDGTABLE { #ROOM(#PC)(room-28) } UDGTABLE#
 @ $6EA0 label=Room_28
   $6EA0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6EA2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -363,6 +405,7 @@ L $6EA0,$04,$13
   $6EEC,$02 Terminator.
 
 w $6EEE Room #N$29
+D $6EEE #UDGTABLE { #ROOM(#PC)(room-29) } UDGTABLE#
 @ $6EEE label=Room_29
   $6EEE,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6EF0,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -370,6 +413,7 @@ L $6EEE,$04,$11
   $6F32,$02 Terminator.
 
 w $6F34 Room #N$2A
+D $6F34 #UDGTABLE { #ROOM(#PC)(room-2A) } UDGTABLE#
 @ $6F34 label=Room_2A
   $6F34,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6F36,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -377,6 +421,7 @@ L $6F34,$04,$0E
   $6F6C,$02 Terminator.
 
 w $6F6E Room #N$2B
+D $6F6E #UDGTABLE { #ROOM(#PC)(room-2B) } UDGTABLE#
 @ $6F6E label=Room_2B
   $6F6E,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6F70,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -384,6 +429,7 @@ L $6F6E,$04,$10
   $6FAE,$02 Terminator.
 
 w $6FB0 Room #N$2C
+D $6FB0 #UDGTABLE { #ROOM(#PC)(room-2C) } UDGTABLE#
 @ $6FB0 label=Room_2C
   $6FB0,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6FB2,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -391,6 +437,7 @@ L $6FB0,$04,$10
   $6FF0,$02 Terminator.
 
 w $6FF2 Room #N$2D
+D $6FF2 #UDGTABLE { #ROOM(#PC)(room-2D) } UDGTABLE#
 @ $6FF2 label=Room_2D
   $6FF2,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $6FF4,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -398,6 +445,7 @@ L $6FF2,$04,$0F
   $702E,$02 Terminator.
 
 w $7030 Room #N$2E
+D $7030 #UDGTABLE { #ROOM(#PC)(room-2E) } UDGTABLE#
 @ $7030 label=Room_2E
   $7030,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $7032,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -405,6 +453,7 @@ L $7030,$04,$11
   $7074,$02 Terminator.
 
 w $7076 Room #N$2F
+D $7076 #UDGTABLE { #ROOM(#PC)(room-2F) } UDGTABLE#
 @ $7076 label=Room_2F
   $7076,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $7078,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -412,7 +461,7 @@ L $7076,$04,$11
   $70BA,$02 Terminator.
 
 b $70BC Background Graphic #N$01
-D $70BC #BG(#PC)(background-01)
+D $70BC #BG(#PC)(background-#PC)
 N $70BC Pixels.
   $70BC,$01 Height = #N(#PEEK(#PC)) pixels.
   $70BD,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -423,7 +472,7 @@ N $7196 Attributes.
   $7198,$1B,$08 Attribute data.
 
 b $71B3 Background Graphic #N$02
-D $71B3 #BG(#PC)(background-02)
+D $71B3 #BG(#PC)(background-#PC)
 N $71B3 Pixels.
   $71B3,$01 Height = #N(#PEEK(#PC)) pixels.
   $71B4,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -434,7 +483,7 @@ N $727D Attributes.
   $727F,$19,$08 Attribute data.
 
 b $7298 Background Graphic #N$03
-D $7298 #BG(#PC)(background-03)
+D $7298 #BG(#PC)(background-#PC)
 N $7298 Pixels.
   $7298,$01 Height = #N(#PEEK(#PC)) pixels.
   $7299,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -445,7 +494,7 @@ N $72EA Attributes.
   $72EC,$0A,$08 Attribute data.
 
 b $72F6 Background Graphic #N$04
-D $72F6 #BG(#PC)(background-04)
+D $72F6 #BG(#PC)(background-#PC)
 N $72F6 Pixels.
   $72F6,$01 Height = #N(#PEEK(#PC)) pixels.
   $72F7,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -456,7 +505,8 @@ N $7438 Attributes.
   $743A,$28,$08 Attribute data.
 
 b $7462 Background Graphic #N$05
-D $7462 #BG(#PC)(background-05)
+D $7462 #BG(#PC)(background-#PC)
+N $7462 Pixels.
   $7462,$01 Height = #N(#PEEK(#PC)) pixels.
   $7463,$01 Width = #N(#PEEK(#PC)) bytes.
   $7464,$A8,$08 Pixel data.
@@ -466,7 +516,8 @@ N $750C Attributes.
   $750E,$15,$08 Attribute data.
 
 b $7523 Background Graphic #N$06
-D $7523 #BG(#PC)(background-06)
+D $7523 #BG(#PC)(background-#PC)
+N $7523 Pixels.
   $7523,$01 Height = #N(#PEEK(#PC)) pixels.
   $7524,$01 Width = #N(#PEEK(#PC)) bytes.
   $7525,$1C0,$08 Pixel data.
@@ -476,7 +527,8 @@ N $76E5 Attributes.
   $76E7,$38,$08 Attribute data.
 
 b $771F Background Graphic #N$07
-D $771F #BG(#PC)(background-07)
+D $771F #BG(#PC)(background-#PC)
+N $771F Pixels.
   $771F,$01 Height = #N(#PEEK(#PC)) pixels.
   $7720,$01 Width = #N(#PEEK(#PC)) bytes.
   $7721,$118,$08 Pixel data.
@@ -486,7 +538,8 @@ N $7839 Attributes.
   $783B,$23,$08 Attribute data.
 
 b $785E Background Graphic #N$08
-D $785E #BG(#PC)(background-08)
+D $785E #BG(#PC)(background-#PC)
+N $785E Pixels.
   $785E,$01 Height = #N(#PEEK(#PC)) pixels.
   $785F,$01 Width = #N(#PEEK(#PC)) bytes.
   $7860,$80,$08 Pixel data.
@@ -496,7 +549,8 @@ N $78E0 Attributes.
   $78E2,$10,$08 Attribute data.
 
 b $78F2 Background Graphic #N$09
-D $78F2 #BG(#PC)(background-09)
+D $78F2 #BG(#PC)(background-#PC)
+N $78F2 Pixels.
   $78F2,$01 Height = #N(#PEEK(#PC)) pixels.
   $78F3,$01 Width = #N(#PEEK(#PC)) bytes.
   $78F4,$48,$08 Pixel data.
@@ -506,7 +560,8 @@ N $793C Attributes.
   $793E,$09,$08 Attribute data.
 
 b $7947 Background Graphic #N$0A
-D $7947 #BG(#PC)(background-0A)
+D $7947 #BG(#PC)(background-#PC)
+N $7947 Pixels.
   $7947,$01 Height = #N(#PEEK(#PC)) pixels.
   $7948,$01 Width = #N(#PEEK(#PC)) bytes.
   $7949,$30,$08 Pixel data.
@@ -516,7 +571,7 @@ N $7979 Attributes.
   $797B,$06,$08 Attribute data.
 
 b $7981 Background Graphic #N$0B
-D $7981 #BG(#PC)(background-0B)
+D $7981 #BG(#PC)(background-#PC)
 N $7981 Pixels.
   $7981,$01 Height = #N(#PEEK(#PC)) pixels.
   $7982,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -527,7 +582,8 @@ N $7AE3 Attributes.
   $7AE5,$2C,$08 Attribute data.
 
 b $7B11 Background Graphic #N$0C
-D $7B11 #BG(#PC)(background-0C)
+D $7B11 #BG(#PC)(background-#PC)
+N $7B11 Pixels.
   $7B11,$01 Height = #N(#PEEK(#PC)) pixels.
   $7B12,$01 Width = #N(#PEEK(#PC)) bytes.
   $7B13,$90,$08 Pixel data.
@@ -537,7 +593,8 @@ N $7BA3 Attributes.
   $7BA5,$12,$08 Attribute data.
 
 b $7BB7 Background Graphic #N$0D
-D $7BB7 #BG(#PC)(background-0D)
+D $7BB7 #BG(#PC)(background-#PC)
+N $7BB7 Pixels.
   $7BB7,$01 Height = #N(#PEEK(#PC)) pixels.
   $7BB8,$01 Width = #N(#PEEK(#PC)) bytes.
   $7BB9,$48,$08 Pixel data.
@@ -547,7 +604,8 @@ N $7C01 Attributes.
   $7C03,$09,$08 Attribute data.
 
 b $7C0C Background Graphic #N$0E
-D $7C0C #BG(#PC)(background-0E)
+D $7C0C #BG(#PC)(background-#PC)
+N $7C0C Pixels.
   $7C0C,$01 Height = #N(#PEEK(#PC)) pixels.
   $7C0D,$01 Width = #N(#PEEK(#PC)) bytes.
   $7C0E,$A8,$08 Pixel data.
@@ -557,166 +615,301 @@ N $7CB6 Attributes.
   $7CB8,$15,$08 Attribute data.
 
 b $7CCD Background Graphic #N$0F
-D $7CCD #BG(#PC)(background-0F)
+D $7CCD #BG(#PC)(background-#PC)
+N $7CCD Pixels.
   $7CCD,$01 Height = #N(#PEEK(#PC)) pixels.
   $7CCE,$01 Width = #N(#PEEK(#PC)) bytes.
   $7CCF,$150,$08 Pixel data.
+N $7E1F Attributes.
+  $7E1F,$01 Height = #N(#PEEK(#PC)) bytes.
+  $7E20,$01 Width = #N(#PEEK(#PC)) bytes.
+  $7E21,$2A,$08 Attribute data.
 
 b $7E4B Background Graphic #N$10
-D $7E4B #BG(#PC)(background-10)
+D $7E4B #BG(#PC)(background-#PC)
+N $7E4B Pixels.
   $7E4B,$01 Height = #N(#PEEK(#PC)) pixels.
   $7E4C,$01 Width = #N(#PEEK(#PC)) bytes.
   $7E4D,$1C0,$08 Pixel data.
+N $800D Attributes.
+  $800D,$01 Height = #N(#PEEK(#PC)) bytes.
+  $800E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $800F,$38,$08 Attribute data.
 
 b $8047 Background Graphic #N$11
-D $8047 #BG(#PC)(background-11)
+D $8047 #BG(#PC)(background-#PC)
+N $8047 Pixels.
   $8047,$01 Height = #N(#PEEK(#PC)) pixels.
   $8048,$01 Width = #N(#PEEK(#PC)) bytes.
   $8049,$150,$08 Pixel data.
+N $8199 Attributes.
+  $8199,$01 Height = #N(#PEEK(#PC)) bytes.
+  $819A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $819B,$2A,$08 Attribute data.
 
 b $81C5 Background Graphic #N$12
-D $81C5 #BG(#PC)(background-12)
+D $81C5 #BG(#PC)(background-#PC)
+N $81C5 Pixels.
   $81C5,$01 Height = #N(#PEEK(#PC)) pixels.
   $81C6,$01 Width = #N(#PEEK(#PC)) bytes.
   $81C7,$188,$08 Pixel data.
+N $834F Attributes.
+  $834F,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8350,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8351,$31,$08 Attribute data.
 
 b $8382 Background Graphic #N$13
-D $8382 #BG(#PC)(background-13)
+D $8382 #BG(#PC)(background-#PC)
+N $8382 Pixels.
   $8382,$01 Height = #N(#PEEK(#PC)) pixels.
   $8383,$01 Width = #N(#PEEK(#PC)) bytes.
   $8384,$20,$08 Pixel data.
+N $83A4 Attributes.
+  $83A4,$01 Height = #N(#PEEK(#PC)) bytes.
+  $83A5,$01 Width = #N(#PEEK(#PC)) bytes.
+  $83A6,$04,$08 Attribute data.
 
 b $83AA Background Graphic #N$14
-D $83AA #BG(#PC)(background-14)
+D $83AA #BG(#PC)(background-#PC)
+N $83AA Pixels.
   $83AA,$01 Height = #N(#PEEK(#PC)) pixels.
   $83AB,$01 Width = #N(#PEEK(#PC)) bytes.
   $83AC,$20,$08 Pixel data.
+N $83CC Attributes.
+  $83CC,$01 Height = #N(#PEEK(#PC)) bytes.
+  $83CD,$01 Width = #N(#PEEK(#PC)) bytes.
+  $83CE,$04,$08 Attribute data.
 
 b $83D2 Background Graphic #N$15
-D $83D2 #BG(#PC)(background-15)
+D $83D2 #BG(#PC)(background-#PC)
+N $83D2 Pixels.
   $83D2,$01 Height = #N(#PEEK(#PC)) pixels.
   $83D3,$01 Width = #N(#PEEK(#PC)) bytes.
   $83D4,$48,$08 Pixel data.
+N $841C Attributes.
+  $841C,$01 Height = #N(#PEEK(#PC)) bytes.
+  $841D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $841E,$09,$08 Attribute data.
 
 b $8427 Background Graphic #N$16
-D $8427 #BG(#PC)(background-16)
+D $8427 #BG(#PC)(background-#PC)
+N $8427 Pixels.
   $8427,$01 Height = #N(#PEEK(#PC)) pixels.
   $8428,$01 Width = #N(#PEEK(#PC)) bytes.
   $8429,$48,$08 Pixel data.
+N $8471 Attributes.
+  $8471,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8472,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8473,$09,$08 Attribute data.
 
 b $847C Background Graphic #N$17
-D $847C #BG(#PC)(background-17)
+D $847C #BG(#PC)(background-#PC)
+N $847C Pixels.
   $847C,$01 Height = #N(#PEEK(#PC)) pixels.
   $847D,$01 Width = #N(#PEEK(#PC)) bytes.
   $847E,$C0,$08 Pixel data.
+N $853E Attributes.
+  $853E,$01 Height = #N(#PEEK(#PC)) bytes.
+  $853F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8540,$18,$08 Attribute data.
 
 b $8558 Background Graphic #N$18
-D $8558 #BG(#PC)(background-18)
+D $8558 #BG(#PC)(background-#PC)
+N $8558 Pixels.
   $8558,$01 Height = #N(#PEEK(#PC)) pixels.
   $8559,$01 Width = #N(#PEEK(#PC)) bytes.
   $855A,$60,$08 Pixel data.
+N $85BA Attributes.
+  $85BA,$01 Height = #N(#PEEK(#PC)) bytes.
+  $85BB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $85BC,$0C,$08 Attribute data.
 
 b $85C8 Background Graphic #N$19
-D $85C8 #BG(#PC)(background-19)
+D $85C8 #BG(#PC)(background-#PC)
+N $85C8 Pixels.
   $85C8,$01 Height = #N(#PEEK(#PC)) pixels.
   $85C9,$01 Width = #N(#PEEK(#PC)) bytes.
   $85CA,$F0,$08 Pixel data.
+N $86BA Attributes.
+  $86BA,$01 Height = #N(#PEEK(#PC)) bytes.
+  $86BB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $86BC,$1E,$08 Attribute data.
 
 b $86DA Background Graphic #N$1A
-D $86DA #BG(#PC)(background-1A)
+D $86DA #BG(#PC)(background-#PC)
+N $86DA Pixels.
   $86DA,$01 Height = #N(#PEEK(#PC)) pixels.
   $86DB,$01 Width = #N(#PEEK(#PC)) bytes.
   $86DC,$20,$08 Pixel data.
+N $86FC Attributes.
+  $86FC,$01 Height = #N(#PEEK(#PC)) bytes.
+  $86FD,$01 Width = #N(#PEEK(#PC)) bytes.
+  $86FE,$04,$08 Attribute data.
 
 b $8702 Background Graphic #N$1B
-D $8702 #BG(#PC)(background-1B)
+D $8702 #BG(#PC)(background-#PC)
+N $8702 Pixels.
   $8702,$01 Height = #N(#PEEK(#PC)) pixels.
   $8703,$01 Width = #N(#PEEK(#PC)) bytes.
   $8704,$20,$08 Pixel data.
+N $8724 Attributes.
+  $8724,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8725,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8726,$04,$08 Attribute data.
 
 b $872A Background Graphic #N$1C
-D $872A #BG(#PC)(background-1C)
+D $872A #BG(#PC)(background-#PC)
+N $872A Pixels.
   $872A,$01 Height = #N(#PEEK(#PC)) pixels.
   $872B,$01 Width = #N(#PEEK(#PC)) bytes.
   $872C,$C0,$08 Pixel data.
+N $87EC Attributes.
+  $87EC,$01 Height = #N(#PEEK(#PC)) bytes.
+  $87ED,$01 Width = #N(#PEEK(#PC)) bytes.
+  $87EE,$18,$08 Attribute data.
 
 b $8806 Background Graphic #N$1D
-D $8806 #BG(#PC)(background-1D)
+D $8806 #BG(#PC)(background-#PC)
+N $8806 Pixels.
   $8806,$01 Height = #N(#PEEK(#PC)) pixels.
   $8807,$01 Width = #N(#PEEK(#PC)) bytes.
   $8808,$188,$08 Pixel data.
+N $8990 Attributes.
+  $8990,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8991,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8992,$31,$08 Attribute data.
 
 b $89C3 Background Graphic #N$1E
-D $89C3 #BG(#PC)(background-1E)
+D $89C3 #BG(#PC)(background-#PC)
+N $89C3 Pixels.
   $89C3,$01 Height = #N(#PEEK(#PC)) pixels.
   $89C4,$01 Width = #N(#PEEK(#PC)) bytes.
   $89C5,$188,$08 Pixel data.
+N $8B4D Attributes.
+  $8B4D,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8B4E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8B4F,$31,$08 Attribute data.
 
 b $8B80 Background Graphic #N$1F
-D $8B80 #BG(#PC)(background-1F)
+D $8B80 #BG(#PC)(background-#PC)
+N $8B80 Pixels.
   $8B80,$01 Height = #N(#PEEK(#PC)) pixels.
   $8B81,$01 Width = #N(#PEEK(#PC)) bytes.
   $8B82,$C0,$08 Pixel data.
+N $8C42 Attributes.
+  $8C42,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8C43,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8C44,$18,$08 Attribute data.
 
 b $8C5C Background Graphic #N$20
-D $8C5C #BG(#PC)(background-20)
+D $8C5C #BG(#PC)(background-#PC)
+N $8C5C Pixels.
   $8C5C,$01 Height = #N(#PEEK(#PC)) pixels.
   $8C5D,$01 Width = #N(#PEEK(#PC)) bytes.
   $8C5E,$60,$08 Pixel data.
+N $8CBE Attributes.
+  $8CBE,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8CBF,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8CC0,$0C,$08 Attribute data.
 
 b $8CCC Background Graphic #N$21
-D $8CCC #BG(#PC)(background-21)
+D $8CCC #BG(#PC)(background-#PC)
+N $8CCC Pixels.
   $8CCC,$01 Height = #N(#PEEK(#PC)) pixels.
   $8CCD,$01 Width = #N(#PEEK(#PC)) bytes.
   $8CCE,$60,$08 Pixel data.
+N $8D2E Attributes.
+  $8D2E,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8D2F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8D30,$0C,$08 Attribute data.
 
 b $8D3C Background Graphic #N$22
-D $8D3C #BG(#PC)(background-22)
+D $8D3C #BG(#PC)(background-#PC)
+N $8D3C Pixels.
   $8D3C,$01 Height = #N(#PEEK(#PC)) pixels.
   $8D3D,$01 Width = #N(#PEEK(#PC)) bytes.
   $8D3E,$C0,$08 Pixel data.
+N $8DFE Attributes.
+  $8DFE,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8DFF,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8E00,$18,$08 Attribute data.
 
 b $8E18 Background Graphic #N$23
-D $8E18 #BG(#PC)(background-23)
+D $8E18 #BG(#PC)(background-#PC)
+N $8E18 Pixels.
   $8E18,$01 Height = #N(#PEEK(#PC)) pixels.
   $8E19,$01 Width = #N(#PEEK(#PC)) bytes.
   $8E1A,$F0,$08 Pixel data.
+N $8F0A Attributes.
+  $8F0A,$01 Height = #N(#PEEK(#PC)) bytes.
+  $8F0B,$01 Width = #N(#PEEK(#PC)) bytes.
+  $8F0C,$1E,$08 Attribute data.
 
 b $8F2A Background Graphic #N$24
-D $8F2A #BG(#PC)(background-24)
+D $8F2A #BG(#PC)(background-#PC)
+N $8F2A Pixels.
   $8F2A,$01 Height = #N(#PEEK(#PC)) pixels.
   $8F2B,$01 Width = #N(#PEEK(#PC)) bytes.
   $8F2C,$150,$08 Pixel data.
+N $907C Attributes.
+  $907C,$01 Height = #N(#PEEK(#PC)) bytes.
+  $907D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $907E,$2A,$08 Attribute data.
 
 b $90A8 Background Graphic #N$25
-D $90A8 #BG(#PC)(background-25)
+D $90A8 #BG(#PC)(background-#PC)
+N $90A8 Pixels.
   $90A8,$01 Height = #N(#PEEK(#PC)) pixels.
   $90A9,$01 Width = #N(#PEEK(#PC)) bytes.
   $90AA,$2C0,$08 Pixel data.
+N $936A Attributes.
+  $936A,$01 Height = #N(#PEEK(#PC)) bytes.
+  $936B,$01 Width = #N(#PEEK(#PC)) bytes.
+  $936C,$58,$08 Attribute data.
 
 b $93C4 Background Graphic #N$26
-D $93C4 #BG(#PC)(background-26)
+D $93C4 #BG(#PC)(background-#PC)
+N $93C4 Pixels.
   $93C4,$01 Height = #N(#PEEK(#PC)) pixels.
   $93C5,$01 Width = #N(#PEEK(#PC)) bytes.
   $93C6,$168,$08 Pixel data.
+N $952E Attributes.
+  $952E,$01 Height = #N(#PEEK(#PC)) bytes.
+  $952F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $9530,$2D,$08 Attribute data.
 
 b $955D Background Graphic #N$27
-D $955D #BG(#PC)(background-27)
+D $955D #BG(#PC)(background-#PC)
+N $955D Pixels.
   $955D,$01 Height = #N(#PEEK(#PC)) pixels.
   $955E,$01 Width = #N(#PEEK(#PC)) bytes.
   $955F,$60,$08 Pixel data.
+N $95BF Attributes.
+  $95BF,$01 Height = #N(#PEEK(#PC)) bytes.
+  $95C0,$01 Width = #N(#PEEK(#PC)) bytes.
+  $95C1,$0C,$08 Attribute data.
 
 b $95CD Background Graphic #N$28
-D $95CD #BG(#PC)(background-28)
+D $95CD #BG(#PC)(background-#PC)
+N $95CD Pixels.
   $95CD,$01 Height = #N(#PEEK(#PC)) pixels.
   $95CE,$01 Width = #N(#PEEK(#PC)) bytes.
   $95CF,$90,$08 Pixel data.
+N $965F Attributes.
+  $965F,$01 Height = #N(#PEEK(#PC)) bytes.
+  $9660,$01 Width = #N(#PEEK(#PC)) bytes.
+  $9661,$12,$08 Attribute data.
 
 b $9673 Background Graphic #N$29
-D $9673 #BG(#PC)(background-29)
+D $9673 #BG(#PC)(background-#PC)
+N $9673 Pixels.
   $9673,$01 Height = #N(#PEEK(#PC)) pixels.
   $9674,$01 Width = #N(#PEEK(#PC)) bytes.
   $9675,$18,$08 Pixel data.
+N $968D Attributes.
+  $968D,$01 Height = #N(#PEEK(#PC)) bytes.
+  $968E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $968F,$03,$08 Attribute data.
 
 g $9692
 
@@ -1996,6 +2189,7 @@ b $C374 Attributes?
 
 w $C386 Special Room (Game Completed)
 D $C386 This is the room data showing on the Game Completed screen. See #R$9F6A.
+D $C386 #UDGTABLE { #ROOM(#PC)(room-complete) } UDGTABLE#
 @ $C386 label=Room_Special_Complete
   $C386,$02 Background graphic #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100).
 B $C388,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
@@ -2198,7 +2392,7 @@ N $DC22 Left Frame 2.
 b $DC6C Attributes?
 
 b $E1EC Background Graphic Game Completed
-D $E1EC #BG(#PC)(background-complete)
+D $E1EC #BG(#PC)(*background-complete)
 N $E1EC Pixels.
   $E1EC,$01 Height = #N(#PEEK(#PC)) pixels.
   $E1ED,$01 Width = #N(#PEEK(#PC)) bytes.
