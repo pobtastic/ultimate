@@ -4,6 +4,7 @@
 <title>Atic Atac: Pokes</title>
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
@@ -22,13 +23,126 @@ gtag('config', 'G-75RERFCHBG');
 </tr>
 </table>
 <ul class="contents">
-<li><a href="#lives">Lives</a></li>
+<li><a href="#infinite_lives">Infinite Lives</a></li>
+<li><a href="#set_starting_lives">Set Starting Lives</a></li>
+<li><a href="#set_current_lives">Set Current Lives</a></li>
+<li><a href="#infinite_energy">Infinite Energy</a></li>
+<li><a href="#infinite_chicken">Infinite Chicken</a></li>
+<li><a href="#allow_doors_to_open_quickly">Allow Doors To Open Quickly</a></li>
 </ul>
-<div><span id="lives"></span></div>
+<div><span id="infinite_lives"></span></div>
 <div class="box box-1">
-<div class="box-title">Lives</div>
+<div class="box-title">Infinite Lives</div>
+<div class="paragraph">
+POKE <a href="../asm/8E26.html#8ea7">8EA7</a>,00
+</div>
+<div class="paragraph">
+This removes the command;
+</div>
+<div class="paragraph">
+<code>DEC <span class="register">A</span></code>
+</div>
+<div class="paragraph">
+Which is written back to <a href="../asm/5E21.html">PlayerLives</a>. Hence the value in <span class="register">A</span> remains static.
+</div>
+</div>
+<div><span id="set_starting_lives"></span></div>
+<div class="box box-2">
+<div class="box-title">Set Starting Lives</div>
 <div class="paragraph">
 POKE <a href="../asm/7D9A.html#7d9d">7D9E</a>,NN
+</div>
+<div class="paragraph">
+<code>LD A,NN</code>
+</div>
+<div class="paragraph">
+Alters the initialisation value which is then written to <a href="../asm/5E21.html">PlayerLives</a>.
+</div>
+</div>
+<div><span id="set_current_lives"></span></div>
+<div class="box box-1">
+<div class="box-title">Set Current Lives</div>
+<div class="paragraph">
+POKE <a href="../asm/5E21.html">PlayerLives</a>,NN
+</div>
+</div>
+<div><span id="infinite_energy"></span></div>
+<div class="box box-2">
+<div class="box-title">Infinite Energy</div>
+<div class="paragraph">
+POKE <a href="../asm/96EC.html#98b4">98B4</a>,00
+</div>
+<div class="paragraph">
+This removes the command;
+</div>
+<div class="paragraph">
+<code>DEC <span class="register">A</span></code>
+</div>
+<div class="paragraph">
+Which is written back to <a href="../asm/5E28.html">PlayerEnergy</a>. Hence the value in <span class="register">A</span> remains static.
+</div>
+</div>
+<div><span id="infinite_chicken"></span></div>
+<div class="box box-1">
+<div class="box-title">Infinite Chicken</div>
+<div class="paragraph">
+POKE <a href="../asm/8B8A.html#8c0b">8C0B</a>,3E
+</div>
+<div class="paragraph">
+POKE <a href="../asm/8B8A.html#8c0b">8C0C</a>,F1
+</div>
+<div class="paragraph">
+POKE <a href="../asm/8B8A.html#8c0e">8C0F</a>,28
+</div>
+<div class="paragraph">
+This changes the chicken energy routine from;
+</div>
+<div class="paragraph">
+<pre>
+<a href="../asm/8B8A.html#8c0b">8C0B</a>	LD <span class="register">A</span>,(<a href="../asm/5E28.html">PlayerEnergy</a>)
+<a href="../asm/8B8A.html#8c0e">8C0E</a>	LD (<a href="../asm/5E29.html">ChickenLevel</a>),<span class="register">A</span>
+</pre>
+</div>
+<div class="paragraph">
+To:
+</div>
+<div class="paragraph">
+<pre>
+<a href="../asm/8B8A.html#8c0b">8C0B</a>	LD <span class="register">A</span>,F1
+<a href="../asm/8B8A.html#8c0b">8C0D</a>	LD <span class="register">E</span>,(<span class="register">HL</span>)
+<a href="../asm/8B8A.html#8c0e">8C0E</a>	LD (<a href="../asm/5E28.html">PlayerEnergy</a>),<span class="register">A</span>
+</pre>
+</div>
+<div class="paragraph">
+This keeps the players energy at a constant level (see <a href="../asm/9443.html#9476">PreparePlayer_Energy</a> for the initialisation value) and never alters the chicken level.
+</div>
+<div class="paragraph">
+The instruction left at 8C0D does nothing.
+</div>
+<div class="paragraph">
+Obviously, the player energy and chicken level are correlated - the chicken level is determined from the player energy.
+</div>
+</div>
+<div><span id="allow_doors_to_open_quickly"></span></div>
+<div class="box box-2">
+<div class="box-title">Allow Doors To Open Quickly</div>
+<div class="paragraph">
+POKE <a href="../asm/917D.html#918c">918C</a>,AF
+</div>
+<div class="paragraph">
+This changes the door timer routine from;
+</div>
+<div class="paragraph">
+<code>DEC <span class="register">A</span></code>
+</div>
+<div class="paragraph">
+To:
+</div>
+<div class="paragraph">
+<code>XOR <span class="register">A</span>, <span class="register">A</span></code>
+</div>
+<div class="paragraph">
+Which instead of decreasing the timer value, simply sets it to zero.
 </div>
 </div>
 <footer>
