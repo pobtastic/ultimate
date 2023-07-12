@@ -5400,7 +5400,7 @@ c$8B8A LD A,($5E28)                         ; #REGa=#R$5E28.
  $8C11 RET                                  ; Return.
 *$8C12 LD A,C                               ; {Write #REGc to #R$C543.
  $8C13 LD ($C543),A                         ; }
- $8C16 LD A,$13                             ; {Write #N$13 to .
+ $8C16 LD A,$13                             ; {Write #N$13 to #REGix+#N$00.
  $8C18 LD (IX+$00),A                        ; }
  $8C1B LD HL,$77C8                          ; {Write #N$77C8 to
  $8C1E LD ($8C30),HL                        ; #R$8C2D(#N$8C30).}
@@ -6599,6 +6599,7 @@ c$9443 LD A,($5E00)                         ; {#REGa=#R$5E00 * #N$02.
  $9471 CALL $9F4A                           ; Call #R$9F4A.
  $9474 POP IX                               ;
 ; Set starting energy.
+@label=PreparePlayer_Energy
 *$9476 LD A,$F0                             ; {Write #N$F0 to #R$5E28.
  $9478 LD ($5E28),A                         ; }
  $947B CALL $8B8A                           ; Call #R$8B8A.
@@ -8366,13 +8367,24 @@ c$9E55 POP BC        ;
 ;
 ; Used by the routine at #R$9F80.
 ;
-;   A The Sprite ID
 ; O:DE The sprite address
 @label=GetSpriteA
 c$9E86 LD A,($5E15)  ; #REGa=#R$5E15.
-; This entry point is used by the routines at #R$8C63, #R$8E26 and #R$9E96.
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B925 }
+; LIST#
+; .
+; Continue on to #R$9E89.
+
+; Get Sprite Address
+;
+; Used by the routines at #R$8C63, #R$8E26 and #R$9E96.
+;
+;   A The Sprite ID
+; O:DE The sprite address
 @label=GetSpriteAddress
-*$9E89 DEC A         ; Decrease #REGa by one.
+c$9E89 DEC A         ; Decrease #REGa by one.
  $9E8A LD L,A        ; {Create an offset in #REGhl.
  $9E8B LD H,$00      ; }
  $9E8D ADD HL,HL     ; #REGhl=#REGhl * 2.
@@ -8382,15 +8394,26 @@ c$9E86 LD A,($5E15)  ; #REGa=#R$5E15.
  $9E93 INC HL        ;
  $9E94 LD D,(HL)     ; }
  $9E95 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B934 }
+; LIST#
 
 ; Get Entity Sprite
 ;
 ; Used by the routine at #R$9F9F.
 @label=GetEntitySprite
-c$9E96 LD A,(IX+$00) ;
- $9E99 JR $9E89      ;
-; This entry point is used by the routines at #R$9F4A, #R$9F56 and #R$9FCA.
-*$9E9B LD A,C        ;
+c$9E96 LD A,(IX+$00) ; #REGa=#REGix+#N$00.
+ $9E99 JR $9E89      ; Jump to #R$9E89.
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B934 }
+; LIST#
+
+; Routine at 9E9B
+;
+; Used by the routines at #R$9F4A, #R$9F56 and #R$9FCA.
+c$9E9B LD A,C        ;
  $9E9C AND A         ;
  $9E9D JR Z,$9EAF    ;
  $9E9F DEC C         ;
@@ -8541,7 +8564,7 @@ c$9E96 LD A,(IX+$00) ;
 ; #R$A13B, #R$A2CE and #R$A311.
 @label=DrawEntity
 c$9F4A CALL $9F9F    ; Call #R$9F9F.
-; This entry point is used by the routine at #R$9E96.
+; This entry point is used by the routine at #R$9E9B.
 *$9F4D EXX           ; Switch to the shadow registers.
  $9F4E XOR A         ; {Write #N$00 to #R$5E18.
  $9F4F LD ($5E18),A  ; }
@@ -8553,7 +8576,7 @@ c$9F4A CALL $9F9F    ; Call #R$9F9F.
 ; Used by the routines at #R$8209, #R$8301, #R$8C63, #R$9252 and #R$96EC.
 @label=RemoveEntity
 c$9F56 CALL $9F80    ;
-; This entry point is used by the routine at #R$9E96.
+; This entry point is used by the routine at #R$9E9B.
 *$9F59 EXX           ;
  $9F5A XOR A         ;
  $9F5B LD C,A        ;
@@ -8575,13 +8598,17 @@ c$9F56 CALL $9F80    ;
  $9F7A CALL $9FA2    ;
  $9F7D EXX           ;
  $9F7E JR $9FD1      ;
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B8F5 }
+; LIST#
 
 ; Prepare Draw 2/ 3 Byte Sprite
 ;
 ; Used by the routines at #R$9F56 and #R$9FCA.
 @label=PrepDraw23
 c$9F80 CALL $9E86    ; Call #R$9E86.
-; This entry point is used by the routines at #R$9E96 and #R$9F56.
+; This entry point is used by the routines at #R$9E9B and #R$9F56.
 *$9F83 LD HL,($5E16) ; #REGhl=#R$5E16 (saved X position).
  $9F86 LD A,L        ;
  $9F87 DEC A         ;
@@ -8598,13 +8625,17 @@ c$9F80 CALL $9E86    ; Call #R$9E86.
 *$9F9B LD C,$00      ;
  $9F9D INC DE        ;
  $9F9E RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B939 }
+; LIST#
 
 ; Prepare Draw 2 Byte Sprite
 ;
 ; Used by the routines at #R$9F4A and #R$9FCA.
 @label=PrepDraw2
 c$9F9F CALL $9E96    ; Call #R$9E96.
-; This entry point is used by the routines at #R$9E96 and #R$9F56.
+; This entry point is used by the routines at #R$9E9B and #R$9F56.
 *$9FA2 LD L,(IX+$03) ;
  $9FA5 LD H,(IX+$04) ;
  $9FA8 LD A,L        ;
@@ -8624,6 +8655,10 @@ c$9F9F CALL $9E96    ; Call #R$9E96.
  $9FC2 LD ($5E19),A  ;
  $9FC5 LD ($5E11),A  ;
  $9FC8 JR $9F9B      ;
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B969 }
+; LIST#
 
 ; Display Entity
 ;
@@ -8652,6 +8687,10 @@ c$9FCA CALL $9F9F    ;
  $9FF4 JP C,$9EB4    ;
  $9FF7 SUB C         ;
  $9FF8 JP $9EC8      ;
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B9A9 }
+; LIST#
 
 ; Store Entity
 ;

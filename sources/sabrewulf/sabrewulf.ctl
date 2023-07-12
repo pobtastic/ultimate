@@ -951,13 +951,26 @@ D $969E The currently active player.
 . { #N$01 | 2UP }
 . TABLE#
 
+g $969F
+
+g $96A0 Saved X
+@ $96A0 label=Saved_X
+B $96A0,$01
+
+g $96A1 Saved Y
+@ $96A1 label=Saved_Y
+B $96A1,$01
+
 g $96A8 Current Menu Item Colour attribute
 @ $96A8 label=Current_MenuAttr
 B $96A8,$01
 
 b $96A9
+  $96B0
+  $96B1
   $96B2
   $96B4
+  $96B5
   $96B7
 W $96B8
   $96BA
@@ -1276,6 +1289,11 @@ b $A7F8
 
 c $A858
 
+c $AA27
+  $AA27,$03 #REGa=#R$9692.
+  $AA2A,$02,b$01 Keep only bit 0.
+  $AA34,$03 #REGhl=#R$96BD.
+
 c $AA6A Game Over
 @ $AA6A label=GameOver_1UP
 N $AA6A #HTML(Set up altering the "GAME OVER PLAYER <em>X</em>" message for 1UP.)
@@ -1335,6 +1353,25 @@ c $AAED
 b $AC24
 
 c $AC28
+  $AC28,$01 Enable interrupts.
+  $AC29,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | | | | | }
+. TABLE#
+  $AC32,$01 Flip the bits.
+  $AC33,$02,b$01 Keep only bits 1-4.
+
+  $AC40,$04 #HTML(#REGhl=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+
+  $AC4D,$02,b$01 Keep only bit 1.
+  $AC4F,$02,b$01
+
+  $AC6A,$01 Return.
+
+  $AC6B,$0B Copy #N$0090 bytes of data from #R$AC77 to #R$9702.
+  $AC76,$01 Return.
 
 b $AC77
 
@@ -1388,6 +1425,16 @@ c $B12F
 c $B16A
 
 c $B187
+
+c $B1B7
+  $B1B7,$03 #REGhl=#R$9702.
+  $B1BA,$05 Write #N$10 to #R$96B1.
+  $B1BF,$05 Write #N$80 to #R$96B4.
+  $B1C4,$05 Write #N$80 to #R$96B5.
+  $B1C9,$04 Write #N$00 to #R$96B0.
+  $B1CD,$03 #REGhl=#R$96BD.
+  $B1D0,$01 Decrease the lives value held at the memory location in #REGhl.
+  $B1D1,$03 Jump to #R$B7CD.
 
 c $B1D4
   $B204,$01 Return.
@@ -1921,7 +1968,12 @@ R $B8DD O:HL Attribute buffer address
   $B8F3,$01 Restore #REGbc from the stack.
   $B8F4,$01 Return.
 
-c $B8F5
+c $B8F5 Remove Entity
+E $B8F5 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9F56 }
+. LIST#
+@ $B8F5 label=RemoveEntity
 
 c $B902
   $B902,$02 #REGl=#N$00.
@@ -1932,6 +1984,69 @@ c $B902
   $B918,$01 Return.
 
 c $B919
+  $B919,$03 Call #R$B969.
+  $B922,$03 Jump to #R$B9DA.
+
+c $B925 Get Sprite "A"
+R $B925 O:DE The sprite address
+E $B925 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9E86 }
+. LIST#
+E $B925 Continue on to #R$B928.
+@ $B925 label=GetSpriteA
+  $B925,$03 #REGa=#R$969F.
+
+c $B928 Get Sprite Address
+R $B928 A The Sprite ID
+R $B928 O:DE The sprite address
+E $B928 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9E89 }
+. LIST#
+@ $B928 label=GetSpriteAddress
+  $B928,$03 Create an offset in #REGhl.
+  $B92B,$01 #REGhl=#REGhl * 2.
+  $B92C,$04 #REGhl=#R$BF84 + offset.
+  $B930,$03 #REGde=the sprite address.
+  $B933,$01 Return.
+
+c $B934 Get Entity Sprite
+E $B934 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9E96 }
+. LIST#
+@ $B934 label=GetEntitySprite
+  $B934,$03 #REGa=#REGix+#N$00.
+  $B937,$02 Jump to #R$B928.
+
+c $B939 Prepare Draw 2/ 3 Byte Sprite
+E $B969 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9F80 }
+. LIST#
+@ $B939 label=PrepDraw23
+  $B939,$03 Call #R$B925.
+  $B93C,$03 #REGhl=#R$96A0 (saved X position).
+  $B942,$02,b$01 Keep only bits 1-3.
+  $B968,$01 Return.
+
+c $B969 Prepare Draw 2 Byte Sprite
+E $B969 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9E96 }
+. LIST#
+@ $B969 label=PrepDraw2
+  $B969,$03 Call #R$9E96.
+
+c $B9A9 Display Entity
+E $B9A9 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9FCA }
+. LIST#
+@ $B9A9 label=DisplayEntity
+
+c $B9CB
 
 c $BB0B Store Entity
 E $BB0B View the equivalent code in;
@@ -1952,6 +2067,13 @@ N $BB0B This is @todo.
   $BB23,$01 Return.
 
 c $BB24
+
+c $BB45
+@ $BB45 label=AttrDrawUnchanged
+  $BB45,$02
+  $BB5B,$01 Return.
+
+c $BB5C
 
 c $BB8F Reset Attribute Buffer
 E $BB8F View the equivalent code in;

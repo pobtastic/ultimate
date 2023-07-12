@@ -16,6 +16,7 @@ usage:
 	@echo "  pssst         build the Psssst disassembly"
 	@echo "  sabrewulf     build the Sabre Wulf disassembly"
 	@echo "  tranzam       build the Tranz Am disassembly"
+	@echo "  underwurlde   build the Underwurlde disassembly"
 	@echo ""
 	@echo "Variables:"
 	@echo "  THEMES     CSS theme(s) to use"
@@ -74,5 +75,12 @@ tranzam:
 	skool2html.py $(OPTIONS) -D -c Config/GameDir=ultimate/tranzam/dec --var pub=4 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/tranzam/tranzam.skool sources/tranzam/tranzam.ref
 	skool2html.py $(OPTIONS) -H -c Config/GameDir=ultimate/tranzam --var pub=2 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/tranzam/tranzam.skool sources/tranzam/tranzam.ref
 
-all : aticatac cookie jetpac lunarjetman pssst sabrewulf tranzam
+.PHONY: underwurlde
+underwurlde:
+	if [ ! -f Underwurlde.z80 ]; then tap2sna.py @underwurlde.t2s; fi
+	sna2skool.py -H -c sources/underwurlde/underwurlde.ctl  Underwurlde.z80 > sources/underwurlde/underwurlde.skool
+	skool2html.py $(OPTIONS) -D -c Config/GameDir=ultimate/underwurlde/dec --var pub=4 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/underwurlde/underwurlde.skool sources/underwurlde/underwurlde.ref
+	skool2html.py $(OPTIONS) -H -c Config/GameDir=ultimate/underwurlde --var pub=2 -c Config/InitModule=$(SKOOLKIT_HOME)/tools:publish sources/underwurlde/underwurlde.skool sources/underwurlde/underwurlde.ref
+
+all : aticatac cookie jetpac lunarjetman pssst sabrewulf tranzam underwurlde
 .PHONY : all

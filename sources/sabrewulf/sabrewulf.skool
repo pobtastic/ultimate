@@ -6381,18 +6381,31 @@ g$969B DEFB $00      ; Byte #1.
 ; { #N$01 | 2UP }
 ; TABLE#
 @label=ActivePlayer
-g$969E DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $96A6 DEFB $00,$00
+g$969E DEFB $00
+
+; Game status buffer entry at 969F
+g$969F DEFB $00
+
+; Saved X
+@label=Saved_X
+g$96A0 DEFB $00
+
+; Saved Y
+@label=Saved_Y
+g$96A1 DEFB $00
+ $96A2 DEFB $00,$00,$00,$00,$00,$00
 
 ; Current Menu Item Colour attribute
 @label=Current_MenuAttr
 g$96A8 DEFB $00
 
 ; Data block at 96A9
-b$96A9 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+b$96A9 DEFB $00,$00,$00,$00,$00,$00,$00
+ $96B0 DEFB $00
  $96B1 DEFB $00
  $96B2 DEFB $00,$00
- $96B4 DEFB $00,$00,$00
+ $96B4 DEFB $00
+ $96B5 DEFB $00,$00
  $96B7 DEFB $00
  $96B8 DEFW $0000
  $96BA DEFB $00,$00
@@ -8516,14 +8529,17 @@ c$A858 CALL $BB0B      ;
  $AA20 JR NZ,$AA57     ;
  $AA22 INC (IX+$00)    ;
  $AA25 JR $AA57        ;
-; This entry point is used by the routine at #R$9F6A.
-*$AA27 LD A,($9692)    ;
- $AA2A AND $01         ;
+
+; Routine at AA27
+;
+; Used by the routines at #R$9F6A and #R$A858.
+c$AA27 LD A,($9692)    ; #REGa=#R$9692.
+ $AA2A AND %00000001   ; Keep only bit 0.
  $AA2C JR NZ,$AA5A     ;
 *$AA2E LD A,($96BD)    ;
  $AA31 AND A           ;
  $AA32 JR Z,$AAA4      ;
- $AA34 LD HL,$96BD     ;
+ $AA34 LD HL,$96BD     ; #REGhl=#R$96BD.
  $AA37 DEC (HL)        ;
  $AA38 CALL $B7CD      ;
  $AA3B LD A,(IX+$00)   ;
@@ -8537,6 +8553,7 @@ c$A858 CALL $BB0B      ;
  $AA4F LD ($96B1),A    ;
  $AA52 LD A,$80        ;
  $AA54 LD ($96B4),A    ;
+; This entry point is used by the routine at #R$A858.
 *$AA57 JP $AD5D        ;
 *$AA5A LD A,($96E0)    ;
  $AA5D AND A           ;
@@ -8779,22 +8796,26 @@ b$AC24 DEFB $D0,$E0,$20,$30
 ; Routine at AC28
 ;
 ; Used by the routines at #R$99F0, #R$9F6A and #R$A207.
-c$AC28 EI            ;
- $AC29 LD A,$7E      ;
- $AC2B OUT ($FD),A   ;
- $AC2D IN A,($FE)    ;
+c$AC28 EI            ; Enable interrupts.
+ $AC29 LD A,$7E      ; {Read from the keyboard;
+ $AC2B OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $AC2D IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$7E | | | | | }
+                     ; TABLE#}
  $AC2F BIT 0,A       ;
  $AC31 RET NZ        ;
- $AC32 CPL           ;
- $AC33 AND $1E       ;
+ $AC32 CPL           ; Flip the bits.
+ $AC33 AND %00011110 ; Keep only bits 1-4.
  $AC35 RET NZ        ;
 *$AC36 LD A,$7E      ;
  $AC38 OUT ($FD),A   ;
  $AC3A IN A,($FE)    ;
  $AC3C BIT 0,A       ;
  $AC3E JR Z,$AC36    ;
-*$AC40 LD HL,$5C78   ;
- $AC43 LD A,(HL)     ;
+*$AC40 LD HL,$5C78   ; {#HTML(#REGhl=<a
+ $AC43 LD A,(HL)     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+                     ; }
 *$AC44 CP (HL)       ;
  $AC45 JR Z,$AC44    ;
  $AC47 LD A,D        ;
@@ -8802,8 +8823,8 @@ c$AC28 EI            ;
  $AC4A LD D,A        ;
  $AC4B RLCA          ;
  $AC4C RLCA          ;
- $AC4D AND $02       ;
- $AC4F OR $01        ;
+ $AC4D AND %00000010 ; Keep only bit 1.
+ $AC4F OR %00000001  ;
  $AC51 OUT ($FE),A   ;
  $AC53 LD A,$7E      ;
  $AC55 OUT ($FD),A   ;
@@ -8817,13 +8838,13 @@ c$AC28 EI            ;
  $AC65 JR Z,$AC5D    ;
  $AC67 XOR A         ;
  $AC68 OUT ($FE),A   ;
- $AC6A RET           ;
+ $AC6A RET           ; Return.
 ; This entry point is used by the routine at #R$B1D4.
-*$AC6B LD HL,$AC77   ;
+*$AC6B LD HL,$AC77   ; {Copy #N$0090 bytes of data from #R$AC77 to #R$9702.
  $AC6E LD DE,$9702   ;
  $AC71 LD BC,$0090   ;
- $AC74 LDIR          ;
- $AC76 RET           ;
+ $AC74 LDIR          ; }
+ $AC76 RET           ; Return.
 
 ; Data block at AC77
 b$AC77 DEFB $10,$A8,$00,$78,$70,$47,$00,$00
@@ -8885,7 +8906,7 @@ c$AD07 CALL $BB0B      ;
  $AD5A CP C            ;
  $AD5B JR NZ,$AD63     ;
 ; This entry point is used by the routines at #R$9CC6, #R$9E72, #R$A3B7,
-; #R$A42A and #R$A858.
+; #R$A42A, #R$A858 and #R$AA27.
 *$AD5D CALL $B9A9      ;
  $AD60 JP $BB24        ;
 *$AD63 CALL $B919      ;
@@ -9471,19 +9492,23 @@ c$B187 LD A,($96AD)  ;
  $B1B0 SUB $10       ;
  $B1B2 LD (IX+$01),A ;
  $B1B5 JR $B148      ;
-; This entry point is used by the routine at #R$B1D4.
-*$B1B7 LD HL,$9702   ;
- $B1BA LD A,$10      ;
- $B1BC LD ($96B1),A  ;
- $B1BF LD A,$80      ;
- $B1C1 LD ($96B4),A  ;
- $B1C4 LD A,$80      ;
- $B1C6 LD ($96B5),A  ;
- $B1C9 XOR A         ;
- $B1CA LD ($96B0),A  ;
- $B1CD LD HL,$96BD   ;
- $B1D0 DEC (HL)      ;
- $B1D1 JP $B7CD      ;
+
+; Routine at B1B7
+;
+; Used by the routine at #R$B1D4.
+c$B1B7 LD HL,$9702   ; #REGhl=#R$9702.
+ $B1BA LD A,$10      ; {Write #N$10 to #R$96B1.
+ $B1BC LD ($96B1),A  ; }
+ $B1BF LD A,$80      ; {Write #N$80 to #R$96B4.
+ $B1C1 LD ($96B4),A  ; }
+ $B1C4 LD A,$80      ; {Write #N$80 to #R$96B5.
+ $B1C6 LD ($96B5),A  ; }
+ $B1C9 XOR A         ; {Write #N$00 to #R$96B0.
+ $B1CA LD ($96B0),A  ; }
+ $B1CD LD HL,$96BD   ; #REGhl=#R$96BD.
+ $B1D0 DEC (HL)      ; Decrease the lives value held at the memory location in
+                     ; #REGhl.
+ $B1D1 JP $B7CD      ; Jump to #R$B7CD.
 
 ; Routine at B1D4
 ;
@@ -9506,7 +9531,7 @@ c$B1D4 CALL $B21E      ;
  $B1FE CALL $A33B      ;
  $B201 CALL $BBDD      ;
  $B204 RET             ; Return.
-; This entry point is used by the routine at #R$A858.
+; This entry point is used by the routine at #R$AA27.
 *$B205 CALL $B235      ;
  $B208 CALL $BB7C      ;
  $B20B CALL $BB5C      ;
@@ -10351,7 +10376,7 @@ b$B755 DEFB $45,$45,$45,$45,$45,$43,$43,$47
 
 ; Routine at B7CD
 ;
-; Used by the routines at #R$9F6A, #R$A2BD, #R$A858 and #R$B187.
+; Used by the routines at #R$9F6A, #R$A2BD, #R$AA27 and #R$B1B7.
 c$B7CD LD HL,$4008   ;
  $B7D0 CALL $B7FE    ;
  $B7D3 AND A         ;
@@ -10480,7 +10505,8 @@ c$B7CD LD HL,$4008   ;
 
 ; Calculate Screen Address
 ;
-; Used by the routines at #R$B272, #R$B52D, #R$B53D, #R$B919 and #R$BBF7.
+; Used by the routines at #R$B272, #R$B52D, #R$B53D, #R$B939, #R$B969 and
+; #R$BBF7.
 @label=ScreenAddress
 c$B8AD LD A,L        ; #REGa=#REGl.
  $B8AE RRCA          ; {#REGa=#REGa / #N$08.
@@ -10575,9 +10601,10 @@ c$B8DD PUSH BC       ; Stash #REGbc on the stack.
 ; { #PSSST$748F }
 ; LIST#
 
-; Routine at B8F5
+; Remove Entity
 ;
 ; Used by the routines at #R$AD07 and #R$B16A.
+@label=RemoveEntity
 c$B8F5 CALL $B939    ;
  $B8F8 EXX           ;
  $B8F9 XOR A         ;
@@ -10585,6 +10612,10 @@ c$B8F5 CALL $B939    ;
  $B8FB LD ($96A4),A  ;
  $B8FE EXX           ;
  $B8FF JP $B9DA      ;
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9F56 }
+; LIST#
 
 ; Routine at B902
 ;
@@ -10609,31 +10640,69 @@ c$B902 LD L,$00      ; #REGl=#N$00.
 ;
 ; Used by the routines at #R$99F0, #R$A18C, #R$A207, #R$A2BD, #R$A42A, #R$AD07,
 ; #R$B12F, #R$B16A and #R$BBBB.
-c$B919 CALL $B969    ;
+c$B919 CALL $B969    ; Call #R$B969.
  $B91C EXX           ;
  $B91D XOR A         ;
  $B91E LD ($96A3),A  ;
  $B921 LD C,A        ;
- $B922 JP $B9DA      ;
-*$B925 LD A,($969F)  ;
-*$B928 LD L,A        ;
- $B929 LD H,$00      ;
- $B92B ADD HL,HL     ;
- $B92C LD BC,$BF84   ;
- $B92F ADD HL,BC     ;
- $B930 LD E,(HL)     ;
+ $B922 JP $B9DA      ; Jump to #R$B9DA.
+
+; Get Sprite "A"
+;
+; Used by the routine at #R$B939.
+;
+; O:DE The sprite address
+@label=GetSpriteA
+c$B925 LD A,($969F)  ; #REGa=#R$969F.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9E86 }
+; LIST#
+; .
+; Continue on to #R$B928.
+
+; Get Sprite Address
+;
+; Used by the routine at #R$B934.
+;
+;   A The Sprite ID
+; O:DE The sprite address
+@label=GetSpriteAddress
+c$B928 LD L,A        ; {Create an offset in #REGhl.
+ $B929 LD H,$00      ; }
+ $B92B ADD HL,HL     ; #REGhl=#REGhl * 2.
+ $B92C LD BC,$BF84   ; {#REGhl=#R$BF84 + offset.
+ $B92F ADD HL,BC     ; }
+ $B930 LD E,(HL)     ; {#REGde=the sprite address.
  $B931 INC HL        ;
- $B932 LD D,(HL)     ;
- $B933 RET           ;
-*$B934 LD A,(IX+$00) ;
- $B937 JR $B928      ;
-; This entry point is used by the routine at #R$B8F5.
-*$B939 CALL $B925    ;
- $B93C LD HL,($96A0) ;
+ $B932 LD D,(HL)     ; }
+ $B933 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9E89 }
+; LIST#
+
+; Get Entity Sprite
+;
+; Used by the routine at #R$B969.
+@label=GetEntitySprite
+c$B934 LD A,(IX+$00) ; #REGa=#REGix+#N$00.
+ $B937 JR $B928      ; Jump to #R$B928.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9E96 }
+; LIST#
+
+; Prepare Draw 2/ 3 Byte Sprite
+;
+; Used by the routines at #R$B8F5 and #R$B9A9.
+@label=PrepDraw23
+c$B939 CALL $B925    ; Call #R$B925.
+ $B93C LD HL,($96A0) ; #REGhl=#R$96A0 (saved X position).
  $B93F LD A,L        ;
  $B940 DEC A         ;
  $B941 RLCA          ;
- $B942 AND $0E       ;
+ $B942 AND %00001110 ; Keep only bits 1-3.
  $B944 OR $F0        ;
  $B946 LD B,A        ;
  $B947 LD A,(DE)     ;
@@ -10657,8 +10726,13 @@ c$B919 CALL $B969    ;
  $B960 LD ($96A3),A  ;
  $B963 CALL $B8AD    ;
  $B966 LD C,$00      ;
- $B968 RET           ;
-*$B969 CALL $B934    ;
+ $B968 RET           ; Return.
+
+; Prepare Draw 2 Byte Sprite
+;
+; Used by the routines at #R$B919 and #R$B9A9.
+@label=PrepDraw2
+c$B969 CALL $B934    ; Call #R$9E96.
  $B96C LD L,(IX+$03) ;
  $B96F LD H,(IX+$04) ;
  $B972 LD A,L        ;
@@ -10696,8 +10770,21 @@ c$B919 CALL $B969    ;
  $B9A3 CALL $B8AD    ;
  $B9A6 LD C,$00      ;
  $B9A8 RET           ;
-; This entry point is used by the routines at #R$A42A and #R$AD07.
-*$B9A9 CALL $B969    ;
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9F80 }
+; LIST#
+; .
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9E96 }
+; LIST#
+
+; Display Entity
+;
+; Used by the routines at #R$A42A and #R$AD07.
+@label=DisplayEntity
+c$B9A9 CALL $B969    ;
  $B9AC EXX           ;
  $B9AD CALL $B939    ;
  $B9B0 LD A,($96A1)  ;
@@ -10711,7 +10798,15 @@ c$B919 CALL $B969    ;
  $B9C4 SUB C         ;
  $B9C5 LD ($96A3),A  ;
  $B9C8 JP $B9DA      ;
-*$B9CB EXX           ;
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9FCA }
+; LIST#
+
+; Routine at B9CB
+;
+; Used by the routine at #R$B9A9.
+c$B9CB EXX           ;
  $B9CC NEG           ;
  $B9CE LD C,A        ;
  $B9CF LD A,($96A4)  ;
@@ -10719,7 +10814,7 @@ c$B919 CALL $B969    ;
  $B9D3 JP C,$B9F3    ;
  $B9D6 SUB C         ;
  $B9D7 JP $BA07      ;
-; This entry point is used by the routine at #R$B8F5.
+; This entry point is used by the routines at #R$B8F5, #R$B919 and #R$B9A9.
 *$B9DA LD A,C        ;
  $B9DB AND A         ;
  $B9DC JR Z,$B9EE    ;
@@ -10738,6 +10833,7 @@ c$B919 CALL $B969    ;
  $B9F0 AND A         ;
  $B9F1 JR NZ,$B9E7   ;
 *$B9F3 EXX           ;
+; This entry point is used by the routine at #R$B9A9.
 *$B9F4 LD A,($96A3)  ;
  $B9F7 LD C,A        ;
  $B9F8 LD A,($96A4)  ;
@@ -11044,8 +11140,12 @@ c$BB24 LD L,(IX+$03) ;
  $BB3F AND $1F       ;
  $BB41 LD C,A        ;
  $BB42 CALL $B8DD    ;
-; This entry point is used by the routine at #R$A42A.
-*$BB45 PUSH BC       ;
+
+; Routine at BB45
+;
+; Used by the routine at #R$A42A.
+@label=AttrDrawUnchanged
+c$BB45 PUSH BC       ;
  $BB46 PUSH HL       ;
 *$BB47 LD A,(HL)     ;
  $BB48 AND $38       ;
@@ -11060,10 +11160,13 @@ c$BB24 LD L,(IX+$03) ;
  $BB57 POP BC        ;
  $BB58 DEC C         ;
  $BB59 JR NZ,$BB45   ;
- $BB5B RET           ;
-; This entry point is used by the routines at #R$9F6A, #R$A207, #R$AA6A,
-; #R$B12F, #R$B1D4 and #R$B3D5.
-*$BB5C LD HL,$4040   ;
+ $BB5B RET           ; Return.
+
+; Routine at BB5C
+;
+; Used by the routines at #R$9F6A, #R$A207, #R$AA6A, #R$B12F, #R$B1D4 and
+; #R$B3D5.
+c$BB5C LD HL,$4040   ;
  $BB5F LD DE,$0008   ;
  $BB62 LD BC,$2006   ;
 *$BB65 PUSH BC       ;
@@ -11092,7 +11195,7 @@ c$BB24 LD L,(IX+$03) ;
 ; Used by the routine at #R$9960.
 @label=ResetScreen
 c$BB81 LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
-; This entry point is used by the routine at #R$BB24.
+; This entry point is used by the routine at #R$BB5C.
 *$BB84 LD B,$58      ; #REGb=#N$58 (i.e. finish once we reach the start of
                      ; #R$5800(attribute buffer)).
  $BB86 LD C,$00      ; #REGc=#N$00 (value to write).
@@ -11137,7 +11240,7 @@ c$BB88 LD (HL),C     ; Write #REGc to the target address.
 ; Used by the routine at #R$9960.
 @label=ResetAttributes
 c$BB8F LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
-; This entry point is used by the routine at #R$BB24.
+; This entry point is used by the routine at #R$BB5C.
 *$BB92 LD B,$5B      ; #REGb=#N$5B (i.e. finish once we reach the end of the
                      ; #R$5800(attribute buffer)).
  $BB94 LD C,$40      ; #REGc=#N$00 (value to write).

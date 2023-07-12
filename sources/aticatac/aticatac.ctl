@@ -2059,7 +2059,7 @@ c $8B8A Draw Chicken
   $8BAA,$04 #REGix=#R$8C2D.
   $8C11,$01 Return.
   $8C12,$04 Write #REGc to #R$C543.
-  $8C16,$05 Write #N$13 to .
+  $8C16,$05 Write #N$13 to #REGix+#N$00.
   $8C1B,$06 Write #N$77C8 to #R$8C2D(#N$8C30).
   $8C21,$03 Call #R$9213.
   $8C24,$02 #REGb=#N$06 (counter).
@@ -2207,6 +2207,7 @@ N $944E Update the current room.
   $9454,$0B Copy #N$08 bytes of data from #R$9481 to #R$EA90.
   $9471,$03 Call #R$9F4A.
 N $9476 Set starting energy.
+@ $9476 label=PreparePlayer_Energy
   $9476,$05 Write #N$F0 to #R$5E28.
   $947B,$03 Call #R$8B8A.
   $947E,$03 Jump to #R$A2CE.
@@ -2409,10 +2410,22 @@ c $9E21 Draw Attr 6
 c $9E55 Draw Attr 7
 
 c $9E86 Get Sprite "A"
-R $9E86 A The Sprite ID
 R $9E86 O:DE The sprite address
+E $9E86 View the equivalent code in;
+. #LIST
+. { #SABREWULF$B925 }
+. LIST#
+E $9E86 Continue on to #R$9E89.
 @ $9E86 label=GetSpriteA
   $9E86,$03 #REGa=#R$5E15.
+
+c $9E89 Get Sprite Address
+R $9E89 A The Sprite ID
+R $9E89 O:DE The sprite address
+E $9E89 View the equivalent code in;
+. #LIST
+. { #SABREWULF$B934 }
+. LIST#
 @ $9E89 label=GetSpriteAddress
   $9E89,$01 Decrease #REGa by one.
   $9E8A,$03 Create an offset in #REGhl.
@@ -2422,7 +2435,15 @@ R $9E86 O:DE The sprite address
   $9E95,$01 Return.
 
 c $9E96 Get Entity Sprite
+E $9E96 View the equivalent code in;
+. #LIST
+. { #SABREWULF$B934 }
+. LIST#
 @ $9E96 label=GetEntitySprite
+  $9E96,$03 #REGa=#REGix+#N$00.
+  $9E99,$02 Jump to #R$9E89.
+
+c $9E9B
 
 c $9F4A Draw Entity
 @ $9F4A label=DrawEntity
@@ -2433,9 +2454,17 @@ c $9F4A Draw Entity
   $9F53,$03 Jump to #R$9E9B.
 
 c $9F56 Remove Entity
+E $9F56 View the equivalent code in;
+. #LIST
+. { #SABREWULF$B8F5 }
+. LIST#
 @ $9F56 label=RemoveEntity
 
 c $9F80 Prepare Draw 2/ 3 Byte Sprite
+E $9F80 View the equivalent code in;
+. #LIST
+. { #SABREWULF$B939 }
+. LIST#
 @ $9F80 label=PrepDraw23
   $9F80,$03 Call #R$9E86.
   $9F83,$03 #REGhl=#R$5E16 (saved X position).
@@ -2443,10 +2472,18 @@ c $9F80 Prepare Draw 2/ 3 Byte Sprite
   $9F9E,$01 Return.
 
 c $9F9F Prepare Draw 2 Byte Sprite
+E $9F9F View the equivalent code in;
+. #LIST
+. { #SABREWULF$B969 }
+. LIST#
 @ $9F9F label=PrepDraw2
   $9F9F,$03 Call #R$9E96.
 
 c $9FCA Display Entity
+E $9FCA View the equivalent code in;
+. #LIST
+. { #SABREWULF$B9A9 }
+. LIST#
 @ $9FCA label=DisplayEntity
 
 c $9FFB Store Entity

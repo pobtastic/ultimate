@@ -1,4 +1,72 @@
 ; Copyright 2023 Paul Maddern (paul@arcadegeek.co.uk)
 
-[Poke:Lives]
+[Poke:Infinite Lives]
+POKE #R$8EA7,#N$00
+
+This removes the command;
+
+<code>DEC #REGa</code>
+
+Which is written back to #R$5E21. Hence the value in #REGa remains static.
+
+[Poke:Set Starting Lives]
 POKE #R$7D9D(#N$7D9E),NN
+
+<code>LD A,NN</code>
+
+Alters the initialisation value which is then written to #R$5E21.
+
+[Poke:Set Current Lives]
+POKE #R$5E21,NN
+
+[Poke:Infinite Energy]
+POKE #R$98B4,#N$00
+
+This removes the command;
+
+<code>DEC #REGa</code>
+
+Which is written back to #R$5E28. Hence the value in #REGa remains static.
+
+[Poke:Infinite Chicken]
+
+POKE #R$8C0B,#N$3E
+
+POKE #R$8C0B(#N$8C0C),#N$F1
+
+POKE #R$8C0E(#N$8C0F),#N$28
+
+This changes the chicken energy routine from;
+
+<pre>
+#R$8C0B	LD #REGa,(#R$5E28)
+#R$8C0E	LD (#R$5E29),#REGa
+</pre>
+
+To:
+
+<pre>
+#R$8C0B	LD #REGa,#N$F1
+#R$8C0B(#N$8C0D)	LD #REGe,(#REGhl)
+#R$8C0E	LD (#R$5E28),#REGa
+</pre>
+
+This keeps the players energy at a constant level (see #R$9476 for the initialisation value) and never alters the chicken level.
+
+The instruction left at #N$8C0D does nothing.
+
+Obviously, the player energy and chicken level are correlated - the chicken level is determined from the player energy.
+
+[Poke:Allow Doors To Open Quickly]
+
+POKE #R$918C,#N$AF
+
+This changes the door timer routine from;
+
+<code>DEC #REGa</code>
+
+To:
+
+<code>XOR #REGa, #REGa</code>
+
+Which instead of decreasing the timer value, simply sets it to zero.
