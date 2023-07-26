@@ -2590,7 +2590,8 @@ E $7F06 View the equivalent code in;
 . { #COOKIE$7702 }
 . { #JETPAC$0000 }
 . { #LUNARJETMAN$0000 }
-. { #PSSST$0000 }
+. { #PSSST$761A }
+. { #SABREWULF$BF84 }
 . LIST#
 @ $7F06 label=SpritesTable
   $7F06,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $7F06) / $02)) #SPRITENAME((#PC - $7F06) / $02).

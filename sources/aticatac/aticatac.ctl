@@ -2801,7 +2801,8 @@ E $A4BE View the equivalent code in;
 . { #JETPAC$0000 }
 . { #LUNARJETMAN$0000 }
 . { #PSSST$761A }
-. { #TRANZAM$0000 }
+. { #SABREWULF$BF84 }
+. { #TRANZAM$7F06 }
 . LIST#
 @ $A4BE label=SpritesTable
   $A4BE,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $A4BE) / 2)) #SPRITENAME((#PC - $A4BE) / 2).

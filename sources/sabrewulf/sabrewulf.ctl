@@ -911,7 +911,17 @@ N $968D Attributes.
   $968E,$01 Width = #N(#PEEK(#PC)) bytes.
   $968F,$03,$08 Attribute data.
 
-g $9692
+g $9692 Game Options
+@ $9692 label=GameOptions
+D $9692 #TABLE(default,centre,centre,centre,centre)
+. { =h Byte Value | =h Binary | =h Option }
+. { #N$00 | #EVAL($00, $02, $08) | 1 Player Game }
+. { #N$01 | #EVAL($01, $02, $08) | 2 Player Game }
+. { #N$02 | #EVAL($02, $02, $08) | Kempston Joystick }
+. { #N$04 | #EVAL($04, $02, $08) | Cursor Joystick }
+. { #N$06 | #EVAL($06, $02, $08) | Interface II Joystick }
+. TABLE#
+B $9692,$01
 
 g $9693
 
@@ -971,9 +981,18 @@ b $96A9
   $96B2
   $96B4
   $96B5
-  $96B7
+
+g $96B7 Flag: Hall Of Fame
+@ $96B7 label=FlagHallOfFame
+B $96B7
+
+g $96B8 Counter: Hall Of Fame
+D $96B8 Counter for game selection screen, which tells the routine when to flip
+.       to display the Hall Of Fame.
+@ $96B8 label=CounterHallOfFame
 W $96B8
-  $96BA
+
+g $96BA
   $96BC
   $96BD
   $96DF
@@ -1037,6 +1056,7 @@ N $997C Set the attributes for the score line (the whole line is INK:#N$46).
   $998C,$03 Call #R$B5DC.
 @ $998F label=Game_Restart
   $998F,$03 Call #R$B3D5.
+N $9992 Writes #N$00 to every address from #R$9698 to #R$995A.
   $9992,$03 #REGhl=#N$9698.
   $9995,$03 #REGbc=#N$02C2.
   $9998,$03 Call #R$BBA5.
@@ -1358,15 +1378,35 @@ c $AC28
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
 . { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
-. { #N$7E | | | | | }
+. { #N$7E | SPACE | FULL-STOP | M | N | B | Shift | Z | X | C | V }
 . TABLE#
   $AC32,$01 Flip the bits.
   $AC33,$02,b$01 Keep only bits 1-4.
+  $AC36,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SPACE | FULL-STOP | M | N | B | Shift | Z | X | C | V }
+. TABLE#
 
   $AC40,$04 #HTML(#REGhl=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
 
   $AC4D,$02,b$01 Keep only bit 1.
   $AC4F,$02,b$01
+
+  $AC53,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SPACE | FULL-STOP | M | N | B | Shift | Z | X | C | V }
+. TABLE#
+
+  $AC5D,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SPACE | FULL-STOP | M | N | B | Shift | Z | X | C | V }
+. TABLE#
 
   $AC6A,$01 Return.
 
@@ -1377,26 +1417,88 @@ b $AC77
 
 c $AD07
 
+c $ADBD
+
+c $ADBE
+
+c $B0A3 Handler: Controls
+E $B0A3 Else, handle Interface II joystick - it's the only option left.
+E $B0A3 Continue on to #R$B0B1.
+@ $B0A3 label=HandlerControls
+  $B0A3,$03 #REGa=#R$9692.
+  $B0A6,$01 Shift off the keyboard option.
+  $B0A7,$02,b$01 Keep only bits 0-1 (Kempston and Cursor joystick options).
+  $B0A9,$02 If there are no joystick options, then keyboard was selected - so jump to #R$B0FA.
+  $B0AB,$03 If bit 0 was on then Kempston joystick was selected - so jump to #R$B0D9.
+  $B0AE,$03 If bit 1 was on then Cursor joystick was selected - so jump to #R$B103.
+
+c $B0B1 Controls: Interface II Joystick
+@ $B0B1 label=ReadInterfaceIIJoystick
+R $B0B1 O:A Joystick controls
+R $B0B1 O:C Joystick controls
+N $B0B1 Initialise the controls as "none" in #REGc.
+  $B0B1,$02 #REGc=#N$00.
+  $B0B3,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
+N $B0B9 Check joystick "FIRE".
+@ $B0B9 label=ReadInterfaceIIJoystick_Fire
+  $B0B9,$02 Has key "0" been pressed?
+  $B0BB,$02 If not jump to #R$B0BF.
+  $B0BD,$02 Set bit 4 of #REGc.
+N $B0BF Check joystick "UP".
+@ $B0BF label=ReadInterfaceIIJoystick_Up
+  $B0BF,$02 Has key "9" been pressed?
+  $B0C1,$02 If not jump to #R$B0C5.
+  $B0C3,$02 Set bit 2 of #REGc.
+N $B0C5 Check joystick "DOWN".
+@ $B0C5 label=ReadInterfaceIIJoystick_Down
+  $B0C5,$02 Has key "8" been pressed?
+  $B0C7,$02 If not jump to #R$B0CB.
+  $B0C9,$02 Set bit 3 of #REGc.
+N $B0CB Check joystick "RIGHT".
+@ $B0CB label=ReadInterfaceIIJoystick_Right
+  $B0CB,$02 Has key "7" been pressed?
+  $B0CD,$02 If not jump to #R$B0C5.
+  $B0CF,$02 Set bit 1 of #REGc.
+N $B0D1 Check joystick "LEFT".
+@ $B0D1 label=ReadInterfaceIIJoystick_Left
+  $B0D1,$02 Has key "6" been pressed?
+  $B0D3,$02 If not jump to #R$B0D7.
+  $B0D5,$02 Set bit 0 of #REGc.
+@ $B0D7 label=HandlerInterfaceIIJoystick
+  $B0D7,$01 #REGa=controls.
+  $B0D8,$01 Return.
+
 c $B0D9 Controls: Kempston Joystick
 @ $B0D9 label=ReadKempstonJoystick
+R $B0D9 O:A Joystick controls
 R $B0D9 O:C Joystick controls
   $B0D9,$02 #REGa=controls.
+N $B0DB Initialise the controls as "none" in #REGc.
   $B0DB,$02 #REGc=#N$00.
 N $B0DD Check joystick "RIGHT".
 @ $B0DD label=ReadKempstonJoystick_Right
-  $B0DD,$04 If bit 0 is set jump to #R$B0E3.
+  $B0DD,$02 If bit 0 is set/ "RIGHT" is NOT being pressed then jump to #R$B0E3.
+  $B0DF,$02 If not jump to #R$B0E3.
   $B0E1,$02 Set bit 1 of #REGc.
 N $B0E3 Check joystick "LEFT".
 @ $B0E3 label=ReadKempstonJoystick_Left
-  $B0E3,$04 If bit 1 is set jump to #R$B0E9.
+  $B0E3,$02 If bit 1 is set/ "LEFT" is NOT being pressed then jump to #R$B0E9.
+  $B0E5,$02 If not jump to #R$B0E9.
   $B0E7,$02 Set bit 0 of #REGc.
 N $B0E9 Check joystick "DOWN".
 @ $B0E9 label=ReadKempstonJoystick_Down
-  $B0E9,$04 If bit 2 is set jump to #R$B0EF.
+  $B0E9,$02 If bit 2 is set/ "DOWN" is NOT being pressed then jump to #R$B0EF.
+  $B0EB,$02 If not jump to #R$B0EF.
   $B0ED,$02 Set bit 3 of #REGc.
 N $B0EF Check joystick "UP".
 @ $B0EF label=ReadKempstonJoystick_Up
-  $B0EF,$04 If bit 3 is set jump to #R$B0F5.
+  $B0EF,$02 If bit 3 is set/ "UP" is NOT being pressed then jump to #R$B0F5.
+  $B0F1,$02 If not jump to #R$B0F5.
   $B0F3,$02 Set bit 2 of #REGc.
 N $B0F5 Check joystick "FIRE".
 @ $B0F5 label=ReadKempstonJoystick_Fire
@@ -1404,8 +1506,68 @@ N $B0F5 Check joystick "FIRE".
   $B0F7,$02 Merge the kept bit into #REGc.
   $B0F9,$01 Return.
 
-c $B0FA
-  $B0FA
+c $B0FA Controls: Keyboard
+@ $B0FA label=ReadKeyboard
+R $B0FA O:A Joystick controls
+R $B0FA O:C Keyboard controls
+  $B0FA,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$FB | Q | W | E | R | T }
+. TABLE#
+  $B100,$01 Flip the bits.
+  $B101,$01 #REGc=#REGa.
+  $B102,$01 Return.
+
+c $B103 Controls: Cursor Joystick
+@ $B103 label=ReadCursorJoystick
+R $B103 O:A Joystick controls
+R $B103 O:C Joystick controls
+N $B103 Initialise the controls as "none" in #REGc.
+  $B103,$02 #REGc=#N$00.
+N $B105 The cusor keys are covered by different ports.
+@ $B105 label=HandleCursorJoystick_Port_F7
+  $B105,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+N $B10B Check joystick "LEFT".
+@ $B10B label=ReadCursorJoystick_Left
+  $B10B,$02 Has key "5" been pressed?
+  $B10D,$02 If not jump to #R$B111.
+  $B10F,$02 Set bit 0 of #REGc.
+N $B111 Handle the other port.
+@ $B111 label=HandleCursorJoystick_Port_EF
+  $B111,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
+N $B117 Check joystick "DOWN".
+@ $B117 label=ReadCursorJoystick_Down
+  $B117,$02 Has key "6" been pressed?
+  $B119,$02 If not jump to #R$B11D.
+  $B11B,$02 Set bit 3 of #REGc.
+N $B11D Check joystick "UP".
+@ $B11D label=ReadCursorJoystick_Up
+  $B11D,$02 Has key "7" been pressed?
+  $B11F,$02 If not jump to #R$B123.
+  $B121,$02 Set bit 2 of #REGc.
+N $B123 Check joystick "RIGHT".
+@ $B123 label=ReadCursorJoystick_Right
+  $B123,$02 Has key "8" been pressed?
+  $B125,$02 If not jump to #R$B129.
+  $B127,$02 Set bit 1 of #REGc.
+N $B129 Check joystick "FIRE".
+@ $B129 label=ReadCursorJoystick_Fire
+  $B129,$02 Has key "0" been pressed?
+  $B12B,$01 If not then return.
+  $B12C,$02 Set bit 4 of #REGc.
+  $B12E,$01 Return.
 
 c $B12F
   $B12F,$02 #REGd=#N$27.
@@ -1476,12 +1638,26 @@ N $B25D This looks complicated but it's just grabbing the data from #REGde, grab
   $B266,$04 Loop back to #R$B25D until the counter in #REGbc is zero.
   $B26A,$01 Return.
 
-c $B26B
+c $B26B Initialise Hall Of Fame Counter
+@ $B26B label=InitialiseCounterHallOfFame
   $B26B,$06 Write #N$0300 to #R$96B8.
   $B271,$01 Return.
 
-c $B272
+c $B272 Handler: Hall Of Fame
+@ $B272 label=HandlerHallOfFame
+  $B274,$07 Decrease #R$96B8 by one.
+  $B27B,$03 Return unless #R$96B8 is zero.
+  $B27E,$03 Call #R$B29F.
+  $B281,$02 #REGb=#N$0C.
+  $B283,$03 #REGhl=#N$0000.
+  $B28B,$01 Flip the bits.
+  $B28C,$02,b$01 Keep only bits 0-4.
+  $B297,$03 Call #R$B2D8.
+  $B29A,$03 Call #R$B473.
+  $B29D,$02 Jump to #R$B26B.
 
+c $B29F Hall Of Fame
+@ $B29F label=HallOfFame
   $B29F,$03 Call #R$B2D8.
   $B2A2,$03 #REGde=#R$B32E.
   $B2A5,$01 Switch to the shadow registers.
@@ -1501,16 +1677,18 @@ N $B2AC There are eight lines of text.
 
   $B2D7,$01 Return.
 
+@ $B2D8 label=HallOfFame_Clear
   $B2D8,$03 #REGhl=#N$58A4.
   $B2DB,$03 #REGbc=#N$1810.
   $B2DE,$03 #REGde=#N$0020.
+  $B2E1
 
   $B2EE,$03 #REGhl=#N$40A4.
   $B2F1,$03 #REGbc=#N$1880.
 
   $B303,$01 Return.
 
-g $B304 High Score
+g $B304 High Scores
 E $B304 View the equivalent code in;
 . #LIST
 . { #JETPAC$5CF0 }
@@ -1518,31 +1696,114 @@ E $B304 View the equivalent code in;
 . { #PSSST$5E00 }
 . { #TRANZAM$5E49 }
 . LIST#
-D $B304 3-byte representation of the score.
-@ $B304 label=HighScore_1
+D $B304 Each high score slot uses 3-bytes for the score with the players initials.
+D $B304 Most other Ultimate games only hold the high score.
+N $B304 Top score.
+@ $B304 label=Top_HighScore_1
 B $B304,$01 Byte #1.
-@ $B305 label=HighScore_2
+@ $B305 label=Top_HighScore_2
 B $B305,$01 Byte #2.
-@ $B306 label=HighScore_3
+@ $B306 label=Top_HighScore_3
 B $B306,$01 Byte #3.
+@ $B307 label=Top_HighScore_Initials
+T $B307,$03 "#STR(#PC,$04,$03)".
+N $B30A 2nd place.
+@ $B30A label=Pos_2_HighScore_1
+B $B30A,$01 Byte #1.
+@ $B30B label=Pos_2_HighScore_2
+B $B30B,$01 Byte #2.
+@ $B30C label=Pos_2_HighScore_3
+B $B30C,$01 Byte #3.
+@ $B30D label=Pos_2_HighScore_Initials
+T $B30D,$03 "#STR(#PC,$04,$03)".
+N $B310 3rd place.
+@ $B310 label=Pos_3_HighScore_1
+B $B310,$01 Byte #1.
+@ $B311 label=Pos_3_HighScore_2
+B $B311,$01 Byte #2.
+@ $B312 label=Pos_3_HighScore_3
+B $B312,$01 Byte #3.
+@ $B313 label=Pos_3_HighScore_Initials
+T $B313,$03 "#STR(#PC,$04,$03)".
+N $B316 4th place.
+@ $B316 label=Pos_4_HighScore_1
+B $B316,$01 Byte #1.
+@ $B317 label=Pos_4_HighScore_2
+B $B317,$01 Byte #2.
+@ $B318 label=Pos_4_HighScore_3
+B $B318,$01 Byte #3.
+@ $B319 label=Pos_4_HighScore_Initials
+T $B319,$03 "#STR(#PC,$04,$03)".
+N $B31C 5th place.
+@ $B31C label=Pos_5_HighScore_1
+B $B31C,$01 Byte #1.
+@ $B31D label=Pos_5_HighScore_2
+B $B31D,$01 Byte #2.
+@ $B31E label=Pos_5_HighScore_3
+B $B31E,$01 Byte #3.
+@ $B31F label=Pos_5_HighScore_Initials
+T $B31F,$03 "#STR(#PC,$04,$03)".
+N $B322 6th place.
+@ $B322 label=Pos_6_HighScore_1
+B $B322,$01 Byte #1.
+@ $B323 label=Pos_6_HighScore_2
+B $B323,$01 Byte #2.
+@ $B324 label=Pos_6_HighScore_3
+B $B324,$01 Byte #3.
+@ $B325 label=Pos_6_HighScore_Initials
+T $B325,$03 "#STR(#PC,$04,$03)".
 
-b $B307
-  $B322
+N $B328 New high score entry buffer.
+@ $B328 label=New_HighScore_1
+B $B328,$01 Byte #1.
+@ $B329 label=New_HighScore_2
+B $B329,$01 Byte #2.
+@ $B32A label=New_HighScore_3
+B $B32A,$01 Byte #3.
+@ $B32B label=New_HighScore_Initials
+T $B32B,$03 "#STR(#PC,$04,$03)".
+
+b $B32E Hall Of Fame Attribute Table
 @ $B32E label=HallOfFame_Attributes
-  $B32E
-@ $B336 label=HallOfFame_Position
-  $B336
-@ $B346 label=HallOfFame_Text
-T $B346,$15,$14:$01 "#STR(#PC)".
-T $B35B,$12,$11:$01 "#STR(#PC)".
-T $B36D,$12,$11:$01 "#STR(#PC)".
-T $B37F,$12,$11:$01 "#STR(#PC)".
-T $B391,$12,$11:$01 "#STR(#PC)".
-T $B3A3,$12,$11:$01 "#STR(#PC)".
-T $B3B5,$12,$11:$01 "#STR(#PC)".
-T $B3C7,$0E,$0D:$01 "#STR(#PC)".
+  $B32E,$08,$01 #TABLE(default,centre)
+. { =h Byte(n) | =h Menu Item }
+. { #N$01 | ULTIMATE HALL OF FAME }
+. { #N$02 | 1ST }
+. { #N$03 | 2ND }
+. { #N$04 | 3RD }
+. { #N$05 | 4TH }
+. { #N$06 | 5TH }
+. { #N$07 | 6TH }
+. { #N$08 | © 1984 A.C.G. }
+. TABLE#
 
-c $B3D5
+b $B336 Hall Of Fame Position Table
+@ $B336 label=HallOfFame_Position
+  $B336,$10,$02 #TABLE(default,centre,centre,centre)
+. { =h X Position | =h Y Position | =h Menu Item }
+. { #N(#EVAL(#PEEK(#PC+$00) / $08)) | #N(#EVAL(#PEEK(#PC+$01)) / $08) | ULTIMATE HALL OF FAME }
+. { #N(#EVAL(#PEEK(#PC+$02) / $08)) | #N(#EVAL(#PEEK(#PC+$03)) / $08) | 1ST }
+. { #N(#EVAL(#PEEK(#PC+$04) / $08)) | #N(#EVAL(#PEEK(#PC+$05)) / $08) | 2ND }
+. { #N(#EVAL(#PEEK(#PC+$06) / $08)) | #N(#EVAL(#PEEK(#PC+$07)) / $08) | 3RD }
+. { #N(#EVAL(#PEEK(#PC+$08) / $08)) | #N(#EVAL(#PEEK(#PC+$09)) / $08) | 4TH }
+. { #N(#EVAL(#PEEK(#PC+$0A) / $08)) | #N(#EVAL(#PEEK(#PC+$0B)) / $08) | 5TH }
+. { #N(#EVAL(#PEEK(#PC+$0C) / $08)) | #N(#EVAL(#PEEK(#PC+$0D)) / $08) | 6TH }
+. { #N(#EVAL(#PEEK(#PC+$0E) / $08)) | #N(#EVAL(#PEEK(#PC+$0F)) / $08) | © 1984 A.C.G }
+. TABLE#
+
+t $B346 Hall Of Fame Screen Text
+@ $B346 label=HallOfFame_Text
+  $B346,$15,$14:$01 "#STR(#PC)".
+  $B35B,$12,$11:$01 "#STR(#PC,$04)".
+  $B36D,$12,$11:$01 "#STR(#PC,$04)".
+  $B37F,$12,$11:$01 "#STR(#PC,$04)".
+  $B391,$12,$11:$01 "#STR(#PC,$04)".
+  $B3A3,$12,$11:$01 "#STR(#PC,$04)".
+  $B3B5,$12,$11:$01 "#STR(#PC,$04)".
+  $B3C7,$0E,$0D:$01 "#STR(#PC)".
+
+c $B3D5 Handler: Game Menu
+@ $B3D5 label=HandlerGameMenu
   $B3D5,$05 Write #N$FF to #R$96B7.
   $B3DA,$03 Call #R$BB7C.
   $B3DD,$03 Call #R$BB5C.
@@ -1561,7 +1822,35 @@ c $B3D5
 . TABLE#
   $B3FB,$01 Flip the bits.
   $B3FC,$01 Store the result in #REGe.
-
+  $B3FD,$03 #REGa=#R$9692.
+N $B400 Handle 1UP game selection.
+@ $B400 label=GameSelect_Check1UP
+  $B400,$02 Has key "1" been pressed? ("1 PLAYER GAME").
+  $B402,$02 If not jump to #R$B406.
+  $B404,$02 Reset bit 0.
+N $B406 Handle 2UP game selection.
+@ $B406 label=GameSelect_Check2UP
+  $B406,$02 Has key "2" been pressed? ("2 PLAYER GAME").
+  $B408,$02 If not jump to #R$B40C.
+  $B40A,$02 Set bit 0.
+N $B40C Handle Keyboard selection.
+@ $B40C label=GameSelect_CheckKeyboard
+  $B40C,$02 Has key "3" been pressed? ("KEYBOARD").
+  $B40E,$02 If not jump to #R$B412.
+  $B410,$02,b$01 Keep only bits 0, 3-7.
+N $B412 Handle Kempston Joystick selection.
+@ $B412 label=GameSelect_CheckKempston
+  $B412,$02 Has key "4" been pressed? ("KEMPSTON JOYSTICK").
+  $B414,$02 If not jump to #R$B41A.
+  $B416,$02,b$01 Keep only bits 0, 3-7.
+  $B418,$02,b$01 Set control method = #N$02.
+N $B41A Handle Cursor Joystick selection.
+@ $B41A label=GameSelect_CheckCursor
+  $B41A,$02 Has key "3" been pressed? ("CURSOR JOYSTICK").
+  $B41C,$02 If not jump to #R$B422.
+  $B41E,$02,b$01 Keep only bits 0, 3-7.
+  $B420,$02,b$01 Set control method = #N$04.
+  $B422,$01 Temporarily store #REGa (#R$9692) in #REGc.
   $B423,$06 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
@@ -1570,7 +1859,53 @@ c $B3D5
 . TABLE#
   $B429,$01 Flip the bits.
   $B42A,$01 Store the result in #REGe.
-
+  $B42B,$01 Restore the previous game options value to #REGa.
+N $B42C Handle Interface II Joystick selection.
+@ $B42C label=GameSelect_CheckInterface2
+  $B42C,$02 Has key "6" been pressed? ("INTERFACE II").
+  $B42E,$02 If not jump to #R$B432.
+  $B430,$02,b$01 Set control method = #N$06.
+  $B432,$03 Write #REGa to #R$9692.
+N $B435 Handle starting a new game.
+@ $B435 label=GameSelect_Start
+  $B435,$02 Has key "0" been pressed? ("START GAME").
+  $B437,$01 If so, return.
+  $B438,$03 Call #R$B43E.
+  $B43B,$03 Jump to #R$B3F2.
+@ $B43E label=HallOfFameCheck
+  $B43E,$03 #REGhl=#R$96B7.
+  $B441,$03 #REGa=#R$9692.
+  $B445,$03 Write #REGa to #R$96B7.
+  $B448,$03 Call #R$B272.
+N $B44B Handle flashing each selection.
+  $B44B,$03 #REGhl=#R$B498.
+  $B44E,$03 #REGa=#R$9692.
+  $B451,$01 Temporarily store #REGa (#R$9692) in #REGc.
+N $B452 There are two player options to choose from (1UP or 2UP game).
+  $B452,$02 #REGb=#N$02.
+  $B454,$02,b$01 Keep only bit 0 (the player options).
+  $B456,$03 Call #R$B463.
+  $B459,$01 Restore the previous game options value to #REGa.
+  $B45A,$01 Shift off the 1UP/ 2UP player options.
+  $B45B,$02,b$01 Keep only bits 0-1 (the control options).
+N $B45D There are four control methods to choose from.
+  $B45D,$02 #REGb=#N$04 (counter).
+  $B45F,$03 Call #R$B463.
+  $B462,$01 Return.
+N $B463 Selection flashing routine.
+@ $B463 label=HandlerMenuAttributeFlash
+  $B463,$03 Jump to #R$B46D if #REGa is zero.
+@ $B466 label=MenuAttributeSet
+  $B466,$02 Set the FLASH attribute for the current selection.
+  $B468,$02 Jump to #R$B46F, we're done here.
+@ $B46A label=HandlerMenuAttributeFlash_Loop
+  $B46A,$01 Decrease #REGa by one.
+  $B46B,$02 Jump to #R$B466 if #REGa is zero.
+@ $B46D label=MenuAttributeUnset
+  $B46D,$02 Unset the FLASH attribute for the current selection.
+@ $B46F label=MenuAttributeNext
+  $B46F,$01 Move onto the next selection attribute.
+  $B470,$02 Decrease counter by one and loop back to #R$B46A until counter is zero.
   $B472,$01 Return.
 
 c $B473 Game Selection Menu
@@ -1869,19 +2204,62 @@ N $B5E2 Prints the score.
   $B5F9,$02 Decrease counter by one and loop back to #R$B5E4 until counter is zero.
   $B5FB,$01 Return.
 
-c $B5FC
+c $B5FC Handler: New High Score
+@ $B5FC label=NewHighScore
   $B5FC,$03 #REGhl=#R$9698.
   $B5FF,$03 #REGde=#R$969B.
   $B602,$03 Call #R$B6B2.
   $B605,$05 Write #N$00 to #R$96BA.
+  $B60A,$04 If there's either any carry or the zero flag is set then jump to #R$B610.
   $B60E,$01 Flip the bits.
+  $B60F,$01 Switch the registers containing the 1UP and 2UP score.
+@ $B610 label=NewHighScore_Process
   $B610,$03 Write #REGa to #R$969E.
   $B613,$03 Call #R$B61E.
   $B61A,$01 Flip the bits.
+  $B61E,$02 Stash #REGde and #REGhl on the stack.
+N $B620 We hold six high scores.
+  $B620,$02 #REGb=#N$06.
   $B622,$03 #REGde=#R$B322.
   $B625,$03 Call #R$B6B2.
   $B62A,$03 Call #R$B6AB.
+
+  $B634,$03 #REGhl=#R$B322.
+  $B637,$03 #REGde=#R$B328.
+
+  $B667,$03 #REGhl=#R$61C6.
+  $B66A,$03 Call #R$BBF7.
+  $B66D,$03 Call #R$B2D8.
+  $B670,$03 #REGa=#R$969E.
+  $B673,$01
+  $B674,$02 #REGa=#N$B1.
+
+  $B686,$03 Create an offset in #REGbc.
+  $B689,$04 #REGhl=#R$B6C5 + offset.
+  $B68D,$03 #REGde=#R$B795(#N$B79C).
+  $B690,$03 #REGbc=#N$0003 (counter).
+  $B693,$02
+  $B695,$03 #REGde=#R$B755.
+  $B699,$03 #REGhl'=#R$B75D.
+  $B69C,$03 #REGde'=#R$B76D.
+N $B69F There are eight lines of text.
+  $B69F,$02 #REGb=#N$08.
+  $B6A1,$03 Call #R$B47F.
+
+  $B6AA,$01 Return.
+
+  $B6B1,$01 Return.
+  $B6B2,$03 Stash #REGbc, #REGde and #REGhl on the stack.
+  $B6B5,$02 #REGb=#N$03 (counter).
+  $B6B7,$01 #REGa=the 1UP score digit held by #REGde.
+  $B6B8,$01 Compare this against the 2UP score.
+  $B6B9,$02 If there's any carry over then jump to #R$B6C1 to return.
+  $B6BB,$02 If the result is non-zero then jump to #R$B6C1 to return.
+  $B6BD,$02 Increment both #REGhl and #REGde by one.
+  $B6BF,$02 Decrease the score digit counter by one and loop back to #R$B6B7 until the counter is zero.
+  $B6C1,$03 Restore #REGhl, #REGde and #REGbc from the stack.
   $B6C4,$01 Return.
+
 T $B6C5,$03 "#STR(#PC,$04,$03)".
 T $B6C8,$03 "#STR(#PC,$04,$03)".
 T $B6CB,$03 "#STR(#PC,$04,$03)".
@@ -1889,17 +2267,71 @@ T $B6CE,$03 "#STR(#PC,$04,$03)".
 T $B6D1,$03 "#STR(#PC,$04,$03)".
 T $B6D4,$03 "#STR(#PC,$04,$03)".
 
+  $B6D7,$02 #REGb=#N$03.
+  $B6D9,$03 #REGhl=#N$506D.
+  $B6DC,$02 #REGa=#N$20.
+  $B6DF,$03 Call #R$B0A3.
+
+  $B71B,$01 Stash #REGaf on the stack.
+  $B71C,$03 Call #R$B0A3.
+  $B71F,$01 Restore #REGaf from the stack.
+
+  $B728,$03 Call #R$B589.
+  $B72C,$03 Call #R$BF2A.
+
+N $B73B Introduce a pause by counting down from 10000.
+  $B73B,$02 #REGb=#N$01.
+  $B73D,$03 #REGhl=#N$0000.
+  $B740,$03 Jump to #R$A1FF.
+
+N $B743 Introduce a pause by counting down from 8000.
+@ $B743 label=NewHighScore_Return
+  $B743,$03 Stash #REGaf, #REGbc and #REGhl on the stack.
+  $B746,$02 #REGb=#N$01.
+  $B748,$03 #REGhl=#N$8000.
+  $B74B,$03 Call #R$A1FF.
+  $B74E,$03 Call #R$BF25.
+  $B751,$03 Restore #REGhl, #REGbc and #REGaf from the stack.
   $B754,$01 Return.
 
-b $B755
-T $B76D,$0F,$0E:$01 "#STR(#PC)".
-T $B77C,$08,$07:$01 "#STR(#PC)".
-T $B784,$11,$10:$01 "#STR(#PC)".
-T $B795,$12,$11:$01 "#STR(#PC)".
-T $B7A7,$05,$04:$01 "#STR(#PC)".
-T $B7AC,$0F,$0E:$01 "#STR(#PC)".
-T $B7BB,$0D,$0C:$01 "#STR(#PC)".
-T $B7C8,$05,$04:$01 "#STR(#PC)".
+b $B755 New High Score Attribute Table
+@ $B755 label=NewHighScore_Attributes
+  $B755,$08,$01 #TABLE(default,centre)
+. { =h Byte(n) | =h Menu Item }
+. { #N$01 | CONGRATULATIONS }
+. { #N$02 | PLAYER }
+. { #N$03 | YOU HAVE ACHIEVED }
+. { #N$04 | TODAYS HIGHEST }
+. { #N$05 | SCORE }
+. { #N$06 | PLEASE REGISTER }
+. { #N$07 | YOUR INITIALS }
+. { #N$08 | - - - }
+. TABLE#
+
+b $B75D New High Score Position Table
+@ $B75D label=NewHighScore_Position
+  $B75D,$10,$02 #TABLE(default,centre,centre,centre)
+. { =h X Position | =h Y Position | =h Menu Item }
+. { #N(#EVAL(#PEEK(#PC+$00) / $08)) | #N(#EVAL(#PEEK(#PC+$01)) / $08) | CONGRATULATIONS }
+. { #N(#EVAL(#PEEK(#PC+$02) / $08)) | #N(#EVAL(#PEEK(#PC+$03)) / $08) | PLAYER }
+. { #N(#EVAL(#PEEK(#PC+$04) / $08)) | #N(#EVAL(#PEEK(#PC+$05)) / $08) | YOU HAVE ACHIEVED }
+. { #N(#EVAL(#PEEK(#PC+$06) / $08)) | #N(#EVAL(#PEEK(#PC+$07)) / $08) | TODAYS HIGHEST }
+. { #N(#EVAL(#PEEK(#PC+$08) / $08)) | #N(#EVAL(#PEEK(#PC+$09)) / $08) | SCORE }
+. { #N(#EVAL(#PEEK(#PC+$0A) / $08)) | #N(#EVAL(#PEEK(#PC+$0B)) / $08) | PLEASE REGISTER }
+. { #N(#EVAL(#PEEK(#PC+$0C) / $08)) | #N(#EVAL(#PEEK(#PC+$0D)) / $08) | YOUR INITIALS }
+. { #N(#EVAL(#PEEK(#PC+$0E) / $08)) | #N(#EVAL(#PEEK(#PC+$0F)) / $08) | - - - }
+. TABLE#
+
+t $B76D New High Score Screen Text
+@ $B76D label=NewHighScore_Text
+  $B76D,$0F,$0E:$01 "#STR(#PC)".
+  $B77C,$08,$07:$01 "#STR(#PC)".
+  $B784,$11,$10:$01 "#STR(#PC)".
+  $B795,$12,$11:$01 "#STR(#PC)".
+  $B7A7,$05,$04:$01 "#STR(#PC)".
+  $B7AC,$0F,$0E:$01 "#STR(#PC)".
+  $B7BB,$0D,$0C:$01 "#STR(#PC)".
+  $B7C8,$05,$04:$01 "#STR(#PC)".
 
 c $B7CD
 
@@ -2124,10 +2556,16 @@ R $BB88 C Value to write
   $BB8C,$02 Keep looping back to #R$BB88 until there is no carry-over.
   $BB8E,$01 Return.
 
-c $BB9F
-  $BB9F,$03 #REGhl=#R$9692.
-  $BBA2,$03 #REGbc=#N$02C8.
-  $BBA5
+c $BB9F Clear Buffers
+@ $BB9F label=ClearBuffers
+N $BB9F Writes #N$00 to every address from #R$9692 to #R$995A.
+  $BB9F,$03 #REGhl=#R$9692 (starting address).
+  $BBA2,$03 #REGbc=#N$02C8 (counter).
+@ $BBA5 label=ClearBuffers_Loop
+  $BBA5,$02 Writes #N$00 to the address held by #REGhl.
+  $BBA7,$01 Increment #REGhl by one.
+  $BBA8,$01 Decrease the counter held in #REGbc by one.
+  $BBA9,$04 Keep looping back to #R$BBA5 until the counter in #REGbc is zero.
   $BBAD,$01 Return.
 
 c $BBAE
@@ -2198,7 +2636,14 @@ b $BC67
 
 c $BD51
   $BD51,$01 Disable interrupts.
+  $BD57,$01 Flip the bits.
+  $BD58,$02,b$01 Keep only bits 0-4.
+  $BD5A,$02
+  $BD5C,$03 #REGa=#R$9692.
   $BD61,$03 Jump to #R$B422.
+  $BD64,$01 #REGa.
+  $BD65,$04 Jump to #R$BD79 if #REGa is #N$FF (terminator).
+  $BD69,$03 Call #R$BD7B.
   $BD6C,$02 Jump to #R$BD52.
 
 c $BD6E
@@ -2225,24 +2670,41 @@ N $BD7B
   $BD93,$02,b$01 Keep only bits 0-1.
   $BD96,$01 Stash #REGde on the stack.
   $BDA1,$03 Set the border to black.
+M $BDAB,$04 Flip speaker on (set bit 4).
+  $BDAB,$02,b$01
+  $BDAF,$02 Decrease counter by one and loop back to #R$BDAF until counter is zero.
   $BDBB,$01 Return.
   $BDC0,$02,b$01 Keep only bits 0-1.
+  $BDC4,$03 #REGbc=#N$430B.
   $BDD1,$01 Return.
 
-b $BDD2
+b $BDD2 Music Data
+@ $BDD2 label=MusicData
 
 c $BECC
+  $BECC,$03 #REGbc=#R$BEDE.
+  $BECF,$03 #REGa=#R$9693.
+  $BED2,$02,b$01 Keep only bits 0-3.
+  $BEDB,$03 Jump to #R$BF6D.
 
 b $BEDE
 
 c $BF08
 
-w $BF84 Sprite Table
+w $BF84 Sprites Table
+E $BF84 View the equivalent code in;
+. #LIST
+. { #COOKIE$7702 }
+. { #JETPAC$0000 }
+. { #LUNARJETMAN$0000 }
+. { #PSSST$761A }
+. { #TRANZAM$0000 }
+. LIST#
 @ $BF84 label=SpritesTable
   $BF84 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $BF84) / $02)) #SPRITENAME((#PC - $BF84) / $02).
 L $BF84,$02,$C4
 
-b $C10C
+b $C10C Sprite: None
   $C10C,$01 Height = #N(#PEEK(#PC)) pixels.
   $C10D,$01
 
@@ -2250,62 +2712,64 @@ b $C10E
 N $C10E Frame 1.
   $C10E,$01 Width = #N(#PEEK(#PC)) bytes.
   $C10F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C110,$36,$03 #GRAPHIC$C0(teleporter)
+  $C110,$36,$03 #GRAPHIC$C0(C0)
 
 N $C146 Frame 2.
   $C146,$01 Width = #N(#PEEK(#PC)) bytes.
   $C147,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C148,$33,$03 #GRAPHIC$C1(c1)
+  $C148,$33,$03 #GRAPHIC$C1(C1)
 
 N $C17B Frame 3.
   $C17B,$01 Width = #N(#PEEK(#PC)) bytes.
   $C17C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C17D,$36,$03 #GRAPHIC$C2(c2)
+  $C17D,$36,$03 #GRAPHIC$C2(C2)
 
 N $C1B3 Frame 4.
   $C1B3,$01 Width = #N(#PEEK(#PC)) bytes.
   $C1B4,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C1B5,$33,$03 #GRAPHIC$C1(c3)
+  $C1B5,$33,$03 #GRAPHIC$C1(C3)
 
-b $C1E8
+b $C1E8 Sprite: Flea
+N $C1E8 Left Frame 1.
   $C1E8,$01 Width = #N(#PEEK(#PC)) bytes.
   $C1E9,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C1EA,$1C,$02 #GRAPHIC$BC(bc)
+  $C1EA,$1C,$02 #GRAPHIC$BC(BC)
 
-N $C206
+N $C206 Left Frame 2.
   $C206,$01 Width = #N(#PEEK(#PC)) bytes.
   $C207,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C208,$24,$02 #GRAPHIC$BD(bd)
+  $C208,$24,$02 #GRAPHIC$BD(BD)
 
-N $C22C
+N $C22C Right Frame 1.
   $C22C,$01 Width = #N(#PEEK(#PC)) bytes.
   $C22D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C22E,$1C,$02 #GRAPHIC$BE(be)
+  $C22E,$1C,$02 #GRAPHIC$BE(BE)
 
-N $C24A
+N $C24A Right Frame 2.
   $C24A,$01 Width = #N(#PEEK(#PC)) bytes.
   $C24B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C24C,$24,$02 #GRAPHIC$BF(bf)
+  $C24C,$24,$02 #GRAPHIC$BF(BF)
 
-b $C270
+b $C270 Sprite: Squirrel?
+N $C270 Left Frame 1.
   $C270,$01 Width = #N(#PEEK(#PC)) bytes.
   $C271,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C272,$3F,$03 #GRAPHIC$B8(b8)
+  $C272,$3F,$03 #GRAPHIC$B8(B8)
 
-N $C2B1
+N $C2B1 Left Frame 2.
   $C2B1,$01 Width = #N(#PEEK(#PC)) bytes.
   $C2B2,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C2B3,$3F,$03 #GRAPHIC$B9(b9)
+  $C2B3,$3F,$03 #GRAPHIC$B9(B9)
 
-N $C2F2
+N $C2F2 Right Frame 1.
   $C2F2,$01 Width = #N(#PEEK(#PC)) bytes.
   $C2F3,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C2F4,$3F,$03 #GRAPHIC$BA(ba)
+  $C2F4,$3F,$03 #GRAPHIC$BA(BA)
 
-N $C333
+N $C333 Right Frame 2.
   $C333,$01 Width = #N(#PEEK(#PC)) bytes.
   $C334,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C335,$3F,$03 #GRAPHIC$BB(bb)
+  $C335,$3F,$03 #GRAPHIC$BB(BB)
 
 b $C374 Attributes?
 
@@ -2317,204 +2781,629 @@ D $C386 #UDGTABLE { #ROOM(#PC)(room-complete) } UDGTABLE#
 B $C388,$02 X/ Y position = #N(#EVAL(#PEEK(#PC) / $08)) / #N(#EVAL(#PEEK(#PC + $01) / $08)).
   $C38A,$02 Terminator.
 
-b $C38C
+b $C38C Sprite: Bat
+N $C38C Frame 1.
   $C38C,$01 Width = #N(#PEEK(#PC)) bytes.
   $C38D,$01 Height = #N(#PEEK(#PC)) pixels.
   $C38E,$22,$02 #GRAPHIC$68(68)
 
-b $C3B0
-b $C3CC
-b $C3F0
-b $C40C
-b $C438
-b $C464
-b $C490
-b $C4BC
-b $C4E8
-b $C514
-b $C540
-b $C56E
-b $C59A
-b $C5DB
-b $C61C
-b $C65D
-b $C69E
-b $C6DF
-b $C720
-b $C74C
-b $C77A
-b $C7A6
-b $C7E7
-b $C828
-b $C869
-b $C8AA
-b $C8EB
-b $C92C
-b $C97A
-b $C9C8
-b $CA16
-b $CA64
-b $CAAE
-b $CAF8
-b $CB46
-b $CB90
-b $CBDE
-b $CC0E
-b $CC3E
-b $CC6E
-b $CC9E
-b $CCCE
-b $CCFE
-b $CD3F
-b $CD83
-b $CDC4
-b $CE08
-b $CE49
-b $CE87
-b $CEC8
-b $CF06
-b $CF64
-b $CFC2
-b $D020
-b $D07E
-b $D0DC
-b $D13A
-b $D17C
-b $D1BE
-b $D220
-b $D282
-b $D2B0
-b $D2D6
-b $D2FC
-b $D32A
-b $D350
-b $D376
-b $D37E
-b $D386
-b $D392
-b $D3A0
-b $D3B2
-b $D3CA
-b $D3E6
-b $D418
-b $D440
-b $D468
-b $D490
-b $D4B8
-b $D4E4
-b $D50E
-b $D53A
-b $D564
-b $D58D
-b $D5B9
-b $D5E5
-b $D60E
-b $D637
-b $D65A
-b $D67D
-b $D706
-b $D747
-b $D78E
-b $D7D8
+N $C3B0 Frame 2.
+  $C3B0,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C3B1,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C3B2,$1A,$02 #GRAPHIC$69(69)
 
-b $D822
+N $C3CC Frame 1.
+  $C3CC,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C3CD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C3CE,$22,$02 #GRAPHIC$6A(6A)
+
+N $C3F0 Frame 2.
+  $C3F0,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C3F1,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C3F2,$1A,$02 #GRAPHIC$6B(6B)
+
+b $C40C Sprite: Sabreman
+E $C40C #UDGTABLE(default,centre)
+. { =h Down | =h Up | =h Left (fighting) | =h Right (fighting) }{
+.   #UDGARRAY*1C,25;1D;1E;1D(sabreman-down) |
+.   #UDGARRAY*18,25;19;1A;19(sabreman-up) |
+.   #UDGARRAY*20,25;21;22;23;24;23;26;21(sabreman-left-fighting) |
+.   #UDGARRAY*28,25;29;2A;2B;2C;2B;2D;29(sabreman-right-fighting)
+. }
+. UDGTABLE#
+N $C40C Up Frame 1.
+  $C40C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C40D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C40E,$2A,$02 #GRAPHIC$18(18*)
+
+N $C438 Up Frame 2.
+  $C438,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C439,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C43A,$2A,$02 #GRAPHIC$19(19*)
+
+N $C464 Up Frame 3.
+  $C464,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C465,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C466,$2A,$02 #GRAPHIC$1A(1A*)
+
+N $C490 Down Frame 1.
+  $C490,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C491,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C492,$2A,$02 #GRAPHIC$1C(1C*)
+
+N $C4BC Down Frame 2.
+  $C4BC,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C4BD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C4BE,$2A,$02 #GRAPHIC$1D(1D*)
+
+N $C4E8 Down Frame 3.
+  $C4E8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C4E9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C4EA,$2A,$02 #GRAPHIC$1E(1E*)
+
+N $C514 Left Frame 1.
+  $C514,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C515,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C516,$2A,$02 #GRAPHIC$10(10*)
+
+N $C540 Left Frame 2.
+  $C540,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C541,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C542,$2C,$02 #GRAPHIC$11(11*)
+
+N $C56E Left Frame 3.
+  $C56E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C56F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C570,$2A,$02 #GRAPHIC$12(12*)
+
+N $C59A Left Fighting Frame 1.
+  $C59A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C59B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C59C,$3F,$03 #GRAPHIC$20(20*)
+
+N $C5DB Left Fighting Frame 2.
+  $C5DB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C5DC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C5DD,$3F,$03 #GRAPHIC$21(21*)
+
+N $C61C Left Fighting Frame 3.
+  $C61C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C61D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C61E,$3F,$03 #GRAPHIC$22(22*)
+
+N $C65D Left Fighting Frame 4.
+  $C65D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C65E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C65F,$3F,$03 #GRAPHIC$23(23*)
+
+N $C69E Left Fighting Frame 5.
+  $C69E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C69F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C6A0,$3F,$03 #GRAPHIC$24(24*)
+
+N $C6DF Left Fighting Frame 6.
+  $C6DF,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C6E0,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C6E1,$3F,$03 #GRAPHIC$26(26*)
+
+N $C720 Right Frame 1.
+  $C720,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C721,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C722,$2A,$02 #GRAPHIC$14(14*)
+
+N $C74C Right Frame 2.
+  $C74C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C74D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C74E,$2A,$02 #GRAPHIC$15(15*)
+
+N $C77A Right Frame 3.
+  $C77A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C77B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C77C,$2A,$02 #GRAPHIC$16(16*)
+
+N $C7A6 Right Fighting Frame 1.
+  $C7A6,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C7A7,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C7A8,$3F,$03 #GRAPHIC$28(28*)
+
+N $C7E7 Right Fighting Frame 2.
+  $C7E7,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C7E8,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C7E9,$3F,$03 #GRAPHIC$29(29*)
+
+N $C828 Right Fighting Frame 3.
+  $C828,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C829,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C82A,$3F,$03 #GRAPHIC$2A(2A*)
+
+N $C869 Right Fighting Frame 4.
+  $C869,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C86A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C86B,$3F,$03 #GRAPHIC$2B(2B*)
+
+N $C8AA Right Fighting Frame 5.
+  $C8AA,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C8AB,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C8AC,$3F,$03 #GRAPHIC$2C(2C*)
+
+N $C8EB Right Fighting Frame 6.
+  $C8EB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C8EC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C8ED,$3F,$03 #GRAPHIC$2D(2D*)
+
+b $C92C Sprite: Rhino
+E $C92C #UDGTABLE(default,centre)
+. { =h Left | =h Right }{
+.   #UDGARRAY*31,25;30(rhino-left) |
+.   #UDGARRAY*33,25;32(rhino-right)
+. }
+. UDGTABLE#
+N $C92C Left Frame 1.
+  $C92C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C92D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C92E,$4C,$04 #GRAPHIC$31(31*)
+
+N $C97A Left Frame 2.
+  $C97A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C97B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C97C,$4C,$04 #GRAPHIC$30(30*)
+
+N $C9C8 Right Frame 1.
+  $C9C8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C9C9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $C9CA,$4C,$04 #GRAPHIC$33(33*)
+
+N $CA16 Right Frame 2.
+  $CA16,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CA17,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CA18,$4C,$04 #GRAPHIC$32(32*)
+
+b $CA64 Sprite: Hippo Sleeping
+  $CA64,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CA65,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CA66,$48,$03 #GRAPHIC$A4(A4)
+
+b $CAAE Sprite: Hippo
+N $CAAE Left Frame 1.
+  $CAAE,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CAAF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CAB0,$48,$04 #GRAPHIC$A0(A0)
+
+N $CAF8 Left Frame 2.
+  $CAF8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CAF9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CAFA,$4C,$04 #GRAPHIC$A1(A1)
+
+N $CB46 Right Frame 1.
+  $CB46,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CB47,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CB48,$48,$04 #GRAPHIC$A2(A2)
+
+N $CB90 Right Frame 2.
+  $CB90,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CB91,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CB92,$4C,$04 #GRAPHIC$A3(A3)
+
+b $CBDE Sprite: Tribesman
+N $CBDE Left Frame 1.
+  $CBDE,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CBDF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CBE0,$2E,$02 #GRAPHIC$38(38)
+
+N $CC0E Left Frame 2.
+  $CC0E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CC0F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CC10,$2E,$02 #GRAPHIC$39(39)
+
+N $CC3E Left Frame 3.
+  $CC3E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CC3F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CC40,$2E,$02 #GRAPHIC$3A(3A)
+
+N $CC6E Left Frame 4.
+  $CC6E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CC6F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CC70,$2E,$02 #GRAPHIC$3B(3B)
+
+N $CC9E Right Frame 1.
+  $CC9E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CC9F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CCA0,$2E,$02 #GRAPHIC$3C(3C)
+
+N $CCCE Right Frame 2.
+  $CCCE,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CCCF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CCD0,$2E,$02 #GRAPHIC$3D(3D)
+
+b $CCFE Sprite: Spider
+N $CCFE Left Frame 1.
+  $CCFE,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CCFF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CD00,$3F,$03 #GRAPHIC$60(60)
+
+N $CD3F Left Frame 2.
+  $CD3F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CD40,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CD41,$42,$03 #GRAPHIC$61(61)
+
+N $CD83 Right Frame 1.
+  $CD83,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CD84,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CD85,$3F,$03 #GRAPHIC$62(62)
+
+N $CDC4 Right Frame 2.
+  $CDC4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CDC5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CDC6,$42,$03 #GRAPHIC$63(63)
+
+b $CE08 Sprite: Scorpion
+N $CE08 Left Frame 1.
+  $CE08,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CE09,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CE0A,$3F,$03 #GRAPHIC$64(64)
+
+N $CE49 Left Frame 2.
+  $CE49,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CE4A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CE4B,$3C,$03 #GRAPHIC$65(65)
+
+N $CE87 Right Frame 1.
+  $CE87,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CE88,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CE89,$3F,$03 #GRAPHIC$66(66)
+
+N $CEC8 Right Frame 2.
+  $CEC8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CEC9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CECA,$3C,$03 #GRAPHIC$67(67)
+
+b $CF06 Sprite: Wolf
+N $CF06 Left Frame 1.
+  $CF06,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CF07,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CF08,$5C,$04 #GRAPHIC$50(50)
+
+N $CF64 Left Frame 2.
+  $CF64,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CF65,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CF66,$5C,$04 #GRAPHIC$51(51)
+
+N $CFC2 Left Frame 3.
+  $CFC2,$01 Width = #N(#PEEK(#PC)) bytes.
+  $CFC3,$01 Height = #N(#PEEK(#PC)) pixels.
+  $CFC4,$5C,$04 #GRAPHIC$52(52)
+
+N $D020 Right Frame 1.
+  $D020,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D021,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D022,$5C,$04 #GRAPHIC$54(54)
+
+N $D07E Right Frame 2.
+  $D07E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D07F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D080,$5C,$04 #GRAPHIC$55(55)
+
+N $D0DC Right Frame 3.
+  $D0DC,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D0DD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D0DE,$5C,$04 #GRAPHIC$56(56)
+
+N $D13A Pounce Left Frame 1.
+  $D13A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D13B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D13C,$40,$04 #GRAPHIC$58(58)
+
+N $D17C Pounce Right Frame 1.
+  $D17C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D17D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D17E,$40,$04 #GRAPHIC$5C(5C)
+
+N $D1BE Pounce Left Frame 2.
+  $D1BE,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D1BF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D1C0,$60,$04 #GRAPHIC$59(59)
+
+N $D220 Pounce Right Frame 2.
+  $D220,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D221,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D222,$60,$04 #GRAPHIC$5D(5D)
+
+b $D282 Sabreman: Attacked
+N $D282 Flying Left.
+  $D282,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D283,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D284,$2C,$02 #GRAPHIC$40(40)
+
+N $D2B0 Sitting Left.
+  $D2B0,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D2B1,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D2B2,$24,$02 #GRAPHIC$41(41)
+
+N $D2D6 Dead Left.
+  $D2D6,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D2D7,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D2D8,$24,$03 #GRAPHIC$42(42)
+
+N $D2FC Flying Right.
+  $D2FC,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D2FD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D2FE,$2C,$02 #GRAPHIC$44(44)
+
+N $D32A Sitting Right.
+  $D32A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D32B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D32C,$24,$02 #GRAPHIC$45(45)
+
+N $D350 Dead Right.
+  $D350,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D351,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D352,$24,$03 #GRAPHIC$46(46)
+
+b $D376 Sprite: Orchid
+N $D376 Frame 1.
+  $D376,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D377,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D378,$06,$02 #GRAPHIC$48(48)
+
+N $D37E Frame 2.
+  $D37E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D37F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D380,$06,$02 #GRAPHIC$49(49)
+
+N $D386 Frame 3.
+  $D386,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D387,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D388,$0A,$02 #GRAPHIC$4A(4A)
+
+N $D392 Frame 4.
+  $D392,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D393,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D394,$0C,$02 #GRAPHIC$4B(4B)
+
+N $D3A0 Frame 5.
+  $D3A0,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D3A1,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D3A2,$10,$02 #GRAPHIC$4C(4C)
+
+N $D3B2 Frame 6.
+  $D3B2,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D3B3,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D3B4,$16,$02 #GRAPHIC$4D(4D)
+
+N $D3CA Frame 7.
+  $D3CA,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D3CB,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D3CC,$1A,$02 #GRAPHIC$4E(4E)
+
+N $D3E6 Frame 8.
+  $D3E6,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D3E7,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D3E8,$30,$03 #GRAPHIC$4F(4F)
+
+b $D418 Sprite: Bird
+N $D418 Left Frame 1.
+  $D418,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D419,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D41A,$26,$02 #GRAPHIC$6C(6C)
+
+N $D440 Left Frame 2.
+  $D440,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D441,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D442,$26,$02 #GRAPHIC$6D(6D)
+
+N $D468 Right Frame 1.
+  $D468,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D469,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D46A,$26,$02 #GRAPHIC$6E(6E)
+
+N $D490 Right Frame 2.
+  $D490,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D491,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D492,$26,$02 #GRAPHIC$6F(6F)
+
+b $D4B8 Sprite: Monkey?
+N $D4B8 Left Frame 1.
+  $D4B8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D4B9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D4BA,$2A,$02 #GRAPHIC$70(70)
+
+N $D4E4 Left Frame 2.
+  $D4E4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D4E5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D4E6,$28,$02 #GRAPHIC$71(71)
+
+N $D50E Right Frame 1.
+  $D50E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D50F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D510,$2A,$02 #GRAPHIC$72(72)
+
+N $D53A Right Frame 2.
+  $D53A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D53B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D53C,$28,$02 #GRAPHIC$73(73)
+
+b $D564 Sprite: Dinosaur?
+N $D564 Left Frame 1.
+  $D564,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D565,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D566,$27,$03 #GRAPHIC$74(74)
+
+N $D58D Left Frame 2.
+  $D58D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D58E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D58F,$2A,$03 #GRAPHIC$75(75)
+
+N $D5B9 Right Frame 1.
+  $D5B9,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D5BA,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D5BB,$2A,$03 #GRAPHIC$76(76)
+
+N $D5E5 Right Frame 2.
+  $D5E5,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D5E6,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D5E7,$27,$03 #GRAPHIC$77(77)
+
+b $D60E Sprite: Snake
+N $D60E Left Frame 1.
+  $D60E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D60F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D610,$27,$03 #GRAPHIC$78(78)
+
+N $D637 Left Frame 2.
+  $D637,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D638,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D639,$21,$03 #GRAPHIC$79(79)
+
+N $D65A Right Frame 1.
+  $D65A,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D65B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D65C,$21,$03 #GRAPHIC$7A(7A)
+
+N $D67D Right Frame 2.
+  $D67D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D67E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D67F,$27,$03 #GRAPHIC$7B(7B)
+
+b $D6A6 Attributes?
+
+b $D706 Sprite: Explosion
+N $D706 Frame 1.
+  $D706,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D707,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D708,$3F,$03 #GRAPHIC$0D(0D)
+
+N $D747 Frame 2.
+  $D747,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D748,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D749,$45,$03 #GRAPHIC$08(08)
+
+N $D78E Frame 3.
+  $D78E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D78F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D790,$48,$03 #GRAPHIC$09(09)
+
+N $D7D8 Frame 4.
+  $D7D8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $D7D9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D7DA,$48,$03 #GRAPHIC$0A(0A)
+
+b $D822 Sprite: Appearing
 N $D822 Frame 1.
   $D822,$01 Width = #N(#PEEK(#PC)) bytes.
   $D823,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D824,$2A,$03 #GRAPHIC$01(testing-01)
+  $D824,$2A,$03 #GRAPHIC$01(01)
 
 N $D84E Frame 2.
   $D84E,$01 Width = #N(#PEEK(#PC)) bytes.
   $D84F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D850,$39,$03 #GRAPHIC$02(testing-02)
+  $D850,$39,$03 #GRAPHIC$02(02)
 
 N $D889 Frame 3.
   $D889,$01 Width = #N(#PEEK(#PC)) bytes.
   $D88A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D88B,$45,$03 #GRAPHIC$03(testing-03)
+  $D88B,$45,$03 #GRAPHIC$03(03)
 
 N $D8D0 Frame 4.
   $D8D0,$01 Width = #N(#PEEK(#PC)) bytes.
   $D8D1,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D8D2,$45,$03 #GRAPHIC$04(testing-04)
+  $D8D2,$45,$03 #GRAPHIC$04(04)
 
 N $D917 Frame 5.
   $D917,$01 Width = #N(#PEEK(#PC)) bytes.
   $D918,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D919,$45,$03 #GRAPHIC$05(testing-05)
+  $D919,$45,$03 #GRAPHIC$05(05)
 
 N $D95E Frame 6.
   $D95E,$01 Width = #N(#PEEK(#PC)) bytes.
   $D95F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D960,$39,$03 #GRAPHIC$06(testing-06)
+  $D960,$39,$03 #GRAPHIC$06(06)
 
-b $D999
+b $D999 Sprite: Crate
   $D999,$01 Width = #N(#PEEK(#PC)) bytes.
   $D99A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D99B,$20,$02 #GRAPHIC$80(testing-07)
+  $D99B,$20,$02 #GRAPHIC$80(80)
 
-b $D9BB Graphic: Ring
+b $D9BB Sprite: Ring
   $D9BB,$01 Width = #N(#PEEK(#PC)) bytes.
   $D9BC,$01 Height = #N(#PEEK(#PC)) pixels.
   $D9BD,$20,$02 #GRAPHIC$81(ring)
 
-b $D9DD
+b $D9DD Sprite: Fruit
   $D9DD,$01 Width = #N(#PEEK(#PC)) bytes.
   $D9DE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D9DF,$20,$02 #GRAPHIC$82(testing-08)
+  $D9DF,$20,$02 #GRAPHIC$82(82)
 
-b $D9FF
+b $D9FF Sprite: Cap
   $D9FF,$01 Width = #N(#PEEK(#PC)) bytes.
   $DA00,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DA01,$20,$02 #GRAPHIC$83(testing-09)
+  $DA01,$20,$02 #GRAPHIC$83(83)
 
-b $DA21 Graphic: Gem
+b $DA21 Sprite: Shield
   $DA21,$01 Width = #N(#PEEK(#PC)) bytes.
   $DA22,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DA23,$20,$02 #GRAPHIC$84(gem)
+  $DA23,$20,$02 #GRAPHIC$84(84)
 
-b $DA43
+b $DA43 Sprite: Life
   $DA43,$01 Width = #N(#PEEK(#PC)) bytes.
   $DA44,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DA45,$20,$02 #GRAPHIC$85(testing-0A)
+  $DA45,$20,$02 #GRAPHIC$85(85)
 
-b $DA65 Graphic: Money Bag
+b $DA65 Sprite: Money Bag
   $DA65,$01 Width = #N(#PEEK(#PC)) bytes.
   $DA66,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DA67,$20,$02 #GRAPHIC$86(testing-0B)
+  $DA67,$20,$02 #GRAPHIC$86(86)
 
-b $DA87
+b $DA87 Sprite: Sword
+  $DA87,$01 Width = #N(#PEEK(#PC)) bytes.
+  $DA88,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DA89,$20,$02 #GRAPHIC$87(87)
 
-b $DB0B Graphic: Sleeping Rhino
+b $DAA9 Sprite: Unused?
+N $DAA9 Not in the sprite table.
+  $DAA9,$01 Width = #N(#PEEK(#PC)) bytes.
+  $DAAA,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DAAB,$20,$02 #NOCROP(#PC,$02,$10,$07)(unused-01)
+
+N $DACB Not in the sprite table.
+  $DACB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $DACC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DACD,$20,$02 #NOCROP(#PC,$02,$10,$07)(unused-02)
+
+N $DAED Not in the sprite table.
+  $DAED,$01 Width = #N(#PEEK(#PC)) bytes.
+  $DAEE,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DAEF,$1C,$02 #CROP(#PC,$02,$0E,$07)(unused-03)
+
+b $DB0B Sprite: Sleeping Warthog
   $DB0B,$01 Width = #N(#PEEK(#PC)) bytes.
   $DB0C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DB0D,$3F,$03 #GRAPHIC$AC(rhino-sleeping)
+  $DB0D,$3F,$03 #GRAPHIC$AC(AC)
 
-b $DB4C Graphic: Running Rhino
+b $DB4C Sprite: Warthog
 N $DB4C Left Frame 1.
   $DB4C,$01 Width = #N(#PEEK(#PC)) bytes.
   $DB4D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DB4E,$44,$04 #GRAPHIC$A8(rhino-left-01)
+  $DB4E,$44,$04 #GRAPHIC$A8(A8)
 
 N $DB92 Right Frame 1.
   $DB92,$01 Width = #N(#PEEK(#PC)) bytes.
   $DB93,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DB94,$48,$04 #GRAPHIC$AA(rhino-right-01)
+  $DB94,$48,$04 #GRAPHIC$AA(AA)
 
 N $DBDC Right Frame 2.
   $DBDC,$01 Width = #N(#PEEK(#PC)) bytes.
   $DBDD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DBDE,$44,$04 #GRAPHIC$AB(rhino-right-02)
+  $DBDE,$44,$04 #GRAPHIC$AB(AB)
 
 N $DC22 Left Frame 2.
   $DC22,$01 Width = #N(#PEEK(#PC)) bytes.
   $DC23,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DC24,$48,$04 #GRAPHIC$A8(rhino-left-02)
+  $DC24,$48,$04 #GRAPHIC$A9(A9)
 
 b $DC6C Attributes?
 
 b $E1EC Background Graphic Game Completed
-D $E1EC #BG(#PC)(*background-complete)
+D $E1EC #BG(#PC)(background-complete)
 N $E1EC Pixels.
   $E1EC,$01 Height = #N(#PEEK(#PC)) pixels.
   $E1ED,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -2524,78 +3413,201 @@ N $E36E Attributes.
   $E36F,$01 Width = #N(#PEEK(#PC)) bytes.
   $E370,$30,$08 Attribute data.
 
-b $E3A0
+b $E3A0 Graphic: Amulet Outline
+D $E3A0 #UDGTABLE(default,centre,centre)
+. { #BG($E3A0)(outline-01) | #BG($E494)(outline-02) }
+. { #BG($E588)(outline-03) | #BG($E67C)(outline-04) }
+. UDGTABLE#
+N $E3A0 Pixels.
+  $E3A0,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E3A1,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E3A2,$C0,$06 Pixel data.
+
+N $E462 Pixels.
+  $E462,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E463,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E464,$18,$06 Pixel data.
+N $E47C Attributes.
+  $E47C,$18,$08 Attribute data.
+
+N $E494 Pixels.
+  $E494,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E495,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E496,$C0,$06 Pixel data.
+
+N $E556 Pixels.
+  $E556,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E557,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E558,$18,$06 Pixel data.
+N $E570 Attributes.
+  $E570,$18,$08 Attribute data.
+
+N $E588 Pixels.
+  $E588,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E589,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E58A,$C0,$06 Pixel data.
+
+N $E64A Pixels.
+  $E64A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E64B,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E64C,$18,$06 Pixel data.
+N $E664 Attributes.
+  $E664,$18,$08 Attribute data.
+
+N $E67C Pixels.
+  $E67C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E67D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E67E,$C0,$06 Pixel data.
+
+N $E73E Pixels.
+  $E73E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E73F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E740,$18,$06 Pixel data.
+N $E758 Attributes.
+  $E758,$18,$08 Attribute data.
 
 b $E770 Graphic: Amulet
 D $E770 #UDGTABLE(default,centre,centre)
-. { #GRAPHIC$93(testing-93) | #GRAPHIC$92(testing-92) }
-. { #GRAPHIC$91(testing-91) | #GRAPHIC$90(testing-90) }
+. { #GRAPHIC$93(93) | #GRAPHIC$92(92) }
+. { #GRAPHIC$91(91) | #GRAPHIC$90(90) }
 . UDGTABLE#
 N $E770 Top Left.
   $E770,$01 Width = #N(#PEEK(#PC)) bytes.
   $E771,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E772,$20,$02 #GRAPHIC$93(testing-93)
+  $E772,$20,$02 #GRAPHIC$93(93)
 
 N $E792 Top Right.
   $E792,$01 Width = #N(#PEEK(#PC)) bytes.
   $E793,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E794,$20,$02 #GRAPHIC$92(testing-92)
+  $E794,$20,$02 #GRAPHIC$92(92)
 
 N $E7B4 Bottom Left.
   $E7B4,$01 Width = #N(#PEEK(#PC)) bytes.
   $E7B5,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E7B6,$20,$02 #GRAPHIC$91(testing-91)
+  $E7B6,$20,$02 #GRAPHIC$91(91)
 
 N $E7D6 Bottom Right.
   $E7D6,$01 Width = #N(#PEEK(#PC)) bytes.
   $E7D7,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E7D8,$20,$02 #GRAPHIC$90(testing-90)
+  $E7D8,$20,$02 #GRAPHIC$90(90)
 
 b $E7F8
-D $E7F8 ...
+N $E7F8 Frame 1.
   $E7F8,$01 Width = #N(#PEEK(#PC)) bytes.
   $E7F9,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E7FA,$80,$04 #GRAPHIC$94(testing-94*)
+  $E7FA,$80,$04 #GRAPHIC$94(94*)
 
-N $E87A
+N $E87A Frame 2.
   $E87A,$01 Width = #N(#PEEK(#PC)) bytes.
   $E87B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E87C,$80,$04 #GRAPHIC$95(testing-95*)
+  $E87C,$80,$04 #GRAPHIC$95(95*)
 
-b $E8FC
+b $E8FC Sprite: Flame
+N $E8FC Frame 1.
   $E8FC,$01 Width = #N(#PEEK(#PC)) bytes.
   $E8FD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E8FE,$2C,$02 #GRAPHIC$34(testing-34)
+  $E8FE,$2C,$02 #GRAPHIC$34(34*)
 
-N $E92A
+N $E92A Frame 2.
   $E92A,$01 Width = #N(#PEEK(#PC)) bytes.
   $E92B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E92C,$2C,$02 #GRAPHIC$35(testing-35)
+  $E92C,$2C,$02 #GRAPHIC$35(35*)
 
-N $E958
+N $E958 Frame 3.
   $E958,$01 Width = #N(#PEEK(#PC)) bytes.
   $E959,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E95A,$2E,$02 #GRAPHIC$36(testing-36)
+  $E95A,$2E,$02 #GRAPHIC$36(36*)
 
-N $E988
+N $E988 Frame 4.
   $E988,$01 Width = #N(#PEEK(#PC)) bytes.
   $E989,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E98A,$2E,$02 #GRAPHIC$37(testing-37)
+  $E98A,$2E,$02 #GRAPHIC$37(37*)
 
-b $E9B8
-b $E9D5
-b $E9F2
-b $EA0F
-b $EA2C
-b $EA64
-b $EAA8
-b $EAE0
-b $EB24
-b $EB46
-b $EB64
-b $EB86
-b $EBA4
-b $EBCA
-b $EBEA
-b $EC10
-T $EC30,$2F
+b $E9B8 Sprite: Rat
+N $E9B8 Left Frame 1.
+  $E9B8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E9B9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E9BA,$1B,$03 #GRAPHIC$98(98)
+
+N $E9D5 Left Frame 2.
+  $E9D5,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E9D6,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E9D7,$1B,$03 #GRAPHIC$99(99)
+
+N $E9F2 Right Frame 1.
+  $E9F2,$01 Width = #N(#PEEK(#PC)) bytes.
+  $E9F3,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E9F4,$1B,$03 #GRAPHIC$9A(9A)
+
+N $EA0F Right Frame 2.
+  $EA0F,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EA10,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA11,$1B,$03 #GRAPHIC$9B(9B)
+
+b $EA2C Sprite: Parrot
+N $EA2C Left Frame 1.
+  $EA2C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EA2D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA2E,$36,$03 #GRAPHIC$9C(9C)
+
+N $EA64 Left Frame 2.
+  $EA64,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EA65,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA66,$42,$03 #GRAPHIC$9D(9D)
+
+N $EAA8 Right Frame 1.
+  $EAA8,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EAA9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EAAA,$36,$03 #GRAPHIC$9E(9E)
+
+N $EAE0 Right Frame 2.
+  $EAE0,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EAE1,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EAE2,$42,$03 #GRAPHIC$9F(9F)
+
+b $EB24 Sprite: Mosquito
+N $EB24 Left Frame 1.
+  $EB24,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EB25,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EB26,$20,$02 #GRAPHIC$B4(B4)
+
+N $EB46 Left Frame 2.
+  $EB46,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EB47,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EB48,$1C,$02 #GRAPHIC$B5(B5)
+
+N $EB64 Right Frame 1.
+  $EB64,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EB65,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EB66,$20,$02 #GRAPHIC$B6(B6)
+
+N $EB86 Right Frame 1.
+  $EB86,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EB87,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EB88,$1C,$02 #GRAPHIC$B7(B7)
+
+b $EBA4 Sprite: Frog
+N $EBA4 Left Frame 1.
+  $EBA4,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EBA5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EBA6,$24,$03 #GRAPHIC$B0(B0)
+
+N $EBCA Left Frame 2.
+  $EBCA,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EBCB,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EBCC,$1E,$03 #GRAPHIC$B1(B1)
+
+N $EBEA Right Frame 1.
+  $EBEA,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EBEB,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EBEC,$24,$03 #GRAPHIC$B2(B2)
+
+N $EC10 Right Frame 2.
+  $EC10,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EC11,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EC12,$1E,$03 #GRAPHIC$B3(B3)
+
+t $EC30
+  $EC30,$2F
+
+b $EC5F
