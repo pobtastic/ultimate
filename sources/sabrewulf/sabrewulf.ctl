@@ -60,7 +60,7 @@ b $6036
 
 b $6066 Layout
 @ $6066 label=Layout
-  $6066,$10
+  $6066,$100,$10
 
 w $6166 Room Table
 @ $6166 label=RoomTable
@@ -2705,10 +2705,10 @@ E $BF84 View the equivalent code in;
 L $BF84,$02,$C4
 
 b $C10C Sprite: None
-  $C10C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C10D,$01
+  $C10C,$01 Width = #N(#PEEK(#PC)) bytes.
+  $C10D,$01 Height = #N(#PEEK(#PC)) pixels.
 
-b $C10E
+b $C10E Sprite: Earwig
 N $C10E Frame 1.
   $C10E,$01 Width = #N(#PEEK(#PC)) bytes.
   $C10F,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -2750,7 +2750,7 @@ N $C24A Right Frame 2.
   $C24B,$01 Height = #N(#PEEK(#PC)) pixels.
   $C24C,$24,$02 #GRAPHIC$BF(BF)
 
-b $C270 Sprite: Squirrel?
+b $C270 Sprite: Skunk
 N $C270 Left Frame 1.
   $C270,$01 Width = #N(#PEEK(#PC)) bytes.
   $C271,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3057,7 +3057,7 @@ N $CEC8 Right Frame 2.
   $CEC9,$01 Height = #N(#PEEK(#PC)) pixels.
   $CECA,$3C,$03 #GRAPHIC$67(67)
 
-b $CF06 Sprite: Wolf
+b $CF06 Sprite: Wulf
 N $CF06 Left Frame 1.
   $CF06,$01 Width = #N(#PEEK(#PC)) bytes.
   $CF07,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3180,7 +3180,7 @@ N $D3E6 Frame 8.
   $D3E7,$01 Height = #N(#PEEK(#PC)) pixels.
   $D3E8,$30,$03 #GRAPHIC$4F(4F)
 
-b $D418 Sprite: Bird
+b $D418 Sprite: Parrot
 N $D418 Left Frame 1.
   $D418,$01 Width = #N(#PEEK(#PC)) bytes.
   $D419,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3201,7 +3201,7 @@ N $D490 Right Frame 2.
   $D491,$01 Height = #N(#PEEK(#PC)) pixels.
   $D492,$26,$02 #GRAPHIC$6F(6F)
 
-b $D4B8 Sprite: Monkey?
+b $D4B8 Sprite: Monkey
 N $D4B8 Left Frame 1.
   $D4B8,$01 Width = #N(#PEEK(#PC)) bytes.
   $D4B9,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3222,7 +3222,7 @@ N $D53A Right Frame 2.
   $D53B,$01 Height = #N(#PEEK(#PC)) pixels.
   $D53C,$28,$02 #GRAPHIC$73(73)
 
-b $D564 Sprite: Dinosaur?
+b $D564 Sprite: Lizard
 N $D564 Left Frame 1.
   $D564,$01 Width = #N(#PEEK(#PC)) bytes.
   $D565,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3491,7 +3491,7 @@ N $E7D6 Bottom Right.
   $E7D7,$01 Height = #N(#PEEK(#PC)) pixels.
   $E7D8,$20,$02 #GRAPHIC$90(90)
 
-b $E7F8
+b $E7F8 Sprite: The Guardian
 N $E7F8 Frame 1.
   $E7F8,$01 Width = #N(#PEEK(#PC)) bytes.
   $E7F9,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3544,7 +3544,7 @@ N $EA0F Right Frame 2.
   $EA10,$01 Height = #N(#PEEK(#PC)) pixels.
   $EA11,$1B,$03 #GRAPHIC$9B(9B)
 
-b $EA2C Sprite: Parrot
+b $EA2C Sprite: Bird
 N $EA2C Left Frame 1.
   $EA2C,$01 Width = #N(#PEEK(#PC)) bytes.
   $EA2D,$01 Height = #N(#PEEK(#PC)) pixels.
