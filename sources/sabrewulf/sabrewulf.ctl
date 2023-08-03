@@ -971,6 +971,8 @@ g $96A1 Saved Y
 @ $96A1 label=Saved_Y
 B $96A1,$01
 
+g $96A3
+
 g $96A8 Current Menu Item Colour attribute
 @ $96A8 label=Current_MenuAttr
 B $96A8,$01
@@ -979,8 +981,10 @@ b $96A9
   $96B0
   $96B1
   $96B2
+  $96B3
   $96B4
   $96B5
+  $96B6
 
 g $96B7 Flag: Hall Of Fame
 @ $96B7 label=FlagHallOfFame
@@ -995,9 +999,14 @@ W $96B8
 g $96BA
   $96BC
   $96BD
+  $96BE
+  $96BF
   $96DF
+  $96E0
   $9702
+  $970D
   $970E
+  $9792
 
 b $97FE Amulet Data
 @ $97FE label=AmuletData
@@ -1086,14 +1095,148 @@ c $99F0
   $99F0,$03 #REGde=#N($000C, $04, $04).
   $99FE,$03 #REGde=#R$982E.
 
+N $9A18
+  $9A18,$03 #REGde=#R$970E.
+  $9A1B,$02 Jump to #R$9A01.
+
+c $9A1D
+  $9A1D,$03 #REGhl=#R$9693.
+  $9A20,$04 Increment #REGhl by one, and write this value back to #R$9693.
+  $9A24,$03 #REGa=#R$9695.
+  $9A30,$03 Call #R$AC28.
+  $9A33,$03 Call #R$9A3C.
+  $9A36,$03 Call #R$9ABC.
+  $9A39,$03 Jump to #R$99AA.
+
+c $9A3C Handler: Destructable Enemies
+@ $9A3C label=HandlerDestructableEnemies
+  $9A3C,$05 If #R$96B5 is not zero, return.
+  $9A41,$06 If #R$96B1 is zero, jump to #R$9A4C.
+  $9A47,$01 Decrease #REGa by one.
+  $9A48,$03 Write the value back to #R$96B1.
+  $9A4B,$01 Return.
+
+N $9A4C
+  $9A4C,$03 #REGa=#R$9702.
+  $9A54,$04 #REGix=#R$9792.
+  $9A58,$03 #REGde=#N($000C,$04,$04).
+  $9A5B,$02 #REGb=#N$06.
+  $9A5D,$03 #REGa=#REGix+#N$00.
+  $9A60,$03 If #REGa is zero, jump to #R$9A68.
+  $9A63,$02 #REGix=#REGix+#REGde.
+  $9A65,$02 Decrease counter by one and loop back to #R$9A5D until counter is zero.
+  $9A67,$01 Return.
+
+c $9A68
+  $9A68,$03 #REGhl=#N$9792.
+  $9A6B,$02 #REGb=#N$06.
+  $9A6D,$02 #REGd=#N$00.
+  $9A6F,$04 #REGe=#N$9703.
+  $9A73,$01
+  $9A7E,$02 #REGa=#N$0C.
+  $9A80,$03 Call #R$9B37.
+  $9A8A,$03 Call #R$9B0D.
+  $9A8E,$03 #REGa=#R$9693.
+  $9A91,$02,b$01 Keep only bits 0-1.
+  $9A93,$03 Create an offset.
+  $9A96,$04 #REGhl=#R$9AB8 + #REGa.
+
+  $9AA2,$13 Writes #N$00 to: #TABLE(default,centre)
+. { #REGix+#N$06 }
+. { #REGix+#N$07 }
+. { #REGix+#N$08 }
+. { #REGix+#N$09 }
+. { #REGix+#N$0A }
+. { #REGix+#N$0B }
+. TABLE#
+  $9AB5,$03 Jump to #R$B919.
+
+b $9AB8
+@ $9AB8 label=ColourBytes
+  $9AB8,$04
+
+c $9ABC
+
+c $9AE9
+
+c $9AF9
+
+c $9B0D
+
+c $9B37
+
 w $9B3E Jump Table
 @ $9B3E label=JumpTable
   $9B3E,$C4,$02
 
 c $9CC6
+  $9CC6,$03 #REGde=#N($0000,$04,$04).
+  $9CC9,$03 #REGbc=#N$0820.
+  $9CCC,$03 #REGhl=#R$96BF.
+  $9CDC,$03 #REGa=#R$970D.
+  $9CDF,$02 #REGb=#N$04.
+  $9CE7,$03 #REGbc=#R$6276.
+  $9CEA,$03 #REGhl=#N($0000,$04,$04).
+  $9CF9,$02 Jump to #R$9CEE.
+
+  $9D0E,$03 #REGhl=#N$48F8.
+  $9D11,$03 #REGde=#R$96B6.
+  $9D14,$02 #REGb=#N$01.
+  $9D1B,$03 Jump to #R$B5F0.
+
+  $9D20,$03 Jump to #R$B5E4.
+
+c $9D23
+  $9D23,$04 #REGc=#REGix+#N$01.
+  $9D2A,$02,b$01 Keep only bits 0-4.
+  $9D33,$02,b$01 Keep only bits 3-5.
+  $9D35,$02,b$01 Set bits 1-2, 6-7.
+  $9D3A,$03 #REGbc=#N$96BF.
+  $9D40,$01 Return.
+
+c $9D41
+N $9D41 Each block of amulet data is #N$0B bytes long.
+  $9D41,$03 #REGde=#N($000B,$04,$04).
+  $9D44,$03 #REGhl=#R$97FE.
+N $9D47 There are four pieces of the amulet.
+  $9D47,$02 #REGb=#N$04.
+  $9D49,$01 #REGa.
+  $9D51,$01 Store the result in #REGc.
+  $9D52,$03 #REGa=#REGix+#N$01.
+  $9D4F,$02,b$01 Keep only bits 0-3.
+  $9D55,$02,b$01 Keep only bits 0-3.
+  $9D5B,$02,b$01 Keep only bits 4-7.
+  $9D61,$02,b$01 Keep only bits 4-7.
+  $9D6A,$01 Return.
+
+  $9D6B,$02 Increment #REGhl by two.
+
+  $9D7C,$01 Return.
+
+  $9D90,$01 Return.
+
+c $9D91
+
+c $9E04
+
+c $9E2F
+
+c $9E48
+
+c $9E4E
+
+c $9E53
+  $9E53,$03 #REGb=#R$9E5C.
+  $9E5B,$01 Return.
 
 b $9E5C
-  $9E6C
+
+c $9E64
+  $9E64,$03 #REGa=#R$9695.
+  $9E67,$02,b$01 Keep only bits 0-2.
+  $9E6D,$02,b$01 Set bits 1-2.
+  $9E6F,$02,b$01 Set bit 6.
+  $9E71,$01 Return.
 
 c $9E72
 
@@ -1265,6 +1408,25 @@ c $A1FF Pause
   $A206,$01 Return.
 
 c $A207
+  $A207,$03 Call #R$BB7C.
+  $A20A,$03 Call #R$BB5C.
+  $A211,$03 #REGhl=#R$C374.
+  $A220,$05 Write #N$01 to #R$96B2.
+  $A22D,$03 Call #R$BC0B.
+  $A230,$02 Stash #REGhl and #REGbc on the stack.
+  $A232,$02 Jump to #R$A214.
+  $A234,$03 Call #R$A01B.
+  $A237,$03 #REGhl=#N$0000.
+  $A23A,$03 #REGde=#R$BD33.
+  $A23D,$03 Call #R$BD6E.
+  $A240,$02 #REGb=#N$08.
+  $A242,$03 Call #R$A1FF.
+  $A245,$03 Call #R$AC28.
+  $A248,$03 Call #R$BB7C.
+  $A24B,$03 Call #R$BB5C.
+  $A24E,$03 Call #R$BBDD.
+  $A251,$03 Call #R$B919.
+  $A254,$01 Return.
 
 c $A255 Place Amulet Pieces
 @ $A255 label=PlaceAmuletPieces
@@ -1297,11 +1459,23 @@ b $A3A7
 
 c $A3B7
 
+c $A3C5
+
+c $A3E0
+
 b $A41A
+@ $A41A label=SpriteReference
+  $A41A,$01 #LET(result=$BF84 + (#PEEK(#PC) * $02)) Sprite ID: #R(#PEEK({result}) + #PEEK({result} + $01) * $100)(#N(#PEEK(#PC))) #SPRITENAME(#PEEK(#PC))
+L $A41A,$01,$10
 
 c $A42A
 
+c $A43B
+
+c $A44B
+
 b $A6FD
+@ $A6FD label=OrchidColour
 
 c $A70D
 
@@ -1310,9 +1484,28 @@ b $A7F8
 c $A858
 
 c $AA27
+N $AA27 Is this a one or two player game?
   $AA27,$03 #REGa=#R$9692.
   $AA2A,$02,b$01 Keep only bit 0.
+  $AA2C,$02 Jump to #R$AA5A if this is a two player game.
+N $AA2E This is a one player game.
+  $AA2E,$06 If #R$96BD is zero then jump to #R$AAA4.
   $AA34,$03 #REGhl=#R$96BD.
+
+  $AA38,$03 Call #R$B7CD.
+  $AA3E,$02,b$01 Keep only bits 0-2.
+  $AA40,$02,b$01 Set bit 4.
+
+  $AA49,$04 Write #N$00 to #R$96B0.
+  $AA4D,$05 Write #N$10 to #R$96B1.
+  $AA52,$05 Write #N$80 to #R$96B4.
+
+  $AA57,$03 Jump to #R$AD5D.
+
+N $AA5A This is a two player game.
+  $AA5A,$06 If #R$96E0 is zero then jump to #R$AA2E.
+
+  $AA67,$03 Jump to #R$B205.
 
 c $AA6A Game Over
 @ $AA6A label=GameOver_1UP
@@ -1320,7 +1513,7 @@ N $AA6A #HTML(Set up altering the "GAME OVER PLAYER <em>X</em>" message for 1UP.
   $AA6A,c,$02 #REGa="1" + #N$80 (escape character).
 N $AA6C Print the messaging and pause to show it for a period of time.
 @ $AA6C label=GameOver_Write
-  $AA6C,$03 Write ASCII player number to #R$AAC1(#N$AAD3).
+  $AA6C,$03 Write ASCII player number to #R$AAC1(#N$AAD3)(GameOver_Text).
   $AA6F,$03 Call #R$BB7C.
   $AA72,$03 Call #R$BB5C.
   $AA75,$03 #REGde=#R$AAD4.
@@ -1330,7 +1523,7 @@ N $AA6C Print the messaging and pause to show it for a period of time.
   $AA81,$03 #REGhl=#N$6038.
   $AA84,$03 Call #R$B53D.
   $AA87,$03 Call #R$9CC6.
-  $AA8A,$03 #REGde=#N$BD28.
+  $AA8A,$03 #REGde=#R$BD28.
   $AA8D,$03 Call #R$BD6E.
 N $AA90 Introduce a pause by counting down from #N$10000 twice.
   $AA90,$02 #REGb=#N$02 (counter).
@@ -1350,6 +1543,9 @@ N $AAA4 This is a controller with a jump to #R$998F to return to the game select
 @ $AAA4 label=GameOver_ControllerRestart
   $AAA4,$06 If #R$969E is not zero, jump to #R$AABC.
   $AAAA,$03 Call #R$AA6A.
+  $AAAD,$03 Call #R$B5FC.
+  $AAB0,$06 If #R$96BA is not zero, jump to #R$AAB9.
+  $AAB6,$03 Call #R$B27E.
 @ $AAB9 label=GameOver_Restart
   $AAB9,$03 Jump to #R$998F.
 @ $AABC label=GameOver_Restart2UP
@@ -1600,6 +1796,22 @@ c $B1B7
 
 c $B1D4
   $B204,$01 Return.
+
+c $B205
+  $B205,$03 Call #R$B235.
+  $B208,$03 Call #R$BB7C.
+  $B20B,$03 Call #R$BB5C.
+  $B211,$02,b$01 Keep only bits 0-2.
+  $B213,$02,b$01 Set bit 4.
+  $B21C,$02 Jump to #R$B1F1.
+
+c $B21E
+  $B21E,$05 Write #N$05 to #R$96BD.
+  $B223,$05 Write #N$03 to #R$96BE.
+  $B228,$04 Write #N$00 to #R$96BC.
+  $B22C,$03 Call #R$AC6B.
+  $B22F,$03 Call #R$A255.
+  $B232,$03 Jump to #R$A2BD.
 
 c $B235 1UP/ 2UP Swapper 
 E $B235 View the equivalent code in;
@@ -2415,8 +2627,16 @@ c $B902
   $B909,$02 #REGb=#N$08.
   $B918,$01 Return.
 
-c $B919
+c $B919 Draw Entity
+E $B919 View the equivalent code in;
+. #LIST
+. { #ATICATAC$9F4A }
+. LIST#
+@ $B919 label=DrawEntity
   $B919,$03 Call #R$B969.
+  $B91C,$01 Switch to the shadow registers.
+  $B91D,$04 Write #N$00 to #R$96A3.
+  $B921,$01 #REGc=#N$00.
   $B922,$03 Jump to #R$B9DA.
 
 c $B925 Get Sprite "A"
@@ -2480,6 +2700,14 @@ E $B9A9 View the equivalent code in;
 
 c $B9CB
 
+c $B9DA
+E $B9DA  View the equivalent code in;
+. #LIST
+. { #ATICATAC$9E9B }
+. LIST#
+
+c $BA14
+
 c $BB0B Store Entity
 E $BB0B View the equivalent code in;
 . #LIST
@@ -2505,7 +2733,43 @@ c $BB45
   $BB45,$02
   $BB5B,$01 Return.
 
-c $BB5C
+c $BB5C Clear Play Area
+N $BB5C This routine clears the top third of the screen, but only from below the banner. This is left untouched.
+@ $BB5C label=ClearPlayArea
+  $BB5C,$03 #REGhl=#N$4040(screen buffer).
+N $BB5F Here #REGd contains the value to be written (#N$00) and #REGe holds the number of rows of pixels to act on
+.       (the full height of a character block).
+  $BB5F,$03 #REGde=#N($0008,$04,$04).
+N $BB62 #REGb holds the number of columns (i.e. #N$20 == full width of the screen), and #REGc is a
+.       counter for how many rows to clear (i.e. the top third would usually be #N$08 rows, but the banner takes up
+.       two - hence this initialises to #N$06).
+  $BB62,$03 #REGbc=#N$2006.
+@ $BB65 label=ClearPlayArea_ClearLine
+  $BB65,$02 Stash #REGbc and #REGhl on the stack.
+@ $BB67 label=ClearPlayArea_ClearLine_Start
+  $BB67,$01 Stash #REGbc on the stack.
+@ $BB68 label=ClearPlayArea_ClearLine_Loop
+  $BB68,$01 Write #N$00 (#REGd) to the screen (#REGhl).
+  $BB69,$01 Move "right" onto the next column.
+  $BB6A,$02 Decrease the width counter by one and loop back to #R$BB68 until counter is zero.
+N $BB6C Resets the width counter ready for the next loop.
+  $BB6C,$01 Restore #REGbc from the stack.
+  $BB6D,$01 Decrease the number of rows counter by one.
+  $BB6E,$02 Jump back to #R$BB67 unless #REGc is zero.
+N $BB70 Resets the screen buffer to where the clearing started for this loop, then moves down one character block.
+  $BB70,$01 Restore #REGhl from the stack.
+  $BB71,$01 Increments #REGh by one.
+  $BB72,$01 Restore #REGbc from the stack.
+  $BB73,$01 Decrease the pixel row counter by one.
+  $BB74,$02 Jump back to #R$BB65 unless #REGe is zero.
+N $BB76 Clears the other two thirds of the screen, so now the screen only contains the banner.
+  $BB76,$03 #REGhl=#N$4800(screen buffer).
+  $BB79,$03 Jump to #R$BB84.
+
+c $BB7C Clear Play Area Attribute Buffer
+@ $BB7C label=ClearPlayArea_Attributes
+  $BB7C,$03 #REGhl=#N$5840(attribute buffer).
+  $BB7F,$02 Jump to #R$BB92.
 
 c $BB8F Reset Attribute Buffer
 E $BB8F View the equivalent code in;
@@ -2629,40 +2893,58 @@ N $BC0B Stash the X/ Y position on the stack.
 
   $BC66,$01 Return.
 
-b $BC67
+b $BC67 Music Data
+@ $BC67 label=MusicData_GameComplete
+@ $BC77 label=MusicData_GameComplete_Loop
   $BC77
+@ $BD28 label=MusicData_GameOver
+  $BD28
+@ $BD33 label=MusicData_Poem
   $BD33
+@ $BD45 label=MusicData_GameInitialisation
   $BD45
 
-c $BD51
+c $BD51 Play Music (break on keypress)
+@ $BD51 label=PlayAudio_WaitKey
   $BD51,$01 Disable interrupts.
+@ $BD52 label=PlayAudio_WaitKey_Loop
+  $BD52,$05
   $BD57,$01 Flip the bits.
   $BD58,$02,b$01 Keep only bits 0-4.
-  $BD5A,$02
+  $BD5A,$02 If no keys were pressed, jump to #R$BD64.
   $BD5C,$03 #REGa=#R$9692.
+  $BD5F,$02 Increments the stack pointer by two.
   $BD61,$03 Jump to #R$B422.
-  $BD64,$01 #REGa.
-  $BD65,$04 Jump to #R$BD79 if #REGa is #N$FF (terminator).
+  $BD61,$03 Jump to #R$B422.
+N $BD64 This is identical to #R$BD6E except it also handles exiting on a keypress.
+@ $BD64 label=PlayAudio_WaitKey_Process
+  $BD64,$01 Fetch the next byte of music data.
+  $BD65,$04 If this is #N$FF (the terminator) then jump to #R$BD79.
   $BD69,$03 Call #R$BD7B.
   $BD6C,$02 Jump to #R$BD52.
 
-c $BD6E
+c $BD6E Play Audio
+@ $BD6E label=PlayAudio
+R $BD6E DE Music data terminated by #N$FF
   $BD6E,$01 Disable interrupts.
-@ $BD6F label=Loop
-  $BD6F,$01 Fetch the next byte.
+@ $BD6F label=PlayAudio_Loop
+  $BD6F,$01 Fetch the next byte of music data.
   $BD70,$04 If this is #N$FF (the terminator) then jump to #R$BD79.
   $BD74,$03 Call #R$BD7B.
   $BD77,$02 Jump to #R$BD6F.
 
-N $BD79 Enable interrupts and return.
-@ $BD79 label=EnableInterrupts
+c $BD79 Play Audio: Enable Interrupts And Return
+@ $BD79 label=PlayAudio_Return
   $BD79,$01 Enable interrupts.
   $BD7A,$01 Return.
 
-N $BD7B
+c $BD7B Play Audio: Process Music Data
+@ $BD7B label=PlayAudio_Process
+R $BD7B A Music data byte
+R $BD7B DE Music data terminated by #N$FF
   $BD7B,$02,b$01 Keep only bits 0-5.
   $BD7D,$02 If we're left with zero, jump to #R$BDBC.
-  $BD7F,$03 Creates an offset using #REGh=$N$00 and #REGl=#REGa.
+  $BD7F,$03 Creates an offset using #REGh=#N$00 and #REGl=#REGa.
   $BD82,$06 #REGhl=#R$BDD2 + (offset * #N$04).
   $BD88,$04 #REGbc=the address held at #REGhl.
   $BD8C,$04 #REGa=.
@@ -2689,7 +2971,85 @@ c $BECC
 
 b $BEDE
 
+c $BEEE
+  $BEEE,$04 #REGl=#R$9695.
+  $BEF2,$03 #REGa=#R$9693.
+  $BEF5,$02,b$01 Keep only bits 0-4.
+  $BEF7,$01 Store the result in #REGh.
+  $BEF8,$02 #REGe=#N$10.
+  $BEFC,$02,b$01 Keep only bits 0-6.
+  $BEFE,$01 Store the result in #REGb.
+  $BEFF,$02 #REGc=#N$02.
+  $BF01,$03 Call #R$BF6D.
+  $BF04,$01 Decrease #REGe by one.
+  $BF07,$01 Return.
+
 c $BF08
+  $BF08,$03 #REGa=#REGix+#N$00.
+  $BF0B,$01 Flip the bits.
+  $BF0C,$03
+  $BF0F,$02,b$01 Keep only bits 5-7.
+  $BF11,$01 Store the result in #REGb.
+  $BF12,$02 #REGc=#N$06.
+  $BF14,$03 Jump to #R$BF6D.
+
+c $BF17
+  $BF17,$02 #REGc=#N$30.
+  $BF1A,$02,b$01 Set bits 3-4.
+  $BF1E,$03 Call #R$BF74.
+  $BF24,$01 Return.
+
+c $BF25
+  $BF25,$03 #REGbc=#N$4030.
+  $BF28,$02 Jump to #R$BF6D.
+
+c $BF2A
+  $BF2A,$03 #REGbc=#N$8010.
+  $BF2D,$02 Jump to #R$BF6D.
+
+c $BF2F
+  $BF2F,$02 #REGc=#N$30.
+  $BF36,$03 Call #R$BF74.
+  $BF3C,$01 Return.
+
+c $BF3D
+  $BF46,$02 #REGc=#N$08.
+  $BF48,$03 Jump to #R$BF6D.
+
+c $BF4B
+  $BF4B,$03 Call #R$BF54.
+  $BF54,$03 #REGhl=#R$96B3.
+  $BF5D,$02,b$01 Keep only bits 0-2.
+  $BF60,$03 #REGbc=#N$4004.
+  $BF63,$02 Jump to #R$BF6D.
+  $BF65,$02,b$01 Keep only bits 0-2.
+  $BF68,$03 #REGbc=#N$6004.
+  $BF6B,$02 Jump to #R$BF6D.
+
+c $BF6D
+  $BF6D,$03 Call #R$BF74.
+
+c $BF74 Play Square Wave Sound
+@ $BF74 label=PlaySquareWave
+E $BF74 View the equivalent code in;
+. #LIST
+. { #PSSST$64AA }
+. LIST#
+R $BF74 B Duration of wave
+N $BF74 Flip speaker on (set bit 4).
+M $BF74,$04 #REGa=#N$10 (speaker on = bit 4).
+  $BF74,$02,b$01
+  $BF78,$01 #REGa=#REGb.
+@ $BF79 label=PlaySquareWave_Loop
+  $BF79,$02 Decrease duration by one and loop back to #R$BF79 until counter is zero.
+  $BF7B,$01 #REGb=#REGa.
+N $BF7C Flip speaker off (unset bit 4).
+  $BF7C,$03 Speaker off.
+  $BF7F,$01 #REGa=#REGb.
+@ $BF80 label=Silence_Loop
+  $BF80,$02 Decrease duration by one and loop back to #R$BF80 until counter is zero.
+  $BF82,$01 #REGb=#REGa.
+  $BF83,$01 Return.
 
 w $BF84 Sprites Table
 E $BF84 View the equivalent code in;
