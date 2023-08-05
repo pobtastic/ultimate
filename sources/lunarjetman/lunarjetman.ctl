@@ -86,9 +86,9 @@ B $5E62,$03
 g $5E65 Active Player
 @ $5E65 label=Flag_ActivePlayer
 D $5E65 Which player is currently active.
-B $5E65 #TABLE(default,centre,centre) { =h Value | =h Player }
-. { $00 | 1UP }
-. { $FF | 2UP }
+. $5E65 #TABLE(default,centre,centre) { =h Value | =h Player }
+. { #N$00 | 1UP }
+. { #N$FF | 2UP }
 . TABLE#
 
 g $5E66 Current menu item colour attribute
@@ -650,6 +650,7 @@ E $894F View the equivalent code in;
 . { #COOKIE$7378 }
 . { #JETPAC$70A4 }
 . { #PSSST$7325 }
+. { #SABREWULF$B7CD }
 . { #TRANZAM$0000 }
 . LIST#
 @ $894F label=DisplayPlayerLives
@@ -680,7 +681,6 @@ N $897C 2UP has no lives.
   $897E,$03 Call #R$89EF.
   $8981,$02 #REGa=ASCII " " (SPACE).
   $8983,$03 Jump to #R$89EF.
-
 N $8986 Controller for the currently active player.
 @ $8986 label=ControllerActiveLives
   $8986,$06 If #R$5E65 is not zero then jump to #R$8990.
