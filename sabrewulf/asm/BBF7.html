@@ -25,7 +25,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="BBBB.html">BBBB</a>
+Prev: <a href="BBDD.html">BBDD</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#bbf7">Map</a></td>
 <td class="next">
@@ -39,7 +39,7 @@ Next: <a href="BC67.html">BC67</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="9F6A.html">GameComplete</a>, <a href="B3D5.html">HandlerGameMenu</a>, <a href="B5FC.html">NewHighScore</a> and <a href="BBBB.html">BBBB</a>.
+Used by the routines at <a href="9F6A.html">GameComplete</a>, <a href="B3D5.html">HandlerGameMenu</a>, <a href="B5FC.html">NewHighScore</a> and <a href="BBDD.html">BBDD</a>.
 </div>
 </div>
 <table class="input">
@@ -160,7 +160,7 @@ Fetch the X/ Y position data.
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc02"></span>BC02</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> (room graphic data pointer) on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -176,14 +176,14 @@ Fetch the X/ Y position data.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc05"></span>BC05</td>
-<td class="instruction">CALL <a href="BBF7.html#bc0b">DrawRoom_0</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BBF7.html#bc0b">DrawRoom_0</a>.</td>
+<td class="instruction">CALL <a href="BBF7.html#bc0b">DrawRoom_Process</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BBF7.html#bc0b">DrawRoom_Process</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc08"></span>BC08</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack (room graphic data pointer).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -196,16 +196,16 @@ Fetch the X/ Y position data.
 <span id="bc0b"></span>
 <div class="comments">
 <div class="paragraph">
-Stash the X/ Y position on the stack.
+At the point of processing; <span class="register">HL</span> contains X/ Y position data, <span class="register">DE</span> contains the room data graphic address (and <span class="register">BC</span> is throwaway).
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_0</td>
+<td class="asm-label">DrawRoom_Process</td>
 <td class="address-2"><span id="bc0b"></span>BC0B</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> (X/ Y position) on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -248,13 +248,13 @@ Stash the X/ Y position on the stack.
 <td class="comment-1" rowspan="1">Increment <span class="register">DE</span> by one.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_1</td>
+<td class="asm-label">DrawRoom_Row_Loop</td>
 <td class="address-2"><span id="bc15"></span>BC15</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_2</td>
+<td class="asm-label">DrawRoom_Write_Row</td>
 <td class="address-2"><span id="bc16"></span>BC16</td>
 <td class="instruction">LD A,(DE)</td>
 <td class="comment-1" rowspan="1"><span class="register">A</span>=fetch a byte of graphics data.</td>
@@ -286,8 +286,8 @@ Stash the X/ Y position on the stack.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc1b"></span>BC1B</td>
-<td class="instruction">DJNZ <a href="BBF7.html#bc16">DrawRoom_2</a></td>
-<td class="comment-1" rowspan="1">Decrease the width counter by one and loop back to <a href="BBF7.html#bc16">DrawRoom_2</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="BBF7.html#bc16">DrawRoom_Write_Row</a></td>
+<td class="comment-1" rowspan="1">Decrease the width counter by one and loop back to <a href="BBF7.html#bc16">DrawRoom_Write_Row</a> until counter is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -299,36 +299,34 @@ Stash the X/ Y position on the stack.
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc1e"></span>BC1E</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3"><span class="register">L</span>=<span class="register">L</span>-<span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc1f"></span>BC1F</td>
 <td class="instruction">SUB B</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc20"></span>BC20</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc21"></span>BC21</td>
-<td class="instruction">CALL <a href="B8CC.html">$B8CC</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B8CC.html">B8CC</a>.</td>
+<td class="instruction">CALL <a href="B8CC.html">ScreenPos1PixelBelow</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B8CC.html">ScreenPos1PixelBelow</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc24"></span>BC24</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="2">Decrease the height counter by one and loop back to <a href="BBF7.html#bc15">DrawRoom_1</a> until counter is zero.</td>
+<td class="comment-1" rowspan="2">Decrease the height counter by one and loop back to <a href="BBF7.html#bc15">DrawRoom_Row_Loop</a> until counter is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc25"></span>BC25</td>
-<td class="instruction">JR NZ,<a href="BBF7.html#bc15">DrawRoom_1</a></td>
+<td class="instruction">JR NZ,<a href="BBF7.html#bc15">DrawRoom_Row_Loop</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -382,22 +380,20 @@ Stash the X/ Y position on the stack.
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc31"></span>BC31</td>
 <td class="instruction">LD A,($96B2)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">If <a href="96A9.html#96b2">96B2</a> is not zero, jump to <a href="BBF7.html#bc49">DrawRoom_2</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc34"></span>BC34</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc35"></span>BC35</td>
-<td class="instruction">JR NZ,<a href="BBF7.html#bc49">DrawRoom_5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="BBF7.html#bc49">DrawRoom_2</a></td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_3</td>
+<td class="asm-label">DrawRoom_0</td>
 <td class="address-2"><span id="bc37"></span>BC37</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1"></td>
@@ -409,7 +405,7 @@ Stash the X/ Y position on the stack.
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_4</td>
+<td class="asm-label">DrawRoom_1</td>
 <td class="address-2"><span id="bc39"></span>BC39</td>
 <td class="instruction">LD A,(DE)</td>
 <td class="comment-1" rowspan="1"></td>
@@ -435,7 +431,7 @@ Stash the X/ Y position on the stack.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc3d"></span>BC3D</td>
-<td class="instruction">DJNZ <a href="BBF7.html#bc39">DrawRoom_4</a></td>
+<td class="instruction">DJNZ <a href="BBF7.html#bc39">DrawRoom_1</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -471,7 +467,7 @@ Stash the X/ Y position on the stack.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc46"></span>BC46</td>
-<td class="instruction">JR NZ,<a href="BBF7.html#bc37">DrawRoom_3</a></td>
+<td class="instruction">JR NZ,<a href="BBF7.html#bc37">DrawRoom_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -481,7 +477,7 @@ Stash the X/ Y position on the stack.
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_5</td>
+<td class="asm-label">DrawRoom_2</td>
 <td class="address-2"><span id="bc49"></span>BC49</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
@@ -498,7 +494,7 @@ Stash the X/ Y position on the stack.
 <td class="instruction">LD ($96B2),A</td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_6</td>
+<td class="asm-label">DrawRoom_3</td>
 <td class="address-2"><span id="bc4e"></span>BC4E</td>
 <td class="instruction">ADD A,C</td>
 <td class="comment-1" rowspan="1"></td>
@@ -506,7 +502,7 @@ Stash the X/ Y position on the stack.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc4f"></span>BC4F</td>
-<td class="instruction">DJNZ <a href="BBF7.html#bc4e">DrawRoom_6</a></td>
+<td class="instruction">DJNZ <a href="BBF7.html#bc4e">DrawRoom_3</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -548,7 +544,7 @@ Stash the X/ Y position on the stack.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc58"></span>BC58</td>
-<td class="instruction">JR <a href="BBF7.html#bc37">DrawRoom_3</a></td>
+<td class="instruction">JR <a href="BBF7.html#bc37">DrawRoom_0</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -564,7 +560,7 @@ Stash the X/ Y position on the stack.
 <td class="comment-1" rowspan="1"><span class="register">B</span>=08.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_7</td>
+<td class="asm-label">DrawRoom_4</td>
 <td class="address-2"><span id="bc5f"></span>BC5F</td>
 <td class="instruction">ADD HL,HL</td>
 <td class="comment-1" rowspan="1"></td>
@@ -578,7 +574,7 @@ Stash the X/ Y position on the stack.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bc61"></span>BC61</td>
-<td class="instruction">JR NC,<a href="BBF7.html#bc64">DrawRoom_8</a></td>
+<td class="instruction">JR NC,<a href="BBF7.html#bc64">DrawRoom_5</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -588,9 +584,9 @@ Stash the X/ Y position on the stack.
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_8</td>
+<td class="asm-label">DrawRoom_5</td>
 <td class="address-2"><span id="bc64"></span>BC64</td>
-<td class="instruction">DJNZ <a href="BBF7.html#bc5f">DrawRoom_7</a></td>
+<td class="instruction">DJNZ <a href="BBF7.html#bc5f">DrawRoom_4</a></td>
 <td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
@@ -603,7 +599,7 @@ Stash the X/ Y position on the stack.
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="BBBB.html">BBBB</a>
+Prev: <a href="BBDD.html">BBDD</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#bbf7">Map</a></td>
 <td class="next">
