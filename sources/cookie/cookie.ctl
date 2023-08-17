@@ -876,7 +876,7 @@ N $7043 Flash 2UP score label.
   $7043,$03 #REGhl=#N($00,$02,$03),#N($D8,$02,$03) (position of the 2UP score label).
   $7046,$02 Jump to #R$7029.
 
-c $7048
+c $7048 Game Play Entry
 @ $7048 label=GamePlayEntry
   $7048,$07 If #R$5F25 is zero, jump to #R$706B.
   $704F,$01 Decrement #R$5F25 by one.
@@ -890,12 +890,12 @@ N $7058 Handle turning off flash for 1UP score label.
   $705E,$03 Call #R$7617.
   $7061,$03 Call #R$6882.
   $7064,$02 Jump to #R$706B.
-
 N $7066 Handle turning off flash for 2UP score label.
 @ $7066 label=Game2UP_UnsetFlash
   $7066,$03 #REGhl=#N($00,$02,$03),#N($D8,$02,$03) (position of the 2UP score label).
   $7069,$02 Jump to #R$705B.
 
+c $706B Game Play Start
 @ $706B label=GamePlay_Start
 N $706B Init.
   $706B,$03 Call #R$76D0.

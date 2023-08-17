@@ -913,15 +913,15 @@ N $968D Attributes.
 
 g $9692 Game Options
 @ $9692 label=GameOptions
-D $9692 #TABLE(default,centre,centre,centre,centre)
+D $9692 #TABLE(default,centre,centre,centre)
 . { =h Byte Value | =h Binary | =h Option }
-. { #N$00 | #EVAL($00, $02, $08) | 1 Player Game }
-. { #N$01 | #EVAL($01, $02, $08) | 2 Player Game }
-. { #N$02 | #EVAL($02, $02, $08) | Kempston Joystick }
-. { #N$04 | #EVAL($04, $02, $08) | Cursor Joystick }
-. { #N$06 | #EVAL($06, $02, $08) | Interface II Joystick }
+. { #N$00 | #EVAL($00,$02,$08) | 1 Player Game }
+. { #N$01 | #EVAL($01,$02,$08) | 2 Player Game }
+. { #N$02 | #EVAL($02,$02,$08) | Kempston Joystick }
+. { #N$04 | #EVAL($04,$02,$08) | Cursor Joystick }
+. { #N$06 | #EVAL($06,$02,$08) | Interface II Joystick }
 . TABLE#
-B $9692,$01
+  $9692,$01
 
 g $9693 Counter
 @ $9693 label=CounterLow
@@ -935,30 +935,34 @@ g $9696 Last Frame
 
 g $9697 Frame Updated
 @ $9697 label=FrameUpdated
-D $9697 Has the frame been updated? #N$00=No #N$01=Yes.
+D $9697 Has the frame been updated?
+. #TABLE(default,centre,centre) { =h Value | =h Updated? }
+. { #N$00 | Not updated }
+. { #N$FF | Updated }
+. TABLE#
 
 g $9698 1UP Score
 D $9698 3-byte representation of the score.
 @ $9698 label=1UP_Score_1
-B $9698,$01 Byte #1.
+  $9698,$01 Byte #1.
 @ $9699 label=1UP_Score_2
-B $9699,$01 Byte #2.
+  $9699,$01 Byte #2.
 @ $969A label=1UP_Score_3
-B $969A,$01 Byte #3.
+  $969A,$01 Byte #3.
 
 g $969B 2UP Score
 D $969B 3-byte representation of the score.
 @ $969B label=2UP_Score_1
-B $969B,$01 Byte #1.
+  $969B,$01 Byte #1.
 @ $969C label=2UP_Score_2
-B $969C,$01 Byte #2.
+  $969C,$01 Byte #2.
 @ $969D label=2UP_Score_3
-B $969D,$01 Byte #3.
+  $969D,$01 Byte #3.
 
 g $969E Flag: Active Player
 @ $969E label=Flag_ActivePlayer
 D $969E Which player is currently active.
-. $969E #TABLE(default,centre,centre) { =h Value | =h Player }
+. #TABLE(default,centre,centre) { =h Value | =h Player }
 . { #N$00 | 1UP }
 . { #N$FF | 2UP }
 . TABLE#
@@ -995,13 +999,30 @@ g $96A8 Current Menu Item Colour attribute
 
 b $96A9
   $96AB
+  $96AC
   $96AD
-  $96B0
-  $96B1
+  $96AE
+  $96AF
+
+g $96B0 Orchid Effect Timer
+@ $96B0 label=OrchidEffectTimer
+  $96B0,$01
+
+g $96B1
   $96B2
   $96B3
   $96B4
-  $96B5
+
+g $96B5 Game Delay Timer
+@ $96B5 label=GameDelayTimer
+D $96B5 At the beginning of each player turn there is a delay to allow the player to be ready for play.
+. #TABLE(default,centre,centre)
+. { =h Value | =h Game Mode }
+. { #N$80 | 1UP }
+. { #N$FF | 2UP }
+. TABLE#
+. The larger delay for a 2UP game is useful for swapping players controls.
+
   $96B6
 
 g $96B7 Flag: Hall Of Fame
@@ -1016,6 +1037,11 @@ W $96B8
 
 g $96BA
 
+g $96BB High Score Position
+D $96BB Used when calculating the players position in the high score table.
+@ $96BB label=HighScorePosition
+  $96BB,$01
+
 g $96BC Active Player:
 
 g $96BD Active Player: Lives
@@ -1023,7 +1049,13 @@ g $96BD Active Player: Lives
 
 g $96BE
 
-g $96BF
+g $96BF Visited Rooms
+@ $96BF label=VisitedRooms
+E $96BF View the equivalent code in;
+. #LIST
+. { #ATICATAC$5E40 }
+. LIST#
+  $96BF,$20,$01
 
 g $96DF Inactive Player:
 
@@ -1033,13 +1065,25 @@ g $96E0 Inactive Player Lives
 
 g $96E1
 
-g $9702
+g $9702 Immortal Data
+@ $9702 label=ImmortalData
   $9703
+  $9705
   $970D
   $970E
-  $9792
 
-b $97FE Amulet Data
+g $9792 Nastie Data
+@ $9792 label=NastieData
+  $9792,$0C
+L $9792,$0C,$06
+
+g $97DA Orchid Data
+@ $97DA label=OrchidData
+
+g $97E6 Object Data
+@ $97E6 label=ObjectData
+
+g $97FE Amulet Data
 @ $97FE label=AmuletData
 N $97FE Amulet part: #N(#EVAL((#PC - $97FE) / $0C) + $01).
   $97FE,$0C
@@ -1151,7 +1195,7 @@ N $9A4C
   $9A4C,$03 #REGa=#R$9702.
   $9A54,$04 #REGix=#R$9792.
   $9A58,$03 #REGde=#N($000C,$04,$04).
-  $9A5B,$02 #REGb=#N$06.
+  $9A5B,$02 #REGb=#N$06 (counter).
   $9A5D,$03 #REGa=#REGix+#N$00 (sprite reference).
   $9A60,$03 If #REGa is zero, jump to #R$9A68.
   $9A63,$02 #REGix=#REGix+#REGde.
@@ -1159,11 +1203,11 @@ N $9A4C
   $9A67,$01 Return.
 
 c $9A68
-  $9A68,$03 #REGhl=#N$9792.
-  $9A6B,$02 #REGb=#N$06.
+  $9A68,$03 #REGhl=#R$9792.
+  $9A6B,$02 #REGb=#N$06 (counter).
   $9A6D,$02 #REGd=#N$00.
-  $9A6F,$04 #REGe=#N$9703.
-  $9A73,$01
+  $9A6F,$04 #REGe=#R$9703.
+  $9A73,$01 #REGa=.
   $9A7E,$02 #REGa=#N$0C.
   $9A80,$03 Call #R$9B37.
   $9A8A,$03 Call #R$9B0D.
@@ -1184,7 +1228,8 @@ c $9A68
 
 b $9AB8
 @ $9AB8 label=ColourBytes
-  $9AB8,$04
+  $9AB8,$01 TODO - make a colour block to demo the attribute: #PEEK(#PC)
+L $9AB8,$01,$04
 
 c $9ABC
 
@@ -1208,17 +1253,26 @@ c $9B0D
   $9B33,$03 Call #R$B81C.
   $9B36,$01 Return.
 
-c $9B37
+c $9B37 Add: #REGhl + #REGa
+@ $9B37 label=Add_HL_A
+  $9B37,$02 #REGl=#REGa+#REGl.
+  $9B39,$04 #REGh=#REGh+any carry.
   $9B3D,$01 Return.
 
 w $9B3E Jump Table
 @ $9B3E label=JumpTable
   $9B3E,$C4,$02
 
-c $9CC6
+c $9CC6 Print Rooms Visited
+@ $9CC6 label=PrintRoomsVisited
+E $9CC6 View the equivalent code in;
+. #LIST
+. { #ATICATAC$96C9 }
+. LIST#
   $9CC6,$03 #REGde=#N($0000,$04,$04).
   $9CC9,$03 #REGbc=#N$0820.
   $9CCC,$03 #REGhl=#R$96BF.
+  $9CCF,$01 Stash #REGbc on the stack.
   $9CDC,$03 #REGa=#R$970D.
   $9CDF,$02 #REGb=#N$04.
   $9CE7,$03 #REGbc=#R$6276.
@@ -1232,12 +1286,21 @@ c $9CC6
 
   $9D20,$03 Jump to #R$B5E4.
 
-c $9D23
+c $9D23 Visit Room
+@ $9D23 label=VisitRoom
+E $9D23 View the equivalent code in;
+. #LIST
+. { #ATICATAC$96AF }
+. LIST#
   $9D23,$04 #REGc=#REGix+#N$01 (current location).
   $9D2A,$02,b$01 Keep only bits 0-4.
+  $9D2C,$03 Create an offset in #REGhl.
+  $9D2F,$01 #REGa=#REGix+#N$01 (current location).
   $9D33,$02,b$01 Keep only bits 3-5.
   $9D35,$02,b$01 Set bits 1-2, 6-7.
-  $9D3A,$03 #REGbc=#N$96BF.
+  $9D37,$03 Write this value to #R$9D3E(#N$9D3F) which updates the bit to set.
+  $9D3A,$04 #REGhl=#R$96BF+#REGbc.
+  $9D3E,$02 With above, set the bit to mark the room as having been visited.
   $9D40,$01 Return.
 
 c $9D41
@@ -1246,12 +1309,16 @@ N $9D41 Each block of amulet data is #N$0B bytes long.
   $9D44,$03 #REGhl=#R$97FE.
 N $9D47 There are four pieces of the amulet.
   $9D47,$02 #REGb=#N$04.
-  $9D49,$01 #REGa.
+  $9D49,$01 #REGa=#REGhl (a byte of amulet data).
+  $9D4A,$01 Increment #REGhl by one.
+  $9D4B,$03 If #REGa is zero, jump to #R$9D66.
+  $9D4E,$01 #REGa=#REGhl (a byte of amulet data).
+  $9D4F,$02,b$01 Keep only bits 0-3.
   $9D51,$01 Store the result in #REGc.
   $9D52,$03 #REGa=#REGix+#N$01 (current location).
-  $9D4F,$02,b$01 Keep only bits 0-3.
   $9D55,$02,b$01 Keep only bits 0-3.
   $9D5B,$02,b$01 Keep only bits 4-7.
+  $9D5E,$03 #REGa=#REGix+#N$01 (current location).
   $9D61,$02,b$01 Keep only bits 4-7.
   $9D6A,$01 Return.
 
@@ -1262,6 +1329,20 @@ N $9D47 There are four pieces of the amulet.
   $9D90,$01 Return.
 
 c $9D91
+  $9D91,$03 #REGa=#R$9703.
+  $9D9A,$05 Write #N$17 to #R$9D9A.
+  $9D9F,$03 Call #R$BB0B.
+  $9DA2,$03 #REGa=#R$9702.
+  $9DB8,$03 Call #R$A44B.
+  $9DC3,$03 #REGbc=#N$170F.
+  $9DC6,$03 Call #R$B81C.
+  $9DC9,$03 Call #R$AAED.
+  $9DD9,$03 Call #R$9E64.
+  $9DEC,$03 #REGbc=#N$130F.
+  $9DEF,$03 Call #R$AB01.
+  $9DF8,$02,b$01 Keep only bit 0.
+  $9DFE,$03 Call #R$AD5D.
+  $9E01,$03 Jump to #R$BECC.
 
 c $9E04
   $9E04,$03 Call #R$A5A9.
@@ -1274,6 +1355,7 @@ c $9E09
 c $9E0E
   $9E15,$02,b$01 Keep only bit 0.
   $9E1C,$02,b$01 Keep only bits 0-2.
+  $9E1E,$03 Call #R$9E53.
   $9E2E,$01 Return.
 
 c $9E2F
@@ -1296,13 +1378,46 @@ c $9E64
   $9E71,$01 Return.
 
 c $9E72
+  $9E72,$03 Call #R$BB0B.
+  $9E75,$03 Call #R$AD93.
+  $9E78,$05 Write #N$20 to #R$96AD.
+  $9E83,$03 Call #R$AFE8.
+  $9E86,$03 #REGbc=#N$171F.
+  $9E89,$03 Call #R$B81C.
+  $9E8C,$03 Call #R$AAED.
+
+  $9E96,$03 Jump to #R$AD46.
+
+  $9EA7,$02,b$01 Keep only bit 0.
+  $9EA9,$01 Store the result in #REGd.
+  $9EAA,$03 #REGbc=#N$0F1C.
+  $9EAD,$03 Call #R$AB36.
+  $9EB0,$03 Jump to #R$AD46.
+
+  $9EB7,$03 Call #R$A630.
+
+  $9EC9,$03 Call #R$BB0B.
+  $9ECC,$05 Write #N$20 to #R$96AD.
+  $9ED5,$02,b$01 Keep only bit 0.
+  $9ED8,$03 #REGbc=#N$0F1C.
+  $9EDB,$06 If #R$96B5 is not zero, jump to #R$9F01.
+  $9EEA,$03 Call #R$AB36.
+  $9EF4,$03 Call #R$ADA2.
+  $9EFB,$03 Call #R$AD5D.
+  $9EFE,$03 Jump to #R$BF17.
+
+  $9F01,$03 Call #R$AB0E.
+  $9F04,$02 Jump to #R$9EED.
 
 c $9F6A Game Complete
 @ $9F6A label=GameComplete
+N $9F6A Clear down the play area.
   $9F6A,$03 Call #R$BB7C.
   $9F6D,$03 Call #R$BB5C.
+N $9F70 Display the "Game Complete" screen.
   $9F70,$03 #REGhl=#R$C386.
   $9F73,$03 Call #R$BBF7.
+N $9F76 Display the "Game Complete" messaging.
   $9F76,$03 #REGde=#R$9F91.
 N $9F79 There are six lines of text.
   $9F79,$02 #REGb=#N$06.
@@ -1456,6 +1571,28 @@ B $A182,$01 Attribute.
 T $A183,$09,$08:$01 "#STR(#PC)".
 
 c $A18C
+  $A18C,$03 #REGa=#REGix+#N$01 (current location).
+  $A18F,$04 If this is not location #N$88 (room #N$07) then jump to #R$A19F.
+  $A193,$03 #REGa=#REGix+#N$04 (sprite y co-ordinate).
+  $A19C,$03 Jump to #R$9F6A.
+
+  $A1A8,$03 Jump to #R$A207.
+
+  $A1B2,$03 #REGbc=#N$0C0C.
+  $A1B5,$03 #REGa=#R$9693.
+  $A1B8,$02,b$01 Keep only bit 0.
+  $A1BC,$03 #REGa=#REGix+#N$05 (entity colour).
+  $A1C0,$02,b$01 Keep only bits 0-1.
+  $A1C2,$02,b$01 Set bits 2 and 6.
+  $A1C4,$03 Write #REGa back to #REGix+#N$05 (entity colour).
+  $A1C7,$03 Call #R$AB01.
+
+  $A1E6,$03 Call #R$B919.
+  $A1E9,$04 Write #N$00 to #REGix+#N$00 (sprite reference).
+
+N $A1ED Add #N$7500 points to the players score.
+  $A1ED,$03 #REGbc=#N$7500.
+  $A1F0,$03 Jump to #R$B5A9.
 
 c $A1FF Pause
 @ $A1FF label=Pause
@@ -1467,6 +1604,7 @@ c $A1FF Pause
 c $A207
   $A207,$03 Call #R$BB7C.
   $A20A,$03 Call #R$BB5C.
+  $A20D,$04 #REGc=#REGix+#N$0B.
   $A211,$03 #REGhl=#R$C374.
   $A220,$05 Write #N$01 to #R$96B2.
   $A22D,$03 Call #R$BC0B.
@@ -1517,12 +1655,37 @@ c $A2BD
   $A2C4,$03 #REGa=#R$9693.
   $A2C7,$02,b$01 Keep only bits 0-4.
   $A2C9,$01 Store the result in #REGd.
+  $A2CA,$03 #REGbc=#N($0200,$04,$04).
+  $A2DB,$01 Return.
+
+  $A2E0,$02,b$01 Keep only bits 6-7.
+  $A2E6,$02,b$01 Keep only bits 0-3.
+  $A2EE,$03 #REGa=#N$9695.
+  $A2F6,$02 Jump to #R$A2D6.
+
+c $A2F8
+
+c $A305
+N $A305 This may be data?
+
+c $A31A
+
+c $A323
+
+c $A33B
+  $A39B,$01 Return.
+  $A3A6,$01 Return.
 
 b $A3A7
 
 c $A3B7
 
 c $A3C5
+  $A3C5,$03 #REGa=#R$9703.
+  $A3CE,$03 Call #R$BB0B.
+  $A3D1,$03 Call #R$A3B7.
+  $A3DA,$03 Call #R$BF08.
+  $A3DD,$03 Jump to #R$AD5D.
 
 c $A3E0
   $A3E0,$03 #REGa=#R$9703.
@@ -1544,31 +1707,62 @@ b $A41A
 L $A41A,$01,$10
 
 c $A42A
+  $A42A,$03 #REGa=#R$9703.
+  $A432,$03 Call #R$BB0B.
+  $A435,$03 Increment #REGix+#N$00 (sprite reference) by one.
+  $A438,$03 Jump to #R$AD5D.
 
 c $A43B
+  $A43B,$03 #REGa=#R$9703.
+  $A443,$03 Call #R$B919.
+@ $A446 label=RemoveExplosion
+  $A446,$04 Set #REGix+#N$00 (sprite reference) to #N$00.
+  $A44A,$01 Return.
 
 c $A44B
 
 c $A493
+  $A49C,$04 Set #REGix+#N$00 (sprite reference) to #N$00.
   $A4A0,$01 Return.
 
 c $A4A1
   $A4A1,$05 Write #N$10 to #R$96B4.
   $A4A6,$03 Call #R$BEEE.
   $A4A9,$03 Call #R$A4B3.
+  $A4AC,$04 Set #REGix+#N$00 (sprite reference) to #N$08 (#SPRITENAME$08 | #R$D747).
   $A4B0,$03 Jump to #R$AD5D.
 
 c $A4B3
+  $A4B3,$03 #REGa=#REGix+#N$00 (sprite reference).
+  $A4B6,$03
   $A4B9,$02,b$01 Keep only bits 4-5.
+  $A4BB,$03 #REGc=#REGa+#N$65.
   $A4BE,$02 #REGb=#N$01.
   $A4C0,$03 Jump to #R$B5A9.
 
 c $A4C3
+  $A4C3,$03 #REGa=#REGix+#N$06.
   $A4C8,$02,b$01 Keep only bit 1.
+  $A4CA,$01 Store the result in #REGc.
+  $A4CB,$03 #REGa=#REGix+#N$00 (sprite reference).
   $A4CE,$02,b$01 Keep only bits 0, 2-7.
+  $A4D1,$02,b$01
+  $A4D3,$03 Write #REGa to  #REGix+#N$00 (sprite reference).
   $A4D6,$01 Return.
 
 c $A4D7
+  $A4D7,$03 #REGa=#R$9703.
+  $A4DF,$05 Write #N$17 to #R$96AD.
+  $A4E4,$03 Call #R$BB0B.
+  $A4E7,$03 #REGa=#R$9702.
+  $A4F0,$03 #REGbc=#N$3008.
+  $A4F3,$03 #REGa=#R$9705.
+  $A503,$03 Call #R$AFD0.
+  $A52D,$03 #REGbc=#N$1717.
+  $A530,$03 Call #R$B81C.
+  $A539,$03 #REGbc=#N$1313.
+  $A53C,$03 Call #R$AB36.
+  $A542,$03 Jump to #R$A4A6.
 
 c $A545
   $A545,$03 Call #R$A5A9.
@@ -1579,20 +1773,31 @@ c $A54A
   $A54D,$02 Jump to #R$A52D.
 
 c $A54F
+  $A54F,$03 #REGa=#R$9703.
   $A558,$05 Write #N$17 to #R$96AD.
   $A55D,$03 Call #R$BB0B.
+  $A560,$03 #REGa=#R$9702.
+  $A570,$03 #REGa=#REGix+#N$06.
   $A578,$03 Call #R$A44B.
   $A583,$03 #REGbc=#N$1717.
   $A586,$03 Call #R$B81C.
   $A589,$03 Call #R$AAED.
+  $A58F,$03 #REGa=#REGix+#N$00 (sprite reference).
+  $A592,$02,b$01
   $A59D,$03 #REGbc=#N$1313.
   $A5A0,$03 Call #R$AB36.
   $A5A6,$03 Jump to #R$A4A6.
 
 c $A5A9
+  $A5A9,$03 #REGa=#REGix+#N$06.
+  $A5B1,$03 #REGa=#REGix+#N$00 (sprite reference).
+  $A5B4,$02,b$01 Reset bit 2.
+  $A5B6,$03 Write #REGa to #REGix+#N$00 (sprite reference).
   $A5B9,$01 Return.
 
 c $A5BA
+  $A5BA,$03 #REGa=#REGix+#N$07.
+  $A5BF,$03 Write #REGa to #REGix+#N$07.
   $A5C2,$01 Return.
 
 c $A5C3
@@ -1604,8 +1809,11 @@ c $A5C8
   $A5CB,$02 Jump to #R$A583.
 
 c $A5CD
+  $A5CD,$03 #REGa=#REGix+#N$06.
+  $A5D5,$03 #REGa=#R$9695.
   $A5D8,$02,b$01 Keep only bits 0-2.
   $A5DD,$03 #REGbc=#R$A601.
+  $A5ED,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
   $A5F0,$02,b$01 Keep only bits 0-2.
   $A5FA,$01 Return.
 
@@ -1621,13 +1829,28 @@ c $A609
   $A617,$03 Write the result to #REGix+#N$02.
   $A61A,$01 Return.
 
-c $A61B
+c $A61B Handler: Stand Up (After Yellow Orchid)
+@ $A61B label=HandlerYellowOrchid_StandUp
   $A61B,$03 Call #R$BB0B.
   $A61E,$03 Call #R$AE7A.
+  $A621,$02 Jump to #R$A62D if the orchid counter is not yet zero.
   $A623,$03 #REGa=#REGix+#N$00 (sprite reference).
+N $A626 Number between #N$00-#N$07.
   $A626,$02,b$01 Keep only bits 0-2.
+N $A628 Add #N$16.
   $A628,$02,b$01 Set bit 4.
+N $A62A #TABLE(default,centre,centre)
+. { =h Sprite ID | =h Sprite Name | =h Sprite Address }
+. { #N$16 | #SPRITENAME$16 | #R$C77A }
+. { #N$17 | #SPRITENAME$17 | #R$C74C }
+. { #N$18 | #SPRITENAME$18 | #R$C40C }
+. { #N$19 | #SPRITENAME$19 | #R$C438 }
+. { #N$1A | #SPRITENAME$1A | #R$C464 }
+. { #N$1B | #SPRITENAME$1B | #R$C438 }
+. { #N$1C | #SPRITENAME$1C | #R$C490 }
+. TABLE#
   $A62A,$03 Write the result to #REGix+#N$00 (sprite reference).
+@ $A62D label=HandlerYellowOrchid_StandUp_Skip
   $A62D,$03 Jump to #R$AF7A.
 
 c $A630
@@ -1916,7 +2139,8 @@ c $AC28
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
 . { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
-. { #N$7E | SPACE | FULL-STOP | M | N | B | Shift | Z | X | C | V }
+. { =r2 #N$7E | SPACE | FULL-STOP | M | N | B }
+. { Shift | Z | X | C | V }
 . TABLE#
   $AC32,$01 Flip the bits.
   $AC33,$02,b$01 Keep only bits 1-4.
@@ -1924,7 +2148,8 @@ c $AC28
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
 . { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
-. { #N$7E | SPACE | FULL-STOP | M | N | B | Shift | Z | X | C | V }
+. { =r2 #N$7E | SPACE | FULL-STOP | M | N | B }
+. { Shift | Z | X | C | V }
 . TABLE#
 
   $AC40,$04 #HTML(#REGhl=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
@@ -1954,6 +2179,54 @@ c $AC28
 b $AC77
 
 c $AD07
+  $AD07,$03 Call #R$BB0B.
+  $AD0A,$03 Call #R$AD93.
+  $AD0D,$05 Write #N$20 to #R$96AD.
+  $AD12,$03 Call #R$AFE8.
+  $AD15,$03 #REGbc=#N$171F.
+  $AD18,$03 Call #R$B81C.
+  $AD1B,$03 Call #R$AAED.
+  $AD20,$02 #REGa=#N$30.
+  $AD22,$03 Call #R$AD86.
+  $AD25,$03 Call #R$ADA2.
+
+  $AD32,$02,b$01 Keep only bit 0.
+  $AD34,$01 Store the result in #REGd.
+  $AD35,$03 #REGbc=#N$0F1C.
+  $AD38,$03 Call #R$AB36.
+
+  $AD43,$03 Call #R$ADA2.
+
+  $AD54,$03 Jump to #R$B8F5.
+
+c $AD57
+  $AD57,$03 #REGa=#R$96A2.
+  $AD5D,$03 Call #R$B9A9.
+  $AD60,$03 Jump to #R$BB24.
+  $AD63,$03 Call #R$B919.
+  $AD66,$03 Jump to #R$BB24.
+
+
+c $AD69
+  $AD92,$01 Return.
+
+c $AD93
+  $AD93,$03 #REGa=#R$9693.
+  $AD96,$02,b$01 Keep only bit 0.
+  $AD99,$03 #REGa=#REGix+#N$00 (sprite reference).
+  $AD9C,$02,b$01 Toggle.
+  $AD9E,$03 Write #REGa to #REGix+#N$00 (sprite reference).
+  $ADA1,$01 Return.
+
+c $ADA2
+  $ADA2
+  $ADB2,$01 Return.
+
+c $ADB3
+  $ADB3,$03 #REGa=#REGix+#N$00 (sprite reference).
+  $ADB6,$02,b$01 Toggle.
+  $ADB8,$03 Write #REGa to #REGix+#N$00 (sprite reference).
+  $ADBB,$02 Jump to #R$ADAA.
 
 c $ADBD
 
@@ -1963,19 +2236,51 @@ c $ADBF
   $ADCA,$05 Write #N$18 to #R$96AD.
   $ADCF,$01 Return.
 
-c $ADD0
+c $ADD0 Player Movement
+@ $ADD0 label=PlayerMovement
   $ADD0,$03 Call #R$BB0B.
   $ADD3,$03 Call #R$A18C.
-
+  $ADD6,$05 Write #N$10 to #R$96AD.
+N $ADE2 Initialise the player movement (#N($0000,$04,$04) == no movement).
   $ADE2,$03 #REGde=#N($0000,$04,$04).
+N $ADE5
   $ADE5,$03 Call #R$B0A3.
-
+N $ADE8 Check if the player is under the influence of an orchid.
+  $ADE8,$03 #REGa=the colour of the player.
+  $ADEB,$04 If the player is not using attribute #N$47 (white) then jump to #R$AE34.
+N $ADEF Controllers for player controls.
+N $ADEF Handle "fire".
+  $ADEF,$04 Jump to #R$AE34 if "fire" was pressed.
+N $ADF3 Handle "right".
+  $ADF3,$04 Jump to #R$ADFB if "right" was pressed.
+N $ADF7 Update movement for moving right.
+  $ADF7,$04 #REGe=#REGe+#N$20.
+N $ADFB Handle "left".
+@ $ADFB label=PlayerMovement_Left
+  $ADFB,$04 Jump to #R$AE03 if "left" was pressed.
+N $ADFF Update movement for moving left.
+  $ADFF,$04 #REGe=#REGe-#N$20.
+N $AE03 Handle "down".
+@ $AE03 label=PlayerMovement_Down
+  $AE03,$04 Jump to #R$AE0B if "down" was pressed.
+N $AE07 Update movement for moving down.
+  $AE07,$04 #REGd=#REGd-#N$20.
+N $AE0B Handle "up".
+@ $AE0B label=PlayerMovement_Up
+  $AE0B,$04 Jump to #R$AE13 if "up" was pressed.
+N $AE0F Update movement for moving up.
+  $AE0F,$04 #REGd=#REGd+#N$20.
+N $AE13 Update the player Actor Entity.
+  $AE13,$03 Write #REGe to #REGix+#N$06.
+  $AE16,$03 Write #REGd to #REGix+#N$07.
+N $AE19
   $AE19,$03 Call #R$AFE8.
   $AE1C,$03 #REGbc=#N$160E.
   $AE1F,$03 Call #R$B81C.
   $AE22,$03 Call #R$AE4B.
   $AE25,$03 Call #R$AAED.
-
+  $AE28,$03 Write #REGe to #REGix+#N$03 (sprite x co-ordinate).
+  $AE2B,$03 Write #REGd to #REGix+#N$04 (sprite y co-ordinate).
   $AE31,$03 Jump to #R$AD5D.
 
 c $AE34
@@ -1986,26 +2291,168 @@ c $AE47
   $AE49,$02 Jump to #R$AE3C.
 
 c $AE4B
+  $AE4B,$03 #REGa=#REGix+#N$06.
+  $AE54,$03 #REGa=#REGix+#N$00 (sprite reference).
+  $AE57,$02,b$01 Set bit 3.
+  $AE59,$03 Write the result back to #REGix+#N$00 (sprite reference).
+  $AE5C,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $AE5F,$02,b$01 Keep only bits 0-1.
+  $AE62,$03 #REGc=#REGix+#N$00 (sprite reference).
+  $AE65,$03 #REGa=#R$9695.
+  $AE68,$02,b$01 Keep only bits 0-2.
+  $AE6C,$02,b$01 Keep only bits 3-7.
   $AE72,$01 Return.
   $AE76,$02,b$01 Keep only bits 0-2, 4-7.
   $AE78,$02 Jump to #R$AE59.
 
-c $AE7A
+c $AE7A Handler: Orchid Timer
+@ $AE7A label=HandlerOrchidTimer
+  $AE7A,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $AE7D,$02,b$01 Keep only bit 0.
+  $AE7F,$01 Return every other FRAME.
+  $AE80,$03 #REGa=#R$96B0.
+  $AE83,$02 Return if #R$96B0 is zero.
+  $AE85,$01 Decrease #REGa by one.
+  $AE86,$03 Write #REGa back to #R$96B0.
+  $AE89,$01 Return if #REGa is not zero.
+  $AE8A,$04 Set #REGix+#N$05 (entity colour) to #N$47 (white).
+  $AE8E,$01 Return.
 
-c $AE8F
+c $AE8F Handler: Yellow Orchid
+@ $AE8F label=HandlerYellowOrchid
+N $AE8F Fetch Sabremans current sprite frame.
+  $AE8F,$03 #REGa=#REGix+#N$00 (sprite reference).
+N $AE92 This will leave either #N$00 or #N$04
+  $AE92,$02,b$01 Keep only bit 2.
+N $AE94 Add on #N$43.
+  $AE94,$02,b$01 Set bits 0-1, 6.
+N $AE96 The resulting sprite frame will be either #R$D2B0(#SPRITENAME$43) or #R$D32A(#SPRITENAME($47)).
+  $AE96,$03 Write the result back to #REGix+#N$00 (sprite reference).
+  $AE99,$05 Write #N$60 to #R$96B0.
+  $AE9E,$03 Jump to #R$A61E.
 
-c $AEA1
+c $AEA1 Flash Score Label
+E $AEA1 View the equivalent code in;
+. #LIST
+. { #COOKIE$7020 }
+. LIST#
+@ $AEA1 label=ScoreLabelFlash
+N $AEA1 Controller for handling whether to action 1UP or 2UP score label.
+  $AEA2,$02,b$01 Keep only bits 0-3.
+  $AEA7,$06 If #R$969E is not zero, jump to #R$AECA.
+N $AEAD Flash 1UP score label.
+  $AEAD,$03 #REGhl=#N($00,$02,$03),#N($10,$02,$03) (position of the 1UP score label).
+N $AEB0 Set flash state for the 3-attributes of the score label.
+@ $AEB0 label=FlashText
+  $AEB0,$03 Call #R$B8DD.
+  $AEB3,$02 #REGb=#N$03 (counter for the three letters in a score label).
+@ $AEB5 label=FlashText_Loop
+  $AEB5,$01 Fetch the attribute byte.
+  $AEB6,$02,b$01 Ensure bit 7 is set (the flash bit).
+  $AEB8,$01 Write the attribute byte back.
+  $AEB9,$01 Increase the attribute pointer by one.
+  $AEBA,$02 Decrease counter by one and loop back to #R$AEB5 until counter is zero.
   $AEBC,$01 Return.
+N $AEBD Unset flash state for the 3-attributes of the score label.
+@ $AEBD label=UnsetFlashText
+  $AEBD,$03 Call #R$B8DD.
+  $AEC0,$02 #REGb=#N$03 (counter for the three letters in a score label).
+@ $AEC2 label=UnsetFlashText_Loop
+  $AEC2,$01 Fetch the attribute byte.
+  $AEC3,$02,b$01 Keep only bits 0-6 (i.e. everything except the flash bit).
+  $AEC5,$01 Write the attribute byte back.
+  $AEC6,$01 Increase the attribute pointer by one.
+  $AEC7,$02 Decrease counter by one and loop back to #R$AEC2 until counter is zero.
+  $AEC9,$01 Return.
+N $AECA Flash 2UP score label.
+@ $AECA label=FlashScoreLabel2UP
+  $AECA,$03 #REGhl=#N($00,$02,$03),#N($D8,$02,$03) (position of the 2UP score label).
+  $AECD,$02 Jump to #R$AEB0.
 
-c $AEBD
+c $AECF Game Play Entry
+E $AECF View the equivalent code in;
+. #LIST
+. { #COOKIE$7048 }
+. LIST#
+@ $AECF label=GamePlayEntry
+  $AECF,$07 If #R$96B5 is zero, jump to #R$AEEF.
+  $AED6,$01 Decrement #R$96B5 by one.
+  $AED7,$02 Jump to #R$AEA1 if the delay timer is still active.
+  $AED9,$06 If #R$969E says that 2UP is the active player, jump to#R$AEEA.
+N $AEDF Handle turning off flash for 1UP score label.
+  $AEDF,$03 #REGhl=#N($00,$02,$03),#N($10,$02,$03) (position of the 1UP score label).
+@ $AEE2 label=Game1UP_UnsetFlash
+  $AEE2,$03 Call #R$AEBD.
+  $AEE5,$03 Call #R$B919.
+  $AEE8,$02 Jump #R$AEEF.
+N $AEEA Handle turning off flash for 2UP score label.
+@ $AEEA label=Game2UP_UnsetFlash
+  $AEEA,$03 #REGde=#N($00,$02,$03),#N($D8,$02,$03) (position of the 2UP score label).
+  $AEED,$02 Jump #R$AEE2.
 
-c $AECA
+c $AEEF Game Play Start
+@ $AEEF label=GamePlay_Start
+  $AEEF,$03 Call #R$BB0B.
+  $AEF2,$03 Call #R$A18C.
+N $AEF5 Is Sabreman yellow?
+  $AEF5,$03 #REGa=#REGix+#N$05 (entity colour).
+  $AEF8,$04 If the colour is #N$46, jump to #R$AE8F.
+  $AEFC,$03 Call #R$AE7A.
+  $AEFF,$05 Write #N$10 to #R$96AD.
+  $AF0B,$03 #REGde=#N($0000,$04,$04).
+  $AF0E,$03 Call #R$B0A3.
+N $AF11 Is Sabreman magenta?
+  $AF11,$03 #REGa=#REGix+#N$05 (entity colour).
+  $AF14,$04 If the colour is not #N$43, jump to #R$AF1C.
+N $AF18 Handles reversing the controls as a result of the magenta orchid.
+  $AF18,$01 #REGa=#REGc.
+  $AF19,$02,b$01
+  $AF1B,$01 #REGc=#REGa.
+@ $AF1C label=GamePlay_Controls
+  $AF1C,$01 #REGa=#REGc.
+  $AF1D,$03 Write #REGa to #R$96AC.
+  $AF20,$01 #REGa=#REGe.
+  $AF21,$02 #REGb=#N$07.
+  $AF3A,$03 Call #R$AFAC.
+  $AF3D,$03 Call #R$AFE8.
+  $AF40,$03 #REGbc=#N$160E.
+  $AF43,$03 Call #R$B81C.
+  $AF46,$03 Call #R$B053.
+  $AF49,$03 Call #R$AAED.
 
-c $AECF
+N $AF55 Is Sabreman white?
+  $AF55,$03 #REGa=#REGix+#N$05 (entity colour).
+  $AF58,$04 If the colour is not #N$47, jump to #R$AF66.
 
-c $AEEA
+  $AF63,$03 Call #R$ADBF.
 
-c $AEEF
+  $AF69,$02 #REGb=#N$01.
+  $AF6B,$03 Call #R$B047.
+
+  $AF74,$03 Call #R$B047.
+
+  $AF7A,$03 Call #R$B9A9.
+  $AF7D,$03 #REGa=#R$96B0.
+  $AF80,$04 If #REGa is zero, jump to #R$BB24.
+  $AF84,$02 Is #REGa #N$2F?
+
+  $AF89,$02,b$01 Keep only bits 0-3.
+
+  $AF8F,$02,b$01 Keep only bits 0-2.
+
+  $AF98,$04 Set #REGix+#N$05 (entity colour) to #N$47 (white).
+  $AF9C,$03 Call #R$BB24.
+
+  $AFA3,$01 Return.
+  $AFA4,$02,b$01 Keep only bits 0-2.
+
+  $AFA9,$03 Jump to #R$BB24.
+
+  $AFB0,$03 Call #R$AFC1.
+
+  $AFBA,$03 Call #R$AFC1.
+
+  $AFC0,$01 Return.
 
 c $AFC1
 
@@ -2018,9 +2465,16 @@ c $AFE4
   $AFE6,$02 Jump to #R$AFCF.
 
 c $AFE8
+  $AFE8,$06 Write #REGix+#N$01 to #R$96AB.
+  $AFEE,$03 #REGd=#REGix+#N$04.
+  $AFF1,$03 #REGa=#REGix+#N$06.
   $AFF4,$03 Call #R$B031.
 
+  $AFFF,$03 #REGa=#N$96AD.
+
+  $B006,$03 #REGa=#REGix+#N$07.
   $B009,$03 Call #R$B031.
+  $B013,$01 Store the result in #REGd.
 
   $B019,$01 Return.
 
@@ -2031,7 +2485,9 @@ c $B027
   $B030,$01 Return.
 
 c $B031
+  $B03B,$02,b$01 Keep only bits 0-3.
   $B03F,$01 Return.
+  $B044,$02,b$01 Keep only bits 0-3.
   $B046,$01 Return.
 
 c $B047
@@ -2040,9 +2496,16 @@ c $B047
 
 c $B053
   $B053,$03 Call #R$B078.
+  $B061,$02,b$01 Set bits 2-3.
+  $B070,$02,b$01 Keep only bits 0-1, 4-7.
+  $B072,$02,b$01 Set bit 2.
   $B077,$01 Return.
 
 c $B078
+  $B078,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $B07B,$02,b$01 Keep only bit 0.
+  $B08E,$02,b$01 Keep only bits 0-1.
+  $B092,$02,b$01 Keep only bits 2-7.
   $B098,$01 Return.
 
 c $B099
@@ -2058,6 +2521,15 @@ c $B0A3 Handler: Controls
 E $B0A3 Else, handle Interface II joystick - it's the only option left.
 E $B0A3 Continue on to #R$B0B1.
 @ $B0A3 label=HandlerControls
+R $B0A3 O:C Controls
+N $B0A3 #TABLE(default,centre,centre)
+. { =h Bit | =h Action }
+. { 0 | Left }
+. { 1 | Right }
+. { 2 | Down }
+. { 3 | Up }
+. { 4 | Fire }
+. TABLE#
   $B0A3,$03 #REGa=#R$9692.
   $B0A6,$01 Shift off the keyboard option.
   $B0A7,$02,b$01 Keep only bits 0-1 (Kempston and Cursor joystick options).
@@ -2067,7 +2539,6 @@ E $B0A3 Continue on to #R$B0B1.
 
 c $B0B1 Controls: Interface II Joystick
 @ $B0B1 label=ReadInterfaceIIJoystick
-R $B0B1 O:A Joystick controls
 R $B0B1 O:C Joystick controls
 N $B0B1 Initialise the controls as "none" in #REGc.
   $B0B1,$02 #REGc=#N$00.
@@ -2108,7 +2579,6 @@ N $B0D1 Check joystick "LEFT".
 
 c $B0D9 Controls: Kempston Joystick
 @ $B0D9 label=ReadKempstonJoystick
-R $B0D9 O:A Joystick controls
 R $B0D9 O:C Joystick controls
   $B0D9,$02 #REGa=controls.
 N $B0DB Initialise the controls as "none" in #REGc.
@@ -2141,7 +2611,6 @@ N $B0F5 Check joystick "FIRE".
 
 c $B0FA Controls: Keyboard
 @ $B0FA label=ReadKeyboard
-R $B0FA O:A Joystick controls
 R $B0FA O:C Keyboard controls
   $B0FA,$06 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
@@ -2206,6 +2675,7 @@ c $B12F
   $B12F,$02 #REGd=#N$27.
   $B139,$03 Create an offset.
   $B13C,$04 #REGbc=#R$6066 + offset.
+  $B143,$04 #REGbc=#R$6036 + offset.
   $B150,$01 Stash #REGde on the stack.
   $B151,$03 Call #R$BB7C.
   $B154,$03 Call #R$BB5C.
@@ -2220,6 +2690,18 @@ c $B12F
 c $B16A
 
 c $B187
+  $B187,$03 #REGa=#R$96AD.
+  $B193,$02,b$01 Keep only bits 0-3.
+  $B197,$02,b$01 Keep only bits 4-7.
+  $B19D,$02 Jump to #R$B148.
+
+c $B19F
+  $B19F,$02 #REGe=#N$00.
+  $B1A9,$02 Jump to #R$B193.
+
+c $B1AB
+  $B1AB,$02 #REGd=#N$BF.
+  $B1B5,$02 Jump to #R$B148.
 
 c $B1B7
   $B1B7,$03 #REGhl=#R$9702.
@@ -2888,7 +3370,10 @@ c $B5FC Handler: New High Score
 @ $B610 label=NewHighScore_Process
   $B610,$03 Write #REGa to #R$969E.
   $B613,$03 Call #R$B61E.
+  $B616,$01 Switch back the registers containing the 1UP and 2UP score.
+  $B617,$03 #REGa=#R$969E.
   $B61A,$01 Flip the bits.
+  $B61B,$03 Write #REGa to #R$969E.
   $B61E,$02 Stash #REGde and #REGhl on the stack.
 N $B620 We hold six high scores.
   $B620,$02 #REGb=#N$06.
@@ -2898,47 +3383,108 @@ N $B620 We hold six high scores.
 
   $B634,$03 #REGhl=#R$B322.
   $B637,$03 #REGde=#R$B328.
-
+  $B63A,$01 #REGa=#REGb.
+  $B63B,$02
+  $B63D,$02 #REGa=#REGa+#N$06.
+  $B63F,$03 Store the result at #R$96BB.
+  $B642,$03 #REGbc=#N($0006,$04,$04).
+  $B645,$01 Stash #REGhl on the stack.
+  $B646,$02
+  $B648,$01 Restore #REGde from the stack.
+  $B649,$02 #REGhl=#REGde.
+  $B64B,$03 Call #R$B6AB.
+  $B64E,$01
+  $B64F,$01 Decrease #REGa by one.
+  $B650,$02
+  $B654,$03 #REGbc=#N($0003,$04,$04).
+  $B65A,$03 Call #R$B5DC.
+  $B65D,$06 If #R$96BA is not zero, jump to #R$B66D.
+  $B663,$01 Increment #REGa by one.
+  $B664,$03 Write #REGa to #R$96BA.
   $B667,$03 #REGhl=#R$61C6.
   $B66A,$03 Call #R$BBF7.
   $B66D,$03 Call #R$B2D8.
+N $B670 Updates the text for the appropriate player number.
   $B670,$03 #REGa=#R$969E.
-  $B673,$01
-  $B674,$02 #REGa=#N$B1.
-
+  $B673,$01 Is this 1UP or 2UP?
+  $B674,$02 #REGa=#N$B1 (ASCII "1"+#N$80).
+  $B676,$02 Jump to #R$B679 if the current player is 1UP.
+  $B678,$01 Else, #REGa=#N$B2 (ASCII "2"+#N$80).
+N $B679 Overwrite the copy: #PUSHS
+. #TABLE(default,centre,centre)
+. { =h Byte | =h Copy }
+. { #N$B1 | #POKES$B783,$B1 "#STR($B77C)" }
+. { #N$B2 | #POKES$B783,$B2 "#STR($B77C)" }
+. TABLE#
+. #POPS
+@ $B679 label=NewHighScore_Update_Player
+  $B679,$03 Write #REGa to #R$B77C(#N$B783).
+N $B67C Work out which of the #R$B6C5 to use.
+  $B67C,$04 #REGb=#R$96BB.
+  $B680,$02 #REGa=#N$FD (as #N$FD+#N$03=#N$00 - so the offset is then pointing at the #R$B6C5(base address)).
+@ $B682 label=NewHighScore_Suffix_Loop
+  $B682,$02 #REGa=#REGa+#N$03.
+  $B684,$02 Decrease the position counter by one and loop back to #R$B682 until the counter is zero.
+N $B686 Fetch the appropriate position suffix.
   $B686,$03 Create an offset in #REGbc.
   $B689,$04 #REGhl=#R$B6C5 + offset.
   $B68D,$03 #REGde=#R$B795(#N$B79C).
   $B690,$03 #REGbc=#N$0003 (counter).
-  $B693,$02
+N $B693 Overwrite the copy: #PUSHS
+. #TABLE(default,centre,centre)
+. { =h Byte | =h Copy }
+. { #N$00 | #FOR($00,$02)(n,#POKES($B79C+n,#PEEK($B6C5+n))) "#STR($B795)" }
+. { #N$01 | #FOR($00,$02)(n,#POKES($B79C+n,#PEEK($B6C8+n))) "#STR($B795)" }
+. { #N$02 | #FOR($00,$02)(n,#POKES($B79C+n,#PEEK($B6CB+n))) "#STR($B795)" }
+. { #N$03 | #FOR($00,$02)(n,#POKES($B79C+n,#PEEK($B6CE+n))) "#STR($B795)" }
+. { #N$04 | #FOR($00,$02)(n,#POKES($B79C+n,#PEEK($B6D1+n))) "#STR($B795)" }
+. TABLE#
+. #POPS
+  $B693,$02 Copy #N$0003 bytes of data from #REGhl to #R$B795(#N$B79C).
+N $B695 Print the messaging to the screen.
   $B695,$03 #REGde=#R$B755.
+  $B698,$01 Switch to the shadow registers.
   $B699,$03 #REGhl'=#R$B75D.
   $B69C,$03 #REGde'=#R$B76D.
 N $B69F There are eight lines of text.
   $B69F,$02 #REGb=#N$08.
   $B6A1,$03 Call #R$B47F.
-
+  $B6A4,$01 Restore #REGde from the stack.
+  $B6A5,$03 Call #R$B6D7.
+  $B6A8,$02 Restore #REGhl and #REGde from the stack.
   $B6AA,$01 Return.
 
+N $B6AB Moves the High Score pointer to the next entry (we move from 6th to 1st).
+@ $B6AB label=NewHighScore_Next
+  $B6AB,$06 Decrease #REGde by six.
   $B6B1,$01 Return.
+
+N $B6B2 Compares the scores pointed to by #REGde and #REGhl.
+@ $B6B2 label=NewHighScore_Compare
   $B6B2,$03 Stash #REGbc, #REGde and #REGhl on the stack.
+N $B6B5 Scores are held in three bytes.
   $B6B5,$02 #REGb=#N$03 (counter).
-  $B6B7,$01 #REGa=the 1UP score digit held by #REGde.
-  $B6B8,$01 Compare this against the 2UP score.
+@ $B6B7 label=NewHighScore_Compare_Loop
+  $B6B7,$01 #REGa=the score digit held at #REGde.
+  $B6B8,$01 Compare this against the score digit held at #REGhl.
   $B6B9,$02 If there's any carry over then jump to #R$B6C1 to return.
   $B6BB,$02 If the result is non-zero then jump to #R$B6C1 to return.
   $B6BD,$02 Increment both #REGhl and #REGde by one.
   $B6BF,$02 Decrease the score digit counter by one and loop back to #R$B6B7 until the counter is zero.
+@ $B6C1 label=NewHighScore_Compare_Return
   $B6C1,$03 Restore #REGhl, #REGde and #REGbc from the stack.
   $B6C4,$01 Return.
 
-T $B6C5,$03 "#STR(#PC,$04,$03)".
-T $B6C8,$03 "#STR(#PC,$04,$03)".
-T $B6CB,$03 "#STR(#PC,$04,$03)".
-T $B6CE,$03 "#STR(#PC,$04,$03)".
-T $B6D1,$03 "#STR(#PC,$04,$03)".
-T $B6D4,$03 "#STR(#PC,$04,$03)".
+t $B6C5 High Score Suffixes
+@ $B6C5 label=HighScore_Suffixes
+  $B6C5,$03 "#STR(#PC,$04,$03)".
+  $B6C8,$03 "#STR(#PC,$04,$03)".
+  $B6CB,$03 "#STR(#PC,$04,$03)".
+  $B6CE,$03 "#STR(#PC,$04,$03)".
+  $B6D1,$03 "#STR(#PC,$04,$03)".
+  $B6D4,$03 "#STR(#PC,$04,$03)".
 
+c $B6D7
   $B6D7,$02 #REGb=#N$03.
   $B6D9,$03 #REGhl=#N$506D.
   $B6DC,$02 #REGa=#N$20.
@@ -2956,9 +3502,11 @@ N $B73B Introduce a pause by counting down from 10000.
   $B73D,$03 #REGhl=#N$0000.
   $B740,$03 Jump to #R$A1FF.
 
+c $B743 New High Score Return
 N $B743 Introduce a pause by counting down from 8000.
 @ $B743 label=NewHighScore_Return
   $B743,$03 Stash #REGaf, #REGbc and #REGhl on the stack.
+N $B746 Introduce a pause by counting down from 8000.
   $B746,$02 #REGb=#N$01.
   $B748,$03 #REGhl=#N$8000.
   $B74B,$03 Call #R$A1FF.
@@ -2997,8 +3545,10 @@ b $B75D New High Score Position Table
 t $B76D New High Score Screen Text
 @ $B76D label=NewHighScore_Text
   $B76D,$0F,$0E:$01 "#STR(#PC)".
+N $B77C This is altered by the code at #R$B679.
   $B77C,$08,$07:$01 "#STR(#PC)".
   $B784,$11,$10:$01 "#STR(#PC)".
+N $B795 This is altered by the code at #R$B68D.
   $B795,$12,$11:$01 "#STR(#PC)".
   $B7A7,$05,$04:$01 "#STR(#PC)".
   $B7AC,$0F,$0E:$01 "#STR(#PC)".
@@ -3064,8 +3614,31 @@ b $B814 The UDG for the lives icon
   $B814,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
 
 c $B81C
+  $B81C,$03 Stash #REGix and #REGbc on the stack.
+
+  $B82D,$04 #REGhl=#R$6066.
+
+  $B835,$04 #REGhl=#R$6166.
+
+  $B843,$03 Call #R$B873.
+
+  $B851,$03 Call #R$B873.
+  $B854,$03 Restore #REGix and #REGde from the stack.
+
+  $B859,$04 #REGe=#R$96AE.
+  $B85D,$01 Stash #REGde on the stack.
+  $B85E,$04 #REGe=#R$96AE.
+
+  $B864,$03 Call #R$B873.
+  $B867,$03 Restore #REGix and #REGde from the stack.
+
+  $B86C,$04 #REGd=#R$96AF.
+
+  $B870,$02 Restore #REGix from the stack.
+  $B872,$01 Return.
 
 c $B873
+  $B884,$02,b$01 Keep only bits 3-7.
 
 c $B8AD Calculate Screen Address
 E $B8AD View the equivalent code in;
@@ -3151,6 +3724,12 @@ E $B8F5 View the equivalent code in;
 . { #ATICATAC$9F56 }
 . LIST#
 @ $B8F5 label=RemoveEntity
+  $B8F5,$03 Call #R$B939.
+  $B8F8,$01 Switch to the shadow registers.
+  $B8F9,$02 Set #REGa and #REGc to #N$00.
+  $B8FB,$03 Write #N$00 to #R$96A4.
+  $B8FE,$01 Switch back to the normal registers.
+  $B8FF,$03 Jump to #R$B9DA.
 
 c $B902
   $B902,$02 #REGl=#N$00.
@@ -3214,6 +3793,16 @@ E $B969 View the equivalent code in;
   $B939,$03 Call #R$B925.
   $B93C,$03 #REGhl=#R$96A0 (saved X position).
   $B942,$02,b$01 Keep only bits 1-3.
+  $B944,$02,b$01 Set bits 4-7.
+  $B946,$01 Store the result in #REGb.
+
+  $B94B,$02,b$01 Keep only bits 0-2.
+
+  $B954,$02,b$01 Keep only bits 0-2.
+
+  $B960,$03 Write #REGa to #R$96A3.
+  $B963,$03 Call #R$B8AD.
+  $B966,$02 #REGc=#N$00.
   $B968,$01 Return.
 
 c $B969 Prepare Draw 2 Byte Sprite
@@ -3222,7 +3811,20 @@ E $B969 View the equivalent code in;
 . { #ATICATAC$9E96 }
 . LIST#
 @ $B969 label=PrepDraw2
-  $B969,$03 Call #R$9E96.
+  $B969,$03 Call #R$B934.
+
+  $B975,$02,b$01 Keep only bits 1-3.
+  $B977,$02,b$01 Set bits 4-7.
+
+  $B97B,$02,b$01 Keep only bits 0-2.
+
+  $B988,$02,b$01 Keep only bits 0-2.
+
+  $B991,$02,b$01 Keep only bits 0-2.
+
+  $B9A3,$03 Call #R$B8AD.
+  $B9A6,$02 #REGc=#N$00.
+  $B9A8,$01 Return.
 
 c $B9A9 Display Entity
 E $B9A9 View the equivalent code in;
@@ -3237,7 +3839,7 @@ E $B9A9 View the equivalent code in;
   $B9BD,$03 #REGa=#R$96A3.
   $B9C8,$03 Jump to #R$B9DA.
 
-N $B9CB
+c $B9CB
   $B9CB,$01 Switch back to the normal registers.
   $B9CF,$03 #REGa=#R$96A4.
   $B9D7,$03 Jump to #R$BA07.
@@ -3247,6 +3849,11 @@ E $B9DA  View the equivalent code in;
 . #LIST
 . { #ATICATAC$9E9B }
 . LIST#
+  $B9DF,$03 Call #R$BA0D.
+  $B9E8,$03 Call #R$BA8C.
+  $B9EC,$02 Jump to #R$B9DA.
+  $BA0B,$02 Jump to #R$B9DA.
+  $BA12,$02 Jump to #R$BA12.
 
 c $BA14
 
@@ -3270,10 +3877,20 @@ N $BB0B This is @todo.
   $BB23,$01 Return.
 
 c $BB24
+E $BB24 Continue on to #R$BB45.
+  $BB33,$02,b$01 Keep only bits 0-2.
+  $BB3F,$02,b$01 Keep only bits 0-4.
+  $BB42,$03 Call #R$B8DD.
 
 c $BB45
 @ $BB45 label=AttrDrawUnchanged
-  $BB45,$02
+  $BB45,$02 Stash #REGbc and #REGhl on the stack.
+  $BB48,$02,b$01 Keep only bits 3-5.
+  $BB50,$01 Restore #REGhl from the stack.
+  $BB51,$03 #REGbc=#N($0020,$04,$04).
+  $BB57,$01 Restore #REGbc from the stack.
+  $BB58,$01 Decrease #REGc by one.
+  $BB59,$02 Jump to #R$BB45 unless #REGc is zero.
   $BB5B,$01 Return.
 
 c $BB5C Clear Play Area
@@ -3383,6 +4000,14 @@ c $BBAE
   $BBBA,$01 Return.
 
 c $BBBB
+  $BBBB,$02 Stash #REGix on the stack.
+  $BBBD,$04 #REGix=#R$970E.
+  $BBC1,$03 #REGa=#R$9703.
+  $BBCA,$03 #REGde=#N($000C,$04,$04).
+  $BBCF,$03 #REGhl=#REGix.
+  $BBD2,$03 #REGde=#R$982E.
+  $BBDA,$02 Restore #REGix from the stack.
+  $BBDC,$01 Return.
 
 c $BBDD
   $BBDD,$03 #REGl=#REGix+#N$01 (current location).
@@ -3390,7 +4015,7 @@ c $BBDD
   $BBE2,$03 #REGbc=#R$6066.
   $BBE7,$02 #REGh=#N$00.
   $BBEA,$03 #REGbc=#R$6166.
-  $BBF2,$03 Call #R$BBF2.
+  $BBF2,$03 Call #R$BBF7.
   $BBF5,$02 Jump to #R$BBAE.
 
 c $BBF7 Draw Room
@@ -3441,6 +4066,8 @@ N $BC0B At the point of processing; #REGhl contains X/ Y position data, #REGde c
   $BC28,$03 Call #R$B8DD.
 
   $BC31,$06 If #R$96B2 is not zero, jump to #R$BC49.
+
+  $BC40,$03 #REGbc=#N($0020,$04,$04).
 
   $BC48,$01 Return.
   $BC49,$01 Stash #REGbc on the stack.
@@ -3558,11 +4185,11 @@ c $BF17
   $BF24,$01 Return.
 
 c $BF25
-  $BF25,$03 #REGbc=#N$4030.
+  $BF25,$03 #REGbc=#N($40,$02,$03),#N($30,$02,$03).
   $BF28,$02 Jump to #R$BF6D.
 
 c $BF2A
-  $BF2A,$03 #REGbc=#N$8010.
+  $BF2A,$03 #REGbc=#N($80,$02,$03),#N($10,$02,$03).
   $BF2D,$02 Jump to #R$BF6D.
 
 c $BF2F
@@ -3584,8 +4211,14 @@ c $BF4B
   $BF68,$03 #REGbc=#N$6004.
   $BF6B,$02 Jump to #R$BF6D.
 
-c $BF6D
+c $BF6D Play Wave Sequence
+@ $BF6D label=PlayWaveSequence
+R $BF6D B Duration of wave
+R $BF6D C Number of times to repeat
   $BF6D,$03 Call #R$BF74.
+  $BF70,$01 Decrease the note counter by one.
+  $BF71,$02 Keep looping back to #R$BF6D until the note counter is zero.
+  $BF73,$01 Return.
 
 c $BF74 Play Square Wave Sound
 @ $BF74 label=PlaySquareWave

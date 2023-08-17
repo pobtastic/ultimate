@@ -179,6 +179,10 @@ B $5E3F,$01
 
 g $5E40 Visited Rooms
 @ $5E40 label=VisitedRooms
+E $5E40 View the equivalent code in;
+. #LIST
+. { #SABREWULF$96BF }
+. LIST#
 B $5E40,$14,$01
 
 g $5E54 Visited Percentage
@@ -2282,6 +2286,10 @@ T $969F,$10,h$01,$0E:$01 Attribute: #N(#PEEK(#PC)) + "".
 
 c $96AF Visit Room
 @ $96AF label=VisitRoom
+E $96AF View the equivalent code in;
+. #LIST
+. { #SABREWULF$9D23 }
+. LIST#
 R $96AF A The room ID
 N $96AF Create an offset in #REGbc.
   $96AF,$01 #REGc=#REGa.
@@ -2297,6 +2305,16 @@ N $96AF Create an offset in #REGbc.
 
 c $96C9 Calculate Rooms Visited
 @ $96C9 label=CalcRoomsVisited
+E $96C9 View the equivalent code in;
+. #LIST
+. { #SABREWULF$9CC6 }
+. LIST#
+  $96C9,$03 #REGhl=#R$5E40.
+  $96CC,$03 #REGbc=#N$0813.
+  $96CF,$02 #REGd=#N$03.
+  $96D2,$01 Stash #REGbc on the stack.
+  $96E3,$01 Restore #REGbc from the stack.
+  $96EB,$01 Return.
 
 c $96EC Game Complete
 @ $96EC label=GameComplete

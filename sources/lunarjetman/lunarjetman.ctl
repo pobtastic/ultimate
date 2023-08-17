@@ -1,3 +1,4 @@
+
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
@@ -61,6 +62,8 @@ D $5E06 3-byte representation of the score.
 
 g $5E09
 
+g $5E40
+
 g $5E50
 
 g $5E52
@@ -75,13 +78,21 @@ g $5E5E
 
 g $5E5F 1UP Score
 D $5E5F 3-byte representation of the score.
-@ $5E5F label=1UP_Score
-B $5E5F,$03
+@ $5E5F label=1UP_Score_1
+  $5E5F,$01 Byte #1.
+@ $5E60 label=1UP_Score_2
+  $5E60,$01 Byte #2.
+@ $5E61 label=1UP_Score_3
+  $5E61,$01 Byte #3.
 
 g $5E62 2UP Score
 D $5E62 3-byte representation of the score.
-@ $5E62 label=2UP_Score
-B $5E62,$03
+@ $5E62 label=2UP_Score_1
+  $5E62,$01 Byte #1.
+@ $5E63 label=2UP_Score_2
+  $5E63,$01 Byte #2.
+@ $5E64 label=2UP_Score_3
+  $5E64,$01 Byte #3.
 
 g $5E65 Active Player
 @ $5E65 label=Flag_ActivePlayer
@@ -140,6 +151,10 @@ B $6030,$18 Laser Beam #3.
 B $6048,$18 Laser Beam #4.
 
 b $6060
+
+b $607A
+
+b $6240
 
 c $8000 Security Check
 E $8000 Continue on to #R$800A.
@@ -612,6 +627,21 @@ E $851E View the equivalent code in;
 c $853D
 
 c $8568
+  $8568,$03 #REGbc=#R$BAC0.
+  $856B,$03 #REGa=#R$5EA2.
+  $856F,$03 #REGa=#R$5E54.
+  $857E,$01 Return.
+
+c $857F
+  $857F,$03 #REGbc=#R$BAC0.
+  $8582,$03 #REGa=#R$5EA2.
+  $858C,$02 Jump to #R$8575.
+
+c $858E
+
+b $85D9
+
+c $85F6
 
 c $864F
 
@@ -634,6 +664,11 @@ c $8807
 c $8826
 
 c $8891
+
+c $88A3
+
+c $88B1
+  $88B1
 
 c $88E8
 
@@ -697,7 +732,40 @@ N $8994 Controller for the inactive player.
   $8994,$06 If #R$5E65 is zero then jump to #R$8990.
   $899A,$02 Jump to #R$898C.
 
-c $899C
+c $899C Add Points To Score
+E $899C View the equivalent code in;
+. #LIST
+. { #COOKIE$7415 }
+. { #JETPAC$70F9 }
+. { #PSSST$737A }
+. { #SABREWULF$B5A9 }
+. { #TRANZAM$6046 }
+. LIST#
+R $899C BC Points to add to score
+@ $899C label=AddPointsToScore
+N $899C Check the active player.
+  $899C,$06 If #R$5E65 is not zero, jump to #R$89A7.
+N $89A2 Set the score address for 1UP.
+  $89A2,$03 #REGhl=#R$5E61.
+  $89A5,$02 Jump to #R$89AA.
+N $89A7 Set the score address for 2UP.
+@ $89A7 label=AddPointsToScore_2UP
+  $89A7,$03 #REGhl=#R$5E64.
+N $89AA Process adding the points to the appropriate score.
+@ $89AA label=AddPointsToScore_Start
+  $89AA,$01 #REGa=score byte #3.
+  $89AB,$02 Add #REGc to score byte #3 with BCD conversion.
+  $89AD,$01 Update score byte #3.
+  $89AE,$01 Move onto the next score byte.
+  $89AF,$01 #REGa=score byte #2.
+  $89B0,$02 Add (with carry) #REGb to score byte #2 with BCD conversion.
+  $89B2,$01 Update score byte #2.
+  $89B3,$01 Move onto the next score byte.
+  $89B4,$01 #REGa=score byte #1.
+  $89B5,$03 Add #N$00 (i.e. just the carry flag) to score byte #1 with BCD conversion.
+  $89B8,$01 Update score byte #1.
+N $89B9 Check the active player.
+  $89B9,$06 If #R$5E65 is not zero, jump to #R$89C7.
 
 c $89BF Print Scores
 E $89BF View the equivalent code in;
@@ -705,6 +773,7 @@ E $89BF View the equivalent code in;
 . { #COOKIE$7438 }
 . { #JETPAC$711C }
 . { #PSSST$739D }
+. { #SABREWULF$B5CC }
 . { #TRANZAM$6CB6 }
 . LIST#
 @ $89BF label=Score_1UP
@@ -1050,8 +1119,34 @@ B $9E28,$04
 
 c $9E2C Animate: Laser Beam
 @ $9E2C label=LaserBeam_Animate
+  $9E2C,$03 Call #R$A796.
+  $9E2F,$03 Laser Y position.
+  $9E32,$03 Laser X position: pulse #1.
+  $9E35,$04 Jump to #R$9E68 if bit 2 is reset.
+  $9E39,$01 #REGl=X position: pulse #1.
+  $9E46,$03 Call #R$851E.
+  $9E51,$03 Call #R$8506.
+  $9E60,$02,b$01 Keep only bits 3-7.
+  $9E69,$03 #REGbc=#N$031C.
+  $9E6C,$02 #REGe=#N$E0.
+N $9E6F Loop counter (to process pulses #2, #3, #4).
+  $9E6F,$02 #REGe=#N$03.
+  $9E7B,$02,b$01 Keep only bits 3-7.
+  $9E8C,$01 Return.
+  $9E98,$02,b$01 Keep only bits 0-2.
+  $9E9B,$03 #REGa=#R$5E40.
+  $9E9E,$02,b$01 Keep only bits 0-1.
+  $9EA0,$02,b$01 Set bit 2.
+  $9EA9,$02,b$01 Set bit 2.
+  $9EAC,$01 Return.
+
+  $9EC9,$01 Return.
 
 c $9ECA
+  $9ECA,$03 #REGa=#R$607A.
+  $9ED0,$02,b$01 Keep only bits 0-2.
+  $9ED7,$03 Call #R$8787.
+  $9EDA,$02 Jump to #R$9EEE.
 
 c $9EDC
 B $A008,$60
@@ -1098,6 +1193,45 @@ N $A86C Handle setting up 2UP player.
   $A87F,$01 Return.
 
 c $A880
+  $A880,$03 #REGhl=#R$5EA0.
+  $A883,$03 #REGde=#R$5EA4.
+  $A886,$02 #REGb=#N$04.
+  $A891,$03 #REGhl=#R$7000.
+  $A894,$03 #REGde=#R$7400.
+  $A897,$03 #REGbc=#N$0400.
+  $A89A,$03 Call #R$A8A6.
+  $A8B4,$01 Return.
+
+c $A8B5
+
+c $A8E3 Game Over
+E $A8E3 View the equivalent code in;
+. #LIST
+. { #COOKIE$6BE0 }
+. LIST#
+@ $A8E3 label=GameOver_1UP
+N $A8E3 #HTML(Set up altering the "GAME OVER PLAYER <em>X</em>" message for 1UP.)
+  $A8E3,c,$02 #REGa="1" + #N$80 (escape character).
+N $A8E5 Print the messaging and pause to show it for a period of time.
+@ $A8E5 label=GameOver_Write
+  $A8E5,$03 Write ASCII player number to #R$A94C(#N$A95D).
+  $A8E8,$03 Call #R$84D8.
+
+N $A92D #HTML(Set up altering the "GAME OVER PLAYER <em>X</em>" message for 2UP.)
+@ $A92D label=GameOver_2UP
+  $A92D,c,$02 #REGa="2" + #N$80 (escape character).
+  $A92F,$02 Jump to #R$A8E5.
+
+  $A945,$03 Call #R$A92D.
+  $A948,$03 Jump to #R$F56E.
+N $A94B Game Over Messaging
+@ $A94B label=GameOver_Text
+T $A94B,$13,h$01,$11:$01 Attribute: #N(#PEEK(#PC)) + "GAME OVER PLAYER X".
+T $A95E,$1B,h$01,$19:$01 Attribute: #N(#PEEK(#PC)) + "YOUR LUNAR ROVER HAS BEEN".
+T $A979,$0C,h$01,$0A:$01 Attribute: #N(#PEEK(#PC)) + "DESTROYED.".
+T $A985,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "ALL IS LOST.".
+
+c $A993
 
 c $B3A3 Message: Teleporting
 @ $B3A3 label=MessageTeleporting
@@ -1134,11 +1268,22 @@ N $B3D0 Messaging data.
 T $B3D0,$0C,h$01,$0A:$01 Attribute: #N(#PEEK(#PC)) + "TELEPORTING".
 
 c $B3DC
+  $B3DC,$03 #REGhl=#R$F6CE.
+  $B3DF,$03 #REGde=#R$7000.
+  $B3E2,$03 #REGbc=#N$0400.
+  $B3E7,$01 Return.
 
 c $B3E8
 B $B451
 
 c $B460
+  $B4C1,$01 Return.
+
+c $B4C2
+  $B4C2,$03 #REGhl=#N$60A8.
+  $B4C5,$03 #REGbc=#N$0711.
+
+c $B52E
 
 c $B594 Messaging: Missile Launch
 @ $B594 label=Message_MissileLaunch
@@ -1192,6 +1337,12 @@ c $B6CF
 
 c $B731
 B $B76D,$18
+
+c $B7A8
+
+c $B87E
+
+c $B89A
 
 c $B8A8 Sounds: Laser Beam
 @ $B8A8 label=SoundsLaserBeam
