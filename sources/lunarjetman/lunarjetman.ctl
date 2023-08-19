@@ -62,7 +62,15 @@ D $5E06 3-byte representation of the score.
 
 g $5E09
 
+g $5E20
+
+g $5E35
+
+g $5E38
+
 g $5E40
+
+g $5E42
 
 g $5E50
 
@@ -108,7 +116,24 @@ B $5E66,$01
 
 g $5E68
 
+g $5E6C
+g $5E6D
+g $5E6F
+
 g $5E71 Number of players?
+
+g $5E73
+
+g $5E74
+
+g $5E75
+
+g $5E77 High Score Position
+D $5E77 Used when calculating the players position in the high score table.
+@ $5E77 label=HighScorePosition
+  $5E77,$01
+
+g $5E78
 
 g $5E7C
 
@@ -164,13 +189,14 @@ E $8000 View the equivalent code in;
 . { #COOKIE$5F00 }
 . { #JETPAC$61E5 }
 . { #PSSST$61C6 }
+. { #SABREWULF$995A }
 . { #TRANZAM$5F00 }
 . LIST#
 @ $8000 label=SecurityCheck
   $8000,$01 Disable interrupts.
   $8001,$03 Set the stack pointer to #N$5E00.
   $8004,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
-  $8007,$03 Return if #REGa is not #N$25.
+  $8007,$03 Return if #REGa is not #N$83.
 
 c $800A Game Initialisation
 E $800A View the equivalent code in;
@@ -473,7 +499,8 @@ B $826A,$03,$01
 
 c $8298
 
-w $82C5
+w $82C5 Jump Table
+@ $82C5 label=JumpTable
 
 c $84AD Reset Screen Buffer
 E $84AD Continue on to #R$84B4 to blank the screen buffer.
@@ -922,7 +949,36 @@ c $8B73
 
 c $8BA5
 
-c $8BBB
+c $8BBB Draw HUD Panel
+E $8BBB View the equivalent code in;
+. #LIST
+. { #COOKIE$5FE1 }
+. { #TRANZAM$69BC }
+. LIST#
+@ $8BBB label=DrawHUDPanel
+  $8BBB,$03 #REGhl=#R$5E04.
+  $8BBE,$01 Stash #REGhl on the stack.
+  $8BBF,$06 Write #R$DD97 to #R$5E04.
+N $8BC5 The panel is printed like a font.
+  $8BC5,$03 #REGbc=#N$1E03.
+  $8BC8,$03 #REGde=#R$DE5F.
+  $8BCB,$03 #REGhl=#N$4041 (screen buffer location).
+@ $8BCE label=DrawHUDPanel_Pixel_Row
+
+@ $8BD0 label=DrawHUDPanel_Pixel_Column
+
+N $8BE2 Now write the attribute bytes.
+  $8BE2,$03 #REGde=#R$DEB9.
+  $8BE5,$03 #REGhl=#N$5841 (attribute buffer location).
+  $8BE8,$03 #REGbc=#N$1E03.
+@ $8BEB label=DrawHUDPanel_Attribute_Row
+
+@ $8BED label=DrawHUDPanel_Attribute_Column
+
+N $8BFC Restore the old font pointer.
+  $8BFC,$01 Restore #REGhl from the stack.
+  $8BFD,$03 Write #REGhl back to #R$5E04.
+  $8C00,$01 Return.
 
 c $8C01
 
@@ -941,9 +997,28 @@ c $8D06
 
 c $8E5A
 
-c $8F6A Player Input: Cursor Joystick
-@ $8F6A label=Player_Cursor
+c $8EC5
+
+c $8F34
+  $8F34,$04 #REGa=#REGix+#N$06.
+  $8F4C,$02 #REGc=#N$F8.
+  $8F53,$02 #REGc=#N$FC.
+  $8F58,$04 #REGix+#N$06=#N$E0.
+  $8F5C,$02 #REGb=#N$40.
+  $8F5E,$03 Jump to #R$8D61.
+
+c $8F61
+  $8F61,$04 Write #N$00 to #REGix+#N$06.
+  $8F65,$02 #REGb=#N$10.
+  $8F67,$03 Jump to #R$8D93.
+
+c $8F6A Controls: Cursor Joystick
+@ $8F6A label=ReadCursorJoystick
 R $8F6A O:A Controls
+E $8F6A View the equivalent code in;
+. #LIST
+. { #SABREWULF$B103 }
+. LIST#
   $8F6A,$06 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
@@ -988,19 +1063,36 @@ N $8F89 Handle relocating the "left" bit.
 . This matches the Kempston Joystick inputs.
   $8F8F,$01 Return.
 
-c $8F90 Read Player Input
-@ $8F90 label=ReadInput
+c $8F90 Handler: Controls
+E $8F90 Continue on to #R$8F9B.
+E $8F90 View the equivalent code in;
+. #LIST
+. { #SABREWULF$B0A3 }
+. LIST#
+@ $8F90 label=HandlerControls
 M $8F90,$06 Jump to #R$8F9F if #R$5E00 is set for keyboard controls.
   $8F93,$02,b$01
   $8F97,$04 Jump to #R$8F6A if #R$5E00 is set for cursor joystick controls.
+
+c $8F9B Controls: Kempston Joystick
+R $8F9B O:A Controls
+E $8F9B View the equivalent code in;
+. #LIST
+. { #SABREWULF$B0D9 }
+. LIST#
 N $8F9B Read from the Kempston Joystick.
-@ $8F9B label=Player_Kempston
+@ $8F9B label=ReadKempstonJoystick
   $8F9B,$02 #REGa=controls.
   $8F9D,$01 Flip the bits.
   $8F9E,$01 Return.
 
-c $8F9F Player Input: Keyboard
-@ $8F9F label=Player_Keyboard
+c $8F9F Controls: Keyboard
+E $8F9F View the equivalent code in;
+. #LIST
+. { #SABREWULF$B0FA }
+. LIST#
+@ $8F9F label=ReadKeyboard
+R $8F9F O:A Controls
   $8F9F,$02 #REGc=#N$FF.
   $8FA1,$06 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
@@ -1047,8 +1139,100 @@ c $8F9F Player Input: Keyboard
   $8FF3,$01 Return.
 
 c $8FF4
+  $8FF4,$03 #REGa=#REGix+#N$00.
+  $9002,$03 Jump to #R$8DD9.
+
+c $9005
+  $9005,$03 #REGa=#REGix+#N$00.
+  $900F,$05 Write #N$F0 to #REGix+#N$06.
+  $901D,$03 Jump to #R$8DD9.
+
+c $9020
+  $9020,$03 #REGa=#R$5E6C.
+
+  $902D,$03 #REGhl=#R$9D5A.
+  $9030,$03 #REGde=#N$6078.
+  $9033,$03 #REGbc=#N($0018,$04,$04).
+
+  $903F,$03 Call #R$AD3F.
+
+  $9047,$03 #REGbc=#N($0040,$04,$04).
+  $904A,$03 Call #R$A002.
+
+  $9073,$03 Jump to #R$894F.
+  $9076,$03 #REGbc=#N$FFC0.
+  $9079,$02 Jump to #R$904A.
+
+c $907B
+  $907B,$03 #REGa=#REGix+#N$05.
+
+c $917C
+R $917C HL Terrain Buffer?
+  $917C,$02 Stash #REGhl and #REGde on the stack.
+  $917E,$01
+  $917F,$02 #REGh=#N$00.
+  $9181,$03 #REGhl=#REGhl^#N$03.
+  $9184,$03 #REGde=#R$F66E.
+  $9187,$01 #REGhl=#REGhl+#REGde.
+  $9188,$02 #REGb=#N$08.
+  $918A,$02 Restore #REGde from the stack, but stash a copy of it again.
+  $918C,$02
+  $918E,$01 Increment #REGhl by one.
+  $918F,$01 Increment #REGd by one.
+  $9190,$02
+  $919D,$01 Return.
+
+c $919E
+  $919E,$03 #REGde=#N$FF88.
+  $91A3,$02,b$01 Keep only bits 0-5.
+  $91B6,$03 #REGde=#N$50C0.
+  $91B9,$02 Jump to #R$917C.
+
+c $91BB
+  $91BB,$03 #REGh=#REGix+#N$03.
+  $91BE,$03 #REGl=#REGix+#N$02.
+  $91C1,$01 #REGa=#REGh.
+  $91C2,$02,b$01 Keep only bits 0-4.
+  $91C4,$01 #REGh=#REGa.
+
+  $91D1,$01 Stash #REGhl on the stack.
+  $91D2,$03 #REGbc=#R$7000.
+
+  $91DA,$01 #REGa=#REGh.
+  $91DB,$02,b$01 Keep only bits 0-1.
+  $91DD,$01 #REGh=#REGa.
+
+  $91E0,$01 Restore #REGhl from the stack.
+  $91E1,$01 Return.
 
 c $91E2
+  $91E2,$06 If #R$5E6C is not zero, jump to #R$9267.
+  $91E8,$06 Write #N$9000 to #N$608E.
+  $91EE,$01 #REGa=#REGh.
+  $91EF,$03 #REGhl=#N$1040.
+  $91F2,$03 Call #R$8C01.
+  $91F5,$03 Call #R$8F90.
+
+  $920D,$02 Jump to #R$9211.
+
+  $921E,$03 #REGde=#N$FFF8.
+
+  $922F,$02,b$01 Keep only bits 0-1.
+
+  $9235,$03 #REGhl=#R$7000.
+
+  $923D,$02,b$01 Keep only bit 3.
+
+  $9248,$02 Jump to #R$9250.
+
+c $930C
+  $930C,$03 #REGhl=#N$6097.
+  $930F,$03 #REGde=#N$607F.
+  $9312,$03 #REGbc=#N($0009,$04,$04).
+  $9323,$02,b$01 Keep only bit 3.
+  $932B,$04 Write #N$00 to #N$6090.
+  $9335,$03 Jump to #R$B8BD.
+  $933C,$02 Jump to #R$932B.
 
 c $933E
   $933E,$06 Read from the keyboard;
@@ -1068,9 +1252,38 @@ c $933E
   $9354,$01 #REGa=#N$00.
   $9355,$01 Return.
 
-c $9356
+c $9356 Draw Terrain?
+  $9356,$03 #REGhl=#R$607A.
+  $9359,$03 #REGde=#N$FF88.
+  $935E,$02,b$01 Keep only bits 0-4.
+  $936D,$03 #REGde=#N$50C0.
+  $9370,$03 #REGbc=#R$7000.
+  $9373,$02 #REGa=#N$20.
+  $937A,$03 Call #R$917C.
+  $9383,$02,b$01 Keep only bits 0-1.
+  $938A,$03 #REGhl=#N$5AE1.
+  $938D,$03 #REGbc=#N$1E5B.
+  $9390,$01 Write #REGc to #REGhl.
+  $9391,$01 Increment #REGhl by one.
+  $9392,$02 Decrease counter by one and loop back to #R$9390 until counter is zero.
+  $9394,$01 Return.
+
+c $9395
+  $93A5,$01 Return.
 
 c $945C
+  $945C,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { =r2 #N$7E | SPACE | FULL-STOP | M | N | B }
+. { Shift | Z | X | C | V }
+. TABLE#
+  $9462,$01 Flip the bits.
+  $9463,$02,b$01 Keep only bits 0-1.
+  $9465,$01 Return.
+
+c $9466
 
 c $9C23
   $9C23,$0B Copy #N$0018 bytes from #R$9D80 to #N$5E20.
@@ -1188,7 +1401,9 @@ N $A84F Handle setting up 1UP player.
 N $A86C Handle setting up 2UP player.
   $A86C,$05 Write 2UP starting lives to #R$5EA5.
   $A871,$05 Write 2UP starting fuel to #R$5EA4.
-  $A876,$06 Return if #R$5E00 indicates this is a 1 player only game.
+  $A876,$03 #REGa=#R$5E00.
+  $A879,$02,b$01 Keep only bit 0.
+  $A87B,$01 Return if #R$5E00 indicates this is a 1 player only game.
   $A87C,$03 Write #REGa to #R$5EA5.
   $A87F,$01 Return.
 
@@ -1232,6 +1447,68 @@ T $A979,$0C,h$01,$0A:$01 Attribute: #N(#PEEK(#PC)) + "DESTROYED.".
 T $A985,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "ALL IS LOST.".
 
 c $A993
+B $AADF,$50
+
+c $AB9D
+  $AB9D,$03 #REGhl=#R$AADF.
+  $ABA0,$03 #REGde=#R$AA4B.
+  $ABA3,$03 #REGbc=#N($0050,$04,$04).
+  $ABA6,$02
+  $ABA8,$01 Return.
+
+c $ABA9
+  $AC04,$03 #REGa=#R$5E42.
+  $AC07,$02,b$01 Keep only bits 0-5.
+  $AC09,$02
+  $AC0B,$02 If so, jump to #R$AC1A.
+  $AC0D,$03
+  $AC10,$03 #REGde=#R$AC24.
+  $AC13,$03 #REGhl=#N$10D8.
+  $AC16,$03 Call #R$8A11.
+  $AC19,$01 Return.
+  $AC1A,$03 #REGde=#R$AC1F.
+  $AC1D,$02 Jump to #R$AC13.
+T $AC1F,$05,$04:01
+T $AC24,$05,$04:01
+
+c $AC3E
+
+B $ACA0,$30
+B $ACD0,$30
+
+c $AD00
+
+c $AD0B
+
+c $AD22
+
+c $AD33
+  $AD33,$01 #REGa=#N$00.
+  $AD34,$02 Jump to #R$AD25.
+
+c $AD36
+  $AD36,$03 #REGhl=#R$607A.
+
+B $AEBC,$30
+B $AEEC,$30
+
+c $B2F9
+  $B2F9,$03 #REGa=#N$60B0.
+  $B300,$02,b$01 Set bit 7.
+  $B305,$03 #REGa=#N$60C8.
+  $B30C,$02,b$01 Set bit 7.
+  $B311,$03 #REGa=#N$60E0.
+  $B314,$02,b$01 Keep only bits 2-7.
+  $B329,$02,b$01 Set bit 1.
+  $B338,$01 Return.
+
+c $B339
+
+c $B33D
+
+c $B37B
+
+c $B385
 
 c $B3A3 Message: Teleporting
 @ $B3A3 label=MessageTeleporting
@@ -1901,6 +2178,22 @@ b $DD15
 
 b $DD56
 
+b $DD97 UDG Graphics
+@ $DD97 label=UDG_Tiles
+N $DD97 Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+  $DD97,b$08,$01 #UDG(#PC)
+L $DD97,$08,$19
+
+b $DE5F HUD Panel Layout
+@ $DE5F label=HUDPanelLayoutData
+  $DE5F,$1E #FOR($00,$1D)||n|#UDG($DD97 + #PEEK(#PC + n) * $08)||
+L $DE5F,$1E,$03
+
+b $DEB9 HUD Panel Attributes
+@ $DEB9 label=HUDPanelAttributes
+  $DEB9,$1E #FOR($00,$1D)||n|#UDG($DD97 + #PEEK(n + #PC - $5A) * $08,attr=#PEEK(#PC + n))||
+L $DEB9,$1E,$03
+
 b $DF13 Graphic: Alien Base
 N $DF13 Frame 1.
   $DF13,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -2040,32 +2333,122 @@ N $EE59 Frame 3.
 
 b $EE7A
 
-c $F232
+c $F232 New High Score Suffix
+@ $F232 label=NewHighScore_Suffix
+  $F232,$07 If #R$5E77 is zero, jump to #R$F26B.
+N $F239 #N$00 is the "Top Score" so we +#N$01 to make it human readable.
+  $F239,$02 #REGa=#REGa+#N$31 (convert to ASCII + #N$01).
+  $F23B,$03 #REGhl=#N$5007 (screen buffer location).
+  $F23E,$01 Stash the ASCII highscore position on the stack.
+  $F23F,$03 Call #R$89EF.
+  $F242,$01 #REGa=the ASCII highscore position from the stack.
+  $F243,$02 #REGa=#REGa-#N$31.
+  $F245,$03 #REGhl=#N$8048 (screen location).
+N $F248 Remember that #N$00 is the "Top Score" so #N$01 is 2nd place.
+  $F248,$05 If the highscore position is #N$01 jump to #R$F261.
+N $F24D And #N$02 is 3rd...
+  $F24D,$05 If the highscore position is #N$02 jump to #R$F266.
+N $F252 Anything higher will use "TH".
+@ $F252 label=NewHighScore_Suffix_TH
+  $F252,$03 #REGde=#R$F274.
+@ $F255 label=NewHighScore_Suffix_Print
+  $F255,$03 Call #R$8A11.
+N $F258 Handle displaying "HIGHEST SCORE".
+@ $F258 label=NewHighScore_Suffix_Highest
+  $F258,$03 #REGhl=#N$8060 (screen location).
+  $F25B,$03 #REGde=#R$F287.
+  $F25E,$03 Jump to #R$8A11.
+N $F261 Handle displaying the "ND" suffix.
+@ $F261 label=NewHighScore_Suffix_ND
+  $F261,$03 #REGde=#R$F281.
+  $F264,$02 Jump to #R$F255.
+N $F266 Handle displaying the "RD" suffix.
+@ $F266 label=NewHighScore_Suffix_RD
+  $F266,$03 #REGde=#R$F284.
+  $F269,$02 Jump to #R$F255.
+N $F26B Handle displaying "TOP SCORE".
+@ $F26B label=NewHighScore_Suffix_Top_Score
+  $F26B,$03 #REGhl=#N$8058 (screen location).
+  $F26E,$03 #REGde=#R$F277.
+  $F271,$03 Jump to #R$8A11.
+N $F274 High Score Suffixes
+@ $F274 label=HighScore_Suffixes_TH
 T $F274,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "TH".
+@ $F277 label=HighScore_Top_Score
 T $F277,$0A,h$01,$08:$01 Attribute: #N(#PEEK(#PC)) + "TOP SCORE".
+@ $F281 label=HighScore_Suffixes_ND
 T $F281,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "ND".
+@ $F284 label=HighScore_Suffixes_RD
 T $F284,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "RD".
+@ $F287 label=HighScore_Highest_Score
 T $F287,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "HIGHEST SCORE".
 
 c $F295
 
 c $F33E
+  $F33E,$04 Write #N$00 to #R$5E73.
+  $F342,$03 Jump to #R$802C.
+
+c $F345
+  $F345,$03 #REGde=#R$5E38.
+  $F348,$03 #REGhl=#R$5E35.
+
+  $F35B,$03 #REGhl=#R$5E78.
+  $F35E,$03 #REGbc=#N($0003,$04,$04).
+
+  $F36D,$03 #REGde=#R$5E62.
+  $F370,$02 Jump to #R$F375.
+  $F372,$03 #REGde=#R$5E5F.
+  $F375,$03 Call #R$F3BF.
+
+  $F38B,$03 #REGde=#R$5E5F.
+
+  $F399,$03 Call #R$F535.
+  $F39C,$03 Jump to #R$F5E3.
+
+  $F3A6,$03 #REGde=#R$5E62.
+
+  $F3B4,$05 Write #N$01 to #R$5E65.
+  $F3B9,$03 Call #R$F535.
+  $F3BC,$03 Jump to #R$F5E3.
+
+c $F3BF
+  $F40F,$01 Return.
 
 c $F410 Hall Of Fame
 @ $F410 label=HallOfFame
-@ $F417 label=
-@ $F419 label=
-@ $F424 label=
+  $F410,$02 #REGa=#N$47.
+  $F412,$02 #REGc=#N$08.
+  $F414,$03 #REGhl=#N$5900.
+  $F417,$02 #REGb=#N$40.
+  $F422,$02 #REGa=#N$44.
 N $F427 Handle printing "THE ULTIMATE" messaging.
-  $F427,$03 #REGhl=#N$1850 (screen buffer location).
+  $F427,$03 #REGhl=#N$1850 (screen location).
   $F42A,$03 #REGde=#R$F4AA.
   $F42D,$03 Call #R$8A11.
 N $F430 Handle printing "HALL OF FAME" messaging.
-  $F430,$03 #REGhl=#N$2850 (screen buffer location).
+  $F430,$03 #REGhl=#N$2850 (screen location).
   $F433,$03 #REGde=#R$F4B8.
   $F436,$03 Call #R$8A11.
   $F439,$03 #REGhl=#N$4048 (screen buffer location).
 @ $F441 label=
+  $F451,$03 #REGhl=#N$4060 (screen buffer location).
+  $F454,$03 #REGde=#R$5E20.
+  $F457,$02 #REGc=#N$08.
+  $F45D,$02 #REGb=#N$03.
+  $F46E,$02 #REGc=#N$08.
+  $F470,$03 #REGde=#R$5E06.
+  $F473,$03 #REGhl=#N$4088.
+  $F476,$02 #REGb=#N$03.
+  $F478,$01 Stash #REGhl on the stack.
+  $F479,$03 Call #R$851E.
+  $F47C,$03 Call #R$89D7.
+  $F47F,$01 Restore #REGhl from the stack.
+  $F480,$04 #REGh=#REGh+#N$10.
+  $F484,$01 Decrease #REGc by one.
+  $F485,$02 Jump back to #R$F476 until #REGc is zero.
+  $F487,$05 Write #N$01 to #R$5E74.
+  $F48C,$06 Write #N$0400 to #R$5E6D.
   $F492,$01 Enable interrupts.
   $F493,$01
   $F49B,$06 Read from the keyboard;
@@ -2080,52 +2463,118 @@ N $F430 Handle printing "HALL OF FAME" messaging.
 T $F4AA,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "THE ULTIMATE ".
 T $F4B8,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "HALL OF FAME ".
 
-c $F4C6
+c $F4C6 Handler: High Score Messaging
 @ $F4C6 label=HighScoreMessaging
 N $F4C6 Handle printing "CONGRATULATIONS PLAYER ...".
   $F4C6,$03 #REGde=#R$F4FB.
-  $F4C9,$03 #REGhl=#N$6020 (screen buffer location).
+  $F4C9,$03 #REGhl=#N$6020 (screen location).
   $F4CC,$03 Call #R$8A11.
 N $F4CF Handle printing the player "number".
-  $F4CF,$05 #REGa=#R$5E71 + #N$30.
+  $F4CF,$05 #REGa=#R$5E71 + #N$30 (convert to ASCII).
   $F4D4,$03 #REGhl=#N$489B (screen buffer location).
   $F4D7,$03 Call #R$89EF.
 N $F4DA Handle printing "TODAYS".
   $F4DA,$03 #REGde=#R$F513.
-  $F4DD,$03 #REGhl=#N$7068 (screen buffer location).
+  $F4DD,$03 #REGhl=#N$7068 (screen location).
   $F4E0,$03 Call #R$8A11.
   $F4E3,$03 Call #R$F232.
 N $F4E6 Handle printing "JETMAN WILL REMEMBER YOU".
   $F4E6,$03 #REGde=#R$F51B.
-  $F4E9,$03 #REGhl=#N$9020 (screen buffer location).
+  $F4E9,$03 #REGhl=#N$9020 (screen location).
   $F4EC,$03 Call #R$8A11.
-  $F4EF,$03 #REGhl=#N$53AD.
-  $F4F2,$02 #REGb=#N$03.
+  $F4EF,$03 #REGhl=#N$53AD (attribute buffer location).
+  $F4F2,$02 #REGb=#N$03 (counter).
+@ $F4F4 label=HighScoreMessaging_Loop
+  $F4F4,$02 Write #N$7E to #REGhl.
+  $F4F6,$02 Increment #REGl by two.
+  $F4F8,$02 Decrease counter by one and loop back to #R$F4F4 until counter is zero.
   $F4FA,$01 Return.
+N $F4FB Messaging.
+@ $F4FB label=HighScoreMessaging_Congrats
 T $F4FB,$18,h$01,$16:$01 Attribute: #N(#PEEK(#PC)) + "CONGRATULATIONS PLAYER ".
+@ $F513 label=HighScoreMessaging_Todays
 T $F513,$08,h$01,$06:$01 Attribute: #N(#PEEK(#PC)) + "TODAYS ".
+@ $F51B label=HighScoreMessaging_Remember
 T $F51B,$1A,h$01,$18:$01 Attribute: #N(#PEEK(#PC)) + "JETMAN WILL REMEMBER YOU ".
 
 c $F535
-  $F535,$01
+  $F535,$01 #REGa=#REGb.
   $F53D,$03 Call #R$84D8.
   $F540,$03 #REGhl=#N$5900.
+  $F543,$02 #REGc=#N$02.
+  $F545,$02 #REGa=#N$46.
+  $F547,$02 #REGb=#N$00 (counter).
+  $F549,$01 Write #REGa to #REGhl.
+  $F54A,$01 Increment #REGhl by one.
+  $F54B,$02 Decrease counter by one and loop back to #R$F549 until counter is zero.
+  $F54D,$01 Decrease #REGc by one.
+  $F54E,$02 Jump back to #R$F547 until #REGc is zero.
   $F550,$03 Call #R$F4C6.
+  $F553,$06 Write #N($1000,$04,$04) to #R$5E6D.
+  $F559,$06 Write #N$50AD to #R$5E75.
+  $F55F,$04 Write #N$00 to #R$5E6F.
+  $F563,$03 #REGhl=#R$5E78.
+  $F566,$02 #REGb=#N$03 (counter).
+  $F568,$02 Write #N$41 to #REGhl.
+  $F56A,$01 Increment #REGhl by one.
+  $F56B,$02 Decrease counter by one and loop back to #R$F568 until counter is zero.
   $F56D,$01 Return.
 
 c $F56E
+  $F56E,$03 #REGde=#N$5E5F.
+  $F571,$03 #REGhl=#N$5E62.
+  $F57B,$02 Jump to #R$F58F.
+
+c $F5E3
+  $F5E3,$02 #REGb=#N$00.
+  $F5E5,$02
+  $F5E7,$01 Enable interrupts.
+  $F5E8,$01
+  $F5E9,$03 Jump to #R$F295.
 
 c $F5EC
-
-c $F609
-
-c $F612
+  $F5EC,$03 #REGhl=#N$0848.
+  $F5EF,$03 Call #R$F662.
+  $F5F2,$03 #REGhl=#N$08A0.
+  $F5F5,$03 Call #R$F662.
+  $F5F8,$06 If #R$5E65 is not zero, jump to #R$F609.
+  $F5FE,$03 #REGhl=#N$0848.
+  $F601,$03 Call #R$F612.
+  $F604,$03 #REGhl=#N$08A0.
+  $F607,$02 Jump to #R$F628.
+  $F609,$03 #REGhl=#N$0848.
+  $F60C,$03 Call #R$F628.
+  $F60F,$03 #REGhl=#N$08A0.
+  $F612,$02 #REGa=#N$4C.
+  $F614,$03 Call #R$F632.
+  $F617,$03 Call #R$F641.
+  $F61A,$01 Stash #REGbc on the stack.
+  $F61B,$02 #REGa=#REGa+#N$30.
+  $F61D,$03 Call #R$F632.
+  $F620,$01 Restore #REGbc from the stack.
+  $F621,$01 #REGa=#REGc.
+  $F622,$02 #REGa=#REGa+#N$30.
+  $F624,$03 Call #R$F632.
+  $F627,$01 Return.
 
 c $F628
 
 c $F632
 
 c $F641
+  $F641,$07 If #R$5EA0 is not #N$FF, jump to #R$F649.
+  $F648,$01 #REGa=#N$00.
+  $F649,$03 Call #R$B699.
+  $F64C,$01 #REGb=#REGa.
+  $F64D,$02,b$01 Keep only bits 0-3.
+  $F64F,$01 #REGc=#REGa.
+  $F650,$01 #REGa=#REGb.
+  $F655,$02,b$01 Keep only bits 0-3.
+  $F657,$01 Return.
+
+  $F658,$07 If #R$5EA4 is not #N$FF, jump to #R$F649.
+  $F65F,$01 #REGa=#N$00.
+  $F660,$02 Jump to #R$F649.
 
 c $F662
 

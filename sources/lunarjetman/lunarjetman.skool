@@ -294,15 +294,25 @@ g$5E06 DEFB $00,$00,$00
 ; Game status buffer entry at 5E09
 g$5E09 DEFB $00,$3A,$EF,$22,$22,$AF,$3A,$F5
  $5E11 DEFB $AC,$36,$0E,$00,$00,$06,$00,$00
- $5E19 DEFB $2C,$30,$0E,$00,$00,$00,$00,$00
- $5E21 DEFB $3A,$EF,$22,$22,$AF,$3A,$F5,$AC
- $5E29 DEFB $36,$0E,$00,$00,$06,$00,$00,$2C
- $5E31 DEFB $30,$0E,$00,$00,$00,$00,$00,$3A
- $5E39 DEFB $EF,$22,$22,$AF,$3A,$F5,$C0
+ $5E19 DEFB $2C,$30,$0E,$00,$00,$00,$00
+
+; Game status buffer entry at 5E20
+g$5E20 DEFB $00,$3A,$EF,$22,$22,$AF,$3A,$F5
+ $5E28 DEFB $AC,$36,$0E,$00,$00,$06,$00,$00
+ $5E30 DEFB $2C,$30,$0E,$00,$00
+
+; Game status buffer entry at 5E35
+g$5E35 DEFB $00,$00,$00
+
+; Game status buffer entry at 5E38
+g$5E38 DEFB $3A,$EF,$22,$22,$AF,$3A,$F5,$C0
 
 ; Game status buffer entry at 5E40
-g$5E40 DEFB $32,$33,$34,$32,$34,$0E,$00,$00
- $5E48 DEFB $80,$5B,$00,$0D,$00,$00,$00,$00
+g$5E40 DEFB $32,$33
+
+; Game status buffer entry at 5E42
+g$5E42 DEFB $34,$32,$34,$0E,$00,$00,$80,$5B
+ $5E4A DEFB $00,$0D,$00,$00,$00,$00
 
 ; Game status buffer entry at 5E50
 g$5E50 DEFB $00,$00
@@ -361,12 +371,37 @@ g$5E66 DEFB $00
  $5E67 DEFB $00
 
 ; Game status buffer entry at 5E68
-g$5E68 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5E70 DEFB $00
+g$5E68 DEFB $00,$00,$00,$00
+
+; Game status buffer entry at 5E6C
+g$5E6C DEFB $00
+
+; Game status buffer entry at 5E6D
+g$5E6D DEFB $00,$00
+
+; Game status buffer entry at 5E6F
+g$5E6F DEFB $00,$00
 
 ; Number of players?
-g$5E71 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $5E79 DEFB $00,$00,$00
+g$5E71 DEFB $00,$00
+
+; Game status buffer entry at 5E73
+g$5E73 DEFB $00
+
+; Game status buffer entry at 5E74
+g$5E74 DEFB $00
+
+; Game status buffer entry at 5E75
+g$5E75 DEFB $00,$00
+
+; High Score Position
+;
+; Used when calculating the players position in the high score table.
+@label=HighScorePosition
+g$5E77 DEFB $00
+
+; Game status buffer entry at 5E78
+g$5E78 DEFB $00,$00,$00,$00
 
 ; Game status buffer entry at 5E7C
 g$5E7C DEFB $00,$00,$00,$00,$00,$00,$00,$00
@@ -1498,7 +1533,7 @@ c$8000 DI            ; Disable interrupts.
  $8001 LD SP,$5E00   ; Set the stack pointer to #N$5E00.
  $8004 LD A,($5C79)  ; #HTML(#REGa=<a
                      ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
- $8007 CP $83        ; {Return if #REGa is not #N$25.
+ $8007 CP $83        ; {Return if #REGa is not #N$83.
  $8009 RET NZ        ; }
 ; Continue on to #R$800A.
 ; .
@@ -1508,6 +1543,7 @@ c$8000 DI            ; Disable interrupts.
 ; { #COOKIE$5F00 }
 ; { #JETPAC$61E5 }
 ; { #PSSST$61C6 }
+; { #SABREWULF$995A }
 ; { #TRANZAM$5F00 }
 ; LIST#
 
@@ -1963,7 +1999,8 @@ c$8298 DI            ;
  $82C2 JR Z,$82BA    ;
  $82C4 RET           ;
 
-; Data block at 82C5
+; Jump Table
+@label=JumpTable
 w$82C5 DEFW $824A
  $82C7 DEFW $8D06
  $82C9 DEFW $8D06
@@ -2332,7 +2369,7 @@ c$84F7 LD HL,$6000   ; #REGhl=#N$6000.
 ; Calculate Attribute Address
 ;
 ; Used by the routines at #R$81AB, #R$8733, #R$890A, #R$8A11, #R$8C01, #R$8C3E,
-; #R$8C5F, #R$9E2C, #R$9EDC, #R$A993 and #R$F662.
+; #R$8C5F, #R$9E2C, #R$9EDC, #R$A993, #R$AD36 and #R$F662.
 ;
 ;   HL Pixel address co-ordinates
 ; O:HL Attribute buffer address
@@ -2594,7 +2631,7 @@ c$85F6 DEC H         ;
  $8639 LD ($5E5A),A  ;
  $863C LD C,A        ;
  $863D JP $858E      ;
-; This entry point is used by the routines at #R$A0F8, #R$A993 and #R$B460.
+; This entry point is used by the routines at #R$A0F8, #R$AD36 and #R$B460.
 *$8640 XOR A         ;
  $8641 LD ($5E59),A  ;
  $8644 LD ($5E58),A  ;
@@ -2605,7 +2642,7 @@ c$85F6 DEC H         ;
 
 ; Routine at 864F
 ;
-; Used by the routines at #R$A993 and #R$B3E8.
+; Used by the routines at #R$AD36 and #R$B3E8.
 c$864F XOR A         ;
  $8650 LD ($5E59),A  ;
  $8653 LD ($5E58),A  ;
@@ -2697,7 +2734,7 @@ c$86A1 LD L,(IX+$02) ;
 
 ; Routine at 8701
 ;
-; Used by the routines at #R$8D06, #R$9356, #R$945C and #R$A993.
+; Used by the routines at #R$8D06, #R$9395, #R$9466, #R$ABA9 and #R$AD36.
 c$8701 CALL $865E    ;
  $8704 EXX           ;
  $8705 CALL $86A1    ;
@@ -2724,8 +2761,8 @@ c$8701 CALL $865E    ;
 
 ; Routine at 8733
 ;
-; Used by the routines at #R$8D06, #R$9356, #R$945C, #R$9EDC, #R$A0F8, #R$A993
-; and #R$B3E8.
+; Used by the routines at #R$8D06, #R$9395, #R$9466, #R$9EDC, #R$A0F8, #R$ABA9,
+; #R$AD36 and #R$B3E8.
 c$8733 LD L,(IX+$01) ;
  $8736 LD H,(IX+$04) ;
  $8739 LD D,(IX+$07) ;
@@ -2742,7 +2779,7 @@ c$8733 LD L,(IX+$01) ;
  $874C AND $1F       ;
  $874E INC A         ;
  $874F LD C,A        ;
-; This entry point is used by the routine at #R$A993.
+; This entry point is used by the routine at #R$AD36.
 *$8750 PUSH BC       ;
  $8751 PUSH HL       ;
  $8752 LD A,H        ;
@@ -2785,7 +2822,7 @@ c$877C CALL $88E8    ;
 
 ; Routine at 8787
 ;
-; Used by the routines at #R$9ECA, #R$9EDC, #R$A993 and #R$B3E8.
+; Used by the routines at #R$9ECA, #R$9EDC, #R$AD36 and #R$B3E8.
 c$8787 CALL $88E8    ;
  $878A EXX           ;
  $878B CALL $8826    ;
@@ -3091,7 +3128,7 @@ c$8931 PUSH BC       ;
 
 ; Routine at 8947
 ;
-; Used by the routines at #R$A0F8 and #R$A993.
+; Used by the routines at #R$A0F8 and #R$AD36.
 c$8947 LD A,L        ;
  $8948 CPL           ;
  $8949 LD L,A        ;
@@ -3103,7 +3140,7 @@ c$8947 LD A,L        ;
 
 ; Display Lives
 ;
-; Used by the routines at #R$8FF4, #R$9EDC and #R$A826.
+; Used by the routines at #R$9020, #R$9EDC and #R$A826.
 ;
 ; .
 ;
@@ -3172,7 +3209,7 @@ c$894F LD HL,$0040   ; {Call #R$851E with #N($0040, $04, $04) (screen buffer
 
 ; Add Points To Score
 ;
-; Used by the routines at #R$945C, #R$A993 and #R$B7A8.
+; Used by the routines at #R$9466, #R$AD36 and #R$B7A8.
 ;
 ; BC Points to add to score
 ;
@@ -3322,7 +3359,7 @@ c$89EF PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
 
 ; Print Colour String
 ;
-; Used by the routines at #R$80D1, #R$8A37, #R$A8E3, #R$A993, #R$B3A3, #R$B594,
+; Used by the routines at #R$80D1, #R$8A37, #R$A8E3, #R$ABA9, #R$B3A3, #R$B594,
 ; #R$F232, #R$F410 and #R$F4C6.
 ;
 ; DE Pointer to string data
@@ -3577,7 +3614,7 @@ c$8A5C LD A,C        ;
 
 ; Routine at 8B73
 ;
-; Used by the routines at #R$945C, #R$A0F8 and #R$A993.
+; Used by the routines at #R$9466, #R$A0F8 and #R$AD36.
 c$8B73 CALL $8B52    ;
  $8B76 EXX           ;
  $8B77 CALL $8AF7    ;
@@ -3619,18 +3656,22 @@ c$8BA5 LD HL,$57BF   ;
  $8BB8 JR NZ,$8BAB   ;
  $8BBA RET           ;
 
-; Routine at 8BBB
+; Draw HUD Panel
 ;
 ; Used by the routine at #R$A826.
-c$8BBB LD HL,($5E04) ;
- $8BBE PUSH HL       ;
- $8BBF LD HL,$DD97   ;
- $8BC2 LD ($5E04),HL ;
- $8BC5 LD BC,$1E03   ;
- $8BC8 LD DE,$DE5F   ;
- $8BCB LD HL,$4041   ;
+@label=DrawHUDPanel
+c$8BBB LD HL,($5E04) ; #REGhl=#R$5E04.
+ $8BBE PUSH HL       ; Stash #REGhl on the stack.
+ $8BBF LD HL,$DD97   ; {Write #R$DD97 to #R$5E04.
+ $8BC2 LD ($5E04),HL ; }
+; The panel is printed like a font.
+ $8BC5 LD BC,$1E03   ; #REGbc=#N$1E03.
+ $8BC8 LD DE,$DE5F   ; #REGde=#R$DE5F.
+ $8BCB LD HL,$4041   ; #REGhl=#N$4041 (screen buffer location).
+@label=DrawHUDPanel_Pixel_Row
 *$8BCE PUSH BC       ;
  $8BCF PUSH HL       ;
+@label=DrawHUDPanel_Pixel_Column
 *$8BD0 LD A,(DE)     ;
  $8BD1 INC DE        ;
  $8BD2 ADD A,$20     ;
@@ -3642,11 +3683,14 @@ c$8BBB LD HL,($5E04) ;
  $8BDE POP BC        ;
  $8BDF DEC C         ;
  $8BE0 JR NZ,$8BCE   ;
- $8BE2 LD DE,$DEB9   ;
- $8BE5 LD HL,$5841   ;
- $8BE8 LD BC,$1E03   ;
+; Now write the attribute bytes.
+ $8BE2 LD DE,$DEB9   ; #REGde=#R$DEB9.
+ $8BE5 LD HL,$5841   ; #REGhl=#N$5841 (attribute buffer location).
+ $8BE8 LD BC,$1E03   ; #REGbc=#N$1E03.
+@label=DrawHUDPanel_Attribute_Row
 *$8BEB PUSH BC       ;
  $8BEC PUSH HL       ;
+@label=DrawHUDPanel_Attribute_Column
 *$8BED LD A,(DE)     ;
  $8BEE INC DE        ;
  $8BEF LD (HL),A     ;
@@ -3658,13 +3702,19 @@ c$8BBB LD HL,($5E04) ;
  $8BF8 POP BC        ;
  $8BF9 DEC C         ;
  $8BFA JR NZ,$8BEB   ;
- $8BFC POP HL        ;
- $8BFD LD ($5E04),HL ;
- $8C00 RET           ;
+; Restore the old font pointer.
+ $8BFC POP HL        ; Restore #REGhl from the stack.
+ $8BFD LD ($5E04),HL ; Write #REGhl back to #R$5E04.
+ $8C00 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$5FE1 }
+; { #TRANZAM$69BC }
+; LIST#
 
 ; Routine at 8C01
 ;
-; Used by the routines at #R$8C71, #R$8D06, #R$91E2 and #R$A993.
+; Used by the routines at #R$8C71, #R$8D06, #R$91E2 and #R$ABA9.
 c$8C01 LD C,A        ;
  $8C02 PUSH HL       ;
  $8C03 CALL $8506    ;
@@ -3842,9 +3892,9 @@ c$8D06 CALL $8F90      ; Call #R$8F90.
  $8D30 CP $30          ;
  $8D32 JP C,$8D37      ;
  $8D35 SUB $10         ;
-; This entry point is used by the routine at #R$8E5A.
+; This entry point is used by the routines at #R$8E5A and #R$8EC5.
 *$8D37 LD (IX+$05),A   ;
-; This entry point is used by the routine at #R$8E5A.
+; This entry point is used by the routines at #R$8E5A and #R$8EC5.
 *$8D3A CALL $8F90      ;
  $8D3D LD B,A          ;
  $8D3E LD A,($608F)    ;
@@ -3861,10 +3911,10 @@ c$8D06 CALL $8F90      ; Call #R$8F90.
  $8D57 CP $40          ;
  $8D59 JR NC,$8D61     ;
 *$8D5B LD C,$08        ;
-; This entry point is used by the routine at #R$8E5A.
+; This entry point is used by the routine at #R$8F34.
 *$8D5D ADD A,C         ;
  $8D5E LD (IX+$06),A   ;
-; This entry point is used by the routine at #R$8E5A.
+; This entry point is used by the routine at #R$8F34.
 *$8D61 LD A,(IX+$06)   ;
  $8D64 SRA A           ;
  $8D66 SRA A           ;
@@ -3889,7 +3939,7 @@ c$8D06 CALL $8F90      ; Call #R$8F90.
 *$8D8A LD (IX+$06),$E0 ;
  $8D8E LD A,$AF        ;
 *$8D90 LD (IX+$04),A   ;
-; This entry point is used by the routine at #R$8E5A.
+; This entry point is used by the routine at #R$8F61.
 *$8D93 LD A,(IX+$05)   ;
  $8D96 AND A           ;
  $8D97 JP P,$8D9C      ;
@@ -3926,7 +3976,7 @@ c$8D06 CALL $8F90      ; Call #R$8F90.
  $8DD4 OR C            ;
  $8DD5 INC A           ;
  $8DD6 LD (IX+$00),A   ;
-; This entry point is used by the routines at #R$8CBC and #R$8FF4.
+; This entry point is used by the routines at #R$8CBC, #R$8FF4 and #R$9005.
 *$8DD9 CALL $8701      ;
  $8DDC CALL $8733      ;
  $8DDF CALL $8F90      ;
@@ -3993,112 +4043,119 @@ c$8D06 CALL $8F90      ; Call #R$8F90.
 ; Routine at 8E5A
 ;
 ; Used by the routine at #R$8D06.
-c$8E5A LD A,(IX+$00)   ;
- $8E5D DEC A           ;
- $8E5E SET 2,A         ;
- $8E60 INC A           ;
- $8E61 LD (IX+$00),A   ;
- $8E64 BIT 0,(IX+$08)  ;
- $8E68 JR NZ,$8E97     ;
- $8E6A LD A,(IX+$05)   ;
- $8E6D AND A           ;
- $8E6E JP M,$8E89      ;
- $8E71 EX AF,AF'       ;
- $8E72 LD A,($608F)    ;
- $8E75 AND A           ;
- $8E76 JR Z,$8E93      ;
- $8E78 EX AF,AF'       ;
- $8E79 CP $40          ;
- $8E7B JP NC,$8D3A     ;
- $8E7E ADD A,$08       ;
- $8E80 CP $30          ;
- $8E82 JR C,$8E86      ;
- $8E84 ADD A,$10       ;
-*$8E86 JP $8D37        ;
-*$8E89 CP $D0          ;
- $8E8B JR NC,$8E8F     ;
- $8E8D ADD A,$10       ;
-*$8E8F ADD A,$08       ;
- $8E91 JR $8E86        ;
-*$8E93 LD A,$10        ;
- $8E95 JR $8E86        ;
-*$8E97 LD A,(IX+$05)   ;
- $8E9A AND A           ;
- $8E9B JP M,$8EB0      ;
- $8E9E EX AF,AF'       ;
- $8E9F LD A,($608F)    ;
- $8EA2 AND A           ;
- $8EA3 JR Z,$8EBB      ;
- $8EA5 EX AF,AF'       ;
- $8EA6 CP $20          ;
- $8EA8 JP NC,$8EC0     ;
- $8EAB ADD A,$04       ;
- $8EAD JP $8D37        ;
-*$8EB0 CP $D0          ;
- $8EB2 JR NC,$8EB6     ;
- $8EB4 ADD A,$10       ;
-*$8EB6 ADD A,$08       ;
- $8EB8 JP $8D37        ;
-*$8EBB LD A,$10        ;
- $8EBD JP $8D37        ;
-*$8EC0 LD A,$20        ;
- $8EC2 JP $8D37        ;
-; This entry point is used by the routine at #R$8D06.
-*$8EC5 LD A,(IX+$00)   ;
- $8EC8 DEC A           ;
- $8EC9 RES 2,A         ;
- $8ECB INC A           ;
- $8ECC LD (IX+$00),A   ;
- $8ECF BIT 0,(IX+$08)  ;
- $8ED3 JR NZ,$8F03     ;
- $8ED5 LD A,(IX+$05)   ;
- $8ED8 AND A           ;
- $8ED9 JP P,$8EF3      ;
- $8EDC EX AF,AF'       ;
- $8EDD LD A,($608F)    ;
- $8EE0 AND A           ;
- $8EE1 JR Z,$8EFF      ;
- $8EE3 EX AF,AF'       ;
- $8EE4 CP $D0          ;
- $8EE6 JP C,$8D3A      ;
- $8EE9 SUB $08         ;
- $8EEB CP $E0          ;
- $8EED JR NC,$8E86     ;
- $8EEF SUB $10         ;
- $8EF1 JR $8E86        ;
-*$8EF3 CP $30          ;
- $8EF5 JR C,$8EFB      ;
- $8EF7 SUB $10         ;
- $8EF9 JR $8E86        ;
-*$8EFB SUB $08         ;
- $8EFD JR $8E86        ;
-*$8EFF LD A,$F0        ;
- $8F01 JR $8E86        ;
-*$8F03 LD A,(IX+$05)   ;
- $8F06 AND A           ;
- $8F07 JP P,$8F1C      ;
- $8F0A EX AF,AF'       ;
- $8F0B LD A,($608F)    ;
- $8F0E AND A           ;
- $8F0F JR Z,$8F2A      ;
- $8F11 EX AF,AF'       ;
- $8F12 CP $F0          ;
- $8F14 JP C,$8F2F      ;
- $8F17 SUB $04         ;
- $8F19 JP $8D37        ;
-*$8F1C CP $30          ;
- $8F1E JR C,$8F25      ;
- $8F20 SUB $10         ;
- $8F22 JP $8D37        ;
-*$8F25 SUB $08         ;
- $8F27 JP $8D37        ;
-*$8F2A LD A,$F0        ;
- $8F2C JP $8D37        ;
-*$8F2F LD A,$E0        ;
- $8F31 JP $8D37        ;
-; This entry point is used by the routine at #R$8D06.
-*$8F34 LD A,(IX+$06)   ;
- $8F37 AND A           ;
+c$8E5A LD A,(IX+$00)  ;
+ $8E5D DEC A          ;
+ $8E5E SET 2,A        ;
+ $8E60 INC A          ;
+ $8E61 LD (IX+$00),A  ;
+ $8E64 BIT 0,(IX+$08) ;
+ $8E68 JR NZ,$8E97    ;
+ $8E6A LD A,(IX+$05)  ;
+ $8E6D AND A          ;
+ $8E6E JP M,$8E89     ;
+ $8E71 EX AF,AF'      ;
+ $8E72 LD A,($608F)   ;
+ $8E75 AND A          ;
+ $8E76 JR Z,$8E93     ;
+ $8E78 EX AF,AF'      ;
+ $8E79 CP $40         ;
+ $8E7B JP NC,$8D3A    ;
+ $8E7E ADD A,$08      ;
+ $8E80 CP $30         ;
+ $8E82 JR C,$8E86     ;
+ $8E84 ADD A,$10      ;
+; This entry point is used by the routine at #R$8EC5.
+*$8E86 JP $8D37       ;
+*$8E89 CP $D0         ;
+ $8E8B JR NC,$8E8F    ;
+ $8E8D ADD A,$10      ;
+*$8E8F ADD A,$08      ;
+ $8E91 JR $8E86       ;
+*$8E93 LD A,$10       ;
+ $8E95 JR $8E86       ;
+*$8E97 LD A,(IX+$05)  ;
+ $8E9A AND A          ;
+ $8E9B JP M,$8EB0     ;
+ $8E9E EX AF,AF'      ;
+ $8E9F LD A,($608F)   ;
+ $8EA2 AND A          ;
+ $8EA3 JR Z,$8EBB     ;
+ $8EA5 EX AF,AF'      ;
+ $8EA6 CP $20         ;
+ $8EA8 JP NC,$8EC0    ;
+ $8EAB ADD A,$04      ;
+ $8EAD JP $8D37       ;
+*$8EB0 CP $D0         ;
+ $8EB2 JR NC,$8EB6    ;
+ $8EB4 ADD A,$10      ;
+*$8EB6 ADD A,$08      ;
+ $8EB8 JP $8D37       ;
+*$8EBB LD A,$10       ;
+ $8EBD JP $8D37       ;
+*$8EC0 LD A,$20       ;
+ $8EC2 JP $8D37       ;
+
+; Routine at 8EC5
+;
+; Used by the routine at #R$8D06.
+c$8EC5 LD A,(IX+$00)  ;
+ $8EC8 DEC A          ;
+ $8EC9 RES 2,A        ;
+ $8ECB INC A          ;
+ $8ECC LD (IX+$00),A  ;
+ $8ECF BIT 0,(IX+$08) ;
+ $8ED3 JR NZ,$8F03    ;
+ $8ED5 LD A,(IX+$05)  ;
+ $8ED8 AND A          ;
+ $8ED9 JP P,$8EF3     ;
+ $8EDC EX AF,AF'      ;
+ $8EDD LD A,($608F)   ;
+ $8EE0 AND A          ;
+ $8EE1 JR Z,$8EFF     ;
+ $8EE3 EX AF,AF'      ;
+ $8EE4 CP $D0         ;
+ $8EE6 JP C,$8D3A     ;
+ $8EE9 SUB $08        ;
+ $8EEB CP $E0         ;
+ $8EED JR NC,$8E86    ;
+ $8EEF SUB $10        ;
+ $8EF1 JR $8E86       ;
+*$8EF3 CP $30         ;
+ $8EF5 JR C,$8EFB     ;
+ $8EF7 SUB $10        ;
+ $8EF9 JR $8E86       ;
+*$8EFB SUB $08        ;
+ $8EFD JR $8E86       ;
+*$8EFF LD A,$F0       ;
+ $8F01 JR $8E86       ;
+*$8F03 LD A,(IX+$05)  ;
+ $8F06 AND A          ;
+ $8F07 JP P,$8F1C     ;
+ $8F0A EX AF,AF'      ;
+ $8F0B LD A,($608F)   ;
+ $8F0E AND A          ;
+ $8F0F JR Z,$8F2A     ;
+ $8F11 EX AF,AF'      ;
+ $8F12 CP $F0         ;
+ $8F14 JP C,$8F2F     ;
+ $8F17 SUB $04        ;
+ $8F19 JP $8D37       ;
+*$8F1C CP $30         ;
+ $8F1E JR C,$8F25     ;
+ $8F20 SUB $10        ;
+ $8F22 JP $8D37       ;
+*$8F25 SUB $08        ;
+ $8F27 JP $8D37       ;
+*$8F2A LD A,$F0       ;
+ $8F2C JP $8D37       ;
+*$8F2F LD A,$E0       ;
+ $8F31 JP $8D37       ;
+
+; Routine at 8F34
+;
+; Used by the routine at #R$8D06.
+c$8F34 LD A,(IX+$06)   ; {#REGa=#REGix+#N$06.
+ $8F37 AND A           ; }
  $8F38 LD B,A          ;
  $8F39 JP P,$8F4C      ;
  $8F3C NEG             ;
@@ -4108,25 +4165,28 @@ c$8E5A LD A,(IX+$00)   ;
  $8F45 JR NZ,$8F51     ;
  $8F47 CP $C0          ;
  $8F49 JP C,$8D61      ;
-*$8F4C LD C,$F8        ;
+*$8F4C LD C,$F8        ; #REGc=#N$F8.
  $8F4E JP $8D5D        ;
 *$8F51 CP $E0          ;
- $8F53 LD C,$FC        ;
+ $8F53 LD C,$FC        ; #REGc=#N$FC.
  $8F55 JP NC,$8D5D     ;
- $8F58 LD (IX+$06),$E0 ;
- $8F5C LD B,$40        ;
- $8F5E JP $8D61        ;
-; This entry point is used by the routine at #R$8D06.
-*$8F61 LD (IX+$06),$00 ;
- $8F65 LD B,$10        ;
- $8F67 JP $8D93        ;
+ $8F58 LD (IX+$06),$E0 ; #REGix+#N$06=#N$E0.
+ $8F5C LD B,$40        ; #REGb=#N$40.
+ $8F5E JP $8D61        ; Jump to #R$8D61.
 
-; Player Input: Cursor Joystick
+; Routine at 8F61
+;
+; Used by the routine at #R$8D06.
+c$8F61 LD (IX+$06),$00 ; Write #N$00 to #REGix+#N$06.
+ $8F65 LD B,$10        ; #REGb=#N$10.
+ $8F67 JP $8D93        ; Jump to #R$8D93.
+
+; Controls: Cursor Joystick
 ;
 ; Used by the routine at #R$8F90.
 ;
 ; O:A Controls
-@label=Player_Cursor
+@label=ReadCursorJoystick
 c$8F6A LD A,$EF      ; {Read from the keyboard;
  $8F6C OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
  $8F6E IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
@@ -4175,27 +4235,50 @@ c$8F6A LD A,$EF      ; {Read from the keyboard;
                      ; TABLE#
                      ; This matches the Kempston Joystick inputs.
  $8F8F RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B103 }
+; LIST#
 
-; Read Player Input
+; Handler: Controls
 ;
 ; Used by the routines at #R$8C71, #R$8CBC, #R$8D06, #R$91E2, #R$A0F8 and
 ; #R$F295.
-@label=ReadInput
+@label=HandlerControls
 c$8F90 LD A,($5E00)  ; {Jump to #R$8F9F if #R$5E00 is set for keyboard
  $8F93 AND %00000110 ; controls.
  $8F95 JR Z,$8F9F    ; }
  $8F97 CP $04        ; {Jump to #R$8F6A if #R$5E00 is set for cursor joystick
  $8F99 JR Z,$8F6A    ; controls.}
+; Continue on to #R$8F9B.
+; .
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B0A3 }
+; LIST#
+
+; Controls: Kempston Joystick
+;
+; .
+;
+; O:A Controls
+;
 ; Read from the Kempston Joystick.
-@label=Player_Kempston
- $8F9B IN A,($1F)    ; #REGa=controls.
+@label=ReadKempstonJoystick
+c$8F9B IN A,($1F)    ; #REGa=controls.
  $8F9D CPL           ; Flip the bits.
  $8F9E RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B0D9 }
+; LIST#
 
-; Player Input: Keyboard
+; Controls: Keyboard
 ;
 ; Used by the routine at #R$8F90.
-@label=Player_Keyboard
+;
+; O:A Controls
+@label=ReadKeyboard
 c$8F9F LD C,$FF      ; #REGc=#N$FF.
  $8FA1 LD A,$E7      ; {Read from the keyboard;
  $8FA3 OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
@@ -4259,302 +4342,326 @@ c$8F9F LD C,$FF      ; #REGc=#N$FF.
  $8FF0 RES 0,C       ;
 *$8FF2 LD A,C        ;
  $8FF3 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #SABREWULF$B0FA }
+; LIST#
 
 ; Routine at 8FF4
 ;
 ; Used by the routine at #R$8D06.
-c$8FF4 LD A,(IX+$00)   ;
+c$8FF4 LD A,(IX+$00)   ; #REGa=#REGix+#N$00.
  $8FF7 DEC A           ;
  $8FF8 SET 3,A         ;
  $8FFA INC A           ;
  $8FFB LD (IX+$00),A   ;
  $8FFE LD (IX+$04),$AF ;
- $9002 JP $8DD9        ;
-; This entry point is used by the routines at #R$8C71 and #R$8CBC.
-*$9005 LD A,(IX+$00)   ;
- $9008 DEC A           ;
- $9009 RES 3,A         ;
- $900B INC A           ;
- $900C LD (IX+$00),A   ;
- $900F LD A,$F0        ;
- $9011 LD (IX+$06),A   ;
- $9014 DEC (IX+$04)    ;
- $9017 DEC (IX+$04)    ;
- $901A DEC (IX+$04)    ;
- $901D JP $8DD9        ;
-; This entry point is used by the routine at #R$A826.
-*$9020 LD A,($5E6C)    ;
- $9023 AND A           ;
- $9024 RET NZ          ;
- $9025 LD A,($6090)    ;
- $9028 SUB $1A         ;
- $902A CP $10          ;
- $902C RET NC          ;
- $902D LD HL,$9D5A     ;
- $9030 LD DE,$6078     ;
- $9033 LD BC,$0018     ;
- $9036 LDIR            ;
- $9038 LD HL,($6092)   ;
- $903B LD BC,($6182)   ;
- $903F CALL $AD3F      ;
- $9042 LD HL,($6092)   ;
- $9045 JR NC,$9076     ;
- $9047 LD BC,$0040     ;
-*$904A CALL $A002      ;
- $904D LD A,L          ;
- $904E AND $F8         ;
- $9050 LD L,A          ;
- $9051 LD ($607A),HL   ;
- $9054 LD A,$40        ;
- $9056 LD HL,$5E00     ;
- $9059 BIT 0,(HL)      ;
- $905B JR Z,$905F      ;
- $905D ADD A,$3F       ;
-*$905F LD ($5E67),A    ;
- $9062 LD A,($5EA1)    ;
- $9065 DEC A           ;
- $9066 LD ($5EA1),A    ;
- $9069 LD HL,$9000     ;
- $906C LD ($608E),HL   ;
- $906F XOR A           ;
- $9070 LD ($5E6C),A    ;
- $9073 JP $894F        ;
-*$9076 LD BC,$FFC0     ;
- $9079 JR $904A        ;
-; This entry point is used by the routines at #R$8D06, #R$91E2 and #R$A993.
-*$907B LD A,(IX+$05)   ;
- $907E SRA A           ;
- $9080 SRA A           ;
- $9082 SRA A           ;
- $9084 SRA A           ;
- $9086 LD E,A          ;
- $9087 LD D,$00        ;
- $9089 JP P,$908E      ;
- $908C LD D,$FF        ;
-*$908E LD H,(IX+$03)   ;
- $9091 LD L,(IX+$02)   ;
- $9094 LD A,L          ;
- $9095 AND $07         ;
- $9097 PUSH HL         ;
- $9098 PUSH DE         ;
- $9099 CALL Z,$915C    ;
- $909C POP DE          ;
- $909D CALL $90AC      ;
- $90A0 POP HL          ;
- $90A1 ADD HL,DE       ;
- $90A2 LD A,H          ;
- $90A3 AND $1F         ;
- $90A5 LD (IX+$03),A   ;
- $90A8 LD (IX+$02),L   ;
- $90AB RET             ;
-*$90AC LD HL,$50C0     ;
- $90AF LD C,$08        ;
- $90B1 LD A,E          ;
- $90B2 AND A           ;
- $90B3 RET Z           ;
- $90B4 JP P,$9109      ;
- $90B7 NEG             ;
- $90B9 DEC A           ;
- $90BA JR Z,$90D8      ;
- $90BC DEC A           ;
- $90BD JR Z,$90EA      ;
- $90BF LD A,(IX+$02)   ;
- $90C2 AND $03         ;
- $90C4 JR NZ,$90EA     ;
-*$90C6 XOR A           ;
- $90C7 LD B,$20        ;
- $90C9 PUSH HL         ;
-*$90CA RRD             ;
- $90CC INC HL          ;
- $90CD DJNZ $90CA      ;
- $90CF POP HL          ;
- $90D0 INC H           ;
- $90D1 DEC C           ;
- $90D2 JR NZ,$90C6     ;
- $90D4 LD DE,$FFFC     ;
- $90D7 RET             ;
-*$90D8 XOR A           ;
- $90D9 LD B,$20        ;
- $90DB PUSH HL         ;
-*$90DC RR (HL)         ;
- $90DE INC HL          ;
- $90DF DJNZ $90DC      ;
- $90E1 POP HL          ;
- $90E2 INC H           ;
- $90E3 DEC C           ;
- $90E4 JR NZ,$90D8     ;
- $90E6 LD DE,$FFFF     ;
- $90E9 RET             ;
-*$90EA LD A,(IX+$02)   ;
- $90ED AND $01         ;
- $90EF JR NZ,$90D8     ;
-*$90F1 XOR A           ;
- $90F2 EX AF,AF'       ;
- $90F3 XOR A           ;
- $90F4 PUSH HL         ;
- $90F5 LD B,$20        ;
-*$90F7 RR (HL)         ;
- $90F9 EX AF,AF'       ;
- $90FA RR (HL)         ;
- $90FC EX AF,AF'       ;
- $90FD INC L           ;
- $90FE DJNZ $90F7      ;
- $9100 POP HL          ;
- $9101 INC H           ;
- $9102 DEC C           ;
- $9103 JR NZ,$90F1     ;
- $9105 LD DE,$FFFE     ;
- $9108 RET             ;
-*$9109 LD HL,$50DF     ;
- $910C DEC A           ;
- $910D JR Z,$912B      ;
- $910F DEC A           ;
- $9110 JR Z,$913D      ;
- $9112 LD A,(IX+$02)   ;
- $9115 AND $03         ;
- $9117 JR NZ,$913D     ;
-*$9119 XOR A           ;
- $911A LD B,$20        ;
- $911C PUSH HL         ;
-*$911D RLD             ;
- $911F DEC L           ;
- $9120 DJNZ $911D      ;
- $9122 POP HL          ;
- $9123 INC H           ;
- $9124 DEC C           ;
- $9125 JR NZ,$9119     ;
- $9127 LD DE,$0004     ;
- $912A RET             ;
-*$912B XOR A           ;
- $912C LD B,$20        ;
- $912E PUSH HL         ;
-*$912F RL (HL)         ;
- $9131 DEC L           ;
- $9132 DJNZ $912F      ;
- $9134 POP HL          ;
- $9135 INC H           ;
- $9136 DEC C           ;
- $9137 JR NZ,$912B     ;
- $9139 LD DE,$0001     ;
- $913C RET             ;
-*$913D LD A,(IX+$02)   ;
- $9140 AND $01         ;
- $9142 JR NZ,$912B     ;
-*$9144 XOR A           ;
- $9145 EX AF,AF'       ;
- $9146 XOR A           ;
- $9147 PUSH HL         ;
- $9148 LD B,$20        ;
-*$914A RL (HL)         ;
- $914C EX AF,AF'       ;
- $914D RL (HL)         ;
- $914F EX AF,AF'       ;
- $9150 DEC L           ;
- $9151 DJNZ $914A      ;
- $9153 POP HL          ;
- $9154 INC H           ;
- $9155 DEC C           ;
- $9156 JR NZ,$9144     ;
- $9158 LD DE,$0002     ;
- $915B RET             ;
-*$915C LD A,E          ;
- $915D AND A           ;
- $915E JP M,$919E      ;
- $9161 LD DE,$0080     ;
- $9164 ADD HL,DE       ;
- $9165 LD A,H          ;
- $9166 AND $1F         ;
- $9168 LD H,A          ;
- $9169 LD DE,$7000     ;
- $916C SRA H           ;
- $916E RR L            ;
- $9170 SRA H           ;
- $9172 RR L            ;
- $9174 SRA H           ;
- $9176 RR L            ;
- $9178 ADD HL,DE       ;
- $9179 LD DE,$50DF     ;
-; This entry point is used by the routine at #R$9356.
-*$917C PUSH HL         ;
- $917D PUSH DE         ;
- $917E LD L,(HL)       ;
- $917F LD H,$00        ;
- $9181 ADD HL,HL       ;
- $9182 ADD HL,HL       ;
- $9183 ADD HL,HL       ;
- $9184 LD DE,$F66E     ;
- $9187 ADD HL,DE       ;
- $9188 LD B,$08        ;
- $918A POP DE          ;
- $918B PUSH DE         ;
-*$918C LD A,(HL)       ;
- $918D LD (DE),A       ;
- $918E INC HL          ;
- $918F INC D           ;
- $9190 DJNZ $918C      ;
- $9192 POP DE          ;
- $9193 LD A,E          ;
- $9194 ADD A,$20       ;
- $9196 LD E,A          ;
- $9197 LD A,D          ;
- $9198 ADC A,$00       ;
- $919A LD D,A          ;
- $919B POP HL          ;
- $919C INC HL          ;
- $919D RET             ;
-*$919E LD DE,$FF88     ;
- $91A1 ADD HL,DE       ;
- $91A2 LD A,H          ;
- $91A3 AND $1F         ;
- $91A5 LD H,A          ;
- $91A6 LD DE,$7000     ;
- $91A9 SRA H           ;
- $91AB RR L            ;
- $91AD SRA H           ;
- $91AF RR L            ;
- $91B1 SRA H           ;
- $91B3 RR L            ;
- $91B5 ADD HL,DE       ;
- $91B6 LD DE,$50C0     ;
- $91B9 JR $917C        ;
-; This entry point is used by the routines at #R$8CBC, #R$8D06, #R$9356,
-; #R$945C and #R$A0F8.
-*$91BB LD H,(IX+$03)   ;
- $91BE LD L,(IX+$02)   ;
- $91C1 LD A,H          ;
- $91C2 AND $1F         ;
- $91C4 LD H,A          ;
- $91C5 SRA H           ;
- $91C7 RR L            ;
- $91C9 SRA H           ;
- $91CB RR L            ;
- $91CD SRA H           ;
- $91CF RR L            ;
- $91D1 PUSH HL         ;
- $91D2 LD BC,$7000     ;
- $91D5 ADD HL,BC       ;
- $91D6 LD D,(HL)       ;
- $91D7 POP HL          ;
- $91D8 PUSH HL         ;
- $91D9 INC HL          ;
- $91DA LD A,H          ;
- $91DB AND $03         ;
- $91DD LD H,A          ;
- $91DE ADD HL,BC       ;
- $91DF LD E,(HL)       ;
- $91E0 POP HL          ;
- $91E1 RET             ;
+ $9002 JP $8DD9        ; Jump to #R$8DD9.
+
+; Routine at 9005
+;
+; Used by the routines at #R$8C71 and #R$8CBC.
+c$9005 LD A,(IX+$00) ; #REGa=#REGix+#N$00.
+ $9008 DEC A         ;
+ $9009 RES 3,A       ;
+ $900B INC A         ;
+ $900C LD (IX+$00),A ;
+ $900F LD A,$F0      ; {Write #N$F0 to #REGix+#N$06.
+ $9011 LD (IX+$06),A ; }
+ $9014 DEC (IX+$04)  ;
+ $9017 DEC (IX+$04)  ;
+ $901A DEC (IX+$04)  ;
+ $901D JP $8DD9      ; Jump to #R$8DD9.
+
+; Routine at 9020
+;
+; Used by the routine at #R$A826.
+c$9020 LD A,($5E6C)  ; #REGa=#R$5E6C.
+ $9023 AND A         ;
+ $9024 RET NZ        ;
+ $9025 LD A,($6090)  ;
+ $9028 SUB $1A       ;
+ $902A CP $10        ;
+ $902C RET NC        ;
+ $902D LD HL,$9D5A   ; #REGhl=#R$9D5A.
+ $9030 LD DE,$6078   ; #REGde=#N$6078.
+ $9033 LD BC,$0018   ; #REGbc=#N($0018,$04,$04).
+ $9036 LDIR          ;
+ $9038 LD HL,($6092) ;
+ $903B LD BC,($6182) ;
+ $903F CALL $AD3F    ; Call #R$AD3F.
+ $9042 LD HL,($6092) ;
+ $9045 JR NC,$9076   ;
+ $9047 LD BC,$0040   ; #REGbc=#N($0040,$04,$04).
+*$904A CALL $A002    ; Call #R$A002.
+ $904D LD A,L        ;
+ $904E AND $F8       ;
+ $9050 LD L,A        ;
+ $9051 LD ($607A),HL ;
+ $9054 LD A,$40      ;
+ $9056 LD HL,$5E00   ;
+ $9059 BIT 0,(HL)    ;
+ $905B JR Z,$905F    ;
+ $905D ADD A,$3F     ;
+*$905F LD ($5E67),A  ;
+ $9062 LD A,($5EA1)  ;
+ $9065 DEC A         ;
+ $9066 LD ($5EA1),A  ;
+ $9069 LD HL,$9000   ;
+ $906C LD ($608E),HL ;
+ $906F XOR A         ;
+ $9070 LD ($5E6C),A  ;
+ $9073 JP $894F      ; Jump to #R$894F.
+*$9076 LD BC,$FFC0   ; #REGbc=#N$FFC0.
+ $9079 JR $904A      ; Jump to #R$904A.
+
+; Routine at 907B
+;
+; Used by the routines at #R$8D06, #R$91E2 and #R$B33D.
+c$907B LD A,(IX+$05) ; #REGa=#REGix+#N$05.
+ $907E SRA A         ;
+ $9080 SRA A         ;
+ $9082 SRA A         ;
+ $9084 SRA A         ;
+ $9086 LD E,A        ;
+ $9087 LD D,$00      ;
+ $9089 JP P,$908E    ;
+ $908C LD D,$FF      ;
+*$908E LD H,(IX+$03) ;
+ $9091 LD L,(IX+$02) ;
+ $9094 LD A,L        ;
+ $9095 AND $07       ;
+ $9097 PUSH HL       ;
+ $9098 PUSH DE       ;
+ $9099 CALL Z,$915C  ;
+ $909C POP DE        ;
+ $909D CALL $90AC    ;
+ $90A0 POP HL        ;
+ $90A1 ADD HL,DE     ;
+ $90A2 LD A,H        ;
+ $90A3 AND $1F       ;
+ $90A5 LD (IX+$03),A ;
+ $90A8 LD (IX+$02),L ;
+ $90AB RET           ;
+*$90AC LD HL,$50C0   ;
+ $90AF LD C,$08      ;
+ $90B1 LD A,E        ;
+ $90B2 AND A         ;
+ $90B3 RET Z         ;
+ $90B4 JP P,$9109    ;
+ $90B7 NEG           ;
+ $90B9 DEC A         ;
+ $90BA JR Z,$90D8    ;
+ $90BC DEC A         ;
+ $90BD JR Z,$90EA    ;
+ $90BF LD A,(IX+$02) ;
+ $90C2 AND $03       ;
+ $90C4 JR NZ,$90EA   ;
+*$90C6 XOR A         ;
+ $90C7 LD B,$20      ;
+ $90C9 PUSH HL       ;
+*$90CA RRD           ;
+ $90CC INC HL        ;
+ $90CD DJNZ $90CA    ;
+ $90CF POP HL        ;
+ $90D0 INC H         ;
+ $90D1 DEC C         ;
+ $90D2 JR NZ,$90C6   ;
+ $90D4 LD DE,$FFFC   ;
+ $90D7 RET           ;
+*$90D8 XOR A         ;
+ $90D9 LD B,$20      ;
+ $90DB PUSH HL       ;
+*$90DC RR (HL)       ;
+ $90DE INC HL        ;
+ $90DF DJNZ $90DC    ;
+ $90E1 POP HL        ;
+ $90E2 INC H         ;
+ $90E3 DEC C         ;
+ $90E4 JR NZ,$90D8   ;
+ $90E6 LD DE,$FFFF   ;
+ $90E9 RET           ;
+*$90EA LD A,(IX+$02) ;
+ $90ED AND $01       ;
+ $90EF JR NZ,$90D8   ;
+*$90F1 XOR A         ;
+ $90F2 EX AF,AF'     ;
+ $90F3 XOR A         ;
+ $90F4 PUSH HL       ;
+ $90F5 LD B,$20      ;
+*$90F7 RR (HL)       ;
+ $90F9 EX AF,AF'     ;
+ $90FA RR (HL)       ;
+ $90FC EX AF,AF'     ;
+ $90FD INC L         ;
+ $90FE DJNZ $90F7    ;
+ $9100 POP HL        ;
+ $9101 INC H         ;
+ $9102 DEC C         ;
+ $9103 JR NZ,$90F1   ;
+ $9105 LD DE,$FFFE   ;
+ $9108 RET           ;
+*$9109 LD HL,$50DF   ;
+ $910C DEC A         ;
+ $910D JR Z,$912B    ;
+ $910F DEC A         ;
+ $9110 JR Z,$913D    ;
+ $9112 LD A,(IX+$02) ;
+ $9115 AND $03       ;
+ $9117 JR NZ,$913D   ;
+*$9119 XOR A         ;
+ $911A LD B,$20      ;
+ $911C PUSH HL       ;
+*$911D RLD           ;
+ $911F DEC L         ;
+ $9120 DJNZ $911D    ;
+ $9122 POP HL        ;
+ $9123 INC H         ;
+ $9124 DEC C         ;
+ $9125 JR NZ,$9119   ;
+ $9127 LD DE,$0004   ;
+ $912A RET           ;
+*$912B XOR A         ;
+ $912C LD B,$20      ;
+ $912E PUSH HL       ;
+*$912F RL (HL)       ;
+ $9131 DEC L         ;
+ $9132 DJNZ $912F    ;
+ $9134 POP HL        ;
+ $9135 INC H         ;
+ $9136 DEC C         ;
+ $9137 JR NZ,$912B   ;
+ $9139 LD DE,$0001   ;
+ $913C RET           ;
+*$913D LD A,(IX+$02) ;
+ $9140 AND $01       ;
+ $9142 JR NZ,$912B   ;
+*$9144 XOR A         ;
+ $9145 EX AF,AF'     ;
+ $9146 XOR A         ;
+ $9147 PUSH HL       ;
+ $9148 LD B,$20      ;
+*$914A RL (HL)       ;
+ $914C EX AF,AF'     ;
+ $914D RL (HL)       ;
+ $914F EX AF,AF'     ;
+ $9150 DEC L         ;
+ $9151 DJNZ $914A    ;
+ $9153 POP HL        ;
+ $9154 INC H         ;
+ $9155 DEC C         ;
+ $9156 JR NZ,$9144   ;
+ $9158 LD DE,$0002   ;
+ $915B RET           ;
+*$915C LD A,E        ;
+ $915D AND A         ;
+ $915E JP M,$919E    ;
+ $9161 LD DE,$0080   ;
+ $9164 ADD HL,DE     ;
+ $9165 LD A,H        ;
+ $9166 AND $1F       ;
+ $9168 LD H,A        ;
+ $9169 LD DE,$7000   ;
+ $916C SRA H         ;
+ $916E RR L          ;
+ $9170 SRA H         ;
+ $9172 RR L          ;
+ $9174 SRA H         ;
+ $9176 RR L          ;
+ $9178 ADD HL,DE     ;
+ $9179 LD DE,$50DF   ;
+
+; Routine at 917C
+;
+; Used by the routines at #R$919E and #R$9356.
+;
+; HL Terrain Buffer?
+c$917C PUSH HL       ; {Stash #REGhl and #REGde on the stack.
+ $917D PUSH DE       ; }
+ $917E LD L,(HL)     ;
+ $917F LD H,$00      ; #REGh=#N$00.
+ $9181 ADD HL,HL     ; {#REGhl=#REGhl^#N$03.
+ $9182 ADD HL,HL     ;
+ $9183 ADD HL,HL     ; }
+ $9184 LD DE,$F66E   ; #REGde=#R$F66E.
+ $9187 ADD HL,DE     ; #REGhl=#REGhl+#REGde.
+ $9188 LD B,$08      ; #REGb=#N$08.
+ $918A POP DE        ; {Restore #REGde from the stack, but stash a copy of it
+ $918B PUSH DE       ; again.}
+*$918C LD A,(HL)     ;
+ $918D LD (DE),A     ;
+ $918E INC HL        ; Increment #REGhl by one.
+ $918F INC D         ; Increment #REGd by one.
+ $9190 DJNZ $918C    ;
+ $9192 POP DE        ;
+ $9193 LD A,E        ;
+ $9194 ADD A,$20     ;
+ $9196 LD E,A        ;
+ $9197 LD A,D        ;
+ $9198 ADC A,$00     ;
+ $919A LD D,A        ;
+ $919B POP HL        ;
+ $919C INC HL        ;
+ $919D RET           ; Return.
+
+; Routine at 919E
+;
+; Used by the routine at #R$907B.
+c$919E LD DE,$FF88   ; #REGde=#N$FF88.
+ $91A1 ADD HL,DE     ;
+ $91A2 LD A,H        ;
+ $91A3 AND %00011111 ; Keep only bits 0-5.
+ $91A5 LD H,A        ;
+ $91A6 LD DE,$7000   ;
+ $91A9 SRA H         ;
+ $91AB RR L          ;
+ $91AD SRA H         ;
+ $91AF RR L          ;
+ $91B1 SRA H         ;
+ $91B3 RR L          ;
+ $91B5 ADD HL,DE     ;
+ $91B6 LD DE,$50C0   ; #REGde=#N$50C0.
+ $91B9 JR $917C      ; Jump to #R$917C.
+
+; Routine at 91BB
+;
+; Used by the routines at #R$8CBC, #R$8D06, #R$9395, #R$9466 and #R$A0F8.
+c$91BB LD H,(IX+$03) ; #REGh=#REGix+#N$03.
+ $91BE LD L,(IX+$02) ; #REGl=#REGix+#N$02.
+ $91C1 LD A,H        ; #REGa=#REGh.
+ $91C2 AND %00011111 ; Keep only bits 0-4.
+ $91C4 LD H,A        ; #REGh=#REGa.
+ $91C5 SRA H         ;
+ $91C7 RR L          ;
+ $91C9 SRA H         ;
+ $91CB RR L          ;
+ $91CD SRA H         ;
+ $91CF RR L          ;
+ $91D1 PUSH HL       ; Stash #REGhl on the stack.
+ $91D2 LD BC,$7000   ; #REGbc=#R$7000.
+ $91D5 ADD HL,BC     ;
+ $91D6 LD D,(HL)     ;
+ $91D7 POP HL        ;
+ $91D8 PUSH HL       ;
+ $91D9 INC HL        ;
+ $91DA LD A,H        ; #REGa=#REGh.
+ $91DB AND %00000011 ; Keep only bits 0-1.
+ $91DD LD H,A        ; #REGh=#REGa.
+ $91DE ADD HL,BC     ;
+ $91DF LD E,(HL)     ;
+ $91E0 POP HL        ; Restore #REGhl from the stack.
+ $91E1 RET           ; Return.
 
 ; Routine at 91E2
-c$91E2 LD A,($5E6C)    ;
+c$91E2 LD A,($5E6C)    ; {If #R$5E6C is not zero, jump to #R$9267.
  $91E5 AND A           ;
- $91E6 JR NZ,$9267     ;
- $91E8 LD HL,$9000     ;
- $91EB LD ($608E),HL   ;
- $91EE LD A,H          ;
- $91EF LD HL,$1040     ;
- $91F2 CALL $8C01      ;
- $91F5 CALL $8F90      ;
+ $91E6 JR NZ,$9267     ; }
+ $91E8 LD HL,$9000     ; {Write #N$9000 to #N$608E.
+ $91EB LD ($608E),HL   ; }
+ $91EE LD A,H          ; #REGa=#REGh.
+ $91EF LD HL,$1040     ; #REGhl=#N$1040.
+ $91F2 CALL $8C01      ; Call #R$8C01.
+ $91F5 CALL $8F90      ; Call #R$8F90.
  $91F8 BIT 0,A         ;
  $91FA JP Z,$92CB      ;
  $91FD BIT 1,A         ;
@@ -4564,13 +4671,13 @@ c$91E2 LD A,($5E6C)    ;
  $9206 JR Z,$9211      ;
  $9208 JP P,$920F      ;
  $920B ADD A,$01       ;
- $920D JR $9211        ;
+ $920D JR $9211        ; Jump to #R$9211.
 *$920F SUB $01         ;
 *$9211 LD (IX+$05),A   ;
  $9214 LD HL,($607A)   ;
  $9217 BIT 7,(IX+$05)  ;
  $921B JP NZ,$92B4     ;
- $921E LD DE,$FFF8     ;
+ $921E LD DE,$FFF8     ; #REGde=#N$FFF8.
 *$9221 ADD HL,DE       ;
  $9222 SRA H           ;
  $9224 RR L            ;
@@ -4579,23 +4686,23 @@ c$91E2 LD A,($5E6C)    ;
  $922A SRA H           ;
  $922C RR L            ;
  $922E LD A,H          ;
- $922F AND $03         ;
+ $922F AND %00000011   ; Keep only bits 0-1.
  $9231 LD H,A          ;
  $9232 LD B,$06        ;
  $9234 EX DE,HL        ;
-*$9235 LD HL,$7000     ;
+*$9235 LD HL,$7000     ; #REGhl=#R$7000.
  $9238 ADD HL,DE       ;
  $9239 LD A,(HL)       ;
  $923A AND A           ;
  $923B JR Z,$924A      ;
- $923D AND $08         ;
+ $923D AND %00001000   ; Keep only bit 3.
  $923F JR NZ,$924A     ;
  $9241 INC DE          ;
  $9242 LD A,D          ;
  $9243 AND $03         ;
  $9245 LD D,A          ;
  $9246 DJNZ $9235      ;
- $9248 JR $9250        ;
+ $9248 JR $9250        ; Jump to #R$9250.
 *$924A LD (IX+$05),$00 ;
  $924E JR $9264        ;
 *$9250 LD A,(IX+$05)   ;
@@ -4676,25 +4783,28 @@ c$91E2 LD A,($5E6C)    ;
 *$9304 LD (IX+$00),$0D ;
  $9308 LD A,$22        ;
  $930A JR $92FB        ;
-; This entry point is used by the routine at #R$8D06.
-*$930C LD HL,$6097     ;
- $930F LD DE,$607F     ;
- $9312 LD BC,$0009     ;
+
+; Routine at 930C
+;
+; Used by the routine at #R$8D06.
+c$930C LD HL,$6097     ; #REGhl=#N$6097.
+ $930F LD DE,$607F     ; #REGde=#N$607F.
+ $9312 LD BC,$0009     ; #REGbc=#N($0009,$04,$04).
  $9315 LDIR            ;
  $9317 LD (IX+$01),$68 ;
  $931B LD (IX+$04),$AF ;
  $931F LD A,(IX+$00)   ;
  $9322 DEC A           ;
- $9323 AND $04         ;
+ $9323 AND %00000100   ; Keep only bit 3.
  $9325 JR NZ,$9338     ;
  $9327 LD (IX+$00),$12 ;
-*$932B XOR A           ;
- $932C LD ($6090),A    ;
+*$932B XOR A           ; {Write #N$00 to #N$6090.
+ $932C LD ($6090),A    ; }
  $932F LD (IX+$05),A   ;
  $9332 LD (IX+$06),A   ;
- $9335 JP $B8BD        ;
+ $9335 JP $B8BD        ; Jump to #R$B8BD.
 *$9338 LD (IX+$00),$16 ;
- $933C JR $932B        ;
+ $933C JR $932B        ; Jump to #R$932B.
 
 ; Routine at 933E
 ;
@@ -4717,49 +4827,53 @@ c$933E LD A,$7E      ; {Read from the keyboard;
 *$9354 XOR A         ; #REGa=#N$00.
  $9355 RET           ; Return.
 
-; Routine at 9356
+; Draw Terrain?
 ;
 ; Used by the routines at #R$A0F8 and #R$A826.
-c$9356 LD HL,($607A)   ;
- $9359 LD DE,$FF88     ;
- $935C ADD HL,DE       ;
- $935D LD A,H          ;
- $935E AND $1F         ;
- $9360 LD H,A          ;
- $9361 SRA H           ;
- $9363 RR L            ;
- $9365 SRA H           ;
- $9367 RR L            ;
- $9369 SRA H           ;
- $936B RR L            ;
- $936D LD DE,$50C0     ;
- $9370 LD BC,$7000     ;
- $9373 LD A,$20        ;
-*$9375 PUSH AF         ;
- $9376 PUSH HL         ;
- $9377 ADD HL,BC       ;
- $9378 PUSH BC         ;
- $9379 PUSH DE         ;
- $937A CALL $917C      ;
- $937D POP DE          ;
- $937E INC E           ;
- $937F POP BC          ;
- $9380 POP HL          ;
- $9381 INC HL          ;
- $9382 LD A,H          ;
- $9383 AND $03         ;
- $9385 LD H,A          ;
- $9386 POP AF          ;
- $9387 DEC A           ;
- $9388 JR NZ,$9375     ;
- $938A LD HL,$5AE1     ;
- $938D LD BC,$1E5B     ;
-*$9390 LD (HL),C       ;
- $9391 INC HL          ;
- $9392 DJNZ $9390      ;
- $9394 RET             ;
-; This entry point is used by the routine at #R$945C.
-*$9395 LD HL,$61B0     ;
+c$9356 LD HL,($607A) ; #REGhl=#R$607A.
+ $9359 LD DE,$FF88   ; #REGde=#N$FF88.
+ $935C ADD HL,DE     ;
+ $935D LD A,H        ;
+ $935E AND %00011111 ; Keep only bits 0-4.
+ $9360 LD H,A        ;
+ $9361 SRA H         ;
+ $9363 RR L          ;
+ $9365 SRA H         ;
+ $9367 RR L          ;
+ $9369 SRA H         ;
+ $936B RR L          ;
+ $936D LD DE,$50C0   ; #REGde=#N$50C0.
+ $9370 LD BC,$7000   ; #REGbc=#R$7000.
+ $9373 LD A,$20      ; #REGa=#N$20.
+*$9375 PUSH AF       ;
+ $9376 PUSH HL       ;
+ $9377 ADD HL,BC     ;
+ $9378 PUSH BC       ;
+ $9379 PUSH DE       ;
+ $937A CALL $917C    ; Call #R$917C.
+ $937D POP DE        ;
+ $937E INC E         ;
+ $937F POP BC        ;
+ $9380 POP HL        ;
+ $9381 INC HL        ;
+ $9382 LD A,H        ;
+ $9383 AND %00000011 ; Keep only bits 0-1.
+ $9385 LD H,A        ;
+ $9386 POP AF        ;
+ $9387 DEC A         ;
+ $9388 JR NZ,$9375   ;
+ $938A LD HL,$5AE1   ; #REGhl=#N$5AE1.
+ $938D LD BC,$1E5B   ; #REGbc=#N$1E5B.
+*$9390 LD (HL),C     ; Write #REGc to #REGhl.
+ $9391 INC HL        ; Increment #REGhl by one.
+ $9392 DJNZ $9390    ; Decrease counter by one and loop back to #R$9390 until
+                     ; counter is zero.
+ $9394 RET           ; Return.
+
+; Routine at 9395
+;
+; Used by the routine at #R$9466.
+c$9395 LD HL,$61B0     ;
  $9398 LD B,$06        ;
  $939A LD DE,$0018     ;
 *$939D LD A,(HL)       ;
@@ -4768,7 +4882,7 @@ c$9356 LD HL,($607A)   ;
  $93A1 ADD HL,DE       ;
  $93A2 DJNZ $939D      ;
  $93A4 AND A           ;
-*$93A5 RET             ;
+*$93A5 RET             ; Return.
  $93A6 LD HL,($607A)   ;
  $93A9 LD (IX+$03),H   ;
  $93AC LD (IX+$02),L   ;
@@ -4848,16 +4962,23 @@ c$9356 LD HL,($607A)   ;
 
 ; Routine at 945C
 ;
-; Used by the routines at #R$8D06, #R$9356, #R$A0F8, #R$B6CF, #R$B731 and
+; Used by the routines at #R$8D06, #R$9395, #R$A0F8, #R$B6CF, #R$B731 and
 ; #R$B7A8.
-c$945C LD A,$7E        ;
- $945E OUT ($FD),A     ;
- $9460 IN A,($FE)      ;
- $9462 CPL             ;
- $9463 AND $02         ;
- $9465 RET             ;
-; This entry point is used by the routine at #R$824A.
-*$9466 LD A,R          ;
+c$945C LD A,$7E      ; {Read from the keyboard;
+ $945E OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+ $9460 IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { =r2 #N$7E | SPACE | FULL-STOP | M | N | B }
+                     ; { Shift | Z | X | C | V }
+                     ; TABLE#}
+ $9462 CPL           ; Flip the bits.
+ $9463 AND %00000010 ; Keep only bits 0-1.
+ $9465 RET           ; Return.
+
+; Routine at 9466
+;
+; Used by the routine at #R$824A.
+c$9466 LD A,R          ;
  $9468 AND $03         ;
  $946A RET NZ          ;
  $946B LD A,($5E67)    ;
@@ -5049,7 +5170,7 @@ c$945C LD A,$7E        ;
  $95AF RET NC          ;
  $95B0 CALL $B2D7      ;
 *$95B3 JP $A76B        ;
-; This entry point is used by the routine at #R$A993.
+; This entry point is used by the routine at #R$AD36.
 *$95B6 CALL $91BB      ;
  $95B9 PUSH HL         ;
  $95BA LD DE,$7000     ;
@@ -5419,7 +5540,7 @@ c$945C LD A,$7E        ;
 *$98AA LD A,$01        ;
  $98AC AND A           ;
  $98AD RET             ;
-; This entry point is used by the routine at #R$9356.
+; This entry point is used by the routine at #R$9395.
 *$98AE LD H,(IX+$03)   ;
  $98B1 LD L,(IX+$02)   ;
  $98B4 LD DE,($607A)   ;
@@ -6223,7 +6344,7 @@ c$9EDC LD A,($607A)                         ;
  $9FFC JP $F5EC                             ;
 *$9FFF LD A,$FF                             ;
  $A001 RET                                  ;
-; This entry point is used by the routines at #R$8FF4, #R$A993, #R$B3E8,
+; This entry point is used by the routines at #R$9020, #R$AD36, #R$B3E8,
 ; #R$B6AE and #R$B731.
 *$A002 ADD HL,BC                            ;
  $A003 LD A,H                               ;
@@ -6740,7 +6861,7 @@ c$A0F8 CALL $945C      ;
  $A534 LD A,$AF        ;
 *$A536 LD (IX+$04),A   ;
  $A539 RET             ;
-; This entry point is used by the routine at #R$A993.
+; This entry point is used by the routine at #R$AD36.
 *$A53A PUSH IX         ;
  $A53C POP HL          ;
  $A53D LD DE,$0018     ;
@@ -7037,7 +7158,7 @@ c$A0F8 CALL $945C      ;
  $A739 POP HL          ;
  $A73A POP HL          ;
  $A73B RET             ;
-; This entry point is used by the routines at #R$945C and #R$A993.
+; This entry point is used by the routines at #R$9466 and #R$AD36.
 *$A73C LD (IX+$00),$64 ;
  $A740 JR $A772        ;
  $A742 CALL $8B73      ;
@@ -7051,14 +7172,14 @@ c$A0F8 CALL $945C      ;
 *$A755 CALL $8AE8      ;
  $A758 LD (IX+$00),$00 ;
  $A75C RET             ;
-; This entry point is used by the routine at #R$A993.
+; This entry point is used by the routine at #R$B37B.
 *$A75D CALL $B973      ;
  $A760 LD (IX+$00),$C0 ;
  $A764 JR $A772        ;
-; This entry point is used by the routine at #R$945C.
+; This entry point is used by the routine at #R$9466.
 *$A766 BIT 0,(IX+$10)  ;
  $A76A RET Z           ;
-; This entry point is used by the routines at #R$945C and #R$A993.
+; This entry point is used by the routines at #R$9466 and #R$AD36.
 *$A76B LD (IX+$00),$5C ;
  $A76F CALL $B9A1      ;
 *$A772 LD A,($5E40)    ;
@@ -7209,9 +7330,10 @@ c$A84C LD B,$02      ; #REGb=#N$02 (counter for our two players).
  $A86E LD ($5EA5),A  ; }
  $A871 LD A,$FF      ; {Write 2UP starting fuel to #R$5EA4.
  $A873 LD ($5EA4),A  ; }
- $A876 LD A,($5E00)  ; {Return if #R$5E00 indicates this is a 1 player only
- $A879 AND $01       ; game.
- $A87B RET NZ        ; }
+ $A876 LD A,($5E00)  ; #REGa=#R$5E00.
+ $A879 AND %00000001 ; Keep only bit 0.
+ $A87B RET NZ        ; Return if #R$5E00 indicates this is a 1 player only
+                     ; game.
  $A87C LD ($5EA5),A  ; Write #REGa to #R$5EA5.
  $A87F RET           ; Return.
 
@@ -7253,7 +7375,7 @@ c$A880 LD HL,$5EA0   ; #REGhl=#R$5EA0.
 
 ; Routine at A8B5
 ;
-; Used by the routine at #R$A993.
+; Used by the routine at #R$B385.
 c$A8B5 LD A,($5E00)  ;
  $A8B8 AND $01       ;
  $A8BA JR NZ,$A8C5   ;
@@ -7353,1404 +7475,1225 @@ c$A8E3 LD A,"1"+$80                             ; #REGa="1" + #N$80 (escape
 ; Routine at A993
 ;
 ; Used by the routine at #R$A0F8.
-c$A993 LD A,(IX+$00)   ;
- $A996 ADD A,(IX+$02)  ;
- $A999 LD L,A          ;
- $A99A LD A,(IX+$01)   ;
- $A99D ADD A,(IX+$03)  ;
- $A9A0 LD H,A          ;
-*$A9A1 LD A,L          ;
- $A9A2 CP $08          ;
- $A9A4 RET C           ;
- $A9A5 CP $F8          ;
- $A9A7 RET NC          ;
- $A9A8 LD A,H          ;
- $A9A9 CP $30          ;
- $A9AB RET C           ;
- $A9AC CP $A8          ;
- $A9AE RET NC          ;
- $A9AF LD (IX+$00),L   ;
- $A9B2 LD (IX+$01),H   ;
- $A9B5 LD A,($5E69)    ;
- $A9B8 INC A           ;
- $A9B9 LD ($5E69),A    ;
- $A9BC LD BC,$0202     ;
- $A9BF PUSH HL         ;
- $A9C0 EXX             ;
- $A9C1 POP DE          ;
- $A9C2 LD L,E          ;
- $A9C3 LD H,D          ;
- $A9C4 CALL $8506      ;
- $A9C7 LD A,(HL)       ;
- $A9C8 AND A           ;
- $A9C9 JR Z,$A9CF      ;
- $A9CB LD A,(IX+$04)   ;
- $A9CE LD (HL),A       ;
-*$A9CF EXX             ;
- $A9D0 CALL $851E      ;
-*$A9D3 PUSH BC         ;
- $A9D4 PUSH HL         ;
- $A9D5 LD A,(IX+$00)   ;
-*$A9D8 AND $07         ;
- $A9DA LD E,A          ;
- $A9DB EX AF,AF'       ;
- $A9DC LD A,E          ;
- $A9DD LD DE,$AA13     ;
- $A9E0 ADD A,E         ;
- $A9E1 LD E,A          ;
- $A9E2 LD A,D          ;
- $A9E3 ADC A,$00       ;
- $A9E5 LD D,A          ;
- $A9E6 LD A,(DE)       ;
- $A9E7 XOR (HL)        ;
- $A9E8 LD (HL),A       ;
- $A9E9 EX AF,AF'       ;
- $A9EA INC A           ;
- $A9EB AND $07         ;
- $A9ED JR NZ,$AA10     ;
- $A9EF INC L           ;
- $A9F0 EXX             ;
- $A9F1 INC E           ;
-*$A9F2 LD L,E          ;
- $A9F3 LD H,D          ;
- $A9F4 EX AF,AF'       ;
- $A9F5 CALL $8506      ;
- $A9F8 LD A,(HL)       ;
- $A9F9 AND A           ;
- $A9FA JR Z,$AA00      ;
- $A9FC LD A,(IX+$04)   ;
- $A9FF LD (HL),A       ;
-*$AA00 EXX             ;
- $AA01 EX AF,AF'       ;
- $AA02 DJNZ $A9D8      ;
- $AA04 POP HL          ;
- $AA05 CALL $85F6      ;
- $AA08 EXX             ;
- $AA09 DEC D           ;
- $AA0A EXX             ;
- $AA0B POP BC          ;
- $AA0C DEC C           ;
- $AA0D JR NZ,$A9D3     ;
- $AA0F RET             ;
-*$AA10 EXX             ;
- $AA11 JR $A9F2        ;
- $AA13 ADD A,B         ;
- $AA14 LD B,B          ;
- $AA15 JR NZ,$AA27     ;
- $AA17 EX AF,AF'       ;
- $AA18 INC B           ;
- $AA19 LD (BC),A       ;
- $AA1A LD BC,$FE00     ;
- $AA1D LD B,C          ;
- $AA1E LD BC,$42FE     ;
- $AA21 LD (BC),A       ;
- $AA22 CP $43          ;
- $AA24 LD (BC),A       ;
- $AA25 RST $38         ;
- $AA26 LD B,H          ;
-*$AA27 LD (BC),A       ;
- $AA28 NOP             ;
- $AA29 LD B,L          ;
- $AA2A LD (BC),A       ;
- $AA2B LD BC,$0246     ;
- $AA2E LD (BC),A       ;
- $AA2F LD B,A          ;
- $AA30 LD BC,$4602     ;
- $AA33 NOP             ;
- $AA34 LD (BC),A       ;
- $AA35 LD B,L          ;
- $AA36 RST $38         ;
- $AA37 LD (BC),A       ;
- $AA38 LD B,H          ;
- $AA39 CP $02          ;
- $AA3B LD B,E          ;
- $AA3C CP $01          ;
- $AA3E LD B,D          ;
- $AA3F CP $00          ;
- $AA41 LD B,C          ;
- $AA42 CP $FF          ;
- $AA44 LD B,D          ;
- $AA45 CP $FE          ;
- $AA47 LD B,E          ;
- $AA48 RST $38         ;
- $AA49 CP $44          ;
- $AA4B NOP             ;
- $AA4C NOP             ;
- $AA4D NOP             ;
- $AA4E NOP             ;
- $AA4F NOP             ;
- $AA50 NOP             ;
- $AA51 NOP             ;
- $AA52 NOP             ;
- $AA53 NOP             ;
- $AA54 NOP             ;
- $AA55 NOP             ;
- $AA56 NOP             ;
- $AA57 NOP             ;
- $AA58 NOP             ;
- $AA59 NOP             ;
- $AA5A NOP             ;
- $AA5B NOP             ;
- $AA5C NOP             ;
- $AA5D NOP             ;
- $AA5E NOP             ;
- $AA5F NOP             ;
- $AA60 NOP             ;
- $AA61 NOP             ;
- $AA62 NOP             ;
- $AA63 NOP             ;
- $AA64 NOP             ;
- $AA65 NOP             ;
- $AA66 NOP             ;
- $AA67 NOP             ;
- $AA68 NOP             ;
- $AA69 NOP             ;
- $AA6A NOP             ;
- $AA6B NOP             ;
- $AA6C NOP             ;
- $AA6D NOP             ;
- $AA6E NOP             ;
- $AA6F NOP             ;
- $AA70 NOP             ;
- $AA71 NOP             ;
- $AA72 NOP             ;
- $AA73 NOP             ;
- $AA74 NOP             ;
- $AA75 NOP             ;
- $AA76 NOP             ;
- $AA77 NOP             ;
- $AA78 NOP             ;
- $AA79 NOP             ;
- $AA7A NOP             ;
- $AA7B NOP             ;
- $AA7C NOP             ;
- $AA7D NOP             ;
- $AA7E NOP             ;
- $AA7F NOP             ;
- $AA80 NOP             ;
- $AA81 NOP             ;
- $AA82 NOP             ;
- $AA83 NOP             ;
- $AA84 NOP             ;
- $AA85 NOP             ;
- $AA86 NOP             ;
- $AA87 NOP             ;
- $AA88 NOP             ;
- $AA89 NOP             ;
- $AA8A NOP             ;
- $AA8B NOP             ;
- $AA8C NOP             ;
- $AA8D NOP             ;
- $AA8E NOP             ;
- $AA8F NOP             ;
- $AA90 NOP             ;
- $AA91 NOP             ;
- $AA92 NOP             ;
- $AA93 NOP             ;
- $AA94 NOP             ;
- $AA95 NOP             ;
- $AA96 NOP             ;
- $AA97 NOP             ;
- $AA98 NOP             ;
- $AA99 NOP             ;
- $AA9A NOP             ;
+c$A993 LD A,(IX+$00)                        ;
+ $A996 ADD A,(IX+$02)                       ;
+ $A999 LD L,A                               ;
+ $A99A LD A,(IX+$01)                        ;
+ $A99D ADD A,(IX+$03)                       ;
+ $A9A0 LD H,A                               ;
+*$A9A1 LD A,L                               ;
+ $A9A2 CP $08                               ;
+ $A9A4 RET C                                ;
+ $A9A5 CP $F8                               ;
+ $A9A7 RET NC                               ;
+ $A9A8 LD A,H                               ;
+ $A9A9 CP $30                               ;
+ $A9AB RET C                                ;
+ $A9AC CP $A8                               ;
+ $A9AE RET NC                               ;
+ $A9AF LD (IX+$00),L                        ;
+ $A9B2 LD (IX+$01),H                        ;
+ $A9B5 LD A,($5E69)                         ;
+ $A9B8 INC A                                ;
+ $A9B9 LD ($5E69),A                         ;
+ $A9BC LD BC,$0202                          ;
+ $A9BF PUSH HL                              ;
+ $A9C0 EXX                                  ;
+ $A9C1 POP DE                               ;
+ $A9C2 LD L,E                               ;
+ $A9C3 LD H,D                               ;
+ $A9C4 CALL $8506                           ;
+ $A9C7 LD A,(HL)                            ;
+ $A9C8 AND A                                ;
+ $A9C9 JR Z,$A9CF                           ;
+ $A9CB LD A,(IX+$04)                        ;
+ $A9CE LD (HL),A                            ;
+*$A9CF EXX                                  ;
+ $A9D0 CALL $851E                           ;
+*$A9D3 PUSH BC                              ;
+ $A9D4 PUSH HL                              ;
+ $A9D5 LD A,(IX+$00)                        ;
+*$A9D8 AND $07                              ;
+ $A9DA LD E,A                               ;
+ $A9DB EX AF,AF'                            ;
+ $A9DC LD A,E                               ;
+ $A9DD LD DE,$AA13                          ;
+ $A9E0 ADD A,E                              ;
+ $A9E1 LD E,A                               ;
+ $A9E2 LD A,D                               ;
+ $A9E3 ADC A,$00                            ;
+ $A9E5 LD D,A                               ;
+ $A9E6 LD A,(DE)                            ;
+ $A9E7 XOR (HL)                             ;
+ $A9E8 LD (HL),A                            ;
+ $A9E9 EX AF,AF'                            ;
+ $A9EA INC A                                ;
+ $A9EB AND $07                              ;
+ $A9ED JR NZ,$AA10                          ;
+ $A9EF INC L                                ;
+ $A9F0 EXX                                  ;
+ $A9F1 INC E                                ;
+*$A9F2 LD L,E                               ;
+ $A9F3 LD H,D                               ;
+ $A9F4 EX AF,AF'                            ;
+ $A9F5 CALL $8506                           ;
+ $A9F8 LD A,(HL)                            ;
+ $A9F9 AND A                                ;
+ $A9FA JR Z,$AA00                           ;
+ $A9FC LD A,(IX+$04)                        ;
+ $A9FF LD (HL),A                            ;
+*$AA00 EXX                                  ;
+ $AA01 EX AF,AF'                            ;
+ $AA02 DJNZ $A9D8                           ;
+ $AA04 POP HL                               ;
+ $AA05 CALL $85F6                           ;
+ $AA08 EXX                                  ;
+ $AA09 DEC D                                ;
+ $AA0A EXX                                  ;
+ $AA0B POP BC                               ;
+ $AA0C DEC C                                ;
+ $AA0D JR NZ,$A9D3                          ;
+ $AA0F RET                                  ;
+*$AA10 EXX                                  ;
+ $AA11 JR $A9F2                             ;
+ $AA13 ADD A,B                              ;
+ $AA14 LD B,B                               ;
+ $AA15 JR NZ,$AA27                          ;
+ $AA17 EX AF,AF'                            ;
+ $AA18 INC B                                ;
+ $AA19 LD (BC),A                            ;
+ $AA1A LD BC,$FE00                          ;
+ $AA1D LD B,C                               ;
+ $AA1E LD BC,$42FE                          ;
+ $AA21 LD (BC),A                            ;
+ $AA22 CP $43                               ;
+ $AA24 LD (BC),A                            ;
+ $AA25 RST $38                              ;
+ $AA26 LD B,H                               ;
+*$AA27 LD (BC),A                            ;
+ $AA28 NOP                                  ;
+ $AA29 LD B,L                               ;
+ $AA2A LD (BC),A                            ;
+ $AA2B LD BC,$0246                          ;
+ $AA2E LD (BC),A                            ;
+ $AA2F LD B,A                               ;
+ $AA30 LD BC,$4602                          ;
+ $AA33 NOP                                  ;
+ $AA34 LD (BC),A                            ;
+ $AA35 LD B,L                               ;
+ $AA36 RST $38                              ;
+ $AA37 LD (BC),A                            ;
+ $AA38 LD B,H                               ;
+ $AA39 CP $02                               ;
+ $AA3B LD B,E                               ;
+ $AA3C CP $01                               ;
+ $AA3E LD B,D                               ;
+ $AA3F CP $00                               ;
+ $AA41 LD B,C                               ;
+ $AA42 CP $FF                               ;
+ $AA44 LD B,D                               ;
+ $AA45 CP $FE                               ;
+ $AA47 LD B,E                               ;
+ $AA48 RST $38                              ;
+ $AA49 CP $44                               ;
+ $AA4B NOP                                  ;
+ $AA4C NOP                                  ;
+ $AA4D NOP                                  ;
+ $AA4E NOP                                  ;
+ $AA4F NOP                                  ;
+ $AA50 NOP                                  ;
+ $AA51 NOP                                  ;
+ $AA52 NOP                                  ;
+ $AA53 NOP                                  ;
+ $AA54 NOP                                  ;
+ $AA55 NOP                                  ;
+ $AA56 NOP                                  ;
+ $AA57 NOP                                  ;
+ $AA58 NOP                                  ;
+ $AA59 NOP                                  ;
+ $AA5A NOP                                  ;
+ $AA5B NOP                                  ;
+ $AA5C NOP                                  ;
+ $AA5D NOP                                  ;
+ $AA5E NOP                                  ;
+ $AA5F NOP                                  ;
+ $AA60 NOP                                  ;
+ $AA61 NOP                                  ;
+ $AA62 NOP                                  ;
+ $AA63 NOP                                  ;
+ $AA64 NOP                                  ;
+ $AA65 NOP                                  ;
+ $AA66 NOP                                  ;
+ $AA67 NOP                                  ;
+ $AA68 NOP                                  ;
+ $AA69 NOP                                  ;
+ $AA6A NOP                                  ;
+ $AA6B NOP                                  ;
+ $AA6C NOP                                  ;
+ $AA6D NOP                                  ;
+ $AA6E NOP                                  ;
+ $AA6F NOP                                  ;
+ $AA70 NOP                                  ;
+ $AA71 NOP                                  ;
+ $AA72 NOP                                  ;
+ $AA73 NOP                                  ;
+ $AA74 NOP                                  ;
+ $AA75 NOP                                  ;
+ $AA76 NOP                                  ;
+ $AA77 NOP                                  ;
+ $AA78 NOP                                  ;
+ $AA79 NOP                                  ;
+ $AA7A NOP                                  ;
+ $AA7B NOP                                  ;
+ $AA7C NOP                                  ;
+ $AA7D NOP                                  ;
+ $AA7E NOP                                  ;
+ $AA7F NOP                                  ;
+ $AA80 NOP                                  ;
+ $AA81 NOP                                  ;
+ $AA82 NOP                                  ;
+ $AA83 NOP                                  ;
+ $AA84 NOP                                  ;
+ $AA85 NOP                                  ;
+ $AA86 NOP                                  ;
+ $AA87 NOP                                  ;
+ $AA88 NOP                                  ;
+ $AA89 NOP                                  ;
+ $AA8A NOP                                  ;
+ $AA8B NOP                                  ;
+ $AA8C NOP                                  ;
+ $AA8D NOP                                  ;
+ $AA8E NOP                                  ;
+ $AA8F NOP                                  ;
+ $AA90 NOP                                  ;
+ $AA91 NOP                                  ;
+ $AA92 NOP                                  ;
+ $AA93 NOP                                  ;
+ $AA94 NOP                                  ;
+ $AA95 NOP                                  ;
+ $AA96 NOP                                  ;
+ $AA97 NOP                                  ;
+ $AA98 NOP                                  ;
+ $AA99 NOP                                  ;
+ $AA9A NOP                                  ;
 ; This entry point is used by the routine at #R$A0F8.
-*$AA9B XOR A           ;
- $AA9C LD ($5E69),A    ;
- $AA9F LD IX,$AA4B     ;
- $AAA3 LD B,$10        ;
-*$AAA5 PUSH BC         ;
- $AAA6 CALL $AAB8      ;
- $AAA9 LD BC,$0005     ;
- $AAAC ADD IX,BC       ;
- $AAAE POP BC          ;
- $AAAF DJNZ $AAA5      ;
- $AAB1 LD A,($5E69)    ;
- $AAB4 AND A           ;
- $AAB5 JR NZ,$AA9B     ;
- $AAB7 RET             ;
-*$AAB8 LD A,(IX+$00)   ;
- $AABB ADD A,(IX+$02)  ;
- $AABE LD L,A          ;
- $AABF LD A,(IX+$01)   ;
- $AAC2 ADD A,(IX+$03)  ;
- $AAC5 LD H,A          ;
- $AAC6 LD A,L          ;
- $AAC7 CP $08          ;
- $AAC9 RET C           ;
- $AACA CP $F8          ;
- $AACC RET NC          ;
- $AACD LD A,H          ;
- $AACE CP $30          ;
- $AAD0 RET C           ;
- $AAD1 CP $A8          ;
- $AAD3 RET NC          ;
- $AAD4 LD (IX+$00),L   ;
- $AAD7 LD (IX+$01),H   ;
- $AADA LD HL,$5E69     ;
- $AADD INC (HL)        ;
- $AADE RET             ;
- $AADF NOP             ;
- $AAE0 NOP             ;
- $AAE1 NOP             ;
- $AAE2 LD (BC),A       ;
- $AAE3 LD B,A          ;
- $AAE4 NOP             ;
- $AAE5 NOP             ;
- $AAE6 RST $38         ;
- $AAE7 LD (BC),A       ;
- $AAE8 LD B,D          ;
- $AAE9 NOP             ;
- $AAEA NOP             ;
- $AAEB CP $02          ;
- $AAED LD B,H          ;
- $AAEE NOP             ;
- $AAEF NOP             ;
- $AAF0 CP $01          ;
- $AAF2 LD B,E          ;
- $AAF3 NOP             ;
- $AAF4 NOP             ;
- $AAF5 CP $00          ;
- $AAF7 LD B,L          ;
- $AAF8 NOP             ;
- $AAF9 NOP             ;
- $AAFA CP $FF          ;
- $AAFC LD B,E          ;
- $AAFD NOP             ;
- $AAFE NOP             ;
- $AAFF CP $FE          ;
- $AB01 LD B,H          ;
- $AB02 NOP             ;
- $AB03 NOP             ;
- $AB04 RST $38         ;
- $AB05 CP $42          ;
- $AB07 NOP             ;
- $AB08 NOP             ;
- $AB09 NOP             ;
- $AB0A CP $47          ;
- $AB0C NOP             ;
- $AB0D NOP             ;
- $AB0E LD BC,$42FE     ;
- $AB11 NOP             ;
- $AB12 NOP             ;
- $AB13 LD (BC),A       ;
- $AB14 CP $44          ;
- $AB16 NOP             ;
- $AB17 NOP             ;
- $AB18 LD (BC),A       ;
- $AB19 RST $38         ;
- $AB1A LD B,E          ;
- $AB1B NOP             ;
- $AB1C NOP             ;
- $AB1D LD (BC),A       ;
- $AB1E NOP             ;
- $AB1F LD B,L          ;
- $AB20 NOP             ;
- $AB21 NOP             ;
- $AB22 LD (BC),A       ;
- $AB23 LD BC,$0043     ;
- $AB26 NOP             ;
- $AB27 LD (BC),A       ;
- $AB28 LD (BC),A       ;
- $AB29 LD B,H          ;
- $AB2A NOP             ;
- $AB2B NOP             ;
- $AB2C LD BC,$4202     ;
+*$AA9B XOR A                                ;
+ $AA9C LD ($5E69),A                         ;
+ $AA9F LD IX,$AA4B                          ;
+ $AAA3 LD B,$10                             ;
+*$AAA5 PUSH BC                              ;
+ $AAA6 CALL $AAB8                           ;
+ $AAA9 LD BC,$0005                          ;
+ $AAAC ADD IX,BC                            ;
+ $AAAE POP BC                               ;
+ $AAAF DJNZ $AAA5                           ;
+ $AAB1 LD A,($5E69)                         ;
+ $AAB4 AND A                                ;
+ $AAB5 JR NZ,$AA9B                          ;
+ $AAB7 RET                                  ;
+*$AAB8 LD A,(IX+$00)                        ;
+ $AABB ADD A,(IX+$02)                       ;
+ $AABE LD L,A                               ;
+ $AABF LD A,(IX+$01)                        ;
+ $AAC2 ADD A,(IX+$03)                       ;
+ $AAC5 LD H,A                               ;
+ $AAC6 LD A,L                               ;
+ $AAC7 CP $08                               ;
+ $AAC9 RET C                                ;
+ $AACA CP $F8                               ;
+ $AACC RET NC                               ;
+ $AACD LD A,H                               ;
+ $AACE CP $30                               ;
+ $AAD0 RET C                                ;
+ $AAD1 CP $A8                               ;
+ $AAD3 RET NC                               ;
+ $AAD4 LD (IX+$00),L                        ;
+ $AAD7 LD (IX+$01),H                        ;
+ $AADA LD HL,$5E69                          ;
+ $AADD INC (HL)                             ;
+ $AADE RET                                  ;
+ $AADF DEFB $00,$00,$00,$02,$47,$00,$00,$FF ;
+ $AAE7 DEFB $02,$42,$00,$00,$FE,$02,$44,$00 ;
+ $AAEF DEFB $00,$FE,$01,$43,$00,$00,$FE,$00 ;
+ $AAF7 DEFB $45,$00,$00,$FE,$FF,$43,$00,$00 ;
+ $AAFF DEFB $FE,$FE,$44,$00,$00,$FF,$FE,$42 ;
+ $AB07 DEFB $00,$00,$00,$FE,$47,$00,$00,$01 ;
+ $AB0F DEFB $FE,$42,$00,$00,$02,$FE,$44,$00 ;
+ $AB17 DEFB $00,$02,$FF,$43,$00,$00,$02,$00 ;
+ $AB1F DEFB $45,$00,$00,$02,$01,$43,$00,$00 ;
+ $AB27 DEFB $02,$02,$44,$00,$00,$01,$02,$42 ;
 ; This entry point is used by the routine at #R$A0F8.
-*$AB2F LD HL,$AA4B     ;
- $AB32 LD DE,$AADF     ;
- $AB35 LD B,$10        ;
-*$AB37 LD A,(HL)       ;
- $AB38 INC HL          ;
- $AB39 LD (DE),A       ;
- $AB3A INC DE          ;
- $AB3B LD A,(HL)       ;
- $AB3C INC HL          ;
- $AB3D LD (DE),A       ;
- $AB3E INC DE          ;
- $AB3F INC HL          ;
- $AB40 INC HL          ;
- $AB41 INC HL          ;
- $AB42 INC DE          ;
- $AB43 INC DE          ;
- $AB44 INC DE          ;
- $AB45 DJNZ $AB37      ;
- $AB47 RET             ;
+*$AB2F LD HL,$AA4B                          ;
+ $AB32 LD DE,$AADF                          ;
+ $AB35 LD B,$10                             ;
+*$AB37 LD A,(HL)                            ;
+ $AB38 INC HL                               ;
+ $AB39 LD (DE),A                            ;
+ $AB3A INC DE                               ;
+ $AB3B LD A,(HL)                            ;
+ $AB3C INC HL                               ;
+ $AB3D LD (DE),A                            ;
+ $AB3E INC DE                               ;
+ $AB3F INC HL                               ;
+ $AB40 INC HL                               ;
+ $AB41 INC HL                               ;
+ $AB42 INC DE                               ;
+ $AB43 INC DE                               ;
+ $AB44 INC DE                               ;
+ $AB45 DJNZ $AB37                           ;
+ $AB47 RET                                  ;
 ; This entry point is used by the routine at #R$A0F8.
-*$AB48 XOR A           ;
- $AB49 LD ($5E69),A    ;
- $AB4C LD A,($5E7B)    ;
- $AB4F INC A           ;
- $AB50 LD ($5E7B),A    ;
- $AB53 CALL $B8F2      ;
- $AB56 LD IX,$AA4B     ;
- $AB5A LD B,$10        ;
-*$AB5C PUSH BC         ;
- $AB5D CALL $AB78      ;
- $AB60 LD BC,$0005     ;
- $AB63 ADD IX,BC       ;
- $AB65 POP BC          ;
- $AB66 DJNZ $AB5C      ;
- $AB68 LD A,($5E69)    ;
- $AB6B AND A           ;
- $AB6C JR NZ,$AB48     ;
- $AB6E RET             ;
-*$AB6F LD A,($5E6A)    ;
- $AB72 CP (IX+$01)     ;
- $AB75 RET Z           ;
- $AB76 JR $AB7F        ;
-*$AB78 LD A,(IX+$00)   ;
- $AB7B CP $80          ;
- $AB7D JR Z,$AB6F      ;
-*$AB7F LD A,(IX+$00)   ;
- $AB82 ADD A,(IX+$02)  ;
- $AB85 LD L,A          ;
- $AB86 LD A,(IX+$01)   ;
- $AB89 ADD A,(IX+$03)  ;
- $AB8C LD H,A          ;
- $AB8D LD A,L          ;
- $AB8E CP $80          ;
- $AB90 JR Z,$AB95      ;
- $AB92 JP $A9A1        ;
-*$AB95 LD A,($5E6A)    ;
- $AB98 CP H            ;
- $AB99 RET Z           ;
- $AB9A JP $A9A1        ;
-; This entry point is used by the routine at #R$A0F8.
-*$AB9D LD HL,$AADF     ;
- $ABA0 LD DE,$AA4B     ;
- $ABA3 LD BC,$0050     ;
- $ABA6 LDIR            ;
- $ABA8 RET             ;
-*$ABA9 LD A,(IX+$00)   ;
- $ABAC INC A           ;
- $ABAD AND $0F         ;
- $ABAF ADD A,$70       ;
- $ABB1 LD (IX+$00),A   ;
-; This entry point is used by the routines at #R$A0F8, #R$B460, #R$B731 and
-; #R$B7A8.
-*$ABB4 CALL $8701      ;
- $ABB7 JP $8733        ;
- $ABBA LD E,$18        ;
- $ABBC CALL $B2A4      ;
- $ABBF CALL C,$B2D7    ;
- $ABC2 LD A,(IX+$17)   ;
- $ABC5 AND A           ;
- $ABC6 JR Z,$AC3E      ;
- $ABC8 CALL $ABA9      ;
- $ABCB LD A,($5E42)    ;
- $ABCE CPL             ;
- $ABCF AND $0F         ;
- $ABD1 RET NZ          ;
- $ABD2 LD A,($5E67)    ;
- $ABD5 AND A           ;
- $ABD6 JR NZ,$ABE5     ;
- $ABD8 LD A,($6078)    ;
- $ABDB CP $81          ;
- $ABDD JR Z,$ABE5      ;
- $ABDF DEC (IX+$17)    ;
- $ABE2 CALL Z,$B16F    ;
-*$ABE5 LD A,(IX+$17)   ;
- $ABE8 LD HL,$2040     ;
- $ABEB CALL $8C01      ;
- $ABEE CALL $AD36      ;
- $ABF1 JR NC,$AC29     ;
- $ABF3 CALL $AD0B      ;
- $ABF6 LD HL,$587B     ;
- $ABF9 CALL $AD00      ;
- $ABFC LD HL,$587D     ;
- $ABFF LD A,$42        ;
-*$AC01 CALL $AD00      ;
- $AC04 LD A,($5E42)    ;
- $AC07 AND $3F         ;
- $AC09 CP $0F          ;
- $AC0B JR Z,$AC1A      ;
- $AC0D CP $2F          ;
- $AC0F RET NZ          ;
- $AC10 LD DE,$AC24     ;
-*$AC13 LD HL,$10D8     ;
- $AC16 CALL $8A11      ;
- $AC19 RET             ;
-*$AC1A LD DE,$AC1F     ;
- $AC1D JR $AC13        ;
- $AC1F LD B,L          ;
- $AC20 LD H,E          ;
- $AC21 LD H,H          ;
- $AC22 LD H,L          ;
- $AC23 AND $45         ;
- $AC25 LD H,A          ;
- $AC26 LD L,B          ;
- $AC27 LD L,C          ;
- $AC28 JP PE,$0BCD     ;
- $AC2B XOR L           ;
- $AC2C LD HL,$587D     ;
- $AC2F CALL $AD00      ;
- $AC32 LD HL,$587B     ;
- $AC35 LD A,$42        ;
- $AC37 JR $AC01        ;
-*$AC39 LD HL,($607A)   ;
- $AC3C JR $AC4A        ;
-*$AC3E LD A,($6090)    ;
- $AC41 SUB $1A         ;
- $AC43 CP $10          ;
- $AC45 JR NC,$AC39     ;
- $AC47 LD HL,($6092)   ;
-*$AC4A CALL $AD39      ;
- $AC4D LD A,(IX+$00)   ;
- $AC50 JR C,$AC59      ;
- $AC52 CP $78          ;
- $AC54 JR Z,$AC60      ;
- $AC56 JP $ABA9        ;
-*$AC59 CP $70          ;
- $AC5B JR Z,$AC6F      ;
- $AC5D JP $ABA9        ;
-*$AC60 CALL $ABB4      ;
- $AC63 CALL $B1D3      ;
- $AC66 RET NZ          ;
- $AC67 CALL $AC7E      ;
- $AC6A LD (IX+$00),$98 ;
- $AC6E RET             ;
-*$AC6F CALL $ABB4      ;
- $AC72 CALL $B1D3      ;
- $AC75 RET NZ          ;
- $AC76 CALL $AC83      ;
- $AC79 LD (IX+$00),$9C ;
- $AC7D RET             ;
-*$AC7E LD HL,$ACD0     ;
- $AC81 JR $AC86        ;
-*$AC83 LD HL,$ACA0     ;
-*$AC86 LD DE,$6138     ;
- $AC89 LD BC,$0030     ;
- $AC8C LDIR            ;
- $AC8E LD L,(IX+$02)   ;
- $AC91 LD H,(IX+$03)   ;
- $AC94 LD ($613A),HL   ;
- $AC97 LD A,(IX+$04)   ;
- $AC9A SUB $10         ;
- $AC9C LD ($613C),A    ;
- $AC9F RET             ;
- $ACA0 ADD A,H         ;
- $ACA1 NOP             ;
- $ACA2 NOP             ;
- $ACA3 NOP             ;
- $ACA4 NOP             ;
- $ACA5 LD BC,$46FF     ;
- $ACA8 NOP             ;
- $ACA9 NOP             ;
- $ACAA NOP             ;
- $ACAB NOP             ;
- $ACAC NOP             ;
- $ACAD NOP             ;
- $ACAE NOP             ;
- $ACAF NOP             ;
- $ACB0 NOP             ;
- $ACB1 NOP             ;
- $ACB2 NOP             ;
- $ACB3 NOP             ;
- $ACB4 NOP             ;
- $ACB5 NOP             ;
- $ACB6 NOP             ;
- $ACB7 NOP             ;
- $ACB8 ADD A,(HL)      ;
- $ACB9 NOP             ;
- $ACBA NOP             ;
- $ACBB NOP             ;
- $ACBC NOP             ;
- $ACBD NOP             ;
- $ACBE NOP             ;
- $ACBF LD B,D          ;
- $ACC0 NOP             ;
- $ACC1 NOP             ;
- $ACC2 NOP             ;
- $ACC3 NOP             ;
- $ACC4 NOP             ;
- $ACC5 NOP             ;
- $ACC6 NOP             ;
- $ACC7 NOP             ;
- $ACC8 NOP             ;
- $ACC9 NOP             ;
- $ACCA NOP             ;
- $ACCB NOP             ;
- $ACCC NOP             ;
- $ACCD NOP             ;
- $ACCE NOP             ;
- $ACCF NOP             ;
- $ACD0 ADD A,B         ;
- $ACD1 NOP             ;
- $ACD2 NOP             ;
- $ACD3 NOP             ;
- $ACD4 NOP             ;
- $ACD5 RST $38         ;
- $ACD6 RST $38         ;
- $ACD7 LD B,(HL)       ;
- $ACD8 NOP             ;
- $ACD9 NOP             ;
- $ACDA NOP             ;
- $ACDB NOP             ;
- $ACDC NOP             ;
- $ACDD NOP             ;
- $ACDE NOP             ;
- $ACDF NOP             ;
- $ACE0 NOP             ;
- $ACE1 NOP             ;
- $ACE2 NOP             ;
- $ACE3 NOP             ;
- $ACE4 NOP             ;
- $ACE5 NOP             ;
- $ACE6 NOP             ;
- $ACE7 NOP             ;
- $ACE8 ADD A,D         ;
- $ACE9 NOP             ;
- $ACEA NOP             ;
- $ACEB NOP             ;
- $ACEC NOP             ;
- $ACED NOP             ;
- $ACEE NOP             ;
- $ACEF LD B,D          ;
- $ACF0 NOP             ;
- $ACF1 NOP             ;
- $ACF2 NOP             ;
- $ACF3 NOP             ;
- $ACF4 NOP             ;
- $ACF5 NOP             ;
- $ACF6 NOP             ;
- $ACF7 NOP             ;
- $ACF8 NOP             ;
- $ACF9 NOP             ;
- $ACFA NOP             ;
- $ACFB NOP             ;
- $ACFC NOP             ;
- $ACFD NOP             ;
- $ACFE NOP             ;
- $ACFF NOP             ;
+*$AB48 XOR A                                ;
+ $AB49 LD ($5E69),A                         ;
+ $AB4C LD A,($5E7B)                         ;
+ $AB4F INC A                                ;
+ $AB50 LD ($5E7B),A                         ;
+ $AB53 CALL $B8F2                           ;
+ $AB56 LD IX,$AA4B                          ;
+ $AB5A LD B,$10                             ;
+*$AB5C PUSH BC                              ;
+ $AB5D CALL $AB78                           ;
+ $AB60 LD BC,$0005                          ;
+ $AB63 ADD IX,BC                            ;
+ $AB65 POP BC                               ;
+ $AB66 DJNZ $AB5C                           ;
+ $AB68 LD A,($5E69)                         ;
+ $AB6B AND A                                ;
+ $AB6C JR NZ,$AB48                          ;
+ $AB6E RET                                  ;
+*$AB6F LD A,($5E6A)                         ;
+ $AB72 CP (IX+$01)                          ;
+ $AB75 RET Z                                ;
+ $AB76 JR $AB7F                             ;
+*$AB78 LD A,(IX+$00)                        ;
+ $AB7B CP $80                               ;
+ $AB7D JR Z,$AB6F                           ;
+*$AB7F LD A,(IX+$00)                        ;
+ $AB82 ADD A,(IX+$02)                       ;
+ $AB85 LD L,A                               ;
+ $AB86 LD A,(IX+$01)                        ;
+ $AB89 ADD A,(IX+$03)                       ;
+ $AB8C LD H,A                               ;
+ $AB8D LD A,L                               ;
+ $AB8E CP $80                               ;
+ $AB90 JR Z,$AB95                           ;
+ $AB92 JP $A9A1                             ;
+*$AB95 LD A,($5E6A)                         ;
+ $AB98 CP H                                 ;
+ $AB99 RET Z                                ;
+ $AB9A JP $A9A1                             ;
+
+; Routine at AB9D
+;
+; Used by the routine at #R$A0F8.
+c$AB9D LD HL,$AADF   ; #REGhl=#R$AADF.
+ $ABA0 LD DE,$AA4B   ; #REGde=#R$AA4B.
+ $ABA3 LD BC,$0050   ; #REGbc=#N($0050,$04,$04).
+ $ABA6 LDIR          ;
+ $ABA8 RET           ; Return.
+
+; Routine at ABA9
+;
+; Used by the routine at #R$AC3E.
+c$ABA9 LD A,(IX+$00)       ;
+ $ABAC INC A               ;
+ $ABAD AND $0F             ;
+ $ABAF ADD A,$70           ;
+ $ABB1 LD (IX+$00),A       ;
+; This entry point is used by the routines at #R$A0F8, #R$AC3E, #R$AD36,
+; #R$B33D, #R$B37B, #R$B460, #R$B731 and #R$B7A8.
+*$ABB4 CALL $8701          ;
+ $ABB7 JP $8733            ;
+ $ABBA LD E,$18            ;
+ $ABBC CALL $B2A4          ;
+ $ABBF CALL C,$B2D7        ;
+ $ABC2 LD A,(IX+$17)       ;
+ $ABC5 AND A               ;
+ $ABC6 JR Z,$AC3E          ;
+ $ABC8 CALL $ABA9          ;
+ $ABCB LD A,($5E42)        ;
+ $ABCE CPL                 ;
+ $ABCF AND $0F             ;
+ $ABD1 RET NZ              ;
+ $ABD2 LD A,($5E67)        ;
+ $ABD5 AND A               ;
+ $ABD6 JR NZ,$ABE5         ;
+ $ABD8 LD A,($6078)        ;
+ $ABDB CP $81              ;
+ $ABDD JR Z,$ABE5          ;
+ $ABDF DEC (IX+$17)        ;
+ $ABE2 CALL Z,$B16F        ;
+*$ABE5 LD A,(IX+$17)       ;
+ $ABE8 LD HL,$2040         ;
+ $ABEB CALL $8C01          ;
+ $ABEE CALL $AD36          ;
+ $ABF1 JR NC,$AC29         ;
+ $ABF3 CALL $AD0B          ;
+ $ABF6 LD HL,$587B         ;
+ $ABF9 CALL $AD00          ;
+ $ABFC LD HL,$587D         ;
+ $ABFF LD A,$42            ;
+*$AC01 CALL $AD00          ;
+ $AC04 LD A,($5E42)        ; #REGa=#R$5E42.
+ $AC07 AND %00111111       ; Keep only bits 0-5.
+ $AC09 CP $0F              ;
+ $AC0B JR Z,$AC1A          ; If so, jump to #R$AC1A.
+ $AC0D CP $2F              ;
+ $AC0F RET NZ              ;
+ $AC10 LD DE,$AC24         ; #REGde=#R$AC24.
+*$AC13 LD HL,$10D8         ; #REGhl=#N$10D8.
+ $AC16 CALL $8A11          ; Call #R$8A11.
+ $AC19 RET                 ; Return.
+*$AC1A LD DE,$AC1F         ; #REGde=#R$AC1F.
+ $AC1D JR $AC13            ; Jump to #R$AC13.
+ $AC1F DEFM "Ecde","f"+$80 ;
+ $AC24 DEFM "Eghi","j"+$80 ;
+*$AC29 CALL $AD0B          ;
+ $AC2C LD HL,$587D         ;
+ $AC2F CALL $AD00          ;
+ $AC32 LD HL,$587B         ;
+ $AC35 LD A,$42            ;
+ $AC37 JR $AC01            ;
+; This entry point is used by the routine at #R$AC3E.
+*$AC39 LD HL,($607A)       ;
+ $AC3C JR $AC4A            ;
+
+; Routine at AC3E
+;
+; Used by the routine at #R$ABA9.
+c$AC3E LD A,($6090)                         ;
+ $AC41 SUB $1A                              ;
+ $AC43 CP $10                               ;
+ $AC45 JR NC,$AC39                          ;
+ $AC47 LD HL,($6092)                        ;
+; This entry point is used by the routine at #R$ABA9.
+*$AC4A CALL $AD39                           ;
+ $AC4D LD A,(IX+$00)                        ;
+ $AC50 JR C,$AC59                           ;
+ $AC52 CP $78                               ;
+ $AC54 JR Z,$AC60                           ;
+ $AC56 JP $ABA9                             ;
+*$AC59 CP $70                               ;
+ $AC5B JR Z,$AC6F                           ;
+ $AC5D JP $ABA9                             ;
+*$AC60 CALL $ABB4                           ;
+ $AC63 CALL $B1D3                           ;
+ $AC66 RET NZ                               ;
+ $AC67 CALL $AC7E                           ;
+ $AC6A LD (IX+$00),$98                      ;
+ $AC6E RET                                  ;
+*$AC6F CALL $ABB4                           ;
+ $AC72 CALL $B1D3                           ;
+ $AC75 RET NZ                               ;
+ $AC76 CALL $AC83                           ;
+ $AC79 LD (IX+$00),$9C                      ;
+ $AC7D RET                                  ;
+*$AC7E LD HL,$ACD0                          ;
+ $AC81 JR $AC86                             ;
+*$AC83 LD HL,$ACA0                          ;
+*$AC86 LD DE,$6138                          ;
+ $AC89 LD BC,$0030                          ;
+ $AC8C LDIR                                 ;
+ $AC8E LD L,(IX+$02)                        ;
+ $AC91 LD H,(IX+$03)                        ;
+ $AC94 LD ($613A),HL                        ;
+ $AC97 LD A,(IX+$04)                        ;
+ $AC9A SUB $10                              ;
+ $AC9C LD ($613C),A                         ;
+ $AC9F RET                                  ;
+ $ACA0 DEFB $84,$00,$00,$00,$00,$01,$FF,$46 ;
+ $ACA8 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $ACB0 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $ACB8 DEFB $86,$00,$00,$00,$00,$00,$00,$42 ;
+ $ACC0 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $ACC8 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $ACD0 DEFB $80,$00,$00,$00,$00,$FF,$FF,$46 ;
+ $ACD8 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $ACE0 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $ACE8 DEFB $82,$00,$00,$00,$00,$00,$00,$42 ;
+ $ACF0 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $ACF8 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+
+; Routine at AD00
+;
+; Used by the routines at #R$9EDC, #R$ABA9, #R$AD22 and #R$AD36.
+c$AD00 LD (HL),A     ;
+ $AD01 INC L         ;
+ $AD02 LD (HL),A     ;
+ $AD03 LD BC,$001F   ;
+ $AD06 ADD HL,BC     ;
+ $AD07 LD (HL),A     ;
+ $AD08 INC L         ;
+ $AD09 LD (HL),A     ;
+ $AD0A RET           ;
+
+; Routine at AD0B
+;
+; Used by the routines at #R$9EDC, #R$ABA9 and #R$AD22.
+c$AD0B LD A,($5E42)  ;
+ $AD0E AND $10       ;
+ $AD10 JR Z,$AD14    ;
+ $AD12 LD A,$30      ;
+*$AD14 OR $42        ;
+ $AD16 RET           ;
+; This entry point is used by the routine at #R$AD36.
+*$AD17 LD A,($5E42)  ;
+ $AD1A AND $10       ;
+ $AD1C JR Z,$AD14    ;
+ $AD1E LD A,$38      ;
+ $AD20 JR $AD14      ;
+
+; Routine at AD22
+;
+; Used by the routine at #R$91E2.
+c$AD22 CALL $AD0B    ;
+; This entry point is used by the routine at #R$AD33.
+*$AD25 LD HL,$5861   ;
+ $AD28 PUSH AF       ;
+ $AD29 CALL $AD00    ;
+ $AD2C POP AF        ;
+ $AD2D LD HL,$5863   ;
+ $AD30 JP $AD00      ;
+
+; Routine at AD33
+;
+; Used by the routine at #R$91E2.
+c$AD33 XOR A         ; #REGa=#N$00.
+ $AD34 JR $AD25      ; Jump to #R$AD25.
+
+; Routine at AD36
+;
+; Used by the routines at #R$9EDC and #R$ABA9.
+c$AD36 LD HL,($607A)                        ; #REGhl=#R$607A.
+; This entry point is used by the routine at #R$AC3E.
+*$AD39 LD C,(IX+$02)                        ;
+ $AD3C LD B,(IX+$03)                        ;
+; This entry point is used by the routines at #R$9020 and #R$B731.
+*$AD3F AND A                                ;
+ $AD40 SBC HL,BC                            ;
+ $AD42 LD A,H                               ;
+ $AD43 AND A                                ;
+ $AD44 JP M,$AD4E                           ;
+ $AD47 LD BC,$1000                          ;
+ $AD4A AND A                                ;
+ $AD4B SBC HL,BC                            ;
+ $AD4D RET                                  ;
+*$AD4E CALL $8947                           ;
+ $AD51 LD BC,$1000                          ;
+ $AD54 AND A                                ;
+ $AD55 SBC HL,BC                            ;
+ $AD57 CCF                                  ;
+ $AD58 RET                                  ;
+ $AD59 LD E,$14                             ;
+ $AD5B CALL $B2A4                           ;
+ $AD5E CALL C,$B2D7                         ;
+ $AD61 LD A,($607A)                         ;
+ $AD64 SUB (IX+$02)                         ;
+ $AD67 NEG                                  ;
+ $AD69 AND $07                              ;
+ $AD6B ADD A,$68                            ;
+ $AD6D LD (IX+$00),A                        ;
+ $AD70 CALL $8787                           ;
+ $AD73 LD A,($5E58)                         ;
+ $AD76 SUB $08                              ;
+ $AD78 LD ($5E58),A                         ;
+ $AD7B CALL $8733                           ;
+ $AD7E LD A,($5E6C)                         ;
+ $AD81 AND A                                ;
+ $AD82 JR NZ,$AD89                          ;
+ $AD84 LD A,(IX+$15)                        ;
+ $AD87 AND A                                ;
+ $AD88 RET Z                                ;
+*$AD89 CALL $864F                           ;
+ $AD8C LD A,$C0                             ;
+ $AD8E LD ($6168),A                         ;
+ $AD91 LD ($6180),A                         ;
+ $AD94 LD HL,($6182)                        ;
+ $AD97 LD BC,$FFF8                          ;
+ $AD9A CALL $A002                           ;
+ $AD9D LD ($6182),HL                        ;
+ $ADA0 LD HL,$6188                          ;
+ $ADA3 LD B,$08                             ;
+*$ADA5 LD (HL),$00                          ;
+ $ADA7 INC HL                               ;
+ $ADA8 DJNZ $ADA5                           ;
+ $ADAA RET                                  ;
+ $ADAB CALL $B2A2                           ;
+ $ADAE JR C,$ADDE                           ;
+ $ADB0 BIT 0,(IX+$10)                       ;
+ $ADB4 JR NZ,$ADE1                          ;
+ $ADB6 LD L,(IX+$02)                        ;
+ $ADB9 LD H,(IX+$03)                        ;
+ $ADBC LD B,$00                             ;
+ $ADBE LD A,(IX+$05)                        ;
+ $ADC1 LD C,A                               ;
+ $ADC2 AND A                                ;
+ $ADC3 JP P,$ADC7                           ;
+ $ADC6 DEC B                                ;
+*$ADC7 ADD HL,BC                            ;
+ $ADC8 LD (IX+$02),L                        ;
+ $ADCB LD (IX+$03),H                        ;
+ $ADCE LD A,(IX+$04)                        ;
+ $ADD1 ADD A,(IX+$06)                       ;
+ $ADD4 LD (IX+$04),A                        ;
+ $ADD7 CP $3C                               ;
+ $ADD9 JR C,$ADE7                           ;
+ $ADDB JP $ABB4                             ;
+*$ADDE CALL $B2D7                           ;
+*$ADE1 LD BC,$0500                          ;
+ $ADE4 CALL $899C                           ;
+*$ADE7 JP $A76B                             ;
+ $ADEA LD A,($6138)                         ;
+ $ADED CP $80                               ;
+ $ADEF JR NZ,$AE2F                          ;
+ $ADF1 LD HL,($613A)                        ;
+ $ADF4 LD BC,$0014                          ;
+ $ADF7 ADD HL,BC                            ;
+*$ADF8 LD A,H                               ;
+ $ADF9 AND $1F                              ;
+ $ADFB LD H,A                               ;
+ $ADFC LD (IX+$02),L                        ;
+ $ADFF LD (IX+$03),H                        ;
+ $AE02 LD A,($613C)                         ;
+ $AE05 ADD A,$10                            ;
+ $AE07 LD (IX+$04),A                        ;
+ $AE0A LD A,(IX+$00)                        ;
+ $AE0D XOR $01                              ;
+ $AE0F LD (IX+$00),A                        ;
+ $AE12 LD A,(IX+$07)                        ;
+ $AE15 XOR $04                              ;
+ $AE17 LD (IX+$07),A                        ;
+ $AE1A JP $ABB4                             ;
+ $AE1D LD A,($6138)                         ;
+ $AE20 CP $84                               ;
+ $AE22 JR NZ,$AE2F                          ;
+ $AE24 LD HL,($613A)                        ;
+ $AE27 LD BC,$0010                          ;
+ $AE2A AND A                                ;
+ $AE2B SBC HL,BC                            ;
+ $AE2D JR $ADF8                             ;
+*$AE2F CALL $8640                           ;
+ $AE32 LD (IX+$00),$00                      ;
+ $AE36 RET                                  ;
+ $AE37 JP $ABB4                             ;
+ $AE3A LD E,$18                             ;
+ $AE3C CALL $B2A4                           ;
+ $AE3F CALL C,$B2D7                         ;
+ $AE42 CALL $ABB4                           ;
+ $AE45 LD A,($5E42)                         ;
+ $AE48 AND $07                              ;
+ $AE4A RET NZ                               ;
+ $AE4B INC (IX+$00)                         ;
+ $AE4E LD A,(IX+$00)                        ;
+ $AE51 AND $03                              ;
+ $AE53 CP $03                               ;
+ $AE55 CALL Z,$AE78                         ;
+ $AE58 RET                                  ;
+ $AE59 LD E,$18                             ;
+ $AE5B CALL $B2A4                           ;
+ $AE5E CALL C,$B2D7                         ;
+ $AE61 CALL $ABB4                           ;
+ $AE64 LD A,($5E42)                         ;
+ $AE67 AND $03                              ;
+ $AE69 RET NZ                               ;
+ $AE6A INC (IX+$00)                         ;
+ $AE6D LD A,(IX+$00)                        ;
+ $AE70 AND $03                              ;
+ $AE72 CP $03                               ;
+ $AE74 CALL Z,$AEB7                         ;
+ $AE77 RET                                  ;
+*$AE78 LD HL,$AEBC                          ;
+*$AE7B LD DE,$6108                          ;
+ $AE7E LD BC,$0030                          ;
+ $AE81 LDIR                                 ;
+ $AE83 LD L,(IX+$02)                        ;
+ $AE86 LD H,(IX+$03)                        ;
+ $AE89 LD ($610A),HL                        ;
+ $AE8C LD A,(IX+$04)                        ;
+ $AE8F SUB $0C                              ;
+ $AE91 LD ($610C),A                         ;
+ $AE94 LD A,($5EA0)                         ;
+ $AE97 ADD A,$08                            ;
+ $AE99 CP $63                               ;
+ $AE9B JR C,$AE9F                           ;
+ $AE9D LD A,$63                             ;
+*$AE9F LD ($611E),A                         ;
+ $AEA2 LD A,($6172)                         ;
+ $AEA5 AND A                                ;
+ $AEA6 RET NZ                               ;
+ $AEA7 LD A,($5EA1)                         ;
+ $AEAA AND A                                ;
+ $AEAB JP NZ,$B52E                          ;
+ $AEAE LD A,($6078)                         ;
+ $AEB1 CP $2A                               ;
+ $AEB3 RET NC                               ;
+ $AEB4 JP $B52E                             ;
+*$AEB7 LD HL,$AEEC                          ;
+ $AEBA JR $AE7B                             ;
+ $AEBC DEFB $A0,$00,$00,$00,$00,$FD,$00,$46 ;
+ $AEC4 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AECC DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AED4 DEFB $A2,$00,$00,$00,$00,$00,$00,$42 ;
+ $AEDC DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AEE4 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AEEC DEFB $A4,$00,$00,$00,$00,$03,$00,$46 ;
+ $AEF4 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AEFC DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AF04 DEFB $A6,$00,$00,$00,$00,$00,$00,$42 ;
+ $AF0C DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AF14 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $AF1C CALL $B2A2                           ;
+ $AF1F JP C,$AFAE                           ;
+ $AF22 CALL $AD36                           ;
+ $AF25 JR NC,$AF35                          ;
+ $AF27 CALL $AD17                           ;
+ $AF2A LD HL,$587B                          ;
+ $AF2D CALL $AD00                           ;
+ $AF30 LD HL,$587D                          ;
+ $AF33 JR $AF41                             ;
+*$AF35 CALL $AD17                           ;
+ $AF38 LD HL,$587D                          ;
+ $AF3B CALL $AD00                           ;
+ $AF3E LD HL,$587B                          ;
+*$AF41 LD A,$42                             ;
+ $AF43 CALL $AD00                           ;
+ $AF46 LD A,($5E42)                         ;
+ $AF49 AND $01                              ;
+ $AF4B JR NZ,$AF61                          ;
+ $AF4D LD A,(IX+$07)                        ;
+ $AF50 CP $46                               ;
+ $AF52 JR Z,$AF61                           ;
+ $AF54 LD A,($5E40)                         ;
+ $AF57 AND $07                              ;
+ $AF59 JR NZ,$AF5C                          ;
+ $AF5B INC A                                ;
+*$AF5C OR $40                               ;
+ $AF5E LD (IX+$07),A                        ;
+*$AF61 BIT 0,(IX+$10)                       ;
+ $AF65 JR Z,$AF7D                           ;
+ $AF67 DEC (IX+$16)                         ;
+ $AF6A JR Z,$AFB1                           ;
+ $AF6C CALL $B8B4                           ;
+ $AF6F LD BC,$0100                          ;
+ $AF72 CALL $899C                           ;
+ $AF75 LD (IX+$07),$42                      ;
+ $AF79 LD (IX+$10),$00                      ;
+*$AF7D LD L,(IX+$02)                        ;
+ $AF80 LD H,(IX+$03)                        ;
+ $AF83 LD C,(IX+$05)                        ;
+ $AF86 LD B,$00                             ;
+ $AF88 LD A,C                               ;
+ $AF89 AND A                                ;
+ $AF8A JP P,$AF8E                           ;
+ $AF8D DEC B                                ;
+*$AF8E ADD HL,BC                            ;
+ $AF8F LD A,H                               ;
+ $AF90 AND $1F                              ;
+ $AF92 LD H,A                               ;
+ $AF93 LD (IX+$02),L                        ;
+ $AF96 LD (IX+$03),H                        ;
+ $AF99 CALL $B0D1                           ;
+ $AF9C JR C,$AFE9                           ;
+ $AF9E LD A,H                               ;
+ $AF9F CP $02                               ;
+ $AFA1 JR C,$AFDD                           ;
+ $AFA3 CP $10                               ;
+ $AFA5 JR C,$AFD6                           ;
+ $AFA7 CP $20                               ;
+ $AFA9 JR C,$AFC5                           ;
+*$AFAB JP $ABB4                             ;
+*$AFAE CALL $B2D7                           ;
+*$AFB1 LD A,$01                             ;
+ $AFB3 LD ($6195),A                         ;
+ $AFB6 LD BC,$0500                          ;
+ $AFB9 CALL $899C                           ;
+ $AFBC LD DE,$BAA8                          ;
+ $AFBF CALL $B9BC                           ;
+ $AFC2 JP $A76B                             ;
+*$AFC5 LD A,(IX+$04)                        ;
+ $AFC8 CP $50                               ;
+*$AFCA JR Z,$AFAB                           ;
+ $AFCC JR NC,$AFD0                          ;
+ $AFCE INC A                                ;
+ $AFCF INC A                                ;
+*$AFD0 DEC A                                ;
+ $AFD1 LD (IX+$04),A                        ;
+ $AFD4 JR $AFAB                             ;
+*$AFD6 LD A,(IX+$04)                        ;
+ $AFD9 CP $80                               ;
+ $AFDB JR $AFCA                             ;
+*$AFDD LD A,(IX+$04)                        ;
+ $AFE0 CP $A7                               ;
+ $AFE2 JR Z,$AFAB                           ;
+ $AFE4 INC A                                ;
+ $AFE5 CP $A7                               ;
+ $AFE7 JR $AFCA                             ;
+*$AFE9 LD A,$01                             ;
+ $AFEB LD ($5E6C),A                         ;
+ $AFEE LD A,$C0                             ;
+ $AFF0 LD ($60D8),A                         ;
+ $AFF3 LD ($60A8),A                         ;
+ $AFF6 LD ($60C0),A                         ;
+ $AFF9 LD A,($60F0)                         ;
+ $AFFC AND A                                ;
+ $AFFD JR Z,$B004                           ;
+ $AFFF LD A,$5C                             ;
+ $B001 LD ($60F0),A                         ;
+*$B004 LD A,($6198)                         ;
+ $B007 AND A                                ;
+ $B008 JR Z,$B00F                           ;
+ $B00A LD A,$C0                             ;
+ $B00C LD ($6198),A                         ;
+*$B00F LD HL,$61B0                          ;
+ $B012 LD DE,$0018                          ;
+ $B015 LD B,$06                             ;
+*$B017 LD A,(HL)                            ;
+ $B018 AND A                                ;
+ $B019 JR Z,$B031                           ;
+ $B01B AND $FE                              ;
+ $B01D CP $5A                               ;
+ $B01F JR Z,$B037                           ;
+ $B021 CP $B6                               ;
+ $B023 JR Z,$B037                           ;
+ $B025 AND $FC                              ;
+ $B027 CP $64                               ;
+ $B029 JR Z,$B031                           ;
+ $B02B CP $C8                               ;
+ $B02D JR Z,$B037                           ;
+ $B02F LD (HL),$5C                          ;
+*$B031 ADD HL,DE                            ;
+ $B032 DJNZ $B017                           ;
+ $B034 JP $A76B                             ;
+*$B037 LD (HL),$64                          ;
+ $B039 JR $B031                             ;
 ; This entry point is used by the routine at #R$9EDC.
-*$AD00 LD (HL),A       ;
- $AD01 INC L           ;
- $AD02 LD (HL),A       ;
- $AD03 LD BC,$001F     ;
- $AD06 ADD HL,BC       ;
- $AD07 LD (HL),A       ;
- $AD08 INC L           ;
- $AD09 LD (HL),A       ;
- $AD0A RET             ;
+*$B03B LD A,($6078)                         ;
+ $B03E SUB $12                              ;
+ $B040 CP $08                               ;
+ $B042 LD BC,$E004                          ;
+ $B045 JR C,$B056                           ;
+ $B047 LD A,B                               ;
+ $B048 LD ($6090),A                         ;
+ $B04B LD A,C                               ;
+ $B04C LD ($6098),A                         ;
+ $B04F LD DE,$6092                          ;
+ $B052 CALL $B4C2                           ;
+ $B055 RET                                  ;
+*$B056 LD A,B                               ;
+ $B057 LD ($6078),A                         ;
+ $B05A LD A,C                               ;
+ $B05B LD ($6080),A                         ;
+ $B05E LD DE,$607A                          ;
+ $B061 CALL $B4C2                           ;
+ $B064 RET                                  ;
+ $B065 LD A,($6108)                         ;
+ $B068 CP $A4                               ;
+ $B06A JR NZ,$B0C9                          ;
+ $B06C LD A,(IX+$00)                        ;
+ $B06F XOR $01                              ;
+ $B071 LD (IX+$00),A                        ;
+ $B074 LD A,(IX+$07)                        ;
+ $B077 XOR $04                              ;
+ $B079 LD (IX+$07),A                        ;
+ $B07C LD A,($610C)                         ;
+ $B07F LD (IX+$04),A                        ;
+ $B082 LD HL,($610A)                        ;
+ $B085 LD BC,$0018                          ;
+ $B088 AND A                                ;
+ $B089 SBC HL,BC                            ;
+ $B08B LD A,H                               ;
+ $B08C AND $1F                              ;
+ $B08E LD H,A                               ;
+ $B08F LD (IX+$02),L                        ;
+ $B092 LD (IX+$03),H                        ;
+ $B095 JP $ABB4                             ;
+ $B098 LD A,($6108)                         ;
+ $B09B CP $A0                               ;
+ $B09D JR NZ,$B0C9                          ;
+ $B09F LD A,(IX+$00)                        ;
+ $B0A2 XOR $01                              ;
+ $B0A4 LD (IX+$00),A                        ;
+ $B0A7 LD A,(IX+$07)                        ;
+ $B0AA XOR $04                              ;
+ $B0AC LD (IX+$07),A                        ;
+ $B0AF LD A,($610C)                         ;
+ $B0B2 LD (IX+$04),A                        ;
+ $B0B5 LD HL,($610A)                        ;
+ $B0B8 LD BC,$0014                          ;
+ $B0BB ADD HL,BC                            ;
+ $B0BC LD A,H                               ;
+ $B0BD AND $1F                              ;
+ $B0BF LD H,A                               ;
+ $B0C0 LD (IX+$02),L                        ;
+ $B0C3 LD (IX+$03),H                        ;
+ $B0C6 JP $ABB4                             ;
+*$B0C9 CALL $8640                           ;
+ $B0CC LD (IX+$00),$00                      ;
+ $B0D0 RET                                  ;
+*$B0D1 LD A,($6078)                         ;
+ $B0D4 SUB $12                              ;
+ $B0D6 CP $08                               ;
+ $B0D8 JR C,$B112                           ;
+ $B0DA LD A,($6090)                         ;
+ $B0DD SUB $1A                              ;
+ $B0DF CP $10                               ;
+ $B0E1 JR NC,$B11B                          ;
+ $B0E3 LD HL,($6092)                        ;
+ $B0E6 LD A,($6094)                         ;
+ $B0E9 LD C,A                               ;
+*$B0EA ADD HL,HL                            ;
+ $B0EB ADD HL,HL                            ;
+ $B0EC ADD HL,HL                            ;
+ $B0ED LD E,(IX+$02)                        ;
+ $B0F0 LD D,(IX+$03)                        ;
+ $B0F3 EX DE,HL                             ;
+ $B0F4 ADD HL,HL                            ;
+ $B0F5 ADD HL,HL                            ;
+ $B0F6 ADD HL,HL                            ;
+ $B0F7 AND A                                ;
+ $B0F8 SBC HL,DE                            ;
+ $B0FA LD A,H                               ;
+ $B0FB AND A                                ;
+ $B0FC JP P,$B102                           ;
+ $B0FF CALL $8947                           ;
+*$B102 LD DE,$00C0                          ;
+ $B105 AND A                                ;
+ $B106 SBC HL,DE                            ;
+ $B108 RET NC                               ;
+ $B109 LD A,(IX+$04)                        ;
+ $B10C SUB C                                ;
+ $B10D NEG                                  ;
+ $B10F CP $20                               ;
+ $B111 RET                                  ;
+*$B112 LD HL,($607A)                        ;
+ $B115 LD A,($607C)                         ;
+ $B118 LD C,A                               ;
+ $B119 JR $B0EA                             ;
+*$B11B AND A                                ;
+ $B11C RET                                  ;
+*$B11D LD A,$5C                             ;
+ $B11F LD ($6108),A                         ;
+ $B122 LD ($6138),A                         ;
+ $B125 JP $AFE9                             ;
+ $B128 CALL $B0D1                           ;
+ $B12B JP C,$B11D                           ;
+ $B12E CALL $B2A2                           ;
+ $B131 CALL C,$B2D7                         ;
+ $B134 CALL $A53A                           ;
+ $B137 LD A,(IX+$00)                        ;
+ $B13A INC A                                ;
+ $B13B AND $07                              ;
+ $B13D ADD A,$90                            ;
+ $B13F LD (IX+$00),A                        ;
+ $B142 CALL $8701                           ;
+ $B145 LD L,(IX+$01)                        ;
+ $B148 LD H,(IX+$04)                        ;
+ $B14B CALL $8506                           ;
+ $B14E LD D,(IX+$07)                        ;
+ $B151 LD C,$02                             ;
+ $B153 LD A,($5E57)                         ;
+ $B156 AND A                                ;
+ $B157 RET Z                                ;
+ $B158 LD B,A                               ;
+ $B159 CALL $8750                           ;
+ $B15C LD A,($5E42)                         ;
+ $B15F RRCA                                 ;
+ $B160 RRCA                                 ;
+ $B161 RRCA                                 ;
+ $B162 AND $07                              ;
+ $B164 JR NZ,$B167                          ;
+ $B166 INC A                                ;
+*$B167 OR $40                               ;
+ $B169 LD D,A                               ;
+ $B16A LD C,$01                             ;
+ $B16C JP $8750                             ;
+; This entry point is used by the routines at #R$ABA9 and #R$B7A8.
+*$B16F LD A,($6108)                         ;
+ $B172 AND A                                ;
+ $B173 JR Z,$B17A                           ;
+ $B175 LD A,$C0                             ;
+ $B177 LD ($6108),A                         ;
+*$B17A LD A,($6138)                         ;
+ $B17D AND A                                ;
+ $B17E JR Z,$B185                           ;
+ $B180 LD A,$C0                             ;
+ $B182 LD ($6138),A                         ;
+*$B185 LD A,($6120)                         ;
+ $B188 SUB $C8                              ;
+ $B18A CP $04                               ;
+ $B18C JR NC,$B193                          ;
+ $B18E LD A,$64                             ;
+ $B190 LD ($6120),A                         ;
+*$B193 LD A,($6150)                         ;
+ $B196 SUB $C8                              ;
+ $B198 CP $04                               ;
+ $B19A JR NC,$B1A1                          ;
+ $B19C LD A,$64                             ;
+ $B19E LD ($6150),A                         ;
+*$B1A1 JP $B960                             ;
+ $B1A4 CALL $ABB4                           ;
+ $B1A7 LD A,($5E42)                         ;
+ $B1AA AND $01                              ;
+ $B1AC RET NZ                               ;
+ $B1AD INC (IX+$00)                         ;
+ $B1B0 LD A,(IX+$00)                        ;
+ $B1B3 CP $C8                               ;
+ $B1B5 RET NZ                               ;
+ $B1B6 CALL $95B6                           ;
+ $B1B9 LD (IX+$00),$63                      ;
+ $B1BD PUSH IX                              ;
+ $B1BF POP HL                               ;
+ $B1C0 LD BC,$6078                          ;
+ $B1C3 AND A                                ;
+ $B1C4 SBC HL,BC                            ;
+ $B1C6 RET NZ                               ;
+ $B1C7 CALL $8640                           ;
+ $B1CA LD (IX+$00),$81                      ;
+ $B1CE LD (IX+$05),$40                      ;
+ $B1D2 RET                                  ;
+; This entry point is used by the routine at #R$AC3E.
+*$B1D3 LD HL,$6108                          ;
+ $B1D6 LD B,$04                             ;
+*$B1D8 LD DE,$0018                          ;
+ $B1DB XOR A                                ;
+*$B1DC OR (HL)                              ;
+ $B1DD ADD HL,DE                            ;
+ $B1DE DJNZ $B1DC                           ;
+ $B1E0 OR A                                 ;
+ $B1E1 RET                                  ;
 ; This entry point is used by the routine at #R$9EDC.
-*$AD0B LD A,($5E42)    ;
- $AD0E AND $10         ;
- $AD10 JR Z,$AD14      ;
- $AD12 LD A,$30        ;
-*$AD14 OR $42          ;
- $AD16 RET             ;
-*$AD17 LD A,($5E42)    ;
- $AD1A AND $10         ;
- $AD1C JR Z,$AD14      ;
- $AD1E LD A,$38        ;
- $AD20 JR $AD14        ;
-; This entry point is used by the routine at #R$91E2.
-*$AD22 CALL $AD0B      ;
-*$AD25 LD HL,$5861     ;
- $AD28 PUSH AF         ;
- $AD29 CALL $AD00      ;
- $AD2C POP AF          ;
- $AD2D LD HL,$5863     ;
- $AD30 JP $AD00        ;
-; This entry point is used by the routine at #R$91E2.
-*$AD33 XOR A           ;
- $AD34 JR $AD25        ;
-; This entry point is used by the routine at #R$9EDC.
-*$AD36 LD HL,($607A)   ;
-*$AD39 LD C,(IX+$02)   ;
- $AD3C LD B,(IX+$03)   ;
-; This entry point is used by the routines at #R$8FF4 and #R$B731.
-*$AD3F AND A           ;
- $AD40 SBC HL,BC       ;
- $AD42 LD A,H          ;
- $AD43 AND A           ;
- $AD44 JP M,$AD4E      ;
- $AD47 LD BC,$1000     ;
- $AD4A AND A           ;
- $AD4B SBC HL,BC       ;
- $AD4D RET             ;
-*$AD4E CALL $8947      ;
- $AD51 LD BC,$1000     ;
- $AD54 AND A           ;
- $AD55 SBC HL,BC       ;
- $AD57 CCF             ;
- $AD58 RET             ;
- $AD59 LD E,$14        ;
- $AD5B CALL $B2A4      ;
- $AD5E CALL C,$B2D7    ;
- $AD61 LD A,($607A)    ;
- $AD64 SUB (IX+$02)    ;
- $AD67 NEG             ;
- $AD69 AND $07         ;
- $AD6B ADD A,$68       ;
- $AD6D LD (IX+$00),A   ;
- $AD70 CALL $8787      ;
- $AD73 LD A,($5E58)    ;
- $AD76 SUB $08         ;
- $AD78 LD ($5E58),A    ;
- $AD7B CALL $8733      ;
- $AD7E LD A,($5E6C)    ;
- $AD81 AND A           ;
- $AD82 JR NZ,$AD89     ;
- $AD84 LD A,(IX+$15)   ;
- $AD87 AND A           ;
- $AD88 RET Z           ;
-*$AD89 CALL $864F      ;
- $AD8C LD A,$C0        ;
- $AD8E LD ($6168),A    ;
- $AD91 LD ($6180),A    ;
- $AD94 LD HL,($6182)   ;
- $AD97 LD BC,$FFF8     ;
- $AD9A CALL $A002      ;
- $AD9D LD ($6182),HL   ;
- $ADA0 LD HL,$6188     ;
- $ADA3 LD B,$08        ;
-*$ADA5 LD (HL),$00     ;
- $ADA7 INC HL          ;
- $ADA8 DJNZ $ADA5      ;
- $ADAA RET             ;
- $ADAB CALL $B2A2      ;
- $ADAE JR C,$ADDE      ;
- $ADB0 BIT 0,(IX+$10)  ;
- $ADB4 JR NZ,$ADE1     ;
- $ADB6 LD L,(IX+$02)   ;
- $ADB9 LD H,(IX+$03)   ;
- $ADBC LD B,$00        ;
- $ADBE LD A,(IX+$05)   ;
- $ADC1 LD C,A          ;
- $ADC2 AND A           ;
- $ADC3 JP P,$ADC7      ;
- $ADC6 DEC B           ;
-*$ADC7 ADD HL,BC       ;
- $ADC8 LD (IX+$02),L   ;
- $ADCB LD (IX+$03),H   ;
- $ADCE LD A,(IX+$04)   ;
- $ADD1 ADD A,(IX+$06)  ;
- $ADD4 LD (IX+$04),A   ;
- $ADD7 CP $3C          ;
- $ADD9 JR C,$ADE7      ;
- $ADDB JP $ABB4        ;
-*$ADDE CALL $B2D7      ;
-*$ADE1 LD BC,$0500     ;
- $ADE4 CALL $899C      ;
-*$ADE7 JP $A76B        ;
- $ADEA LD A,($6138)    ;
- $ADED CP $80          ;
- $ADEF JR NZ,$AE2F     ;
- $ADF1 LD HL,($613A)   ;
- $ADF4 LD BC,$0014     ;
- $ADF7 ADD HL,BC       ;
-*$ADF8 LD A,H          ;
- $ADF9 AND $1F         ;
- $ADFB LD H,A          ;
- $ADFC LD (IX+$02),L   ;
- $ADFF LD (IX+$03),H   ;
- $AE02 LD A,($613C)    ;
- $AE05 ADD A,$10       ;
- $AE07 LD (IX+$04),A   ;
- $AE0A LD A,(IX+$00)   ;
- $AE0D XOR $01         ;
- $AE0F LD (IX+$00),A   ;
- $AE12 LD A,(IX+$07)   ;
- $AE15 XOR $04         ;
- $AE17 LD (IX+$07),A   ;
- $AE1A JP $ABB4        ;
- $AE1D LD A,($6138)    ;
- $AE20 CP $84          ;
- $AE22 JR NZ,$AE2F     ;
- $AE24 LD HL,($613A)   ;
- $AE27 LD BC,$0010     ;
- $AE2A AND A           ;
- $AE2B SBC HL,BC       ;
- $AE2D JR $ADF8        ;
-*$AE2F CALL $8640      ;
- $AE32 LD (IX+$00),$00 ;
- $AE36 RET             ;
- $AE37 JP $ABB4        ;
- $AE3A LD E,$18        ;
- $AE3C CALL $B2A4      ;
- $AE3F CALL C,$B2D7    ;
- $AE42 CALL $ABB4      ;
- $AE45 LD A,($5E42)    ;
- $AE48 AND $07         ;
- $AE4A RET NZ          ;
- $AE4B INC (IX+$00)    ;
- $AE4E LD A,(IX+$00)   ;
- $AE51 AND $03         ;
- $AE53 CP $03          ;
- $AE55 CALL Z,$AE78    ;
- $AE58 RET             ;
- $AE59 LD E,$18        ;
- $AE5B CALL $B2A4      ;
- $AE5E CALL C,$B2D7    ;
- $AE61 CALL $ABB4      ;
- $AE64 LD A,($5E42)    ;
- $AE67 AND $03         ;
- $AE69 RET NZ          ;
- $AE6A INC (IX+$00)    ;
- $AE6D LD A,(IX+$00)   ;
- $AE70 AND $03         ;
- $AE72 CP $03          ;
- $AE74 CALL Z,$AEB7    ;
- $AE77 RET             ;
-*$AE78 LD HL,$AEBC     ;
-*$AE7B LD DE,$6108     ;
- $AE7E LD BC,$0030     ;
- $AE81 LDIR            ;
- $AE83 LD L,(IX+$02)   ;
- $AE86 LD H,(IX+$03)   ;
- $AE89 LD ($610A),HL   ;
- $AE8C LD A,(IX+$04)   ;
- $AE8F SUB $0C         ;
- $AE91 LD ($610C),A    ;
- $AE94 LD A,($5EA0)    ;
- $AE97 ADD A,$08       ;
- $AE99 CP $63          ;
- $AE9B JR C,$AE9F      ;
- $AE9D LD A,$63        ;
-*$AE9F LD ($611E),A    ;
- $AEA2 LD A,($6172)    ;
- $AEA5 AND A           ;
- $AEA6 RET NZ          ;
- $AEA7 LD A,($5EA1)    ;
- $AEAA AND A           ;
- $AEAB JP NZ,$B52E     ;
- $AEAE LD A,($6078)    ;
- $AEB1 CP $2A          ;
- $AEB3 RET NC          ;
- $AEB4 JP $B52E        ;
-*$AEB7 LD HL,$AEEC     ;
- $AEBA JR $AE7B        ;
- $AEBC AND B           ;
- $AEBD NOP             ;
- $AEBE NOP             ;
- $AEBF NOP             ;
- $AEC0 NOP             ;
- $AEC1 DEFB $FD        ;
- $AEC2 NOP             ;
- $AEC3 LD B,(HL)       ;
- $AEC4 NOP             ;
- $AEC5 NOP             ;
- $AEC6 NOP             ;
- $AEC7 NOP             ;
- $AEC8 NOP             ;
- $AEC9 NOP             ;
- $AECA NOP             ;
- $AECB NOP             ;
- $AECC NOP             ;
- $AECD NOP             ;
- $AECE NOP             ;
- $AECF NOP             ;
- $AED0 NOP             ;
- $AED1 NOP             ;
- $AED2 NOP             ;
- $AED3 NOP             ;
- $AED4 AND D           ;
- $AED5 NOP             ;
- $AED6 NOP             ;
- $AED7 NOP             ;
- $AED8 NOP             ;
- $AED9 NOP             ;
- $AEDA NOP             ;
- $AEDB LD B,D          ;
- $AEDC NOP             ;
- $AEDD NOP             ;
- $AEDE NOP             ;
- $AEDF NOP             ;
- $AEE0 NOP             ;
- $AEE1 NOP             ;
- $AEE2 NOP             ;
- $AEE3 NOP             ;
- $AEE4 NOP             ;
- $AEE5 NOP             ;
- $AEE6 NOP             ;
- $AEE7 NOP             ;
- $AEE8 NOP             ;
- $AEE9 NOP             ;
- $AEEA NOP             ;
- $AEEB NOP             ;
- $AEEC AND H           ;
- $AEED NOP             ;
- $AEEE NOP             ;
- $AEEF NOP             ;
- $AEF0 NOP             ;
- $AEF1 INC BC          ;
- $AEF2 NOP             ;
- $AEF3 LD B,(HL)       ;
- $AEF4 NOP             ;
- $AEF5 NOP             ;
- $AEF6 NOP             ;
- $AEF7 NOP             ;
- $AEF8 NOP             ;
- $AEF9 NOP             ;
- $AEFA NOP             ;
- $AEFB NOP             ;
- $AEFC NOP             ;
- $AEFD NOP             ;
- $AEFE NOP             ;
- $AEFF NOP             ;
- $AF00 NOP             ;
- $AF01 NOP             ;
- $AF02 NOP             ;
- $AF03 NOP             ;
- $AF04 AND (HL)        ;
- $AF05 NOP             ;
- $AF06 NOP             ;
- $AF07 NOP             ;
- $AF08 NOP             ;
- $AF09 NOP             ;
- $AF0A NOP             ;
- $AF0B LD B,D          ;
- $AF0C NOP             ;
- $AF0D NOP             ;
- $AF0E NOP             ;
- $AF0F NOP             ;
- $AF10 NOP             ;
- $AF11 NOP             ;
- $AF12 NOP             ;
- $AF13 NOP             ;
- $AF14 NOP             ;
- $AF15 NOP             ;
- $AF16 NOP             ;
- $AF17 NOP             ;
- $AF18 NOP             ;
- $AF19 NOP             ;
- $AF1A NOP             ;
- $AF1B NOP             ;
- $AF1C CALL $B2A2      ;
- $AF1F JP C,$AFAE      ;
- $AF22 CALL $AD36      ;
- $AF25 JR NC,$AF35     ;
- $AF27 CALL $AD17      ;
- $AF2A LD HL,$587B     ;
- $AF2D CALL $AD00      ;
- $AF30 LD HL,$587D     ;
- $AF33 JR $AF41        ;
-*$AF35 CALL $AD17      ;
- $AF38 LD HL,$587D     ;
- $AF3B CALL $AD00      ;
- $AF3E LD HL,$587B     ;
-*$AF41 LD A,$42        ;
- $AF43 CALL $AD00      ;
- $AF46 LD A,($5E42)    ;
- $AF49 AND $01         ;
- $AF4B JR NZ,$AF61     ;
- $AF4D LD A,(IX+$07)   ;
- $AF50 CP $46          ;
- $AF52 JR Z,$AF61      ;
- $AF54 LD A,($5E40)    ;
- $AF57 AND $07         ;
- $AF59 JR NZ,$AF5C     ;
- $AF5B INC A           ;
-*$AF5C OR $40          ;
- $AF5E LD (IX+$07),A   ;
-*$AF61 BIT 0,(IX+$10)  ;
- $AF65 JR Z,$AF7D      ;
- $AF67 DEC (IX+$16)    ;
- $AF6A JR Z,$AFB1      ;
- $AF6C CALL $B8B4      ;
- $AF6F LD BC,$0100     ;
- $AF72 CALL $899C      ;
- $AF75 LD (IX+$07),$42 ;
- $AF79 LD (IX+$10),$00 ;
-*$AF7D LD L,(IX+$02)   ;
- $AF80 LD H,(IX+$03)   ;
- $AF83 LD C,(IX+$05)   ;
- $AF86 LD B,$00        ;
- $AF88 LD A,C          ;
- $AF89 AND A           ;
- $AF8A JP P,$AF8E      ;
- $AF8D DEC B           ;
-*$AF8E ADD HL,BC       ;
- $AF8F LD A,H          ;
- $AF90 AND $1F         ;
- $AF92 LD H,A          ;
- $AF93 LD (IX+$02),L   ;
- $AF96 LD (IX+$03),H   ;
- $AF99 CALL $B0D1      ;
- $AF9C JR C,$AFE9      ;
- $AF9E LD A,H          ;
- $AF9F CP $02          ;
- $AFA1 JR C,$AFDD      ;
- $AFA3 CP $10          ;
- $AFA5 JR C,$AFD6      ;
- $AFA7 CP $20          ;
- $AFA9 JR C,$AFC5      ;
-*$AFAB JP $ABB4        ;
-*$AFAE CALL $B2D7      ;
-*$AFB1 LD A,$01        ;
- $AFB3 LD ($6195),A    ;
- $AFB6 LD BC,$0500     ;
- $AFB9 CALL $899C      ;
- $AFBC LD DE,$BAA8     ;
- $AFBF CALL $B9BC      ;
- $AFC2 JP $A76B        ;
-*$AFC5 LD A,(IX+$04)   ;
- $AFC8 CP $50          ;
-*$AFCA JR Z,$AFAB      ;
- $AFCC JR NC,$AFD0     ;
- $AFCE INC A           ;
- $AFCF INC A           ;
-*$AFD0 DEC A           ;
- $AFD1 LD (IX+$04),A   ;
- $AFD4 JR $AFAB        ;
-*$AFD6 LD A,(IX+$04)   ;
- $AFD9 CP $80          ;
- $AFDB JR $AFCA        ;
-*$AFDD LD A,(IX+$04)   ;
- $AFE0 CP $A7          ;
- $AFE2 JR Z,$AFAB      ;
- $AFE4 INC A           ;
- $AFE5 CP $A7          ;
- $AFE7 JR $AFCA        ;
-*$AFE9 LD A,$01        ;
- $AFEB LD ($5E6C),A    ;
- $AFEE LD A,$C0        ;
- $AFF0 LD ($60D8),A    ;
- $AFF3 LD ($60A8),A    ;
- $AFF6 LD ($60C0),A    ;
- $AFF9 LD A,($60F0)    ;
- $AFFC AND A           ;
- $AFFD JR Z,$B004      ;
- $AFFF LD A,$5C        ;
- $B001 LD ($60F0),A    ;
-*$B004 LD A,($6198)    ;
- $B007 AND A           ;
- $B008 JR Z,$B00F      ;
- $B00A LD A,$C0        ;
- $B00C LD ($6198),A    ;
-*$B00F LD HL,$61B0     ;
- $B012 LD DE,$0018     ;
- $B015 LD B,$06        ;
-*$B017 LD A,(HL)       ;
- $B018 AND A           ;
- $B019 JR Z,$B031      ;
- $B01B AND $FE         ;
- $B01D CP $5A          ;
- $B01F JR Z,$B037      ;
- $B021 CP $B6          ;
- $B023 JR Z,$B037      ;
- $B025 AND $FC         ;
- $B027 CP $64          ;
- $B029 JR Z,$B031      ;
- $B02B CP $C8          ;
- $B02D JR Z,$B037      ;
- $B02F LD (HL),$5C     ;
-*$B031 ADD HL,DE       ;
- $B032 DJNZ $B017      ;
- $B034 JP $A76B        ;
-*$B037 LD (HL),$64     ;
- $B039 JR $B031        ;
-; This entry point is used by the routine at #R$9EDC.
-*$B03B LD A,($6078)    ;
- $B03E SUB $12         ;
- $B040 CP $08          ;
- $B042 LD BC,$E004     ;
- $B045 JR C,$B056      ;
- $B047 LD A,B          ;
- $B048 LD ($6090),A    ;
- $B04B LD A,C          ;
- $B04C LD ($6098),A    ;
- $B04F LD DE,$6092     ;
- $B052 CALL $B4C2      ;
- $B055 RET             ;
-*$B056 LD A,B          ;
- $B057 LD ($6078),A    ;
- $B05A LD A,C          ;
- $B05B LD ($6080),A    ;
- $B05E LD DE,$607A     ;
- $B061 CALL $B4C2      ;
- $B064 RET             ;
- $B065 LD A,($6108)    ;
- $B068 CP $A4          ;
- $B06A JR NZ,$B0C9     ;
- $B06C LD A,(IX+$00)   ;
- $B06F XOR $01         ;
- $B071 LD (IX+$00),A   ;
- $B074 LD A,(IX+$07)   ;
- $B077 XOR $04         ;
- $B079 LD (IX+$07),A   ;
- $B07C LD A,($610C)    ;
- $B07F LD (IX+$04),A   ;
- $B082 LD HL,($610A)   ;
- $B085 LD BC,$0018     ;
- $B088 AND A           ;
- $B089 SBC HL,BC       ;
- $B08B LD A,H          ;
- $B08C AND $1F         ;
- $B08E LD H,A          ;
- $B08F LD (IX+$02),L   ;
- $B092 LD (IX+$03),H   ;
- $B095 JP $ABB4        ;
- $B098 LD A,($6108)    ;
- $B09B CP $A0          ;
- $B09D JR NZ,$B0C9     ;
- $B09F LD A,(IX+$00)   ;
- $B0A2 XOR $01         ;
- $B0A4 LD (IX+$00),A   ;
- $B0A7 LD A,(IX+$07)   ;
- $B0AA XOR $04         ;
- $B0AC LD (IX+$07),A   ;
- $B0AF LD A,($610C)    ;
- $B0B2 LD (IX+$04),A   ;
- $B0B5 LD HL,($610A)   ;
- $B0B8 LD BC,$0014     ;
- $B0BB ADD HL,BC       ;
- $B0BC LD A,H          ;
- $B0BD AND $1F         ;
- $B0BF LD H,A          ;
- $B0C0 LD (IX+$02),L   ;
- $B0C3 LD (IX+$03),H   ;
- $B0C6 JP $ABB4        ;
-*$B0C9 CALL $8640      ;
- $B0CC LD (IX+$00),$00 ;
- $B0D0 RET             ;
-*$B0D1 LD A,($6078)    ;
- $B0D4 SUB $12         ;
- $B0D6 CP $08          ;
- $B0D8 JR C,$B112      ;
- $B0DA LD A,($6090)    ;
- $B0DD SUB $1A         ;
- $B0DF CP $10          ;
- $B0E1 JR NC,$B11B     ;
- $B0E3 LD HL,($6092)   ;
- $B0E6 LD A,($6094)    ;
- $B0E9 LD C,A          ;
-*$B0EA ADD HL,HL       ;
- $B0EB ADD HL,HL       ;
- $B0EC ADD HL,HL       ;
- $B0ED LD E,(IX+$02)   ;
- $B0F0 LD D,(IX+$03)   ;
- $B0F3 EX DE,HL        ;
- $B0F4 ADD HL,HL       ;
- $B0F5 ADD HL,HL       ;
- $B0F6 ADD HL,HL       ;
- $B0F7 AND A           ;
- $B0F8 SBC HL,DE       ;
- $B0FA LD A,H          ;
- $B0FB AND A           ;
- $B0FC JP P,$B102      ;
- $B0FF CALL $8947      ;
-*$B102 LD DE,$00C0     ;
- $B105 AND A           ;
- $B106 SBC HL,DE       ;
- $B108 RET NC          ;
- $B109 LD A,(IX+$04)   ;
- $B10C SUB C           ;
- $B10D NEG             ;
- $B10F CP $20          ;
- $B111 RET             ;
-*$B112 LD HL,($607A)   ;
- $B115 LD A,($607C)    ;
- $B118 LD C,A          ;
- $B119 JR $B0EA        ;
-*$B11B AND A           ;
- $B11C RET             ;
-*$B11D LD A,$5C        ;
- $B11F LD ($6108),A    ;
- $B122 LD ($6138),A    ;
- $B125 JP $AFE9        ;
- $B128 CALL $B0D1      ;
- $B12B JP C,$B11D      ;
- $B12E CALL $B2A2      ;
- $B131 CALL C,$B2D7    ;
- $B134 CALL $A53A      ;
- $B137 LD A,(IX+$00)   ;
- $B13A INC A           ;
- $B13B AND $07         ;
- $B13D ADD A,$90       ;
- $B13F LD (IX+$00),A   ;
- $B142 CALL $8701      ;
- $B145 LD L,(IX+$01)   ;
- $B148 LD H,(IX+$04)   ;
- $B14B CALL $8506      ;
- $B14E LD D,(IX+$07)   ;
- $B151 LD C,$02        ;
- $B153 LD A,($5E57)    ;
- $B156 AND A           ;
- $B157 RET Z           ;
- $B158 LD B,A          ;
- $B159 CALL $8750      ;
- $B15C LD A,($5E42)    ;
- $B15F RRCA            ;
- $B160 RRCA            ;
- $B161 RRCA            ;
- $B162 AND $07         ;
- $B164 JR NZ,$B167     ;
- $B166 INC A           ;
-*$B167 OR $40          ;
- $B169 LD D,A          ;
- $B16A LD C,$01        ;
- $B16C JP $8750        ;
-; This entry point is used by the routine at #R$B7A8.
-*$B16F LD A,($6108)    ;
- $B172 AND A           ;
- $B173 JR Z,$B17A      ;
- $B175 LD A,$C0        ;
- $B177 LD ($6108),A    ;
-*$B17A LD A,($6138)    ;
- $B17D AND A           ;
- $B17E JR Z,$B185      ;
- $B180 LD A,$C0        ;
- $B182 LD ($6138),A    ;
-*$B185 LD A,($6120)    ;
- $B188 SUB $C8         ;
- $B18A CP $04          ;
- $B18C JR NC,$B193     ;
- $B18E LD A,$64        ;
- $B190 LD ($6120),A    ;
-*$B193 LD A,($6150)    ;
- $B196 SUB $C8         ;
- $B198 CP $04          ;
- $B19A JR NC,$B1A1     ;
- $B19C LD A,$64        ;
- $B19E LD ($6150),A    ;
-*$B1A1 JP $B960        ;
- $B1A4 CALL $ABB4      ;
- $B1A7 LD A,($5E42)    ;
- $B1AA AND $01         ;
- $B1AC RET NZ          ;
- $B1AD INC (IX+$00)    ;
- $B1B0 LD A,(IX+$00)   ;
- $B1B3 CP $C8          ;
- $B1B5 RET NZ          ;
- $B1B6 CALL $95B6      ;
- $B1B9 LD (IX+$00),$63 ;
- $B1BD PUSH IX         ;
- $B1BF POP HL          ;
- $B1C0 LD BC,$6078     ;
- $B1C3 AND A           ;
- $B1C4 SBC HL,BC       ;
- $B1C6 RET NZ          ;
- $B1C7 CALL $8640      ;
- $B1CA LD (IX+$00),$81 ;
- $B1CE LD (IX+$05),$40 ;
- $B1D2 RET             ;
-*$B1D3 LD HL,$6108     ;
- $B1D6 LD B,$04        ;
-*$B1D8 LD DE,$0018     ;
- $B1DB XOR A           ;
-*$B1DC OR (HL)         ;
- $B1DD ADD HL,DE       ;
- $B1DE DJNZ $B1DC      ;
- $B1E0 OR A            ;
- $B1E1 RET             ;
-; This entry point is used by the routine at #R$9EDC.
-*$B1E2 LD HL,$6108     ;
- $B1E5 LD B,$06        ;
- $B1E7 JR $B1D8        ;
-*$B1E9 ADD A,(IX+$10)  ;
- $B1EC LD C,A          ;
- $B1ED AND $0E         ;
- $B1EF LD (IX+$10),A   ;
- $B1F2 LD A,C          ;
- $B1F3 RRCA            ;
- $B1F4 RRCA            ;
- $B1F5 RRCA            ;
- $B1F6 RRCA            ;
- $B1F7 AND $0F         ;
- $B1F9 LD B,$00        ;
- $B1FB JR $B246        ;
-*$B1FD ADD A,(IX+$11)  ;
- $B200 LD C,A          ;
- $B201 AND $0F         ;
- $B203 LD (IX+$11),A   ;
- $B206 LD A,C          ;
- $B207 RRCA            ;
- $B208 RRCA            ;
- $B209 RRCA            ;
- $B20A RRCA            ;
- $B20B AND $0F         ;
- $B20D JR $B272        ;
-*$B20F LD BC,$0025     ;
- $B212 CALL $899C      ;
- $B215 JP $A73C        ;
- $B218 BIT 0,(IX+$10)  ;
- $B21C JP NZ,$B20F     ;
- $B21F DEC (IX+$08)    ;
- $B222 JP Z,$A73C      ;
- $B225 LD A,(IX+$05)   ;
- $B228 AND A           ;
- $B229 JP P,$B1E9      ;
- $B22C ADD A,(IX+$10)  ;
- $B22F LD C,A          ;
- $B230 AND $0F         ;
- $B232 NEG             ;
- $B234 AND $FE         ;
- $B236 LD (IX+$10),A   ;
- $B239 LD A,C          ;
- $B23A NEG             ;
- $B23C RRCA            ;
- $B23D RRCA            ;
- $B23E RRCA            ;
- $B23F RRCA            ;
- $B240 AND $0F         ;
- $B242 NEG             ;
- $B244 LD B,$FF        ;
-*$B246 ADD A,(IX+$02)  ;
- $B249 LD (IX+$02),A   ;
- $B24C LD A,(IX+$03)   ;
- $B24F ADC A,B         ;
- $B250 AND $1F         ;
- $B252 LD (IX+$03),A   ;
- $B255 LD A,(IX+$06)   ;
- $B258 AND A           ;
- $B259 JP P,$B1FD      ;
- $B25C ADD A,(IX+$11)  ;
- $B25F LD C,A          ;
- $B260 AND $0F         ;
- $B262 NEG             ;
- $B264 LD (IX+$11),A   ;
- $B267 LD A,C          ;
- $B268 NEG             ;
- $B26A RRCA            ;
- $B26B RRCA            ;
- $B26C RRCA            ;
- $B26D RRCA            ;
- $B26E AND $0F         ;
- $B270 NEG             ;
-*$B272 ADD A,(IX+$04)  ;
- $B275 CP $AF          ;
- $B277 JP NC,$A73C     ;
- $B27A CP $30          ;
- $B27C JP C,$A73C      ;
- $B27F LD (IX+$04),A   ;
- $B282 LD A,(IX+$00)   ;
- $B285 AND $FC         ;
- $B287 LD C,A          ;
- $B288 LD A,(IX+$00)   ;
- $B28B INC A           ;
- $B28C AND $03         ;
- $B28E OR C            ;
- $B28F LD (IX+$00),A   ;
- $B292 CALL $8B73      ;
- $B295 CALL $8733      ;
- $B298 CALL $B2A2      ;
- $B29B RET NC          ;
- $B29C CALL $B2D7      ;
- $B29F JP $A73C        ;
-; This entry point is used by the routine at #R$945C.
-*$B2A2 LD E,$0E        ;
-*$B2A4 LD A,($5E67)    ;
- $B2A7 AND A           ;
- $B2A8 RET NZ          ;
- $B2A9 LD A,($6078)    ;
- $B2AC CP $11          ;
- $B2AE RET NC          ;
- $B2AF LD L,(IX+$02)   ;
- $B2B2 LD H,(IX+$03)   ;
- $B2B5 LD BC,$0008     ;
- $B2B8 ADD HL,BC       ;
- $B2B9 LD BC,($607A)   ;
- $B2BD AND A           ;
- $B2BE SBC HL,BC       ;
- $B2C0 LD A,H          ;
- $B2C1 AND $1F         ;
- $B2C3 RET NZ          ;
- $B2C4 LD A,L          ;
- $B2C5 CP $10          ;
- $B2C7 RET NC          ;
- $B2C8 LD A,($607C)    ;
- $B2CB SUB $04         ;
- $B2CD SUB (IX+$04)    ;
- $B2D0 JP P,$B2D5      ;
- $B2D3 NEG             ;
-*$B2D5 CP E            ;
- $B2D6 RET             ;
-; This entry point is used by the routine at #R$945C.
-*$B2D7 LD DE,$B9E7     ;
- $B2DA CALL $B9BC      ;
- $B2DD LD HL,$6078     ;
- $B2E0 LD (HL),$DC     ;
- $B2E2 LD HL,$607D     ;
- $B2E5 LD A,(IX+$01)   ;
- $B2E8 CP $78          ;
- $B2EA JR C,$B339      ;
- $B2EC LD (HL),$C0     ;
-*$B2EE INC HL          ;
- $B2EF LD (HL),$01     ;
- $B2F1 LD HL,$608A     ;
- $B2F4 LD (HL),$06     ;
- $B2F6 INC HL          ;
- $B2F7 LD (HL),$06     ;
-; This entry point is used by the routine at #R$A826.
-*$B2F9 LD A,($60B0)    ;
- $B2FC BIT 3,A         ;
- $B2FE JR NZ,$B305     ;
- $B300 OR $80          ;
- $B302 LD ($60B0),A    ;
-*$B305 LD A,($60C8)    ;
- $B308 BIT 3,A         ;
- $B30A JR NZ,$B311     ;
- $B30C OR $80          ;
- $B30E LD ($60C8),A    ;
-*$B311 LD A,($60E0)    ;
- $B314 AND $FC         ;
- $B316 LD ($60E0),A    ;
- $B319 LD A,($61A0)    ;
- $B31C BIT 2,A         ;
- $B31E JR NZ,$B32B     ;
- $B320 LD A,($619C)    ;
- $B323 CP $AF          ;
- $B325 LD A,$00        ;
- $B327 JR Z,$B32B      ;
- $B329 OR $02          ;
-*$B32B LD ($61A0),A    ;
- $B32E LD A,($60F0)    ;
- $B331 AND A           ;
- $B332 RET Z           ;
- $B333 LD A,$2F        ;
- $B335 LD ($60F0),A    ;
- $B338 RET             ;
-*$B339 LD (HL),$40     ;
- $B33B JR $B2EE        ;
- $B33D DEC (IX+$12)    ;
- $B340 JR NZ,$B357     ;
- $B342 LD A,(IX+$13)   ;
- $B345 LD (IX+$12),A   ;
- $B348 INC (IX+$06)    ;
- $B34B LD A,(IX+$05)   ;
- $B34E AND A           ;
- $B34F JR Z,$B357      ;
- $B351 JP P,$B356      ;
- $B354 INC A           ;
- $B355 INC A           ;
-*$B356 DEC A           ;
-*$B357 CALL $907B      ;
- $B35A LD A,(IX+$04)   ;
- $B35D ADD A,(IX+$06)  ;
- $B360 CP $AF          ;
- $B362 JR NC,$B37B     ;
- $B364 LD (IX+$04),A   ;
- $B367 LD C,A          ;
- $B368 LD D,$03        ;
- $B36A CALL $B8CD      ;
- $B36D LD A,($5E42)    ;
- $B370 RRCA            ;
- $B371 AND $03         ;
- $B373 ADD A,$DC       ;
- $B375 LD (IX+$00),A   ;
- $B378 JP $ABB4        ;
-*$B37B LD (IX+$04),$AF ;
+*$B1E2 LD HL,$6108                          ;
+ $B1E5 LD B,$06                             ;
+ $B1E7 JR $B1D8                             ;
+*$B1E9 ADD A,(IX+$10)                       ;
+ $B1EC LD C,A                               ;
+ $B1ED AND $0E                              ;
+ $B1EF LD (IX+$10),A                        ;
+ $B1F2 LD A,C                               ;
+ $B1F3 RRCA                                 ;
+ $B1F4 RRCA                                 ;
+ $B1F5 RRCA                                 ;
+ $B1F6 RRCA                                 ;
+ $B1F7 AND $0F                              ;
+ $B1F9 LD B,$00                             ;
+ $B1FB JR $B246                             ;
+*$B1FD ADD A,(IX+$11)                       ;
+ $B200 LD C,A                               ;
+ $B201 AND $0F                              ;
+ $B203 LD (IX+$11),A                        ;
+ $B206 LD A,C                               ;
+ $B207 RRCA                                 ;
+ $B208 RRCA                                 ;
+ $B209 RRCA                                 ;
+ $B20A RRCA                                 ;
+ $B20B AND $0F                              ;
+ $B20D JR $B272                             ;
+*$B20F LD BC,$0025                          ;
+ $B212 CALL $899C                           ;
+ $B215 JP $A73C                             ;
+ $B218 BIT 0,(IX+$10)                       ;
+ $B21C JP NZ,$B20F                          ;
+ $B21F DEC (IX+$08)                         ;
+ $B222 JP Z,$A73C                           ;
+ $B225 LD A,(IX+$05)                        ;
+ $B228 AND A                                ;
+ $B229 JP P,$B1E9                           ;
+ $B22C ADD A,(IX+$10)                       ;
+ $B22F LD C,A                               ;
+ $B230 AND $0F                              ;
+ $B232 NEG                                  ;
+ $B234 AND $FE                              ;
+ $B236 LD (IX+$10),A                        ;
+ $B239 LD A,C                               ;
+ $B23A NEG                                  ;
+ $B23C RRCA                                 ;
+ $B23D RRCA                                 ;
+ $B23E RRCA                                 ;
+ $B23F RRCA                                 ;
+ $B240 AND $0F                              ;
+ $B242 NEG                                  ;
+ $B244 LD B,$FF                             ;
+*$B246 ADD A,(IX+$02)                       ;
+ $B249 LD (IX+$02),A                        ;
+ $B24C LD A,(IX+$03)                        ;
+ $B24F ADC A,B                              ;
+ $B250 AND $1F                              ;
+ $B252 LD (IX+$03),A                        ;
+ $B255 LD A,(IX+$06)                        ;
+ $B258 AND A                                ;
+ $B259 JP P,$B1FD                           ;
+ $B25C ADD A,(IX+$11)                       ;
+ $B25F LD C,A                               ;
+ $B260 AND $0F                              ;
+ $B262 NEG                                  ;
+ $B264 LD (IX+$11),A                        ;
+ $B267 LD A,C                               ;
+ $B268 NEG                                  ;
+ $B26A RRCA                                 ;
+ $B26B RRCA                                 ;
+ $B26C RRCA                                 ;
+ $B26D RRCA                                 ;
+ $B26E AND $0F                              ;
+ $B270 NEG                                  ;
+*$B272 ADD A,(IX+$04)                       ;
+ $B275 CP $AF                               ;
+ $B277 JP NC,$A73C                          ;
+ $B27A CP $30                               ;
+ $B27C JP C,$A73C                           ;
+ $B27F LD (IX+$04),A                        ;
+ $B282 LD A,(IX+$00)                        ;
+ $B285 AND $FC                              ;
+ $B287 LD C,A                               ;
+ $B288 LD A,(IX+$00)                        ;
+ $B28B INC A                                ;
+ $B28C AND $03                              ;
+ $B28E OR C                                 ;
+ $B28F LD (IX+$00),A                        ;
+ $B292 CALL $8B73                           ;
+ $B295 CALL $8733                           ;
+ $B298 CALL $B2A2                           ;
+ $B29B RET NC                               ;
+ $B29C CALL $B2D7                           ;
+ $B29F JP $A73C                             ;
+; This entry point is used by the routine at #R$9466.
+*$B2A2 LD E,$0E                             ;
+; This entry point is used by the routine at #R$ABA9.
+*$B2A4 LD A,($5E67)                         ;
+ $B2A7 AND A                                ;
+ $B2A8 RET NZ                               ;
+ $B2A9 LD A,($6078)                         ;
+ $B2AC CP $11                               ;
+ $B2AE RET NC                               ;
+ $B2AF LD L,(IX+$02)                        ;
+ $B2B2 LD H,(IX+$03)                        ;
+ $B2B5 LD BC,$0008                          ;
+ $B2B8 ADD HL,BC                            ;
+ $B2B9 LD BC,($607A)                        ;
+ $B2BD AND A                                ;
+ $B2BE SBC HL,BC                            ;
+ $B2C0 LD A,H                               ;
+ $B2C1 AND $1F                              ;
+ $B2C3 RET NZ                               ;
+ $B2C4 LD A,L                               ;
+ $B2C5 CP $10                               ;
+ $B2C7 RET NC                               ;
+ $B2C8 LD A,($607C)                         ;
+ $B2CB SUB $04                              ;
+ $B2CD SUB (IX+$04)                         ;
+ $B2D0 JP P,$B2D5                           ;
+ $B2D3 NEG                                  ;
+*$B2D5 CP E                                 ;
+ $B2D6 RET                                  ;
+; This entry point is used by the routines at #R$9466 and #R$ABA9.
+*$B2D7 LD DE,$B9E7                          ;
+ $B2DA CALL $B9BC                           ;
+ $B2DD LD HL,$6078                          ;
+ $B2E0 LD (HL),$DC                          ;
+ $B2E2 LD HL,$607D                          ;
+ $B2E5 LD A,(IX+$01)                        ;
+ $B2E8 CP $78                               ;
+ $B2EA JR C,$B339                           ;
+ $B2EC LD (HL),$C0                          ;
+; This entry point is used by the routine at #R$B339.
+*$B2EE INC HL                               ;
+ $B2EF LD (HL),$01                          ;
+ $B2F1 LD HL,$608A                          ;
+ $B2F4 LD (HL),$06                          ;
+ $B2F6 INC HL                               ;
+ $B2F7 LD (HL),$06                          ;
+
+; Routine at B2F9
+;
+; Used by the routine at #R$A826.
+c$B2F9 LD A,($60B0)  ; #REGa=#N$60B0.
+ $B2FC BIT 3,A       ;
+ $B2FE JR NZ,$B305   ;
+ $B300 OR %10000000  ; Set bit 7.
+ $B302 LD ($60B0),A  ;
+*$B305 LD A,($60C8)  ; #REGa=#N$60C8.
+ $B308 BIT 3,A       ;
+ $B30A JR NZ,$B311   ;
+ $B30C OR %10000000  ; Set bit 7.
+ $B30E LD ($60C8),A  ;
+*$B311 LD A,($60E0)  ; #REGa=#N$60E0.
+ $B314 AND %11111100 ; Keep only bits 2-7.
+ $B316 LD ($60E0),A  ;
+ $B319 LD A,($61A0)  ;
+ $B31C BIT 2,A       ;
+ $B31E JR NZ,$B32B   ;
+ $B320 LD A,($619C)  ;
+ $B323 CP $AF        ;
+ $B325 LD A,$00      ;
+ $B327 JR Z,$B32B    ;
+ $B329 OR %00000010  ; Set bit 1.
+*$B32B LD ($61A0),A  ;
+ $B32E LD A,($60F0)  ;
+ $B331 AND A         ;
+ $B332 RET Z         ;
+ $B333 LD A,$2F      ;
+ $B335 LD ($60F0),A  ;
+ $B338 RET           ; Return.
+
+; Routine at B339
+;
+; Used by the routine at #R$AD36.
+c$B339 LD (HL),$40   ;
+ $B33B JR $B2EE      ;
+
+; Routine at B33D
+c$B33D DEC (IX+$12)   ;
+ $B340 JR NZ,$B357    ;
+ $B342 LD A,(IX+$13)  ;
+ $B345 LD (IX+$12),A  ;
+ $B348 INC (IX+$06)   ;
+ $B34B LD A,(IX+$05)  ;
+ $B34E AND A          ;
+ $B34F JR Z,$B357     ;
+ $B351 JP P,$B356     ;
+ $B354 INC A          ;
+ $B355 INC A          ;
+*$B356 DEC A          ;
+*$B357 CALL $907B     ;
+ $B35A LD A,(IX+$04)  ;
+ $B35D ADD A,(IX+$06) ;
+ $B360 CP $AF         ;
+ $B362 JR NC,$B37B    ;
+ $B364 LD (IX+$04),A  ;
+ $B367 LD C,A         ;
+ $B368 LD D,$03       ;
+ $B36A CALL $B8CD     ;
+ $B36D LD A,($5E42)   ;
+ $B370 RRCA           ;
+ $B371 AND $03        ;
+ $B373 ADD A,$DC      ;
+ $B375 LD (IX+$00),A  ;
+ $B378 JP $ABB4       ;
+
+; Routine at B37B
+;
+; Used by the routine at #R$B33D.
+c$B37B LD (IX+$04),$AF ;
  $B37F CALL $A75D      ;
  $B382 JP $ABB4        ;
-; This entry point is used by the routines at #R$A826 and #R$B52E.
-*$B385 LD HL,$61B0     ;
- $B388 LD B,$90        ;
-*$B38A LD (HL),$00     ;
- $B38C INC HL          ;
- $B38D DJNZ $B38A      ;
- $B38F RET             ;
- $B390 LD A,($5E6C)    ;
- $B393 AND A           ;
- $B394 RET NZ          ;
- $B395 DEC (IX+$05)    ;
- $B398 RET NZ          ;
- $B399 JP $A8B5        ;
- $B39C DEC (IX+$05)    ;
- $B39F RET NZ          ;
- $B3A0 JP $A8B5        ;
+
+; Routine at B385
+;
+; Used by the routines at #R$A826 and #R$B52E.
+c$B385 LD HL,$61B0   ;
+ $B388 LD B,$90      ;
+*$B38A LD (HL),$00   ;
+ $B38C INC HL        ;
+ $B38D DJNZ $B38A    ;
+ $B38F RET           ;
+ $B390 LD A,($5E6C)  ;
+ $B393 AND A         ;
+ $B394 RET NZ        ;
+ $B395 DEC (IX+$05)  ;
+ $B398 RET NZ        ;
+ $B399 JP $A8B5      ;
+ $B39C DEC (IX+$05)  ;
+ $B39F RET NZ        ;
+ $B3A0 JP $A8B5      ;
 
 ; Message: Teleporting
 ;
@@ -8901,7 +8844,7 @@ c$B460 DEC (IX+$10)    ;
 
 ; Routine at B4C2
 ;
-; Used by the routine at #R$A993.
+; Used by the routine at #R$AD36.
 c$B4C2 LD HL,$60A8   ; #REGhl=#N$60A8.
  $B4C5 LD BC,$0711   ; #REGbc=#N$0711.
  $B4C8 EXX           ;
@@ -8984,7 +8927,7 @@ c$B4C2 LD HL,$60A8   ; #REGhl=#N$60A8.
 
 ; Routine at B52E
 ;
-; Used by the routine at #R$A993.
+; Used by the routine at #R$AD36.
 c$B52E DI            ;
  $B52F LD DE,$BA2A   ;
  $B532 CALL $B9BC    ;
@@ -9372,7 +9315,7 @@ c$B8A8 LD C,$08      ;
 
 ; Routine at B8B4
 ;
-; Used by the routine at #R$A993.
+; Used by the routine at #R$AD36.
 c$B8B4 LD C,$38      ;
 *$B8B6 CALL $B8DA    ;
  $B8B9 DEC C         ;
@@ -9381,7 +9324,7 @@ c$B8B4 LD C,$38      ;
 
 ; Routine at B8BD
 ;
-; Used by the routines at #R$8D06, #R$91E2, #R$A0F8, #R$B6CF, #R$B731 and
+; Used by the routines at #R$8D06, #R$930C, #R$A0F8, #R$B6CF, #R$B731 and
 ; #R$F295.
 c$B8BD LD D,$20      ;
  $B8BF LD C,$50      ;
@@ -9389,7 +9332,7 @@ c$B8BD LD D,$20      ;
 
 ; Routine at B8C3
 ;
-; Used by the routines at #R$91E2, #R$9356, #R$A0F8, #R$B7A8 and #R$F295.
+; Used by the routines at #R$91E2, #R$9395, #R$A0F8, #R$B7A8 and #R$F295.
 c$B8C3 LD D,$30      ;
  $B8C5 LD C,$40      ;
  $B8C7 JR $B8CD      ; Jump to #R$B8CD.
@@ -9400,7 +9343,7 @@ c$B8C3 LD D,$30      ;
 @label=SoundsPickupItem
 c$B8C9 LD D,$40      ; #REGd=#N$40 (duration).
  $B8CB LD C,$30      ; #REGc=#N$30 (pitch).
-; This entry point is used by the routines at #R$A993, #R$B460, #R$B8BD,
+; This entry point is used by the routines at #R$B33D, #R$B460, #R$B8BD,
 ; #R$B8C3 and #R$B8D4.
 @label=SquareWave_Loop
 *$B8CD CALL $B8DA    ; Call #R$B8DA.
@@ -9556,7 +9499,7 @@ c$B9A1 LD HL,$B9A6                          ;
 ; Routine at B9BC
 ;
 ; Used by the routines at #R$800A, #R$80FD, #R$81BB, #R$8D06, #R$91E2, #R$9EDC,
-; #R$A0F8, #R$A8E3, #R$A993 and #R$B52E.
+; #R$A0F8, #R$A8E3, #R$AD36 and #R$B52E.
 c$B9BC DI            ; Disable interrupts.
  $B9BD LD HL,$FF51   ; #REGhl=#R$FF51.
 *$B9C0 LD A,(DE)     ;
@@ -12272,54 +12215,270 @@ b$DD56 DEFB $20,$AD,$B5,$AD,$B5,$00,$00,$8F
  $DD7E DEFB $E4,$2E,$EE,$2E,$E6,$16,$EA,$0A
  $DD86 DEFB $C6,$04,$B0,$02,$38,$01,$7C,$00
  $DD8E DEFB $BC,$00,$5E,$00,$26,$00,$1A,$00
- $DD96 DEFB $06,$00,$00,$00,$00,$00,$00,$00
- $DD9E DEFB $00,$80,$C0,$E0,$F0,$F8,$FC,$FF
- $DDA6 DEFB $FF,$03,$03,$03,$03,$FF,$FF,$FF
- $DDAE DEFB $FF,$C0,$C0,$C0,$C0,$FF,$FF,$FF
- $DDB6 DEFB $FF,$01,$03,$07,$0F,$1F,$3F,$FF
- $DDBE DEFB $FF,$FF,$FF,$FC,$F8,$F0,$E0,$C0
- $DDC6 DEFB $80,$FF,$FF,$FF,$FF,$03,$03,$03
- $DDCE DEFB $03,$FF,$FF,$FF,$FF,$C0,$C0,$C0
- $DDD6 DEFB $C0,$FF,$FF,$3F,$1F,$0F,$07,$03
- $DDDE DEFB $01,$FF,$FF,$82,$CE,$CE,$CE,$CE
- $DDE6 DEFB $FF,$FF,$FF,$19,$69,$19,$69,$6C
- $DDEE DEFB $FF,$FF,$FF,$B1,$A6,$A7,$A6,$71
- $DDF6 DEFB $FF,$FF,$FF,$9B,$97,$8F,$97,$9B
- $DDFE DEFB $FF,$FF,$FF,$F8,$F9,$F8,$F9,$F8
- $DE06 DEFB $FF,$FF,$FF,$71,$A6,$60,$A6,$66
- $DE0E DEFB $FF,$FF,$FF,$C2,$9E,$82,$F2,$86
- $DE16 DEFB $FF,$FF,$FF,$1F,$7F,$3F,$7F,$1F
- $DE1E DEFB $FF,$00,$00,$11,$11,$11,$11,$00
- $DE26 DEFB $00,$00,$10,$11,$11,$11,$11,$10
- $DE2E DEFB $00,$FF,$C2,$CE,$C6,$CE,$CF,$FF
- $DE36 DEFB $FF,$FF,$68,$69,$68,$69,$18,$FF
- $DE3E DEFB $FF,$FF,$4F,$CF,$CF,$CF,$43,$FF
- $DE46 DEFB $FF,$FF,$FF,$C1,$E7,$E7,$E7,$E7
- $DE4E DEFB $FF,$FF,$FF,$20,$25,$25,$27,$27
- $DE56 DEFB $FF,$FF,$FF,$43,$4F,$47,$4F,$43
- $DE5E DEFB $FF,$09,$0A,$0B,$0C,$13,$14,$15
- $DE66 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $DE6E DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $DE76 DEFB $00,$00,$00,$0D,$0E,$0F,$10,$05
- $DE7E DEFB $06,$07,$08,$11,$12,$11,$12,$11
- $DE86 DEFB $12,$11,$12,$11,$12,$11,$12,$11
- $DE8E DEFB $12,$11,$12,$11,$12,$11,$12,$11
- $DE96 DEFB $12,$05,$06,$07,$08,$01,$02,$03
- $DE9E DEFB $04,$16,$17,$18,$00,$00,$00,$00
- $DEA6 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $DEAE DEFB $00,$00,$00,$00,$00,$00,$00,$01
- $DEB6 DEFB $02,$03,$04,$45,$45,$45,$45,$44
- $DEBE DEFB $44,$44,$42,$42,$42,$42,$42,$42
- $DEC6 DEFB $46,$46,$46,$46,$46,$46,$46,$46
- $DECE DEFB $46,$46,$46,$46,$46,$45,$45,$45
- $DED6 DEFB $45,$42,$42,$42,$42,$47,$47,$47
- $DEDE DEFB $47,$47,$47,$47,$47,$47,$47,$47
- $DEE6 DEFB $47,$47,$47,$47,$47,$47,$47,$47
- $DEEE DEFB $47,$47,$47,$42,$42,$42,$42,$42
- $DEF6 DEFB $42,$42,$42,$44,$44,$44,$42,$42
- $DEFE DEFB $42,$43,$43,$43,$46,$46,$46,$46
- $DF06 DEFB $46,$46,$46,$46,$46,$46,$46,$46
- $DF0E DEFB $46,$42,$42,$42,$42
+ $DD96 DEFB $06
+
+; UDG Graphics
+;
+; .
+;
+; .
+;
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+@label=UDG_Tiles
+b$DD97 DEFB %00000000 ; {#UDG(#PC)
+ $DD98 DEFB %00000000 ;
+ $DD99 DEFB %00000000 ;
+ $DD9A DEFB %00000000 ;
+ $DD9B DEFB %00000000 ;
+ $DD9C DEFB %00000000 ;
+ $DD9D DEFB %00000000 ;
+ $DD9E DEFB %00000000 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DD9F DEFB %10000000 ; {#UDG(#PC)
+ $DDA0 DEFB %11000000 ;
+ $DDA1 DEFB %11100000 ;
+ $DDA2 DEFB %11110000 ;
+ $DDA3 DEFB %11111000 ;
+ $DDA4 DEFB %11111100 ;
+ $DDA5 DEFB %11111111 ;
+ $DDA6 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDA7 DEFB %00000011 ; {#UDG(#PC)
+ $DDA8 DEFB %00000011 ;
+ $DDA9 DEFB %00000011 ;
+ $DDAA DEFB %00000011 ;
+ $DDAB DEFB %11111111 ;
+ $DDAC DEFB %11111111 ;
+ $DDAD DEFB %11111111 ;
+ $DDAE DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDAF DEFB %11000000 ; {#UDG(#PC)
+ $DDB0 DEFB %11000000 ;
+ $DDB1 DEFB %11000000 ;
+ $DDB2 DEFB %11000000 ;
+ $DDB3 DEFB %11111111 ;
+ $DDB4 DEFB %11111111 ;
+ $DDB5 DEFB %11111111 ;
+ $DDB6 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDB7 DEFB %00000001 ; {#UDG(#PC)
+ $DDB8 DEFB %00000011 ;
+ $DDB9 DEFB %00000111 ;
+ $DDBA DEFB %00001111 ;
+ $DDBB DEFB %00011111 ;
+ $DDBC DEFB %00111111 ;
+ $DDBD DEFB %11111111 ;
+ $DDBE DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDBF DEFB %11111111 ; {#UDG(#PC)
+ $DDC0 DEFB %11111111 ;
+ $DDC1 DEFB %11111100 ;
+ $DDC2 DEFB %11111000 ;
+ $DDC3 DEFB %11110000 ;
+ $DDC4 DEFB %11100000 ;
+ $DDC5 DEFB %11000000 ;
+ $DDC6 DEFB %10000000 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDC7 DEFB %11111111 ; {#UDG(#PC)
+ $DDC8 DEFB %11111111 ;
+ $DDC9 DEFB %11111111 ;
+ $DDCA DEFB %11111111 ;
+ $DDCB DEFB %00000011 ;
+ $DDCC DEFB %00000011 ;
+ $DDCD DEFB %00000011 ;
+ $DDCE DEFB %00000011 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDCF DEFB %11111111 ; {#UDG(#PC)
+ $DDD0 DEFB %11111111 ;
+ $DDD1 DEFB %11111111 ;
+ $DDD2 DEFB %11111111 ;
+ $DDD3 DEFB %11000000 ;
+ $DDD4 DEFB %11000000 ;
+ $DDD5 DEFB %11000000 ;
+ $DDD6 DEFB %11000000 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDD7 DEFB %11111111 ; {#UDG(#PC)
+ $DDD8 DEFB %11111111 ;
+ $DDD9 DEFB %00111111 ;
+ $DDDA DEFB %00011111 ;
+ $DDDB DEFB %00001111 ;
+ $DDDC DEFB %00000111 ;
+ $DDDD DEFB %00000011 ;
+ $DDDE DEFB %00000001 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDDF DEFB %11111111 ; {#UDG(#PC)
+ $DDE0 DEFB %11111111 ;
+ $DDE1 DEFB %10000010 ;
+ $DDE2 DEFB %11001110 ;
+ $DDE3 DEFB %11001110 ;
+ $DDE4 DEFB %11001110 ;
+ $DDE5 DEFB %11001110 ;
+ $DDE6 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDE7 DEFB %11111111 ; {#UDG(#PC)
+ $DDE8 DEFB %11111111 ;
+ $DDE9 DEFB %00011001 ;
+ $DDEA DEFB %01101001 ;
+ $DDEB DEFB %00011001 ;
+ $DDEC DEFB %01101001 ;
+ $DDED DEFB %01101100 ;
+ $DDEE DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDEF DEFB %11111111 ; {#UDG(#PC)
+ $DDF0 DEFB %11111111 ;
+ $DDF1 DEFB %10110001 ;
+ $DDF2 DEFB %10100110 ;
+ $DDF3 DEFB %10100111 ;
+ $DDF4 DEFB %10100110 ;
+ $DDF5 DEFB %01110001 ;
+ $DDF6 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDF7 DEFB %11111111 ; {#UDG(#PC)
+ $DDF8 DEFB %11111111 ;
+ $DDF9 DEFB %10011011 ;
+ $DDFA DEFB %10010111 ;
+ $DDFB DEFB %10001111 ;
+ $DDFC DEFB %10010111 ;
+ $DDFD DEFB %10011011 ;
+ $DDFE DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DDFF DEFB %11111111 ; {#UDG(#PC)
+ $DE00 DEFB %11111111 ;
+ $DE01 DEFB %11111000 ;
+ $DE02 DEFB %11111001 ;
+ $DE03 DEFB %11111000 ;
+ $DE04 DEFB %11111001 ;
+ $DE05 DEFB %11111000 ;
+ $DE06 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE07 DEFB %11111111 ; {#UDG(#PC)
+ $DE08 DEFB %11111111 ;
+ $DE09 DEFB %01110001 ;
+ $DE0A DEFB %10100110 ;
+ $DE0B DEFB %01100000 ;
+ $DE0C DEFB %10100110 ;
+ $DE0D DEFB %01100110 ;
+ $DE0E DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE0F DEFB %11111111 ; {#UDG(#PC)
+ $DE10 DEFB %11111111 ;
+ $DE11 DEFB %11000010 ;
+ $DE12 DEFB %10011110 ;
+ $DE13 DEFB %10000010 ;
+ $DE14 DEFB %11110010 ;
+ $DE15 DEFB %10000110 ;
+ $DE16 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE17 DEFB %11111111 ; {#UDG(#PC)
+ $DE18 DEFB %11111111 ;
+ $DE19 DEFB %00011111 ;
+ $DE1A DEFB %01111111 ;
+ $DE1B DEFB %00111111 ;
+ $DE1C DEFB %01111111 ;
+ $DE1D DEFB %00011111 ;
+ $DE1E DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE1F DEFB %00000000 ; {#UDG(#PC)
+ $DE20 DEFB %00000000 ;
+ $DE21 DEFB %00010001 ;
+ $DE22 DEFB %00010001 ;
+ $DE23 DEFB %00010001 ;
+ $DE24 DEFB %00010001 ;
+ $DE25 DEFB %00000000 ;
+ $DE26 DEFB %00000000 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE27 DEFB %00000000 ; {#UDG(#PC)
+ $DE28 DEFB %00010000 ;
+ $DE29 DEFB %00010001 ;
+ $DE2A DEFB %00010001 ;
+ $DE2B DEFB %00010001 ;
+ $DE2C DEFB %00010001 ;
+ $DE2D DEFB %00010000 ;
+ $DE2E DEFB %00000000 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE2F DEFB %11111111 ; {#UDG(#PC)
+ $DE30 DEFB %11000010 ;
+ $DE31 DEFB %11001110 ;
+ $DE32 DEFB %11000110 ;
+ $DE33 DEFB %11001110 ;
+ $DE34 DEFB %11001111 ;
+ $DE35 DEFB %11111111 ;
+ $DE36 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE37 DEFB %11111111 ; {#UDG(#PC)
+ $DE38 DEFB %01101000 ;
+ $DE39 DEFB %01101001 ;
+ $DE3A DEFB %01101000 ;
+ $DE3B DEFB %01101001 ;
+ $DE3C DEFB %00011000 ;
+ $DE3D DEFB %11111111 ;
+ $DE3E DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE3F DEFB %11111111 ; {#UDG(#PC)
+ $DE40 DEFB %01001111 ;
+ $DE41 DEFB %11001111 ;
+ $DE42 DEFB %11001111 ;
+ $DE43 DEFB %11001111 ;
+ $DE44 DEFB %01000011 ;
+ $DE45 DEFB %11111111 ;
+ $DE46 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE47 DEFB %11111111 ; {#UDG(#PC)
+ $DE48 DEFB %11111111 ;
+ $DE49 DEFB %11000001 ;
+ $DE4A DEFB %11100111 ;
+ $DE4B DEFB %11100111 ;
+ $DE4C DEFB %11100111 ;
+ $DE4D DEFB %11100111 ;
+ $DE4E DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE4F DEFB %11111111 ; {#UDG(#PC)
+ $DE50 DEFB %11111111 ;
+ $DE51 DEFB %00100000 ;
+ $DE52 DEFB %00100101 ;
+ $DE53 DEFB %00100101 ;
+ $DE54 DEFB %00100111 ;
+ $DE55 DEFB %00100111 ;
+ $DE56 DEFB %11111111 ; }
+; Tile ID: "#N(#EVAL((#PC - $DD97) / $08))".
+ $DE57 DEFB %11111111 ; {#UDG(#PC)
+ $DE58 DEFB %11111111 ;
+ $DE59 DEFB %01000011 ;
+ $DE5A DEFB %01001111 ;
+ $DE5B DEFB %01000111 ;
+ $DE5C DEFB %01001111 ;
+ $DE5D DEFB %01000011 ;
+ $DE5E DEFB %11111111 ; }
+
+; HUD Panel Layout
+@label=HUDPanelLayoutData
+b$DE5F DEFB $09,$0A,$0B,$0C,$13,$14,$15,$00 ; {#FOR($00,$1D)||n|#UDG($DD97 +
+ $DE67 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; #PEEK(#PC + n) * $08)||
+ $DE6F DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $DE77 DEFB $00,$00,$0D,$0E,$0F,$10         ; }
+ $DE7D DEFB $05,$06,$07,$08,$11,$12,$11,$12 ; {#FOR($00,$1D)||n|#UDG($DD97 +
+ $DE85 DEFB $11,$12,$11,$12,$11,$12,$11,$12 ; #PEEK(#PC + n) * $08)||
+ $DE8D DEFB $11,$12,$11,$12,$11,$12,$11,$12 ;
+ $DE95 DEFB $11,$12,$05,$06,$07,$08         ; }
+ $DE9B DEFB $01,$02,$03,$04,$16,$17,$18,$00 ; {#FOR($00,$1D)||n|#UDG($DD97 +
+ $DEA3 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; #PEEK(#PC + n) * $08)||
+ $DEAB DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $DEB3 DEFB $00,$00,$01,$02,$03,$04         ; }
+
+; HUD Panel Attributes
+@label=HUDPanelAttributes
+b$DEB9 DEFB $45,$45,$45,$45,$44,$44,$44,$42 ; {#FOR($00,$1D)||n|#UDG($DD97 +
+ $DEC1 DEFB $42,$42,$42,$42,$42,$46,$46,$46 ; #PEEK(n + #PC - $5A) *
+ $DEC9 DEFB $46,$46,$46,$46,$46,$46,$46,$46 ; $08,attr=#PEEK(#PC + n))||
+ $DED1 DEFB $46,$46,$45,$45,$45,$45         ; }
+ $DED7 DEFB $42,$42,$42,$42,$47,$47,$47,$47 ; {#FOR($00,$1D)||n|#UDG($DD97 +
+ $DEDF DEFB $47,$47,$47,$47,$47,$47,$47,$47 ; #PEEK(n + #PC - $5A) *
+ $DEE7 DEFB $47,$47,$47,$47,$47,$47,$47,$47 ; $08,attr=#PEEK(#PC + n))||
+ $DEEF DEFB $47,$47,$42,$42,$42,$42         ; }
+ $DEF5 DEFB $42,$42,$42,$42,$44,$44,$44,$42 ; {#FOR($00,$1D)||n|#UDG($DD97 +
+ $DEFD DEFB $42,$42,$43,$43,$43,$46,$46,$46 ; #PEEK(n + #PC - $5A) *
+ $DF05 DEFB $46,$46,$46,$46,$46,$46,$46,$46 ; $08,attr=#PEEK(#PC + n))||
+ $DF0D DEFB $46,$46,$42,$42,$42,$42         ; }
 
 ; Graphic: Alien Base
 ;
@@ -13158,49 +13317,73 @@ b$EE7A DEFB $BA,$EE,$D7,$EE,$F4,$EE,$11,$EF
  $F222 DEFB $0F,$E0,$13,$90,$29,$28,$2D,$68
  $F22A DEFB $13,$90,$FF,$FE,$7E,$FC,$00,$00
 
-; Routine at F232
+; New High Score Suffix
 ;
 ; Used by the routine at #R$F4C6.
-c$F232 LD A,($5E77)                ;
+@label=NewHighScore_Suffix
+c$F232 LD A,($5E77)                ; {If #R$5E77 is zero, jump to #R$F26B.
  $F235 AND A                       ;
- $F236 JP Z,$F26B                  ;
- $F239 ADD A,$31                   ;
- $F23B LD HL,$5007                 ;
- $F23E PUSH AF                     ;
- $F23F CALL $89EF                  ;
- $F242 POP AF                      ;
- $F243 SUB $31                     ;
- $F245 LD HL,$8048                 ;
- $F248 CP $01                      ;
- $F24A JP Z,$F261                  ;
- $F24D CP $02                      ;
- $F24F JP Z,$F266                  ;
- $F252 LD DE,$F274                 ;
-*$F255 CALL $8A11                  ;
- $F258 LD HL,$8060                 ;
- $F25B LD DE,$F287                 ;
- $F25E JP $8A11                    ;
-*$F261 LD DE,$F281                 ;
- $F264 JR $F255                    ;
-*$F266 LD DE,$F284                 ;
- $F269 JR $F255                    ;
-*$F26B LD HL,$8058                 ;
- $F26E LD DE,$F277                 ;
- $F271 JP $8A11                    ;
+ $F236 JP Z,$F26B                  ; }
+; #N$00 is the "Top Score" so we +#N$01 to make it human readable.
+ $F239 ADD A,$31                   ; #REGa=#REGa+#N$31 (convert to ASCII +
+                                   ; #N$01).
+ $F23B LD HL,$5007                 ; #REGhl=#N$5007 (screen buffer location).
+ $F23E PUSH AF                     ; Stash the ASCII highscore position on the
+                                   ; stack.
+ $F23F CALL $89EF                  ; Call #R$89EF.
+ $F242 POP AF                      ; #REGa=the ASCII highscore position from
+                                   ; the stack.
+ $F243 SUB $31                     ; #REGa=#REGa-#N$31.
+ $F245 LD HL,$8048                 ; #REGhl=#N$8048 (screen location).
+; Remember that #N$00 is the "Top Score" so #N$01 is 2nd place.
+ $F248 CP $01                      ; {If the highscore position is #N$01 jump
+ $F24A JP Z,$F261                  ; to #R$F261.}
+; And #N$02 is 3rd...
+ $F24D CP $02                      ; {If the highscore position is #N$02 jump
+ $F24F JP Z,$F266                  ; to #R$F266.}
+; Anything higher will use "TH".
+@label=NewHighScore_Suffix_TH
+ $F252 LD DE,$F274                 ; #REGde=#R$F274.
+@label=NewHighScore_Suffix_Print
+*$F255 CALL $8A11                  ; Call #R$8A11.
+; Handle displaying "HIGHEST SCORE".
+@label=NewHighScore_Suffix_Highest
+ $F258 LD HL,$8060                 ; #REGhl=#N$8060 (screen location).
+ $F25B LD DE,$F287                 ; #REGde=#R$F287.
+ $F25E JP $8A11                    ; Jump to #R$8A11.
+; Handle displaying the "ND" suffix.
+@label=NewHighScore_Suffix_ND
+*$F261 LD DE,$F281                 ; #REGde=#R$F281.
+ $F264 JR $F255                    ; Jump to #R$F255.
+; Handle displaying the "RD" suffix.
+@label=NewHighScore_Suffix_RD
+*$F266 LD DE,$F284                 ; #REGde=#R$F284.
+ $F269 JR $F255                    ; Jump to #R$F255.
+; Handle displaying "TOP SCORE".
+@label=NewHighScore_Suffix_Top_Score
+*$F26B LD HL,$8058                 ; #REGhl=#N$8058 (screen location).
+ $F26E LD DE,$F277                 ; #REGde=#R$F277.
+ $F271 JP $8A11                    ; Jump to #R$8A11.
+; High Score Suffixes
+@label=HighScore_Suffixes_TH
  $F274 DEFM $46                    ; {Attribute: #N(#PEEK(#PC)) + "TH".
  $F275 DEFM "T","H"+$80            ; }
+@label=HighScore_Top_Score
  $F277 DEFM $46                    ; {Attribute: #N(#PEEK(#PC)) + "TOP SCORE".
  $F278 DEFM "TOP SCOR","E"+$80     ; }
+@label=HighScore_Suffixes_ND
  $F281 DEFM $46                    ; {Attribute: #N(#PEEK(#PC)) + "ND".
  $F282 DEFM "N","D"+$80            ; }
+@label=HighScore_Suffixes_RD
  $F284 DEFM $46                    ; {Attribute: #N(#PEEK(#PC)) + "RD".
  $F285 DEFM "R","D"+$80            ; }
+@label=HighScore_Highest_Score
  $F287 DEFM $46                    ; {Attribute: #N(#PEEK(#PC)) + "HIGHEST
  $F288 DEFM "HIGHEST SCOR","E"+$80 ; SCORE".}
 
 ; Routine at F295
 ;
-; Used by the routine at #R$F56E.
+; Used by the routines at #R$F56E and #R$F5E3.
 c$F295 LD HL,($5E6D) ;
  $F298 DEC HL        ;
  $F299 LD ($5E6D),HL ;
@@ -13281,13 +13464,16 @@ c$F295 LD HL,($5E6D) ;
 
 ; Routine at F33E
 ;
-; Used by the routine at #R$F56E.
-c$F33E XOR A         ;
- $F33F LD ($5E73),A  ;
- $F342 JP $802C      ;
-; This entry point is used by the routine at #R$F295.
-*$F345 LD DE,$5E38   ;
- $F348 LD HL,$5E35   ;
+; Used by the routines at #R$F345 and #R$F56E.
+c$F33E XOR A         ; {Write #N$00 to #R$5E73.
+ $F33F LD ($5E73),A  ; }
+ $F342 JP $802C      ; Jump to #R$802C.
+
+; Routine at F345
+;
+; Used by the routine at #R$F295.
+c$F345 LD DE,$5E38   ; #REGde=#R$5E38.
+ $F348 LD HL,$5E35   ; #REGhl=#R$5E35.
  $F34B LD A,($5E77)  ;
  $F34E NEG           ;
  $F350 ADD A,$08     ;
@@ -13297,17 +13483,17 @@ c$F33E XOR A         ;
  $F356 LD C,A        ;
  $F357 LD B,$00      ;
  $F359 LDDR          ;
- $F35B LD HL,$5E78   ;
- $F35E LD BC,$0003   ;
+ $F35B LD HL,$5E78   ; #REGhl=#R$5E78.
+ $F35E LD BC,$0003   ; #REGbc=#N($0003,$04,$04).
  $F361 LDIR          ;
  $F363 LD A,($5E71)  ;
  $F366 LD ($5E74),A  ;
  $F369 CP $01        ;
  $F36B JR Z,$F372    ;
- $F36D LD DE,$5E62   ;
- $F370 JR $F375      ;
-*$F372 LD DE,$5E5F   ;
-*$F375 CALL $F3BF    ;
+ $F36D LD DE,$5E62   ; #REGde=#R$5E62.
+ $F370 JR $F375      ; Jump to #R$F375.
+*$F372 LD DE,$5E5F   ; #REGde=#R$5E5F.
+*$F375 CALL $F3BF    ; Call #R$F3BF.
  $F378 LD A,($5E72)  ;
  $F37B AND A         ;
  $F37C JP Z,$F33E    ;
@@ -13316,29 +13502,32 @@ c$F33E XOR A         ;
  $F384 LD ($5E71),A  ;
  $F387 XOR A         ;
  $F388 LD ($5E72),A  ;
- $F38B LD DE,$5E5F   ;
+ $F38B LD DE,$5E5F   ; #REGde=#R$5E5F.
  $F38E LD ($5E74),A  ;
  $F391 CALL $F3BF    ;
  $F394 LD A,B        ;
  $F395 AND A         ;
  $F396 JP Z,$F33E    ;
- $F399 CALL $F535    ;
- $F39C JP $F5E3      ;
+ $F399 CALL $F535    ; Call #R$F535.
+ $F39C JP $F5E3      ; Jump to #R$F5E3.
 *$F39F LD ($5E71),A  ;
  $F3A2 XOR A         ;
  $F3A3 LD ($5E72),A  ;
- $F3A6 LD DE,$5E62   ;
+ $F3A6 LD DE,$5E62   ; #REGde=#R$5E62.
  $F3A9 LD ($5E74),A  ;
  $F3AC CALL $F3BF    ;
  $F3AF LD A,B        ;
  $F3B0 AND A         ;
  $F3B1 JP Z,$F33E    ;
- $F3B4 LD A,$01      ;
- $F3B6 LD ($5E65),A  ;
- $F3B9 CALL $F535    ;
- $F3BC JP $F5E3      ;
-; This entry point is used by the routine at #R$F56E.
-*$F3BF LD B,$08      ;
+ $F3B4 LD A,$01      ; {Write #N$01 to #R$5E65.
+ $F3B6 LD ($5E65),A  ; }
+ $F3B9 CALL $F535    ; Call #R$F535.
+ $F3BC JP $F5E3      ; Jump to #R$F5E3.
+
+; Routine at F3BF
+;
+; Used by the routines at #R$F345 and #R$F56E.
+c$F3BF LD B,$08      ;
  $F3C1 PUSH DE       ;
  $F3C2 LD HL,$5E06   ;
 *$F3C5 LD C,(HL)     ;
@@ -13389,34 +13578,31 @@ c$F33E XOR A         ;
  $F409 LD BC,$0003   ;
  $F40C LDIR          ;
  $F40E POP BC        ;
- $F40F RET           ;
+ $F40F RET           ; Return.
 
 ; Hall Of Fame
 ;
 ; Used by the routine at #R$800A.
 @label=HallOfFame
-c$F410 LD A,$47                    ;
- $F412 LD C,$08                    ;
- $F414 LD HL,$5900                 ;
-@label=
- $F417 LD B,$40                    ;
-@label=
- $F419 LD (HL),A                   ;
+c$F410 LD A,$47                    ; #REGa=#N$47.
+ $F412 LD C,$08                    ; #REGc=#N$08.
+ $F414 LD HL,$5900                 ; #REGhl=#N$5900.
+*$F417 LD B,$40                    ; #REGb=#N$40.
+*$F419 LD (HL),A                   ;
  $F41A INC HL                      ;
  $F41B DJNZ $F419                  ;
  $F41D DEC A                       ;
  $F41E CP $41                      ;
  $F420 JR NZ,$F424                 ;
- $F422 LD A,$44                    ;
-@label=
- $F424 DEC C                       ;
+ $F422 LD A,$44                    ; #REGa=#N$44.
+*$F424 DEC C                       ;
  $F425 JR NZ,$F417                 ;
 ; Handle printing "THE ULTIMATE" messaging.
- $F427 LD HL,$1850                 ; #REGhl=#N$1850 (screen buffer location).
+ $F427 LD HL,$1850                 ; #REGhl=#N$1850 (screen location).
  $F42A LD DE,$F4AA                 ; #REGde=#R$F4AA.
  $F42D CALL $8A11                  ; Call #R$8A11.
 ; Handle printing "HALL OF FAME" messaging.
- $F430 LD HL,$2850                 ; #REGhl=#N$2850 (screen buffer location).
+ $F430 LD HL,$2850                 ; #REGhl=#N$2850 (screen location).
  $F433 LD DE,$F4B8                 ; #REGde=#R$F4B8.
  $F436 CALL $8A11                  ; Call #R$8A11.
  $F439 LD HL,$4048                 ; #REGhl=#N$4048 (screen buffer location).
@@ -13434,12 +13620,12 @@ c$F410 LD A,$47                    ;
  $F44D LD H,A                      ;
  $F44E INC C                       ;
  $F44F DJNZ $F441                  ;
- $F451 LD HL,$4060                 ;
- $F454 LD DE,$5E20                 ;
- $F457 LD C,$08                    ;
+ $F451 LD HL,$4060                 ; #REGhl=#N$4060 (screen buffer location).
+ $F454 LD DE,$5E20                 ; #REGde=#R$5E20.
+ $F457 LD C,$08                    ; #REGc=#N$08.
 *$F459 PUSH HL                     ;
  $F45A CALL $851E                  ;
- $F45D LD B,$03                    ;
+ $F45D LD B,$03                    ; #REGb=#N$03.
 *$F45F LD A,(DE)                   ;
  $F460 CALL $89EF                  ;
  $F463 INC DE                      ;
@@ -13450,23 +13636,23 @@ c$F410 LD A,$47                    ;
  $F46A LD H,A                      ;
  $F46B DEC C                       ;
  $F46C JR NZ,$F459                 ;
- $F46E LD C,$08                    ;
- $F470 LD DE,$5E06                 ;
- $F473 LD HL,$4088                 ;
-*$F476 LD B,$03                    ;
- $F478 PUSH HL                     ;
- $F479 CALL $851E                  ;
- $F47C CALL $89D7                  ;
- $F47F POP HL                      ;
- $F480 LD A,H                      ;
+ $F46E LD C,$08                    ; #REGc=#N$08.
+ $F470 LD DE,$5E06                 ; #REGde=#R$5E06.
+ $F473 LD HL,$4088                 ; #REGhl=#N$4088.
+*$F476 LD B,$03                    ; #REGb=#N$03.
+ $F478 PUSH HL                     ; Stash #REGhl on the stack.
+ $F479 CALL $851E                  ; Call #R$851E.
+ $F47C CALL $89D7                  ; Call #R$89D7.
+ $F47F POP HL                      ; Restore #REGhl from the stack.
+ $F480 LD A,H                      ; {#REGh=#REGh+#N$10.
  $F481 ADD A,$10                   ;
- $F483 LD H,A                      ;
- $F484 DEC C                       ;
- $F485 JR NZ,$F476                 ;
- $F487 LD A,$01                    ;
- $F489 LD ($5E74),A                ;
- $F48C LD HL,$0400                 ;
- $F48F LD ($5E6D),HL               ;
+ $F483 LD H,A                      ; }
+ $F484 DEC C                       ; Decrease #REGc by one.
+ $F485 JR NZ,$F476                 ; Jump back to #R$F476 until #REGc is zero.
+ $F487 LD A,$01                    ; {Write #N$01 to #R$5E74.
+ $F489 LD ($5E74),A                ; }
+ $F48C LD HL,$0400                 ; {Write #N$0400 to #R$5E6D.
+ $F48F LD ($5E6D),HL               ; }
 *$F492 EI                          ; Enable interrupts.
  $F493 HALT                        ;
  $F494 LD HL,($5E6D)               ;
@@ -13490,7 +13676,7 @@ c$F410 LD A,$47                    ;
  $F4B8 DEFM $45                    ; {Attribute: #N(#PEEK(#PC)) + "HALL OF FAME
  $F4B9 DEFM "HALL OF FAME"," "+$80 ; ".}
 
-; Routine at F4C6
+; Handler: High Score Messaging
 ;
 ; Used by the routine at #R$F535.
 ;
@@ -13499,81 +13685,91 @@ c$F410 LD A,$47                    ;
 ; Handle printing "CONGRATULATIONS PLAYER ...".
 @label=HighScoreMessaging
 c$F4C6 LD DE,$F4FB                             ; #REGde=#R$F4FB.
- $F4C9 LD HL,$6020                             ; #REGhl=#N$6020 (screen buffer
+ $F4C9 LD HL,$6020                             ; #REGhl=#N$6020 (screen
                                                ; location).
  $F4CC CALL $8A11                              ; Call #R$8A11.
 ; Handle printing the player "number".
- $F4CF LD A,($5E71)                            ; {#REGa=#R$5E71 + #N$30.
- $F4D2 ADD A,$30                               ; }
+ $F4CF LD A,($5E71)                            ; {#REGa=#R$5E71 + #N$30
+ $F4D2 ADD A,$30                               ; (convert to ASCII).}
  $F4D4 LD HL,$489B                             ; #REGhl=#N$489B (screen buffer
                                                ; location).
  $F4D7 CALL $89EF                              ; Call #R$89EF.
 ; Handle printing "TODAYS".
  $F4DA LD DE,$F513                             ; #REGde=#R$F513.
- $F4DD LD HL,$7068                             ; #REGhl=#N$7068 (screen buffer
+ $F4DD LD HL,$7068                             ; #REGhl=#N$7068 (screen
                                                ; location).
  $F4E0 CALL $8A11                              ; Call #R$8A11.
  $F4E3 CALL $F232                              ; Call #R$F232.
 ; Handle printing "JETMAN WILL REMEMBER YOU".
  $F4E6 LD DE,$F51B                             ; #REGde=#R$F51B.
- $F4E9 LD HL,$9020                             ; #REGhl=#N$9020 (screen buffer
+ $F4E9 LD HL,$9020                             ; #REGhl=#N$9020 (screen
                                                ; location).
  $F4EC CALL $8A11                              ; Call #R$8A11.
- $F4EF LD HL,$53AD                             ; #REGhl=#N$53AD.
- $F4F2 LD B,$03                                ; #REGb=#N$03.
-*$F4F4 LD (HL),$7E                             ;
- $F4F6 INC L                                   ;
- $F4F7 INC L                                   ;
- $F4F8 DJNZ $F4F4                              ;
+ $F4EF LD HL,$53AD                             ; #REGhl=#N$53AD (attribute
+                                               ; buffer location).
+ $F4F2 LD B,$03                                ; #REGb=#N$03 (counter).
+@label=HighScoreMessaging_Loop
+*$F4F4 LD (HL),$7E                             ; Write #N$7E to #REGhl.
+ $F4F6 INC L                                   ; {Increment #REGl by two.
+ $F4F7 INC L                                   ; }
+ $F4F8 DJNZ $F4F4                              ; Decrease counter by one and
+                                               ; loop back to #R$F4F4 until
+                                               ; counter is zero.
  $F4FA RET                                     ; Return.
+; Messaging.
+@label=HighScoreMessaging_Congrats
  $F4FB DEFM $47                                ; {Attribute: #N(#PEEK(#PC)) +
  $F4FC DEFM "CONGRATULATIONS PLAYER"," "+$80   ; "CONGRATULATIONS PLAYER ".}
+@label=HighScoreMessaging_Todays
  $F513 DEFM $47                                ; {Attribute: #N(#PEEK(#PC)) +
  $F514 DEFM "TODAYS"," "+$80                   ; "TODAYS ".}
+@label=HighScoreMessaging_Remember
  $F51B DEFM $47                                ; {Attribute: #N(#PEEK(#PC)) +
  $F51C DEFM "JETMAN WILL REMEMBER YOU"," "+$80 ; "JETMAN WILL REMEMBER YOU ".}
 
 ; Routine at F535
 ;
-; Used by the routines at #R$F33E and #R$F56E.
-c$F535 LD A,B        ;
+; Used by the routines at #R$F345 and #R$F56E.
+c$F535 LD A,B        ; #REGa=#REGb.
  $F536 SUB $08       ;
  $F538 NEG           ;
  $F53A LD ($5E77),A  ;
  $F53D CALL $84D8    ; Call #R$84D8.
  $F540 LD HL,$5900   ; #REGhl=#N$5900.
- $F543 LD C,$02      ;
- $F545 LD A,$46      ;
-*$F547 LD B,$00      ;
-*$F549 LD (HL),A     ;
- $F54A INC HL        ;
- $F54B DJNZ $F549    ;
- $F54D DEC C         ;
- $F54E JR NZ,$F547   ;
+ $F543 LD C,$02      ; #REGc=#N$02.
+ $F545 LD A,$46      ; #REGa=#N$46.
+*$F547 LD B,$00      ; #REGb=#N$00 (counter).
+*$F549 LD (HL),A     ; Write #REGa to #REGhl.
+ $F54A INC HL        ; Increment #REGhl by one.
+ $F54B DJNZ $F549    ; Decrease counter by one and loop back to #R$F549 until
+                     ; counter is zero.
+ $F54D DEC C         ; Decrease #REGc by one.
+ $F54E JR NZ,$F547   ; Jump back to #R$F547 until #REGc is zero.
  $F550 CALL $F4C6    ; Call #R$F4C6.
- $F553 LD HL,$1000   ;
- $F556 LD ($5E6D),HL ;
- $F559 LD HL,$50AD   ;
- $F55C LD ($5E75),HL ;
- $F55F XOR A         ;
- $F560 LD ($5E6F),A  ;
- $F563 LD HL,$5E78   ;
- $F566 LD B,$03      ;
-*$F568 LD (HL),$41   ;
- $F56A INC HL        ;
- $F56B DJNZ $F568    ;
+ $F553 LD HL,$1000   ; {Write #N($1000,$04,$04) to #R$5E6D.
+ $F556 LD ($5E6D),HL ; }
+ $F559 LD HL,$50AD   ; {Write #N$50AD to #R$5E75.
+ $F55C LD ($5E75),HL ; }
+ $F55F XOR A         ; {Write #N$00 to #R$5E6F.
+ $F560 LD ($5E6F),A  ; }
+ $F563 LD HL,$5E78   ; #REGhl=#R$5E78.
+ $F566 LD B,$03      ; #REGb=#N$03 (counter).
+*$F568 LD (HL),$41   ; Write #N$41 to #REGhl.
+ $F56A INC HL        ; Increment #REGhl by one.
+ $F56B DJNZ $F568    ; Decrease counter by one and loop back to #R$F568 until
+                     ; counter is zero.
  $F56D RET           ; Return.
 
 ; Routine at F56E
 ;
 ; Used by the routine at #R$A8E3.
-c$F56E LD DE,$5E5F   ;
- $F571 LD HL,$5E62   ;
+c$F56E LD DE,$5E5F   ; #REGde=#N$5E5F.
+ $F571 LD HL,$5E62   ; #REGhl=#N$5E62.
  $F574 LD A,(DE)     ;
  $F575 CP (HL)       ;
  $F576 JP C,$F5BF    ;
  $F579 JR Z,$F57D    ;
- $F57B JR $F58F      ;
+ $F57B JR $F58F      ; Jump to #R$F58F.
 *$F57D INC DE        ;
  $F57E LD A,(DE)     ;
  $F57F INC HL        ;
@@ -13621,54 +13817,49 @@ c$F56E LD DE,$5E5F   ;
  $F5DA LD ($5E73),A  ;
  $F5DD CALL $F535    ;
  $F5E0 JP $F295      ;
-; This entry point is used by the routines at #R$F295 and #R$F33E.
-*$F5E3 LD B,$00      ;
+
+; Routine at F5E3
+;
+; Used by the routines at #R$F295 and #R$F345.
+c$F5E3 LD B,$00      ; #REGb=#N$00.
 *$F5E5 DJNZ $F5E5    ;
- $F5E7 EI            ;
+ $F5E7 EI            ; Enable interrupts.
  $F5E8 HALT          ;
- $F5E9 JP $F295      ;
+ $F5E9 JP $F295      ; Jump to #R$F295.
 
 ; Routine at F5EC
 ;
 ; Used by the routines at #R$84D8 and #R$9EDC.
-c$F5EC LD HL,$0848   ;
- $F5EF CALL $F662    ;
- $F5F2 LD HL,$08A0   ;
- $F5F5 CALL $F662    ;
- $F5F8 LD A,($5E65)  ;
+c$F5EC LD HL,$0848   ; #REGhl=#N$0848.
+ $F5EF CALL $F662    ; Call #R$F662.
+ $F5F2 LD HL,$08A0   ; #REGhl=#N$08A0.
+ $F5F5 CALL $F662    ; Call #R$F662.
+ $F5F8 LD A,($5E65)  ; {If #R$5E65 is not zero, jump to #R$F609.
  $F5FB AND A         ;
- $F5FC JR NZ,$F609   ;
- $F5FE LD HL,$0848   ;
- $F601 CALL $F612    ;
- $F604 LD HL,$08A0   ;
- $F607 JR $F628      ;
-
-; Routine at F609
-;
-; Used by the routine at #R$F5EC.
-c$F609 LD HL,$0848   ;
- $F60C CALL $F628    ;
- $F60F LD HL,$08A0   ;
-
-; Routine at F612
-;
-; Used by the routine at #R$F5EC.
-c$F612 LD A,$4C      ;
- $F614 CALL $F632    ;
- $F617 CALL $F641    ;
+ $F5FC JR NZ,$F609   ; }
+ $F5FE LD HL,$0848   ; #REGhl=#N$0848.
+ $F601 CALL $F612    ; Call #R$F612.
+ $F604 LD HL,$08A0   ; #REGhl=#N$08A0.
+ $F607 JR $F628      ; Jump to #R$F628.
+*$F609 LD HL,$0848   ; #REGhl=#N$0848.
+ $F60C CALL $F628    ; Call #R$F628.
+ $F60F LD HL,$08A0   ; #REGhl=#N$08A0.
+*$F612 LD A,$4C      ; #REGa=#N$4C.
+ $F614 CALL $F632    ; Call #R$F632.
+ $F617 CALL $F641    ; Call #R$F641.
 ; This entry point is used by the routine at #R$F628.
-*$F61A PUSH BC       ;
- $F61B ADD A,$30     ;
- $F61D CALL $F632    ;
- $F620 POP BC        ;
+*$F61A PUSH BC       ; Stash #REGbc on the stack.
+ $F61B ADD A,$30     ; #REGa=#REGa+#N$30.
+ $F61D CALL $F632    ; Call #R$F632.
+ $F620 POP BC        ; Restore #REGbc from the stack.
  $F621 LD A,C        ;
- $F622 ADD A,$30     ;
- $F624 CALL $F632    ;
- $F627 RET           ;
+ $F622 ADD A,$30     ; #REGa=#REGa+#N$30.
+ $F624 CALL $F632    ; Call #R$F632.
+ $F627 RET           ; Return.
 
 ; Routine at F628
 ;
-; Used by the routines at #R$F5EC and #R$F609.
+; Used by the routine at #R$F5EC.
 c$F628 LD A,$4C      ;
  $F62A CALL $F632    ;
  $F62D CALL $F658    ;
@@ -13676,7 +13867,7 @@ c$F628 LD A,$4C      ;
 
 ; Routine at F632
 ;
-; Used by the routines at #R$F612 and #R$F628.
+; Used by the routines at #R$F5EC and #R$F628.
 c$F632 PUSH HL       ;
  $F633 PUSH AF       ;
  $F634 CALL $851E    ;
@@ -13690,28 +13881,28 @@ c$F632 PUSH HL       ;
 
 ; Routine at F641
 ;
-; Used by the routine at #R$F612.
-c$F641 LD A,($5EA0)  ;
+; Used by the routine at #R$F5EC.
+c$F641 LD A,($5EA0)  ; {If #R$5EA0 is not #N$FF, jump to #R$F649.
  $F644 CP $FF        ;
- $F646 JR NZ,$F649   ;
- $F648 XOR A         ;
-*$F649 CALL $B699    ;
- $F64C LD B,A        ;
- $F64D AND $0F       ;
- $F64F LD C,A        ;
- $F650 LD A,B        ;
+ $F646 JR NZ,$F649   ; }
+ $F648 XOR A         ; #REGa=#N$00.
+*$F649 CALL $B699    ; Call #R$B699.
+ $F64C LD B,A        ; #REGb=#REGa.
+ $F64D AND %00001111 ; Keep only bits 0-3.
+ $F64F LD C,A        ; #REGc=#REGa.
+ $F650 LD A,B        ; #REGa=#REGb.
  $F651 RRA           ;
  $F652 RRA           ;
  $F653 RRA           ;
  $F654 RRA           ;
- $F655 AND $0F       ;
- $F657 RET           ;
+ $F655 AND %00001111 ; Keep only bits 0-3.
+ $F657 RET           ; Return.
 ; This entry point is used by the routine at #R$F628.
-*$F658 LD A,($5EA4)  ;
+*$F658 LD A,($5EA4)  ; {If #R$5EA4 is not #N$FF, jump to #R$F649.
  $F65B CP $FF        ;
- $F65D JR NZ,$F649   ;
- $F65F XOR A         ;
- $F660 JR $F649      ;
+ $F65D JR NZ,$F649   ; }
+ $F65F XOR A         ; #REGa=#N$00.
+ $F660 JR $F649      ; Jump to #R$F649.
 
 ; Routine at F662
 ;
