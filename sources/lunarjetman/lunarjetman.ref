@@ -8,7 +8,7 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref;lunarjetmanGraphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/lunarjetman
 
@@ -58,8 +58,9 @@ PageContent=#INCLUDE(Credits)
   research and documentation already done and made available by:
 #LIST
   { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+  { <a href="https://www.angelfire.com/retro/carcass/ultimate/lunar/luntip.htm">Matthew Carrier</a> }
 LIST#
-  This game shares a lot of functionality with Jetpac, hence his disassembly was
+  This game shares a lot of functionality with Jetpac, and Michaels' disassembly work was
   invaluable!
 </div>
 
@@ -71,16 +72,16 @@ LIST#
   ||
 )
 
-#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)($fname))
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr+({height}*$size)-$size)-$01-($size*$08)($fname))
 
-#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr+({height}*$size)-$size)-$01-($size*$08){$00,$04*($08-({height}%$08)),$04*$size*$08,$04*{height}}($fname))
 
 #DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height)($fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr+($height*$width)-$width)-$01-($width*$08)@$attrtable-($attrtable+$width*$height)($fname)
 )
 
 #DEF(#COLOURCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attrtable-($attrtable + $width * $height){$00, $04 * ($08 - ($height % $08)), $04 * $width * $08, $04 * $height}($fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr+($height*$width)-$width)-$01-($width*$08)@$attrtable-($attrtable+$width*$height){$00,$04*($08-($height%$08)),$04*$width*$08,$04*$height}($fname)
 )
 
 #DEF(#JETMAN(id)(fname)
@@ -91,83 +92,208 @@ LIST#
   #GRAPHIC($id,$BAE2)($fname)
 )
 
-#DEF(#GRAPHIC(id,base=$BB8C,attributes=0)(fname)
-  #LET(offset=$id * $02)
-  #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
+#DEF(#GRAPHIC(id,base=$BAC0,attributes=0)(fname)
+  #LET(offset=$id*$02)
+  #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
   #LET(width=#PEEK({addr}))
-  #LET(height=#PEEK({addr} + $01))
-  #IF($attributes > $00)||
-    #LET(attr=#PEEK($A64E + {offset}) + #PEEK($A64E + {offset} + $01) * $100)
+  #LET(height=#PEEK({addr}+$01))
+  #IF($attributes>$00)||
+    #LET(attr=#PEEK($A64E+{offset})+#PEEK($A64E+{offset}+$01)*$100)
     #PUSHS
     #CONVERTFF({attr})
-    #IF({height} % $08)(
-      #COLOURCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname),
-      #COLOURNOCROP({addr} + $02, {width}, {height}, {attr} + $02)($fname)
+    #IF({height}%$08)(
+      #COLOURCROP({addr}+$02,{width},{height},{attr}+$02)($fname),
+      #COLOURNOCROP({addr}+$02,{width},{height},{attr}+$02)($fname)
     )
     #POPS
   |
-    #IF({height} % $08)(
-      #CROP({addr} + $02, {width}, $07)($fname),
-      #NOCROP({addr} + $02, {width}, $07)($fname)
+    #IF({height}%$08)(
+      #CROP({addr}+$02,{width},$07)($fname),
+      #NOCROP({addr}+$02,{width},$07)($fname)
     )
   ||
 )
 
 #DEF(#SPRITE(id,base=$BB12)(fname)
-  #LET(offset=$id * $02)
-  #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
-  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+  #LET(offset=$id*$02)
+  #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
+  #LET(height=#PEEK({addr}))#IF({height}%$08)(#CROP({addr}+$01,$02,$07)($fname),#NOCROP({addr}+$01,$02,$07)($fname)))
 
 #DEF(#SPRITENAME(id)
   #MAP($id)(
     ?,
-    0:"Teleporter: Frame 1",
-    1:"Teleporter: Frame 2",
-    2:"Teleporter: Frame 3",
-    3:"Teleporter: Frame 4",
-    4:"Platform",
-    5:"Platform",
-    6:"Turret: Left Frame 1",
-    7:"Turret: Left Frame 2",
-    8:"Turret: Left Frame 3",
-    9:"Turret: Left Frame 4",
-    10:"Turret: Left Frame 5",
-    11:"Turret: Left Frame 6",
-    12:"Turret: Left Frame 7",
-    13:"Turret: Left Frame 8",
-    14:"Turret: Right Frame 1",
-    15:"Turret: Right Frame 2",
-    16:"Turret: Right Frame 3",
-    17:"Turret: Right Frame 4",
-    18:"Turret: Right Frame 5",
-    19:"Turret: Right Frame 6",
-    20:"Turret: Right Frame 7",
-    21:"Turret: Right Frame 8",
-    22:"Spinning Top Alien: Frame 1",
-    23:"Spinning Top Alien: Frame 2",
-    24:"Spinning Top Alien: Frame 3",
-    25:"Spinning Top Alien: Frame 4",
-    26:"Spinning Top Alien: Frame 5",
-    27:"Spinning Top Alien: Frame 6",
-    28:"Spinning Top Alien: Frame 7",
-    29:"Spinning Top Alien: Frame 8",
-    30:"Blob: Frame 1",
-    31:"Blob: Frame 2",
-    32:"Blob: Frame 3",
-    33:"Blob: Frame 4",
-    34:"Blob: Frame 5",
-    35:"Blob: Frame 6",
-    36:"Blob: Frame 7",
-    37:"Blob: Frame 8",
-    38:"Blob: Frame 9",
-    39:"Blob: Frame 10",
-    40:"Blob: Frame 11",
-    41:"Blob: Frame 12",
-    42:"Blob: Frame 13",
-    43:"Blob: Frame 14",
-    44:"Blob: Frame 15",
-    45:"Blob: Frame 16",
-    57:"None",
-    61:"None"
+    0:"Jetman: Flying left frame 1",
+    1:"Jetman: Flying left frame 2",
+    2:"Jetman: Flying left frame 1",
+    3:"Jetman: Flying left frame 2",
+    4:"Jetman: Flying right frame 1",
+    5:"Jetman: Flying right frame 2",
+    6:"Jetman: Flying right frame 1",
+    7:"Jetman: Flying right frame 2",
+    8:"Jetman: Walking left frame 1",
+    9:"Jetman: Walking left frame 2",
+    10:"Jetman: Walking left frame 3",
+    11:"Jetman: Walking left frame 2",
+    12:"Jetman: Walking right frame 1",
+    13:"Jetman: Walking right frame 2",
+    14:"Jetman: Walking right frame 3",
+    15:"Jetman: Walking right frame 2",
+    16:"None",
+    17:"Lunar Rover: Left frame 4",
+    18:"Lunar Rover: Left frame 3",
+    19:"Lunar Rover: Left frame 2",
+    20:"Lunar Rover: Left frame 1",
+    21:"Lunar Rover: Right frame 1",
+    22:"Lunar Rover: Right frame 2",
+    23:"Lunar Rover: Right frame 3",
+    24:"Lunar Rover: Right frame 4",
+    25:"Lunar Rover: Left frame 1",
+    26:"Lunar Rover: Left frame 5",
+    27:"Lunar Rover: Left frame 6",
+    28:"Lunar Rover: Left frame 7",
+    29:"Lunar Rover: Left frame 8",
+    30:"Lunar Rover: Left frame 9",
+    31:"Lunar Rover: Left frame 10",
+    32:"Lunar Rover: Left frame 11",
+    33:"Lunar Rover: Right frame 1",
+    34:"Lunar Rover: Right frame 5",
+    35:"Lunar Rover: Right frame 6",
+    36:"Lunar Rover: Right frame 7",
+    37:"Lunar Rover: Right frame 8",
+    38:"Lunar Rover: Right frame 9",
+    39:"Lunar Rover: Right frame 10",
+    40:"Lunar Rover: Right frame 11",
+    41:"Teleporter: Frame 1",
+    42:"Teleporter: Frame 2",
+    43:"Teleporter: Frame 3",
+    44:"Teleporter: Frame 4",
+    45:"Platform",
+    46:"Platform",
+    47:"Turret: Left Frame 1",
+    48:"Turret: Left Frame 2",
+    49:"Turret: Left Frame 3",
+    50:"Turret: Left Frame 4",
+    51:"Turret: Left Frame 5",
+    52:"Turret: Left Frame 6",
+    53:"Turret: Left Frame 7",
+    54:"Turret: Left Frame 8",
+    55:"Turret: Right Frame 1",
+    56:"Turret: Right Frame 2",
+    57:"Turret: Right Frame 3",
+    58:"Turret: Right Frame 4",
+    59:"Turret: Right Frame 5",
+    60:"Turret: Right Frame 6",
+    61:"Turret: Right Frame 7",
+    62:"Turret: Right Frame 8",
+    63:"Spinning Top Alien: Frame 1",
+    64:"Spinning Top Alien: Frame 2",
+    65:"Spinning Top Alien: Frame 3",
+    66:"Spinning Top Alien: Frame 4",
+    67:"Spinning Top Alien: Frame 5",
+    68:"Spinning Top Alien: Frame 6",
+    69:"Spinning Top Alien: Frame 7",
+    70:"Spinning Top Alien: Frame 8",
+    71:"Blob: Frame 1",
+    72:"Blob: Frame 2",
+    73:"Blob: Frame 3",
+    74:"Blob: Frame 4",
+    75:"Blob: Frame 5",
+    76:"Blob: Frame 6",
+    77:"Blob: Frame 7",
+    78:"Blob: Frame 8",
+    79:"Blob: Frame 9",
+    80:"Blob: Frame 10",
+    81:"Blob: Frame 11",
+    82:"Blob: Frame 12",
+    83:"Blob: Frame 13",
+    84:"Blob: Frame 14",
+    85:"Blob: Frame 15",
+    86:"Blob: Frame 16",
+    87:"None",
+    88:"None",
+    102:"None",
+    103:"Alien Base: Frame 1",
+    104:"Alien Base: Frame 2",
+    105:"Alien Base: Frame 3",
+    106:"Alien Base: Frame 4",
+    107:"Alien Base: Frame 5",
+    108:"Alien Base: Frame 6",
+    109:"Alien Base: Frame 7",
+    110:"Alien Base: Frame 8",
+    111:"Missile Launcher: Frame 1",
+    112:"Missile Launcher: Frame 2",
+    113:"Missile Launcher: Frame 3",
+    114:"Missile Launcher: Frame 4",
+    115:"Missile Launcher: Frame 5",
+    116:"Missile Launcher: Frame 6",
+    117:"Missile Launcher: Frame 7",
+    118:"Missile Launcher: Frame 8",
+    119:"Missile Launcher: Frame 9",
+    120:"Missile Launcher: Frame 10",
+    121:"Missile Launcher: Frame 11",
+    122:"Missile Launcher: Frame 12",
+    123:"Missile Launcher: Frame 13",
+    124:"Missile Launcher: Frame 14",
+    125:"Missile Launcher: Frame 15",
+    126:"Missile Launcher: Frame 16",
+    127:"Missile: Frame up-left",
+    128:"None",
+    129:"Missile Flame: Frame 1",
+    130:"Missile Flame: Frame 2",
+    131:"Missile: Frame up-right",
+    132:"None",
+    133:"",
+    134:"",
+    135:"The Block: Frame 1",
+    136:"The Block: Frame 2",
+    137:"The Block: Frame 3",
+    138:"The Block: Frame 4",
+    139:"The Block: Frame 5",
+    140:"The Block: Frame 6",
+    141:"The Block: Frame 7",
+    142:"The Block: Frame 8",
+    143:"Alien Base Plasma: Frame 1",
+    144:"Alien Base Plasma: Frame 1",
+    145:"Alien Base Plasma: Frame 2",
+    146:"Alien Base Plasma: Frame 3",
+    147:"Alien Base Plasma: Frame 4",
+    148:"Alien Base Plasma: Frame 4",
+    149:"Alien Base Plasma: Frame 3",
+    150:"Alien Base Plasma: Frame 2",
+    159:"Missile: Left",
+    160:"None",
+    161:"Missile Flame: Left Frame 1",
+    162:"Missile Flame: Left Frame 2",
+    163:"Missile: Right",
+    164:"None",
+    165:"Missile Flame: Right Frame 1",
+    166:"Missile Flame: Right Frame 2",
+    167:"Bouncing Wheel: Frame 1",
+    168:"Bouncing Wheel: Frame 2",
+    169:"Bouncing Wheel: Frame 3",
+    170:"Bouncing Wheel: Frame 4",
+    171:"Bouncing Wheel: Frame 5",
+    172:"Bouncing Wheel: Frame 6",
+    173:"None",
+    174:"None",
+    175:"Spinner: Frame 1",
+    176:"Spinner: Frame 2",
+    177:"Spinner: Frame 3",
+    178:"Spinner: Frame 4",
+    179:"Spinner: Frame 5",
+    180:"Spinner: Frame 6",
+    181:"",
+    182:"",
+    183:"Shooter: Frame 1",
+    184:"Shooter: Frame 2",
+    185:"Shooter: Frame 3",
+    186:"Shooter: Frame 4",
+    187:"Shooter: Frame 5",
+    188:"Shooter: Frame 6",
+    189:"Shooter: Frame 7",
+    235:"Bomb: Frame 1",
+    236:"Bomb: Frame 2",
+    237:"Bomb: Frame 3",
+    238:"Bomb: Frame 2"
   )
 )

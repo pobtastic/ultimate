@@ -1,4 +1,3 @@
-
 > $4000 @org=$4000
 > $4000 @start=$5B80
 b $4000 Loading screen
@@ -79,7 +78,13 @@ g $5E52
 g $5E53 Last Frame
 D $5E53 #HTML(Holds a copy of the last <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
 @ $5E53 label=LastFrame
-B $5E53,$01
+  $5E53,$01
+
+g $5E56
+g $5E57
+g $5E58
+g $5E59
+g $5E5A
 
 g $5E5D
 g $5E5E
@@ -112,7 +117,17 @@ D $5E65 Which player is currently active.
 
 g $5E66 Current menu item colour attribute
 @ $5E66 label=Current_MenuAttr
-B $5E66,$01
+  $5E66,$01
+
+g $5E67 Game Delay Timer
+@ $5E67 label=GameDelayTimer
+D $5E67 At the beginning of each player turn there is a delay to allow the player to be ready for play.
+. #TABLE(default,centre,centre)
+. { =h Value | =h Game Mode }
+. { #N$80 | 1UP }
+. { #N$FF | 2UP }
+. TABLE#
+. The larger delay for a 2UP game is useful for swapping players controls.
 
 g $5E68
 
@@ -176,10 +191,54 @@ B $6030,$18 Laser Beam #3.
 B $6048,$18 Laser Beam #4.
 
 b $6060
+  $6060,$2E,$01
 
-b $607A
+g $608E Fuel Level
+@ $608E label=FuelLevel_1
+@ $608F label=FuelLevel_2
+  $608E,$02,$01
+
+b $6090
+
+b $6195
+
+b $6198 Bomb States?
+@ $6198 label=Bomb_StatesTBC
+  $6198,$08,$01
+
+g $61B0 Alien States
+@ $61B0 label=Alien_States
+D $61B0 There are a maximum of 6 aliens on the screen at one time, and those states
+. are stored here in this data block.
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h Byte | =h State | =h Byte | =h State | =h Byte | =h State }
+. { #N$00 | TBC | #N$08 | TBC | #N$10 | TBC }
+. { #N$01 | TBC | #N$09 | TBC | #N$11 | TBC }
+. { #N$02 | TBC | #N$0A | TBC | #N$12 | TBC }
+. { #N$03 | TBC | #N$0B | TBC | #N$13 | TBC }
+. { #N$04 | TBC | #N$0C | TBC | #N$14 | TBC }
+. { #N$05 | TBC | #N$0D | TBC | #N$15 | TBC }
+. { #N$06 | TBC | #N$0E | TBC | #N$16 | TBC }
+. { #N$07 | TBC | #N$0F | TBC | #N$17 | TBC }
+. TABLE#
+  $61B0,$18 Slot 1.
+  $61C8,$18 Slot 2.
+  $61E0,$18 Slot 3.
+  $61F8,$18 Slot 4.
+  $6210,$18 Slot 5.
+  $6228,$18 Slot 6.
 
 b $6240
+
+b $7000 Active Terrain Data
+@ $7000 label=TerrainData_Active
+  $7000,$400,$10
+
+b $7400 Inactive Terrain Data
+@ $7400 label=TerrainData_Inactive
+  $7400,$400,$10
+
+b $7800
 
 c $8000 Security Check
 E $8000 Continue on to #R$800A.
@@ -352,11 +411,12 @@ N $80DB There are seven lines of text.
 
 c $80FD
   $80FD,$03 #REGde=#R$BAA4.
-  $8100,$01
+  $8100,$01 #REGa=#REGc.
+  $8101,$01 Rotate bit 0 to bit 1.
   $8102,$02,b$01 Keep only bit 1.
   $8104,$03 Create an offset in #REGhl.
   $8107,$01 #REGhl=#R$BAA4 + offset.
-  $8108,$03 #REGde=
+  $8108,$03 #REGde=#REGhl.
   $810B,$03 Jump to #R$B9BC.
 
 b $810E Game Select Attribute Table
@@ -401,7 +461,7 @@ E $8115 View the equivalent code in;
 . { #N$07 | #EVAL(#PEEK(#PC+$06) / $08) | 6 Start Game }
 . TABLE#
 
-t $811C Game Selection Title text
+t $811C Messaging: Game Selection Title
 E $811C View the equivalent code in;
 . #LIST
 . { #ATICATAC$7CF8 }
@@ -410,18 +470,31 @@ E $811C View the equivalent code in;
 . { #PSSST$6288 }
 . { #TRANZAM$5FB1 }
 . LIST#
-@ $811C label=GameSelection_Title
-E $811C View the equivalent code in #ATICATAC$7CF8.
+N $811C #FONT:(GAME SELECTION)addr=$D347,attr=$47(game-selection)
+@ $811C label=String_GameSelection
   $811C,$0E,$0D:$01 "GAME SELECTION".
+N $812A #FONT:(1  1 PLAYER GAME)addr=$D347,attr=$47(1up-game)
+@ $812A label=String_1UP_Game
   $812A,$10,$0F:$01 "1  1 PLAYER GAME".
+N $813A #FONT:(2  2 PLAYER GAME)addr=$D347,attr=$47(2up-game)
+@ $813A label=String_2UP_Game
   $813A,$10,$0F:$01 "2  2 PLAYER GAME".
+N $814A #FONT:(3  KEYBOARD)addr=$D347,attr=$47(keyboard)
+@ $814A label=String_Keyboard
   $814A,$0B,$0A:$01 "3  KEYBOARD".
+N $8155 #FONT:(4  KEMPSTON JOYSTICK)addr=$D347,attr=$47(kempston)
+@ $8155 label=String_Kempston
   $8155,$14,$13:$01 "4  KEMPSTON JOYSTICK".
+N $8169 #FONT:(5  CURSOR   JOYSTICK)addr=$D347,attr=$47(cursor)
+@ $8169 label=String_Cursor
   $8169,$14,$13:$01 "5  CURSOR   JOYSTICK".
+N $817D #FONT:(6  START GAME)addr=$D347,attr=$47(start-game)
+@ $817D label=String_StartGame
   $817D,$0D,$0C:$01 "6  START GAME".
 
-t $818A Copyright Messaging
-@ $818A label=Message_Copyright
+t $818A Messaging: Copyright
+N $818A #FONT:(% 1983 A.C.G. ALL RIGHTS RESERVED)addr=$D347,attr=$45(copyright)
+@ $818A label=String_Copyright
 E $818A View the equivalent code in #ATICATAC$7D51.
   $818A,$21,h$01,c$01,$1E:$01 Attribute: #N(#PEEK(#PC)) + "© 1983 A.C.G. ALL RIGHTS RESERVED".
 
@@ -482,6 +555,8 @@ c $8209
   $8210,$05 Write #N$01 to #R$5E52.
   $8217,$06 Write #N$6078 to #R$8261(#N$8262).
   $821D,$05 Write #N$C3 to #R$826A.
+  $8222,$06 Write #R$823F to #R$826B.
+  $8228,$04 #REGix=#R$6000.
   $822C,$03 Jump to #R$81E9.
 
 c $822F
@@ -495,9 +570,60 @@ c $823F
   $8249,$01 Return.
 
 c $824A
+  $824A,$03 #REGa=#R$5E52.
+  $824F,$03 #REGhl=#N($00C0,$04,$04).
+  $8252,$01 Decrease #REGhl by one.
+  $8253,$04 Jump to #R$8252 until #REGhl is zero.
+  $8257,$01 Return.
+
+c $8258
+  $8258,$01 Return.
+
 B $826A,$03,$01
 
-c $8298
+c $8298 Controls: Pause
+@ $8298 label=ControlsPause
+  $8298,$01 Disable interrupts.
+  $8299,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$DF | P | O | I | U | Y }
+. TABLE#
+N $829F If key "O" is not being pressed, then just return.
+  $829F,$03 Return if bit 1 is not set.
+N $82A2 Return if any other key has been pressed with "O".
+  $82A2,$01 Flip the bits.
+  $82A3,$02,b$01 Keep only bits 0, 2-4.
+  $82A5,$01 Return if the result is not zero.
+N $82A6 Loop until the "O" button is released.
+@ $82A6 label=GamePaused_Debounce
+  $82A6,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$DF | P | O | I | U | Y }
+. TABLE#
+  $82AC,$04 Jump to #R$82A6 if bit 1 is set.
+N $82B0 Creates an infinite loop which only exits when "O" is pressed again.
+@ $82B0 label=GamePaused
+  $82B0,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$DF | P | O | I | U | Y }
+. TABLE#
+  $82B6,$04 Jump to #R$82B0 if bit 1 is not set.
+N $82BA Likewise, to prevent the pause from recurring instantly, loop until the "O" button is released.
+@ $82BA label=GamePaused_Debounce_Exit
+  $82BA,$06 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$DF | P | O | I | U | Y }
+. TABLE#
+  $82C0,$04 Jump to #R$82BA if bit 1 is set.
+  $82C4,$01 Return.
 
 w $82C5 Jump Table
 @ $82C5 label=JumpTable
@@ -581,8 +707,9 @@ N $84EB Write the 1UP, 2UP and HI scores.
 
 c $84F7 Reset Planet
 @ $84F7 label=ResetPlanet
-  $84F7,$03 #REGhl=#N$6000.
+  $84F7,$03 #REGhl=#R$6000.
   $84FA,$03 #REGbc=#N$0480 (counter).
+@ $84FD label=ResetPlanet_Loop
   $84FD,$02 Write #N$00 to #REGhl.
   $84FF,$01 Increment #REGhl by one.
   $8500,$05 Decrease counter by one and loop back to #R$84FD until counter is zero.
@@ -668,31 +795,164 @@ c $858E
 
 b $85D9
 
-c $85F6
+c $85F6 Screen Address One Pixel Above
+@ $85F6 label=ScreenPos1PixelAbove
+R $85F6 HL Current position
+R $85F6 O:HL Address for new position
+N $85F6 Calculates the new address for writing a sprite pixel, in an upward direction, taking into consideration the screen memory layout.
+  $85F6,$01 Decrement #REGh by one to move up one pixel on screen.
+  $85F7,$02 Store the inverted result in #REGa.
+  $85F9,$02,b$01 Keep only bits 0-2.
+  $85FB,$01 If a screen bank boundary has not been crossed then return.
+  $85FC,$04 Else subtract #N$20 from #REGl.
+  $8600,$01 If there is any carry then return.
+  $8601,$04 Else add #N$08 to #REGh and return.
+  $8605,$01 Return.
+
+c $8606
+  $8606,$01 Exchange the #REGde and #REGhl registers.
+  $8611,$03 Jump to #R$85F6.
+
+c $8614
+  $8614,$01 Exchange the #REGde and #REGhl registers.
 
 c $864F
+  $864F,$07 Write #N$00 to #LIST { #R$5E59 } { #R$5E58 } LIST#
+  $8656,$01 #REGc=#N$00.
+  $8657,$01
+  $8658,$03 Call #R$88E8.
+  $865B,$03 Jump to #R$87B9.
 
 c $865E
+  $865E,$03 #REGe=#REGix+#N$0C.
+  $8661,$03 #REGd=#REGix+#N$0D.
+  $8664,$03 #REGl=#REGix+#N$0E.
+  $8667,$03 #REGh=#REGix+#N$0F.
+  $866A,$03 #REGa=#REGix+#N$09.
+  $866D,$03 Write #REGa to #R$85D7(#N$85D8).
+  $8670,$03 #REGa=#REGix+#N$0A.
+  $8673,$03 Write #REGa to #R$5E5A.
+  $8676,$03 #REGa=#REGix+#N$0B.
+  $8679,$03 Write #REGa to #R$5E56.
+  $867C,$02 #REGc=#N$00.
+  $867E,$01 Return.
 
 c $867F
+  $867F,$1F Write #N$00 to;
+. #LIST
+. { #REGix+#N$09 }
+. { #REGix+#N$0A }
+. { #REGix+#N$0B }
+. { #REGix+#N$0C }
+. { #REGix+#N$0D }
+. { #REGix+#N$0E }
+. { #REGix+#N$0F }
+. { #R$5E59 }
+. { #R$5E57 }
+. { #R$5E58 }
+. LIST#
+  $869E,$02 #REGc=#N$00.
+  $86A0,$01 Return.
 
 c $86A1
+  $86A1,$03 #REGl=#REGix+#N$02.
+  $86A4,$03 #REGh=#REGix+#N$03.
+  $86A7,$04 #REGhl=#REGhl+#N($0078,$04,$04).
+  $86AB,$04 #REGbc=#R$607A.
+  $86B3,$02,b$01 Keep only bits 0-4.
+  $86BF,$03 Call #R$857F.
+  $86C2,$03 #REGl=#REGix+#N$01.
+  $86C5,$03 #REGh=#REGix+#N$04.
+
+  $86CB,$02,b$01 Keep only bits 1-3.
+
+  $86D1,$02 #REGa=#N$E8.
+
+  $86E4,$03 Call #R$851E.
+
+  $86FE,$02 #REGc=#N$00.
+  $8700,$01 Return.
 
 c $8701
+  $8701,$03 Call #R$865E.
+  $8704,$01 Switch to the shadow registers.
+  $8705,$03 Call #R$86A1.
+  $8708,$01 Switch back to the normal registers.
+  $8709,$03 #REGa=#R$5E56.
+  $8715,$01 #REGc=#REGa.
+  $8716,$03 #REGa=#R$5E5A.
+  $8721,$03 Jump to #R$858E.
+
+  $8730,$03 Jump to #R$85BB.
 
 c $8733
+  $8733,$03 #REGl=#REGix+#N$01.
+  $8736,$03 #REGh=#REGix+#N$04.
+  $8739,$03 #REGd=#REGix+#N$07.
+  $873C,$03 #REGa=#R$5E57.
+
+  $8742,$03 Call #R$8506.
+  $8745,$03 #REGa=#R$5E58.
+
+  $8759,$03 #REGbc=#N$5AC0.
+
+  $8771,$03 #REGbc=#N($0020,$04,$04).
+
+  $874C,$02,b$01 Keep only bits 0-4.
+  $874E,$01 Increment #REGa by one.
+  $874F,$01 #REGc=#REGa.
+
+  $877B,$01 Return.
 
 c $877C
+  $877C,$03 Call #R$88E8.
+  $877F,$01 Switch to the shadow registers.
+  $8780,$03 Call #R$88A3.
+  $8783,$01 Switch back to the normal registers.
+  $8784,$03 Jump to #R$878F.
 
 c $8787
+  $8787,$03 Call #R$88E8.
+  $878A,$01 Switch to the shadow registers.
+  $878B,$03 Call #R$8826.
+  $878E,$01 Switch back to the normal registers.
+
+c $87B9
+  $87B9,$01 #REGa=#REGc.
+  $87BA,$03 If #REGa is zero, jump to #R$8807.
+  $87BD,$01 Decrease #REGc by one.
+  $87BE,$02 Stash #REGbc and #REGhl on the stack.
+  $87C0,$01 #REGa=#REGde.
+  $87C1,$01 Increment #REGde by one.
+  $87C2,$01
+  $87C3,$01 Write #REGa to #REGhl.
+  $87C4,$01 Increment #REGl by one.
+  $87C5,$02
+  $87C7,$02 Jump to #R$87C7.
 
 c $8807
 
 c $8826
 
 c $8891
+  $8891,$10 Write #N$00 to:
+. #LIST
+. { #R$5E59 }
+. { #R$5E58 }
+. { #REGix+#N$0A }
+. { #R$5E57 }
+. { #REGix+#N$0B }
+. LIST#
+  $88A1,$02 Jump to #R$8879.
 
 c $88A3
+  $88A3,$03 Call #R$857F.
+  $88A6,$03 #REGl=#REGix+#N$01.
+  $88A9,$03 #REGh=#REGix+#N$04.
+  $88AC,$01 #REGa=#REGde.
+  $88AD,$01 Increment #REGde by one.
+  $88AE,$01 #REGb=#REGa.
+  $88AF,$02 Jump to #R$88E2.
 
 c $88B1
   $88B1
@@ -923,31 +1183,47 @@ E $8A37 View the equivalent code in;
 . { #PSSST$7413 }
 . LIST#
 @ $8A37 label=PrintBanner
-N $8A37 Prints "1UP".
-  $8A37,$03 #REGhl=#N($0018, 4, 4).
+N $8A37 Handle printing "#FONT:(1UP)addr=$D347,attr=$47(1up)" messaging.
+  $8A37,$03 #REGhl=#N($0018,$04,$04).
   $8A3A,$03 #REGde=#R$8A51.
   $8A3D,$03 Call #R$8A11.
-N $8A40 Prints "HI".
-  $8A40,$03 #REGhl=#N($0078, 4, 4).
+N $8A40 Handle printing "#FONT:(HI)addr=$D347,attr=$45(hi)" messaging.
+  $8A40,$03 #REGhl=#N($0078,$04,$04).
   $8A43,$03 #REGde=#R$8A59.
   $8A46,$03 Call #R$8A11.
-N $8A49 Prints "2UP".
-  $8A49,$03 #REGhl=#N($00D8, 4, 4).
+N $8A49 Handle printing "#FONT:(2UP)addr=$D347,attr=$47(2up)" messaging.
+  $8A49,$03 #REGhl=#N($00D8,$04,$04).
   $8A4C,$03 #REGde=#R$8A55.
   $8A4F,$02 Jump to #R$8A11.
-N $8A51 Banner text data.
-@ $8A51 label=1UP_Text
-T $8A51,$04,h$01,$02:$01 "1UP" (#N(#PEEK(#PC)) is the attribute).
-@ $8A55 label=2UP_Text
-T $8A55,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
-@ $8A59 label=HI_Text
-T $8A59,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
+
+t $8A51 Messaging: Banner Text
+N $8A51 #FONT:(1UP)addr=$D347,attr=$47(1up)
+@ $8A51 label=String_1UP
+  $8A51,$04,h$01,$02:$01 "1UP" (#N(#PEEK(#PC)) is the attribute).
+N $8A55 #FONT:(2UP)addr=$D347,attr=$47(2up)
+@ $8A55 label=String_2UP
+  $8A55,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
+N $8A59 #FONT:(HI)addr=$D347,attr=$45(hi)
+@ $8A59 label=String_HI
+  $8A59,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
 
 c $8A5C
 
 c $8B73
 
 c $8BA5
+  $8BA5,$03 #REGhl=#N$57BF.
+  $8BA8,$03 #REGbc=#N$2088.
+  $8BAB,$02 Stash #REGbc and #REGhl on the stack.
+  $8BAD,$02 Write #N$00 to #REGhl.
+  $8BAF,$01 Decrease #REGhl by one.
+  $8BB0,$02 Decrease counter by one and loop back to #R$8BAD until counter is zero.
+  $8BB2,$01 Restore #REGhl from the stack.
+  $8BB3,$03 Call #R$85F6.
+  $8BB6,$01 Restore #REGbc from the stack.
+  $8BB7,$01 Decrease #REGc by one.
+  $8BB8,$02 Jump back to #R$8BAB until #REGc is zero.
+  $8BBA,$01 Return.
 
 c $8BBB Draw HUD Panel
 E $8BBB View the equivalent code in;
@@ -980,19 +1256,157 @@ N $8BFC Restore the old font pointer.
   $8BFD,$03 Write #REGhl back to #R$5E04.
   $8C00,$01 Return.
 
-c $8C01
+c $8C01 Draw Gauge
+R $8C01 A Lower byte of gauge
+R $8C01 HL Screen location
+@ $8C01 label=DrawGauge
+N $8C01 Stash the lower gauge byte for later.
+  $8C01,$01 #REGc=#REGa.
+N $8C02 Stash the screen location for later, as we'll need it to gain the screen buffer address.
+  $8C02,$01 Stash #REGhl on the stack.
+  $8C03,$03 Call #R$8506.
+N $8C06 Restore the lower gauge byte.
+  $8C06,$01 #REGa=#REGc.
+N $8C07 Rotate off the INK bits.
+  $8C07,$03 Rotate the bits right three times (including the carry).
+  $8C0A,$02,b$01 Keep only bits 0-4 (PAPER, BRIGHT and FLASH).
+  $8C0C,$02 Jump to #R$8C1A if the result is zero (i.e. empty/ blank).
+  $8C0E,$01 #REGb=#REGa.
+N $8C0F This moves along 
+@ $8C0F label=DrawGauge_Find
+  $8C0F,$01 #REGa=attribute byte.
+  $8C10,$03 Rotate the bits left three times (including the carry).
+  $8C13,$02,b$01 Keep only bits 3-5 (INK).
+  $8C15,$01
+  $8C16,$01 Write #REGa back to #REGhl.
+  $8C17,$01 Increment #REGhl by one.
+  $8C18,$02 Decrease counter by one and loop back to #R$8C0F until counter is zero.
+N $8C1A Fetch the attribute byte for where the gauge ends.
+@ $8C1A label=DrawGauge_Draw
+  $8C1A,$01 #REGa=#REGhl.
+N $8C1B Remove the PAPER bits.
+  $8C1B,$02,b$01 Keep only bits 0-2, 6-7.
+  $8C1D,$01 Write #REGa back to #REGhl.
+N $8C1E Store the attribute buffer address in #REGde.
+  $8C1E,$01 Switch the #REGde and #REGhl registers.
+N $8C1F Restore the screen location for the screen buffer address call.
+  $8C1F,$01 Restore #REGhl from the stack.
+  $8C20,$03 Call #R$851E.
+  $8C23,$01 #REGa=#REGe.
+  $8C24,$02,b$01 Keep only bits 0-4.
+  $8C26,$01 #REGe=#REGa.
+  $8C27,$01 #REGa=#REGl.
+  $8C28,$02,b$01 Keep only bits 5-7.
+  $8C2A,$01
+  $8C2B,$01 #REGl=#REGa.
+N $8C2C Restore the lower gauge byte.
+  $8C2C,$01 #REGa=#REGc.
+N $8C2D The gradient lines are stored in the font at: #R$D51F.
+. #UDGTABLE(default,centre,centre)
+. { #N$00 | #FONT:([)addr=$D347,attr=$47(gradient-0) }
+. { #N$01 | #FONT:(\)addr=$D347,attr=$47(gradient-1) }
+. { #N$02 | #FONT:(])addr=$D347,attr=$47(gradient-2) }
+. { #N$03 | #FONT:(^)addr=$D347,attr=$47(gradient-3) }
+. { #N$04 | #FONT:(_)addr=$D347,attr=$47(gradient-4) }
+. { #N$05 | #FONT:(`)addr=$D347,attr=$47(gradient-5) }
+. { #N$06 | #FONT:(a)addr=$D347,attr=$47(gradient-6) }
+. { #N$07 | #FONT:(b)addr=$D347,attr=$47(gradient-7) }
+. UDGTABLE#
+N $8C2D There are 8 gradient line images, so ensure the number reference is between #N$00-#N$07.
+  $8C2D,$02,b$01 Keep only bits 0-2.
+N $8C2F The first value is #N$5B which corresponds to "#FONT:([)addr=$D347,attr=$47(gradient-0)" (the smallest gradient).
+  $8C2F,$02 #REGa=#REGa+#N$5B.
+  $8C31,$03 Call #R$89EF.
+N $8C34 Restore the lower gauge byte.
+  $8C34,$01 #REGa=#REGc.
+  $8C35,$01 Flip the bits.
+  $8C36,$02,b$01 Keep only bits 0-2.
+  $8C38,$01 Return if the result is not zero.
+  $8C39,$02 #REGa=#N$20.
+  $8C3B,$03 Jump to #R$89EF.
 
-c $8C3E
-
-c $8C5F
-
-c $8C6C
+c $8C3E Flash Score Label
+@ $8C3E label=HandlerScoreLabel
+E $8C3E View the equivalent code in;
+. #LIST
+. { #COOKIE$7020 }
+. { #SABREWULF$AEA1 }
+. LIST#
+  $8C3E,$06 If #R$5E6C is zero, jump to #R$8C49.
+  $8C44,$04 Write #N$00 to #REGix+#N$00.
+  $8C48,$01 Return.
+N $8C49 Controller for handling whether to action 1UP or 2UP score label.
+@ $8C49 label=ScoreLabelFlash
+  $8C49,$06 If #R$5E65 is not zero, jump to #R$8C6C.
+N $8C4F Flash 1UP score label.
+  $8C4F,$03 #REGhl=#N($0018,$04,$04) (position of the 1UP score label).
+N $8C52 Set flash state for the 3-attributes of the score label.
+@ $8C52 label=FlashText
+  $8C52,$03 Call #R$8506.
+  $8C55,$02 #REGb=#N$03 (counter for the three letters in a score label).
+@ $8C57 label=FlashText_Loop
+  $8C57,$01 Fetch the attribute byte.
+  $8C58,$02,b$01 Ensure bit 7 is set (the flash bit).
+  $8C5A,$01 Write the attribute byte back to #REGhl.
+  $8C5B,$01 Increment the attribute address pointer by one.
+  $8C5C,$02 Decrease counter by one and loop back to #R$8C57 until counter is zero.
+  $8C5E,$01 Return.
+N $8C5F Unset flash state for the 3-attributes of the score label.
+@ $8C5F label=UnsetFlashText
+  $8C5F,$03 Call #R$8506.
+  $8C62,$02 #REGb=#N$03 (counter for the three letters in a score label).
+@ $8C64 label=UnsetFlashText_Loop
+  $8C64,$01 Fetch the attribute byte.
+  $8C65,$02,b$01 Keep only bits 0-6 (i.e. everything except the flash bit).
+  $8C67,$01 Write the attribute byte back to #REGhl.
+  $8C68,$01 Increment the attribute address pointer by one.
+  $8C69,$02 Decrease counter by one and loop back to #R$8C64 until counter is zero.
+  $8C6B,$01 Return.
+N $8C6C Flash 2UP score label.
+@ $8C6C label=FlashScoreLabel2UP
+  $8C6C,$03 #REGhl=#N($00D8,$04,$04) (position of the 2UP score label).
+  $8C6F,$02 Jump to #R$8C52.
 
 c $8C71
+  $8C71,$07 If #R$5E67 is zero, jump to #R$8C99.
+  $8C78,$01 Decrement #R$5E67 by one.
+  $8C79,$02 Jump to #R$8C3E if the delay timer is still active.
+  $8C7B,$03 Call #R$B8C9.
+  $8C7E,$03 #REGa=#R$5EA0.
+  $8C81,$02,b$01 Keep only bit 0.
+  $8C83,$03 Write the result to #R$5EA2.
+  $8C86,$06 Jump to #R$8C94 if #R$5E65 is not zero.
+  $8C8C,$03 #REGhl=#N($0018,$04,$04).
+  $8C8F,$03 Call #R$8C5F.
+  $8C92,$02 Jump to #R$8C99.
+  $8C94,$03 #REGhl=#N($00D8,$04,$04).
+  $8C97,$02 Jump to #R$8C8F.
+  $8C99,$03 #REGhl=#N($1040,$04,$04).
+  $8C9C,$03 #REGa=#R$608F.
+  $8C9F,$03 Call #R$8C01.
+  $8CA2,$03 Call #R$8F90.
+
+  $8CB1,$05 Write #N$00 to #REGix+#N$05.
+
+  $8CB9,$03 Jump to #R$8CDF.
 
 c $8CBC
 
 c $8D06
+  $8DA4,$03 #REGhl=#R$608E.
+  $8DA7,$04 If jetmans fuel has run out, jump to #R$8DBB.
+  $8DAB,$01 Reset flags.
+N $8DAC Subtract the fuel expenditure from the current fuel level.
+  $8DAC,$02 #REGhl=#REGhl-#REGbc.
+  $8DAE,$04 If there's any fuel remaining, jump to #R$8DBB.
+  $8DB2,$03 #REGde=#R$BA2D.
+  $8DB5,$03 Call #R$B9BC.
+  $8DB8,$06 Write #N($0000,$04,$04) to #R$608E.
+  $8DBE,$01 #REGa=#REGh.
+  $8DBF,$03 #REGhl=#N$1040.
+  $8DC2,$03 Call #R$8C01.
+  $8DC5,$03 Call #R$907B.
+
   $8D06,$03 Call #R$8F90.
 
 c $8E5A
@@ -1268,8 +1682,42 @@ c $9356 Draw Terrain?
   $9392,$02 Decrease counter by one and loop back to #R$9390 until counter is zero.
   $9394,$01 Return.
 
-c $9395
+c $9395 Find Unused Alien Slot
+@ $9395 label=FindSlotAlien
+R $9395 O:F Z: slot available
+R $9395 O:F NZ: no available slots
+R $9395 O:HL The alien slot address
+  $9395,$03 #REGhl=#R$61B0.
+N $9398 There are a maximum of 6 aliens on screen at a time.
+  $9398,$02 #REGb=#N$06 (alien counter).
+  $939A,$03 #REGde=#N($0018,$04,$04) (the length of each slot).
+@ $939D label=FindSlotAlien_Loop
+  $939D,$01 #REGa=#REGhl.
+  $939E,$03 Jump to #R$93A5 if #REGa is zero.
+  $93A1,$01 #REGhl=#REGhl+#REGde.
+  $93A2,$02 Decrease alien slot counter by one and loop back to #R$939D until counter is zero.
+  $93A4,$01 If no available slot was found, ensure the Z flag is unset (so NZ is true).
+@ $93A5 label=FindSlotAlien_Return
   $93A5,$01 Return.
+
+c $93A6
+  $93A6,$03 #REGhl=#R$607A.
+  $93A9,$03
+  $93AC,$03
+  $93AF,$05 #REGa=#R$607C+#N$08.
+  $93B4,$04
+  $93B8,$05 Write #N$AF to #REGix+#N$04.
+  $93BD,$03 Call #R$8701.
+  $93C0,$03 Call #R$8733.
+  $93C3,$03 Call #R$945C.
+  $93C6,$02
+  $93C8,$04
+  $93CD,$04 Write #N$2F to #REGix+#N$00.
+  $93D1,$03 #REGhl=#R$6080.
+  $93E0,$03 Jump to #R$B8C3.
+
+  $93E3,$04 Reset bit 0 of #REGix+#N$08.
+  $93E7,$01 Return.
 
 c $945C
   $945C,$06 Read from the keyboard;
@@ -1280,10 +1728,69 @@ c $945C
 . { Shift | Z | X | C | V }
 . TABLE#
   $9462,$01 Flip the bits.
-  $9463,$02,b$01 Keep only bits 0-1.
+  $9463,$02,b$01 Keep only bit 1.
   $9465,$01 Return.
 
 c $9466
+  $9466,$02 #REGa=random number.
+  $9468,$02,b$01 Keep only bits 0-1.
+  $946A,$01 Return if the value is not zero.
+  $946B,$03 #REGa=#R$5E67.
+  $946E,$02 Return if the value is not zero.
+  $9470,$03 Call #R$9395.
+  $9473,$01 Return if there were no available alien slots.
+  $9474,$01 Stash #REGhl (the free alien slot) on the stack.
+  $9475,$01 Switch the #REGde and #REGhl registers.
+  $9476,$03 #REGa=#R$5E40.
+
+  $947A,$02,b$01 Keep only bits 1-3.
+
+  $947F,$03 #REGa=#R$5EA0.
+
+  $9486,$02 #REGa=#N$0C.
+  $9488,$02,b$01 Keep only bits 1-3.
+
+  $948D,$04 #REGhl=#REGhl+#R$9D72.
+
+c $9531
+  $9531,$03 #REGhl=#R$5E5E.
+
+  $955C,$03 Jump to #R$9937.
+
+c $95B6
+  $95B6,$03 Call #R$91BB.
+  $95B9,$01 Stash #REGhl on the stack.
+  $95BA,$03 #REGde=#R$7000.
+  $95BD,$01 Switch the #REGde and #REGhl registers.
+  $95BE,$01 #REGhl=#REGhl+#REGde.
+
+  $95C3,$02 Write #N$0A to #REGhl. #UDG($F66E+$0A*$08,attr=$43)
+  $95C5,$02 Jump to #R$95C9.
+  $95C7,$02 Write #N$08 to #REGhl. #UDG($F66E+$08*$08,attr=$43)
+
+  $95CB,$02,b$01 Keep only bits 0-1.
+
+  $95CE,$03 #REGhl=#R$7000.
+  $95D1,$01 #REGhl=#REGhl+#REGde.
+
+  $95D6,$02 Write #N$0A to #REGhl. #UDG($F66E+$0A*$08,attr=$43)
+  $95D8,$02 Jump to #R$95DC.
+  $95DA,$02 Write #N$09 to #REGhl. #UDG($F66E+$09*$08,attr=$43)
+
+  $95E8,$02,b$01 Keep only bits 0-4.
+
+  $95EB,$03 #REGde=#R$7000.
+
+  $9630,$02 #REGb=#N$08 (counter).
+  $9632,$01 #REGa=#REGde.
+
+  $9651,$01 Return.
+  $9652,$01 Restore #REGhl from the stack.
+  $9653,$01 Return.
+
+c $9654
+
+c $970E
 
 c $9C23
   $9C23,$0B Copy #N$0018 bytes from #R$9D80 to #N$5E20.
@@ -1291,6 +1798,16 @@ c $9C23
   $9C39,$01 Return.
 
 b $9C3A
+
+w $9CFA
+  $9D0A
+  $9D1A
+  $9D2A
+  $9D3A
+  $9D4A
+
+w $9D72
+
 b $9D80
   $9D80,$18
 b $9D98
@@ -1362,10 +1879,27 @@ c $9ECA
   $9EDA,$02 Jump to #R$9EEE.
 
 c $9EDC
-B $A008,$60
-B $A068,$90
+
+c $9F5E
+  $9F5E,$03 #REGhl=#R$A008.
+  $9F61,$03 #REGde=#R$6090.
+  $9F64,$03 #REGbc=#N($0060,$04,$04).
+  $9F67,$02
+  $9F69,$01 Return.
+
+c $9F6A
+
+b $A008
+  $A008,$60,$10
+
+b $A068
+  $A068,$90,$10
 
 c $A0F8
+
+c $A1AA
+
+c $A325
 
 c $A826 Initialise New Level
 @ $A826 label=LevelNew
@@ -1415,36 +1949,114 @@ c $A880
   $A894,$03 #REGde=#R$7400.
   $A897,$03 #REGbc=#N$0400.
   $A89A,$03 Call #R$A8A6.
+  $A89D,$03 #REGhl=#R$6090.
+  $A8A0,$03 #REGde=#R$6240.
+  $A8A3,$03 #REGbc=#N$0120.
+  $A8A6,$01 Stash #REGbc on the stack.
+  $A8A7,$01 #REGa=fetch byte from #REGde.
+  $A8A8,$01 #REGc=fetch byte from #REGhl.
+  $A8A9,$03 Write the byte from #REGde to #REGhl, and the byte from #REGhl to #REGde.
+  $A8AC,$01 Increment #REGhl by one.
+  $A8AD,$01 Increment #REGde by one.
+  $A8AE,$01 Restore #REGbc from the stack.
+  $A8AF,$01 Decrease #REGbc by one.
+  $A8B0,$04 Jump back to #R$A8A6 until #REGbc is zero.
   $A8B4,$01 Return.
 
 c $A8B5
+  $A8B5,$03 #REGa=#R$5E00.
+  $A8B8,$02,b$01 Keep only bit 0.
+  $A8BA,$02
+  $A8BC,$06 Jump to #R$A939 if #R$5EA1 is zero.
+  $A8C2,$03 Jump to #R$A82A.
+
+  $A8C5,$06 Jump to #R$A8BC if #R$5EA5 is zero.
+
+  $A8CB,$07 Call #R$A931 if #R$5EA1 is zero.
+
+  $A8D2,$03 Call #R$A880.
+  $A8D5,$04 Write #N$00 to #R$5E6C.
+  $A8D9,$03 #REGa=#R$5E65.
+  $A8DC,$01 Flip the bits.
+  $A8DD,$03 Write the result back to #R$5E65.
+  $A8E0,$03 Jump to #R$A82A.
 
 c $A8E3 Game Over
 E $A8E3 View the equivalent code in;
 . #LIST
+. { #ATICATAC$8C35 }
 . { #COOKIE$6BE0 }
 . LIST#
-@ $A8E3 label=GameOver_1UP
-N $A8E3 #HTML(Set up altering the "GAME OVER PLAYER <em>X</em>" message for 1UP.)
+@ $A8E3 label=GameOver_1UP_Messaging
+N $A8E3 #HTML(Set up altering the "#FONT:(GAME OVER PLAYER 0)addr=$D347,attr=$47(game-over-0up)" message for 1UP.)
   $A8E3,c,$02 #REGa="1" + #N$80 (escape character).
-N $A8E5 Print the messaging and pause to show it for a period of time.
+N $A8E5 Print the altered messaging and pause to show it for a period of time.
 @ $A8E5 label=GameOver_Write
   $A8E5,$03 Write ASCII player number to #R$A94C(#N$A95D).
   $A8E8,$03 Call #R$84D8.
-
-N $A92D #HTML(Set up altering the "GAME OVER PLAYER <em>X</em>" message for 2UP.)
-@ $A92D label=GameOver_2UP
+N $A8EB Handle printing "#FONT:(GAME OVER PLAYER X)addr=$D347,attr=$47(game-over)" messaging.
+  $A8EB,$03 #REGde=#R$A94B.
+  $A8EE,$03 #REGhl=#N$7038 (screen location).
+  $A8F1,$03 Call #R$8A11.
+  $A8F4,$03 #REGde=#R$B9D2.
+  $A8F7,$03 Call #R$B9BC.
+N $A8FA Set a lower delay period for the following test.
+  $A8FA,$02 #REGb=#N$04 (delay loop counter).
+  $A8FC,$05 #REGa=#R$6090-#N$1A.
+  $A901,$04 If the lunar rover was not destroyed, jump straight to #R$A922.
+N $A905 Handle printing "#FONT:(YOUR LUNAR ROVER HAS BEEN)addr=$D347,attr=$45(lunar-rover)" messaging.
+  $A905,$03 #REGde=#R$A95E.
+  $A908,$03 #REGhl=#N$3818 (screen location).
+  $A90B,$03 Call #R$8A11.
+N $A90E Handle printing "#FONT:(DESTROYED.)addr=$D347,attr=$45(destroyed)" messaging.
+  $A90E,$03 #REGde=#R$A979.
+  $A911,$03 #REGhl=#N$4858 (screen location).
+  $A914,$03 Call #R$8A11.
+N $A917 Handle printing "#FONT:(ALL IS LOST.)addr=$D347,attr=$45(all-lost)" messaging.
+  $A917,$03 #REGde=#R$A985.
+  $A91A,$03 #REGhl=#N$5850 (screen location).
+  $A91D,$03 Call #R$8A11.
+N $A920 Provide a pause for us to reflect that the game has now ended.
+  $A920,$02 #REGb=#N$08 (delay loop counter).
+@ $A922 label=GameOverDelay
+  $A922,$03 #REGhl=#N($0000,$04,$04).
+N $A925 From #REGhl being set above, note that decrementing #N($0000,$04,$04) by one gives #N$FFFF.
+@ $A925 label=GameOverDelay_Loop
+  $A925,$01 Decrease #REGhl by one.
+  $A926,$04 Jump back to #R$A925 until #REGhl is zero.
+  $A92A,$02 Decrease delay loop counter by one and loop back to #R$A925 until the counter is zero.
+  $A92C,$01 Return.
+N $A92D #HTML(Set up altering the "#FONT:(GAME OVER PLAYER 0)addr=$D347,attr=$47(game-over-0up)" message for 2UP.)
+@ $A92D label=GameOver_2UP_Messaging
   $A92D,c,$02 #REGa="2" + #N$80 (escape character).
   $A92F,$02 Jump to #R$A8E5.
-
+N $A931 Handles checking if this is a 1UP or 2UP game.
+@ $A931 label=GameOver_Check_Player_1UP
+  $A931,$06 If #R$5E65 is zero, jump to #R$A8E3.
+  $A937,$02 Jump to #R$A92D.
+N $A939 Handles checking if this is a 2UP or 1UP game.
+@ $A939 label=GameOver_Check_Player_2UP
+  $A939,$06 If #R$5E65 is not zero, jump to #R$A945.
+  $A93F,$03 Call #R$A8E3.
+  $A942,$03 Jump to #R$F56E.
+N $A945 Handle 2UP, and then check if this is a new high score.
+@ $A945 label=GameOver_2UP
   $A945,$03 Call #R$A92D.
   $A948,$03 Jump to #R$F56E.
-N $A94B Game Over Messaging
-@ $A94B label=GameOver_Text
-T $A94B,$13,h$01,$11:$01 Attribute: #N(#PEEK(#PC)) + "GAME OVER PLAYER X".
-T $A95E,$1B,h$01,$19:$01 Attribute: #N(#PEEK(#PC)) + "YOUR LUNAR ROVER HAS BEEN".
-T $A979,$0C,h$01,$0A:$01 Attribute: #N(#PEEK(#PC)) + "DESTROYED.".
-T $A985,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "ALL IS LOST.".
+
+t $A94B Messaging: Game Over
+N $A94B #FONT:(GAME OVER PLAYER X)addr=$D347,attr=$47(game-over)
+@ $A94B label=String_GameOver
+  $A94B,$13,h$01,$11:$01 Attribute: #N(#PEEK(#PC)) + "GAME OVER PLAYER X".
+N $A95E #FONT:(YOUR LUNAR ROVER HAS BEEN)addr=$D347,attr=$45(lunar-rover)
+@ $A95E label=String_Lunar_Rover
+  $A95E,$1B,h$01,$19:$01 Attribute: #N(#PEEK(#PC)) + "YOUR LUNAR ROVER HAS BEEN".
+N $A979 #FONT:(DESTROYED.)addr=$D347,attr=$45(destroyed)
+@ $A979 label=String_Destroyed
+  $A979,$0C,h$01,$0A:$01 Attribute: #N(#PEEK(#PC)) + "DESTROYED.".
+N $A985 #FONT:(ALL IS LOST.)addr=$D347,attr=$45(all-lost)
+@ $A985 label=String_All_Lost
+  $A985,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "ALL IS LOST.".
 
 c $A993
 B $AADF,$50
@@ -1457,30 +2069,90 @@ c $AB9D
   $ABA8,$01 Return.
 
 c $ABA9
+  $ABA9,$03 #REGa=#REGix+#N$00.
+  $ABAD,$02,b$01 Keep only bits 0-3.
+
+  $ABB4,$03 Call #R$8701.
+  $ABB7,$03 Jump to #R$8733.
+  $ABBA,$02 #REGe=#N$18.
+  $ABBC,$03 Call #R$B2A4.
+
+  $ABC2,$06 If #REGix+#N$17 is zero, jump to #R$AC3E.
+  $ABC8,$03 Call #R$ABA9.
+  $ABCB,$03 #REGa=#R$5E42.
+  $ABCE,$01 Flip the bits.
+  $ABCF,$02,b$01 Keep only bits 0-3.
+
+  $ABD2,$06 If #R$5E67 is not zero, jump to #R$ABE5.
+  $ABD8,$07 If #R$6078 is #N$81, jump to #R$ABE5.
+
+  $ABE8,$03 #REGhl=#N$2040.
+  $ABEB,$03 Call #R$8C01.
+  $ABEE,$03 Call #R$AD36.
+
+  $ABF3,$03 Call #R$AD0B.
+  $ABF6,$03 #REGhl=#N$587B (attribute buffer location).
+  $ABF9,$03 Call #R$AD00.
+  $ABFC,$03 #REGhl=#N$587D (attribute buffer location).
+  $ABFF,$02 #REGa=#N$42 (attribute value).
+  $AC01,$03 Call #R$AD00.
   $AC04,$03 #REGa=#R$5E42.
   $AC07,$02,b$01 Keep only bits 0-5.
   $AC09,$02
   $AC0B,$02 If so, jump to #R$AC1A.
   $AC0D,$03
+N $AC10 Handle printing the "#FONT:(ghij)addr=$D347,attr=$45(alien)" messaging.
   $AC10,$03 #REGde=#R$AC24.
-  $AC13,$03 #REGhl=#N$10D8.
+@ $AC13 label=BannerMessaging_Print
+  $AC13,$03 #REGhl=#N$10D8 (screen location).
   $AC16,$03 Call #R$8A11.
   $AC19,$01 Return.
+N $AC1A Handle printing the "#FONT:(cdef)addr=$D347,attr=$45(base)" messaging.
   $AC1A,$03 #REGde=#R$AC1F.
   $AC1D,$02 Jump to #R$AC13.
-T $AC1F,$05,$04:01
-T $AC24,$05,$04:01
+@ $AC1F label=BannerMessaging_Base
+T $AC1F,$05,$04:01 Attribute: #N(#PEEK(#PC)) + "#FONT:(cdef)addr=$D347,attr=$45(base)".
+@ $AC24 label=BannerMessaging_Alien
+T $AC24,$05,$04:01 Attribute: #N(#PEEK(#PC)) + "#FONT:(ghij)addr=$D347,attr=$45(alien)".
+  $AC29,$03 Call #R$AD0B.
+  $AC2C,$03 #REGhl=#N$587D (attribute buffer location).
+  $AC2F,$03 Call #R$AD00.
+  $AC32,$03 #REGhl=#N$587B (attribute buffer location).
+  $AC35,$02 #REGa=#N$42 (attribute byte).
+  $AC37,$02 Jump to #R$AC01.
 
-c $AC3E
+c $AC39
 
 B $ACA0,$30
 B $ACD0,$30
 
-c $AD00
+c $AD00 Handler: Colourise 2x2
+@ $AD00 label=Handler_Colour2x2
+N $AD00 This routine writes an attribute value to four attribute buffer locations.
+R $AD00 A The attribute value to write
+R $AD00 HL The address in the attribute buffer to begin writing to
+  $AD00,$01 Write #REGa to #REGhl.
+N $AD01 Move one byte to the right.
+  $AD01,$01 Increment #REGl by one.
+  $AD02,$01 Write #REGa to #REGhl.
+N $AD03 Moves down to the next line, but less one byte - so under the first attribute buffer location.
+  $AD03,$04 #REGhl=#REGhl+#N($001F,$04,$04).
+  $AD07,$01 Write #REGa to #REGhl.
+N $AD08 Move one byte to the right.
+  $AD08,$01 Increment #REGl by one.
+  $AD09,$01 Write #REGa to #REGhl.
+  $AD0A,$01 Return.
 
 c $AD0B
 
 c $AD22
+  $AD22,$03 Call #R$AD0B.
+  $AD25,$03 #REGhl=#N$5861 (attribute buffer location).
+  $AD28,$01 Stash #REGaf on the stack.
+  $AD29,$03 Call #R$AD00.
+  $AD2C,$01 Restore #REGaf from the stack.
+  $AD2D,$03 #REGhl=#N$5863 (attribute buffer location).
+  $AD30,$03 Jump to #R$AD00.
 
 c $AD33
   $AD33,$01 #REGa=#N$00.
@@ -1489,8 +2161,28 @@ c $AD33
 c $AD36
   $AD36,$03 #REGhl=#R$607A.
 
+  $ADDE,$03 Call #R$B2D7.
+N $ADE1 Destroying the missile adds #N$0500 points. TBC is this the decoy missile?
+  $ADE1,$03 #REGbc=#N$0500.
+  $ADE4,$03 Call #R$899C.
+  $ADE7,$03 Jump to #R$A76B.
+
 B $AEBC,$30
 B $AEEC,$30
+
+N $AF67 Take one hit off the missile hit count total.
+  $AF67,$03 Decrease #REGix+#N16 by one.
+  $AF6A,$02 Jump to #R$AFB1 if the missile has been destroyed.
+  $AF6C,$03 Call #R$B8B4.
+N $AF6F Each missile hit adds #N$0100 points.
+  $AF6F,$03 #REGbc=#N$0100.
+  $AF72,$03 Call #R$899C.
+
+  $AFAE,$03 Call #R$B2D7.
+  $AFB1,$05 Write #N$01 to #R$6195.
+N $AFB6 Destroying the missile adds #N$0500 points. TBC is this the decoy missile?
+  $AFB6,$03 #REGbc=#N$0500.
+  $AFB9,$03 Call #R$899C.
 
 c $B2F9
   $B2F9,$03 #REGa=#N$60B0.
@@ -1503,12 +2195,40 @@ c $B2F9
   $B338,$01 Return.
 
 c $B339
+  $B339,$02 Write #N$40 to #REGhl.
+  $B33B,$02 Jump to #R$B2EE.
 
 c $B33D
+  $B33D,$03 Decrease #REGix+#N$12 by one.
+
+  $B357,$03 Call #R$907B.
+
+  $B36A,$03 Call #R$B8CD.
+
+  $B378,$03 Jump to #R$ABB4.
 
 c $B37B
+  $B37B,$04 Write #N$AF to #REGix+#N$04.
+  $B37F,$03 Call #R$A75D.
+  $B382,$03 Jump to #R$ABB4.
 
 c $B385
+  $B385,$03 #REGhl=#R$61B0.
+  $B388,$02 #REGb=#N$90.
+  $B38A,$02 Write #N$00 to #REGhl.
+  $B38C,$01 Increment #REGhl by one.
+  $B38D,$02 Decrease counter by one and loop back to #R$B38A until counter is zero.
+  $B38F,$01 Return.
+
+c $B390
+  $B390,$05 Return if #R$5E6C is not zero.
+  $B395,$03 Decrease #REGix+#N$05 by one.
+  $B398,$01 Return if the result is above zero.
+  $B399,$03 Jump to #R$A8B5.
+N $B39C
+  $B39C,$03 Decrease #REGix+#N$05 by one.
+  $B39F,$01 Return if the result is above zero.
+  $B3A0,$03 Jump to #R$A8B5.
 
 c $B3A3 Message: Teleporting
 @ $B3A3 label=MessageTeleporting
@@ -1517,7 +2237,7 @@ c $B3A3 Message: Teleporting
   $B3A7,$02 #REGb=#N$10 (colour cycling counter).
 @ $B3A9 label=MessageTeleporting_Loop
   $B3A9,$01 Stash #REGbc (the colour cycling counter) on the stack.
-N $B3AA Handle printing "#FONT:(TELEPORTING)$D347" messaging.
+N $B3AA Handle printing "#FONT:(TELEPORTING)addr=$D347,attr=$41(teleporting)" messaging.
   $B3AA,$03 #REGhl=#N$7058 (screen buffer location).
   $B3AD,$03 #REGde=#R$B3D0.
   $B3B0,$03 Call #R$8A11.
@@ -1540,17 +2260,38 @@ N $B3BB Handle cycling the text INK colour.
   $B3CA,$03 Call #R$B8E8.
   $B3CD,$02 Decrease colour cycling counter by one and loop back to #R$B3A9 until the counter is zero.
   $B3CF,$01 Return.
-N $B3D0 Messaging data.
-@ $B3D0 label=String_Teleporting
-T $B3D0,$0C,h$01,$0A:$01 Attribute: #N(#PEEK(#PC)) + "TELEPORTING".
 
-c $B3DC
+t $B3D0 Messaging: Teleporting
+N $B3D0 #FONT:(TELEPORTING)addr=$D347,attr=$41(teleporting)
+@ $B3D0 label=String_Teleporting
+  $B3D0,$0C,h$01,$0A:$01 Attribute: #N(#PEEK(#PC)) + "TELEPORTING".
+
+c $B3DC Initialise Terrain
+@ $B3DC label=Terrain_Initialise
   $B3DC,$03 #REGhl=#R$F6CE.
   $B3DF,$03 #REGde=#R$7000.
   $B3E2,$03 #REGbc=#N$0400.
+  $B3E5,$02 Copies the default terrain data to the terrain buffer.
   $B3E7,$01 Return.
 
 c $B3E8
+  $B3E8,$03 #REGa=#R$5E42.
+  $B3EB,$01 Flip the bits.
+  $B3EC,$02,b$01 Keep only bit 0.
+  $B3EE,$02
+  $B3F0,$03 Decrease #REGix+#N$08 by one.
+
+  $B41B,$03 Call #R$A002.
+
+  $B42F,$03 Call #R$8787.
+  $B432,$03 Call #R$8733.
+
+  $B440,$01 Return.
+  $B441,$03 Call #R$864F.
+  $B444,$04 Write #N$00 to #R$5EA1.
+  $B448,$04 Write #N$85 to #REGix+#N00.
+  $B44C,$04 Write #N$40 to #REGix+#N05.
+  $B450,$01 Return.
 B $B451
 
 c $B460
@@ -1561,77 +2302,223 @@ c $B4C2
   $B4C5,$03 #REGbc=#N$0711.
 
 c $B52E
+  $B52E,$01 Disable interrupts.
+  $B52F,$03 #REGde=#R$BA2A.
+  $B532,$03 Call #R$B9BC.
+
+  $B539,$03 Call #R$B699.
+N $B53C Here we alter "#FONT:(IT IS ESTIMATED THAT XX LASER)addr=$D347,attr=$47(hits)" to update with the number of hits.
+  $B53C,$03 #REGhl=#R$B64B(#N$B660).
+
+  $B544,$02,b$01 Keep only bits 0-3.
+
+  $B54F,$02,b$01 Keep only bits 0-3.
+
+  $B554,$03 Call #R$8BA5.
+  $B557,$02 #REGb=#N$0C.
+  $B559,$01 Stash #REGbc on the stack.
+  $B55A,$03 Call #R$8298.
+  $B55D,$03 Call #R$B594.
+  $B560,$02 #REGc=#N$80 (pitch).
+  $B562,$02 #REGd=#N$80 (duration).
+  $B564,$03 Call #R$B8DA.
+
+  $B577,$03 #REGhl=#R$8000.
+
+  $B57F,$01 Restore #REGbc from the stack.
+
+  $B582,$03 #REGde=#R$B9DA.
+  $B585,$03 Call #R$B9BC.
+  $B588,$03 Call #R$8BA5.
+  $B58B,$03 Call #R$A317.
+  $B58E,$03 Call #R$B385.
+  $B591,$03 Jump to #R$A2F5.
 
 c $B594 Messaging: Missile Launch
 @ $B594 label=Message_MissileLaunch
-N $B594 Print "WARNING".
+N $B594 Handle displaying "WARNING" messaging.
   $B594,$03 #REGde=#R$B5DC.
-  $B597,$03 #REGhl=#N($2860, $04, $04) (screen buffer location).
+  $B597,$03 #REGhl=#N($2860, $04, $04) (screen location).
   $B59A,$03 Call #R$8A11.
-N $B59D Print "A MISSILE HAS BEEN LAUNCHED".
+N $B59D Handle displaying "A MISSILE HAS BEEN LAUNCHED" messaging.
   $B59D,$03 #REGde=#R$B5E4.
-  $B5A0,$03 #REGhl=#N($3808, $04, $04) (screen buffer location).
+  $B5A0,$03 #REGhl=#N($3808, $04, $04) (screen location).
   $B5A3,$03 Call #R$8A11.
-N $B5A6 Print "FROM THE ENEMY BASE".
+N $B5A6 Handle displaying "FROM THE ENEMY BASE" messaging.
   $B5A6,$03 #REGde=#R$B601.
-  $B5A9,$03 #REGhl=#N($4808, $04, $04) (screen buffer location).
+  $B5A9,$03 #REGhl=#N($4808, $04, $04) (screen location).
   $B5AC,$03 Call #R$8A11.
-N $B5AF Print "YOUR LUNAR ROVER IS IN DANGER".
+N $B5AF Handle displaying "YOUR LUNAR ROVER IS IN DANGER" messaging.
   $B5AF,$03 #REGde=#R$B617.
-  $B5B2,$03 #REGhl=#N($5808, $04, $04) (screen buffer location).
+  $B5B2,$03 #REGhl=#N($5808, $04, $04) (screen location).
   $B5B5,$03 Call #R$8A11.
-N $B5B8 Print "OF BEING DESTROYED".
+N $B5B8 Handle displaying "OF BEING DESTROYED" messaging.
   $B5B8,$03 #REGde=#R$B636.
-  $B5BB,$03 #REGhl=#N($6808, $04, $04) (screen buffer location).
+  $B5BB,$03 #REGhl=#N($6808, $04, $04) (screen location).
   $B5BE,$03 Call #R$8A11.
-N $B5C1 Print "IT IS ESTIMATED THAT    LASER".
+N $B5C1 Handle displaying "IT IS ESTIMATED THAT    LASER" messaging.
   $B5C1,$03 #REGde=#R$B64A.
-  $B5C4,$03 #REGhl=#N($8008, $04, $04) (screen buffer location).
+  $B5C4,$03 #REGhl=#N($8008, $04, $04) (screen location).
   $B5C7,$03 Call #R$8A11.
-N $B5CA Print "HITS WILL BE REQUIRED TO".
+N $B5CA Handle displaying "HITS WILL BE REQUIRED TO" messaging.
   $B5CA,$03 #REGde=#R$B669.
-  $B5CD,$03 #REGhl=#N($9008, $04, $04) (screen buffer location).
+  $B5CD,$03 #REGhl=#N($9008, $04, $04) (screen location).
   $B5D0,$03 Call #R$8A11.
-N $B5D3 Print "DESTROY THE MISSILE.".
+N $B5D3 Handle displaying "DESTROY THE MISSILE." messaging.
   $B5D3,$03 #REGde=#R$B683.
-  $B5D6,$03 #REGhl=#N($A008, $04, $04) (screen buffer location).
+  $B5D6,$03 #REGhl=#N($A008, $04, $04) (screen location).
   $B5D9,$03 Jump to #R$8A11.
-N $B5DC Messaging data.
-T $B5DC,$08,h$01,$06:$01 "WARNING".
-T $B5E4,$1D,h$01,$1B:$01 "A MISSILE HAS BEEN LAUNCHED "
-T $B601,$16,h$01,$14:$01 "FROM THE ENEMY BASE "
-T $B617,$1F,h$01,$1D:$01 "YOUR LUNAR ROVER IS IN DANGER ".
-T $B636,$14,h$01,$12:$01 "OF BEING DESTROYED ".
-T $B64A,$1F,h$01,$1D:$01 "IT IS ESTIMATED THAT    LASER ".
-T $B669,$1A,h$01,$18:$01 "HITS WILL BE REQUIRED TO ".
-T $B683,$16,h$01,$14:$01 "DESTROY THE MISSILE. ".
+
+t $B5DC Messaging: Missile Launch
+@ $B5DC label=String_Warning
+N $B5DC #FONT:(WARNING)addr=$D347,attr=$56(warning)
+  $B5DC,$08,h$01,$06:$01 "WARNING".
+@ $B5E4 label=String_Launched
+N $B5E4 #FONT:(A MISSILE HAS BEEN LAUNCHED)addr=$D347,attr=$46(launched)
+  $B5E4,$1D,h$01,$1B:$01 "A MISSILE HAS BEEN LAUNCHED "
+@ $B601 label=String_EnemyBase
+N $B601 #FONT:(FROM THE ENEMY BASE)addr=$D347,attr=$46(enemy-base)
+  $B601,$16,h$01,$14:$01 "FROM THE ENEMY BASE "
+@ $B617 label=String_Danger
+N $B617 #FONT:(YOUR LUNAR ROVER IS IN DANGER)addr=$D347,attr=$44(danger)
+  $B617,$1F,h$01,$1D:$01 "YOUR LUNAR ROVER IS IN DANGER ".
+@ $B636 label=String_BeingDestroyed
+N $B636 #FONT:(OF BEING DESTROYED)addr=$D347,attr=$44(being-destroyed)
+  $B636,$14,h$01,$12:$01 "OF BEING DESTROYED ".
+@ $B64A label=String_Estimated
+N $B64A #FONT:(IT IS ESTIMATED THAT    LASER)addr=$D347,attr=$47(estimated)
+  $B64A,$1F,h$01,$1D:$01 "IT IS ESTIMATED THAT    LASER ".
+@ $B669 label=String_Required
+N $B669 #FONT:(HITS WILL BE REQUIRED TO)addr=$D347,attr=$47(required)
+  $B669,$1A,h$01,$18:$01 "HITS WILL BE REQUIRED TO ".
+@ $B683 label=String_DestroyMissile
+N $B683 #FONT:(DESTROY THE MISSILE.)addr=$D347,attr=$47(missile)
+  $B683,$16,h$01,$14:$01 "DESTROY THE MISSILE. ".
 
 c $B699
+  $B699,$03 #REGbc=#N($000A,$04,$04).
+  $B6AA,$02,b$01 Keep only bits 0-2.
+  $B6AD,$01 Return.
 
 c $B6AE
+  $B6AE,$04 #REGc=#REGix+#N$05.
+  $B6B9,$03 #REGl=#REGix+#N$02.
+  $B6BC,$03 #REGh=#REGix+#N$03.
+  $B6BF,$03 Call #R$A002.
+  $B6CE,$01 Return.
 
 c $B6CF
+  $B6CF,$03 #REGbc=#R$B6DB.
+  $B6D2,$03 #REGa=#REGix+#N$08.
+  $B6D5,$02,b$01 Keep only bits 0-3.
+  $B6D7,$01 #REGl=#REGa.
+  $B6D8,$03 Jump to #R$81FE.
+W $B6DB,$10
+  $B6EB,$01 Return.
+  $B6EC,$03 Call #R$B7A8.
+  $B6EF,$03 Call #R$945C.
+  $B706,$04 Write #N$81 to #REGix+#N$08.
+  $B716,$03 Call #R$B8BD.
+  $B719,$03 Jump to #R$A431.
+  $B723,$03 #REGbc=#N$FFF4.
+  $B729,$03 Jump to #R$A43E.
+  $B72C,$03 #REGbc=#N($0012,$04,$04).
+  $B72F,$02 Jump to #R$B726.
 
 c $B731
 B $B76D,$18
 
-c $B7A8
+c $B785
+  $B785,$03 Call #R$945C.
+
+  $B78E,$03 Call #R$A4E7.
+
+  $B793,$04 Write #N$81 to #REGix+#N$08.
+  $B797,$03 #REGa=#R$6080.
+  $B79A,$02,b$01 Set bit 0.
+  $B79C,$03 Write #REGa to #R$6080.
+  $B79F,$03 Call #R$B8BD.
+  $B7A2,$03 Call #R$B7A8.
+  $B7A5,$03 Jump to #R$ABB4.
+
+c $B7A8 Handler: Bomb
+@ $B7A8 label=Handler_Bomb
+R $B7A8 IX Animation object
+N $B7A8 Animate the sprite.
+  $B7A8,$03 #REGa=#REGix+#N$00.
+  $B7AB,$01 Increment #REGa by one.
+N $B7AC The bomb has four frames of animation.
+  $B7AC,$02,b$01 Keep only bits 0-1.
+N $B7AE With sprite IDs beginning from #N$EC.
+  $B7AE,$02 #REGa=#REGa+#N$EC.
+  $B7B0,$03 Write #REGa back to #REGix+#N$00.
+  $B7B3,$03 #REGa=#REGix+#N$07.
+  $B7B6,$02,b$01
+  $B7B8,$03 Write #REGa back to #REGix+#N$07.
+  $B7BB,$01 Return.
+
+c $B7BC
+  $B7BC,$03 Call #R$945C.
+
+  $B81E,$03 Call #R$B6AE.
+
+  $B828,$03 Call #R$B854.
+
+  $B82E,$03 Call #R$B16F.
+  $B831,$05 Write #N$01 to #R$6195.
+N $B836 Destroying the alien base adds #N$3000 points.
+  $B836,$03 #REGbc=#N$3000.
+  $B839,$03 Call #R$899C.
+
+  $B87D,$01 Return.
 
 c $B87E
+  $B87E,$03 #REGa=#R$6078.
+  $B883,$03 #REGhl=#R$BCA9.
+
+  $B888,$02 #REGa=#N$57.
+  $B88A,$01 Write #REGa to #REGhl.
+  $B88B,$01 Increment #REGhl by one.
+  $B88C,$01 Write #REGa to #REGhl.
+  $B88D,$01 Increment #REGhl by one.
+  $B88E,$02 Write #N$47 to #REGhl.
+  $B890,$01 Return.
+  $B891,$02 #REGa=#N$57.
+  $B893,$02 Write #N$47 to #REGhl.
+  $B895,$01 Increment #REGhl by one.
+  $B896,$01 Write #REGa to #REGhl.
+  $B897,$01 Increment #REGhl by one.
+  $B898,$01 Write #REGa to #REGhl.
+  $B899,$01 Return.
 
 c $B89A
+  $B89A,$03 Decrease #REGix+#N$11 by one.
+  $B89D,$01 Return if the result is not zero.
+  $B89E,$03 #REGa=#REGix+#N$12.
+  $B8A1,$03 Write #REGa to #REGix+#N$11.
+  $B8A4,$03 Increment #REGix+#N$06 by one.
+  $B8A7,$01 Return.
 
 c $B8A8 Sounds: Laser Beam
 @ $B8A8 label=SoundsLaserBeam
   $B8B3,$01 Return.
 
-c $B8B4
+c $B8B4 Sounds: Laser Missile Hit
+@ $B8B4 label=SoundsLaserMissileHit
+  $B8B4,$02 #REGc=#N$38 (pitch).
+@ $B8B6 label=SoundsLaserMissileHit_Loop
+  $B8B6,$03 Call #R$B8DA.
+  $B8B9,$03 Decrease duration by one and loop back to #R$B8B6 until duration is zero.
   $B8BC,$01 Return.
 
 c $B8BD
+  $B8BD,$02 #REGd=#N$20 (duration).
+  $B8BF,$02 #REGc=#N$50 (pitch).
   $B8C1,$02 Jump to #R$B8CD.
 
 c $B8C3
+  $B8C3,$02 #REGd=#N$30 (duration).
+  $B8C5,$02 #REGc=#N$40 (pitch).
   $B8C7,$02 Jump to #R$B8CD.
 
 c $B8C9 Sounds: Pickup Item
@@ -1648,6 +2535,8 @@ E $B8C9 View the equivalent code in;
   $B8D3,$01 Return.
 
 c $B8D4
+  $B8D4,$02 #REGd=#N$10 (duration).
+  $B8D6,$02 #REGc=#N$60 (pitch).
   $B8D8,$02 Jump to #R$B8CD.
 
 c $B8DA Play square wave sound
@@ -1668,21 +2557,76 @@ c $B8F2
 c $B8FF
 
 c $B918
+
 c $B922
+E $B922 Continue on to #R$B92D.
+  $B922,$03 Decrease #REGix+#N$03 by one.
+  $B925,$02 Jump to #R$B94B if zero.
+  $B927,$03 #REGc=#REGix+#N$03 (duration).
+  $B92A,$03 #REGd=#REGix+#N$02 (pitch).
+
+c $B92D Play Wave Sequence
+@ $B92D label=PlayWaveSequence
+R $B92D C Duration of wave
+R $B92D D Number of times to repeat
+E $B92D View the equivalent code in;
+. #LIST
+. { #SABREWULF$BF6D }
+. LIST#
+  $B92D,$03 Call #R$B8DA.
+  $B930,$01 Decrease #REGd by one.
+  $B931,$02 Jump to #R$B92D until #REGd is zero.
+  $B933,$01 Return.
+
 c $B934
+  $B934,$03 Decrease #REGix+#N$01 by one.
+  $B937,$02 Jump to #R$B94B if zero.
+N $B939 Create an offset in #REGbc.
+  $B939,$03 #REGc=#REGix+#N$01.
+  $B93C,$02 #REGb=#N$00.
+  $B93E,$03 #REGl=#REGix+#N$02.
+  $B941,$03 #REGh=#REGix+#N$03.
+  $B944,$01 #REGhl=#REGhl+#REGbc.
+  $B945,$01 #REGc=#REGhl (duration).
+  $B946,$03 #REGd=#REGix+#N$04 (pitch).
+  $B949,$02 Jump to #R$B92D.
+
+c $B94B Sound: Finish Effect
+@ $B94B label=SoundEffect_Finish
+E $B94B View the equivalent code in;
+. #LIST
+. { #JETPAC$6839 }
+. LIST#
+N $B94B Set frequency to zero.
+  $B94B,$04 Write #N$00 to #REGix+#N$00.
+  $B94F,$01 Return.
 
 c $B950
+R $B950 HL Source address
+R $B950 DE Destination address
+R $B950 BC Number of bytes to copy
+  $B950,$03 #REGhl=#R$B95C.
+  $B953,$03 #REGde=#R$6060.
+  $B956,$03 #REGbc=#N($0008,$04,$04).
+  $B959,$02 Copy #N$08 bytes from #REGhl to #REGde.
+  $B95B,$01 Return.
 B $B95C,$08
 B $B964,$08
 B $B96C,$07
 
-c $B973
+N $B973
+  $B973,$03 #REGhl=#R$B978.
+  $B976,$02 Jump to #R$B953.
 B $B978
 
-c $B986
+N $B986
+  $B986,$03 #REGhl=#R$B98B.
+  $B989,$02 Jump to #R$B953.
 B $B98B
 
-c $B9A1
+N $B9A1
+  $B9A1,$03 #REGhl=#R$B9A6.
+  $B9A4,$02 Jump to #R$B953.
 B $B9A6
 
 c $B9BC
@@ -1700,6 +2644,7 @@ b $B9D2
   $BA0F
   $BA1D
   $BA2A
+  $BA2D
   $BA35
 
 w $BA9E
@@ -1708,6 +2653,8 @@ w $BAA4
   $BAA4,$04,$02
 
 b $BAA8
+
+w $BABE
 
 w $BAC0 Jetman Sprite Table
 E $BAC0 View the equivalent code in;
@@ -1719,39 +2666,35 @@ E $BAC0 View the equivalent code in;
 . { #TRANZAM$0000 }
 . LIST#
 @ $BAC0 label=JetmanSpritesTable
-  $BAC0,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BAC0) / 2)).
+  $BAC0,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
 L $BAC0,$02,$11
 
 w $BAE2 Rover Graphics Table
 @ $BAE2 label=RoverGraphicsTable
-  $BAE2,$02 Graphic ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BAE2) / 2)).
+  $BAE2,$02 Graphic ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
 L $BAE2,$02,$18
 
 w $BB12 Sprite Table
 @ $BB12 label=SpritesTable
-  $BB12,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BB12) / 2)) #SPRITENAME((#PC - $BB12) / 2).
+  $BB12,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
 L $BB12,$02,$3D
 
 w $BB8C Graphics Table
 @ $BB8C label=GraphicsTable
-  $BB8C,$02 Graphic ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BB8C) / 2)).
-L $BB8C,$02,$09
+  $BB8C,$02 Graphic ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
+L $BB8C,$02,$85
 
-w $BB9E Attribute Table?
-@ $BB9E label=AttributeTable
-  $BB9E,$02 Graphic ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BB9E) / 2)).
-L $BB9E,$02,$09
-
-w $BBB0 Graphics Table 2
-@ $BBB0 label=GraphicsTable2
-  $BBB0,$02 Graphic ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $BBB0) / 2)).
-L $BBB0,$02,$09
+w $BC96 Sprite Table 2
+  $BC96,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
+L $BC96,$02,$04
 
 b $BC9E
 
+b $BCA9
+
 b $BCBC Sprite: None
-  $BCBC,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BCBD,$01
+  $BCBC,$01 Width = #N(#PEEK(#PC)) bytes.
+  $BCBD,$01 Height = #N(#PEEK(#PC)) pixels.
 
 b $BCBE Sprite: Jetman Walking
 N $BCBE Walking left frame 1.
@@ -2146,37 +3089,71 @@ b $D976 Sprite: Platform
   $D976,$01 Height = #N(#PEEK(#PC)) pixels.
   $D977,$10,$02 #SPRITE$04(platform)
 
-b $D987 Frame 8
+b $D987 Sprite: Missile Launcher
+E $D987 #UDGTABLE(default) { #UDGARRAY*missile-launcher-01,15;missile-launcher-02;missile-launcher-03;missile-launcher-04;missile-launcher-05;missile-launcher-06;missile-launcher-07;missile-launcher-08;missile-launcher-09;missile-launcher-0A;missile-launcher-0B;missile-launcher-0C;missile-launcher-0D;missile-launcher-0E;missile-launcher-0F;missile-launcher-10(missile-launcher) } UDGTABLE#
+N $D987 Frame 1.
+  $D987,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D988,$40,$02 #JETMAN$6F(missile-launcher-01*)
 
-b $D9C8
+N $D9C8 Frame 2.
+  $D9C8,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D9C9,$40,$02 #JETMAN$70(missile-launcher-02*)
 
-b $DA09
+N $DA09 Frame 3.
+  $DA09,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DA0A,$40,$02 #JETMAN$71(missile-launcher-03*)
 
-b $DA4A
+N $DA4A Frame 4.
+  $DA4A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DA4B,$40,$02 #JETMAN$72(missile-launcher-04*)
 
-b $DA8B
+N $DA8B Frame 5.
+  $DA8B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DA8C,$40,$02 #JETMAN$73(missile-launcher-05*)
 
-b $DACC
+N $DACC Frame 6.
+  $DACC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DACD,$40,$02 #JETMAN$74(missile-launcher-06*)
 
-b $DB0D
+N $DB0D Frame 7.
+  $DB0D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DB0E,$40,$02 #JETMAN$75(missile-launcher-07*)
 
-b $DB4E
+N $DB4E Frame 8.
+  $DB4E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DB4F,$40,$02 #JETMAN$76(missile-launcher-08*)
 
-b $DB8F
+N $DB8F Frame 9.
+  $DB8F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DB90,$40,$02 #JETMAN$77(missile-launcher-09*)
 
-b $DBD0
+N $DBD0 Frame 10.
+  $DBD0,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DBD1,$40,$02 #JETMAN$78(missile-launcher-0A*)
 
-b $DC11
+N $DC11 Frame 11.
+  $DC11,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DC12,$40,$02 #JETMAN$79(missile-launcher-0B*)
 
-b $DC52
+N $DC52 Frame 12.
+  $DC52,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DC53,$40,$02 #JETMAN$7A(missile-launcher-0C*)
 
-b $DC93
+N $DC93 Frame 13.
+  $DC93,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DC94,$40,$02 #JETMAN$7B(missile-launcher-0D*)
 
-b $DCD4
+N $DCD4 Frame 14.
+  $DCD4,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DCD5,$40,$02 #JETMAN$7C(missile-launcher-0E*)
 
-b $DD15
+N $DD15 Frame 15.
+  $DD15,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DD16,$40,$02 #JETMAN$7D(missile-launcher-0F*)
 
-b $DD56
+N $DD56 Frame 16.
+  $DD56,$01 Height = #N(#PEEK(#PC)) pixels.
+  $DD57,$40,$02 #JETMAN$7E(missile-launcher-10*)
 
 b $DD97 UDG Graphics
 @ $DD97 label=UDG_Tiles
@@ -2198,138 +3175,451 @@ b $DF13 Graphic: Alien Base
 N $DF13 Frame 1.
   $DF13,$01 Width = #N(#PEEK(#PC)) bytes.
   $DF14,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DF15,$40,$04 #GRAPHIC$01(base-01)
+  $DF15,$40,$04 #GRAPHIC$67(base-01)
 
 N $DF55 Frame 2.
   $DF55,$01 Width = #N(#PEEK(#PC)) bytes.
   $DF56,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DF57,$50,$05 #GRAPHIC$02(base-02)
+  $DF57,$50,$05 #GRAPHIC$68(base-02)
 
 N $DFA7 Frame 3.
   $DFA7,$01 Width = #N(#PEEK(#PC)) bytes.
   $DFA8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DFA9,$50,$05 #GRAPHIC$03(base-03)
+  $DFA9,$50,$05 #GRAPHIC$69(base-03)
 
 N $DFF9 Frame 4.
   $DFF9,$01 Width = #N(#PEEK(#PC)) bytes.
   $DFFA,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DFFB,$50,$05 #GRAPHIC$04(base-04)
+  $DFFB,$50,$05 #GRAPHIC$6A(base-04)
 
 N $E04B Frame 5.
   $E04B,$01 Width = #N(#PEEK(#PC)) bytes.
   $E04C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E04D,$50,$05 #GRAPHIC$05(base-05)
+  $E04D,$50,$05 #GRAPHIC$6B(base-05)
 
 N $E09D Frame 6.
   $E09D,$01 Width = #N(#PEEK(#PC)) bytes.
   $E09E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E09F,$50,$05 #GRAPHIC$06(base-06)
+  $E09F,$50,$05 #GRAPHIC$6C(base-06)
 
 N $E0EF Frame 7.
   $E0EF,$01 Width = #N(#PEEK(#PC)) bytes.
   $E0F0,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E0F1,$50,$05 #GRAPHIC$07(base-07)
+  $E0F1,$50,$05 #GRAPHIC$6D(base-07)
 
 N $E141 Frame 8.
   $E141,$01 Width = #N(#PEEK(#PC)) bytes.
   $E142,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E143,$50,$05 #GRAPHIC$08(base-08)
+  $E143,$50,$05 #GRAPHIC$6E(base-08)
 
-b $E193
+b $E193 Sprite: Missile
+N $E193 Frame Up-Left.
+  $E193,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E194,$20,$02 #JETMAN$7F(missile-up-left)
 
-b $E1B4
+N $E1B4 Frame Up-Right.
+  $E1B4,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E1B5,$20,$02 #JETMAN$83(missile-up-right)
 
-b $E23B
+b $E1D5
+N $E1D5
+  $E1D5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E1D6,$32,$02 #JETMAN$9A(9a)
 
-b $E256
+N $E208
+  $E208,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E209,$32,$02
 
-b $E271
+b $E23B Sprite: Missile Flame
+N $E23B Frame 1.
+  $E23B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E23C,$1A,$02 #JETMAN$81(missile-flame-01*)
 
-b $E28C
+N $E256 Frame 2.
+  $E256,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E257,$1A,$02 #JETMAN$82(missile-flame-02*)
 
-b $E2A7
+N $E271 Frame 3.
+  $E271,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E272,$1A,$02 #JETMAN$85(missile-flame-03*)
 
-b $E2C8
+N $E28C Frame 4.
+  $E28C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E28D,$1A,$02 #JETMAN$86(missile-flame-04*)
 
-b $E2E9
+b $E2A7 Sprite: The Block
+N $E2A7 Frame 1.
+  $E2A7,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E2A8,$20,$02 #JETMAN$87(block-01)
 
-b $E306
+N $E2C8 Frame 2.
+  $E2C8,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E2C9,$20,$02 #JETMAN$88(block-02)
 
-b $E31F
+N $E2E9 Frame 3.
+  $E2E9,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E2EA,$1C,$02 #JETMAN$89(block-03)
 
-b $E338
+N $E306 Frame 4.
+  $E306,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E307,$18,$02 #JETMAN$8A(block-04)
 
-b $E351
+N $E31F Frame 5.
+  $E31F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E320,$18,$02 #JETMAN$8B(block-05)
 
-b $E36E
+N $E338 Frame 6.
+  $E338,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E339,$18,$02 #JETMAN$8C(block-06)
 
-b $E533
+N $E351 Frame 7.
+  $E351,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E352,$1C,$02 #JETMAN$8D(block-07)
 
-b $E55E
+N $E36E Frame 8.
+  $E36E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E36F,$20,$02 #JETMAN$8E(block-08)
 
-b $E589
+b $E38F Sprite: Missile
+N $E38F Left frame.
+  $E38F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E390,$12,$02 #JETMAN$9F(missile-left)
 
-b $E5B4
+N $E3A2 Right frame.
+  $E3A2,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E3A3,$12,$02 #JETMAN$A3(missile-right)
 
-b $EB67 Graphic: Explosion
-N $EB67 Frame 1.
+b $E3B5 Sprite: Missile Flame
+N $E3B5 Left frame 1.
+  $E3B5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E3B6,$14,$02 #JETMAN$A1(missile-flame-left-01)
+
+N $E3CA Left frame 2.
+  $E3CA,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E3CB,$10,$02 #JETMAN$A2(missile-flame-left-02)
+
+N $E3DB Right frame 1.
+  $E3DB,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E3DC,$14,$02 #JETMAN$A5(missile-flame-right-01)
+
+N $E3F0 Right frame 2.
+  $E3F0,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E3F1,$10,$02 #JETMAN$A6(missile-flame-right-02)
+
+b $E401
+  $E401,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E402,$32,$02 #JETMAN$97(thing97)
+
+N $E434
+  $E434,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E435,$32,$02 #JETMAN$98(thing98)
+
+N $E467
+  $E467,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E468,$32,$02 #JETMAN$99(thing99)
+
+b $E49A
+  $E49A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E49B,$32,$02 #JETMAN$9B(thing3)
+
+N $E4CD
+  $E4CD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E4CE,$32,$02 #JETMAN$9C(thing4)
+
+N $E500
+  $E500,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E501,$32,$02 #JETMAN$9D(thing5)
+
+b $E533 Sprite: Alien Base Plasma
+E $E533 #UDGTABLE(default) { #UDGARRAY*alien-base-plasma-01,5;alien-base-plasma-01;alien-base-plasma-02;alien-base-plasma-03;alien-base-plasma-04;alien-base-plasma-04;alien-base-plasma-03;alien-base-plasma-02(alien-base-plasma) } UDGTABLE#
+N $E533 Frame 1.
+  $E533,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E534,$2A,$02 #JETMAN$90(alien-base-plasma-01*)
+
+N $E55E Frame 2.
+  $E55E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E55F,$2A,$02 #JETMAN$91(alien-base-plasma-02*)
+
+N $E589 Frame 3.
+  $E589,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E58A,$2A,$02 #JETMAN$92(alien-base-plasma-03*)
+
+N $E5B4 Frame 4.
+  $E5B4,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E5B5,$2A,$02 #JETMAN$93(alien-base-plasma-04*)
+
+b $E5DF
+  $E5DF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E5E0,$18,$02 #JETMAN$BF(thing1)
+
+N $E5F8
+  $E5F8,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E5F9,$20,$02 #JETMAN$C0(thing2)
+
+N $E619
+  $E619,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E61A,$20,$02 #JETMAN$C1(thingc1)
+
+N $E63A
+  $E63A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E63B,$20,$02 #JETMAN$C2(thingc2)
+
+N $E65B
+  $E65B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E65C,$20,$02 #JETMAN$C3(thingc3)
+
+N $E67C
+  $E67C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E67D,$20,$02 #JETMAN$C4(thingc4)
+
+N $E69D
+  $E69D,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E69E,$20,$02 #JETMAN$C5(thingc5)
+
+N $E6BE
+  $E6BE,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E6BF,$20,$02 #JETMAN$C6(thingc6)
+
+N $E6DF
+  $E6DF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E6E0,$08,$02 #JETMAN$C7(thingc7)
+
+b $E6E8
+  $E6E8,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E6E9,$08,$02 #JETMAN$C8(thingc8)
+
+b $E6F1
+
+b $E6FA
+
+b $E703 Sprite: Saturn
+E $E703 #UDGTABLE(default) { #UDGARRAY*saturn-01,15;saturn-02;saturn-03;saturn-04;saturn-05;saturn-06;saturn-07;saturn-08;saturn-09;saturn-0A;saturn-0B;saturn-0C;saturn-0D(saturn) } UDGTABLE#
+N $E703 Frame 1.
+  $E703,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E704,$18,$02 #JETMAN$CB(saturn-01*)
+
+N $E71C Frame 2.
+  $E71C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E71D,$18,$02 #JETMAN$CC(saturn-02*)
+
+N $E735 Frame 3.
+  $E735,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E736,$18,$02 #JETMAN$CD(saturn-03*)
+
+N $E74E Frame 4.
+  $E74E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E74F,$18,$02 #JETMAN$CE(saturn-04*)
+
+N $E767 Frame 5.
+  $E767,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E768,$18,$02 #JETMAN$CF(saturn-05*)
+
+N $E780 Frame 6.
+  $E780,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E781,$18,$02 #JETMAN$D0(saturn-06*)
+
+N $E799 Frame 7.
+  $E799,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E79A,$18,$02 #JETMAN$D1(saturn-07*)
+
+N $E7B2 Frame 8.
+  $E7B2,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E7B3,$18,$02 #JETMAN$D4(saturn-08*)
+
+N $E7CB Frame 9.
+  $E7CB,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E7CC,$18,$02 #JETMAN$D5(saturn-09*)
+
+N $E7E4 Frame 10.
+  $E7E4,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E7E5,$18,$02 #JETMAN$D6(saturn-0A*)
+
+N $E7FD Frame 11.
+  $E7FD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E7FE,$18,$02 #JETMAN$D7(saturn-0B*)
+
+N $E816 Frame 12.
+  $E816,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E817,$18,$02 #JETMAN$D8(saturn-0C*)
+
+N $E82F Frame 13.
+  $E82F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E830,$18,$02 #JETMAN$D9(saturn-0D*)
+
+b $E848 Sprite: Spinner
+N $E848 Frame 1.
+  $E848,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E849,$26,$02 #JETMAN$AF(spinner-01)
+
+N $E86F Frame 2.
+  $E86F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E870,$26,$02 #JETMAN$B0(spinner-02)
+
+N $E896 Frame 3.
+  $E896,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E897,$24,$02 #JETMAN$B1(spinner-03)
+
+N $E8BB Frame 4.
+  $E8BB,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E8BC,$1E,$02 #JETMAN$B2(spinner-04)
+
+N $E8DA Frame 5.
+  $E8DA,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E8DB,$16,$02 #JETMAN$B3(spinner-05)
+
+N $E8F1 Frame 6.
+  $E8F1,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E8F2,$1E,$02 #JETMAN$B4(spinner-06)
+
+b $E910 Sprite: Jetman Falling
+E $E910 #UDGTABLE(default) { #UDGARRAY*jetman-falling-01,15;jetman-falling-02;jetman-falling-03;jetman-falling-04(jetman-falling) } UDGTABLE#
+N $E910 Frame 1.
+  $E910,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E911,$22,$02 #JETMAN$DB(jetman-falling-01*)
+
+N $E933 Frame 2.
+  $E933,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E934,$22,$02 #JETMAN$DC(jetman-falling-02*)
+
+N $E956 Frame 3.
+  $E956,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E957,$22,$02 #JETMAN$DD(jetman-falling-03*)
+
+N $E979 Frame 4.
+  $E979,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E97A,$22,$02 #JETMAN$DE(jetman-falling-04*)
+
+b $E99C Sprite: Shooter
+E $E99C #UDGTABLE(default) { #UDGARRAY*shooter-01,15;shooter-02;shooter-03;shooter-04;shooter-05;shooter-06;shooter-07(shooter) } UDGTABLE#
+D $E99C Shooters appear from level 8 onwards.
+N $E99C Frame 1.
+  $E99C,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E99D,$20,$02 #JETMAN$B7(shooter-01*)
+
+N $E9BD Frame 2.
+  $E9BD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E9BE,$20,$02 #JETMAN$B8(shooter-02*)
+
+N $E9DE Frame 3.
+  $E9DE,$01 Height = #N(#PEEK(#PC)) pixels.
+  $E9DF,$20,$02 #JETMAN$B9(shooter-03*)
+
+N $E9FF Frame 4.
+  $E9FF,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA00,$20,$02 #JETMAN$BA(shooter-04*)
+
+N $EA20 Frame 5.
+  $EA20,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA21,$20,$02 #JETMAN$BB(shooter-05*)
+
+N $EA41 Frame 6.
+  $EA41,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA42,$20,$02 #JETMAN$BC(shooter-06*)
+
+N $EA62 Frame 7.
+  $EA62,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA63,$20,$02 #JETMAN$BD(shooter-07*)
+
+b $EA83
+  $EA83,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA84,$04,$01
+
+b $EA88
+  $EA88,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA89,$04,$01
+
+b $EA8D Graphic: Explosion
+N $EA8D Frame 1.
+  $EA8D,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EA8E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EA8F,$1C,$02 #GRAPHIC$DF(explosion-01)
+
+N $EAAB Frame 2.
+  $EAAB,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EAAC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EAAD,$40,$04 #GRAPHIC$E0(explosion-02)
+
+N $EAED Frame 3.
+  $EAED,$01 Width = #N(#PEEK(#PC)) bytes.
+  $EAEE,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EAEF,$78,$05 #GRAPHIC$E1(explosion-03)
+
+N $EB67 Frame 4.
   $EB67,$01 Width = #N(#PEEK(#PC)) bytes.
   $EB68,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EB69,$E0,$07 #GRAPHIC$07(explosion-01)
+  $EB69,$E0,$07 #GRAPHIC$E2(explosion-04)
 
-N $EC49 Frame 2.
-  $EC49,$01 Width = #N(#PEEK(#PC)) bytes.
-  $EC4A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC4B,$1F,$07 #GRAPHIC$07(explosion-02)
+N $EC49 Frame 5.
+  $EC49,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EC4A,$20,$02 #JETMAN$E3(explosion-05)
 
-N $EC6A Frame 3.
-  $EC6A,$01 Width = #N(#PEEK(#PC)) bytes.
-  $EC6B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC6C,$1F,$07 #GRAPHIC$07(explosion-03)
+N $EC6A Frame 6.
+  $EC6A,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EC6B,$20,$02 #JETMAN$E4(explosion-06)
 
-N $EC8B Frame 4.
-  $EC8B,$01 Width = #N(#PEEK(#PC)) bytes.
-  $EC8C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC8D,$1F,$07 #GRAPHIC$07(explosion-04)
+N $EC8B Frame 7.
+  $EC8B,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EC8C,$20,$02 #JETMAN$E5(explosion-07)
 
-N $ECAC Frame 5.
-  $ECAC,$01 Width = #N(#PEEK(#PC)) bytes.
-  $ECAD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECAE,$1F,$07 #GRAPHIC$07(explosion-05)
+N $ECAC Frame 8.
+  $ECAC,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ECAD,$20,$02 #JETMAN$E6(explosion-08)
 
-N $ECCD Frame 6.
-  $ECCD,$01 Width = #N(#PEEK(#PC)) bytes.
-  $ECCE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECCF,$1F,$07 #GRAPHIC$07(explosion-06)
+N $ECCD Frame 9.
+  $ECCD,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ECCE,$20,$02 #JETMAN$E7(explosion-09)
 
-N $ECEE Frame 7.
-  $ECEE,$01 Width = #N(#PEEK(#PC)) bytes.
-  $ECEF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECF0,$1F,$07 #GRAPHIC$07(explosion-07)
+N $ECEE Frame 10.
+  $ECEE,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ECEF,$20,$02 #JETMAN$E8(explosion-0a)
 
-N $ED0F Frame 8.
-  $ED0F,$01 Width = #N(#PEEK(#PC)) bytes.
-  $ED10,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED11,$1F,$07 #GRAPHIC$07(explosion-08)
+N $ED0F Frame 11.
+  $ED0F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ED10,$20,$02 #JETMAN$E9(explosion-0b)
 
-N $ED30 Frame 9.
-  $ED30,$01 Width = #N(#PEEK(#PC)) bytes.
-  $ED31,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED32,$1F,$07 #GRAPHIC$07(explosion-09)
+N $ED30 Frame 12.
+  $ED30,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ED31,$20,$02 #JETMAN$EA(explosion-0c)
+
+b $ED51 Sprite: Bouncing Wheel
+E $ED51 #UDGTABLE(default) { #UDGARRAY*bouncing-wheel-01,5;bouncing-wheel-02;bouncing-wheel-03;bouncing-wheel-04;bouncing-wheel-05;bouncing-wheel-06(bouncing-wheel) } UDGTABLE#
+N $ED51 Frame 1.
+  $ED51,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ED52,$20,$02 #JETMAN$A7(bouncing-wheel-01*)
+
+N $ED72 Frame 2.
+  $ED72,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ED73,$20,$02 #JETMAN$A8(bouncing-wheel-02*)
+
+N $ED93 Frame 3.
+  $ED93,$01 Height = #N(#PEEK(#PC)) pixels.
+  $ED94,$20,$02 #JETMAN$A9(bouncing-wheel-03*)
+
+N $EDB4 Frame 4.
+  $EDB4,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EDB5,$20,$02 #JETMAN$AA(bouncing-wheel-04*)
+
+N $EDD5 Frame 5.
+  $EDD5,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EDD6,$20,$02 #JETMAN$AB(bouncing-wheel-05*)
+
+N $EDF6 Frame 6.
+  $EDF6,$01 Height = #N(#PEEK(#PC)) pixels.
+  $EDF7,$20,$02 #JETMAN$AC(bouncing-wheel-06*)
 
 b $EE17 Sprite: Bomb
-E $EE17 #UDGTABLE(default) { #UDGARRAY*bomb-01,25;bomb-02;bomb-03(bomb) } UDGTABLE#
+E $EE17 #UDGTABLE(default) { #UDGARRAY*bomb-01,25;bomb-02;bomb-03;bomb-02(bomb) } UDGTABLE#
 N $EE17 Frame 1.
   $EE17,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EE18,$20,$02 #SPRITE$07(bomb-01*)
+  $EE18,$20,$02 #JETMAN$EB(bomb-01*)
 
 N $EE38 Frame 2.
   $EE38,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EE39,$20,$02 #SPRITE$07(bomb-02*)
+  $EE39,$20,$02 #JETMAN$EC(bomb-02*)
 
 N $EE59 Frame 3.
   $EE59,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EE5A,$20,$02 #SPRITE$07(bomb-03*)
+  $EE5A,$20,$02 #JETMAN$ED(bomb-03*)
 
 b $EE7A
 
@@ -2348,40 +3638,46 @@ N $F248 Remember that #N$00 is the "Top Score" so #N$01 is 2nd place.
   $F248,$05 If the highscore position is #N$01 jump to #R$F261.
 N $F24D And #N$02 is 3rd...
   $F24D,$05 If the highscore position is #N$02 jump to #R$F266.
-N $F252 Anything higher will use "TH".
+N $F252 Anything higher will use the "TH" suffix messaging.
 @ $F252 label=NewHighScore_Suffix_TH
   $F252,$03 #REGde=#R$F274.
 @ $F255 label=NewHighScore_Suffix_Print
   $F255,$03 Call #R$8A11.
-N $F258 Handle displaying "HIGHEST SCORE".
+N $F258 Handle displaying "HIGHEST SCORE" messaging.
 @ $F258 label=NewHighScore_Suffix_Highest
   $F258,$03 #REGhl=#N$8060 (screen location).
   $F25B,$03 #REGde=#R$F287.
   $F25E,$03 Jump to #R$8A11.
-N $F261 Handle displaying the "ND" suffix.
+N $F261 Handle displaying the "ND" suffix messaging.
 @ $F261 label=NewHighScore_Suffix_ND
   $F261,$03 #REGde=#R$F281.
   $F264,$02 Jump to #R$F255.
-N $F266 Handle displaying the "RD" suffix.
+N $F266 Handle displaying the "RD" suffix messaging.
 @ $F266 label=NewHighScore_Suffix_RD
   $F266,$03 #REGde=#R$F284.
   $F269,$02 Jump to #R$F255.
-N $F26B Handle displaying "TOP SCORE".
+N $F26B Handle displaying "TOP SCORE" messaging.
 @ $F26B label=NewHighScore_Suffix_Top_Score
   $F26B,$03 #REGhl=#N$8058 (screen location).
   $F26E,$03 #REGde=#R$F277.
   $F271,$03 Jump to #R$8A11.
-N $F274 High Score Suffixes
+
+t $F274 Messaging: High Score Suffixes
+N $F274 #FONT:(TH)addr=$D347,attr=$46(th)
 @ $F274 label=HighScore_Suffixes_TH
-T $F274,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "TH".
+  $F274,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "TH".
+N $F277 #FONT:(TOP SCORE)addr=$D347,attr=$46(top-score)
 @ $F277 label=HighScore_Top_Score
-T $F277,$0A,h$01,$08:$01 Attribute: #N(#PEEK(#PC)) + "TOP SCORE".
+  $F277,$0A,h$01,$08:$01 Attribute: #N(#PEEK(#PC)) + "TOP SCORE".
+N $F281 #FONT:(ND)addr=$D347,attr=$46(nd)
 @ $F281 label=HighScore_Suffixes_ND
-T $F281,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "ND".
+  $F281,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "ND".
+N $F284 #FONT:(RD)addr=$D347,attr=$46(rd)
 @ $F284 label=HighScore_Suffixes_RD
-T $F284,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "RD".
+  $F284,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "RD".
+N $F287 #FONT:(HIGHEST SCORE)addr=$D347,attr=$46(highest-score)
 @ $F287 label=HighScore_Highest_Score
-T $F287,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "HIGHEST SCORE".
+  $F287,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "HIGHEST SCORE".
 
 c $F295
 
@@ -2460,12 +3756,18 @@ N $F430 Handle printing "HALL OF FAME" messaging.
   $F4A1,$01 Flip the bits.
   $F4A2,$02,b$01 Keep only bits 0-4.
   $F4A9,$01 Return.
-T $F4AA,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "THE ULTIMATE ".
-T $F4B8,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "HALL OF FAME ".
+
+t $F4AA Messaging: Hall Of Fame
+N $F4AA #FONT:(THE ULTIMATE)addr=$D347,attr=$45(ultimate)
+@ $F4AA label=String_Ultimate
+  $F4AA,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "THE ULTIMATE ".
+N $F4B8 #FONT:(HALL OF FAME)addr=$D347,attr=$45(hall-of-fame)
+@ $F4B8 label=String_HallOfFame
+  $F4B8,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "HALL OF FAME ".
 
 c $F4C6 Handler: High Score Messaging
 @ $F4C6 label=HighScoreMessaging
-N $F4C6 Handle printing "CONGRATULATIONS PLAYER ...".
+N $F4C6 Handle printing "CONGRATULATIONS PLAYER ..." messaging.
   $F4C6,$03 #REGde=#R$F4FB.
   $F4C9,$03 #REGhl=#N$6020 (screen location).
   $F4CC,$03 Call #R$8A11.
@@ -2473,12 +3775,12 @@ N $F4CF Handle printing the player "number".
   $F4CF,$05 #REGa=#R$5E71 + #N$30 (convert to ASCII).
   $F4D4,$03 #REGhl=#N$489B (screen buffer location).
   $F4D7,$03 Call #R$89EF.
-N $F4DA Handle printing "TODAYS".
+N $F4DA Handle printing "TODAYS" messaging.
   $F4DA,$03 #REGde=#R$F513.
   $F4DD,$03 #REGhl=#N$7068 (screen location).
   $F4E0,$03 Call #R$8A11.
   $F4E3,$03 Call #R$F232.
-N $F4E6 Handle printing "JETMAN WILL REMEMBER YOU".
+N $F4E6 Handle printing "JETMAN WILL REMEMBER YOU" messaging.
   $F4E6,$03 #REGde=#R$F51B.
   $F4E9,$03 #REGhl=#N$9020 (screen location).
   $F4EC,$03 Call #R$8A11.
@@ -2489,13 +3791,17 @@ N $F4E6 Handle printing "JETMAN WILL REMEMBER YOU".
   $F4F6,$02 Increment #REGl by two.
   $F4F8,$02 Decrease counter by one and loop back to #R$F4F4 until counter is zero.
   $F4FA,$01 Return.
-N $F4FB Messaging.
-@ $F4FB label=HighScoreMessaging_Congrats
-T $F4FB,$18,h$01,$16:$01 Attribute: #N(#PEEK(#PC)) + "CONGRATULATIONS PLAYER ".
-@ $F513 label=HighScoreMessaging_Todays
-T $F513,$08,h$01,$06:$01 Attribute: #N(#PEEK(#PC)) + "TODAYS ".
-@ $F51B label=HighScoreMessaging_Remember
-T $F51B,$1A,h$01,$18:$01 Attribute: #N(#PEEK(#PC)) + "JETMAN WILL REMEMBER YOU ".
+
+t $F4FB Messaging: High Score
+N $F4FB #FONT:(CONGRATULATIONS PLAYER X)addr=$D347,attr=$47(congratulations)
+@ $F4FB label=String_Congratulations
+  $F4FB,$18,h$01,$16:$01 Attribute: #N(#PEEK(#PC)) + "CONGRATULATIONS PLAYER ".
+N $F513 #FONT:(TODAYS)addr=$D347,attr=$47(todays)
+@ $F513 label=String_Todays
+  $F513,$08,h$01,$06:$01 Attribute: #N(#PEEK(#PC)) + "TODAYS ".
+N $F51B #FONT:(JETMAN WILL REMEMBER YOU)addr=$D347,attr=$47(remember)
+@ $F51B label=String_Remember
+  $F51B,$1A,h$01,$18:$01 Attribute: #N(#PEEK(#PC)) + "JETMAN WILL REMEMBER YOU ".
 
 c $F535
   $F535,$01 #REGa=#REGb.
@@ -2520,9 +3826,10 @@ c $F535
   $F56B,$02 Decrease counter by one and loop back to #R$F568 until counter is zero.
   $F56D,$01 Return.
 
-c $F56E
-  $F56E,$03 #REGde=#N$5E5F.
-  $F571,$03 #REGhl=#N$5E62.
+c $F56E Handler: New High Score
+@ $F56E label=NewHighScore
+  $F56E,$03 #REGde=#R$5E5F.
+  $F571,$03 #REGhl=#R$5E62.
   $F57B,$02 Jump to #R$F58F.
 
 c $F5E3
@@ -2558,8 +3865,19 @@ c $F5EC
   $F627,$01 Return.
 
 c $F628
+  $F628,$02 #REGa=#N$4C.
+  $F62A,$03 Call #R$F632.
+  $F62D,$03 Call #R$F658.
+  $F630,$02 Jump to #R$F61A.
 
-c $F632
+N $F632
+  $F632,$02 Stash #REGhl and #REGaf on the stack.
+  $F634,$03 Call #R$851E.
+  $F637,$01 Restore #REGaf from the stack.
+  $F638,$03 Call #R$89EF.
+  $F63B,$01 Restore #REGhl from the stack.
+  $F63C,$04 #REGl=#REGl+#N$08.
+  $F640,$01 Return.
 
 c $F641
   $F641,$07 If #R$5EA0 is not #N$FF, jump to #R$F649.
@@ -2577,11 +3895,25 @@ c $F641
   $F660,$02 Jump to #R$F649.
 
 c $F662
+  $F662,$03 Call #R$8506.
+  $F665,$02 #REGb=#N$03.
+  $F667,$03 Write #N$44 (attribute byte) to #REGhl.
+@ $F669 label=Write44_Loop
+  $F66A,$01 Increment #REGhl by one.
+  $F66B,$02 Decrease counter by one and loop back to #R$F669 until counter is zero.
+  $F66D,$01 Return.
 
 b $F66E Terrain UDGs
 @ $F66E label=TerrainUDGs
-  $F66E,$08 #UDG(#PC)
-L $F66E,$08,$90
+  $F66E,$08 #UDG(#PC,attr=$43)
+L $F66E,$08,$0C
+
+b $F6CE Default Terrain Data
+@ $F6CE label=TerrainData_Default
+  $F6CE,$10 #FOR($00,$0F)||n|#UDG($F66E + #PEEK(#PC + n) * $08,attr=$43)||
+L $F6CE,$10,$40
+
+b $FACE
 
 i $FC00
 
