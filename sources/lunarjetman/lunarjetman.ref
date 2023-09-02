@@ -28,6 +28,10 @@ Graphics
 DataTables
 Reference
 
+[Index:Graphics:Graphics]
+Graphics
+Sprites
+
 [Index:Reference:Reference]
 Changelog
 Bugs
@@ -65,10 +69,24 @@ LIST#
 </div>
 
 [Expand]
+#DEF(#COLOUR(id)
+  #MAP(id)(
+    UNKNOWN,
+    0:BLACK,
+    1:BLUE,
+    2:RED,
+    3:MAGENTA,
+    4:GREEN,
+    5:CYAN,
+    6:YELLOW,
+    7:WHITE
+  )
+)
+
 #DEF(#CONVERTFF(addr)
-  #LET(length=#PEEK($addr) * #PEEK($addr + $01))
+  #LET(length=#PEEK($addr)*#PEEK($addr+$01))
   #FOR($00,{length})||n|
-    #IF(#PEEK($02 + $addr + n) == $FF)(#POKES(($02 + $addr + n), $47))
+    #IF(#PEEK($02+$addr+n)==$FF)(#POKES(($02+$addr+n),$47))
   ||
 )
 
@@ -84,26 +102,24 @@ LIST#
   #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr+($height*$width)-$width)-$01-($width*$08)@$attrtable-($attrtable+$width*$height){$00,$04*($08-($height%$08)),$04*$width*$08,$04*$height}($fname)
 )
 
-#DEF(#JETMAN(id)(fname)
-  #SPRITE($id,$BAC0)($fname)
-)
-
 #DEF(#ROVER(id)(fname)
   #GRAPHIC($id,$BAE2)($fname)
 )
 
-#DEF(#GRAPHIC(id,base=$BAC0,attributes=0)(fname)
+#DEF(#GRAPHIC(id,base=$BAC0,attrbase=$00)(fname)
   #LET(offset=$id*$02)
   #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
   #LET(width=#PEEK({addr}))
   #LET(height=#PEEK({addr}+$01))
-  #IF($attributes>$00)||
-    #LET(attr=#PEEK($A64E+{offset})+#PEEK($A64E+{offset}+$01)*$100)
+  #IF($attrbase>$00)||
+    #LET(attr=#PEEK($attrbase+{offset})+#PEEK($A64E+{offset}+$01)*$100)
+    #LET(awidth=#PEEK({attr}))
+    #LET(aheight=#PEEK({attr}+$01))
     #PUSHS
     #CONVERTFF({attr})
     #IF({height}%$08)(
-      #COLOURCROP({addr}+$02,{width},{height},{attr}+$02)($fname),
-      #COLOURNOCROP({addr}+$02,{width},{height},{attr}+$02)($fname)
+      #COLOURCROP({addr}+$02,{width},{height},{attr}+$02,{awidth},{aheight})($fname),
+      #COLOURNOCROP({addr}+$02,{width},{height},{attr}+$02,{awidth},{aheight})($fname)
     )
     #POPS
   |
@@ -114,7 +130,7 @@ LIST#
   ||
 )
 
-#DEF(#SPRITE(id,base=$BB12)(fname)
+#DEF(#SPRITE(id,base=$BAC0)(fname)
   #LET(offset=$id*$02)
   #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
   #LET(height=#PEEK({addr}))#IF({height}%$08)(#CROP({addr}+$01,$02,$07)($fname),#NOCROP({addr}+$01,$02,$07)($fname)))
@@ -122,47 +138,47 @@ LIST#
 #DEF(#SPRITENAME(id)
   #MAP($id)(
     ?,
-    0:"Jetman: Flying left frame 1",
-    1:"Jetman: Flying left frame 2",
-    2:"Jetman: Flying left frame 1",
-    3:"Jetman: Flying left frame 2",
-    4:"Jetman: Flying right frame 1",
-    5:"Jetman: Flying right frame 2",
-    6:"Jetman: Flying right frame 1",
-    7:"Jetman: Flying right frame 2",
-    8:"Jetman: Walking left frame 1",
-    9:"Jetman: Walking left frame 2",
-    10:"Jetman: Walking left frame 3",
-    11:"Jetman: Walking left frame 2",
-    12:"Jetman: Walking right frame 1",
-    13:"Jetman: Walking right frame 2",
-    14:"Jetman: Walking right frame 3",
-    15:"Jetman: Walking right frame 2",
+    0:"Jetman: Flying Left Frame 1",
+    1:"Jetman: Flying Left Frame 2",
+    2:"Jetman: Flying Left Frame 1",
+    3:"Jetman: Flying Left Frame 2",
+    4:"Jetman: Flying Right Frame 1",
+    5:"Jetman: Flying Right Frame 2",
+    6:"Jetman: Flying Right Frame 1",
+    7:"Jetman: Flying Right Frame 2",
+    8:"Jetman: Walking Left Frame 1",
+    9:"Jetman: Walking Left Frame 2",
+    10:"Jetman: Walking Left Frame 3",
+    11:"Jetman: Walking Left Frame 2",
+    12:"Jetman: Walking Right Frame 1",
+    13:"Jetman: Walking Right Frame 2",
+    14:"Jetman: Walking Right Frame 3",
+    15:"Jetman: Walking Right Frame 2",
     16:"None",
-    17:"Lunar Rover: Left frame 4",
-    18:"Lunar Rover: Left frame 3",
-    19:"Lunar Rover: Left frame 2",
-    20:"Lunar Rover: Left frame 1",
-    21:"Lunar Rover: Right frame 1",
-    22:"Lunar Rover: Right frame 2",
-    23:"Lunar Rover: Right frame 3",
-    24:"Lunar Rover: Right frame 4",
-    25:"Lunar Rover: Left frame 1",
-    26:"Lunar Rover: Left frame 5",
-    27:"Lunar Rover: Left frame 6",
-    28:"Lunar Rover: Left frame 7",
-    29:"Lunar Rover: Left frame 8",
-    30:"Lunar Rover: Left frame 9",
-    31:"Lunar Rover: Left frame 10",
-    32:"Lunar Rover: Left frame 11",
-    33:"Lunar Rover: Right frame 1",
-    34:"Lunar Rover: Right frame 5",
-    35:"Lunar Rover: Right frame 6",
-    36:"Lunar Rover: Right frame 7",
-    37:"Lunar Rover: Right frame 8",
-    38:"Lunar Rover: Right frame 9",
-    39:"Lunar Rover: Right frame 10",
-    40:"Lunar Rover: Right frame 11",
+    17:"Lunar Rover: Left Frame 4",
+    18:"Lunar Rover: Left Frame 3",
+    19:"Lunar Rover: Left Frame 2",
+    20:"Lunar Rover: Left Frame 1",
+    21:"Lunar Rover: Right Frame 1",
+    22:"Lunar Rover: Right Frame 2",
+    23:"Lunar Rover: Right Frame 3",
+    24:"Lunar Rover: Right Frame 4",
+    25:"Lunar Rover: Left Frame 1",
+    26:"Lunar Rover: Left Frame 5",
+    27:"Lunar Rover: Left Frame 6",
+    28:"Lunar Rover: Left Frame 7",
+    29:"Lunar Rover: Left Frame 8",
+    30:"Lunar Rover: Left Frame 9",
+    31:"Lunar Rover: Left Frame 10",
+    32:"Lunar Rover: Left Frame 11",
+    33:"Lunar Rover: Right Frame 1",
+    34:"Lunar Rover: Right Frame 5",
+    35:"Lunar Rover: Right Frame 6",
+    36:"Lunar Rover: Right Frame 7",
+    37:"Lunar Rover: Right Frame 8",
+    38:"Lunar Rover: Right Frame 9",
+    39:"Lunar Rover: Right Frame 10",
+    40:"Lunar Rover: Right Frame 11",
     41:"Teleporter: Frame 1",
     42:"Teleporter: Frame 2",
     43:"Teleporter: Frame 3",
@@ -185,32 +201,36 @@ LIST#
     60:"Turret: Right Frame 6",
     61:"Turret: Right Frame 7",
     62:"Turret: Right Frame 8",
-    63:"Spinning Top Alien: Frame 1",
-    64:"Spinning Top Alien: Frame 2",
-    65:"Spinning Top Alien: Frame 3",
-    66:"Spinning Top Alien: Frame 4",
-    67:"Spinning Top Alien: Frame 5",
-    68:"Spinning Top Alien: Frame 6",
-    69:"Spinning Top Alien: Frame 7",
-    70:"Spinning Top Alien: Frame 8",
-    71:"Blob: Frame 1",
-    72:"Blob: Frame 2",
-    73:"Blob: Frame 3",
-    74:"Blob: Frame 4",
-    75:"Blob: Frame 5",
-    76:"Blob: Frame 6",
-    77:"Blob: Frame 7",
-    78:"Blob: Frame 8",
-    79:"Blob: Frame 9",
-    80:"Blob: Frame 10",
-    81:"Blob: Frame 11",
-    82:"Blob: Frame 12",
-    83:"Blob: Frame 13",
-    84:"Blob: Frame 14",
-    85:"Blob: Frame 15",
-    86:"Blob: Frame 16",
+    63:"Mr Magnetic Brella: Frame 1",
+    64:"Mr Magnetic Brella: Frame 2",
+    65:"Mr Magnetic Brella: Frame 3",
+    66:"Mr Magnetic Brella: Frame 4",
+    67:"Mr Magnetic Brella: Frame 5",
+    68:"Mr Magnetic Brella: Frame 6",
+    69:"Mr Magnetic Brella: Frame 7",
+    70:"Mr Magnetic Brella: Frame 8",
+    71:"The Blob: Frame 1",
+    72:"The Blob: Frame 2",
+    73:"The Blob: Frame 3",
+    74:"The Blob: Frame 4",
+    75:"The Blob: Frame 5",
+    76:"The Blob: Frame 6",
+    77:"The Blob: Frame 7",
+    78:"The Blob: Frame 8",
+    79:"Meteor: Frame 1",
+    80:"Meteor: Frame 2",
+    81:"Meteor: Frame 3",
+    82:"Meteor: Frame 4",
+    83:"Meteor: Frame 5",
+    84:"Meteor: Frame 6",
+    85:"Meteor: Frame 7",
+    86:"Meteor: Frame 8",
     87:"None",
     88:"None",
+    89:?,
+    90:?,
+    100:?,
+    101:?,
     102:"None",
     103:"Alien Base: Frame 1",
     104:"Alien Base: Frame 2",
@@ -291,6 +311,26 @@ LIST#
     187:"Shooter: Frame 5",
     188:"Shooter: Frame 6",
     189:"Shooter: Frame 7",
+    203:"Saturn: Frame 1",
+    204:"Saturn: Frame 2",
+    205:"Saturn: Frame 3",
+    206:"Saturn: Frame 4",
+    207:"Saturn: Frame 5",
+    208:"Saturn: Frame 6",
+    209:"Saturn: Frame 7",
+    210:"Saturn: Frame 2",
+    211:"Saturn: Frame 1",
+    212:"Saturn: Frame 8",
+    213:"Saturn: Frame 9",
+    214:"Saturn: Frame 10",
+    215:"Saturn: Frame 11",
+    216:"Saturn: Frame 12",
+    217:"Saturn: Frame 13",
+    218:"Saturn: Frame 8",
+    219:"Jetman: Falling Frame 1",
+    220:"Jetman: Falling Frame 2",
+    221:"Jetman: Falling Frame 3",
+    222:"Jetman: Falling Frame 4",
     235:"Bomb: Frame 1",
     236:"Bomb: Frame 2",
     237:"Bomb: Frame 3",

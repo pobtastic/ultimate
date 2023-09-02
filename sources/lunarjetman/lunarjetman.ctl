@@ -2656,7 +2656,8 @@ b $BAA8
 
 w $BABE
 
-w $BAC0 Jetman Sprite Table
+w $BAC0 Sprite Table
+@ $BAC0 label=SpritesTable
 E $BAC0 View the equivalent code in;
 . #LIST
 . { #ATICATAC$A4BE }
@@ -2665,28 +2666,8 @@ E $BAC0 View the equivalent code in;
 . { #PSSST$761A }
 . { #TRANZAM$0000 }
 . LIST#
-@ $BAC0 label=JetmanSpritesTable
   $BAC0,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
-L $BAC0,$02,$11
-
-w $BAE2 Rover Graphics Table
-@ $BAE2 label=RoverGraphicsTable
-  $BAE2,$02 Graphic ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
-L $BAE2,$02,$18
-
-w $BB12 Sprite Table
-@ $BB12 label=SpritesTable
-  $BB12,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
-L $BB12,$02,$3D
-
-w $BB8C Graphics Table
-@ $BB8C label=GraphicsTable
-  $BB8C,$02 Graphic ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
-L $BB8C,$02,$85
-
-w $BC96 Sprite Table 2
-  $BC96,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
-L $BC96,$02,$04
+L $BAC0,$02,$EF
 
 b $BC9E
 
@@ -2699,44 +2680,44 @@ b $BCBC Sprite: None
 b $BCBE Sprite: Jetman Walking
 N $BCBE Walking left frame 1.
   $BCBE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BCBF,$2C,$02 #JETMAN$08(jetman-walk-left-01)
+  $BCBF,$2C,$02 #SPRITE$08(jetman-walk-left-01*)
 
 N $BCEB Walking left frame 2.
   $BCEB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BCEC,$2C,$02 #JETMAN$09(jetman-walk-left-02)
+  $BCEC,$2C,$02 #SPRITE$09(jetman-walk-left-02*)
 
 N $BD18 Walking left frame 3.
   $BD18,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BD19,$2C,$02 #JETMAN$0A(jetman-walk-left-03)
+  $BD19,$2C,$02 #SPRITE$0A(jetman-walk-left-03*)
 
 N $BD45 Walking right frame 1.
   $BD45,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BD46,$2C,$02 #JETMAN$0C(jetman-walk-right-01)
+  $BD46,$2C,$02 #SPRITE$0C(jetman-walk-right-01*)
 
 N $BD72 Walking right frame 2.
   $BD72,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BD73,$2C,$02 #JETMAN$0D(jetman-walk-right-02)
+  $BD73,$2C,$02 #SPRITE$0D(jetman-walk-right-02*)
 
 N $BD9F Walking right frame 3.
   $BD9F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BDA0,$2C,$02 #JETMAN$0E(jetman-walk-right-03)
+  $BDA0,$2C,$02 #SPRITE$0E(jetman-walk-right-03*)
 
 b $BDCC Sprite: Jetman Flying
 N $BDCC Flying left frame 1.
   $BDCC,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BDCD,$30,$02 #JETMAN$00(jetman-fly-left-01)
+  $BDCD,$30,$02 #SPRITE$00(jetman-fly-left-01)
 
 N $BDFD Flying left frame 2.
   $BDFD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BDFE,$30,$02 #JETMAN$01(jetman-fly-left-02)
+  $BDFE,$30,$02 #SPRITE$01(jetman-fly-left-02)
 
 N $BE2E Flying right frame 1.
   $BE2E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BE2F,$30,$02 #JETMAN$04(jetman-fly-right-01)
+  $BE2F,$30,$02 #SPRITE$04(jetman-fly-right-01)
 
 N $BE5F Flying right frame 2.
   $BE5F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $BE60,$30,$02 #JETMAN$05(jetman-fly-right-02)
+  $BE60,$30,$02 #SPRITE$05(jetman-fly-right-02)
 
 b $BE90 Graphic: Moon Rover
 N $BE90 Right frame 1.
@@ -2787,12 +2768,12 @@ N $C4F4 Right frame 9.
 N $C5CE Right frame 10.
   $C5CE,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $C5CF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C5D0,$D8,$08 #ROVER$16(rover-right-0A)
+  $C5D0,$D8,$08 #ROVER$16(rover-right-10)
 
 N $C6A8 Right frame 11.
   $C6A8,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $C6A9,$01 Height = #N(#PEEK(#PC)) pixels.
-  $C6AA,$D8,$08 #ROVER$17(rover-right-0B)
+  $C6AA,$D8,$08 #ROVER$17(rover-right-11)
 
 N $C782 Left frame 1.
   $C782,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
@@ -2842,30 +2823,30 @@ N $CDE6 Left frame 9.
 N $CEC0 Left frame 10.
   $CEC0,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $CEC1,$01 Height = #N(#PEEK(#PC)) pixels.
-  $CEC2,$D8,$08 #ROVER$0E(rover-left-0A)
+  $CEC2,$D8,$08 #ROVER$0E(rover-left-10)
 
 N $CF9A Left frame 11.
   $CF9A,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $CF9B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $CF9C,$D8,$08 #ROVER$0F(rover-left-0B)
+  $CF9C,$D8,$08 #ROVER$0F(rover-left-11)
 
 b $D074 Sprite: Teleporter
 E $D074 #UDGTABLE(default) { #UDGARRAY*teleporter-01,15;teleporter-02;teleporter-03;teleporter-04(teleporter) } UDGTABLE#
 N $D074 Frame 1.
   $D074,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D075,$36,$02 #SPRITE$00(teleporter-01*)
+  $D075,$36,$02 #SPRITE$29(teleporter-01*)
 
 N $D0AB Frame 2.
   $D0AB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D0AC,$36,$02 #SPRITE$01(teleporter-02*)
+  $D0AC,$36,$02 #SPRITE$2A(teleporter-02*)
 
 N $D0E2 Frame 3.
   $D0E2,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D0E3,$36,$02 #SPRITE$02(teleporter-03*)
+  $D0E3,$36,$02 #SPRITE$2B(teleporter-03*)
 
 N $D119 Frame 4.
   $D119,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D11A,$36,$02 #SPRITE$03(teleporter-04*)
+  $D11A,$36,$02 #SPRITE$2C(teleporter-04*)
 
 b $D150
 b $D151 The UDG for the lives icon
@@ -2879,281 +2860,290 @@ b $D160
 b $D167 Sprite: Turret
 N $D167 Left frame 1.
   $D167,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D168,$16,$02 #SPRITE$06(turret-left-01)
+  $D168,$16,$02 #SPRITE$2F(turret-left-01)
 
 N $D17E Left frame 2.
   $D17E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D17F,$16,$02 #SPRITE$07(turret-left-02)
+  $D17F,$16,$02 #SPRITE$30(turret-left-02)
 
 N $D195 Left frame 3.
   $D195,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D196,$18,$02 #SPRITE$08(turret-left-03)
+  $D196,$18,$02 #SPRITE$31(turret-left-03)
 
 N $D1AE Left frame 4.
   $D1AE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D1AF,$1C,$02 #SPRITE$09(turret-left-04)
+  $D1AF,$1C,$02 #SPRITE$32(turret-left-04)
 
 N $D1CB Left frame 5.
   $D1CB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D1CC,$1E,$02 #SPRITE$0A(turret-left-05)
+  $D1CC,$1E,$02 #SPRITE$33(turret-left-05)
 
 N $D1EA Left frame 6.
   $D1EA,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D1EB,$22,$02 #SPRITE$0B(turret-left-06)
+  $D1EB,$22,$02 #SPRITE$34(turret-left-06)
 
 N $D20D Left frame 7.
   $D20D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D20E,$24,$02 #SPRITE$0C(turret-left-07)
+  $D20E,$24,$02 #SPRITE$35(turret-left-07)
 
 N $D232 Left frame 8.
   $D232,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D233,$24,$02 #SPRITE$0D(turret-left-08)
+  $D233,$24,$02 #SPRITE$36(turret-left-08)
 
 N $D257 Right frame 1.
   $D257,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D258,$16,$02 #SPRITE$0E(turret-right-01)
+  $D258,$16,$02 #SPRITE$37(turret-right-01)
 
 N $D26E Right frame 2.
   $D26E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D26F,$16,$02 #SPRITE$0F(turret-right-02)
+  $D26F,$16,$02 #SPRITE$38(turret-right-02)
 
 N $D285 Right frame 3.
   $D285,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D286,$18,$02 #SPRITE$10(turret-right-03)
+  $D286,$18,$02 #SPRITE$39(turret-right-03)
 
 N $D29E Right frame 4.
   $D29E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D29F,$1C,$02 #SPRITE$11(turret-right-04)
+  $D29F,$1C,$02 #SPRITE$3A(turret-right-04)
 
 N $D2BB Right frame 5.
   $D2BB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D2BC,$1E,$02 #SPRITE$12(turret-right-05)
+  $D2BC,$1E,$02 #SPRITE$3B(turret-right-05)
 
 N $D2DA Right frame 6.
   $D2DA,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D2DB,$22,$02 #SPRITE$13(turret-right-06)
+  $D2DB,$22,$02 #SPRITE$3C(turret-right-06)
 
 N $D2FD Right frame 7.
   $D2FD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D2FE,$24,$02 #SPRITE$14(turret-right-07)
+  $D2FE,$24,$02 #SPRITE$3D(turret-right-07)
 
 N $D322 Right frame 8.
   $D322,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D323,$24,$02 #SPRITE$15(turret-right-08)
+  $D323,$24,$02 #SPRITE$3E(turret-right-08)
 
 b $D347 Main Font
 @ $D347 label=MainFont
   $D347,$08 #UDG(#PC)
 L $D347,$08,$4B
 
-b $D59F Sprite: Blob
+b $D59F Sprite: The Blob
+D $D59F The Blob appears from level 4 onwards.
 N $D59F Frame 1.
   $D59F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D5A0,$20,$02 #SPRITE$1E(blob-01)
+  $D5A0,$20,$02 #SPRITE$47(blob-01*)
 
 N $D5C0 Frame 2.
   $D5C0,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D5C1,$20,$02 #SPRITE$1F(blob-02)
+  $D5C1,$20,$02 #SPRITE$48(blob-02*)
 
 N $D5E1 Frame 3.
   $D5E1,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D5E2,$20,$02 #SPRITE$20(blob-03)
+  $D5E2,$20,$02 #SPRITE$49(blob-03*)
 
 N $D602 Frame 4.
   $D602,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D603,$1C,$02 #SPRITE$21(blob-04)
+  $D603,$1C,$02 #SPRITE$4A(blob-04*)
 
 N $D61F Frame 5.
   $D61F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D620,$18,$02 #SPRITE$22(blob-05)
+  $D620,$18,$02 #SPRITE$4B(blob-05*)
 
 N $D638 Frame 6.
   $D638,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D639,$1C,$02 #SPRITE$23(blob-06)
+  $D639,$1C,$02 #SPRITE$4C(blob-06*)
 
 N $D655 Frame 7.
   $D655,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D656,$20,$02 #SPRITE$24(blob-07)
+  $D656,$20,$02 #SPRITE$4D(blob-07*)
 
 N $D676 Frame 8.
   $D676,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D677,$20,$02 #SPRITE$25(blob-08)
+  $D677,$20,$02 #SPRITE$4E(blob-08*)
 
-N $D697 Frame 9.
+b $D697 Sprite: Meteor
+D $D697 Meteors appear from level 1 onwards.
+N $D697 Frame 1.
   $D697,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D698,$20,$02 #SPRITE$26(blob-09)
+  $D698,$20,$02 #SPRITE$4F(meteor-01*)
 
-N $D6B8 Frame 10.
+N $D6B8 Frame 2.
   $D6B8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D6B9,$20,$02 #SPRITE$27(blob-10)
+  $D6B9,$20,$02 #SPRITE$50(meteor-02*)
 
-N $D6D9 Frame 11.
+N $D6D9 Frame 3.
   $D6D9,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D6DA,$20,$02 #SPRITE$28(blob-11)
+  $D6DA,$20,$02 #SPRITE$51(meteor-03*)
 
-N $D6FA Frame 12.
+N $D6FA Frame 4.
   $D6FA,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D6FB,$20,$02 #SPRITE$29(blob-12)
+  $D6FB,$20,$02 #SPRITE$52(meteor-04*)
 
-N $D71B Frame 13.
+N $D71B Frame 5.
   $D71B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D71C,$20,$02 #SPRITE$2A(blob-13)
+  $D71C,$20,$02 #SPRITE$53(meteor-05*)
 
-N $D73C Frame 14.
+N $D73C Frame 6.
   $D73C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D73D,$20,$02 #SPRITE$2B(blob-14)
+  $D73D,$20,$02 #SPRITE$54(meteor-06*)
 
-N $D75D Frame 15.
+N $D75D Frame 7.
   $D75D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D75E,$20,$02 #SPRITE$2C(blob-15)
+  $D75E,$20,$02 #SPRITE$55(meteor-07*)
 
-N $D77E Frame 16.
+N $D77E Frame 8.
   $D77E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D77F,$20,$02 #SPRITE$2D(blob-16)
+  $D77F,$20,$02 #SPRITE$56(meteor-08*)
 
 b $D79F Sprite: Sparkle
+D $D79F Sparkles appear from level 3 onwards.
 N $D79F Frame 1.
   $D79F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D7A0,$12,$02 #SPRITE$32(sparkle-01)
+  $D7A0,$12,$02 #SPRITE$5B(sparkle-01*)
 
 N $D7B2 Frame 2.
   $D7B2,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D7B3,$18,$02 #SPRITE$33(sparkle-02)
+  $D7B3,$18,$02 #SPRITE$5C(sparkle-02*)
 
 N $D7CB Frame 3.
   $D7CB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D7CC,$20,$02 #SPRITE$34(sparkle-03)
+  $D7CC,$20,$02 #SPRITE$5D(sparkle-03*)
 
 N $D7EC Frame 4.
   $D7EC,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D7ED,$20,$02 #SPRITE$35(sparkle-04)
+  $D7ED,$20,$02 #SPRITE$5E(sparkle-04*)
 
 N $D80D Frame 5.
   $D80D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D80E,$20,$02 #SPRITE$36(sparkle-05)
+  $D80E,$20,$02 #SPRITE$5F(sparkle-05*)
 
 N $D82E Frame 6.
   $D82E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D82F,$20,$02 #SPRITE$37(sparkle-06)
+  $D82F,$20,$02 #SPRITE$60(sparkle-06*)
 
-N $D84F Frame 6.
+N $D84F Frame 7.
   $D84F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D850,$20,$02 #SPRITE$38(sparkle-07)
+  $D850,$20,$02 #SPRITE$61(sparkle-07*)
 
 b $D870
   $D870,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D871 #SPRITE$2E(test-2E)
+  $D871 #CROP(#PC,$01,$07)(thing57)
 
 b $D876
   $D876,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D877 #SPRITE$2F(test-2F)
+  $D877 #CROP(#PC,$01,$07)(thing58)
 
 b $D87E
+  $D87E,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D87F #CROP(#PC,$01,$07)(thing63)
 
 b $D888
+  $D888,$01 Height = #N(#PEEK(#PC)) pixels.
+  $D889 #CROP(#PC,$01,$07)(thing64)
 
-b $D894 Sprite: Spinning Top Alien
+b $D894 Sprite: Mr Magnetic Brella
+D $D894 Mr Magnetic Brella appears from level 6 onwards.
 N $D894 Frame 1.
   $D894,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D895,$20,$02 #SPRITE$16(top-01)
+  $D895,$20,$02 #SPRITE$3F(brella-01*)
 
 N $D8B5 Frame 2.
   $D8B5,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D8B6,$1E,$02 #SPRITE$17(top-02)
+  $D8B6,$1E,$02 #SPRITE$40(brella-02*)
 
 N $D8D4 Frame 3.
   $D8D4,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D8D5,$1C,$02 #SPRITE$18(top-03)
+  $D8D5,$1C,$02 #SPRITE$41(brella-03*)
 
 N $D8F1 Frame 4.
   $D8F1,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D8F2,$1A,$02 #SPRITE$19(top-04)
+  $D8F2,$1A,$02 #SPRITE$42(brella-04*)
 
 N $D90C Frame 5.
   $D90C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D90D,$18,$02 #SPRITE$1A(top-05)
+  $D90D,$18,$02 #SPRITE$43(brella-05*)
 
 N $D925 Frame 6.
   $D925,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D926,$16,$02 #SPRITE$1B(top-06)
+  $D926,$16,$02 #SPRITE$44(brella-06*)
 
 N $D93C Frame 7.
   $D93C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D93D,$1A,$02 #SPRITE$1C(top-07)
+  $D93D,$1A,$02 #SPRITE$45(brella-07*)
 
 N $D957 Frame 8.
   $D957,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D958,$1E,$02 #SPRITE$1D(top-08)
+  $D958,$1E,$02 #SPRITE$46(brella-08*)
 
 b $D976 Sprite: Platform
   $D976,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D977,$10,$02 #SPRITE$04(platform)
+  $D977,$10,$02 #SPRITE$2D(platform)
 
 b $D987 Sprite: Missile Launcher
-E $D987 #UDGTABLE(default) { #UDGARRAY*missile-launcher-01,15;missile-launcher-02;missile-launcher-03;missile-launcher-04;missile-launcher-05;missile-launcher-06;missile-launcher-07;missile-launcher-08;missile-launcher-09;missile-launcher-0A;missile-launcher-0B;missile-launcher-0C;missile-launcher-0D;missile-launcher-0E;missile-launcher-0F;missile-launcher-10(missile-launcher) } UDGTABLE#
+E $D987 #UDGTABLE(default) { #UDGARRAY*missile-launcher-01,15;missile-launcher-02;missile-launcher-03;missile-launcher-04;missile-launcher-05;missile-launcher-06;missile-launcher-07;missile-launcher-08;missile-launcher-09;missile-launcher-10;missile-launcher-11;missile-launcher-12;missile-launcher-13;missile-launcher-14;missile-launcher-15;missile-launcher-16(missile-launcher) } UDGTABLE#
 N $D987 Frame 1.
   $D987,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D988,$40,$02 #JETMAN$6F(missile-launcher-01*)
+  $D988,$40,$02 #SPRITE$6F(missile-launcher-01*)
 
 N $D9C8 Frame 2.
   $D9C8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $D9C9,$40,$02 #JETMAN$70(missile-launcher-02*)
+  $D9C9,$40,$02 #SPRITE$70(missile-launcher-02*)
 
 N $DA09 Frame 3.
   $DA09,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DA0A,$40,$02 #JETMAN$71(missile-launcher-03*)
+  $DA0A,$40,$02 #SPRITE$71(missile-launcher-03*)
 
 N $DA4A Frame 4.
   $DA4A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DA4B,$40,$02 #JETMAN$72(missile-launcher-04*)
+  $DA4B,$40,$02 #SPRITE$72(missile-launcher-04*)
 
 N $DA8B Frame 5.
   $DA8B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DA8C,$40,$02 #JETMAN$73(missile-launcher-05*)
+  $DA8C,$40,$02 #SPRITE$73(missile-launcher-05*)
 
 N $DACC Frame 6.
   $DACC,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DACD,$40,$02 #JETMAN$74(missile-launcher-06*)
+  $DACD,$40,$02 #SPRITE$74(missile-launcher-06*)
 
 N $DB0D Frame 7.
   $DB0D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DB0E,$40,$02 #JETMAN$75(missile-launcher-07*)
+  $DB0E,$40,$02 #SPRITE$75(missile-launcher-07*)
 
 N $DB4E Frame 8.
   $DB4E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DB4F,$40,$02 #JETMAN$76(missile-launcher-08*)
+  $DB4F,$40,$02 #SPRITE$76(missile-launcher-08*)
 
 N $DB8F Frame 9.
   $DB8F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DB90,$40,$02 #JETMAN$77(missile-launcher-09*)
+  $DB90,$40,$02 #SPRITE$77(missile-launcher-09*)
 
 N $DBD0 Frame 10.
   $DBD0,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DBD1,$40,$02 #JETMAN$78(missile-launcher-0A*)
+  $DBD1,$40,$02 #SPRITE$78(missile-launcher-10*)
 
 N $DC11 Frame 11.
   $DC11,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DC12,$40,$02 #JETMAN$79(missile-launcher-0B*)
+  $DC12,$40,$02 #SPRITE$79(missile-launcher-11*)
 
 N $DC52 Frame 12.
   $DC52,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DC53,$40,$02 #JETMAN$7A(missile-launcher-0C*)
+  $DC53,$40,$02 #SPRITE$7A(missile-launcher-12*)
 
 N $DC93 Frame 13.
   $DC93,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DC94,$40,$02 #JETMAN$7B(missile-launcher-0D*)
+  $DC94,$40,$02 #SPRITE$7B(missile-launcher-13*)
 
 N $DCD4 Frame 14.
   $DCD4,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DCD5,$40,$02 #JETMAN$7C(missile-launcher-0E*)
+  $DCD5,$40,$02 #SPRITE$7C(missile-launcher-14*)
 
 N $DD15 Frame 15.
   $DD15,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DD16,$40,$02 #JETMAN$7D(missile-launcher-0F*)
+  $DD16,$40,$02 #SPRITE$7D(missile-launcher-15*)
 
 N $DD56 Frame 16.
   $DD56,$01 Height = #N(#PEEK(#PC)) pixels.
-  $DD57,$40,$02 #JETMAN$7E(missile-launcher-10*)
+  $DD57,$40,$02 #SPRITE$7E(missile-launcher-16*)
 
 b $DD97 UDG Graphics
 @ $DD97 label=UDG_Tiles
@@ -3215,16 +3205,16 @@ N $E141 Frame 8.
 b $E193 Sprite: Missile
 N $E193 Frame Up-Left.
   $E193,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E194,$20,$02 #JETMAN$7F(missile-up-left)
+  $E194,$20,$02 #SPRITE$7F(missile-up-left)
 
 N $E1B4 Frame Up-Right.
   $E1B4,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E1B5,$20,$02 #JETMAN$83(missile-up-right)
+  $E1B5,$20,$02 #SPRITE$83(missile-up-right)
 
 b $E1D5
 N $E1D5
   $E1D5,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E1D6,$32,$02 #JETMAN$9A(9a)
+  $E1D6,$32,$02 #SPRITE$9A(9a)
 
 N $E208
   $E208,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3233,292 +3223,295 @@ N $E208
 b $E23B Sprite: Missile Flame
 N $E23B Frame 1.
   $E23B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E23C,$1A,$02 #JETMAN$81(missile-flame-01*)
+  $E23C,$1A,$02 #SPRITE$81(missile-flame-01*)
 
 N $E256 Frame 2.
   $E256,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E257,$1A,$02 #JETMAN$82(missile-flame-02*)
+  $E257,$1A,$02 #SPRITE$82(missile-flame-02*)
 
 N $E271 Frame 3.
   $E271,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E272,$1A,$02 #JETMAN$85(missile-flame-03*)
+  $E272,$1A,$02 #SPRITE$85(missile-flame-03*)
 
 N $E28C Frame 4.
   $E28C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E28D,$1A,$02 #JETMAN$86(missile-flame-04*)
+  $E28D,$1A,$02 #SPRITE$86(missile-flame-04*)
 
 b $E2A7 Sprite: The Block
+D $E2A7 The Block appears from level 1 onwards.
 N $E2A7 Frame 1.
   $E2A7,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E2A8,$20,$02 #JETMAN$87(block-01)
+  $E2A8,$20,$02 #SPRITE$87(block-01)
 
 N $E2C8 Frame 2.
   $E2C8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E2C9,$20,$02 #JETMAN$88(block-02)
+  $E2C9,$20,$02 #SPRITE$88(block-02)
 
 N $E2E9 Frame 3.
   $E2E9,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E2EA,$1C,$02 #JETMAN$89(block-03)
+  $E2EA,$1C,$02 #SPRITE$89(block-03)
 
 N $E306 Frame 4.
   $E306,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E307,$18,$02 #JETMAN$8A(block-04)
+  $E307,$18,$02 #SPRITE$8A(block-04)
 
 N $E31F Frame 5.
   $E31F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E320,$18,$02 #JETMAN$8B(block-05)
+  $E320,$18,$02 #SPRITE$8B(block-05)
 
 N $E338 Frame 6.
   $E338,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E339,$18,$02 #JETMAN$8C(block-06)
+  $E339,$18,$02 #SPRITE$8C(block-06)
 
 N $E351 Frame 7.
   $E351,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E352,$1C,$02 #JETMAN$8D(block-07)
+  $E352,$1C,$02 #SPRITE$8D(block-07)
 
 N $E36E Frame 8.
   $E36E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E36F,$20,$02 #JETMAN$8E(block-08)
+  $E36F,$20,$02 #SPRITE$8E(block-08)
 
 b $E38F Sprite: Missile
 N $E38F Left frame.
   $E38F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E390,$12,$02 #JETMAN$9F(missile-left)
+  $E390,$12,$02 #SPRITE$9F(missile-left)
 
 N $E3A2 Right frame.
   $E3A2,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E3A3,$12,$02 #JETMAN$A3(missile-right)
+  $E3A3,$12,$02 #SPRITE$A3(missile-right)
 
 b $E3B5 Sprite: Missile Flame
 N $E3B5 Left frame 1.
   $E3B5,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E3B6,$14,$02 #JETMAN$A1(missile-flame-left-01)
+  $E3B6,$14,$02 #SPRITE$A1(missile-flame-left-01)
 
 N $E3CA Left frame 2.
   $E3CA,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E3CB,$10,$02 #JETMAN$A2(missile-flame-left-02)
+  $E3CB,$10,$02 #SPRITE$A2(missile-flame-left-02)
 
 N $E3DB Right frame 1.
   $E3DB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E3DC,$14,$02 #JETMAN$A5(missile-flame-right-01)
+  $E3DC,$14,$02 #SPRITE$A5(missile-flame-right-01)
 
 N $E3F0 Right frame 2.
   $E3F0,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E3F1,$10,$02 #JETMAN$A6(missile-flame-right-02)
+  $E3F1,$10,$02 #SPRITE$A6(missile-flame-right-02)
 
 b $E401
   $E401,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E402,$32,$02 #JETMAN$97(thing97)
+  $E402,$32,$02 #SPRITE$97(thing97)
 
 N $E434
   $E434,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E435,$32,$02 #JETMAN$98(thing98)
+  $E435,$32,$02 #SPRITE$98(thing98)
 
 N $E467
   $E467,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E468,$32,$02 #JETMAN$99(thing99)
+  $E468,$32,$02 #SPRITE$99(thing99)
 
 b $E49A
   $E49A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E49B,$32,$02 #JETMAN$9B(thing3)
+  $E49B,$32,$02 #SPRITE$9B(thing3)
 
 N $E4CD
   $E4CD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E4CE,$32,$02 #JETMAN$9C(thing4)
+  $E4CE,$32,$02 #SPRITE$9C(thing4)
 
 N $E500
   $E500,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E501,$32,$02 #JETMAN$9D(thing5)
+  $E501,$32,$02 #SPRITE$9D(thing5)
 
 b $E533 Sprite: Alien Base Plasma
 E $E533 #UDGTABLE(default) { #UDGARRAY*alien-base-plasma-01,5;alien-base-plasma-01;alien-base-plasma-02;alien-base-plasma-03;alien-base-plasma-04;alien-base-plasma-04;alien-base-plasma-03;alien-base-plasma-02(alien-base-plasma) } UDGTABLE#
 N $E533 Frame 1.
   $E533,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E534,$2A,$02 #JETMAN$90(alien-base-plasma-01*)
+  $E534,$2A,$02 #SPRITE$90(alien-base-plasma-01*)
 
 N $E55E Frame 2.
   $E55E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E55F,$2A,$02 #JETMAN$91(alien-base-plasma-02*)
+  $E55F,$2A,$02 #SPRITE$91(alien-base-plasma-02*)
 
 N $E589 Frame 3.
   $E589,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E58A,$2A,$02 #JETMAN$92(alien-base-plasma-03*)
+  $E58A,$2A,$02 #SPRITE$92(alien-base-plasma-03*)
 
 N $E5B4 Frame 4.
   $E5B4,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E5B5,$2A,$02 #JETMAN$93(alien-base-plasma-04*)
+  $E5B5,$2A,$02 #SPRITE$93(alien-base-plasma-04*)
 
 b $E5DF
   $E5DF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E5E0,$18,$02 #JETMAN$BF(thing1)
+  $E5E0,$18,$02 #SPRITE$BF(thing1)
 
 N $E5F8
   $E5F8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E5F9,$20,$02 #JETMAN$C0(thing2)
+  $E5F9,$20,$02 #SPRITE$C0(thing2)
 
 N $E619
   $E619,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E61A,$20,$02 #JETMAN$C1(thingc1)
+  $E61A,$20,$02 #SPRITE$C1(thingc1)
 
 N $E63A
   $E63A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E63B,$20,$02 #JETMAN$C2(thingc2)
+  $E63B,$20,$02 #SPRITE$C2(thingc2)
 
 N $E65B
   $E65B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E65C,$20,$02 #JETMAN$C3(thingc3)
+  $E65C,$20,$02 #SPRITE$C3(thingc3)
 
 N $E67C
   $E67C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E67D,$20,$02 #JETMAN$C4(thingc4)
+  $E67D,$20,$02 #SPRITE$C4(thingc4)
 
 N $E69D
   $E69D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E69E,$20,$02 #JETMAN$C5(thingc5)
+  $E69E,$20,$02 #SPRITE$C5(thingc5)
 
 N $E6BE
   $E6BE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E6BF,$20,$02 #JETMAN$C6(thingc6)
+  $E6BF,$20,$02 #SPRITE$C6(thingc6)
 
 N $E6DF
   $E6DF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E6E0,$08,$02 #JETMAN$C7(thingc7)
+  $E6E0,$08,$02 #SPRITE$C7(thingc7)
 
 b $E6E8
   $E6E8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E6E9,$08,$02 #JETMAN$C8(thingc8)
+  $E6E9,$08,$02 #SPRITE$C8(thingc8)
 
 b $E6F1
 
 b $E6FA
 
 b $E703 Sprite: Saturn
-E $E703 #UDGTABLE(default) { #UDGARRAY*saturn-01,15;saturn-02;saturn-03;saturn-04;saturn-05;saturn-06;saturn-07;saturn-08;saturn-09;saturn-0A;saturn-0B;saturn-0C;saturn-0D(saturn) } UDGTABLE#
+D $E703 Saturn appears from level 10 onwards.
+E $E703 #UDGTABLE(default) { #UDGARRAY*saturn-01,15;saturn-02;saturn-03;saturn-04;saturn-05;saturn-06;saturn-07;saturn-02;saturn-01;saturn-08;saturn-09;saturn-10;saturn-11;saturn-12;saturn-13;saturn-08(saturn) } UDGTABLE#
 N $E703 Frame 1.
   $E703,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E704,$18,$02 #JETMAN$CB(saturn-01*)
+  $E704,$18,$02 #SPRITE$CB(saturn-01*)
 
 N $E71C Frame 2.
   $E71C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E71D,$18,$02 #JETMAN$CC(saturn-02*)
+  $E71D,$18,$02 #SPRITE$CC(saturn-02*)
 
 N $E735 Frame 3.
   $E735,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E736,$18,$02 #JETMAN$CD(saturn-03*)
+  $E736,$18,$02 #SPRITE$CD(saturn-03*)
 
 N $E74E Frame 4.
   $E74E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E74F,$18,$02 #JETMAN$CE(saturn-04*)
+  $E74F,$18,$02 #SPRITE$CE(saturn-04*)
 
 N $E767 Frame 5.
   $E767,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E768,$18,$02 #JETMAN$CF(saturn-05*)
+  $E768,$18,$02 #SPRITE$CF(saturn-05*)
 
 N $E780 Frame 6.
   $E780,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E781,$18,$02 #JETMAN$D0(saturn-06*)
+  $E781,$18,$02 #SPRITE$D0(saturn-06*)
 
 N $E799 Frame 7.
   $E799,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E79A,$18,$02 #JETMAN$D1(saturn-07*)
+  $E79A,$18,$02 #SPRITE$D1(saturn-07*)
 
 N $E7B2 Frame 8.
   $E7B2,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E7B3,$18,$02 #JETMAN$D4(saturn-08*)
+  $E7B3,$18,$02 #SPRITE$D4(saturn-08*)
 
 N $E7CB Frame 9.
   $E7CB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E7CC,$18,$02 #JETMAN$D5(saturn-09*)
+  $E7CC,$18,$02 #SPRITE$D5(saturn-09*)
 
 N $E7E4 Frame 10.
   $E7E4,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E7E5,$18,$02 #JETMAN$D6(saturn-0A*)
+  $E7E5,$18,$02 #SPRITE$D6(saturn-10*)
 
 N $E7FD Frame 11.
   $E7FD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E7FE,$18,$02 #JETMAN$D7(saturn-0B*)
+  $E7FE,$18,$02 #SPRITE$D7(saturn-11*)
 
 N $E816 Frame 12.
   $E816,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E817,$18,$02 #JETMAN$D8(saturn-0C*)
+  $E817,$18,$02 #SPRITE$D8(saturn-12*)
 
 N $E82F Frame 13.
   $E82F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E830,$18,$02 #JETMAN$D9(saturn-0D*)
+  $E830,$18,$02 #SPRITE$D9(saturn-13*)
 
 b $E848 Sprite: Spinner
+D $E848 Spinner appears from level 2 onwards.
 N $E848 Frame 1.
   $E848,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E849,$26,$02 #JETMAN$AF(spinner-01)
+  $E849,$26,$02 #SPRITE$AF(spinner-01)
 
 N $E86F Frame 2.
   $E86F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E870,$26,$02 #JETMAN$B0(spinner-02)
+  $E870,$26,$02 #SPRITE$B0(spinner-02)
 
 N $E896 Frame 3.
   $E896,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E897,$24,$02 #JETMAN$B1(spinner-03)
+  $E897,$24,$02 #SPRITE$B1(spinner-03)
 
 N $E8BB Frame 4.
   $E8BB,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E8BC,$1E,$02 #JETMAN$B2(spinner-04)
+  $E8BC,$1E,$02 #SPRITE$B2(spinner-04)
 
 N $E8DA Frame 5.
   $E8DA,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E8DB,$16,$02 #JETMAN$B3(spinner-05)
+  $E8DB,$16,$02 #SPRITE$B3(spinner-05)
 
 N $E8F1 Frame 6.
   $E8F1,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E8F2,$1E,$02 #JETMAN$B4(spinner-06)
+  $E8F2,$1E,$02 #SPRITE$B4(spinner-06)
 
 b $E910 Sprite: Jetman Falling
 E $E910 #UDGTABLE(default) { #UDGARRAY*jetman-falling-01,15;jetman-falling-02;jetman-falling-03;jetman-falling-04(jetman-falling) } UDGTABLE#
 N $E910 Frame 1.
   $E910,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E911,$22,$02 #JETMAN$DB(jetman-falling-01*)
+  $E911,$22,$02 #SPRITE$DB(jetman-falling-01*)
 
 N $E933 Frame 2.
   $E933,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E934,$22,$02 #JETMAN$DC(jetman-falling-02*)
+  $E934,$22,$02 #SPRITE$DC(jetman-falling-02*)
 
 N $E956 Frame 3.
   $E956,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E957,$22,$02 #JETMAN$DD(jetman-falling-03*)
+  $E957,$22,$02 #SPRITE$DD(jetman-falling-03*)
 
 N $E979 Frame 4.
   $E979,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E97A,$22,$02 #JETMAN$DE(jetman-falling-04*)
+  $E97A,$22,$02 #SPRITE$DE(jetman-falling-04*)
 
 b $E99C Sprite: Shooter
 E $E99C #UDGTABLE(default) { #UDGARRAY*shooter-01,15;shooter-02;shooter-03;shooter-04;shooter-05;shooter-06;shooter-07(shooter) } UDGTABLE#
 D $E99C Shooters appear from level 8 onwards.
 N $E99C Frame 1.
   $E99C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E99D,$20,$02 #JETMAN$B7(shooter-01*)
+  $E99D,$20,$02 #SPRITE$B7(shooter-01*)
 
 N $E9BD Frame 2.
   $E9BD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E9BE,$20,$02 #JETMAN$B8(shooter-02*)
+  $E9BE,$20,$02 #SPRITE$B8(shooter-02*)
 
 N $E9DE Frame 3.
   $E9DE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E9DF,$20,$02 #JETMAN$B9(shooter-03*)
+  $E9DF,$20,$02 #SPRITE$B9(shooter-03*)
 
 N $E9FF Frame 4.
   $E9FF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EA00,$20,$02 #JETMAN$BA(shooter-04*)
+  $EA00,$20,$02 #SPRITE$BA(shooter-04*)
 
 N $EA20 Frame 5.
   $EA20,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EA21,$20,$02 #JETMAN$BB(shooter-05*)
+  $EA21,$20,$02 #SPRITE$BB(shooter-05*)
 
 N $EA41 Frame 6.
   $EA41,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EA42,$20,$02 #JETMAN$BC(shooter-06*)
+  $EA42,$20,$02 #SPRITE$BC(shooter-06*)
 
 N $EA62 Frame 7.
   $EA62,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EA63,$20,$02 #JETMAN$BD(shooter-07*)
+  $EA63,$20,$02 #SPRITE$BD(shooter-07*)
 
 b $EA83
   $EA83,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -3551,75 +3544,76 @@ N $EB67 Frame 4.
 
 N $EC49 Frame 5.
   $EC49,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC4A,$20,$02 #JETMAN$E3(explosion-05)
+  $EC4A,$20,$02 #SPRITE$E3(explosion-05)
 
 N $EC6A Frame 6.
   $EC6A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC6B,$20,$02 #JETMAN$E4(explosion-06)
+  $EC6B,$20,$02 #SPRITE$E4(explosion-06)
 
 N $EC8B Frame 7.
   $EC8B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EC8C,$20,$02 #JETMAN$E5(explosion-07)
+  $EC8C,$20,$02 #SPRITE$E5(explosion-07)
 
 N $ECAC Frame 8.
   $ECAC,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECAD,$20,$02 #JETMAN$E6(explosion-08)
+  $ECAD,$20,$02 #SPRITE$E6(explosion-08)
 
 N $ECCD Frame 9.
   $ECCD,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECCE,$20,$02 #JETMAN$E7(explosion-09)
+  $ECCE,$20,$02 #SPRITE$E7(explosion-09)
 
 N $ECEE Frame 10.
   $ECEE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ECEF,$20,$02 #JETMAN$E8(explosion-0a)
+  $ECEF,$20,$02 #SPRITE$E8(explosion-10)
 
 N $ED0F Frame 11.
   $ED0F,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED10,$20,$02 #JETMAN$E9(explosion-0b)
+  $ED10,$20,$02 #SPRITE$E9(explosion-11)
 
 N $ED30 Frame 12.
   $ED30,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED31,$20,$02 #JETMAN$EA(explosion-0c)
+  $ED31,$20,$02 #SPRITE$EA(explosion-12)
 
 b $ED51 Sprite: Bouncing Wheel
 E $ED51 #UDGTABLE(default) { #UDGARRAY*bouncing-wheel-01,5;bouncing-wheel-02;bouncing-wheel-03;bouncing-wheel-04;bouncing-wheel-05;bouncing-wheel-06(bouncing-wheel) } UDGTABLE#
+D $ED51 Bouncing Wheels appear from level 1 onwards.
 N $ED51 Frame 1.
   $ED51,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED52,$20,$02 #JETMAN$A7(bouncing-wheel-01*)
+  $ED52,$20,$02 #SPRITE$A7(bouncing-wheel-01*)
 
 N $ED72 Frame 2.
   $ED72,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED73,$20,$02 #JETMAN$A8(bouncing-wheel-02*)
+  $ED73,$20,$02 #SPRITE$A8(bouncing-wheel-02*)
 
 N $ED93 Frame 3.
   $ED93,$01 Height = #N(#PEEK(#PC)) pixels.
-  $ED94,$20,$02 #JETMAN$A9(bouncing-wheel-03*)
+  $ED94,$20,$02 #SPRITE$A9(bouncing-wheel-03*)
 
 N $EDB4 Frame 4.
   $EDB4,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EDB5,$20,$02 #JETMAN$AA(bouncing-wheel-04*)
+  $EDB5,$20,$02 #SPRITE$AA(bouncing-wheel-04*)
 
 N $EDD5 Frame 5.
   $EDD5,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EDD6,$20,$02 #JETMAN$AB(bouncing-wheel-05*)
+  $EDD6,$20,$02 #SPRITE$AB(bouncing-wheel-05*)
 
 N $EDF6 Frame 6.
   $EDF6,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EDF7,$20,$02 #JETMAN$AC(bouncing-wheel-06*)
+  $EDF7,$20,$02 #SPRITE$AC(bouncing-wheel-06*)
 
 b $EE17 Sprite: Bomb
 E $EE17 #UDGTABLE(default) { #UDGARRAY*bomb-01,25;bomb-02;bomb-03;bomb-02(bomb) } UDGTABLE#
 N $EE17 Frame 1.
   $EE17,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EE18,$20,$02 #JETMAN$EB(bomb-01*)
+  $EE18,$20,$02 #SPRITE$EB(bomb-01*)
 
 N $EE38 Frame 2.
   $EE38,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EE39,$20,$02 #JETMAN$EC(bomb-02*)
+  $EE39,$20,$02 #SPRITE$EC(bomb-02*)
 
 N $EE59 Frame 3.
   $EE59,$01 Height = #N(#PEEK(#PC)) pixels.
-  $EE5A,$20,$02 #JETMAN$ED(bomb-03*)
+  $EE5A,$20,$02 #SPRITE$ED(bomb-03*)
 
 b $EE7A
 
