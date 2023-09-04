@@ -152,8 +152,8 @@ g $5E78
 
 g $5E7C
 
-g $5EA0 Active Player Fuel
-@ $5EA0 label=ActivePlayer_Fuel
+g $5EA0 Active Player Level
+@ $5EA0 label=ActivePlayer_Level
 B $5EA0,$01
 
 g $5EA1 Active Player Lives
@@ -163,8 +163,8 @@ B $5EA1,$01
 g $5EA2
 g $5EA3
 
-g $5EA4 Inactive Player Fuel
-@ $5EA4 label=InactivePlayer_Fuel
+g $5EA4 Inactive Player Level
+@ $5EA4 label=InactivePlayer_Level
 B $5EA4,$01
 
 g $5EA5 Inactive Player Lives
@@ -699,8 +699,9 @@ N $84E1 Set the attributes for the score line (the whole line is INK:#N$46).
   $84E7,$01 Write #N$46 to the attribute buffer.
   $84E8,$01 Move onto the next column.
   $84E9,$02 Decrease counter by one and loop back to #R$84E7 until counter is zero.
-N $84EB Write the 1UP, 2UP and HI scores.
+N $84EB Display the current 1UP and 2UP level.
   $84EB,$03 Call #R$F5EC.
+N $84EE Write the 1UP, 2UP and HI scores.
   $84EE,$03 Call #R$89BF.
   $84F1,$03 Call #R$89C7.
   $84F4,$03 Jump to #R$89CF.
@@ -730,7 +731,7 @@ R $8506 O:HL Attribute buffer address
 @ $8506 label=AttributeAddress
   $8506,$01 Stash #REGbc on the stack.
   $8507,$01 Horizontal co-ordinate.
-  $8508,$03 Divide by #N08.
+  $8508,$03 Divide by #N$08.
   $850B,$02,b$01 Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum horizontal screen values).
   $850D,$01 Store this back in #REGl.
   $850E,$01 Vertical co-ordinate.
@@ -1115,7 +1116,7 @@ R $89EF HL Screen address
   $89FA,$04 #REGde=#R$5E04 (main font is #R$D347).
   $89FE,$02 #REGde=#REGhl + #REGde. For examples of usage;
 . #TABLE(default,centre,centre,centre,centre,centre)
-. { =h Letter | =h ASCII Value | =h - #N$20 * #N08 (offset) | =h CHARS + offset }
+. { =h Letter | =h ASCII Value | =h - #N$20 * #N$08 (offset) | =h CHARS + offset }
 . #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
 .   { #LET(result=$D347 + (value - $20) * $08) "#CHR(value)" | #N(value) | #N((value - $20) * $08) | #R({result}) }
 . )
@@ -1742,15 +1743,54 @@ c $9466
   $9474,$01 Stash #REGhl (the free alien slot) on the stack.
   $9475,$01 Switch the #REGde and #REGhl registers.
   $9476,$03 #REGa=#R$5E40.
-
+  $9479,$01 Rotate #REGa left once.
   $947A,$02,b$01 Keep only bits 1-3.
-
+  $947C,$03 Create an offset in #REGbc - max #N$0E (only even numbers).
+N $947F 
   $947F,$03 #REGa=#R$5EA0.
-
+  $9482,$04 Compare the current level against #N$0C, if there's any carry over then jump to #R$9488.
   $9486,$02 #REGa=#N$0C.
   $9488,$02,b$01 Keep only bits 1-3.
+  $948A,$03 Create an offset in #REGhl - number can be:
+. #LIST
+. { #N($0002,$04,$04) }
+. { #N($0004,$04,$04) }
+. { #N($0006,$04,$04) }
+. { #N($0008,$04,$04) }
+. { #N($000A,$04,$04) }
+. { #N($000C,$04,$04) }
+. LIST#
+  $948D,$04 #REGhl+=#R$9D72.
+  $9491,$04 #REGhl=alien lookup table appropriate for the current level.
+  $9495,$01 #REGhl+=.
+  $949A,$03 #REGbc=#N($0018,$04,$04).
+  $949D,$01 #REGde=the free alien slot (from earlier).
+  $949E,$01 Stash #REGde (the free alien slot) on the stack again.
 
-  $948D,$04 #REGhl=#REGhl+#R$9D72.
+  $94A1,$01 #REGhl=the free alien slot.
+
+  $94C8,$02,b$01 Keep only bits 0-4.
+
+  $94D3,$02,b$01 Keep only bit 7.
+
+  $94DF,$02,b$01 Keep only bit 7.
+
+  $94E7,$03 #REGde=#N($0090,$04,$04).
+  $94EA,$02 Jump to #R$94EF.
+
+  $94F1,$02,b$01 Keep only bits 0-4.
+
+  $94FB,$02,b$01 Keep only bits 3-6.
+
+  $950A,$02,b$01 Keep only bit 7.
+
+  $9512,$03 #REGde=#N($0090,$04,$04).
+  $9515,$02 Jump to #R$951A.
+  $9517,$03 #REGde=#N$FF70.
+
+  $9526,$02,b$01 Keep only bits 3-6.
+
+  $9530,$01 Return.
 
 c $9531
   $9531,$03 #REGhl=#R$5E5E.
@@ -1797,16 +1837,37 @@ c $9C23
   $9C2E,$0B Copy #N$0018 bytes from #R$9D98 to #N$5E06.
   $9C39,$01 Return.
 
-b $9C3A
+b $9C3A Alien States
+@ $9C3A label=Alien_Meteor
+  $9C3A,$18 #SPRITENAME(#PEEK(#PC)).
+L $9C3A,$18,$08
+@ $9C52 label=Alien_MrMagneticBrella
+@ $9C6A label=Alien_TheBlob
+@ $9C82 label=Alien_TheBlock
+@ $9C9A label=Alien_BouncingWheel
+@ $9CB2 label=Alien_Spinner
+@ $9CCA label=Alien_Saturn
+@ $9CE2 label=Alien_Shooter
 
-w $9CFA
-  $9D0A
-  $9D1A
-  $9D2A
-  $9D3A
-  $9D4A
+w $9CFA Alien Lookup Table
+D $9CFA All levels beyond level 6, repeat the level 6 lookups.
+N $9CFA Level 1 aliens.
+@ $9CFA label=Level1Aliens
+N $9D0A Level 2 aliens.
+@ $9D0A label=Level2Aliens
+N $9D1A Level 3 aliens.
+@ $9D1A label=Level3Aliens
+N $9D2A Level 4 aliens.
+@ $9D2A label=Level4Aliens
+N $9D3A Level 5 aliens.
+@ $9D3A label=Level5Aliens
+N $9D4A Level 6 aliens.
+@ $9D4A label=Level6Aliens
 
-w $9D72
+b $9D5A
+
+w $9D72 Levels Alien Lookup Table
+@ $9D72 label=LevelsAlienLookupTable
 
 b $9D80
   $9D80,$18
@@ -1843,8 +1904,10 @@ N $9DDE Initialise a new laser beam.
   $9DDE,$02 Mark the laser beam slot as "in-use".
   $9DE0,$01 #REGhl=Laser beam Y position.
   $9DE1,$03 #REGde=#R$6078.
+  $9E17,$03 #REGhl=#R$9E28.
   $9E25,$03 Jump to #R$B8A8.
 N $9E28 All the attributes a laser beam can be.
+@ $9E28 label=Attributes_LaserBeam
 B $9E28,$04
 
 c $9E2C Animate: Laser Beam
@@ -1879,6 +1942,13 @@ c $9ECA
   $9EDA,$02 Jump to #R$9EEE.
 
 c $9EDC
+  $9EDC,$03 #REGa=#R$607A.
+N $9EE4 The Lunar Rover has seven (eleven?) frames of animation.
+  $9EE4,$02,b$01 Keep only bits 0-2.
+N $9EE6 With sprite IDs beginning from #R$BE90(#N$22) (#SPRITENAME$22).
+  $9EE6,$02
+  $9EE8,$03 Write #REGa to #REGix+#N$00.
+  $9EEB,$03 Call #R$8787.
 
 c $9F5E
   $9F5E,$03 #REGhl=#R$A008.
@@ -1899,7 +1969,107 @@ c $A0F8
 
 c $A1AA
 
+B $A313,$04
+
+c $A317 Handler: Reset Laser Beam Slots
+N $A317 See #R$9DC6 for the handler which actions "searching" for a free slot.
+@ $A317 label=Handler_ResetLaserBeamSlots
+  $A317,$03 #REGhl=#R$6000.
+  $A31A,$03 #REGde=#N($0018,$04,$04).
+  $A31D,$02 #REGb=#N$04 (counter).
+@ $A31F label=ResetLaserBeamSlots_Loop
+  $A31F,$02 Write #N$00 to #REGhl.
+  $A321,$01 #REGhl=#REGhl+#REGde.
+  $A322,$02 Decrease counter by one and loop back to #R$A31F until counter is zero.
+  $A324,$01 Return.
+
 c $A325
+c $A378
+c $A39C
+
+c $A3C1
+  $A3C1,$03 Call #R$945C.
+
+  $A3CC,$03 Call #R$91BB.
+
+  $A3F1,$05 Write #N$AF to #REGix+#N$04.
+  $A3F6,$03 Jump to #R$A375.
+  $A3F9,$04 Set bit 3 of #REGix+#N$00.
+  $A3FD,$02 Jump to #R$A3DF.
+
+c $A3FF
+  $A3FF,$03 #REGa=#R$6090.
+
+  $A40E,$03 Call #R$945C.
+
+  $A413,$03 Call #R$A4FC.
+
+  $A418,$04 Write #N$00 to #R$5EA3.
+
+  $A427,$02,b$01 Keep only bits 4-7.
+  $A429,$02,b$01 Set bits 0-1.
+
+  $A42E,$03 Call #R$B8BD.
+
+  $A4B9,$01 Return.
+
+c $A4BA
+  $A4BA,$03 #REGl=#REGix+#N$02.
+  $A4BD,$03 #REGh=#REGix+#N$03.
+
+  $A4D3,$03 Call #R$8947.
+  $A4D6,$03 #REGbc=#N($00C0,$04,$04).
+
+  $A4DD,$03 #REGa=#R$6074.
+
+  $A4E6,$01 Retun.
+
+c $A4E7
+  $A4E7,$03 #REGa=#R$6078.
+  $A4ED,$03 Call #R$945C.
+
+  $A4F1,$03 #REGa=#R$6080.
+  $A4F4,$02,b$01 Keep only bit 0.
+  $A4F6,$01 Return the result is #N$01.
+
+  $A50E,$02,b$01 Keep only bits 0-4.
+
+  $A521,$01 Return.
+
+c $A522
+  $A522,$03 Call #R$B89A.
+  $A525,$03 Call #R$B6AE.
+
+  $A52C,$08 Write #N$00 to #REGix+#N$06 and #REGix+#N$05.
+  $A534,$05 Write #N$AF to #REGix+#N$04.
+  $A539,$01 Return.
+
+c $A53A
+  $A53A,$07 #REGhl=#REGix+#N($0018,$04,$04).
+  $A541,$03 Return if the byte at this address is non-zero.
+  $A544,$02 Write #N$C8 to #REGhl.
+
+  $A557,$02,b$01 Keep only bits 2-5.
+
+  $A55C,$03 #REGhl=#R$A68B.
+
+  $A56E,$02,b$01 Keep only bits 0-4.
+
+  $A577,$02 Jump to #R$A5C8.
+
+c $A579
+  $A579,$03 #REGa=#R$5E42.
+  $A57C,$02,b$01 Keep only bits 0-1.
+  $A57E,$01 Return if the result is non-zero.
+  $A57F,$03 Call #R$8F90.
+  $A585,$03 #REGhl=#R$6000.
+  $A588,$03 #REGde=#N($0018,$04,$04).
+  $A58B,$02 #REGb=#N$02 (counter).
+
+  $A592,$02 Decrease counter by one and loop back to #R$A58D until counter is zero.
+  $A594,$01 Return.
+
+c $A73C
 
 c $A826 Initialise New Level
 @ $A826 label=LevelNew
@@ -1924,7 +2094,7 @@ c $A84C Initialise New Game
 @ $A84E label=NewGame_Loop
   $A84E,$01 Stash the counter in #REGbc on the stack.
 N $A84F Handle setting up 1UP player.
-  $A84F,$05 Write 1UP starting fuel to #R$5EA0.
+  $A84F,$05 Write 1UP starting level to #R$5EA0.
   $A854,$05 Write 1UP starting lives to #R$5EA1.
   $A859,$07 Write #N$00 to; #LIST { #R$5EA2 } { #R$5EA3 } LIST#
   $A860,$03 Call #R$B3DC.
@@ -1934,7 +2104,7 @@ N $A84F Handle setting up 1UP player.
   $A86A,$02 Decrease counter by one and loop back to #R$A84E until counter is zero.
 N $A86C Handle setting up 2UP player.
   $A86C,$05 Write 2UP starting lives to #R$5EA5.
-  $A871,$05 Write 2UP starting fuel to #R$5EA4.
+  $A871,$05 Write 2UP starting level to #R$5EA4.
   $A876,$03 #REGa=#R$5E00.
   $A879,$02,b$01 Keep only bit 0.
   $A87B,$01 Return if #R$5E00 indicates this is a 1 player only game.
@@ -2171,7 +2341,7 @@ B $AEBC,$30
 B $AEEC,$30
 
 N $AF67 Take one hit off the missile hit count total.
-  $AF67,$03 Decrease #REGix+#N16 by one.
+  $AF67,$03 Decrease #REGix+#N$16 by one.
   $AF6A,$02 Jump to #R$AFB1 if the missile has been destroyed.
   $AF6C,$03 Call #R$B8B4.
 N $AF6F Each missile hit adds #N$0100 points.
@@ -2289,8 +2459,8 @@ c $B3E8
   $B440,$01 Return.
   $B441,$03 Call #R$864F.
   $B444,$04 Write #N$00 to #R$5EA1.
-  $B448,$04 Write #N$85 to #REGix+#N00.
-  $B44C,$04 Write #N$40 to #REGix+#N05.
+  $B448,$04 Write #N$85 to #REGix+#N$00.
+  $B44C,$04 Write #N$40 to #REGix+#N$05.
   $B450,$01 Return.
 B $B451
 
@@ -2395,9 +2565,22 @@ N $B669 #FONT:(HITS WILL BE REQUIRED TO)addr=$D347,attr=$47(required)
 N $B683 #FONT:(DESTROY THE MISSILE.)addr=$D347,attr=$47(missile)
   $B683,$16,h$01,$14:$01 "DESTROY THE MISSILE. ".
 
-c $B699
+c $B699 Convert To Base 10
+@ $B699 label=Convert_Base10
+R $B699 A Input number
+R $B699 O:A Output number
+N $B699 For an example, given #REGa=#N$16 - the output is #EVAL($22,$02,$08).
+N $B699 First count the number of "10's" in #REGa.
   $B699,$03 #REGbc=#N($000A,$04,$04).
-  $B6AA,$02,b$01 Keep only bits 0-2.
+@ $B69C label=Convert_Base10_Loop
+  $B69C,$01 Increment #REGb counter.
+  $B69D,$01 #REGa-=#N$0A.
+  $B69E,$02 Jump back to #R$B69C until there's a carry amount.
+  $B6A0,$01 #REGa+=#REGc.
+  $B6A1,$01 Decrease the counter in #REGb by one to account for the carry.
+  $B6A2,$08 Shift and rotate #REGb four times.
+  $B6AA,$02,b$01 Keep only bits 0-3.
+  $B6AC,$01 Set the bits from #REGb.
   $B6AD,$01 Return.
 
 c $B6AE
@@ -2449,7 +2632,7 @@ N $B7A8 Animate the sprite.
   $B7AB,$01 Increment #REGa by one.
 N $B7AC The bomb has four frames of animation.
   $B7AC,$02,b$01 Keep only bits 0-1.
-N $B7AE With sprite IDs beginning from #N$EC.
+N $B7AE With sprite IDs beginning from #R$EE17(#N$EC) (#SPRITENAME$EC).
   $B7AE,$02 #REGa=#REGa+#N$EC.
   $B7B0,$03 Write #REGa back to #REGix+#N$00.
   $B7B3,$03 #REGa=#REGix+#N$07.
@@ -2610,8 +2793,9 @@ R $B950 BC Number of bytes to copy
   $B956,$03 #REGbc=#N($0008,$04,$04).
   $B959,$02 Copy #N$08 bytes from #REGhl to #REGde.
   $B95B,$01 Return.
-B $B95C,$08
-B $B964,$08
+B $B95C,$04
+  $B960
+B $B965,$07
 B $B96C,$07
 
 N $B973
@@ -2666,12 +2850,14 @@ E $BAC0 View the equivalent code in;
 . { #PSSST$761A }
 . { #TRANZAM$0000 }
 . LIST#
-  $BAC0,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02)) #SPRITENAME((#PC-$BAC0)/$02).
+  $BAC0,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02)) #SPRITENAME((#PC-$BABE)/$02).
 L $BAC0,$02,$EF
 
 b $BC9E
-
-b $BCA9
+  $BC9E,$01 Width = #N(#PEEK(#PC)) bytes.
+  $BC9F,$01 Height = #N(#PEEK(#PC)) pixels.
+  $BCA0,$1C,$07
+  $BCA9
 
 b $BCBC Sprite: None
   $BCBC,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -2963,6 +3149,7 @@ N $D676 Frame 8.
 
 b $D697 Sprite: Meteor
 D $D697 Meteors appear from level 1 onwards.
+E $D697 #UDGTABLE(default) { #UDGARRAY*meteor-01,15;meteor-02;meteor-03;meteor-04;meteor-05;meteor-06;meteor-07;meteor-08(meteor) } UDGTABLE#
 N $D697 Frame 1.
   $D697,$01 Height = #N(#PEEK(#PC)) pixels.
   $D698,$20,$02 #SPRITE$4F(meteor-01*)
@@ -3833,66 +4020,88 @@ c $F5E3
   $F5E8,$01
   $F5E9,$03 Jump to #R$F295.
 
-c $F5EC
+c $F5EC Print 1UP/ 2UP Levels
+@ $F5EC label=PrintPlayerLevels
+N $F5EC Sets attributes for 1UP level.
   $F5EC,$03 #REGhl=#N$0848.
   $F5EF,$03 Call #R$F662.
+N $F5F2 Sets attributes for 2UP level.
   $F5F2,$03 #REGhl=#N$08A0.
   $F5F5,$03 Call #R$F662.
+N $F5F8 Is this a 1 or 2 player game?
   $F5F8,$06 If #R$5E65 is not zero, jump to #R$F609.
+N $F5FE Handler for printing 1UP level followed by 2UP level.
   $F5FE,$03 #REGhl=#N$0848.
   $F601,$03 Call #R$F612.
   $F604,$03 #REGhl=#N$08A0.
   $F607,$02 Jump to #R$F628.
+N $F609 Handler for printing 2UP level followed by 1UP level.
+@ $F609 label=Handler_PrintPlayerLevels
   $F609,$03 #REGhl=#N$0848.
   $F60C,$03 Call #R$F628.
+N $F60F Handles the 2UP level.
   $F60F,$03 #REGhl=#N$08A0.
+N $F612 Handles displaying "#FONT:(L)addr=$D347,attr=$47(level)" for 1UP.
+@ $F612 label=Print1UPLevel
   $F612,$02 #REGa=#N$4C.
   $F614,$03 Call #R$F632.
   $F617,$03 Call #R$F641.
+N $F61A Prints the first digit (held in #REGa from #REGb).
+@ $F61A label=PrintLevel
   $F61A,$01 Stash #REGbc on the stack.
-  $F61B,$02 #REGa=#REGa+#N$30.
+  $F61B,$02 Add #N$30 to convert to an ASCII character (starting at "0" character).
   $F61D,$03 Call #R$F632.
   $F620,$01 Restore #REGbc from the stack.
-  $F621,$01 #REGa=#REGc.
-  $F622,$02 #REGa=#REGa+#N$30.
+N $F621 Now move onto the second digit held in #REGc.
+  $F621,$01 #REGa=#REGc.
+  $F622,$02 Add #N$30 to convert to an ASCII character (starting at "0" character).
   $F624,$03 Call #R$F632.
   $F627,$01 Return.
-
-c $F628
+N $F628 Handles displaying "#FONT:(L)addr=$D347,attr=$47(level)" for 2UP.
+@ $F628 label=Print2UPLevel
   $F628,$02 #REGa=#N$4C.
   $F62A,$03 Call #R$F632.
   $F62D,$03 Call #R$F658.
   $F630,$02 Jump to #R$F61A.
-
-N $F632
+N $F632 Keep #REGhl (pixel co-ordinates) and #REGaf (the ASCII character to print) for later.
+@ $F632 label=PrintLevelMessaging
   $F632,$02 Stash #REGhl and #REGaf on the stack.
   $F634,$03 Call #R$851E.
+N $F637 Fetch the ASCII character we want to print from the stack.
   $F637,$01 Restore #REGaf from the stack.
   $F638,$03 Call #R$89EF.
+N $F63B Restore the pixel co-ordinates from the stack, and move onto the next character column.
   $F63B,$01 Restore #REGhl from the stack.
   $F63C,$04 #REGl=#REGl+#N$08.
   $F640,$01 Return.
 
-c $F641
+c $F641 Active Player Level
+@ $F641 label=Calculate_ActivePlayer_Level
+R $F641 BC Player level as two digits
   $F641,$07 If #R$5EA0 is not #N$FF, jump to #R$F649.
   $F648,$01 #REGa=#N$00.
+N $F649 This reads #REGa into #REGbc as two nibbles, e.g. level 21 would be #EVAL($15,$02,$08) which returns #N$2101.
+@ $F649 label=Calculate_Player_Level
   $F649,$03 Call #R$B699.
   $F64C,$01 #REGb=#REGa.
   $F64D,$02,b$01 Keep only bits 0-3.
   $F64F,$01 #REGc=#REGa.
   $F650,$01 #REGa=#REGb.
+  $F651,$04 Rotate the bits of #REGa right four times.
   $F655,$02,b$01 Keep only bits 0-3.
   $F657,$01 Return.
-
+@ $F658 label=Calculate_InactivePlayer_Level
   $F658,$07 If #R$5EA4 is not #N$FF, jump to #R$F649.
   $F65F,$01 #REGa=#N$00.
   $F660,$02 Jump to #R$F649.
 
-c $F662
+c $F662 Helper: Colour Levels Messaging Green
+@ $F662 label=ColourLevelsGreen
+R $F662 HL Pixel address co-ordinates
   $F662,$03 Call #R$8506.
   $F665,$02 #REGb=#N$03.
-  $F667,$03 Write #N$44 (attribute byte) to #REGhl.
-@ $F669 label=Write44_Loop
+  $F667,$03 Write #N$44 (#COLOUR$44 attribute byte) to #REGhl.
+@ $F669 label=ColourLevelsGreen_Loop
   $F66A,$01 Increment #REGhl by one.
   $F66B,$02 Decrease counter by one and loop back to #R$F669 until counter is zero.
   $F66D,$01 Return.

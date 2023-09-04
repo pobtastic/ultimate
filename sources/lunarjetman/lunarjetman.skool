@@ -435,8 +435,8 @@ g$5E7C DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $5E94 DEFB $00,$00,$00,$00,$00,$00,$00,$00
  $5E9C DEFB $00,$00,$00,$00
 
-; Active Player Fuel
-@label=ActivePlayer_Fuel
+; Active Player Level
+@label=ActivePlayer_Level
 g$5EA0 DEFB $00
 
 ; Active Player Lives
@@ -449,8 +449,8 @@ g$5EA2 DEFB $00
 ; Game status buffer entry at 5EA3
 g$5EA3 DEFB $00
 
-; Inactive Player Fuel
-@label=InactivePlayer_Fuel
+; Inactive Player Level
+@label=InactivePlayer_Level
 g$5EA4 DEFB $00
 
 ; Inactive Player Lives
@@ -2367,8 +2367,9 @@ c$84D8 CALL $84BB    ; Call #R$84BB.
  $84E8 INC L         ; Move onto the next column.
  $84E9 DJNZ $84E7    ; Decrease counter by one and loop back to #R$84E7 until
                      ; counter is zero.
-; Write the 1UP, 2UP and HI scores.
+; Display the current 1UP and 2UP level.
  $84EB CALL $F5EC    ; Call #R$F5EC.
+; Write the 1UP, 2UP and HI scores.
  $84EE CALL $89BF    ; Call #R$89BF.
  $84F1 CALL $89C7    ; Call #R$89C7.
  $84F4 JP $89CF      ; Jump to #R$89CF.
@@ -2405,7 +2406,7 @@ c$84F7 LD HL,$6000   ; #REGhl=#R$6000.
 @label=AttributeAddress
 c$8506 PUSH BC       ; Stash #REGbc on the stack.
  $8507 LD A,L        ; Horizontal co-ordinate.
- $8508 RRCA          ; {Divide by #N08.
+ $8508 RRCA          ; {Divide by #N$08.
  $8509 RRCA          ;
  $850A RRCA          ; }
  $850B AND %00011111 ; Keep only bits 0-4 (#N$00-#N$1F / minimum-maximum
@@ -2437,7 +2438,7 @@ c$8506 PUSH BC       ; Stash #REGbc on the stack.
 ; Calculate Screen Address
 ;
 ; Used by the routines at #R$81AB, #R$86A1, #R$8826, #R$894F, #R$8A11, #R$8A5C,
-; #R$8C01, #R$9E2C, #R$A993, #R$F410 and #R$F628.
+; #R$8C01, #R$9E2C, #R$A993, #R$F410 and #R$F5EC.
 @label=ScreenAddress
 c$851E LD A,L        ; #REGa=#REGl.
  $851F RRCA          ; {#REGa=#REGa / #N$08.
@@ -2671,7 +2672,7 @@ c$8614 EX DE,HL      ; Exchange the #REGde and #REGhl registers.
  $8639 LD ($5E5A),A  ;
  $863C LD C,A        ;
  $863D JP $858E      ;
-; This entry point is used by the routines at #R$A1AA, #R$A325, #R$AD36 and
+; This entry point is used by the routines at #R$A1AA, #R$A73C, #R$AD36 and
 ; #R$B460.
 *$8640 XOR A         ;
  $8641 LD ($5E59),A  ;
@@ -2804,8 +2805,8 @@ c$8701 CALL $865E    ; Call #R$865E.
 
 ; Routine at 8733
 ;
-; Used by the routines at #R$8D06, #R$93A6, #R$9531, #R$970E, #R$9EDC, #R$A325,
-; #R$ABA9, #R$AD36 and #R$B3E8.
+; Used by the routines at #R$8D06, #R$93A6, #R$9531, #R$970E, #R$9EDC, #R$A579,
+; #R$A73C, #R$ABA9, #R$AD36 and #R$B3E8.
 c$8733 LD L,(IX+$01) ; #REGl=#REGix+#N$01.
  $8736 LD H,(IX+$04) ; #REGh=#REGix+#N$04.
  $8739 LD D,(IX+$07) ; #REGd=#REGix+#N$07.
@@ -3176,7 +3177,7 @@ c$8931 PUSH BC       ;
 
 ; Routine at 8947
 ;
-; Used by the routines at #R$A325 and #R$AD36.
+; Used by the routines at #R$A4BA and #R$AD36.
 c$8947 LD A,L        ;
  $8948 CPL           ;
  $8949 LD L,A        ;
@@ -3354,7 +3355,7 @@ c$89BF LD HL,$4021   ; #REGhl=#N$4021 (screen buffer address).
 ; Print Character
 ;
 ; Used by the routines at #R$894F, #R$89BF, #R$8A11, #R$8BBB, #R$8C01, #R$F232,
-; #R$F295, #R$F410, #R$F4C6 and #R$F628.
+; #R$F295, #R$F410, #R$F4C6 and #R$F5EC.
 ;
 ; A ASCII value to print
 ; HL Screen address
@@ -3371,7 +3372,7 @@ c$89EF PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
  $89FA LD DE,($5E04) ; #REGde=#R$5E04 (main font is #R$D347).
  $89FE ADD HL,DE     ; {#REGde=#REGhl + #REGde. For examples of usage;
  $89FF EX DE,HL      ; #TABLE(default,centre,centre,centre,centre,centre)
-                     ; { =h Letter | =h ASCII Value | =h - #N$20 * #N08 (offset) | =h CHARS + offset }
+                     ; { =h Letter | =h ASCII Value | =h - #N$20 * #N$08 (offset) | =h CHARS + offset }
                      ; #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
                      ;   { #LET(result=$D347 + (value - $20) * $08) "#CHR(value)" | #N(value) | #N((value - $20) * $08) | #R({result}) }
                      ; )
@@ -3607,7 +3608,7 @@ c$8A5C LD A,C        ;
  $8AE1 LD ($5E5A),A  ;
  $8AE4 LD C,A        ;
  $8AE5 JP $8A5C      ;
-; This entry point is used by the routine at #R$A325.
+; This entry point is used by the routines at #R$A579 and #R$A73C.
 *$8AE8 XOR A         ;
  $8AE9 LD ($5E59),A  ;
  $8AEC LD ($5E58),A  ;
@@ -3671,7 +3672,7 @@ c$8A5C LD A,C        ;
 
 ; Routine at 8B73
 ;
-; Used by the routines at #R$970E, #R$A325 and #R$AD36.
+; Used by the routines at #R$970E, #R$A579, #R$A73C and #R$AD36.
 c$8B73 CALL $8B52    ;
  $8B76 EXX           ;
  $8B77 CALL $8AF7    ;
@@ -4353,8 +4354,8 @@ c$8F6A LD A,$EF      ; {Read from the keyboard;
 
 ; Handler: Controls
 ;
-; Used by the routines at #R$8C71, #R$8CBC, #R$8D06, #R$91E2, #R$A325 and
-; #R$F295.
+; Used by the routines at #R$8C71, #R$8CBC, #R$8D06, #R$91E2, #R$A3FF, #R$A579
+; and #R$F295.
 @label=HandlerControls
 c$8F90 LD A,($5E00)  ; {Jump to #R$8F9F if #R$5E00 is set for keyboard
  $8F93 AND %00000110 ; controls.
@@ -4737,7 +4738,7 @@ c$919E LD DE,$FF88   ; #REGde=#N$FF88.
 ; Routine at 91BB
 ;
 ; Used by the routines at #R$8CBC, #R$8D06, #R$93A6, #R$95B6, #R$970E and
-; #R$A325.
+; #R$A3C1.
 c$91BB LD H,(IX+$03) ; #REGh=#REGix+#N$03.
  $91BE LD L,(IX+$02) ; #REGl=#REGix+#N$02.
  $91C1 LD A,H        ; #REGa=#REGh.
@@ -5086,8 +5087,8 @@ c$93A6 LD HL,($607A)   ; #REGhl=#R$607A.
 
 ; Routine at 945C
 ;
-; Used by the routines at #R$8D06, #R$93A6, #R$A0F8, #R$A1AA, #R$A325, #R$B6CF,
-; #R$B785 and #R$B7BC.
+; Used by the routines at #R$8D06, #R$93A6, #R$A0F8, #R$A1AA, #R$A325, #R$A3C1,
+; #R$A3FF, #R$A4E7, #R$B6CF, #R$B785 and #R$B7BC.
 c$945C LD A,$7E      ; {Read from the keyboard;
  $945E OUT ($FD),A   ; #TABLE(default,centre,centre,centre,centre,centre,centre)
  $9460 IN A,($FE)    ; { =h,r2 Port Number | =h,c5 Bit }
@@ -5113,33 +5114,40 @@ c$9466 LD A,R        ; #REGa=random number.
  $9474 PUSH HL       ; Stash #REGhl (the free alien slot) on the stack.
  $9475 EX DE,HL      ; Switch the #REGde and #REGhl registers.
  $9476 LD A,($5E40)  ; #REGa=#R$5E40.
- $9479 RLA           ;
+ $9479 RLA           ; Rotate #REGa left once.
  $947A AND %00001110 ; Keep only bits 1-3.
- $947C LD C,A        ;
- $947D LD B,$00      ;
+ $947C LD C,A        ; {Create an offset in #REGbc - max #N$0E (only even
+ $947D LD B,$00      ; numbers).}
  $947F LD A,($5EA0)  ; #REGa=#R$5EA0.
- $9482 CP $0C        ;
- $9484 JR C,$9488    ;
+ $9482 CP $0C        ; {Compare the current level against #N$0C, if there's any
+ $9484 JR C,$9488    ; carry over then jump to #R$9488.}
  $9486 LD A,$0C      ; #REGa=#N$0C.
 *$9488 AND %00001110 ; Keep only bits 1-3.
- $948A LD L,A        ;
- $948B LD H,$00      ;
- $948D LD DE,$9D72   ; {#REGhl=#REGhl+#R$9D72.
+ $948A LD L,A        ; {Create an offset in #REGhl - number can be:
+ $948B LD H,$00      ; #LIST
+                     ; { #N($0002,$04,$04) }
+                     ; { #N($0004,$04,$04) }
+                     ; { #N($0006,$04,$04) }
+                     ; { #N($0008,$04,$04) }
+                     ; { #N($000A,$04,$04) }
+                     ; { #N($000C,$04,$04) }
+                     ; LIST#}
+ $948D LD DE,$9D72   ; {#REGhl+=#R$9D72.
  $9490 ADD HL,DE     ; }
- $9491 LD A,(HL)     ;
- $9492 INC HL        ;
+ $9491 LD A,(HL)     ; {#REGhl=alien lookup table appropriate for the current
+ $9492 INC HL        ; level.
  $9493 LD H,(HL)     ;
- $9494 LD L,A        ;
- $9495 ADD HL,BC     ;
+ $9494 LD L,A        ; }
+ $9495 ADD HL,BC     ; #REGhl+=.
  $9496 LD A,(HL)     ;
  $9497 INC HL        ;
  $9498 LD H,(HL)     ;
  $9499 LD L,A        ;
- $949A LD BC,$0018   ;
- $949D POP DE        ;
- $949E PUSH DE       ;
+ $949A LD BC,$0018   ; #REGbc=#N($0018,$04,$04).
+ $949D POP DE        ; #REGde=the free alien slot (from earlier).
+ $949E PUSH DE       ; Stash #REGde (the free alien slot) on the stack again.
  $949F LDIR          ;
- $94A1 POP HL        ;
+ $94A1 POP HL        ; #REGhl=the free alien slot.
  $94A2 LD A,(HL)     ;
  $94A3 INC HL        ;
  $94A4 INC HL        ;
@@ -5161,7 +5169,7 @@ c$9466 LD A,R        ; #REGa=random number.
 *$94C5 ADD HL,BC     ;
  $94C6 ADD HL,DE     ;
 *$94C7 LD A,H        ;
- $94C8 AND $1F       ;
+ $94C8 AND %00011111 ; Keep only bits 0-4.
  $94CA LD H,A        ;
  $94CB EX DE,HL      ;
  $94CC POP HL        ;
@@ -5171,7 +5179,7 @@ c$9466 LD A,R        ; #REGa=random number.
  $94D0 INC HL        ;
  $94D1 INC HL        ;
  $94D2 LD A,C        ;
- $94D3 AND $80       ;
+ $94D3 AND %10000000 ; Keep only bit 7.
  $94D5 RET Z         ;
  $94D6 LD A,(HL)     ;
  $94D7 NEG           ;
@@ -5179,16 +5187,16 @@ c$9466 LD A,R        ; #REGa=random number.
  $94DA RET           ;
 *$94DB LD A,($5E40)  ;
  $94DE LD B,A        ;
- $94DF AND $80       ;
+ $94DF AND %10000000 ; Keep only bit 7.
  $94E1 SUB $40       ;
  $94E3 LD C,A        ;
  $94E4 JP P,$94EC    ;
- $94E7 LD DE,$0090   ;
- $94EA JR $94EF      ;
+ $94E7 LD DE,$0090   ; #REGde=#N($0090,$04,$04).
+ $94EA JR $94EF      ; Jump to #R$94EF.
 *$94EC LD DE,$FF70   ;
 *$94EF ADD HL,DE     ;
  $94F0 LD A,H        ;
- $94F1 AND $1F       ;
+ $94F1 AND %00011111 ; Keep only bits 0-4.
  $94F3 LD H,A        ;
  $94F4 EX DE,HL      ;
  $94F5 POP HL        ;
@@ -5197,7 +5205,7 @@ c$9466 LD A,R        ; #REGa=random number.
  $94F8 LD (HL),D     ;
  $94F9 INC HL        ;
  $94FA LD A,B        ;
- $94FB AND $78       ;
+ $94FB AND %01111000 ; Keep only bits 3-6.
  $94FD JR NZ,$9500   ;
  $94FF INC A         ;
 *$9500 ADD A,$37     ;
@@ -5207,13 +5215,13 @@ c$9466 LD A,R        ; #REGa=random number.
  $9505 RET           ;
 *$9506 LD A,($5E40)  ;
  $9509 LD B,A        ;
- $950A AND $80       ;
+ $950A AND %10000000 ; Keep only bit 7.
  $950C SUB $40       ;
  $950E LD C,A        ;
  $950F JP P,$9517    ;
- $9512 LD DE,$0090   ;
- $9515 JR $951A      ;
-*$9517 LD DE,$FF70   ;
+ $9512 LD DE,$0090   ; #REGde=#N($0090,$04,$04).
+ $9515 JR $951A      ; Jump to #R$951A.
+*$9517 LD DE,$FF70   ; #REGde=#N$FF70.
 *$951A ADD HL,DE     ;
  $951B LD A,H        ;
  $951C AND $1F       ;
@@ -5225,14 +5233,14 @@ c$9466 LD A,R        ; #REGa=random number.
  $9523 LD (HL),D     ;
  $9524 INC HL        ;
  $9525 LD A,B        ;
- $9526 AND $78       ;
+ $9526 AND %01111000 ; Keep only bits 3-6.
  $9528 JR NZ,$952B   ;
  $952A INC A         ;
 *$952B ADD A,$37     ;
  $952D LD (HL),A     ;
  $952E INC HL        ;
  $952F LD (HL),C     ;
- $9530 RET           ;
+ $9530 RET           ; Return.
 
 ; Routine at 9531
 c$9531 LD HL,$5E5E     ; #REGhl=#R$5E5E.
@@ -6096,33 +6104,48 @@ c$9C23 LD HL,$9D80   ; {Copy #N$0018 bytes from #R$9D80 to #N$5E20.
  $9C37 LDIR          ; }
  $9C39 RET           ; Return.
 
-; Data block at 9C3A
-b$9C3A DEFB $50,$00,$00,$00,$38,$60,$00,$42
- $9C42 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C4A DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C52 DEFB $40,$00,$00,$00,$38,$30,$00,$45
- $9C5A DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C62 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C6A DEFB $48,$00,$00,$00,$38,$30,$00,$00
- $9C72 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C7A DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C82 DEFB $88,$00,$00,$00,$00,$00,$00,$44
- $9C8A DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C92 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9C9A DEFB $A8,$00,$00,$00,$38,$30,$03,$42
- $9CA2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9CAA DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9CB2 DEFB $B0,$00,$00,$00,$38,$20,$20,$43
- $9CBA DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9CC2 DEFB $00,$00,$20,$FC,$FC,$F4,$20,$00
- $9CCA DEFB $CC,$00,$00,$00,$38,$30,$20,$41
- $9CD2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9CDA DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9CE2 DEFB $B8,$00,$00,$00,$00,$00,$00,$42
- $9CEA DEFB $00,$00,$00,$00,$00,$00,$00,$00
- $9CF2 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+; Alien States
+@label=Alien_Meteor
+b$9C3A DEFB $50,$00,$00,$00,$38,$60,$00,$42 ; {#SPRITENAME(#PEEK(#PC)).
+ $9C42 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9C4A DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Alien_MrMagneticBrella
+ $9C52 DEFB $40,$00,$00,$00,$38,$30,$00,$45 ; {#SPRITENAME(#PEEK(#PC)).
+ $9C5A DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9C62 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Alien_TheBlob
+ $9C6A DEFB $48,$00,$00,$00,$38,$30,$00,$00 ; {#SPRITENAME(#PEEK(#PC)).
+ $9C72 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9C7A DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Alien_TheBlock
+ $9C82 DEFB $88,$00,$00,$00,$00,$00,$00,$44 ; {#SPRITENAME(#PEEK(#PC)).
+ $9C8A DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9C92 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Alien_BouncingWheel
+ $9C9A DEFB $A8,$00,$00,$00,$38,$30,$03,$42 ; {#SPRITENAME(#PEEK(#PC)).
+ $9CA2 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9CAA DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Alien_Spinner
+ $9CB2 DEFB $B0,$00,$00,$00,$38,$20,$20,$43 ; {#SPRITENAME(#PEEK(#PC)).
+ $9CBA DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9CC2 DEFB $00,$00,$20,$FC,$FC,$F4,$20,$00 ; }
+@label=Alien_Saturn
+ $9CCA DEFB $CC,$00,$00,$00,$38,$30,$20,$41 ; {#SPRITENAME(#PEEK(#PC)).
+ $9CD2 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9CDA DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
+@label=Alien_Shooter
+ $9CE2 DEFB $B8,$00,$00,$00,$00,$00,$00,$42 ; {#SPRITENAME(#PEEK(#PC)).
+ $9CEA DEFB $00,$00,$00,$00,$00,$00,$00,$00 ;
+ $9CF2 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; }
 
-; Data block at 9CFA
+; Alien Lookup Table
+;
+; All levels beyond level 6, repeat the level 6 lookups.
+;
+; .
+;
+; Level 1 aliens.
+@label=Level1Aliens
 w$9CFA DEFW $9C3A
  $9CFC DEFW $9C3A
  $9CFE DEFW $9C9A
@@ -6131,6 +6154,8 @@ w$9CFA DEFW $9C3A
  $9D04 DEFW $9C82
  $9D06 DEFW $9C9A
  $9D08 DEFW $9C82
+; Level 2 aliens.
+@label=Level2Aliens
  $9D0A DEFW $9C3A
  $9D0C DEFW $9CB2
  $9D0E DEFW $9C9A
@@ -6139,6 +6164,8 @@ w$9CFA DEFW $9C3A
  $9D14 DEFW $9C9A
  $9D16 DEFW $9C3A
  $9D18 DEFW $9C82
+; Level 3 aliens.
+@label=Level3Aliens
  $9D1A DEFW $9C3A
  $9D1C DEFW $9C3A
  $9D1E DEFW $9C9A
@@ -6147,6 +6174,8 @@ w$9CFA DEFW $9C3A
  $9D24 DEFW $9C6A
  $9D26 DEFW $9C9A
  $9D28 DEFW $9C82
+; Level 4 aliens.
+@label=Level4Aliens
  $9D2A DEFW $9C3A
  $9D2C DEFW $9C9A
  $9D2E DEFW $9C82
@@ -6155,6 +6184,8 @@ w$9CFA DEFW $9C3A
  $9D34 DEFW $9C6A
  $9D36 DEFW $9C3A
  $9D38 DEFW $9C82
+; Level 5 aliens.
+@label=Level5Aliens
  $9D3A DEFW $9C3A
  $9D3C DEFW $9C9A
  $9D3E DEFW $9C82
@@ -6163,6 +6194,8 @@ w$9CFA DEFW $9C3A
  $9D44 DEFW $9C6A
  $9D46 DEFW $9CE2
  $9D48 DEFW $9C3A
+; Level 6 aliens.
+@label=Level6Aliens
  $9D4A DEFW $9C3A
  $9D4C DEFW $9C52
  $9D4E DEFW $9C9A
@@ -6171,20 +6204,14 @@ w$9CFA DEFW $9C3A
  $9D54 DEFW $9C6A
  $9D56 DEFW $9CE2
  $9D58 DEFW $9CCA
- $9D5A DEFW $7809
- $9D5C DEFW $0030
- $9D5E DEFW $00AF
- $9D60 DEFW $4700
- $9D62 DEFW $0000
- $9D64 DEFW $0000
- $9D66 DEFW $0000
- $9D68 DEFW $0000
- $9D6A DEFW $0000
- $9D6C DEFW $0000
- $9D6E DEFW $0000
- $9D70 DEFW $0000
 
-; Data block at 9D72
+; Data block at 9D5A
+b$9D5A DEFB $09,$78,$30,$00,$AF,$00,$00,$47
+ $9D62 DEFB $00,$00,$00,$00,$00,$00,$00,$00
+ $9D6A DEFB $00,$00,$00,$00,$00,$00,$00,$00
+
+; Levels Alien Lookup Table
+@label=LevelsAlienLookupTable
 w$9D72 DEFW $9CFA
  $9D74 DEFW $9D0A
  $9D76 DEFW $9D1A
@@ -6278,7 +6305,7 @@ c$9DC0 LD A,($5E42)         ;
  $9E14 LD (HL),A            ;
  $9E15 INC HL               ;
  $9E16 EX DE,HL             ;
- $9E17 LD HL,$9E28          ;
+ $9E17 LD HL,$9E28          ; #REGhl=#R$9E28.
  $9E1A LD A,($5E40)         ;
  $9E1D AND $03              ;
  $9E1F LD C,A               ;
@@ -6288,6 +6315,7 @@ c$9DC0 LD A,($5E42)         ;
  $9E24 LD (DE),A            ;
  $9E25 JP $B8A8             ; Jump to #R$B8A8.
 ; All the attributes a laser beam can be.
+@label=Attributes_LaserBeam
  $9E28 DEFB $47,$43,$43,$45 ;
 ; View the equivalent code in;
 ; #LIST
@@ -6398,13 +6426,15 @@ c$9ECA LD A,($607A)  ; #REGa=#R$607A.
  $9EDA JR $9EEE      ; Jump to #R$9EEE.
 
 ; Routine at 9EDC
-c$9EDC LD A,($607A)  ;
+c$9EDC LD A,($607A)  ; #REGa=#R$607A.
  $9EDF SUB (IX+$02)  ;
  $9EE2 NEG           ;
- $9EE4 AND $07       ;
+; The Lunar Rover has seven (eleven?) frames of animation.
+ $9EE4 AND %00000111 ; Keep only bits 0-2.
+; With sprite IDs beginning from #R$BE90(#N$22) (#SPRITENAME$22).
  $9EE6 ADD A,$22     ;
- $9EE8 LD (IX+$00),A ;
- $9EEB CALL $8787    ;
+ $9EE8 LD (IX+$00),A ; Write #REGa to #REGix+#N$00.
+ $9EEB CALL $8787    ; Call #R$8787.
 ; This entry point is used by the routine at #R$9ECA.
 *$9EEE LD A,($5E6C)  ;
  $9EF1 AND A         ;
@@ -6638,217 +6668,229 @@ c$A0F8 CALL $945C      ;
  $A1A7 JP $B8C3        ;
 
 ; Routine at A1AA
-c$A1AA LD A,($5E42)   ;
- $A1AD RRCA           ;
- $A1AE LD C,A         ;
- $A1AF AND $03        ;
- $A1B1 ADD A,$2A      ;
- $A1B3 LD (IX+$00),A  ;
- $A1B6 LD B,$00       ;
- $A1B8 LD HL,$A313    ;
- $A1BB LD A,C         ;
- $A1BC RRCA           ;
- $A1BD RRCA           ;
- $A1BE AND $03        ;
- $A1C0 LD C,A         ;
- $A1C1 ADD HL,BC      ;
- $A1C2 LD A,(HL)      ;
- $A1C3 LD (IX+$07),A  ;
- $A1C6 BIT 3,(IX+$08) ;
- $A1CA JP NZ,$A0F8    ;
- $A1CD BIT 7,(IX+$08) ;
- $A1D1 JR Z,$A1F8     ;
- $A1D3 CALL $A522     ;
- $A1D6 JR C,$A1E0     ;
- $A1D8 LD A,(IX+$08)  ;
- $A1DB AND $02        ;
- $A1DD LD (IX+$08),A  ;
-*$A1E0 LD A,($5EA3)   ;
- $A1E3 AND A          ;
- $A1E4 JR NZ,$A1F8    ;
- $A1E6 CALL $A4BA     ;
- $A1E9 JR NC,$A1F8    ;
- $A1EB LD A,$01       ;
- $A1ED LD ($5EA3),A   ;
- $A1F0 SET 3,(IX+$08) ;
- $A1F4 RES 2,(IX+$08) ;
-*$A1F8 CALL $ABB4     ;
- $A1FB LD A,($6078)   ;
- $A1FE CP $11         ;
- $A200 RET NC         ;
- $A201 BIT 2,(IX+$08) ;
- $A205 JP NZ,$A15B    ;
- $A208 CALL $945C     ;
- $A20B JP NZ,$A12C    ;
- $A20E RES 1,(IX+$08) ;
+c$A1AA LD A,($5E42)         ;
+ $A1AD RRCA                 ;
+ $A1AE LD C,A               ;
+ $A1AF AND $03              ;
+ $A1B1 ADD A,$2A            ;
+ $A1B3 LD (IX+$00),A        ;
+ $A1B6 LD B,$00             ;
+ $A1B8 LD HL,$A313          ;
+ $A1BB LD A,C               ;
+ $A1BC RRCA                 ;
+ $A1BD RRCA                 ;
+ $A1BE AND $03              ;
+ $A1C0 LD C,A               ;
+ $A1C1 ADD HL,BC            ;
+ $A1C2 LD A,(HL)            ;
+ $A1C3 LD (IX+$07),A        ;
+ $A1C6 BIT 3,(IX+$08)       ;
+ $A1CA JP NZ,$A0F8          ;
+ $A1CD BIT 7,(IX+$08)       ;
+ $A1D1 JR Z,$A1F8           ;
+ $A1D3 CALL $A522           ;
+ $A1D6 JR C,$A1E0           ;
+ $A1D8 LD A,(IX+$08)        ;
+ $A1DB AND $02              ;
+ $A1DD LD (IX+$08),A        ;
+*$A1E0 LD A,($5EA3)         ;
+ $A1E3 AND A                ;
+ $A1E4 JR NZ,$A1F8          ;
+ $A1E6 CALL $A4BA           ;
+ $A1E9 JR NC,$A1F8          ;
+ $A1EB LD A,$01             ;
+ $A1ED LD ($5EA3),A         ;
+ $A1F0 SET 3,(IX+$08)       ;
+ $A1F4 RES 2,(IX+$08)       ;
+*$A1F8 CALL $ABB4           ;
+ $A1FB LD A,($6078)         ;
+ $A1FE CP $11               ;
+ $A200 RET NC               ;
+ $A201 BIT 2,(IX+$08)       ;
+ $A205 JP NZ,$A15B          ;
+ $A208 CALL $945C           ;
+ $A20B JP NZ,$A12C          ;
+ $A20E RES 1,(IX+$08)       ;
 ; This entry point is used by the routine at #R$A0F8.
-*$A212 LD A,($6078)   ;
- $A215 CP $11         ;
- $A217 RET NC         ;
- $A218 CALL $A4FC     ;
- $A21B RET NC         ;
- $A21C CALL $933E     ;
- $A21F RET Z          ;
- $A220 PUSH IX        ;
- $A222 POP HL         ;
- $A223 LD BC,$60A8    ;
- $A226 AND A          ;
- $A227 SBC HL,BC      ;
- $A229 JP Z,$A30A     ;
- $A22C LD A,($60AC)   ;
- $A22F LD HL,($60AA)  ;
-*$A232 LD DE,($607C)  ;
- $A236 LD ($607C),A   ;
- $A239 LD A,L         ;
- $A23A AND $F8        ;
- $A23C LD L,A         ;
- $A23D LD ($607A),HL  ;
- $A240 LD A,E         ;
- $A241 SUB $0C        ;
- $A243 LD ($5E6A),A   ;
- $A246 LD A,($6078)   ;
- $A249 DEC A          ;
- $A24A AND $F7        ;
- $A24C INC A          ;
- $A24D LD ($6078),A   ;
- $A250 JP $A299       ;
-*$A253 LD DE,$AA1B    ;
- $A256 LD HL,$AA4B    ;
- $A259 LD B,$10       ;
-*$A25B LD (HL),$80    ;
- $A25D INC HL         ;
- $A25E LD A,($5E6A)   ;
- $A261 LD (HL),A      ;
- $A262 INC HL         ;
- $A263 LD A,(DE)      ;
- $A264 INC DE         ;
- $A265 LD (HL),A      ;
- $A266 INC HL         ;
- $A267 LD A,(DE)      ;
- $A268 INC DE         ;
- $A269 LD (HL),A      ;
- $A26A INC HL         ;
- $A26B LD A,(DE)      ;
- $A26C INC DE         ;
- $A26D LD (HL),A      ;
- $A26E INC HL         ;
- $A26F DJNZ $A25B     ;
- $A271 RET            ;
-*$A272 XOR A          ;
- $A273 LD ($5E69),A   ;
- $A276 LD A,($5E7B)   ;
- $A279 DEC A          ;
- $A27A LD ($5E7B),A   ;
- $A27D CALL $B8F2     ;
- $A280 LD IX,$AA4B    ;
- $A284 LD B,$10       ;
-*$A286 PUSH BC        ;
- $A287 CALL $A993     ;
- $A28A LD BC,$0005    ;
- $A28D ADD IX,BC      ;
- $A28F POP BC         ;
- $A290 DJNZ $A286     ;
- $A292 LD A,($5E69)   ;
- $A295 AND A          ;
- $A296 JR NZ,$A272    ;
- $A298 RET            ;
-*$A299 DI             ;
- $A29A LD DE,$BA2A    ;
- $A29D CALL $B9BC     ;
- $A2A0 RST $38        ;
- $A2A1 XOR A          ;
- $A2A2 LD ($5E7B),A   ;
- $A2A5 CALL $A253     ;
- $A2A8 CALL $A272     ;
- $A2AB LD IX,$6078    ;
- $A2AF CALL $8640     ;
- $A2B2 CALL $A253     ;
- $A2B5 CALL $A272     ;
- $A2B8 CALL $A317     ;
- $A2BB LD A,$01       ;
- $A2BD LD ($5E68),A   ;
- $A2C0 CALL $A2F5     ;
- $A2C3 CALL $B3A3     ;
- $A2C6 CALL $8BA5     ;
- $A2C9 CALL $9356     ;
- $A2CC JP $81E1       ;
+*$A212 LD A,($6078)         ;
+ $A215 CP $11               ;
+ $A217 RET NC               ;
+ $A218 CALL $A4FC           ;
+ $A21B RET NC               ;
+ $A21C CALL $933E           ;
+ $A21F RET Z                ;
+ $A220 PUSH IX              ;
+ $A222 POP HL               ;
+ $A223 LD BC,$60A8          ;
+ $A226 AND A                ;
+ $A227 SBC HL,BC            ;
+ $A229 JP Z,$A30A           ;
+ $A22C LD A,($60AC)         ;
+ $A22F LD HL,($60AA)        ;
+*$A232 LD DE,($607C)        ;
+ $A236 LD ($607C),A         ;
+ $A239 LD A,L               ;
+ $A23A AND $F8              ;
+ $A23C LD L,A               ;
+ $A23D LD ($607A),HL        ;
+ $A240 LD A,E               ;
+ $A241 SUB $0C              ;
+ $A243 LD ($5E6A),A         ;
+ $A246 LD A,($6078)         ;
+ $A249 DEC A                ;
+ $A24A AND $F7              ;
+ $A24C INC A                ;
+ $A24D LD ($6078),A         ;
+ $A250 JP $A299             ;
+*$A253 LD DE,$AA1B          ;
+ $A256 LD HL,$AA4B          ;
+ $A259 LD B,$10             ;
+*$A25B LD (HL),$80          ;
+ $A25D INC HL               ;
+ $A25E LD A,($5E6A)         ;
+ $A261 LD (HL),A            ;
+ $A262 INC HL               ;
+ $A263 LD A,(DE)            ;
+ $A264 INC DE               ;
+ $A265 LD (HL),A            ;
+ $A266 INC HL               ;
+ $A267 LD A,(DE)            ;
+ $A268 INC DE               ;
+ $A269 LD (HL),A            ;
+ $A26A INC HL               ;
+ $A26B LD A,(DE)            ;
+ $A26C INC DE               ;
+ $A26D LD (HL),A            ;
+ $A26E INC HL               ;
+ $A26F DJNZ $A25B           ;
+ $A271 RET                  ;
+*$A272 XOR A                ;
+ $A273 LD ($5E69),A         ;
+ $A276 LD A,($5E7B)         ;
+ $A279 DEC A                ;
+ $A27A LD ($5E7B),A         ;
+ $A27D CALL $B8F2           ;
+ $A280 LD IX,$AA4B          ;
+ $A284 LD B,$10             ;
+*$A286 PUSH BC              ;
+ $A287 CALL $A993           ;
+ $A28A LD BC,$0005          ;
+ $A28D ADD IX,BC            ;
+ $A28F POP BC               ;
+ $A290 DJNZ $A286           ;
+ $A292 LD A,($5E69)         ;
+ $A295 AND A                ;
+ $A296 JR NZ,$A272          ;
+ $A298 RET                  ;
+*$A299 DI                   ;
+ $A29A LD DE,$BA2A          ;
+ $A29D CALL $B9BC           ;
+ $A2A0 RST $38              ;
+ $A2A1 XOR A                ;
+ $A2A2 LD ($5E7B),A         ;
+ $A2A5 CALL $A253           ;
+ $A2A8 CALL $A272           ;
+ $A2AB LD IX,$6078          ;
+ $A2AF CALL $8640           ;
+ $A2B2 CALL $A253           ;
+ $A2B5 CALL $A272           ;
+ $A2B8 CALL $A317           ;
+ $A2BB LD A,$01             ;
+ $A2BD LD ($5E68),A         ;
+ $A2C0 CALL $A2F5           ;
+ $A2C3 CALL $B3A3           ;
+ $A2C6 CALL $8BA5           ;
+ $A2C9 CALL $9356           ;
+ $A2CC JP $81E1             ;
 ; This entry point is used by the routine at #R$81BB.
-*$A2CF LD A,($607C)   ;
- $A2D2 SUB $0C        ;
- $A2D4 LD ($5E6A),A   ;
- $A2D7 CALL $A253     ;
- $A2DA CALL $AA9B     ;
- $A2DD CALL $AB2F     ;
- $A2E0 XOR A          ;
- $A2E1 LD ($5E7B),A   ;
- $A2E4 CALL $AB9D     ;
- $A2E7 CALL $AB48     ;
- $A2EA CALL $AB9D     ;
- $A2ED CALL $AB48     ;
- $A2F0 XOR A          ;
- $A2F1 LD ($5E68),A   ;
- $A2F4 RET            ;
+*$A2CF LD A,($607C)         ;
+ $A2D2 SUB $0C              ;
+ $A2D4 LD ($5E6A),A         ;
+ $A2D7 CALL $A253           ;
+ $A2DA CALL $AA9B           ;
+ $A2DD CALL $AB2F           ;
+ $A2E0 XOR A                ;
+ $A2E1 LD ($5E7B),A         ;
+ $A2E4 CALL $AB9D           ;
+ $A2E7 CALL $AB48           ;
+ $A2EA CALL $AB9D           ;
+ $A2ED CALL $AB48           ;
+ $A2F0 XOR A                ;
+ $A2F1 LD ($5E68),A         ;
+ $A2F4 RET                  ;
 ; This entry point is used by the routines at #R$A826 and #R$B52E.
-*$A2F5 LD HL,$6009    ;
- $A2F8 LD BC,$0718    ;
- $A2FB LD DE,$0011    ;
-*$A2FE PUSH BC        ;
-*$A2FF LD (HL),$00    ;
- $A301 INC HL         ;
- $A302 DJNZ $A2FF     ;
- $A304 ADD HL,DE      ;
- $A305 POP BC         ;
- $A306 DEC C          ;
- $A307 JR NZ,$A2FE    ;
- $A309 RET            ;
-*$A30A LD HL,($60C2)  ;
- $A30D LD A,($60C4)   ;
- $A310 JP $A232       ;
- $A313 LD B,A         ;
- $A314 LD B,H         ;
- $A315 LD B,L         ;
- $A316 LD B,(HL)      ;
-; This entry point is used by the routines at #R$A826 and #R$B52E.
-*$A317 LD HL,$6000    ;
- $A31A LD DE,$0018    ;
- $A31D LD B,$04       ;
-*$A31F LD (HL),$00    ;
- $A321 ADD HL,DE      ;
- $A322 DJNZ $A31F     ;
- $A324 RET            ;
+*$A2F5 LD HL,$6009          ;
+ $A2F8 LD BC,$0718          ;
+ $A2FB LD DE,$0011          ;
+*$A2FE PUSH BC              ;
+*$A2FF LD (HL),$00          ;
+ $A301 INC HL               ;
+ $A302 DJNZ $A2FF           ;
+ $A304 ADD HL,DE            ;
+ $A305 POP BC               ;
+ $A306 DEC C                ;
+ $A307 JR NZ,$A2FE          ;
+ $A309 RET                  ;
+*$A30A LD HL,($60C2)        ;
+ $A30D LD A,($60C4)         ;
+ $A310 JP $A232             ;
+ $A313 DEFB $47,$44,$45,$46 ;
+
+; Handler: Reset Laser Beam Slots
+;
+; Used by the routines at #R$A1AA, #R$A826 and #R$B52E.
+;
+; .
+;
+; See #R$9DC6 for the handler which actions "searching" for a free slot.
+@label=Handler_ResetLaserBeamSlots
+c$A317 LD HL,$6000   ; #REGhl=#R$6000.
+ $A31A LD DE,$0018   ; #REGde=#N($0018,$04,$04).
+ $A31D LD B,$04      ; #REGb=#N$04 (counter).
+@label=ResetLaserBeamSlots_Loop
+*$A31F LD (HL),$00   ; Write #N$00 to #REGhl.
+ $A321 ADD HL,DE     ; #REGhl=#REGhl+#REGde.
+ $A322 DJNZ $A31F    ; Decrease counter by one and loop back to #R$A31F until
+                     ; counter is zero.
+ $A324 RET           ; Return.
 
 ; Routine at A325
-c$A325 CALL $945C      ;
- $A328 JR NZ,$A32E     ;
- $A32A RES 1,(IX+$08)  ;
-*$A32E BIT 2,(IX+$08)  ;
- $A332 JP NZ,$A3FF     ;
- $A335 BIT 0,(IX+$08)  ;
- $A339 JP NZ,$A3C1     ;
- $A33C CALL $A522      ;
- $A33F LD A,($5EA3)    ;
- $A342 AND A           ;
- $A343 JR NZ,$A34A     ;
- $A345 CALL $A4BA      ;
- $A348 JR C,$A39C      ;
-*$A34A BIT 1,(IX+$08)  ;
- $A34E JR NZ,$A375     ;
- $A350 CALL $945C      ;
- $A353 JR Z,$A375      ;
- $A355 LD A,($6078)    ;
- $A358 CP $11          ;
- $A35A JR NC,$A375     ;
- $A35C CALL $A4FC      ;
- $A35F JR NC,$A375     ;
- $A361 LD HL,$6080     ;
- $A364 BIT 0,(HL)      ;
- $A366 JR NZ,$A375     ;
- $A368 SET 0,(HL)      ;
- $A36A SET 0,(IX+$08)  ;
- $A36E SET 1,(IX+$08)  ;
- $A372 CALL $B8BD      ;
-*$A375 JP $ABB4        ;
-*$A378 RES 0,(IX+$08)  ;
+c$A325 CALL $945C     ;
+ $A328 JR NZ,$A32E    ;
+ $A32A RES 1,(IX+$08) ;
+*$A32E BIT 2,(IX+$08) ;
+ $A332 JP NZ,$A3FF    ;
+ $A335 BIT 0,(IX+$08) ;
+ $A339 JP NZ,$A3C1    ;
+ $A33C CALL $A522     ;
+ $A33F LD A,($5EA3)   ;
+ $A342 AND A          ;
+ $A343 JR NZ,$A34A    ;
+ $A345 CALL $A4BA     ;
+ $A348 JR C,$A39C     ;
+*$A34A BIT 1,(IX+$08) ;
+ $A34E JR NZ,$A375    ;
+ $A350 CALL $945C     ;
+ $A353 JR Z,$A375     ;
+ $A355 LD A,($6078)   ;
+ $A358 CP $11         ;
+ $A35A JR NC,$A375    ;
+ $A35C CALL $A4FC     ;
+ $A35F JR NC,$A375    ;
+ $A361 LD HL,$6080    ;
+ $A364 BIT 0,(HL)     ;
+ $A366 JR NZ,$A375    ;
+ $A368 SET 0,(HL)     ;
+ $A36A SET 0,(IX+$08) ;
+ $A36E SET 1,(IX+$08) ;
+ $A372 CALL $B8BD     ;
+; This entry point is used by the routines at #R$A378, #R$A39C and #R$A3C1.
+*$A375 JP $ABB4       ;
+
+; Routine at A378
+;
+; Used by the routine at #R$A3C1.
+c$A378 RES 0,(IX+$08)  ;
  $A37C SET 1,(IX+$08)  ;
  $A380 LD HL,$6080     ;
  $A383 RES 0,(HL)      ;
@@ -6861,252 +6903,282 @@ c$A325 CALL $945C      ;
  $A393 LD (IX+$06),$01 ;
  $A397 CALL $B8C3      ;
  $A39A JR $A375        ;
-*$A39C SET 2,(IX+$08)  ;
- $A3A0 LD A,$01        ;
- $A3A2 LD ($5EA3),A    ;
- $A3A5 LD A,($6090)    ;
- $A3A8 CP $22          ;
- $A3AA LD A,$00        ;
- $A3AC JR C,$A3B0      ;
- $A3AE ADD A,$08       ;
-*$A3B0 XOR (IX+$00)    ;
- $A3B3 AND $08         ;
- $A3B5 LD C,A          ;
- $A3B6 LD A,(IX+$08)   ;
- $A3B9 AND $F7         ;
- $A3BB OR C            ;
- $A3BC LD (IX+$08),A   ;
- $A3BF JR $A375        ;
-*$A3C1 CALL $945C      ;
- $A3C4 JR Z,$A3D3      ;
- $A3C6 BIT 1,(IX+$08)  ;
- $A3CA JR NZ,$A3D3     ;
- $A3CC CALL $91BB      ;
- $A3CF LD A,D          ;
- $A3D0 AND A           ;
- $A3D1 JR NZ,$A378     ;
-*$A3D3 LD A,($6078)    ;
- $A3D6 DEC A           ;
- $A3D7 AND $04         ;
- $A3D9 JR NZ,$A3F9     ;
- $A3DB RES 3,(IX+$00)  ;
-*$A3DF LD HL,($607A)   ;
- $A3E2 LD (IX+$02),L   ;
- $A3E5 LD (IX+$03),H   ;
- $A3E8 LD A,($607C)    ;
- $A3EB ADD A,$08       ;
- $A3ED CP $AF          ;
- $A3EF JR C,$A3F3      ;
- $A3F1 LD A,$AF        ;
-*$A3F3 LD (IX+$04),A   ;
- $A3F6 JP $A375        ;
-*$A3F9 SET 3,(IX+$00)  ;
- $A3FD JR $A3DF        ;
-*$A3FF LD A,($6090)    ;
- $A402 SUB $1A         ;
- $A404 CP $10          ;
- $A406 JR NC,$A45A     ;
- $A408 BIT 1,(IX+$08)  ;
- $A40C JR NZ,$A431     ;
- $A40E CALL $945C      ;
- $A411 JR Z,$A431      ;
- $A413 CALL $A4FC      ;
- $A416 JR NC,$A431     ;
- $A418 XOR A           ;
- $A419 LD ($5EA3),A    ;
- $A41C LD A,($6080)    ;
- $A41F OR $01          ;
- $A421 LD ($6080),A    ;
- $A424 LD A,(IX+$08)   ;
- $A427 AND $F0         ;
- $A429 OR $03          ;
- $A42B LD (IX+$08),A   ;
- $A42E CALL $B8BD      ;
+
+; Routine at A39C
+;
+; Used by the routine at #R$A325.
+c$A39C SET 2,(IX+$08) ;
+ $A3A0 LD A,$01       ;
+ $A3A2 LD ($5EA3),A   ;
+ $A3A5 LD A,($6090)   ;
+ $A3A8 CP $22         ;
+ $A3AA LD A,$00       ;
+ $A3AC JR C,$A3B0     ;
+ $A3AE ADD A,$08      ;
+*$A3B0 XOR (IX+$00)   ;
+ $A3B3 AND $08        ;
+ $A3B5 LD C,A         ;
+ $A3B6 LD A,(IX+$08)  ;
+ $A3B9 AND $F7        ;
+ $A3BB OR C           ;
+ $A3BC LD (IX+$08),A  ;
+ $A3BF JR $A375       ;
+
+; Routine at A3C1
+;
+; Used by the routine at #R$A325.
+c$A3C1 CALL $945C     ; Call #R$945C.
+ $A3C4 JR Z,$A3D3     ;
+ $A3C6 BIT 1,(IX+$08) ;
+ $A3CA JR NZ,$A3D3    ;
+ $A3CC CALL $91BB     ; Call #R$91BB.
+ $A3CF LD A,D         ;
+ $A3D0 AND A          ;
+ $A3D1 JR NZ,$A378    ;
+*$A3D3 LD A,($6078)   ;
+ $A3D6 DEC A          ;
+ $A3D7 AND $04        ;
+ $A3D9 JR NZ,$A3F9    ;
+ $A3DB RES 3,(IX+$00) ;
+*$A3DF LD HL,($607A)  ;
+ $A3E2 LD (IX+$02),L  ;
+ $A3E5 LD (IX+$03),H  ;
+ $A3E8 LD A,($607C)   ;
+ $A3EB ADD A,$08      ;
+ $A3ED CP $AF         ;
+ $A3EF JR C,$A3F3     ;
+ $A3F1 LD A,$AF       ; {Write #N$AF to #REGix+#N$04.
+*$A3F3 LD (IX+$04),A  ; }
+ $A3F6 JP $A375       ; Jump to #R$A375.
+*$A3F9 SET 3,(IX+$00) ; Set bit 3 of #REGix+#N$00.
+ $A3FD JR $A3DF       ; Jump to #R$A3DF.
+
+; Routine at A3FF
+;
+; Used by the routine at #R$A325.
+c$A3FF LD A,($6090)   ; #REGa=#R$6090.
+ $A402 SUB $1A        ;
+ $A404 CP $10         ;
+ $A406 JR NC,$A45A    ;
+ $A408 BIT 1,(IX+$08) ;
+ $A40C JR NZ,$A431    ;
+ $A40E CALL $945C     ; Call #R$945C.
+ $A411 JR Z,$A431     ;
+ $A413 CALL $A4FC     ; Call #R$A4FC.
+ $A416 JR NC,$A431    ;
+ $A418 XOR A          ; {Write #N$00 to #R$5EA3.
+ $A419 LD ($5EA3),A   ; }
+ $A41C LD A,($6080)   ;
+ $A41F OR $01         ;
+ $A421 LD ($6080),A   ;
+ $A424 LD A,(IX+$08)  ;
+ $A427 AND %11110000  ; Keep only bits 4-7.
+ $A429 OR %00000011   ; Set bits 0-1.
+ $A42B LD (IX+$08),A  ;
+ $A42E CALL $B8BD     ; Call #R$B8BD.
 ; This entry point is used by the routines at #R$A0F8 and #R$B6CF.
-*$A431 LD A,($6090)    ;
- $A434 CP $22          ;
- $A436 JR C,$A450      ;
- $A438 LD BC,$FFF4     ;
-*$A43B LD HL,($6092)   ;
+*$A431 LD A,($6090)   ;
+ $A434 CP $22         ;
+ $A436 JR C,$A450     ;
+ $A438 LD BC,$FFF4    ;
+*$A43B LD HL,($6092)  ;
 ; This entry point is used by the routines at #R$A0F8 and #R$B6CF.
-*$A43E ADD HL,BC       ;
- $A43F LD (IX+$02),L   ;
- $A442 LD (IX+$03),H   ;
- $A445 LD A,($6094)    ;
- $A448 SUB $16         ;
- $A44A LD (IX+$04),A   ;
- $A44D JP $ABB4        ;
-*$A450 LD BC,$0012     ;
- $A453 JR $A43B        ;
-*$A455 CALL $A48D      ;
- $A458 JR $A46F        ;
-*$A45A CALL $A579      ;
- $A45D LD A,($5E42)    ;
- $A460 AND $01         ;
- $A462 JR NZ,$A46F     ;
- $A464 CALL $8F90      ;
- $A467 LD D,A          ;
- $A468 BIT 3,D         ;
- $A46A JR Z,$A455      ;
- $A46C CALL $A4A0      ;
-*$A46F LD A,($6078)    ;
- $A472 CP $16          ;
- $A474 JR C,$A483      ;
- $A476 LD A,$08        ;
- $A478 CALL $A4AA      ;
- $A47B LD BC,$FFF4     ;
-*$A47E LD HL,($607A)   ;
- $A481 JR $A43E        ;
-*$A483 LD A,$00        ;
- $A485 CALL $A4AA      ;
- $A488 LD BC,$0012     ;
- $A48B JR $A47E        ;
-*$A48D LD A,(IX+$00)   ;
- $A490 LD C,A          ;
- $A491 AND $07         ;
- $A493 CP $07          ;
- $A495 RET Z           ;
- $A496 INC A           ;
-*$A497 LD B,A          ;
- $A498 LD A,C          ;
- $A499 AND $F8         ;
- $A49B OR B            ;
- $A49C LD (IX+$00),A   ;
- $A49F RET             ;
-*$A4A0 LD A,(IX+$00)   ;
- $A4A3 LD C,A          ;
- $A4A4 AND $07         ;
- $A4A6 RET Z           ;
- $A4A7 DEC A           ;
- $A4A8 JR $A497        ;
-*$A4AA XOR (IX+$08)    ;
- $A4AD AND $08         ;
- $A4AF LD C,A          ;
- $A4B0 LD A,(IX+$00)   ;
- $A4B3 AND $F7         ;
- $A4B5 OR C            ;
- $A4B6 LD (IX+$00),A   ;
- $A4B9 RET             ;
-; This entry point is used by the routines at #R$A1AA and #R$B7BC.
-*$A4BA LD L,(IX+$02)   ;
- $A4BD LD H,(IX+$03)   ;
- $A4C0 ADD HL,HL       ;
- $A4C1 ADD HL,HL       ;
- $A4C2 ADD HL,HL       ;
- $A4C3 LD C,L          ;
- $A4C4 LD B,H          ;
- $A4C5 LD HL,($6092)   ;
- $A4C8 ADD HL,HL       ;
- $A4C9 ADD HL,HL       ;
- $A4CA ADD HL,HL       ;
- $A4CB AND A           ;
- $A4CC SBC HL,BC       ;
- $A4CE LD A,H          ;
- $A4CF AND A           ;
- $A4D0 JP P,$A4D6      ;
- $A4D3 CALL $8947      ;
-*$A4D6 LD BC,$00C0     ;
- $A4D9 AND A           ;
- $A4DA SBC HL,BC       ;
- $A4DC RET NC          ;
- $A4DD LD A,($6094)    ;
- $A4E0 DEC A           ;
- $A4E1 SUB (IX+$04)    ;
- $A4E4 CP $16          ;
- $A4E6 RET             ;
-; This entry point is used by the routines at #R$B6CF and #R$B785.
-*$A4E7 LD A,($6078)    ;
- $A4EA CP $11          ;
- $A4EC RET NC          ;
- $A4ED CALL $945C      ;
- $A4F0 RET Z           ;
- $A4F1 LD A,($6080)    ;
- $A4F4 AND $01         ;
- $A4F6 RET NZ          ;
- $A4F7 BIT 7,(IX+$08)  ;
- $A4FB RET NZ          ;
-; This entry point is used by the routines at #R$A0F8 and #R$A1AA.
-*$A4FC LD L,(IX+$02)   ;
- $A4FF LD H,(IX+$03)   ;
- $A502 LD BC,$0008     ;
- $A505 ADD HL,BC       ;
- $A506 LD BC,($607A)   ;
- $A50A AND A           ;
- $A50B SBC HL,BC       ;
- $A50D LD A,H          ;
- $A50E AND $1F         ;
- $A510 RET NZ          ;
- $A511 LD A,L          ;
- $A512 CP $10          ;
- $A514 RET NC          ;
- $A515 LD A,($607C)    ;
- $A518 SUB $08         ;
- $A51A SUB (IX+$04)    ;
- $A51D NEG             ;
- $A51F CP $18          ;
- $A521 RET             ;
-; This entry point is used by the routine at #R$A1AA.
-*$A522 CALL $B89A      ;
- $A525 CALL $B6AE      ;
+*$A43E ADD HL,BC      ;
+ $A43F LD (IX+$02),L  ;
+ $A442 LD (IX+$03),H  ;
+ $A445 LD A,($6094)   ;
+ $A448 SUB $16        ;
+ $A44A LD (IX+$04),A  ;
+ $A44D JP $ABB4       ;
+*$A450 LD BC,$0012    ;
+ $A453 JR $A43B       ;
+*$A455 CALL $A48D     ;
+ $A458 JR $A46F       ;
+*$A45A CALL $A579     ;
+ $A45D LD A,($5E42)   ;
+ $A460 AND $01        ;
+ $A462 JR NZ,$A46F    ;
+ $A464 CALL $8F90     ;
+ $A467 LD D,A         ;
+ $A468 BIT 3,D        ;
+ $A46A JR Z,$A455     ;
+ $A46C CALL $A4A0     ;
+*$A46F LD A,($6078)   ;
+ $A472 CP $16         ;
+ $A474 JR C,$A483     ;
+ $A476 LD A,$08       ;
+ $A478 CALL $A4AA     ;
+ $A47B LD BC,$FFF4    ;
+*$A47E LD HL,($607A)  ;
+ $A481 JR $A43E       ;
+*$A483 LD A,$00       ;
+ $A485 CALL $A4AA     ;
+ $A488 LD BC,$0012    ;
+ $A48B JR $A47E       ;
+*$A48D LD A,(IX+$00)  ;
+ $A490 LD C,A         ;
+ $A491 AND $07        ;
+ $A493 CP $07         ;
+ $A495 RET Z          ;
+ $A496 INC A          ;
+*$A497 LD B,A         ;
+ $A498 LD A,C         ;
+ $A499 AND $F8        ;
+ $A49B OR B           ;
+ $A49C LD (IX+$00),A  ;
+ $A49F RET            ;
+*$A4A0 LD A,(IX+$00)  ;
+ $A4A3 LD C,A         ;
+ $A4A4 AND $07        ;
+ $A4A6 RET Z          ;
+ $A4A7 DEC A          ;
+ $A4A8 JR $A497       ;
+*$A4AA XOR (IX+$08)   ;
+ $A4AD AND $08        ;
+ $A4AF LD C,A         ;
+ $A4B0 LD A,(IX+$00)  ;
+ $A4B3 AND $F7        ;
+ $A4B5 OR C           ;
+ $A4B6 LD (IX+$00),A  ;
+ $A4B9 RET            ; Return.
+
+; Routine at A4BA
+;
+; Used by the routines at #R$A1AA, #R$A325 and #R$B7BC.
+c$A4BA LD L,(IX+$02) ; #REGl=#REGix+#N$02.
+ $A4BD LD H,(IX+$03) ; #REGh=#REGix+#N$03.
+ $A4C0 ADD HL,HL     ;
+ $A4C1 ADD HL,HL     ;
+ $A4C2 ADD HL,HL     ;
+ $A4C3 LD C,L        ;
+ $A4C4 LD B,H        ;
+ $A4C5 LD HL,($6092) ;
+ $A4C8 ADD HL,HL     ;
+ $A4C9 ADD HL,HL     ;
+ $A4CA ADD HL,HL     ;
+ $A4CB AND A         ;
+ $A4CC SBC HL,BC     ;
+ $A4CE LD A,H        ;
+ $A4CF AND A         ;
+ $A4D0 JP P,$A4D6    ;
+ $A4D3 CALL $8947    ; Call #R$8947.
+*$A4D6 LD BC,$00C0   ; #REGbc=#N($00C0,$04,$04).
+ $A4D9 AND A         ;
+ $A4DA SBC HL,BC     ;
+ $A4DC RET NC        ;
+ $A4DD LD A,($6094)  ; #REGa=#R$6074.
+ $A4E0 DEC A         ;
+ $A4E1 SUB (IX+$04)  ;
+ $A4E4 CP $16        ;
+ $A4E6 RET           ; Retun.
+
+; Routine at A4E7
+;
+; Used by the routines at #R$B6CF and #R$B785.
+c$A4E7 LD A,($6078)   ; #REGa=#R$6078.
+ $A4EA CP $11         ;
+ $A4EC RET NC         ;
+ $A4ED CALL $945C     ; Call #R$945C.
+ $A4F0 RET Z          ;
+ $A4F1 LD A,($6080)   ; #REGa=#R$6080.
+ $A4F4 AND %00000001  ; Keep only bit 0.
+ $A4F6 RET NZ         ; Return the result is #N$01.
+ $A4F7 BIT 7,(IX+$08) ;
+ $A4FB RET NZ         ;
+; This entry point is used by the routines at #R$A0F8, #R$A1AA, #R$A325 and
+; #R$A3FF.
+*$A4FC LD L,(IX+$02)  ;
+ $A4FF LD H,(IX+$03)  ;
+ $A502 LD BC,$0008    ;
+ $A505 ADD HL,BC      ;
+ $A506 LD BC,($607A)  ;
+ $A50A AND A          ;
+ $A50B SBC HL,BC      ;
+ $A50D LD A,H         ;
+ $A50E AND %00011111  ; Keep only bits 0-4.
+ $A510 RET NZ         ;
+ $A511 LD A,L         ;
+ $A512 CP $10         ;
+ $A514 RET NC         ;
+ $A515 LD A,($607C)   ;
+ $A518 SUB $08        ;
+ $A51A SUB (IX+$04)   ;
+ $A51D NEG            ;
+ $A51F CP $18         ;
+ $A521 RET            ; Return.
+
+; Routine at A522
+;
+; Used by the routines at #R$A1AA and #R$A325.
+c$A522 CALL $B89A      ; Call #R$B89A.
+ $A525 CALL $B6AE      ; Call #R$B6AE.
  $A528 CP $AF          ;
  $A52A JR C,$A536      ;
- $A52C LD (IX+$06),$00 ;
- $A530 LD (IX+$05),$00 ;
- $A534 LD A,$AF        ;
-*$A536 LD (IX+$04),A   ;
- $A539 RET             ;
-; This entry point is used by the routine at #R$AD36.
-*$A53A PUSH IX         ;
- $A53C POP HL          ;
- $A53D LD DE,$0018     ;
- $A540 ADD HL,DE       ;
- $A541 LD A,(HL)       ;
- $A542 AND A           ;
- $A543 RET NZ          ;
- $A544 LD (HL),$C8     ;
- $A546 INC HL          ;
- $A547 INC HL          ;
- $A548 EX DE,HL        ;
- $A549 LD A,($5E42)    ;
- $A54C LD C,A          ;
- $A54D LD A,($5E40)    ;
- $A550 ADD A,C         ;
- $A551 LD ($5E40),A    ;
- $A554 LD A,($5E40)    ;
- $A557 AND $3C         ;
- $A559 LD C,A          ;
- $A55A LD B,$00        ;
- $A55C LD HL,$A68B     ;
- $A55F ADD HL,BC       ;
- $A560 INC HL          ;
- $A561 INC HL          ;
- $A562 LD A,(IX+$02)   ;
- $A565 ADD A,$08       ;
- $A567 LD (DE),A       ;
- $A568 INC DE          ;
- $A569 LD A,(IX+$03)   ;
- $A56C ADC A,$00       ;
- $A56E AND $1F         ;
- $A570 LD (DE),A       ;
- $A571 INC DE          ;
- $A572 LD A,(IX+$04)   ;
- $A575 SUB $10         ;
- $A577 JR $A5C8        ;
-*$A579 LD A,($5E42)    ;
- $A57C AND $03         ;
- $A57E RET NZ          ;
- $A57F CALL $8F90      ;
+ $A52C LD (IX+$06),$00 ; {Write #N$00 to #REGix+#N$06 and #REGix+#N$05.
+ $A530 LD (IX+$05),$00 ; }
+ $A534 LD A,$AF        ; {Write #N$AF to #REGix+#N$04.
+*$A536 LD (IX+$04),A   ; }
+ $A539 RET             ; Return.
+
+; Routine at A53A
+;
+; Used by the routine at #R$AD36.
+c$A53A PUSH IX       ; {#REGhl=#REGix+#N($0018,$04,$04).
+ $A53C POP HL        ;
+ $A53D LD DE,$0018   ;
+ $A540 ADD HL,DE     ; }
+ $A541 LD A,(HL)     ; {Return if the byte at this address is non-zero.
+ $A542 AND A         ;
+ $A543 RET NZ        ; }
+ $A544 LD (HL),$C8   ; Write #N$C8 to #REGhl.
+ $A546 INC HL        ;
+ $A547 INC HL        ;
+ $A548 EX DE,HL      ;
+ $A549 LD A,($5E42)  ;
+ $A54C LD C,A        ;
+ $A54D LD A,($5E40)  ;
+ $A550 ADD A,C       ;
+ $A551 LD ($5E40),A  ;
+ $A554 LD A,($5E40)  ;
+ $A557 AND %00111100 ; Keep only bits 2-5.
+ $A559 LD C,A        ;
+ $A55A LD B,$00      ;
+ $A55C LD HL,$A68B   ; #REGhl=#R$A68B.
+ $A55F ADD HL,BC     ;
+ $A560 INC HL        ;
+ $A561 INC HL        ;
+ $A562 LD A,(IX+$02) ;
+ $A565 ADD A,$08     ;
+ $A567 LD (DE),A     ;
+ $A568 INC DE        ;
+ $A569 LD A,(IX+$03) ;
+ $A56C ADC A,$00     ;
+ $A56E AND %00011111 ; Keep only bits 0-4.
+ $A570 LD (DE),A     ;
+ $A571 INC DE        ;
+ $A572 LD A,(IX+$04) ;
+ $A575 SUB $10       ;
+ $A577 JR $A5C8      ; Jump to #R$A5C8.
+
+; Routine at A579
+;
+; Used by the routine at #R$A3FF.
+c$A579 LD A,($5E42)    ; #REGa=#R$5E42.
+ $A57C AND %00000011   ; Keep only bits 0-1.
+ $A57E RET NZ          ; Return if the result is non-zero.
+ $A57F CALL $8F90      ; Call #R$8F90.
  $A582 BIT 4,A         ;
  $A584 RET NZ          ;
- $A585 LD HL,$6000     ;
- $A588 LD DE,$0018     ;
- $A58B LD B,$02        ;
+ $A585 LD HL,$6000     ; #REGhl=#R$6000.
+ $A588 LD DE,$0018     ; #REGde=#N($0018,$04,$04).
+ $A58B LD B,$02        ; #REGb=#N$02 (counter).
 *$A58D LD A,(HL)       ;
  $A58E AND A           ;
  $A58F JR Z,$A595      ;
  $A591 ADD HL,DE       ;
- $A592 DJNZ $A58D      ;
- $A594 RET             ;
+ $A592 DJNZ $A58D      ; Decrease counter by one and loop back to #R$A58D until
+                       ; counter is zero.
+ $A594 RET             ; Return.
 *$A595 PUSH HL         ;
  $A596 CALL $B960      ;
  $A599 POP HL          ;
@@ -7139,6 +7211,7 @@ c$A325 CALL $945C      ;
  $A5C3 LD A,(IX+$04)   ;
  $A5C6 ADD A,(HL)      ;
  $A5C7 INC HL          ;
+; This entry point is used by the routine at #R$A53A.
 *$A5C8 LD (DE),A       ;
  $A5C9 INC DE          ;
  $A5CA LD A,(HL)       ;
@@ -7352,8 +7425,11 @@ c$A325 CALL $945C      ;
  $A739 POP HL          ;
  $A73A POP HL          ;
  $A73B RET             ;
-; This entry point is used by the routines at #R$970E and #R$AD36.
-*$A73C LD (IX+$00),$64 ;
+
+; Routine at A73C
+;
+; Used by the routines at #R$970E, #R$A579 and #R$AD36.
+c$A73C LD (IX+$00),$64 ;
  $A740 JR $A772        ;
  $A742 CALL $8B73      ;
  $A745 CALL $8733      ;
@@ -7506,7 +7582,7 @@ c$A84C LD B,$02      ; #REGb=#N$02 (counter for our two players).
 @label=NewGame_Loop
 *$A84E PUSH BC       ; Stash the counter in #REGbc on the stack.
 ; Handle setting up 1UP player.
- $A84F LD A,$FF      ; {Write 1UP starting fuel to #R$5EA0.
+ $A84F LD A,$FF      ; {Write 1UP starting level to #R$5EA0.
  $A851 LD ($5EA0),A  ; }
  $A854 LD A,$04      ; {Write 1UP starting lives to #R$5EA1.
  $A856 LD ($5EA1),A  ; }
@@ -7522,7 +7598,7 @@ c$A84C LD B,$02      ; #REGb=#N$02 (counter for our two players).
 ; Handle setting up 2UP player.
  $A86C LD A,$05      ; {Write 2UP starting lives to #R$5EA5.
  $A86E LD ($5EA5),A  ; }
- $A871 LD A,$FF      ; {Write 2UP starting fuel to #R$5EA4.
+ $A871 LD A,$FF      ; {Write 2UP starting level to #R$5EA4.
  $A873 LD ($5EA4),A  ; }
  $A876 LD A,($5E00)  ; #REGa=#R$5E00.
  $A879 AND %00000001 ; Keep only bit 0.
@@ -8025,8 +8101,8 @@ c$ABA9 LD A,(IX+$00)       ; #REGa=#REGix+#N$00.
  $ABAD AND %00001111       ; Keep only bits 0-3.
  $ABAF ADD A,$70           ;
  $ABB1 LD (IX+$00),A       ;
-; This entry point is used by the routines at #R$A1AA, #R$A325, #R$AC39,
-; #R$AD36, #R$B33D, #R$B37B, #R$B460, #R$B785 and #R$B7BC.
+; This entry point is used by the routines at #R$A1AA, #R$A325, #R$A3FF,
+; #R$A73C, #R$AC39, #R$AD36, #R$B33D, #R$B37B, #R$B460, #R$B785 and #R$B7BC.
 *$ABB4 CALL $8701          ; Call #R$8701.
  $ABB7 JP $8733            ; Jump to #R$8733.
  $ABBA LD E,$18            ; #REGe=#N$18.
@@ -8412,7 +8488,7 @@ c$AD36 LD HL,($607A)                        ; #REGhl=#R$607A.
 *$AF61 BIT 0,(IX+$10)                       ;
  $AF65 JR Z,$AF7D                           ;
 ; Take one hit off the missile hit count total.
- $AF67 DEC (IX+$16)                         ; Decrease #REGix+#N16 by one.
+ $AF67 DEC (IX+$16)                         ; Decrease #REGix+#N$16 by one.
  $AF6A JR Z,$AFB1                           ; Jump to #R$AFB1 if the missile
                                             ; has been destroyed.
  $AF6C CALL $B8B4                           ; Call #R$B8B4.
@@ -9050,8 +9126,8 @@ c$B3E8 LD A,($5E42)                         ; #REGa=#R$5E42.
 *$B441 CALL $864F                           ; Call #R$864F.
  $B444 XOR A                                ; {Write #N$00 to #R$5EA1.
  $B445 LD ($5EA1),A                         ; }
- $B448 LD (IX+$00),$85                      ; Write #N$85 to #REGix+#N00.
- $B44C LD (IX+$05),$40                      ; Write #N$40 to #REGix+#N05.
+ $B448 LD (IX+$00),$85                      ; Write #N$85 to #REGix+#N$00.
+ $B44C LD (IX+$05),$40                      ; Write #N$40 to #REGix+#N$05.
  $B450 RET                                  ; Return.
  $B451 DEFB $00,$00,$00,$00,$18,$FC,$01,$10 ;
  $B459 DEFB $FA,$02,$08,$FE,$03,$00,$00     ;
@@ -9313,26 +9389,36 @@ t$B5DC DEFM $56                                     ; {"WARNING".
  $B683 DEFM $47                                     ; {"DESTROY THE MISSILE. ".
  $B684 DEFM "DESTROY THE MISSILE."," "+$80          ; }
 
-; Routine at B699
+; Convert To Base 10
 ;
 ; Used by the routines at #R$B52E and #R$F641.
+;
+;   A Input number
+; O:A Output number
+;
+; For an example, given #REGa=#N$16 - the output is #EVAL($22,$02,$08).
+; .
+; First count the number of "10's" in #REGa.
+@label=Convert_Base10
 c$B699 LD BC,$000A   ; #REGbc=#N($000A,$04,$04).
-*$B69C INC B         ;
- $B69D SUB C         ;
- $B69E JR NC,$B69C   ;
- $B6A0 ADD A,C       ;
- $B6A1 DEC B         ;
- $B6A2 SLA B         ;
+@label=Convert_Base10_Loop
+*$B69C INC B         ; Increment #REGb counter.
+ $B69D SUB C         ; #REGa-=#N$0A.
+ $B69E JR NC,$B69C   ; Jump back to #R$B69C until there's a carry amount.
+ $B6A0 ADD A,C       ; #REGa+=#REGc.
+ $B6A1 DEC B         ; Decrease the counter in #REGb by one to account for the
+                     ; carry.
+ $B6A2 SLA B         ; {Shift and rotate #REGb four times.
  $B6A4 SLA B         ;
  $B6A6 SLA B         ;
- $B6A8 SLA B         ;
- $B6AA AND %00001111 ; Keep only bits 0-2.
- $B6AC OR B          ;
+ $B6A8 SLA B         ; }
+ $B6AA AND %00001111 ; Keep only bits 0-3.
+ $B6AC OR B          ; Set the bits from #REGb.
  $B6AD RET           ; Return.
 
 ; Routine at B6AE
 ;
-; Used by the routines at #R$A325, #R$B460 and #R$B7BC.
+; Used by the routines at #R$A522, #R$B460 and #R$B7BC.
 c$B6AE LD A,(IX+$05)  ; {#REGc=#REGix+#N$05.
  $B6B1 LD C,A         ; }
  $B6B2 LD B,$00       ;
@@ -9450,7 +9536,7 @@ c$B7A8 LD A,(IX+$00) ; #REGa=#REGix+#N$00.
  $B7AB INC A         ; Increment #REGa by one.
 ; The bomb has four frames of animation.
  $B7AC AND %00000011 ; Keep only bits 0-1.
-; With sprite IDs beginning from #N$EC.
+; With sprite IDs beginning from #R$EE17(#N$EC) (#SPRITENAME$EC).
  $B7AE ADD A,$EC     ; #REGa=#REGa+#N$EC.
  $B7B0 LD (IX+$00),A ; Write #REGa back to #REGix+#N$00.
  $B7B3 LD A,(IX+$07) ; #REGa=#REGix+#N$07.
@@ -9563,7 +9649,7 @@ c$B87E LD A,($6078)  ; #REGa=#R$6078.
 
 ; Routine at B89A
 ;
-; Used by the routines at #R$A325 and #R$B7BC.
+; Used by the routines at #R$A522 and #R$B7BC.
 c$B89A DEC (IX+$11)  ; Decrease #REGix+#N$11 by one.
  $B89D RET NZ        ; Return if the result is not zero.
  $B89E LD A,(IX+$12) ; #REGa=#REGix+#N$12.
@@ -9596,15 +9682,15 @@ c$B8B4 LD C,$38      ; #REGc=#N$38 (pitch).
 
 ; Routine at B8BD
 ;
-; Used by the routines at #R$8D06, #R$930C, #R$A0F8, #R$A325, #R$B6CF, #R$B785
-; and #R$F295.
+; Used by the routines at #R$8D06, #R$930C, #R$A0F8, #R$A325, #R$A3FF, #R$B6CF,
+; #R$B785 and #R$F295.
 c$B8BD LD D,$20      ; #REGd=#N$20 (duration).
  $B8BF LD C,$50      ; #REGc=#N$50 (pitch).
  $B8C1 JR $B8CD      ; Jump to #R$B8CD.
 
 ; Routine at B8C3
 ;
-; Used by the routines at #R$91E2, #R$93A6, #R$A0F8, #R$A325, #R$B7BC and
+; Used by the routines at #R$91E2, #R$93A6, #R$A0F8, #R$A378, #R$B7BC and
 ; #R$F295.
 c$B8C3 LD D,$30      ; #REGd=#N$30 (duration).
  $B8C5 LD C,$40      ; #REGc=#N$40 (pitch).
@@ -9676,7 +9762,7 @@ c$B8F2 LD A,($5E7B)  ;
 
 ; Routine at B8FF
 ;
-; Used by the routine at #R$A325.
+; Used by the routine at #R$A73C.
 c$B8FF LD D,$07      ;
 *$B901 LD A,D        ;
  $B902 DAA           ;
@@ -9770,8 +9856,11 @@ c$B950 LD HL,$B95C                          ; #REGhl=#R$B95C.
  $B959 LDIR                                 ; Copy #N$08 bytes from #REGhl to
                                             ; #REGde.
  $B95B RET                                  ; Return.
- $B95C DEFB $A5,$20,$08,$28,$21,$65,$B9,$18 ;
- $B964 DEFB $EE,$A1,$08,$6A,$B9,$08,$00,$78 ;
+ $B95C DEFB $A5,$20,$08,$28                 ;
+; This entry point is used by the routines at #R$A579 and #R$AD36.
+*$B960 LD HL,$B965                          ;
+ $B963 JR $B953                             ;
+ $B965 DEFB $A1,$08,$6A,$B9,$08,$00,$78     ;
  $B96C DEFB $70,$68,$60,$58,$50,$48,$40     ;
 *$B973 LD HL,$B978                          ; #REGhl=#R$B978.
  $B976 JR $B953                             ; Jump to #R$B953.
@@ -9858,722 +9947,722 @@ w$BABE DEFW $834B
 ; Sprite Table
 @label=SpritesTable
 w$BAC0 DEFW $BDCC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAC2 DEFW $BDFD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAC4 DEFW $BDCC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAC6 DEFW $BDFD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAC8 DEFW $BE2E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BACA DEFW $BE5F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BACC DEFW $BE2E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BACE DEFW $BE5F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAD0 DEFW $BCBE    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAD2 DEFW $BCEB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAD4 DEFW $BD18    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAD6 DEFW $BCEB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAD8 DEFW $BD45    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BADA DEFW $BD72    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BADC DEFW $BD9F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BADE DEFW $BD72    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAE0 DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAE2 DEFW $C9BF    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAE4 DEFW $C900    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAE6 DEFW $C841    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAE8 DEFW $C782    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAEA DEFW $BE90    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAEC DEFW $BF4F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAEE DEFW $C00E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAF0 DEFW $C0CD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAF2 DEFW $C782    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAF4 DEFW $CA7E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAF6 DEFW $CB58    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAF8 DEFW $CC32    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAFA DEFW $CD0C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAFC DEFW $CDE6    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BAFE DEFW $CEC0    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB00 DEFW $CF9A    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB02 DEFW $BE90    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB04 DEFW $C18C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB06 DEFW $C266    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB08 DEFW $C340    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB0A DEFW $C41A    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB0C DEFW $C4F4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB0E DEFW $C5CE    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB10 DEFW $C6A8    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB12 DEFW $D074    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB14 DEFW $D0AB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB16 DEFW $D0E2    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB18 DEFW $D119    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB1A DEFW $D976    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB1C DEFW $D976    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB1E DEFW $D167    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB20 DEFW $D17E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB22 DEFW $D195    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB24 DEFW $D1AE    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB26 DEFW $D1CB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB28 DEFW $D1EA    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB2A DEFW $D20D    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB2C DEFW $D232    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB2E DEFW $D257    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB30 DEFW $D26E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB32 DEFW $D285    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB34 DEFW $D29E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB36 DEFW $D2BB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB38 DEFW $D2DA    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB3A DEFW $D2FD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB3C DEFW $D322    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB3E DEFW $D894    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB40 DEFW $D8B5    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB42 DEFW $D8D4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB44 DEFW $D8F1    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB46 DEFW $D90C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB48 DEFW $D925    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB4A DEFW $D93C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB4C DEFW $D957    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB4E DEFW $D59F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB50 DEFW $D5C0    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB52 DEFW $D5E1    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB54 DEFW $D602    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB56 DEFW $D61F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB58 DEFW $D638    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB5A DEFW $D655    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB5C DEFW $D676    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB5E DEFW $D697    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB60 DEFW $D6B8    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB62 DEFW $D6D9    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB64 DEFW $D6FA    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB66 DEFW $D71B    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB68 DEFW $D73C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB6A DEFW $D75D    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB6C DEFW $D77E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB6E DEFW $D870    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB70 DEFW $D876    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB72 DEFW $D159    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB74 DEFW $D160    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB76 DEFW $D79F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB78 DEFW $D7B2    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB7A DEFW $D7CB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB7C DEFW $D7EC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB7E DEFW $D80D    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB80 DEFW $D82E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB82 DEFW $D84F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB84 DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB86 DEFW $D87E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB88 DEFW $D888    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB8A DEFW $D87E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB8C DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB8E DEFW $DF13    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB90 DEFW $DF55    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB92 DEFW $DFA7    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB94 DEFW $DFF9    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB96 DEFW $E04B    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB98 DEFW $E09D    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB9A DEFW $E0EF    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB9C DEFW $E141    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BB9E DEFW $D987    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBA0 DEFW $D9C8    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBA2 DEFW $DA09    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBA4 DEFW $DA4A    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBA6 DEFW $DA8B    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBA8 DEFW $DACC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBAA DEFW $DB0D    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBAC DEFW $DB4E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBAE DEFW $DB8F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBB0 DEFW $DBD0    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBB2 DEFW $DC11    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBB4 DEFW $DC52    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBB6 DEFW $DC93    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBB8 DEFW $DCD4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBBA DEFW $DD15    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBBC DEFW $DD56    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBBE DEFW $E193    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBC0 DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBC2 DEFW $E23B    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBC4 DEFW $E256    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBC6 DEFW $E1B4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBC8 DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBCA DEFW $E271    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBCC DEFW $E28C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBCE DEFW $E2A7    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBD0 DEFW $E2C8    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBD2 DEFW $E2E9    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBD4 DEFW $E306    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBD6 DEFW $E31F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBD8 DEFW $E338    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBDA DEFW $E351    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBDC DEFW $E36E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBDE DEFW $E533    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBE0 DEFW $E533    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBE2 DEFW $E55E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBE4 DEFW $E589    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBE6 DEFW $E5B4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBE8 DEFW $E5B4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBEA DEFW $E589    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBEC DEFW $E55E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBEE DEFW $E401    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBF0 DEFW $E434    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBF2 DEFW $E467    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBF4 DEFW $E1D5    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBF6 DEFW $E49A    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBF8 DEFW $E4CD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBFA DEFW $E500    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBFC DEFW $E1D5    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BBFE DEFW $E38F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC00 DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC02 DEFW $E3B5    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC04 DEFW $E3CA    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC06 DEFW $E3A2    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC08 DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC0A DEFW $E3DB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC0C DEFW $E3F0    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC0E DEFW $ED51    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC10 DEFW $ED72    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC12 DEFW $ED93    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC14 DEFW $EDB4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC16 DEFW $EDD5    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC18 DEFW $EDF6    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC1A DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC1C DEFW $BCBC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC1E DEFW $E848    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC20 DEFW $E86F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC22 DEFW $E896    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC24 DEFW $E8BB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC26 DEFW $E8DA    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC28 DEFW $E8F1    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC2A DEFW $EA83    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC2C DEFW $EA88    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC2E DEFW $E99C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC30 DEFW $E9BD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC32 DEFW $E9DE    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC34 DEFW $E9FF    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC36 DEFW $EA20    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC38 DEFW $EA41    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC3A DEFW $EA62    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC3C DEFW $E36E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC3E DEFW $E5DF    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC40 DEFW $E5F8    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC42 DEFW $E619    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC44 DEFW $E63A    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC46 DEFW $E65B    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC48 DEFW $E67C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC4A DEFW $E67C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC4C DEFW $E6BE    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC4E DEFW $E6DF    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC50 DEFW $E6E8    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC52 DEFW $E6F1    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC54 DEFW $E6FA    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC56 DEFW $E703    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC58 DEFW $E71C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC5A DEFW $E735    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC5C DEFW $E74E    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC5E DEFW $E767    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC60 DEFW $E780    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC62 DEFW $E799    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC64 DEFW $E71C    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC66 DEFW $E703    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC68 DEFW $E7B2    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC6A DEFW $E7CB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC6C DEFW $E7E4    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC6E DEFW $E7FD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC70 DEFW $E816    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC72 DEFW $E82F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC74 DEFW $E7B2    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC76 DEFW $E910    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC78 DEFW $E933    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC7A DEFW $E956    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC7C DEFW $E979    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC7E DEFW $EA8D    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC80 DEFW $EAAB    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC82 DEFW $EAED    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC84 DEFW $EB67    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC86 DEFW $EC49    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC88 DEFW $EC6A    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC8A DEFW $EC8B    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC8C DEFW $ECAC    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC8E DEFW $ECCD    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC90 DEFW $ECEE    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC92 DEFW $ED0F    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC94 DEFW $ED30    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC96 DEFW $EE17    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC98 DEFW $EE38    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC9A DEFW $EE59    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
  $BC9C DEFW $EE38    ; Sprite ID:
-                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BAC0)/$02))
-                     ; #SPRITENAME((#PC-$BAC0)/$02).
+                     ; #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02))
+                     ; #SPRITENAME((#PC-$BABE)/$02).
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$A4BE }
@@ -10584,11 +10673,11 @@ w$BAC0 DEFW $BDCC    ; Sprite ID:
 ; LIST#
 
 ; Data block at BC9E
-b$BC9E DEFB $07,$04,$47,$47,$47,$47,$47,$47
- $BCA6 DEFB $47,$47,$47
-
-; Data block at BCA9
-b$BCA9 DEFB $47,$47,$47,$47,$47,$45,$45,$45
+b$BC9E DEFB $07                             ; Width = #N(#PEEK(#PC)) bytes.
+ $BC9F DEFB $04                             ; Height = #N(#PEEK(#PC)) pixels.
+ $BCA0 DEFB $47,$47,$47,$47,$47,$47,$47
+ $BCA7 DEFB $47,$47
+ $BCA9 DEFB $47,$47,$47,$47,$47,$45,$45,$45
  $BCB1 DEFB $45,$45,$45,$45,$45,$45,$45,$45
  $BCB9 DEFB $45,$45,$45
 
@@ -12337,6 +12426,11 @@ b$D697 DEFB $10      ; Height = #N(#PEEK(#PC)) pixels.
  $D799 DEFB $3F,$20  ;
  $D79B DEFB $1F,$40  ;
  $D79D DEFB $0F,$80  ; }
+; #UDGTABLE(default)
+; {
+; #UDGARRAY*meteor-01,15;meteor-02;meteor-03;meteor-04;meteor-05;meteor-06;meteor-07;meteor-08(meteor)
+; }
+; UDGTABLE#
 
 ; Sprite: Sparkle
 ;
@@ -16038,86 +16132,117 @@ c$F5E3 LD B,$00      ; #REGb=#N$00.
  $F5E8 HALT          ;
  $F5E9 JP $F295      ; Jump to #R$F295.
 
-; Routine at F5EC
+; Print 1UP/ 2UP Levels
 ;
 ; Used by the routines at #R$84D8 and #R$9F6A.
+;
+; .
+;
+; Sets attributes for 1UP level.
+@label=PrintPlayerLevels
 c$F5EC LD HL,$0848   ; #REGhl=#N$0848.
  $F5EF CALL $F662    ; Call #R$F662.
+; Sets attributes for 2UP level.
  $F5F2 LD HL,$08A0   ; #REGhl=#N$08A0.
  $F5F5 CALL $F662    ; Call #R$F662.
+; Is this a 1 or 2 player game?
  $F5F8 LD A,($5E65)  ; {If #R$5E65 is not zero, jump to #R$F609.
  $F5FB AND A         ;
  $F5FC JR NZ,$F609   ; }
+; Handler for printing 1UP level followed by 2UP level.
  $F5FE LD HL,$0848   ; #REGhl=#N$0848.
  $F601 CALL $F612    ; Call #R$F612.
  $F604 LD HL,$08A0   ; #REGhl=#N$08A0.
  $F607 JR $F628      ; Jump to #R$F628.
+; Handler for printing 2UP level followed by 1UP level.
+@label=Handler_PrintPlayerLevels
 *$F609 LD HL,$0848   ; #REGhl=#N$0848.
  $F60C CALL $F628    ; Call #R$F628.
+; Handles the 2UP level.
  $F60F LD HL,$08A0   ; #REGhl=#N$08A0.
+; Handles displaying "#FONT:(L)addr=$D347,attr=$47(level)" for 1UP.
+@label=Print1UPLevel
 *$F612 LD A,$4C      ; #REGa=#N$4C.
  $F614 CALL $F632    ; Call #R$F632.
  $F617 CALL $F641    ; Call #R$F641.
-; This entry point is used by the routine at #R$F628.
+; Prints the first digit (held in #REGa from #REGb).
+@label=PrintLevel
 *$F61A PUSH BC       ; Stash #REGbc on the stack.
- $F61B ADD A,$30     ; #REGa=#REGa+#N$30.
+ $F61B ADD A,$30     ; Add #N$30 to convert to an ASCII character (starting at
+                     ; "0" character).
  $F61D CALL $F632    ; Call #R$F632.
  $F620 POP BC        ; Restore #REGbc from the stack.
- $F621 LD A,C        ;
- $F622 ADD A,$30     ; #REGa=#REGa+#N$30.
+; Now move onto the second digit held in #REGc.
+ $F621 LD A,C        ; #REGa=#REGc.
+ $F622 ADD A,$30     ; Add #N$30 to convert to an ASCII character (starting at
+                     ; "0" character).
  $F624 CALL $F632    ; Call #R$F632.
  $F627 RET           ; Return.
-
-; Routine at F628
-;
-; Used by the routine at #R$F5EC.
-c$F628 LD A,$4C      ; #REGa=#N$4C.
+; Handles displaying "#FONT:(L)addr=$D347,attr=$47(level)" for 2UP.
+@label=Print2UPLevel
+*$F628 LD A,$4C      ; #REGa=#N$4C.
  $F62A CALL $F632    ; Call #R$F632.
  $F62D CALL $F658    ; Call #R$F658.
  $F630 JR $F61A      ; Jump to #R$F61A.
+; Keep #REGhl (pixel co-ordinates) and #REGaf (the ASCII character to print)
+; for later.
+@label=PrintLevelMessaging
 *$F632 PUSH HL       ; {Stash #REGhl and #REGaf on the stack.
  $F633 PUSH AF       ; }
  $F634 CALL $851E    ; Call #R$851E.
+; Fetch the ASCII character we want to print from the stack.
  $F637 POP AF        ; Restore #REGaf from the stack.
  $F638 CALL $89EF    ; Call #R$89EF.
+; Restore the pixel co-ordinates from the stack, and move onto the next
+; character column.
  $F63B POP HL        ; Restore #REGhl from the stack.
  $F63C LD A,L        ; {#REGl=#REGl+#N$08.
  $F63D ADD A,$08     ;
  $F63F LD L,A        ; }
  $F640 RET           ; Return.
 
-; Routine at F641
+; Active Player Level
 ;
 ; Used by the routine at #R$F5EC.
+;
+; BC Player level as two digits
+@label=Calculate_ActivePlayer_Level
 c$F641 LD A,($5EA0)  ; {If #R$5EA0 is not #N$FF, jump to #R$F649.
  $F644 CP $FF        ;
  $F646 JR NZ,$F649   ; }
  $F648 XOR A         ; #REGa=#N$00.
+; This reads #REGa into #REGbc as two nibbles, e.g. level 21 would be
+; #EVAL($15,$02,$08) which returns #N$2101.
+@label=Calculate_Player_Level
 *$F649 CALL $B699    ; Call #R$B699.
  $F64C LD B,A        ; #REGb=#REGa.
  $F64D AND %00001111 ; Keep only bits 0-3.
  $F64F LD C,A        ; #REGc=#REGa.
  $F650 LD A,B        ; #REGa=#REGb.
- $F651 RRA           ;
+ $F651 RRA           ; {Rotate the bits of #REGa right four times.
  $F652 RRA           ;
  $F653 RRA           ;
- $F654 RRA           ;
+ $F654 RRA           ; }
  $F655 AND %00001111 ; Keep only bits 0-3.
  $F657 RET           ; Return.
-; This entry point is used by the routine at #R$F628.
+; This entry point is used by the routine at #R$F5EC.
+@label=Calculate_InactivePlayer_Level
 *$F658 LD A,($5EA4)  ; {If #R$5EA4 is not #N$FF, jump to #R$F649.
  $F65B CP $FF        ;
  $F65D JR NZ,$F649   ; }
  $F65F XOR A         ; #REGa=#N$00.
  $F660 JR $F649      ; Jump to #R$F649.
 
-; Routine at F662
+; Helper: Colour Levels Messaging Green
 ;
 ; Used by the routine at #R$F5EC.
+;
+; HL Pixel address co-ordinates
+@label=ColourLevelsGreen
 c$F662 CALL $8506    ; Call #R$8506.
  $F665 LD B,$03      ; #REGb=#N$03.
- $F667 LD A,$44      ; {Write #N$44 (attribute byte) to #REGhl.
-@label=Write44_Loop
+ $F667 LD A,$44      ; {Write #N$44 (#COLOUR$44 attribute byte) to #REGhl.
+@label=ColourLevelsGreen_Loop
 *$F669 LD (HL),A     ; }
  $F66A INC HL        ; Increment #REGhl by one.
  $F66B DJNZ $F669    ; Decrease counter by one and loop back to #R$F669 until
