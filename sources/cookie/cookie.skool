@@ -2880,16 +2880,31 @@ c$713D LD HL,$5F35   ; #REGhl=#R$5F35.
                      ; counter is zero.
  $7151 RET           ; Return.
 
-; Routine at 7152
-c$7152 LD A,($5F23)  ; {Return if #R$5F23 is not zero.
+; Limit Frame Rate
+;
+; .
+;
+; .
+;
+; Called at the beginning of each game loop. Setting a higher pause value will
+; slow the game down.
+@label=LimitFrameRate
+c$7152 LD A,($5F23)  ; {Return if #R$5F23 is is not marked as being updated.
  $7155 AND A         ;
  $7156 RET NZ        ; }
- $7157 LD HL,$0100   ; #REGhl=#N$0100.
-*$715A DEC HL        ; Decrease #REGhl by one.
- $715B LD A,L        ; {Jump to #R$715A if #REGhl is not zero.
+ $7157 LD HL,$0100   ; Introduce a counter (#N$0100) for a slight pause.
+@LimitFrameRate_Loop
+*$715A DEC HL        ; Decrease the counter by one.
+ $715B LD A,L        ; {Keep jumping back to #R$715A until the counter is zero.
  $715C OR H          ;
  $715D JR NZ,$715A   ; }
  $715F RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #JETPAC$691B }
+; { #LUNARJETMAN$824A }
+; { #PSSST$70DF }
+; LIST#
 
 ; Frame Update
 ;

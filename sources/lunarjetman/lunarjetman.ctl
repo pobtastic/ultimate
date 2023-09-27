@@ -73,7 +73,10 @@ g $5E42
 
 g $5E50
 
-g $5E52
+g $5E52 Frame Updated
+@ $5E52 label=FrameUpdated
+D $5E52 Has the frame been updated? #TABLE(default,centre,centre) { #N$00 | No } { #N$01 | Yes } TABLE#
+  $5E52,$01
 
 g $5E53 Last Frame
 D $5E53 #HTML(Holds a copy of the last <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
@@ -130,6 +133,8 @@ D $5E67 At the beginning of each player turn there is a delay to allow the playe
 . The larger delay for a 2UP game is useful for swapping players controls.
 
 g $5E68
+
+g $5E69
 
 g $5E6C
 g $5E6D
@@ -199,6 +204,14 @@ g $608E Fuel Level
   $608E,$02,$01
 
 b $6090
+
+b $6092
+
+b $60C4
+
+b $6108
+
+b $6182
 
 b $6195
 
@@ -566,14 +579,25 @@ c $822F
 
 c $823F
   $823F,$03 Call #R$822F.
+  $8242,$02 Restore #REGix from the stack.
+  $8244,$04 Write #N$00 to #R$5E52.
   $8248,$01 Enable interrupts.
   $8249,$01 Return.
 
-c $824A
-  $824A,$03 #REGa=#R$5E52.
-  $824F,$03 #REGhl=#N($00C0,$04,$04).
-  $8252,$01 Decrease #REGhl by one.
-  $8253,$04 Jump to #R$8252 until #REGhl is zero.
+c $824A Limit Frame Rate
+@ $824A label=LimitFrameRate
+E $824A View the equivalent code in;
+. #LIST
+. { #COOKIE$7152 }
+. { #JETPAC$691B }
+. { #PSSST$70DF }
+. LIST#
+N $824A Called at the beginning of each game loop. Setting a higher pause value will slow the game down.
+  $824A,$05 Return if #R$5E52 is is not marked as being updated.
+  $824F,$03 Introduce a counter (#N($00C0,$04,$04)) for a slight pause.
+@ $8252 label=LimitFrameRate_Loop
+  $8252,$01 Decrease counter by one.
+  $8253,$04 Keep jumping back to #R$8252 until the counter is zero.
   $8257,$01 Return.
 
 c $8258
@@ -780,6 +804,27 @@ E $851E View the equivalent code in;
   $853C,$01 Return.
 
 c $853D
+  $853D,$01 #REGl=#REGa.
+  $853E,$02 #REGa-=#N$40.
+  $8540,$02 Is #REGa now less than #N$08?
+  $8542,$02 #REGh=#N$00.
+  $8544,$02 If #REGa was less than #N$08, jump to #R$8560.
+  $8546,$02 #REGa-=#N$08.
+  $8548,$02 #REGh=#N$08.
+  $854A,$04 If #REGa is now less than #N$08, jump to #R$8560.
+  $854E,$02 #REGa-=#N$40.
+
+  $8552,$02 #REGh=#N$10.
+
+  $855A,$02 #REGh=#N$18.
+
+  $855E,$01 #REGa=#REGl.
+  $855F,$01 Return.
+  $8560,$02,b$01 Keep only bits 0-2.
+  $8562,$01 #REGa+=#REGh.
+  $8563,$01 Increment #REGa by one.
+  $8564,$03 #REGbc=#R$EE7A.
+  $8567,$01 Return.
 
 c $8568
   $8568,$03 #REGbc=#R$BAC0.
@@ -1392,8 +1437,43 @@ c $8C71
   $8CB9,$03 Jump to #R$8CDF.
 
 c $8CBC
+  $8CBC,$04 Write #N$F0 to #REGix+#N$06.
+  $8CC0,$03 Call #R$8F90.
+
+  $8CC8,$03 Call #R$91BB.
+
+  $8CDC,$03 Jump to #R$8DC5.
+
+N $8CDF
+  $8CDF,$03 Jump to #R$8DD9.
+
+N $8CE2
+  $8CE2,$05 Write #N$F0 to #REGix+#N$05.
+  $8CE7,$03 #REGa=#REGix+#N$00.
+  $8CEA,$01 Decrease #REGa by one.
+  $8CEB,$02 Reset bit 2 of #REGa.
+  $8CED,$01 Increment #REGa by one.
+  $8CEE,$03 Write #REGa back to #REGix+#N$00.
+  $8CF1,$03 Jump to #R$8CBC.
+
+N $8CF4
+  $8CF4,$05 Write #N$10 to #REGix+#N$05.
+  $8CF9,$03 #REGa=#REGix+#N$00.
+  $8CFC,$01 Decrease #REGa by one.
+  $8CFD,$02 Set bit 2 of #REGa.
+  $8CFF,$01 Increment #REGa by one.
+  $8D00,$03 Write #REGa back to #REGix+#N$00.
+  $8D03,$03 Jump to #R$8CBC.
 
 c $8D06
+  $8D06,$03 Call #R$8F90.
+
+  $8D28,$02 Jump to #R$8D37.
+
+  $8D3A,$03 Call #R$8F90.
+  $8D3D,$01 #REGb=controls.
+  $8D3E,$06 If #R$608F is zero, jump to #R$8D4E.
+
   $8DA4,$03 #REGhl=#R$608E.
   $8DA7,$04 If jetmans fuel has run out, jump to #R$8DBB.
   $8DAB,$01 Reset flags.
@@ -1407,10 +1487,55 @@ N $8DAC Subtract the fuel expenditure from the current fuel level.
   $8DBF,$03 #REGhl=#N$1040.
   $8DC2,$03 Call #R$8C01.
   $8DC5,$03 Call #R$907B.
+  $8DC8,$03 #REGa=#R$5E42.
+  $8DCB,$02,b$01 Keep bits 0-1.
+  $8DCD,$01 Store the result in #REGc.
+  $8DCE,$03 #REGa=#REGix+#N$00.
+  $8DD1,$01 Decrease #REGa by one.
+  $8DD2,$02,b$01 Keep only bits 2-7.
+  $8DD4,$01 Set the bits from #REGc.
+  $8DD5,$01 Increment #REGa by one.
+  $8DD6,$03 Write #REGa back to #REGix+#N$00.
+  $8DD9,$03 Call #R$8701.
+  $8DDC,$03 Call #R$8733.
+  $8DDF,$03 Call #R$8F90.
 
-  $8D06,$03 Call #R$8F90.
+  $8DE7,$03 #REGa=#R$FF54.
+
+  $8DEE,$03 #REGa=#R$5E40.
+  $8DF1,$02,b$01 Keep only bits 0-6.
+  $8DF5,$03 #REGa=#R$5E42.
+  $8DF8,$02,b$01 Keep only bits 1-3.
+
+  $8DFD,$03 #REGhl=#R$9DB0.
+
+  $8E04,$03 Call #R$B9BC.
 
 c $8E5A
+  $8E5A,$03 #REGa=#REGix+#N$00.
+  $8E5D,$01 Decrease #REGa by one.
+  $8E5E,$02 Set bit 2 of #REGa.
+  $8E60,$01 Increment #REGa by one.
+  $8E61,$03 Write #REGa back to #REGix+#N$00.
+
+  $8E72,$03 #REGa=#R$608F.
+
+  $8E86,$03 Jump to #R$8D37.
+
+  $8E91,$02 Jump to #R$8E86.
+  $8E93,$02 #REGa=#N$10.
+  $8E95,$02 Jump to #R$8E86.
+  $8E97,$03 #REGa=#REGix+#N$05.
+
+  $8E9F,$03 #REGa=#R$608F.
+
+  $8EAD,$03 Jump to #R$8D37.
+
+  $8EB8,$03 Jump to #R$8D37.
+  $8EBB,$02 #REGa=#N$10.
+  $8EBD,$03 Jump to #R$8D37.
+  $8EC0,$02 #REGa=#N$20.
+  $8EC2,$03 Jump to #R$8D37.
 
 c $8EC5
 
@@ -1555,25 +1680,46 @@ R $8F9F O:A Controls
 
 c $8FF4
   $8FF4,$03 #REGa=#REGix+#N$00.
+  $8FF7,$01 Decrease #REGa by one.
+  $8FF8,$02 Set bit 3 of #REGa.
+  $8FFA,$01 Increment #REGa by one.
+  $8FFB,$03 Write #REGa to #REGix+#N$00.
+  $8FFE,$04 Write #N$AF to #REGix+#N$04.
   $9002,$03 Jump to #R$8DD9.
 
 c $9005
   $9005,$03 #REGa=#REGix+#N$00.
+  $9008,$01 Decrease #REGa by one.
+  $9009,$02 Reset bit 3 of #REGa.
+  $900B,$01 Increment #REGa by one.
+  $900C,$03 Write #REGa back to #REGix+#N$00.
   $900F,$05 Write #N$F0 to #REGix+#N$06.
+  $9014,$09 Decrease #REGix+#N$04 by three.
   $901D,$03 Jump to #R$8DD9.
 
 c $9020
-  $9020,$03 #REGa=#R$5E6C.
+  $9020,$05 If #R$5E6C is non-zero then return.
+  $9025,$03 #REGa=#R$6090.
 
   $902D,$03 #REGhl=#R$9D5A.
   $9030,$03 #REGde=#N$6078.
   $9033,$03 #REGbc=#N($0018,$04,$04).
 
+  $9038,$03 #REGhl=#R$6092.
+  $903B,$04 #REGbc=#R$6182.
   $903F,$03 Call #R$AD3F.
+  $9042,$03 #REGhl=#R$6092.
 
   $9047,$03 #REGbc=#N($0040,$04,$04).
   $904A,$03 Call #R$A002.
 
+  $904E,$02,b$01 Keep only bits 3-7.
+
+  $9054,$02 #REGa=#N$40.
+  $9056,$03 #REGhl=#R$5E00.
+
+  $9069,$06 Write #N$9000 to #R$608E.
+  $906F,$04 Write #N$00 to #R$5E6C.
   $9073,$03 Jump to #R$894F.
   $9076,$03 #REGbc=#N$FFC0.
   $9079,$02 Jump to #R$904A.
@@ -1599,7 +1745,13 @@ R $917C HL Terrain Buffer?
 
 c $919E
   $919E,$03 #REGde=#N$FF88.
+  $91A1,$01 #REGhl+=#REGde.
+  $91A2,$01 #REGa=#REGh.
   $91A3,$02,b$01 Keep only bits 0-5.
+  $91A5,$01 #REGh=#REGa.
+  $91A6,$03 #REGde=#R$7000.
+  $91A9,$0C
+  $91B5,$01 #REGhl+=#REGde.
   $91B6,$03 #REGde=#N$50C0.
   $91B9,$02 Jump to #R$917C.
 
@@ -1612,17 +1764,20 @@ c $91BB
 
   $91D1,$01 Stash #REGhl on the stack.
   $91D2,$03 #REGbc=#R$7000.
+  $91D5,$01 #REGhl+=#REGbc.
 
+  $91D9,$01 Increment #REGhl by one.
   $91DA,$01 #REGa=#REGh.
   $91DB,$02,b$01 Keep only bits 0-1.
   $91DD,$01 #REGh=#REGa.
-
+  $91DE,$01 #REGhl+=#REGbc.
+  $91DF,$01 #REGe=#REGhl.
   $91E0,$01 Restore #REGhl from the stack.
   $91E1,$01 Return.
 
 c $91E2
   $91E2,$06 If #R$5E6C is not zero, jump to #R$9267.
-  $91E8,$06 Write #N$9000 to #N$608E.
+  $91E8,$06 Write #N$9000 to #R$608E.
   $91EE,$01 #REGa=#REGh.
   $91EF,$03 #REGhl=#N$1040.
   $91F2,$03 Call #R$8C01.
@@ -1631,13 +1786,20 @@ c $91E2
   $920D,$02 Jump to #R$9211.
 
   $921E,$03 #REGde=#N$FFF8.
+  $9221,$01 #REGhl+=#REGde.
 
   $922F,$02,b$01 Keep only bits 0-1.
-
+  $9231,$01 #REGh=#REGa.
+  $9232,$02 #REGb=#N$06.
+  $9234,$01 Switch the #REGde and #REGhl registers.
   $9235,$03 #REGhl=#R$7000.
+  $9238,$01 #REGhl+=#REGde.
 
   $923D,$02,b$01 Keep only bit 3.
 
+  $9243,$02,b$01 Keep only bits 0-1.
+  $9245,$01 #REGd=#REGa.
+  $9246,$02
   $9248,$02 Jump to #R$9250.
 
 c $930C
@@ -1669,13 +1831,29 @@ c $933E
 
 c $9356 Draw Terrain?
   $9356,$03 #REGhl=#R$607A.
-  $9359,$03 #REGde=#N$FF88.
+  $9359,$03 #REGde=#R$FF88.
+  $935C,$01 #REGhl+=#REGde.
+  $935D,$01 #REGa=#REGh.
   $935E,$02,b$01 Keep only bits 0-4.
+  $9360,$01 #REGh=#REGa.
+  $9361,$0C
   $936D,$03 #REGde=#N$50C0.
   $9370,$03 #REGbc=#R$7000.
   $9373,$02 #REGa=#N$20.
+  $9375,$02 Stash #REGaf and #REGhl on the stack.
+  $9377,$01 #REGhl+=#REGbc.
+  $9378,$02 Stash #REGbc and #REGde on the stack.
   $937A,$03 Call #R$917C.
+  $937D,$01 Restore #REGde from the stack.
+  $937E,$01 Increment #REGe by one.
+  $937F,$02 Restore #REGbc and #REGhl from the stack.
+  $9381,$01 Increment #REGhl by one.
+  $9382,$01 #REGa=#REGh.
   $9383,$02,b$01 Keep only bits 0-1.
+  $9385,$01 #REGh=#REGa.
+  $9386,$01 Restore #REGaf from the stack.
+  $9387,$01 Decrease #REGa by one.
+  $9388,$02 Jump back to #R$9375 unless #REGa is now zero.
   $938A,$03 #REGhl=#N$5AE1.
   $938D,$03 #REGbc=#N$1E5B.
   $9390,$01 Write #REGc to #REGhl.
@@ -1703,9 +1881,10 @@ N $9398 There are a maximum of 6 aliens on screen at a time.
 
 c $93A6
   $93A6,$03 #REGhl=#R$607A.
-  $93A9,$03
-  $93AC,$03
-  $93AF,$05 #REGa=#R$607C+#N$08.
+  $93A9,$03 Write #REGh to #REGix+#N$03.
+  $93AC,$03 Write #REGl to #REGix+#N$02.
+  $93AF,$03 #REGa=#R$607C.
+  $93B2,$02 #REGa+=#N$08.
   $93B4,$04
   $93B8,$05 Write #N$AF to #REGix+#N$04.
   $93BD,$03 Call #R$8701.
@@ -1716,7 +1895,6 @@ c $93A6
   $93CD,$04 Write #N$2F to #REGix+#N$00.
   $93D1,$03 #REGhl=#R$6080.
   $93E0,$03 Jump to #R$B8C3.
-
   $93E3,$04 Reset bit 0 of #REGix+#N$08.
   $93E7,$01 Return.
 
@@ -1762,17 +1940,21 @@ N $947F
 . LIST#
   $948D,$04 #REGhl+=#R$9D72.
   $9491,$04 #REGhl=alien lookup table appropriate for the current level.
-  $9495,$01 #REGhl+=.
+  $9495,$01 #REGhl+=#REGbc.
+  $9496,$04 #REGhl=an alien from the level lookup table.
   $949A,$03 #REGbc=#N($0018,$04,$04).
   $949D,$01 #REGde=the free alien slot (from earlier).
   $949E,$01 Stash #REGde (the free alien slot) on the stack again.
-
+  $949F,$02 Copy the alien data to the free alien slot.
   $94A1,$01 #REGhl=the free alien slot.
 
   $94C8,$02,b$01 Keep only bits 0-4.
 
   $94D3,$02,b$01 Keep only bit 7.
 
+  $94DA,$01 Return.
+  $94DB,$03 #REGa=#R$5E40.
+  $94DE,$01 #REGb=#REGa.
   $94DF,$02,b$01 Keep only bit 7.
 
   $94E7,$03 #REGde=#N($0090,$04,$04).
@@ -1873,7 +2055,8 @@ b $9D80
   $9D80,$18
 b $9D98
   $9D98,$18
-b $9DB0
+
+w $9DB0
 
 c $9DC0 Handler: Laser Beam
 E $9DC0 View the equivalent code in;
@@ -1969,7 +2152,27 @@ c $A0F8
 
 c $A1AA
 
-B $A313,$04
+c $A2F5
+  $A2F5,$03 #REGhl=#R$6000(#N$6009).
+  $A2F8,$03 #REGbc=#N$0718.
+  $A2FB,$03 #REGde=#N($0011,$04,$04).
+  $A2FE,$01 Stash #REGbc on the stack.
+  $A2FF,$02 Write #N$00 to #REGhl.
+  $A301,$01 Increment #REGhl by one.
+  $A302,$02
+  $A304,$01 #REGhl+=#REGde.
+  $A305,$01 Restore #REGbc from the stack.
+  $A306,$01 Decrease #REGc by one.
+  $A307,$02 Jump back to #R$A2FE until #REGc is zero.
+  $A309,$01 Return.
+
+c $A30A
+  $A30A,$03 #REGhl=#R$60C2.
+  $A30D,$03 #REGa=#R$60C4.
+  $A310,$03 Jump to #R$A232.
+
+b $A313
+  $A313,$04
 
 c $A317 Handler: Reset Laser Beam Slots
 N $A317 See #R$9DC6 for the handler which actions "searching" for a free slot.
@@ -1984,7 +2187,19 @@ N $A317 See #R$9DC6 for the handler which actions "searching" for a free slot.
   $A324,$01 Return.
 
 c $A325
+
 c $A378
+  $A378,$04 Reset bit 0 of #REGix+#N$08.
+  $A37C,$04 Set bit 1 of #REGix+#N$08.
+  $A380,$03 #REGhl=#R$6080.
+  $A383,$02 Reset bit 0 of #REGhl.
+  $A385,$03 #REGa=#R$607D.
+  $A388,$08 Shift and rotate #REGa right, four times.
+  $A390,$03 Write #REGa to #REGix+#N$05.
+  $A393,$04 Write #N$01 to #REGix+#N$06.
+  $A397,$03 Call #R$B8C3.
+  $A39A,$02 Jump to #R$A375.
+
 c $A39C
 
 c $A3C1
@@ -2070,6 +2285,87 @@ c $A579
   $A594,$01 Return.
 
 c $A73C
+N $A73C "#SPRITENAME$64".
+  $A73C,$04 Write #N$64 to #REGix+#N$00.
+  $A740,$02 Jump to #R$A772.
+
+  $A742,$03 Call #R$8B73.
+  $A745,$03 Call #R$8733.
+  $A748,$03 Increment #REGix+#N$00 by one.
+  $A74B,$01 Return.
+
+  $A758,$04 Write #N$00 to #REGix+#N$00.
+  $A75C,$01 Return.
+
+  $A75D,$03 Call #R$B973.
+N $A760 "#SPRITENAME$C0".
+  $A760,$04 Write #N$C0 to #REGix+#N$00.
+  $A764,$02 Jump to #R$A772.
+
+c $A766
+  $A766,$05
+N $A76B "#SPRITENAME$5C".
+  $A76B,$04 #REGix+#N$00=#N$5C.
+  $A76F,$03 Call #R$B9A1.
+  $A772,$03 #REGa=#R$5E40.
+  $A775,$02,b$01 Keep only bits 0-1.
+
+  $A77A,$04 #REGhl=#R$A792+offset.
+  $A782,$01 Return.
+
+B $A792,$04
+
+c $A796
+  $A796,$03 #REGhl=#R$61B0.
+  $A799,$03 #REGde=#N($0018,$04,$04).
+  $A79C,$02 #REGb=#N$06.
+  $A79E,$03 Call #R$A7CB.
+  $A7A1,$03 #REGhl=#R$6108.
+  $A7A4,$02 #REGb=#N$01.
+  $A7A6,$03 Call #R$A7CB.
+  $A7A9,$03 #REGhl=#R$6138.
+  $A7AC,$02 #REGb=#N$01.
+  $A7AE,$03 Call #R$A7CB.
+  $A7B1,$03 #REGhl=#R$6120.
+  $A7B4,$01 #REGa=#REGhl.
+  $A7B5,$02 #REGa-=#N$C8.
+  $A7B7,$04
+  $A7BB,$02 #REGb=#N$01.
+  $A7BD,$03 Call #R$A7CB.
+  $A7C0,$03 #REGhl=#R$6150.
+  $A7C3,$01 #REGa=#REGhl.
+  $A7C4,$02 #REGa-=#N$C8.
+  $A7C6,$03
+  $A7C9,$02 #REGb=#N$01.
+  $A7CB,$01 #REGa=#REGhl.
+  $A7CC,$03
+  $A7CF,$06
+  $A7D5,$03 Stash #REGbc, #REGde and #REGhl on the stack.
+  $A7D8,$03 Call #R$A7E2.
+  $A7DB,$03 Restore #REGhl, #REGde and #REGbc from the stack.
+  $A7DE,$01 #REGhl+=#REGde.
+  $A7DF,$02 Decrease counter by one and loop back to #R$A7CB until counter is zero.
+  $A7E1,$01 Return.
+
+c $A7E2
+  $A7E2,$02 Increment #REGhl by one.
+  $A7E4,$01 Switch the #REGde and #REGhl registers.
+  $A7E5,$01 #REGa=#REGde.
+  $A7E6,$01 Increment #REGde by one.
+  $A7E7,$01 #REGc=#REGa.
+  $A7E8,$01 #REGa=#REGde.
+  $A7E9,$01 Increment #REGde by one.
+  $A7EA,$01 #REGb=#REGa.
+  $A7EB,$03 #REGhl=#N($0090,$04,$04).
+
+  $A7EF,$04 #REGbc=#R$607A.
+
+  $A811,$04 #REGhl+=#N($000C,$04,$04).
+  $A81B,$01 Return.
+  $A81C,$03 Call #R$8B73.
+  $A81F,$03 Call #R$8733.
+  $A822,$03 Increment #REGix+#N$00 by one.
+  $A825,$01 Return.
 
 c $A826 Initialise New Level
 @ $A826 label=LevelNew
@@ -2111,17 +2407,39 @@ N $A86C Handle setting up 2UP player.
   $A87C,$03 Write #REGa to #R$5EA5.
   $A87F,$01 Return.
 
-c $A880
+c $A880 1UP/ 2UP Swapper
+E $A880 View the equivalent code in;
+. #LIST
+. { #COOKIE$6416 }
+. { #JETPAC$0000 }
+. { #PSSST$613B }
+. { #SABREWULF$B235 }
+. LIST#
+@ $A880 label=ChangePlayer
+N $A880 This routine "swaps" the data between #REGde and #REGhl.
+N $A880 These are all the player states.
   $A880,$03 #REGhl=#R$5EA0.
   $A883,$03 #REGde=#R$5EA4.
-  $A886,$02 #REGb=#N$04.
+  $A886,$02 #REGb=#N$04 (counter).
+N $A888 This looks complicated but it's just grabbing the data from #REGde, grabbing the data from #REGhl, and writing the others data to each one.
+@ $A888 label=ChangePlayer_States
+  $A888,$01 #REGa=fetch byte from #REGde.
+  $A889,$01 #REGc=fetch byte from #REGhl.
+  $A88A,$03 Write the byte from #REGde to #REGhl, and the byte from #REGhl to #REGde.
+  $A88D,$01 Increment #REGhl by one.
+  $A88E,$01 Increment #REGde by one.
+  $A88F,$02 Decrease counter by one and loop back to #R$A888 until counter is zero.
+N $A891 This is the current terrain buffer data.
   $A891,$03 #REGhl=#R$7000.
   $A894,$03 #REGde=#R$7400.
-  $A897,$03 #REGbc=#N$0400.
+  $A897,$03 #REGbc=#N$0400 (counter).
   $A89A,$03 Call #R$A8A6.
+N $A89D And this is the active sprites.
   $A89D,$03 #REGhl=#R$6090.
   $A8A0,$03 #REGde=#R$6240.
-  $A8A3,$03 #REGbc=#N$0120.
+  $A8A3,$03 #REGbc=#N$0120 (counter).
+N $A8A6 This is identical to the copier routine above, except it uses #REGbc for the counter and not only #REGb.
+@ $A8A6 label=ChangePlayer_Loop
   $A8A6,$01 Stash #REGbc on the stack.
   $A8A7,$01 #REGa=fetch byte from #REGde.
   $A8A8,$01 #REGc=fetch byte from #REGhl.
@@ -2230,6 +2548,37 @@ N $A985 #FONT:(ALL IS LOST.)addr=$D347,attr=$45(all-lost)
 
 c $A993
 B $AADF,$50
+
+c $AA9B
+  $AA9B,$04 Write #N$00 to #R$5E69.
+  $AA9F,$04 #REGix=#R$AA4B.
+  $AAA3,$02 #REGb=#N$10.
+  $AAA5,$01 Stash #REGbc on the stack.
+  $AAA6,$03 Call #R$AAB8.
+  $AAA9,$03 #REGbc=#N($0005,$04,$04).
+  $AAAF,$02 Decrease counter by one and loop back to #R$AAA5 until counter is zero.
+  $AAB7,$01 Return.
+
+c $AB2F
+  $AB2F,$03 #REGhl=#R$AA4B.
+  $AB32,$03 #REGde=#R$AADF.
+  $AB35,$02 #REGb=#N$10.
+  $AB37
+  $AB3E,$01 Increment #REGde by one.
+  $AB3F,$03 Increment #REGhl by three.
+  $AB42,$03 Increment #REGde by three.
+  $AB45,$02 Decrease counter by one and loop back to #R$AB37 until counter is zero.
+  $AB47,$01 Return.
+
+c $AB48
+  $AB48,$04 Write #N$00 to #R$5E69.
+  $AB53,$03 Call #R$B8F2.
+  $AB56,$04 #REGix=#R$AA4B.
+  $AB5A,$02 #REGb=#N$10.
+  $AB5C,$01 Stash #REGbc on the stack.
+  $AB5D,$03 Call #R$AB78.
+  $AB60,$03 #REGbc=#N($0005,$04,$04).
+  $AB6E,$01 Return.
 
 c $AB9D
   $AB9D,$03 #REGhl=#R$AADF.
@@ -2354,6 +2703,50 @@ N $AFB6 Destroying the missile adds #N$0500 points. TBC is this the decoy missil
   $AFB6,$03 #REGbc=#N$0500.
   $AFB9,$03 Call #R$899C.
 
+c $B1A4
+
+c $B1D3
+  $B1D3,$03 #REGhl=#R$6108.
+  $B1D6,$02 #REGb=#N$04.
+  $B1D8,$03 #REGde=#N($0018,$04,$04).
+
+  $B1E1,$01 Return.
+
+  $B1E2,$03 #REGhl=#R$6108.
+  $B1E5,$02 #REGb=#N$06.
+  $B1E7,$02 Jump to #R$B1D8.
+
+c $B1E9
+  $B1E9,$03 #REGa+=#REGix+#N$10.
+  $B1EC,$01 #REGc=#REGa.
+  $B1ED,$02,b$01 Keep only bits 1-3.
+  $B1EF,$03 Write #REGa to #REGix+#N$10.
+  $B1F2,$01 #REGa=#REGc.
+  $B1F3,$04
+  $B1F7,$02,b$01 Keep only bits 0-3.
+  $B1F9,$02 #REGb=#N$00.
+  $B1FB,$02 Jump to #R$B246.
+
+  $B1FD,$03 #REGa+=#REGix+#N$11.
+  $B200,$01 #REGc=#REGa.
+  $B201,$02,b$01 Keep only bits 0-3.
+  $B203,$03 Write #REGa to #REGix+#N$11.
+  $B206,$01 #REGa=#REGc.
+  $B207,$04
+  $B20B,$02,b$01 Keep only bits 0-3.
+  $B20D,$02 Jump to #R$B272.
+
+c $B20F
+  $B20F,$03 #REGbc=#N($0025,$04,$04).
+  $B212,$03 Call #R$899C.
+  $B215,$03 Jump to #R$A73C.
+
+c $B218
+  $B218,$04
+  $B21C,$03
+  $B21F,$03 Decrease #REGix+#N$08 by one.
+  $B222,$03 Jump to #R$A73C if #REGix+#N$08 is now zero.
+
 c $B2F9
   $B2F9,$03 #REGa=#N$60B0.
   $B300,$02,b$01 Set bit 7.
@@ -2382,9 +2775,13 @@ c $B37B
   $B37F,$03 Call #R$A75D.
   $B382,$03 Jump to #R$ABB4.
 
-c $B385
+c $B385 Reset Alien States
+@ $B385 label=ResetAlienStates
+N $B385 Writes #N$00 to every alien state to clear it.
   $B385,$03 #REGhl=#R$61B0.
+N $B388 There are six alien slots, each is #N$18 bytes long.
   $B388,$02 #REGb=#N$90.
+@ $B38A label=ResetAlienStates_Loop
   $B38A,$02 Write #N$00 to #REGhl.
   $B38C,$01 Increment #REGhl by one.
   $B38D,$02 Decrease counter by one and loop back to #R$B38A until counter is zero.
@@ -2597,7 +2994,11 @@ c $B6CF
   $B6D7,$01 #REGl=#REGa.
   $B6D8,$03 Jump to #R$81FE.
 W $B6DB,$10
+
+c $B6EB
   $B6EB,$01 Return.
+
+c $B6EC
   $B6EC,$03 Call #R$B7A8.
   $B6EF,$03 Call #R$945C.
   $B706,$04 Write #N$81 to #REGix+#N$08.
@@ -2642,6 +3043,8 @@ N $B7AE With sprite IDs beginning from #R$EE17(#N$EC) (#SPRITENAME$EC).
 
 c $B7BC
   $B7BC,$03 Call #R$945C.
+
+c $B810
 
   $B81E,$03 Call #R$B6AE.
 
@@ -3528,43 +3931,43 @@ N $E5B4 Frame 4.
 
 b $E5DF
   $E5DF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E5E0,$18,$02 #SPRITE$BF(thing1)
+  $E5E0,$18,$02 #SPRITE$C0(thing1)
 
 N $E5F8
   $E5F8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E5F9,$20,$02 #SPRITE$C0(thing2)
+  $E5F9,$20,$02 #SPRITE$C1(thing2)
 
 N $E619
   $E619,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E61A,$20,$02 #SPRITE$C1(thingc1)
+  $E61A,$20,$02 #SPRITE$C2(thingc1)
 
 N $E63A
   $E63A,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E63B,$20,$02 #SPRITE$C2(thingc2)
+  $E63B,$20,$02 #SPRITE$C3(thingc2)
 
 N $E65B
   $E65B,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E65C,$20,$02 #SPRITE$C3(thingc3)
+  $E65C,$20,$02 #SPRITE$C4(thingc3)
 
 N $E67C
   $E67C,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E67D,$20,$02 #SPRITE$C4(thingc4)
+  $E67D,$20,$02 #SPRITE$C5(thingc4)
 
 N $E69D
   $E69D,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E69E,$20,$02 #SPRITE$C5(thingc5)
+  $E69E,$20,$02 #SPRITE$C6(thingc5)
 
 N $E6BE
   $E6BE,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E6BF,$20,$02 #SPRITE$C6(thingc6)
+  $E6BF,$20,$02 #SPRITE$C7(thingc6)
 
 N $E6DF
   $E6DF,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E6E0,$08,$02 #SPRITE$C7(thingc7)
+  $E6E0,$08,$02 #SPRITE$C8(thingc7)
 
 b $E6E8
   $E6E8,$01 Height = #N(#PEEK(#PC)) pixels.
-  $E6E9,$08,$02 #SPRITE$C8(thingc8)
+  $E6E9,$08,$02 #SPRITE$C9(thingc8)
 
 b $E6F1
 
@@ -3846,19 +4249,19 @@ N $F26B Handle displaying "TOP SCORE" messaging.
 t $F274 Messaging: High Score Suffixes
 N $F274 #FONT:(TH)addr=$D347,attr=$46(th)
 @ $F274 label=HighScore_Suffixes_TH
-  $F274,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "TH".
+  $F274,$03,h$01,$01:$01 Attribute: #COLOUR(#PEEK(#PC)) + "TH".
 N $F277 #FONT:(TOP SCORE)addr=$D347,attr=$46(top-score)
 @ $F277 label=HighScore_Top_Score
-  $F277,$0A,h$01,$08:$01 Attribute: #N(#PEEK(#PC)) + "TOP SCORE".
+  $F277,$0A,h$01,$08:$01 Attribute: #COLOUR(#PEEK(#PC)) + "TOP SCORE".
 N $F281 #FONT:(ND)addr=$D347,attr=$46(nd)
 @ $F281 label=HighScore_Suffixes_ND
-  $F281,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "ND".
+  $F281,$03,h$01,$01:$01 Attribute: #COLOUR(#PEEK(#PC)) + "ND".
 N $F284 #FONT:(RD)addr=$D347,attr=$46(rd)
 @ $F284 label=HighScore_Suffixes_RD
-  $F284,$03,h$01,$01:$01 Attribute: #N(#PEEK(#PC)) + "RD".
+  $F284,$03,h$01,$01:$01 Attribute: #COLOUR(#PEEK(#PC)) + "RD".
 N $F287 #FONT:(HIGHEST SCORE)addr=$D347,attr=$46(highest-score)
 @ $F287 label=HighScore_Highest_Score
-  $F287,$0E,h$01,$0C:$01 Attribute: #N(#PEEK(#PC)) + "HIGHEST SCORE".
+  $F287,$0E,h$01,$0C:$01 Attribute: #COLOUR(#PEEK(#PC)) + "HIGHEST SCORE".
 
 c $F295
 
@@ -4126,4 +4529,6 @@ b $FF44
 w $FF54
   $FF54,$02
 
-i $FF56
+b $FF56
+
+b $FF88

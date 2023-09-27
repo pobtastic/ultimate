@@ -869,14 +869,17 @@ L $690F,$02,$06
 c $691B Limit Frame Rate
 E $691B View the equivalent code in;
 . #LIST
+. { #COOKIE$7152 }
+. { #LUNARJETMAN$824A }
 . { #PSSST$70DF }
 . LIST#
 @ $691B label=LimitFrameRate
+N $691B Called at the beginning of each game loop. Setting a higher pause value will slow the game down.
   $691B,$05 Return if #R$5DD5 is not marked as being updated.
-  $6920,$03 Introduce a counter for a slight pause.
+  $6920,$03 Introduce a counter (#N($00C0,$04,$04)) for a slight pause.
 @ $6923 label=LimitFrameRate_Loop
   $6923,$01 Decrease counter by one.
-  $6924,$04 Keep looping back to #R$6923 until the counter is zero.
+  $6924,$04 Keep jumping back to #R$6923 until the counter is zero.
   $6928,$01 Return.
 
 c $6929

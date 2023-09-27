@@ -911,11 +911,20 @@ c $713D
   $714F,$02 Decrease counter by one and loop back to #R$714C until counter is zero.
   $7151,$01 Return.
 
-c $7152
-  $7152,$05 Return if #R$5F23 is not zero.
-  $7157,$03 #REGhl=#N$0100.
-  $715A,$01 Decrease #REGhl by one.
-  $715B,$04 Jump to #R$715A if #REGhl is not zero.
+c $7152 Limit Frame Rate
+@ $7152 label=LimitFrameRate
+E $7152 View the equivalent code in;
+. #LIST
+. { #JETPAC$691B }
+. { #LUNARJETMAN$824A }
+. { #PSSST$70DF }
+. LIST#
+N $7152 Called at the beginning of each game loop. Setting a higher pause value will slow the game down.
+  $7152,$05 Return if #R$5F23 is is not marked as being updated.
+  $7157,$03 Introduce a counter (#N$0100) for a slight pause.
+@ $715A LimitFrameRate_Loop
+  $715A,$01 Decrease the counter by one.
+  $715B,$04 Keep jumping back to #R$715A until the counter is zero.
   $715F,$01 Return.
 
 c $7160 Frame Update
