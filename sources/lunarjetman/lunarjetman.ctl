@@ -282,12 +282,16 @@ E $800A View the equivalent code in;
 @ $800A label=GameInitialisation
 @ $8010 label=GameInitialisation_Loop
   $800A,$0E Write #N$00 to #N$2200 bytes starting from #R$5E00.
+N $8018 Use the custom font.
   $8018,$06 Write #R$D347 to #R$5E04.
+N $801E Sets some default values for e.g. the high score.
   $801E,$03 Call #R$9C23.
   $8021,$03 Call #R$84D8.
   $8024,$03 #REGde=#R$BA2A.
   $8027,$03 Call #R$B9BC.
   $802A,$02 Jump to #R$8035.
+
+c $802C Game Restart
 @ $802C label=Game_Restart
   $802C,$03 Call #R$84D8.
   $802F,$03 Call #R$F410.
@@ -718,7 +722,7 @@ N $84D8 Blank the screen and write the banner.
   $84DE,$03 Call #R$8A37.
 N $84E1 Set the attributes for the score line (the whole line is INK:#N$46).
   $84E1,$03 #REGhl=#N$5820.
-  $84E4,$03 #REGbc=counter:#N$20, INK:#N$46.
+  $84E4,$03 #REGbc=counter:#N$20, #COLOUR$46.
 @ $84E7 label=CreateWindow_Loop
   $84E7,$01 Write #N$46 to the attribute buffer.
   $84E8,$01 Move onto the next column.
@@ -2014,9 +2018,10 @@ c $9654
 
 c $970E
 
-c $9C23
-  $9C23,$0B Copy #N$0018 bytes from #R$9D80 to #N$5E20.
-  $9C2E,$0B Copy #N$0018 bytes from #R$9D98 to #N$5E06.
+c $9C23 Set Default Values
+@ $9C23 label=SetDefaults
+  $9C23,$0B Copy #N$0018 bytes from #R$9D80 to #R$5E20.
+  $9C2E,$0B Copy #N$0018 bytes from #R$9D98 to #R$5E06.
   $9C39,$01 Return.
 
 b $9C3A Alien States
@@ -2053,8 +2058,11 @@ w $9D72 Levels Alien Lookup Table
 
 b $9D80
   $9D80,$18
+
 b $9D98
-  $9D98,$18
+@ $9D98 label=Default_High_Score
+  $9D98,$03 Default High Score.
+  $9D9B,$15 Other configs.
 
 w $9DB0
 
@@ -3219,8 +3227,15 @@ B $B9A6
 c $B9BC
   $B9BC,$01 Disable interrupts.
   $B9BD,$03 #REGhl=#R$FF51.
+  $B9C0,$01 #REGa=#REGde.
+  $B9C1,$01 Increment #REGde by one.
+  $B9C2,$04 If bit 7 of #REGa is set, jump to #R$B9CA.
+  $B9C6,$01 Write #REGa to #REGhl.
+  $B9C7,$01 Decrease #REGhl by one.
   $B9C8,$02 Jump to #R$B9C0.
   $B9CA,$02,b$01 Keep only bits 0-6.
+  $B9CC,$01 Write #REGa to #REGhl.
+  $B9CD,$03 Write #REGhl to #R$FF54.
   $B9D0,$01 Enable interrupts.
   $B9D1,$01 Return.
 

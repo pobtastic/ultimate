@@ -1559,18 +1559,32 @@ c$800A LD HL,$5E00   ; {Write #N$00 to #N$2200 bytes starting from #R$5E00.
  $8014 LD A,C        ;
  $8015 OR B          ;
  $8016 JR NZ,$8010   ; }
+; Use the custom font.
  $8018 LD HL,$D347   ; {Write #R$D347 to #R$5E04.
  $801B LD ($5E04),HL ; }
+; Sets some default values for e.g. the high score.
  $801E CALL $9C23    ; Call #R$9C23.
  $8021 CALL $84D8    ; Call #R$84D8.
  $8024 LD DE,$BA2A   ; #REGde=#R$BA2A.
  $8027 CALL $B9BC    ; Call #R$B9BC.
  $802A JR $8035      ; Jump to #R$8035.
-; This entry point is used by the routine at #R$F33E.
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$7C19 }
+; { #COOKIE$6298 }
+; { #JETPAC$61EB }
+; { #PSSST$61CD }
+; { #TRANZAM$5F07 }
+; LIST#
+
+; Game Restart
+;
+; Used by the routine at #R$F33E.
 @label=Game_Restart
-*$802C CALL $84D8    ; Call #R$84D8.
+c$802C CALL $84D8    ; Call #R$84D8.
  $802F CALL $F410    ; Call #R$F410.
  $8032 CALL $84D8    ; Call #R$84D8.
+; This entry point is used by the routine at #R$800A.
 @label=GameSelect_Loop
 *$8035 CALL $80D1    ; Call #R$80D1.
  $8038 LD A,$F7      ; {Read from the keyboard;
@@ -1681,18 +1695,10 @@ c$800A LD HL,$5E00   ; {Write #N$00 to #N$2200 bytes starting from #R$5E00.
 *$80CD SET 7,(HL)    ; Set the FLASH attribute for the menu attribute.
  $80CF INC HL        ; Move onto the next menu attribute.
  $80D0 RET           ; Return.
-; View the equivalent code in;
-; #LIST
-; { #ATICATAC$7C19 }
-; { #COOKIE$6298 }
-; { #JETPAC$61EB }
-; { #PSSST$61CD }
-; { #TRANZAM$5F07 }
-; LIST#
 
 ; Game Selection Menu
 ;
-; Used by the routine at #R$800A.
+; Used by the routine at #R$802C.
 @label=GameMenu
 c$80D1 LD DE,$810E   ; #REGde=#R$810E.
  $80D4 EXX           ; Switch to the shadow registers.
@@ -1733,7 +1739,7 @@ c$80D1 LD DE,$810E   ; #REGde=#R$810E.
 
 ; Routine at 80FD
 ;
-; Used by the routine at #R$800A.
+; Used by the routine at #R$802C.
 c$80FD LD DE,$BAA4   ; #REGde=#R$BAA4.
  $8100 LD A,C        ; #REGa=#REGc.
  $8101 RLCA          ; Rotate bit 0 to bit 1.
@@ -1861,7 +1867,7 @@ c$81AB PUSH HL       ; Stash #REGhl containing the co-ordinate on the stack.
 
 ; Start Game
 ;
-; Used by the routine at #R$800A.
+; Used by the routine at #R$802C.
 @label=StartGame
 c$81BB LD DE,$BA35   ; #REGde=#R$BA35.
  $81BE CALL $B9BC    ; Call #R$B9BC.
@@ -2387,7 +2393,7 @@ c$84BB XOR A         ; {Set the border to black.
 
 ; Create Game Window
 ;
-; Used by the routines at #R$800A, #R$A826, #R$A8E3 and #R$F535.
+; Used by the routines at #R$800A, #R$802C, #R$A826, #R$A8E3 and #R$F535.
 ;
 ; .
 ;
@@ -2398,7 +2404,7 @@ c$84D8 CALL $84BB    ; Call #R$84BB.
  $84DE CALL $8A37    ; Call #R$8A37.
 ; Set the attributes for the score line (the whole line is INK:#N$46).
  $84E1 LD HL,$5820   ; #REGhl=#N$5820.
- $84E4 LD BC,$2046   ; #REGbc=counter:#N$20, INK:#N$46.
+ $84E4 LD BC,$2046   ; #REGbc=counter:#N$20, #COLOUR$46.
 @label=CreateWindow_Loop
 *$84E7 LD (HL),C     ; Write #N$46 to the attribute buffer.
  $84E8 INC L         ; Move onto the next column.
@@ -6125,14 +6131,15 @@ c$970E LD HL,$5E5E     ;
 *$9C1E LD (IX+$00),$00 ;
  $9C22 RET             ;
 
-; Routine at 9C23
+; Set Default Values
 ;
 ; Used by the routine at #R$800A.
-c$9C23 LD HL,$9D80   ; {Copy #N$0018 bytes from #R$9D80 to #N$5E20.
+@label=SetDefaults
+c$9C23 LD HL,$9D80   ; {Copy #N$0018 bytes from #R$9D80 to #R$5E20.
  $9C26 LD DE,$5E20   ;
  $9C29 LD BC,$0018   ;
  $9C2C LDIR          ; }
- $9C2E LD HL,$9D98   ; {Copy #N$0018 bytes from #R$9D98 to #N$5E06.
+ $9C2E LD HL,$9D98   ; {Copy #N$0018 bytes from #R$9D98 to #R$5E06.
  $9C31 LD DE,$5E06   ;
  $9C34 LD BC,$0018   ;
  $9C37 LDIR          ; }
@@ -6260,9 +6267,11 @@ b$9D80 DEFB $41,$43,$47,$55,$50,$47,$4A,$53
  $9D90 DEFB $4C,$57,$49,$43,$4C,$49,$42,$4D
 
 ; Data block at 9D98
-b$9D98 DEFB $10,$51,$40,$08,$53,$10,$06,$37
- $9DA0 DEFB $80,$05,$23,$40,$04,$28,$90,$03
- $9DA8 DEFB $45,$10,$02,$15,$60,$01,$05,$30
+@label=Default_High_Score
+b$9D98 DEFB $10,$51,$40                     ; Default High Score.
+ $9D9B DEFB $08,$53,$10,$06,$37,$80,$05,$23 ; {Other configs.
+ $9DA3 DEFB $40,$04,$28,$90,$03,$45,$10,$02 ;
+ $9DAB DEFB $15,$60,$01,$05,$30             ; }
 
 ; Data block at 9DB0
 w$9DB0 DEFW $BA88
@@ -10012,20 +10021,20 @@ c$B950 LD HL,$B95C                          ; #REGhl=#R$B95C.
 
 ; Routine at B9BC
 ;
-; Used by the routines at #R$800A, #R$80FD, #R$81BB, #R$8D06, #R$91E2, #R$9F6A,
-; #R$A1AA, #R$A8E3, #R$AD36, #R$B218 and #R$B52E.
+; Used by the routines at #R$800A, #R$802C, #R$80FD, #R$81BB, #R$8D06, #R$91E2,
+; #R$9F6A, #R$A1AA, #R$A8E3, #R$AD36, #R$B218 and #R$B52E.
 c$B9BC DI            ; Disable interrupts.
  $B9BD LD HL,$FF51   ; #REGhl=#R$FF51.
-*$B9C0 LD A,(DE)     ;
- $B9C1 INC DE        ;
- $B9C2 BIT 7,A       ;
- $B9C4 JR NZ,$B9CA   ;
- $B9C6 LD (HL),A     ;
- $B9C7 DEC HL        ;
+*$B9C0 LD A,(DE)     ; #REGa=#REGde.
+ $B9C1 INC DE        ; Increment #REGde by one.
+ $B9C2 BIT 7,A       ; {If bit 7 of #REGa is set, jump to #R$B9CA.
+ $B9C4 JR NZ,$B9CA   ; }
+ $B9C6 LD (HL),A     ; Write #REGa to #REGhl.
+ $B9C7 DEC HL        ; Decrease #REGhl by one.
  $B9C8 JR $B9C0      ; Jump to #R$B9C0.
 *$B9CA AND %01111111 ; Keep only bits 0-6.
- $B9CC LD (HL),A     ;
- $B9CD LD ($FF54),HL ;
+ $B9CC LD (HL),A     ; Write #REGa to #REGhl.
+ $B9CD LD ($FF54),HL ; Write #REGhl to #R$FF54.
  $B9D0 EI            ; Enable interrupts.
  $B9D1 RET           ; Return.
 
@@ -16005,7 +16014,7 @@ c$F3BF LD B,$08      ;
 
 ; Hall Of Fame
 ;
-; Used by the routine at #R$800A.
+; Used by the routine at #R$802C.
 @label=HallOfFame
 c$F410 LD A,$47      ; #REGa=#N$47.
  $F412 LD C,$08      ; #REGc=#N$08.
