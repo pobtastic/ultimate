@@ -461,8 +461,12 @@ N $617D This looks complicated but it's just grabbing the data from #REGde, grab
   $6184,$02 Decrease counter by one and loop back to #R$617D until counter is zero.
   $6186,$01 Return.
 
-c $6187
-T $6187,$13,h$01,$11:$01 "GAME OVER PLAYER 1" (#N(#PEEK(#PC)) is the attribute).
+t $6187 Game Over P1 Message
+@ $6187 label=Message_GameOverP1
+  $6187,$13,h$01,$11:$01 "GAME OVER PLAYER 1" (#N(#PEEK(#PC)) is the attribute).
+
+c $619A Player Initialisation
+@ $619A label=PlayerInitialisation
   $619A,$03 #REGhl Source address: #R$6010
   $619D,$03 #REGde Target address: #R$5D00
   $61A0,$03 #REGbc=loop counter
@@ -651,7 +655,8 @@ E $6299 View the equivalent code in;
   $62DC,$15,$14:$01 "4   KEMPSTON JOYSTICK".
   $62F1,$0E,$0D:$01 "5   START GAME".
 
-c $62FF
+c $62FF Print Menu Item
+@ $62FF label=PrintMenuItem
 C $62FF Store #REGhl on the stack
   $6300
   $6303 #REGa=#R$5DD6
@@ -843,6 +848,7 @@ c $681E Sounds: Laser Beam
   $6833,$01 Return.
 
 c $6834 Set Explosion Sound Defaults
+@ $6834 label=ExplosionInitialise
 B $6847,$04
 
 c $684B
@@ -1512,6 +1518,7 @@ c $73D3 Jetman Fly
   $7445,$02 Decrease #REGb by one, and loop back to #R$7439 until zero
 
 c $7571 Jetman Walk
+@ $7571 label=JetmanWalk
 
 c $761D
   $766A,$02 Decrease #REGb by one, and loop back to #R$7622 until zero
