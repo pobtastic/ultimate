@@ -144,11 +144,11 @@ B $5E29,$01
 g $5E2A Score
 D $5E2A 3-byte representation of the score.
 @ $5E2A label=Score_1
-B $5E2A,$01 Byte #1.
+  $5E2A,$01 Byte #1.
 @ $5E2B label=Score_2
-B $5E2B,$01 Byte #2.
+  $5E2B,$01 Byte #2.
 @ $5E2C label=Score_3
-B $5E2C,$01 Byte #3.
+  $5E2C,$01 Byte #3.
 
 g $5E2D In Doorway
 

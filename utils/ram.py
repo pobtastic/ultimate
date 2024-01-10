@@ -25,8 +25,16 @@ def rrd(snapshot, start, end):
 		snapshot[addr] = byte
 		reg_a = a1 + b2
 
+def cpl(snapshot, start, end):
+	for addr in range(start, end):
+		byte = snapshot[addr]
+		snapshot[addr] = ~byte
+
 def decrypt_aticatac(snapshot):
 	rrd(snapshot, 0x5FFF, 0xDBFF)
 
 def decrypt_lunarjetman(snapshot):
 	rrd(snapshot, 0x7FFF, 0xFBFF)
+
+def decrypt_sabrewulf(snapshot):
+	cpl(snapshot, 0x7FFF, 0xFBFF)
