@@ -666,7 +666,8 @@ C $62FF Store #REGhl on the stack
   $6309
   $630C Jump to #R$7178
 
-c $630F
+c $630F Reset Players
+@ $630f label=ResetPlayers
 C $630F,$02 #REGb=$02
   $6311,$01 Stores #REGbc on the stack
 C $6312,$01 Clear #REGa (sets to $00)
@@ -773,6 +774,8 @@ C $65EE,$03 #REGbc=loop counter
 C $65F1,$01 #REGa=(#REGde)
   $65FA,$02 Action! Copy source to target, decrease counter, repeat until zero
 
+c $6630 Drop New Fuel Pod
+@ $6630 label=DropFuelPod
   $6639,$03 #REGhl=$6030
   $663C,$03 #REGde=#R$5D38
   $663F,$03 #REGbc=$0008
@@ -781,24 +784,34 @@ C $65F1,$01 #REGa=(#REGde)
 
   $665A,$01 Return
 
+c $665B Reset Rocket Modules State
+@ $665B label=ResetRocketModState
   $665B,$03 #REGhl=#R$5D38
   $665E,$02 #REGb=$0C
+
+c $6660 Set Objects As Inactive
+@ $6660 label=SetObjsInactive
   $6660,$03 #REGde=$0008
   $6663,$02 Reset the memory held at location #REGhl (set to $00)
   $6665,$01 Increase #REGhl by $08
   $6666,$02 Decrease #REGb by one, and loop back to #R$6663 until zero
   $6668,$01 Return
 
-c $66C7
+c $6669 Animate Rocket Flames
 
-c $66EB
+c $66C7 Rocket Take Off
 
-c $6707
+c $66EB Rocket Land
+
+c $6707 Update Rocket
 
   $6766,$02 Decrease #REGb by one, and loop back to #R$6740 until zero
 
 C $671A,$02 Store #REGix on the stack
 C $671C,$04 #REGix=#R$5D00
+
+c $6733 Update Rocket Colour
+
   $67C0,$02 Decrease #REGb by one, and loop back to #R$67B1 until zero
 
 w $67C3 Collectables Sprite Table
@@ -851,13 +864,36 @@ c $6834 Set Explosion Sound Defaults
 @ $6834 label=ExplosionInitialise
 B $6847,$04
 
-c $684B
+c $684B Sounds: Player Death
+@ $684B label=SoundsPlayerDeath
 
-c $6854
+c $6854 Sounds: Enenmy Death
+@ $6854 label=SoundsEnemyDeath
+
+c $685F Sounds: Explosion
+@ $685F label=SoundsExplosion
   $6864,$02 Decrease #REGb by one, and loop back to #R$6864 until zero
   $686A,$02 Decrease #REGb by one, and loop back to #R$686A until zero
 
-c $68B1
+c $6870 End Sound
+@ $6870 label=EndSound
+C $6870,$04 Shut off sound by setting frequency to zero
+  $6874,$01 Return.
+
+c $6875 Do explosion after object death
+@ $6875 label=ObjectDeathExplosion
+
+c $6894 End Animation
+@ $6894 label=EndAnimation
+
+c $689F Start Animation
+@ $689F label=StartAnimation
+
+c $68AB Change Animation
+@ $68AB label=ChangeAnimation
+
+c $68B1 Animate explosion
+@ $68B1 label=AnimateExplosion
 
 w $690F Explosion Sprite Table
 E $690F View the equivalent code in;
@@ -936,6 +972,7 @@ c $6C2F
 c $6CF5
 
 c $6DD3 Meteor Update
+@ $6DD3 label=MeteorUpdate
   $6DD6,$03 #REGhl=$5DCB.
 
   $6E98,$02 Decrease #REGb by one, and loop back to #R$6E5A until zero.
