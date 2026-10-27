@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,82 +36,145 @@ Next: <a href="B9D2.html">B9D2</a>
 </td>
 </tr>
 </table>
-<div class="description">B9BC: Routine at B9BC</div>
+<div class="description">B9BC: Queue Tune</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="800A.html">GameInitialisation</a>, <a href="802C.html">Game_Restart</a>, <a href="80FD.html">80FD</a>, <a href="81BB.html">StartGame</a>, <a href="8D06.html">8D06</a>, <a href="91E2.html">91E2</a>, <a href="9F6A.html">9F6A</a>, <a href="A1AA.html">A1AA</a>, <a href="A8E3.html">GameOver_1UP_Messaging</a>, <a href="AD36.html">AD36</a>, <a href="B218.html">B218</a> and <a href="B52E.html">B52E</a>.
+Copy a bit-7-terminated tune from <span class="register">DE</span> into the sound buffer, working downwards from <a href="FF44.html#ff51">Tune_Buffer_End</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Tune data</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b9bc"></span>
+<div class="comments">
+<div class="paragraph">
+Copy a bit-7-terminated tune from <span class="register">DE</span> into the buffer.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">QueueTune</td>
 <td class="address-2"><span id="b9bc"></span>B9BC</td>
 <td class="instruction">DI</td>
 <td class="comment-1" rowspan="1">Disable interrupts.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9bd"></span>B9BD</td>
 <td class="instruction">LD HL,$FF51</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="FF44.html#ff51">FF51</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="FF44.html#ff51">Tune_Buffer_End</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b9c0"></span>
+<div class="comments">
+<div class="paragraph">
+Copy bytes until bit 7 marks the terminator.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">QueueTune_Copy</td>
 <td class="address-2"><span id="b9c0"></span>B9C0</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=*<span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9c1"></span>B9C1</td>
 <td class="instruction">INC DE</td>
 <td class="comment-1" rowspan="1">Increment <span class="register">DE</span> by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9c2"></span>B9C2</td>
 <td class="instruction">BIT 7,A</td>
-<td class="comment-1" rowspan="2">If bit 7 of <span class="register">A</span> is set, jump to <a href="B9BC.html#b9ca">B9CA</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B9BC.html#b9ca">QueueTune_Terminator</a> if bit 7 of <span class="register">A</span> is set.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9c4"></span>B9C4</td>
-<td class="instruction">JR NZ,<a href="B9BC.html#b9ca">$B9CA</a></td>
+<td class="instruction">JR NZ,<a href="B9BC.html#b9ca">QueueTune_Terminator</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9c6"></span>B9C6</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to *<span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9c7"></span>B9C7</td>
 <td class="instruction">DEC HL</td>
 <td class="comment-1" rowspan="1">Decrease <span class="register">HL</span> by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9c8"></span>B9C8</td>
-<td class="instruction">JR <a href="B9BC.html#b9c0">$B9C0</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="B9BC.html#b9c0">B9C0</a>.</td>
+<td class="instruction">JR <a href="B9BC.html#b9c0">QueueTune_Copy</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B9BC.html#b9c0">QueueTune_Copy</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b9ca"></span>
+<div class="comments">
+<div class="paragraph">
+Store the terminator byte with bit 7 cleared.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">QueueTune_Terminator</td>
 <td class="address-2"><span id="b9ca"></span>B9CA</td>
 <td class="instruction">AND %01111111</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-6.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9cc"></span>B9CC</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to *<span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b9cd"></span>
+<div class="comments">
+<div class="paragraph">
+Save the buffer pointer and enable interrupts.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9cd"></span>B9CD</td>
 <td class="instruction">LD ($FF54),HL</td>
-<td class="comment-1" rowspan="1">Write <span class="register">HL</span> to <a href="FF54.html">FF54</a>.</td>
+<td class="comment-1" rowspan="1">Write <span class="register">HL</span> to <a href="FF54.html">Tune_Pointer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9d0"></span>B9D0</td>
 <td class="instruction">EI</td>
 <td class="comment-1" rowspan="1">Enable interrupts.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9d1"></span>B9D1</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
@@ -127,10 +193,10 @@ Next: <a href="B9D2.html">B9D2</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/B9BC.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/47548.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

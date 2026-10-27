@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,7 @@ Next: <a href="899C.html">899C</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="9020.html">9020</a>, <a href="9F6A.html">9F6A</a> and <a href="A826.html">LevelNew</a>.
+Draw the 1UP and 2UP lives counts and the life UDG, or spaces if a player has none.
 </div>
 </div>
 </td>
@@ -58,7 +61,7 @@ Controller for 1UP lives.
 <td class="asm-label">DisplayPlayerLives</td>
 <td class="address-2"><span id="894f"></span>894F</td>
 <td class="instruction">LD HL,$0040</td>
-<td class="comment-1" rowspan="2">Call <a href="851E.html">ScreenAddress</a> with 0040 (screen buffer address) for 1UP lives.</td>
+<td class="comment-1" rowspan="2">Call <a href="851E.html">ScreenAddress</a> with the pixel co-ordinates 0040 to get the 1UP lives screen address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -68,8 +71,8 @@ Controller for 1UP lives.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8955"></span>8955</td>
-<td class="instruction">CALL <a href="894F.html#8986">ControllerActiveLives</a></td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=1UP lives remaining (by calling <a href="894F.html#8986">ControllerActiveLives</a>).</td>
+<td class="instruction">CALL <a href="894F.html#8986">FetchLives_1UP</a></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=1UP lives remaining (by calling <a href="894F.html#8986">FetchLives_1UP</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -102,7 +105,7 @@ Controller for 2UP lives.
 <td class="asm-label">Controller2UPLives</td>
 <td class="address-2"><span id="895e"></span>895E</td>
 <td class="instruction">LD HL,$00B0</td>
-<td class="comment-1" rowspan="2">Call <a href="851E.html">ScreenAddress</a> with 00B0 (screen buffer address) for 2UP lives.</td>
+<td class="comment-1" rowspan="2">Call <a href="851E.html">ScreenAddress</a> with the pixel co-ordinates 00B0 to get the 2UP lives screen address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -112,8 +115,8 @@ Controller for 2UP lives.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8964"></span>8964</td>
-<td class="instruction">CALL <a href="894F.html#8994">ControllerInactiveLives</a></td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=2UP lives remaining (by calling <a href="894F.html#8994">ControllerInactiveLives</a>).</td>
+<td class="instruction">CALL <a href="894F.html#8994">FetchLives_2UP</a></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=2UP lives remaining (by calling <a href="894F.html#8994">FetchLives_2UP</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -140,7 +143,7 @@ Handles displaying the lives count and UDG character.
 <td class="asm-label">HandlerDisplayLives</td>
 <td class="address-2"><span id="896a"></span>896A</td>
 <td class="instruction">ADD A,$30</td>
-<td class="comment-1" rowspan="1">Add 30 to convert to an ASCII character (starting at "0" character).</td>
+<td class="comment-1" rowspan="1">Add 30 to convert to an ASCII character (starting at "0").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -168,8 +171,8 @@ Handles displaying the lives count and UDG character.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8974"></span>8974</td>
-<td class="instruction">JP <a href="89EF.html#8a01">PrintScreen_0</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="89EF.html#8a01">PrintScreen_0</a>.</td>
+<td class="instruction">JP <a href="89EF.html#8a01">PrintCharacter_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="89EF.html#8a01">PrintCharacter_Draw</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -232,13 +235,13 @@ Handles displaying the lives count and UDG character.
 <span id="8986"></span>
 <div class="comments">
 <div class="paragraph">
-Controller for the currently active player.
+Return the 1UP player's lives left.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ControllerActiveLives</td>
+<td class="asm-label">FetchLives_1UP</td>
 <td class="address-2"><span id="8986"></span>8986</td>
 <td class="instruction">LD A,($5E65)</td>
 <td class="comment-1" rowspan="3">If <a href="5E65.html">Flag_ActivePlayer</a> is not zero then jump to <a href="894F.html#8990">InactivePlayerLives</a>.</td>
@@ -267,7 +270,7 @@ Return currently active players lives left.
 <td class="asm-label">ActivePlayerLives</td>
 <td class="address-2"><span id="898c"></span>898C</td>
 <td class="instruction">LD A,($5EA1)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5EA1.html">ActivePlayer_Lives</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=*<a href="5EA1.html">ActivePlayer_Lives</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -289,7 +292,7 @@ Return inactive players lives left.
 <td class="asm-label">InactivePlayerLives</td>
 <td class="address-2"><span id="8990"></span>8990</td>
 <td class="instruction">LD A,($5EA5)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5EA5.html">InactivePlayer_Lives</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=*<a href="5EA5.html">InactivePlayer_Lives</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -302,13 +305,13 @@ Return inactive players lives left.
 <span id="8994"></span>
 <div class="comments">
 <div class="paragraph">
-Controller for the inactive player.
+Return the 2UP player's lives left.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ControllerInactiveLives</td>
+<td class="asm-label">FetchLives_2UP</td>
 <td class="address-2"><span id="8994"></span>8994</td>
 <td class="instruction">LD A,($5E65)</td>
 <td class="comment-1" rowspan="3">If <a href="5E65.html">Flag_ActivePlayer</a> is zero then jump to <a href="894F.html#8990">InactivePlayerLives</a>.</td>
@@ -334,12 +337,12 @@ Controller for the inactive player.
 <div class="comments">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
-<li><a href="/ultimate/aticatac/asm/0000.html">Atic Atac</a></li>
+<li><a href="/ultimate/aticatac/asm/A2CE.html">Atic Atac</a></li>
 <li><a href="/ultimate/cookie/asm/7378.html">Cookie</a></li>
 <li><a href="/ultimate/jetpac/asm/70A4.html">Jetpac</a></li>
 <li><a href="/ultimate/pssst/asm/7325.html">Pssst</a></li>
 <li><a href="/ultimate/sabrewulf/asm/B7CD.html">Sabre Wulf</a></li>
-<li><a href="/ultimate/tranzam/asm/0000.html">Tranz Am</a></li>
+<li><a href="/ultimate/tranzam/asm/687B.html">Tranz Am</a></li>
 </ul>
 </div>
 </div>
@@ -359,10 +362,10 @@ Next: <a href="899C.html">899C</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/894F.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/35151.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

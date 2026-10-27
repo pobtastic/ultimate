@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,23 @@ Next: <a href="F4AA.html">F4AA</a>
 </td>
 </tr>
 </table>
-<div class="description">F410: Hall Of Fame</div>
+<div class="description">F410: Show Hall Of Fame</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="802C.html">Game_Restart</a>.
+Paint the hall of fame page, print the ranks, names and scores, then wait for a number key or the timer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f410"></span>
+<div class="comments">
+<div class="paragraph">
+Paint the hall of fame attribute rows.
 </div>
 </div>
 </td>
@@ -48,13 +61,13 @@ Used by the routine at <a href="802C.html">Game_Restart</a>.
 <td class="asm-label">HallOfFame</td>
 <td class="address-2"><span id="f410"></span>F410</td>
 <td class="instruction">LD A,$47</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=47.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=INK:WHITE, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f412"></span>F412</td>
 <td class="instruction">LD C,$08</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=08.</td>
+<td class="comment-1" rowspan="1">Set a row counter in <span class="register">C</span> for 08 loops.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -63,64 +76,73 @@ Used by the routine at <a href="802C.html">Game_Restart</a>.
 <td class="comment-1" rowspan="1"><span class="register">HL</span>=5900.</td>
 </tr>
 <tr>
-<td class="asm-label">HallOfFame_0</td>
+<td class="asm-label">HallOfFame_Loop</td>
 <td class="address-2"><span id="f417"></span>F417</td>
 <td class="instruction">LD B,$40</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=40.</td>
+<td class="comment-1" rowspan="1">Set an attribute counter in <span class="register">B</span> for 40 loops.</td>
 </tr>
 <tr>
-<td class="asm-label">HallOfFame_1</td>
+<td class="asm-label">HallOfFame_WriteAttribute</td>
 <td class="address-2"><span id="f419"></span>F419</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the attribute.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f41a"></span>F41A</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the attribute pointer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f41b"></span>F41B</td>
-<td class="instruction">DJNZ <a href="F410.html#f419">HallOfFame_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="F410.html#f419">HallOfFame_WriteAttribute</a></td>
+<td class="comment-1" rowspan="1">Decrease the column count by one and jump back to <a href="F410.html#f419">HallOfFame_WriteAttribute</a> until it is zero.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f41d"></span>
+<div class="comments">
+<div class="paragraph">
+Step to the next band colour, going back to INK:GREEN, PAPER:BLACK (BRIGHT) after INK:RED, PAPER:BLACK (BRIGHT).
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f41d"></span>F41D</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the attribute by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f41e"></span>F41E</td>
 <td class="instruction">CP $41</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="F410.html#f424">HallOfFame_NextRow</a> if it is not INK:BLUE, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f420"></span>F420</td>
-<td class="instruction">JR NZ,<a href="F410.html#f424">HallOfFame_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="F410.html#f424">HallOfFame_NextRow</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f422"></span>F422</td>
 <td class="instruction">LD A,$44</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=44.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=INK:GREEN, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
-<td class="asm-label">HallOfFame_2</td>
+<td class="asm-label">HallOfFame_NextRow</td>
 <td class="address-2"><span id="f424"></span>F424</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the row count by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f425"></span>F425</td>
-<td class="instruction">JR NZ,<a href="F410.html#f417">HallOfFame_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="F410.html#f417">HallOfFame_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="F410.html#f417">HallOfFame_Loop</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -179,190 +201,236 @@ Handle printing "HALL OF FAME" messaging.
 <td class="comment-1" rowspan="1">Call <a href="8A11.html">PrintStringColour</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f439"></span>
+<div class="comments">
+<div class="paragraph">
+Print the rank numbers down the page.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f439"></span>F439</td>
 <td class="instruction">LD HL,$4048</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=4048 (screen buffer location).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=4048 (screen location).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f43c"></span>F43C</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f43d"></span>F43D</td>
 <td class="instruction">LD C,$31</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">C</span>=31.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f43f"></span>F43F</td>
 <td class="instruction">LD B,$08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set a rank counter in <span class="register">B</span> for 08 loops.</td>
 </tr>
 <tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="f441"></span>F441</td>
+<td class="asm-label">HallOfFame_Rank_Loop</td>
+<td class="address-2"><span id="f441"></span>F441</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the row address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f442"></span>F442</td>
 <td class="instruction">CALL <a href="851E.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="851E.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f445"></span>F445</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the rank character into <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f446"></span>F446</td>
 <td class="instruction">CALL <a href="89EF.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="89EF.html">PrintScreen</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f449"></span>F449</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the row address from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f44a"></span>F44A</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move down two character rows.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f44b"></span>F44B</td>
 <td class="instruction">ADD A,$10</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f44d"></span>F44D</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f44e"></span>F44E</td>
 <td class="instruction">INC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increase the rank character by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f44f"></span>F44F</td>
-<td class="instruction">DJNZ <a href="F410.html#f441">$F441</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="F410.html#f441">HallOfFame_Rank_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the rank count by one and jump back to <a href="F410.html#f441">HallOfFame_Rank_Loop</a> until it is zero.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f451"></span>
+<div class="comments">
+<div class="paragraph">
+Print the eight names.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f451"></span>F451</td>
 <td class="instruction">LD HL,$4060</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=4060 (screen buffer location).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=4060 (screen location).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f454"></span>F454</td>
 <td class="instruction">LD DE,$5E20</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E20.html">5E20</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E20.html">HallOfFame_Names</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f457"></span>F457</td>
 <td class="instruction">LD C,$08</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=08.</td>
+<td class="comment-1" rowspan="1">Set a name counter in <span class="register">C</span> for 08 loops.</td>
 </tr>
 <tr>
-<td class="asm-label">HallOfFame_3</td>
+<td class="asm-label">HallOfFame_PrintName</td>
 <td class="address-2"><span id="f459"></span>F459</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the row address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f45a"></span>F45A</td>
 <td class="instruction">CALL <a href="851E.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="851E.html">ScreenAddress</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f45d"></span>
+<div class="comments">
+<div class="paragraph">
+Print the three letters of the name.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f45d"></span>F45D</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03.</td>
+<td class="comment-1" rowspan="1">Set a letter counter in <span class="register">B</span> for 03 loops.</td>
 </tr>
 <tr>
-<td class="asm-label">HallOfFame_4</td>
+<td class="asm-label">HallOfFame_PrintLetter</td>
 <td class="address-2"><span id="f45f"></span>F45F</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the next name letter.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f460"></span>F460</td>
 <td class="instruction">CALL <a href="89EF.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="89EF.html">PrintScreen</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f463"></span>F463</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the name pointer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f464"></span>F464</td>
-<td class="instruction">DJNZ <a href="F410.html#f45f">HallOfFame_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="F410.html#f45f">HallOfFame_PrintLetter</a></td>
+<td class="comment-1" rowspan="1">Decrease the letter count by one and jump back to <a href="F410.html#f45f">HallOfFame_PrintLetter</a> until it is zero.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f466"></span>
+<div class="comments">
+<div class="paragraph">
+Move down to the row for the next name.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f466"></span>F466</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the row address from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f467"></span>F467</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move down two character rows.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f468"></span>F468</td>
 <td class="instruction">ADD A,$10</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f46a"></span>F46A</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f46b"></span>F46B</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the name count by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f46c"></span>F46C</td>
-<td class="instruction">JR NZ,<a href="F410.html#f459">HallOfFame_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="F410.html#f459">HallOfFame_PrintName</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="F410.html#f459">HallOfFame_PrintName</a> until it is zero.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f46e"></span>
+<div class="comments">
+<div class="paragraph">
+Print the eight scores.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f46e"></span>F46E</td>
 <td class="instruction">LD C,$08</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=08.</td>
+<td class="comment-1" rowspan="1">Set a score counter in <span class="register">C</span> for 08 loops.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -377,10 +445,10 @@ Handle printing "HALL OF FAME" messaging.
 <td class="comment-1" rowspan="1"><span class="register">HL</span>=4088.</td>
 </tr>
 <tr>
-<td class="asm-label">HallOfFame_5</td>
+<td class="asm-label">HallOfFame_PrintScore</td>
 <td class="address-2"><span id="f476"></span>F476</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03.</td>
+<td class="comment-1" rowspan="1">Set a score byte counter in <span class="register">B</span> for 03 loops.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -431,14 +499,24 @@ Handle printing "HALL OF FAME" messaging.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f485"></span>F485</td>
-<td class="instruction">JR NZ,<a href="F410.html#f476">HallOfFame_5</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="F410.html#f476">HallOfFame_5</a> until <span class="register">C</span> is zero.</td>
+<td class="instruction">JR NZ,<a href="F410.html#f476">HallOfFame_PrintScore</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="F410.html#f476">HallOfFame_PrintScore</a> until <span class="register">C</span> is zero.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f487"></span>
+<div class="comments">
+<div class="paragraph">
+Set the timeout and wait for a number key.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f487"></span>F487</td>
 <td class="instruction">LD A,$01</td>
-<td class="comment-1" rowspan="2">Write 01 to <a href="5E74.html">5E74</a>.</td>
+<td class="comment-1" rowspan="2">Write 01 to <a href="5E74.html">HighScore_PlayerCopy</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -449,7 +527,7 @@ Handle printing "HALL OF FAME" messaging.
 <td class="asm-label"></td>
 <td class="address-1"><span id="f48c"></span>F48C</td>
 <td class="instruction">LD HL,$0400</td>
-<td class="comment-1" rowspan="2">Write 0400 to <a href="5E6D.html">5E6D</a>.</td>
+<td class="comment-1" rowspan="2">Write 0400 to <a href="5E6D.html">HallOfFame_Timer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -457,7 +535,7 @@ Handle printing "HALL OF FAME" messaging.
 <td class="instruction">LD ($5E6D),HL</td>
 </tr>
 <tr>
-<td class="asm-label">HallOfFame_6</td>
+<td class="asm-label">HallOfFame_WaitKey</td>
 <td class="address-2"><span id="f492"></span>F492</td>
 <td class="instruction">EI</td>
 <td class="comment-1" rowspan="1">Enable interrupts.</td>
@@ -466,25 +544,45 @@ Handle printing "HALL OF FAME" messaging.
 <td class="asm-label"></td>
 <td class="address-1"><span id="f493"></span>F493</td>
 <td class="instruction">HALT</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Wait for the next interrupt.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f494"></span>
+<div class="comments">
+<div class="paragraph">
+Count the timeout down.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f494"></span>F494</td>
 <td class="instruction">LD HL,($5E6D)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="5E6D.html">HallOfFame_Timer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f497"></span>F497</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease it by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f498"></span>F498</td>
 <td class="instruction">LD ($5E6D),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it back.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f49b"></span>
+<div class="comments">
+<div class="paragraph">
+Read the number keys and return if any is pressed.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -504,16 +602,16 @@ Handle printing "HALL OF FAME" messaging.
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">E7</td>
-<td class="centre" colspan="1" rowspan="1">Q</td>
-<td class="centre" colspan="1" rowspan="1">W</td>
-<td class="centre" colspan="1" rowspan="1">E</td>
-<td class="centre" colspan="1" rowspan="1">R</td>
-<td class="centre" colspan="1" rowspan="1">T</td>
-<td class="" colspan="1" rowspan="1">Y</td>
-<td class="" colspan="1" rowspan="1">U</td>
-<td class="" colspan="1" rowspan="1">I</td>
-<td class="" colspan="1" rowspan="1">O</td>
-<td class="" colspan="1" rowspan="1">P</td>
+<td class="centre" colspan="1" rowspan="1">0</td>
+<td class="centre" colspan="1" rowspan="1">1</td>
+<td class="centre" colspan="1" rowspan="1">2</td>
+<td class="centre" colspan="1" rowspan="1">3</td>
+<td class="centre" colspan="1" rowspan="1">4</td>
+<td class="" colspan="1" rowspan="1">5</td>
+<td class="" colspan="1" rowspan="1">6</td>
+<td class="" colspan="1" rowspan="1">7</td>
+<td class="" colspan="1" rowspan="1">8</td>
+<td class="" colspan="1" rowspan="1">9</td>
 </tr>
 </table></td>
 </tr>
@@ -543,25 +641,23 @@ Handle printing "HALL OF FAME" messaging.
 <td class="asm-label"></td>
 <td class="address-1"><span id="f4a4"></span>F4A4</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if any number key is pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f4a5"></span>F4A5</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump back to <a href="F410.html#f492">HallOfFame_WaitKey</a> if the timer is not zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f4a6"></span>F4A6</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="f4a7"></span>F4A7</td>
-<td class="instruction">JR NZ,<a href="F410.html#f492">HallOfFame_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="F410.html#f492">HallOfFame_WaitKey</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -583,10 +679,10 @@ Next: <a href="F4AA.html">F4AA</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/F410.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/62480.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,160 +36,378 @@ Next: <a href="B9BC.html">B9BC</a>
 </td>
 </tr>
 </table>
-<div class="description">B950: Routine at B950</div>
+<div class="description">B950: Initialise Explosion</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Copy an 8-byte explosion template into <a href="6060.html">Explosion_Slot</a>, which starts a sound. The entry point at <a href="B950.html#b953">InitialiseExplosion_Copy</a> takes the template address in <span class="register">HL</span>.
 </div>
-<table class="input">
-<tr class="asm-input-header">
-<th colspan="2">Input</th>
-</tr>
-<tr>
-<td class="register">HL</td>
-<td class="register-desc">Source address</td>
-</tr>
-<tr>
-<td class="register">DE</td>
-<td class="register-desc">Destination address</td>
-</tr>
-<tr>
-<td class="register">BC</td>
-<td class="register-desc">Number of bytes to copy</td>
-</tr>
-</table>
+<div class="paragraph">
+There are five templates. The first is read by <a href="B922.html">TickWaveDuration</a> (type A5) and the other four by <a href="B934.html">TickWaveTable</a> (type A1).
+</div>
+</div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">InitialiseExplosion</td>
 <td class="address-2"><span id="b950"></span>B950</td>
 <td class="instruction">LD HL,$B95C</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b95c">B95C</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b95c">Explosion_Template_1</a>.</td>
 </tr>
 <tr>
+<td class="asm-label">InitialiseExplosion_Copy</td>
 <td class="address-2"><span id="b953"></span>B953</td>
 <td class="instruction">LD DE,$6060</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="6060.html">6060</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="6060.html">Explosion_Slot</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b956"></span>B956</td>
 <td class="instruction">LD BC,$0008</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=0008.</td>
+<td class="comment-1" rowspan="2">Copy 08 bytes from <span class="register">HL</span> to <span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b959"></span>B959</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1">Copy 08 bytes from <span class="register">HL</span> to <span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b95b"></span>B95B</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b95c"></span>
+<div class="comments">
+<div class="paragraph">
+Template for <a href="B922.html">TickWaveDuration</a>. It plays one note on each pass, starting from the pitch below and counting down to 01 so the sound rises over 27 notes. Nothing calls <a href="B950.html">InitialiseExplosion</a>, so this one is never used. The copy at <a href="B950.html#b953">InitialiseExplosion_Copy</a> takes four more bytes than this, which are the first instructions at <a href="B950.html#b960">Copy_Explosion_Template</a>, but <a href="B922.html">TickWaveDuration</a> never reads them.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Explosion_Template_1</td>
 <td class="address-1"><span id="b95c"></span>B95C</td>
-<td class="instruction">DEFB $A5,$20,$08,$28</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DEFB $A5</td>
+<td class="comment-1" rowspan="1">Actor type, handled by <a href="B922.html">TickWaveDuration</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b95d"></span>B95D</td>
+<td class="instruction">DEFB $20</td>
+<td class="comment-1" rowspan="1">Not read by <a href="B922.html">TickWaveDuration</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b95e"></span>B95E</td>
+<td class="instruction">DEFB $08</td>
+<td class="comment-1" rowspan="1">Repeat count: each note is played 08 times.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b95f"></span>B95F</td>
+<td class="instruction">DEFB $28</td>
+<td class="comment-1" rowspan="1">Starting pitch.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="b960"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="A579.html">A579</a> and <a href="AD36.html">AD36</a>.
+This entry point is used by the routines at <a href="A579.html">Handler_PlayerShot</a> and <a href="B16F.html">Handler_Missile_ConvertExploding</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">Copy_Explosion_Template</td>
 <td class="address-2"><span id="b960"></span>B960</td>
 <td class="instruction">LD HL,$B965</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b965">Explosion_Template_2</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b963"></span>B963</td>
-<td class="instruction">JR <a href="B950.html#b953">$B953</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="B950.html#b953">InitialiseExplosion_Copy</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B950.html#b953">InitialiseExplosion_Copy</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b965"></span>
+<div class="comments">
+<div class="paragraph">
+Template for <a href="B934.html">TickWaveTable</a>: seven notes of falling pitch, each played 08 times.
+</div>
+<div class="paragraph">
+<audio controls="" src="../audio/falling-tone.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/falling-tone.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Explosion_Template_2</td>
 <td class="address-1"><span id="b965"></span>B965</td>
-<td class="instruction">DEFB $A1,$08,$6A,$B9,$08,$00,$78</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DEFB $A1</td>
+<td class="comment-1" rowspan="1">Actor type, handled by <a href="B934.html">TickWaveTable</a>.</td>
 </tr>
 <tr>
-<td class="address-1"><span id="b96c"></span>B96C</td>
-<td class="instruction">DEFB $70,$68,$60,$58,$50,$48,$40</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b966"></span>B966</td>
+<td class="instruction">DEFB $08</td>
+<td class="comment-1" rowspan="1">Counter: a value of 08 gives seven notes.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b967"></span>B967</td>
+<td class="instruction">DEFW <a href="B950.html#b96a">$B96A</a></td>
+<td class="comment-1" rowspan="1">Address of the pitch table minus one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b969"></span>B969</td>
+<td class="instruction">DEFB $08</td>
+<td class="comment-1" rowspan="1">Repeat count: each note is played 08 times.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b96a"></span>B96A</td>
+<td class="instruction">DEFB $00</td>
+<td class="comment-1" rowspan="1">Index 00 of the pitch table, which is never read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b96b"></span>B96B</td>
+<td class="instruction">DEFB $78,$70,$68,$60,$58,$50,$48</td>
+<td class="comment-1" rowspan="1">Pitch table, played from the last byte back to the first.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b972"></span>B972</td>
+<td class="instruction">DEFB $40</td>
+<td class="comment-1" rowspan="1">Never played, as the counter reaches zero first.</td>
+</tr>
+<tr>
+<td class="asm-label">InitialiseExplosion_2</td>
 <td class="address-2"><span id="b973"></span>B973</td>
 <td class="instruction">LD HL,$B978</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b978">B978</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b978">Explosion_Template_Burst</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b976"></span>B976</td>
-<td class="instruction">JR <a href="B950.html#b953">$B953</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="B950.html#b953">B953</a>.</td>
+<td class="instruction">JR <a href="B950.html#b953">InitialiseExplosion_Copy</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B950.html#b953">InitialiseExplosion_Copy</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b978"></span>
+<div class="comments">
+<div class="paragraph">
+Template for <a href="B934.html">TickWaveTable</a>: seven notes of rising pitch, each played 10 times.
+</div>
+<div class="paragraph">
+<audio controls="" src="../audio/rising-tone.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/rising-tone.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Explosion_Template_Burst</td>
 <td class="address-1"><span id="b978"></span>B978</td>
-<td class="instruction">DEFB $A1,$08,$7D,$B9,$10,$00,$40,$48</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DEFB $A1</td>
+<td class="comment-1" rowspan="1">Actor type, handled by <a href="B934.html">TickWaveTable</a>.</td>
 </tr>
 <tr>
-<td class="address-1"><span id="b980"></span>B980</td>
-<td class="instruction">DEFB $50,$58,$60,$60,$68,$70</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b979"></span>B979</td>
+<td class="instruction">DEFB $08</td>
+<td class="comment-1" rowspan="1">Counter: a value of 08 gives seven notes.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b97a"></span>B97A</td>
+<td class="instruction">DEFW <a href="B950.html#b97d">$B97D</a></td>
+<td class="comment-1" rowspan="1">Address of the pitch table minus one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b97c"></span>B97C</td>
+<td class="instruction">DEFB $10</td>
+<td class="comment-1" rowspan="1">Repeat count: each note is played 10 times.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b97d"></span>B97D</td>
+<td class="instruction">DEFB $00</td>
+<td class="comment-1" rowspan="1">Index 00 of the pitch table, which is never read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b97e"></span>B97E</td>
+<td class="instruction">DEFB $40,$48,$50,$58,$60,$60,$68</td>
+<td class="comment-1" rowspan="1">Pitch table, played from the last byte back to the first.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b985"></span>B985</td>
+<td class="instruction">DEFB $70</td>
+<td class="comment-1" rowspan="1">Never played, as the counter reaches zero first.</td>
+</tr>
+<tr>
+<td class="asm-label">InitialiseExplosion_3</td>
 <td class="address-2"><span id="b986"></span>B986</td>
 <td class="instruction">LD HL,$B98B</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b98b">B98B</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b98b">Explosion_Template_3</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b989"></span>B989</td>
-<td class="instruction">JR <a href="B950.html#b953">$B953</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="B950.html#b953">B953</a>.</td>
+<td class="instruction">JR <a href="B950.html#b953">InitialiseExplosion_Copy</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B950.html#b953">InitialiseExplosion_Copy</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b98b"></span>
+<div class="comments">
+<div class="paragraph">
+Template for <a href="B934.html">TickWaveTable</a>: fifteen notes that swap between two pitches in runs of up to four, each note played 06 times.
+</div>
+<div class="paragraph">
+<audio controls="" src="../audio/warble.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/warble.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Explosion_Template_3</td>
 <td class="address-1"><span id="b98b"></span>B98B</td>
-<td class="instruction">DEFB $A1,$10,$90,$B9,$06,$00,$40,$40</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DEFB $A1</td>
+<td class="comment-1" rowspan="1">Actor type, handled by <a href="B934.html">TickWaveTable</a>.</td>
 </tr>
 <tr>
-<td class="address-1"><span id="b993"></span>B993</td>
-<td class="instruction">DEFB $40,$40,$50,$50,$50,$50,$40,$40</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b98c"></span>B98C</td>
+<td class="instruction">DEFB $10</td>
+<td class="comment-1" rowspan="1">Counter: a value of 10 gives fifteen notes.</td>
 </tr>
 <tr>
-<td class="address-1"><span id="b99b"></span>B99B</td>
-<td class="instruction">DEFB $40,$40,$50,$50,$50,$50</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b98d"></span>B98D</td>
+<td class="instruction">DEFW <a href="B950.html#b990">$B990</a></td>
+<td class="comment-1" rowspan="1">Address of the pitch table minus one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b98f"></span>B98F</td>
+<td class="instruction">DEFB $06</td>
+<td class="comment-1" rowspan="1">Repeat count: each note is played 06 times.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b990"></span>B990</td>
+<td class="instruction">DEFB $00</td>
+<td class="comment-1" rowspan="1">Index 00 of the pitch table, which is never read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b991"></span>B991</td>
+<td class="instruction">DEFB $40,$40,$40,$40,$50,$50,$50,$50</td>
+<td class="comment-1" rowspan="2">Pitch table, played from the last byte back to the first.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b999"></span>B999</td>
+<td class="instruction">DEFB $40,$40,$40,$40,$50,$50,$50</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9a0"></span>B9A0</td>
+<td class="instruction">DEFB $50</td>
+<td class="comment-1" rowspan="1">Never played, as the counter reaches zero first.</td>
+</tr>
+<tr>
+<td class="asm-label">InitialiseExplosion_4</td>
 <td class="address-2"><span id="b9a1"></span>B9A1</td>
 <td class="instruction">LD HL,$B9A6</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b9a6">B9A6</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="B950.html#b9a6">Explosion_Template_4</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b9a4"></span>B9A4</td>
-<td class="instruction">JR <a href="B950.html#b953">$B953</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="B950.html#b953">B953</a>.</td>
+<td class="instruction">JR <a href="B950.html#b953">InitialiseExplosion_Copy</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B950.html#b953">InitialiseExplosion_Copy</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b9a6"></span>
+<div class="comments">
+<div class="paragraph">
+Template for <a href="B934.html">TickWaveTable</a>: fifteen notes of falling pitch, each played 06 times.
+</div>
+<div class="paragraph">
+<audio controls="" src="../audio/falling-slide.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/falling-slide.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Explosion_Template_4</td>
 <td class="address-1"><span id="b9a6"></span>B9A6</td>
-<td class="instruction">DEFB $A1,$10,$AB,$B9,$06,$00,$50,$4E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DEFB $A1</td>
+<td class="comment-1" rowspan="1">Actor type, handled by <a href="B934.html">TickWaveTable</a>.</td>
 </tr>
 <tr>
-<td class="address-1"><span id="b9ae"></span>B9AE</td>
-<td class="instruction">DEFB $4C,$4A,$48,$46,$44,$42,$40,$3E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9a7"></span>B9A7</td>
+<td class="instruction">DEFB $10</td>
+<td class="comment-1" rowspan="1">Counter: a value of 10 gives fifteen notes.</td>
 </tr>
 <tr>
-<td class="address-1"><span id="b9b6"></span>B9B6</td>
-<td class="instruction">DEFB $3C,$3A,$38,$36,$34,$32</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9a8"></span>B9A8</td>
+<td class="instruction">DEFW <a href="B950.html#b9ab">$B9AB</a></td>
+<td class="comment-1" rowspan="1">Address of the pitch table minus one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9aa"></span>B9AA</td>
+<td class="instruction">DEFB $06</td>
+<td class="comment-1" rowspan="1">Repeat count: each note is played 06 times.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9ab"></span>B9AB</td>
+<td class="instruction">DEFB $00</td>
+<td class="comment-1" rowspan="1">Index 00 of the pitch table, which is never read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9ac"></span>B9AC</td>
+<td class="instruction">DEFB $50,$4E,$4C,$4A,$48,$46,$44,$42</td>
+<td class="comment-1" rowspan="2">Pitch table, played from the last byte back to the first.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9b4"></span>B9B4</td>
+<td class="instruction">DEFB $40,$3E,$3C,$3A,$38,$36,$34</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9bb"></span>B9BB</td>
+<td class="instruction">DEFB $32</td>
+<td class="comment-1" rowspan="1">Never played, as the counter reaches zero first.</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -202,10 +423,10 @@ Next: <a href="B9BC.html">B9BC</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/B950.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/47440.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,17 @@ Next: <a href="A880.html">A880</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="81BB.html">StartGame</a>.
+Sets the starting level and lives for both players. The loop runs twice, clearing the level parity and carrying flag, initialising the terrain and then swapping the player states using <a href="A880.html">ChangePlayer</a>. The 2UP starting lives and level are written afterwards.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a84c"></span>
+<div class="comments">
+<div class="paragraph">
+Write the starting level and lives for both players.
 </div>
 </div>
 </td>
@@ -48,7 +61,7 @@ Used by the routine at <a href="81BB.html">StartGame</a>.
 <td class="asm-label">NewGame</td>
 <td class="address-2"><span id="a84c"></span>A84C</td>
 <td class="instruction">LD B,$02</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=02 (counter for our two players).</td>
+<td class="comment-1" rowspan="1">Set a player counter in <span class="register">B</span> for 02 loops.</td>
 </tr>
 <tr>
 <td class="asm-label">NewGame_Loop</td>
@@ -78,6 +91,16 @@ Handle setting up 1UP player.
 <td class="instruction">LD ($5EA0),A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a854"></span>
+<div class="comments">
+<div class="paragraph">
+See <a href="../reference/pokes.html#255_lives">255 Lives</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a854"></span>A854</td>
 <td class="instruction">LD A,$04</td>
@@ -93,8 +116,8 @@ Handle setting up 1UP player.
 <td class="address-1"><span id="a859"></span>A859</td>
 <td class="instruction">XOR A</td>
 <td class="comment-1" rowspan="3">Write 00 to; <ul class="">
-<li><a href="5EA2.html">5EA2</a></li>
-<li><a href="5EA3.html">5EA3</a></li>
+<li><a href="5EA2.html">LevelParity</a></li>
+<li><a href="5EA3.html">RoverCargoFlag</a></li>
 </ul></td>
 </tr>
 <tr>
@@ -116,8 +139,8 @@ Handle setting up 1UP player.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a863"></span>A863</td>
-<td class="instruction">CALL <a href="9F5E.html">$9F5E</a></td>
-<td class="comment-1" rowspan="1">Call <a href="9F5E.html">9F5E</a>.</td>
+<td class="instruction">CALL <a href="9F5E.html">InitialiseObjects</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9F5E.html">InitialiseObjects</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -135,7 +158,7 @@ Handle setting up 1UP player.
 <td class="asm-label"></td>
 <td class="address-1"><span id="a86a"></span>A86A</td>
 <td class="instruction">DJNZ <a href="A84C.html#a84e">NewGame_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="A84C.html#a84e">NewGame_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the counter by one and jump back to <a href="A84C.html#a84e">NewGame_Loop</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -143,6 +166,9 @@ Handle setting up 1UP player.
 <div class="comments">
 <div class="paragraph">
 Handle setting up 2UP player.
+</div>
+<div class="paragraph">
+See <a href="../reference/pokes.html#255_lives">255 Lives</a>.
 </div>
 </div>
 </td>
@@ -173,7 +199,7 @@ Handle setting up 2UP player.
 <td class="asm-label"></td>
 <td class="address-1"><span id="a876"></span>A876</td>
 <td class="instruction">LD A,($5E00)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E00.html">GameOptions</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=*<a href="5E00.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -185,19 +211,31 @@ Handle setting up 2UP player.
 <td class="asm-label"></td>
 <td class="address-1"><span id="a87b"></span>A87B</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1">Return if <a href="5E00.html">GameOptions</a> indicates this is a 1 player only game.</td>
+<td class="comment-1" rowspan="1">Return if <a href="5E00.html">GameOptions</a> indicates this is a 2UP game.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a87c"></span>A87C</td>
 <td class="instruction">LD ($5EA5),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <a href="5EA5.html">InactivePlayer_Lives</a>.</td>
+<td class="comment-1" rowspan="1">Write 00 to <a href="5EA5.html">InactivePlayer_Lives</a> as there is no 2UP player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a87f"></span>A87F</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/cookie/asm/6C58.html">Cookie</a></li>
+<li><a href="/ultimate/tranzam/asm/6391.html">Tranz Am</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -213,10 +251,10 @@ Next: <a href="A880.html">A880</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/A84C.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/43084.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

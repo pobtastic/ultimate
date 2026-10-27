@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,200 +36,296 @@ Next: <a href="37781.html">37781</a>
 </td>
 </tr>
 </table>
-<div class="description">37718: Draw Terrain?</div>
+<div class="description">37718: Draw Terrain</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="41386.html">41386</a> and <a href="43046.html">LevelNew</a>.
+Redraw the whole strip of moon surface along the bottom of the screen for the current scroll position, then colour the row of ground beneath it.
+</div>
+<div class="paragraph">
+Jetman always stands at pixel column 120 so the left-hand edge of the screen is 120 pixels behind his world X in <a href="24696.html#24698">Jetman_Position</a>. That is divided by 8 to find the terrain cell at the left edge, as the world is 8192 pixels wide and <a href="28672.html">TerrainData_Active</a> holds one cell for every 8 of them (1024 cells), wrapping round at the far end. The 32 cells from there are drawn side by side along character row 22.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="37718"></span>
+<div class="comments">
+<div class="paragraph">
+Work out which terrain cell sits at the left-hand edge of the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain</td>
 <td class="address-2"><span id="37718"></span>37718</td>
 <td class="instruction">LD HL,(24698)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24672.html#24698">24698</a>.</td>
+<td class="comment-1" rowspan="1">Fetch Jetman's world X from <a href="24696.html#24698">Jetman_Position</a>.</td>
 </tr>
 <tr>
+<td class="asm-label">DrawTerrain_Target</td>
 <td class="address-1"><span id="37721"></span>37721</td>
 <td class="instruction">LD DE,65416</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="65416.html">65416</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=65416 (minus 120).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37724"></span>37724</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>+=<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Subtract 120 to find the world X of the left-hand edge of the screen.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="37725"></span>
+<div class="comments">
+<div class="paragraph">
+The world is 8192 pixels wide, so wrap anything left of its start back round to the far end.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37725"></span>37725</td>
 <td class="instruction">LD A,H</td>
 <td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">H</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37726"></span>37726</td>
 <td class="instruction">AND %00011111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-4.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-4 so the position wraps round the world.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37728"></span>37728</td>
 <td class="instruction">LD H,A</td>
 <td class="comment-1" rowspan="1"><span class="register">H</span>=<span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37729"></span>37729</td>
 <td class="instruction">SRA H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="6">Divide the world X by 8 to give the terrain cell index.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37731"></span>37731</td>
 <td class="instruction">RR L</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37733"></span>37733</td>
 <td class="instruction">SRA H</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37735"></span>37735</td>
 <td class="instruction">RR L</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37737"></span>37737</td>
 <td class="instruction">SRA H</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37739"></span>37739</td>
 <td class="instruction">RR L</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="37741"></span>
+<div class="comments">
+<div class="paragraph">
+Start at the left-hand end of the terrain row on the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37741"></span>37741</td>
 <td class="instruction">LD DE,20672</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=20672.</td>
+<td class="comment-1" rowspan="1">Set the screen address to 20672 (the start of character row 22).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37744"></span>37744</td>
 <td class="instruction">LD BC,28672</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="28672.html">TerrainData_Active</a>.</td>
+<td class="comment-1" rowspan="1">Set the terrain base in <span class="register">BC</span> to <a href="28672.html">TerrainData_Active</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37747"></span>37747</td>
 <td class="instruction">LD A,32</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=32.</td>
+<td class="comment-1" rowspan="1">Set a column counter in <span class="register">A</span> for 32 loops.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="37749"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the graphic for one terrain cell.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Loop</td>
 <td class="address-2"><span id="37749"></span>37749</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">AF</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Stash the counter and the cell index on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37750"></span>37750</td>
 <td class="instruction">PUSH HL</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37751"></span>37751</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>+=<span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="1">Add the terrain base to get the address of the cell.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37752"></span>37752</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">BC</span> and <span class="register">DE</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Stash the terrain base and the screen address on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37753"></span>37753</td>
 <td class="instruction">PUSH DE</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37754"></span>37754</td>
-<td class="instruction">CALL <a href="37244.html">37244</a></td>
-<td class="comment-1" rowspan="1">Call <a href="37244.html">37244</a>.</td>
+<td class="instruction">CALL <a href="37244.html">DrawTerrainColumn</a></td>
+<td class="comment-1" rowspan="1">Call <a href="37244.html">DrawTerrainColumn</a> to copy the cell graphic onto the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37757"></span>37757</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">DE</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the screen address from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37758"></span>37758</td>
 <td class="instruction">INC E</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">E</span> by one.</td>
+<td class="comment-1" rowspan="1">Move along to the next screen column.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37759"></span>37759</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="2">Restore <span class="register">BC</span> and <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="2">Restore the terrain base and the cell index from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37760"></span>37760</td>
 <td class="instruction">POP HL</td>
 </tr>
 <tr>
-<td class="address-1"><span id="37761"></span>37761</td>
-<td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="routine-comment" colspan="5">
+<span id="37761"></span>
+<div class="comments">
+<div class="paragraph">
+Step on to the next terrain cell, wrapping round at the end of the world, and loop until every column is drawn.
+</div>
+</div>
+</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="37761"></span>37761</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move onto the next cell index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37762"></span>37762</td>
 <td class="instruction">LD A,H</td>
 <td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">H</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37763"></span>37763</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-1 so the index wraps round after 1024 cells.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37765"></span>37765</td>
 <td class="instruction">LD H,A</td>
 <td class="comment-1" rowspan="1"><span class="register">H</span>=<span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37766"></span>37766</td>
 <td class="instruction">POP AF</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">AF</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the counter from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37767"></span>37767</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">A</span> by one.</td>
+<td class="comment-1" rowspan="1">Decrease the column counter by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37768"></span>37768</td>
-<td class="instruction">JR NZ,<a href="37718.html#37749">37749</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="37718.html#37749">37749</a> unless <span class="register">A</span> is now zero.</td>
+<td class="instruction">JR NZ,<a href="37718.html#37749">DrawTerrain_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="37718.html#37749">DrawTerrain_Loop</a> until all 32 columns are drawn.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="37770"></span>
+<div class="comments">
+<div class="paragraph">
+Colour the ground beneath the terrain; the black border columns at either edge of the window are left alone.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37770"></span>37770</td>
 <td class="instruction">LD HL,23265</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=23265.</td>
+<td class="comment-1" rowspan="1">Set the attribute pointer to 23265 (the second column of the bottom row).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37773"></span>37773</td>
 <td class="instruction">LD BC,7771</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=7771.</td>
+<td class="comment-1" rowspan="1">Set a column counter in <span class="register">B</span> for 30 loops and the ground colour in <span class="register">C</span> to INK:MAGENTA, PAPER:MAGENTA (BRIGHT).</td>
 </tr>
 <tr>
+<td class="asm-label">DrawTerrain_WriteByte</td>
 <td class="address-2"><span id="37776"></span>37776</td>
 <td class="instruction">LD (HL),C</td>
-<td class="comment-1" rowspan="1">Write <span class="register">C</span> to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Write the ground colour to the attribute buffer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37777"></span>37777</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Move onto the next column.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37778"></span>37778</td>
-<td class="instruction">DJNZ <a href="37718.html#37776">37776</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="37718.html#37776">37776</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="37718.html#37776">DrawTerrain_WriteByte</a></td>
+<td class="comment-1" rowspan="1">Decrease the column counter by one and loop back to <a href="37718.html#37776">DrawTerrain_WriteByte</a> until the ground is coloured.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="37780"></span>37780</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
@@ -245,10 +344,10 @@ Next: <a href="37781.html">37781</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/37718.html">Switch to hexadecimal</a>.</div>
+<div><a href="../../asm/9356.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>
 </html>

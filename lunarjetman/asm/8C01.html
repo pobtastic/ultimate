@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,7 @@ Next: <a href="8C3E.html">8C3E</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="8C71.html">8C71</a>, <a href="8D06.html">8D06</a>, <a href="91E2.html">91E2</a> and <a href="ABA9.html">ABA9</a>.
+Draw a fuel/level bar at the given screen position, using the gauge value as both length and gradient.
 </div>
 </div>
 <table class="input">
@@ -48,7 +51,7 @@ Used by the routines at <a href="8C71.html">8C71</a>, <a href="8D06.html">8D06</
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">Lower byte of gauge</td>
+<td class="register-desc">Gauge value (bits 3-7 whole cells, bits 0-2 gradient)</td>
 </tr>
 <tr>
 <td class="register">HL</td>
@@ -62,7 +65,7 @@ Used by the routines at <a href="8C71.html">8C71</a>, <a href="8D06.html">8D06</
 <span id="8c01"></span>
 <div class="comments">
 <div class="paragraph">
-Stash the lower gauge byte for later.
+Stash the gauge value for later.
 </div>
 </div>
 </td>
@@ -71,7 +74,7 @@ Stash the lower gauge byte for later.
 <td class="asm-label">DrawGauge</td>
 <td class="address-2"><span id="8c01"></span>8C01</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Stash the gauge byte.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -100,7 +103,7 @@ Stash the screen location for later, as we'll need it to gain the screen buffer 
 <span id="8c06"></span>
 <div class="comments">
 <div class="paragraph">
-Restore the lower gauge byte.
+Restore the gauge value.
 </div>
 </div>
 </td>
@@ -116,7 +119,7 @@ Restore the lower gauge byte.
 <span id="8c07"></span>
 <div class="comments">
 <div class="paragraph">
-Rotate off the INK bits.
+Divide by 08 to leave the number of whole cells.
 </div>
 </div>
 </td>
@@ -141,13 +144,13 @@ Rotate off the INK bits.
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c0a"></span>8C0A</td>
 <td class="instruction">AND %00011111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-4 (PAPER, BRIGHT and FLASH).</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-4.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c0c"></span>8C0C</td>
 <td class="instruction">JR Z,<a href="8C01.html#8c1a">DrawGauge_Draw</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="8C01.html#8c1a">DrawGauge_Draw</a> if the result is zero (i.e. empty/ blank).</td>
+<td class="comment-1" rowspan="1">Jump to <a href="8C01.html#8c1a">DrawGauge_Draw</a> if there are no whole cells to fill.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -160,7 +163,7 @@ Rotate off the INK bits.
 <span id="8c0f"></span>
 <div class="comments">
 <div class="paragraph">
-This moves along
+Copy the INK bits into PAPER as the bar is filled.
 </div>
 </div>
 </td>
@@ -169,7 +172,7 @@ This moves along
 <td class="asm-label">DrawGauge_Find</td>
 <td class="address-2"><span id="8c0f"></span>8C0F</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=attribute byte.</td>
+<td class="comment-1" rowspan="1">Fetch the current attribute byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -191,19 +194,18 @@ This moves along
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c13"></span>8C13</td>
 <td class="instruction">AND %00111000</td>
-<td class="comment-1" rowspan="1">Keep only bits 3-5 (INK).</td>
+<td class="comment-1" rowspan="1">Keep only bits 3-5 (the INK bits, now in the PAPER position).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c15"></span>8C15</td>
 <td class="instruction">OR (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Merge them back into the attribute byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c16"></span>8C16</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> back to <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -215,7 +217,7 @@ This moves along
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c18"></span>8C18</td>
 <td class="instruction">DJNZ <a href="8C01.html#8c0f">DrawGauge_Find</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="8C01.html#8c0f">DrawGauge_Find</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the counter by one and jump back to <a href="8C01.html#8c0f">DrawGauge_Find</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -231,7 +233,7 @@ Fetch the attribute byte for where the gauge ends.
 <td class="asm-label">DrawGauge_Draw</td>
 <td class="address-2"><span id="8c1a"></span>8C1A</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=*<span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -253,7 +255,7 @@ Remove the PAPER bits.
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c1d"></span>8C1D</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> back to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> back to *<span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -327,20 +329,19 @@ Restore the screen location for the screen buffer address call.
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c2a"></span>8C2A</td>
 <td class="instruction">OR E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Merge in the column bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8c2b"></span>8C2B</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"><span class="register">L</span>=<span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="8c2c"></span>
 <div class="comments">
 <div class="paragraph">
-Restore the lower gauge byte.
+Restore the gauge value.
 </div>
 </div>
 </td>
@@ -356,7 +357,7 @@ Restore the lower gauge byte.
 <span id="8c2d"></span>
 <div class="comments">
 <div class="paragraph">
-The gradient lines are stored in the font at: <a href="D347.html#d51f">D51F</a>. <table class="default">
+The gradient lines are stored in the font at: <a href="D347.html#d51f">Font_Gradient</a>. <table class="default">
 <tr>
 <td class="centre" colspan="1" rowspan="1">00</td>
 <td class="centre" colspan="1" rowspan="1"><img alt="gradient-0" src="../images/font/gradient-0.png" /></td>
@@ -392,7 +393,7 @@ The gradient lines are stored in the font at: <a href="D347.html#d51f">D51F</a>.
 </table>
 </div>
 <div class="paragraph">
-There are 8 gradient line images, so ensure the number reference is between 00-07.
+There are 8 gradient line images, so keep the index between 00 and 07.
 </div>
 </div>
 </td>
@@ -430,7 +431,7 @@ The first value is 5B which corresponds to "<img alt="gradient-0" src="../images
 <span id="8c34"></span>
 <div class="comments">
 <div class="paragraph">
-Restore the lower gauge byte.
+Restore the gauge value.
 </div>
 </div>
 </td>
@@ -485,10 +486,10 @@ Next: <a href="8C3E.html">8C3E</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/8C01.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/35841.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

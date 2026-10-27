@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,270 +36,474 @@ Next: <a href="F3BF.html">F3BF</a>
 </td>
 </tr>
 </table>
-<div class="description">F345: Routine at F345</div>
+<div class="description">F345: Insert High Score</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="F295.html">F295</a>.
+Open a slot in the name table at <a href="5E20.html">HallOfFame_Names</a>, copy the new 3-letter name from <a href="5E78.html">HallOfFame_Name</a>, then insert the matching score into <a href="5E06.html">High_Score</a>.
+</div>
+<div class="paragraph">
+If the other player also made the table, rank their score too and start name entry for them.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f345"></span>
+<div class="comments">
+<div class="paragraph">
+<span class="register">DE</span> is the byte after the name table and <span class="register">HL</span> is three bytes before that, so copying backwards moves each byte on by three bytes, which is one name row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">InsertHighScore</td>
 <td class="address-2"><span id="f345"></span>F345</td>
 <td class="instruction">LD DE,$5E38</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E38.html">5E38</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E38.html">HallOfFame_NameEnd</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f348"></span>F348</td>
 <td class="instruction">LD HL,$5E35</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E35.html">5E35</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E35.html">HallOfFame_LastName</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f34b"></span>
+<div class="comments">
+<div class="paragraph">
+Work out how many bytes lie from the insert row down. <a href="5E77.html">HighScorePosition</a> holds 08 minus the rank, so this gives back the row count that <a href="F3BF.html">CompareHighScores</a> returned in <span class="register">B</span> (08 is first place).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f34b"></span>F34B</td>
 <td class="instruction">LD A,($5E77)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="5E77.html">HighScorePosition</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f34e"></span>F34E</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Negate it.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f350"></span>F350</td>
 <td class="instruction">ADD A,$08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 08.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f352"></span>F352</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the row count into <span class="register">B</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f353"></span>F353</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Double it.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f355"></span>F355</td>
 <td class="instruction">ADD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the original count.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f356"></span>F356</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the byte count into <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f357"></span>F357</td>
 <td class="instruction">LD B,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear <span class="register">B</span>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f359"></span>
+<div class="comments">
+<div class="paragraph">
+Move the names from the insert row down one row. The old last name is overwritten, and <span class="register">DE</span> is left pointing at the freed slot.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f359"></span>F359</td>
 <td class="instruction">LDDR</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shuffle the table down.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f35b"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the new name into the freed slot.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f35b"></span>F35B</td>
 <td class="instruction">LD HL,$5E78</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E78.html">5E78</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E78.html">HallOfFame_Name</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f35e"></span>F35E</td>
 <td class="instruction">LD BC,$0003</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=0003.</td>
+<td class="comment-1" rowspan="2">Copy the new 03-byte name into the table.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f361"></span>F361</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f363"></span>
+<div class="comments">
+<div class="paragraph">
+Note which player is being ranked. This also acts as the insert flag for <a href="F3BF.html">CompareHighScores</a>, as it is never zero for 1UP or 2UP.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f363"></span>F363</td>
 <td class="instruction">LD A,($5E71)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="5E71.html">HighScore_Player</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f366"></span>F366</td>
 <td class="instruction">LD ($5E74),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it to <a href="5E74.html">HighScore_PlayerCopy</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f369"></span>
+<div class="comments">
+<div class="paragraph">
+Pick the score of the player who has just entered a name.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f369"></span>F369</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="F345.html#f372">InsertHighScore_1UP</a> if this is 1UP.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f36b"></span>F36B</td>
-<td class="instruction">JR Z,<a href="F345.html#f372">$F372</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="F345.html#f372">InsertHighScore_1UP</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f36d"></span>F36D</td>
 <td class="instruction">LD DE,$5E62</td>
 <td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E62.html">2UP_Score_1</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f370"></span>F370</td>
-<td class="instruction">JR <a href="F345.html#f375">$F375</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="F345.html#f375">F375</a>.</td>
+<td class="instruction">JR <a href="F345.html#f375">InsertHighScore_Compare</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="F345.html#f375">InsertHighScore_Compare</a>.</td>
 </tr>
 <tr>
+<td class="asm-label">InsertHighScore_1UP</td>
 <td class="address-2"><span id="f372"></span>F372</td>
 <td class="instruction">LD DE,$5E5F</td>
 <td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E5F.html">1UP_Score_1</a>.</td>
 </tr>
 <tr>
-<td class="address-2"><span id="f375"></span>F375</td>
-<td class="instruction">CALL <a href="F3BF.html">$F3BF</a></td>
-<td class="comment-1" rowspan="1">Call <a href="F3BF.html">F3BF</a>.</td>
+<td class="routine-comment" colspan="5">
+<span id="f375"></span>
+<div class="comments">
+<div class="paragraph">
+Insert the score into the table at the rank found by <a href="F3BF.html">CompareHighScores</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
+<td class="asm-label">InsertHighScore_Compare</td>
+<td class="address-2"><span id="f375"></span>F375</td>
+<td class="instruction">CALL <a href="F3BF.html">CompareHighScores</a></td>
+<td class="comment-1" rowspan="1">Call <a href="F3BF.html">CompareHighScores</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="f378"></span>
+<div class="comments">
+<div class="paragraph">
+Check whether the other player also needs a name. <a href="5E72.html">HighScore_OtherPlayer</a> holds the number of the other player, or zero if there is nobody else waiting.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f378"></span>F378</td>
 <td class="instruction">LD A,($5E72)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="5E72.html">HighScore_OtherPlayer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f37b"></span>F37B</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="F33E.html">ReturnToRestart</a> if the other player is not pending.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f37c"></span>F37C</td>
-<td class="instruction">JP Z,<a href="F33E.html">$F33E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="F33E.html">ReturnToRestart</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f37f"></span>
+<div class="comments">
+<div class="paragraph">
+Send 2UP to its own handling, otherwise it is 1UP.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f37f"></span>F37F</td>
 <td class="instruction">CP $02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="F345.html#f39f">InsertHighScore_2UPPending</a> if the other player is 2UP.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f381"></span>F381</td>
-<td class="instruction">JP Z,<a href="F345.html#f39f">$F39F</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="F345.html#f39f">InsertHighScore_2UPPending</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f384"></span>
+<div class="comments">
+<div class="paragraph">
+Switch to the pending 1UP score and compare it with the table.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f384"></span>F384</td>
 <td class="instruction">LD ($5E71),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it to <a href="5E71.html">HighScore_Player</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f387"></span>F387</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="5E72.html">HighScore_OtherPlayer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f388"></span>F388</td>
 <td class="instruction">LD ($5E72),A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f38b"></span>
+<div class="comments">
+<div class="paragraph">
+Clearing <a href="5E74.html">HighScore_PlayerCopy</a> means that <a href="F3BF.html">CompareHighScores</a> only returns the rank and leaves the table alone. The score is inserted later, once this player has entered a name.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f38b"></span>F38B</td>
 <td class="instruction">LD DE,$5E5F</td>
 <td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E5F.html">1UP_Score_1</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f38e"></span>F38E</td>
 <td class="instruction">LD ($5E74),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 00 to <a href="5E74.html">HighScore_PlayerCopy</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f391"></span>F391</td>
-<td class="instruction">CALL <a href="F3BF.html">$F3BF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="F3BF.html">CompareHighScores</a></td>
+<td class="comment-1" rowspan="1">Call <a href="F3BF.html">CompareHighScores</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f394"></span>
+<div class="comments">
+<div class="paragraph">
+Restart if the score is too low, otherwise start name entry.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f394"></span>F394</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump to <a href="F33E.html">ReturnToRestart</a> if the score is not high enough.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f395"></span>F395</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f396"></span>F396</td>
-<td class="instruction">JP Z,<a href="F33E.html">$F33E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="F33E.html">ReturnToRestart</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f399"></span>F399</td>
-<td class="instruction">CALL <a href="F535.html">$F535</a></td>
-<td class="comment-1" rowspan="1">Call <a href="F535.html">F535</a>.</td>
+<td class="instruction">CALL <a href="F535.html">PrepareNameEntry</a></td>
+<td class="comment-1" rowspan="1">Call <a href="F535.html">PrepareNameEntry</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f39c"></span>F39C</td>
-<td class="instruction">JP <a href="F5E3.html">$F5E3</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="F5E3.html">F5E3</a>.</td>
+<td class="instruction">JP <a href="F5E3.html">StartNameEntry</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="F5E3.html">StartNameEntry</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f39f"></span>
+<div class="comments">
+<div class="paragraph">
+Switch to the pending 2UP score and compare it with the table.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">InsertHighScore_2UPPending</td>
 <td class="address-2"><span id="f39f"></span>F39F</td>
 <td class="instruction">LD ($5E71),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it to <a href="5E71.html">HighScore_Player</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3a2"></span>F3A2</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="5E72.html">HighScore_OtherPlayer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3a3"></span>F3A3</td>
 <td class="instruction">LD ($5E72),A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f3a6"></span>
+<div class="comments">
+<div class="paragraph">
+As above, only rank the score; it is inserted after name entry.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3a6"></span>F3A6</td>
 <td class="instruction">LD DE,$5E62</td>
 <td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E62.html">2UP_Score_1</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3a9"></span>F3A9</td>
 <td class="instruction">LD ($5E74),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 00 to <a href="5E74.html">HighScore_PlayerCopy</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3ac"></span>F3AC</td>
-<td class="instruction">CALL <a href="F3BF.html">$F3BF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="F3BF.html">CompareHighScores</a></td>
+<td class="comment-1" rowspan="1">Call <a href="F3BF.html">CompareHighScores</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f3af"></span>
+<div class="comments">
+<div class="paragraph">
+Restart if the score is too low.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3af"></span>F3AF</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump to <a href="F33E.html">ReturnToRestart</a> if the score is not high enough.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3b0"></span>F3B0</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3b1"></span>F3B1</td>
-<td class="instruction">JP Z,<a href="F33E.html">$F33E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="F33E.html">ReturnToRestart</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="f3b4"></span>
+<div class="comments">
+<div class="paragraph">
+Make 2UP the active player and start name entry.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3b4"></span>F3B4</td>
 <td class="instruction">LD A,$01</td>
 <td class="comment-1" rowspan="2">Write 01 to <a href="5E65.html">Flag_ActivePlayer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3b6"></span>F3B6</td>
 <td class="instruction">LD ($5E65),A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3b9"></span>F3B9</td>
-<td class="instruction">CALL <a href="F535.html">$F535</a></td>
-<td class="comment-1" rowspan="1">Call <a href="F535.html">F535</a>.</td>
+<td class="instruction">CALL <a href="F535.html">PrepareNameEntry</a></td>
+<td class="comment-1" rowspan="1">Call <a href="F535.html">PrepareNameEntry</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="f3bc"></span>F3BC</td>
-<td class="instruction">JP <a href="F5E3.html">$F5E3</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="F5E3.html">F5E3</a>.</td>
+<td class="instruction">JP <a href="F5E3.html">StartNameEntry</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="F5E3.html">StartNameEntry</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -312,10 +519,10 @@ Next: <a href="F3BF.html">F3BF</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/F345.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/62277.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

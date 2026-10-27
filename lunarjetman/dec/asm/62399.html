@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,273 +36,436 @@ Next: <a href="62480.html">62480</a>
 </td>
 </tr>
 </table>
-<div class="description">62399: Routine at F3BF</div>
+<div class="description">62399: Compare High Scores</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="62277.html">62277</a> and <a href="62830.html">NewHighScore</a>.
+Compare the 3-byte score in <span class="register">DE</span> against the table at <a href="24070.html">High_Score</a> and return the insert rank in <span class="register">B</span>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Pointer to the 3-byte score to test</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Rows from the insert point (8 = top) or 0 if too low</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="62399"></span>
+<div class="comments">
+<div class="paragraph">
+Walk the eight high-score rows and return the insert rank.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">CompareHighScores</td>
 <td class="address-2"><span id="62399"></span>62399</td>
 <td class="instruction">LD B,8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set a rank counter in <span class="register">B</span> for 8 loops.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62401"></span>62401</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the score pointer on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62402"></span>62402</td>
 <td class="instruction">LD HL,24070</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24070.html">High_Score</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62405"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the first byte of the score with the table row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CompareHighScores_Loop</td>
 <td class="address-2"><span id="62405"></span>62405</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the table byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62406"></span>62406</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the score byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62407"></span>62407</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="62399.html#62421">CompareHighScores_SecondByte</a> if the bytes match.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62408"></span>62408</td>
-<td class="instruction">JP Z,<a href="62399.html#62421">62421</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="62399.html#62421">CompareHighScores_SecondByte</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62411"></span>62411</td>
-<td class="instruction">JP NC,<a href="62399.html#62449">62449</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NC,<a href="62399.html#62449">CompareHighScores_InsertScore</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="62399.html#62449">CompareHighScores_InsertScore</a> if the score is higher.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62414"></span>
+<div class="comments">
+<div class="paragraph">
+Move the table pointer on to the next row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62414"></span>62414</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the table pointer.</td>
 </tr>
 <tr>
+<td class="asm-label">CompareHighScores_AdvanceTable</td>
 <td class="address-2"><span id="62415"></span>62415</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the table pointer.</td>
 </tr>
 <tr>
+<td class="asm-label">CompareHighScores_NextRank</td>
 <td class="address-2"><span id="62416"></span>62416</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the table pointer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62417"></span>62417</td>
-<td class="instruction">DJNZ <a href="62399.html#62405">62405</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="62399.html#62405">CompareHighScores_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the rank by one and jump back to <a href="62399.html#62405">CompareHighScores_Loop</a> until it is zero.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62419"></span>
+<div class="comments">
+<div class="paragraph">
+Return with <span class="register">B</span> zero as the score is too low.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62419"></span>62419</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the score pointer from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62420"></span>62420</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62421"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the second bytes when the first bytes match.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CompareHighScores_SecondByte</td>
 <td class="address-2"><span id="62421"></span>62421</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the score pointer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62422"></span>62422</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the table pointer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62423"></span>62423</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the table byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62424"></span>62424</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the score byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62425"></span>62425</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="62399.html#62435">CompareHighScores_ThirdByte</a> if the bytes match.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62426"></span>62426</td>
-<td class="instruction">JP Z,<a href="62399.html#62435">62435</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="62399.html#62435">CompareHighScores_ThirdByte</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62429"></span>62429</td>
-<td class="instruction">JP NC,<a href="62399.html#62449">62449</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NC,<a href="62399.html#62449">CompareHighScores_InsertScore</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="62399.html#62449">CompareHighScores_InsertScore</a> if the score is higher.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62432"></span>62432</td>
 <td class="instruction">DEC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rewind the score pointer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62433"></span>62433</td>
-<td class="instruction">JR <a href="62399.html#62415">62415</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="62399.html#62415">CompareHighScores_AdvanceTable</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="62399.html#62415">CompareHighScores_AdvanceTable</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62435"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the third bytes when the second bytes match.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CompareHighScores_ThirdByte</td>
 <td class="address-2"><span id="62435"></span>62435</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the table pointer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62436"></span>62436</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Advance the score pointer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62437"></span>62437</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the table byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62438"></span>62438</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the score byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62439"></span>62439</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="62399.html#62444">CompareHighScores_RewindScore</a> if the bytes match.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62440"></span>62440</td>
-<td class="instruction">JR Z,<a href="62399.html#62444">62444</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="62399.html#62444">CompareHighScores_RewindScore</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62442"></span>62442</td>
-<td class="instruction">JR NC,<a href="62399.html#62449">62449</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="62399.html#62449">CompareHighScores_InsertScore</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="62399.html#62449">CompareHighScores_InsertScore</a> if the score is higher.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62444"></span>
+<div class="comments">
+<div class="paragraph">
+Rewind the score pointer and try the next row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CompareHighScores_RewindScore</td>
 <td class="address-2"><span id="62444"></span>62444</td>
 <td class="instruction">DEC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Rewind the score pointer by two bytes.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62445"></span>62445</td>
 <td class="instruction">DEC DE</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62446"></span>62446</td>
-<td class="instruction">JP <a href="62399.html#62416">62416</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP <a href="62399.html#62416">CompareHighScores_NextRank</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="62399.html#62416">CompareHighScores_NextRank</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62449"></span>
+<div class="comments">
+<div class="paragraph">
+Shuffle the table and insert the new score when <a href="24180.html">HighScore_PlayerCopy</a> is set.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CompareHighScores_InsertScore</td>
 <td class="address-2"><span id="62449"></span>62449</td>
 <td class="instruction">LD DE,24094</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="24073.html">24094</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62452"></span>62452</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the score pointer from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62453"></span>62453</td>
 <td class="instruction">LD A,(24180)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="24180.html">HighScore_PlayerCopy</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62456"></span>62456</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Return if it is zero.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62457"></span>62457</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62458"></span>
+<div class="comments">
+<div class="paragraph">
+Work out how many bytes lie below the insert row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62458"></span>62458</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Stash the rank and score pointer on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62459"></span>62459</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62460"></span>62460</td>
 <td class="instruction">LD HL,24091</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24073.html">24091</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62463"></span>62463</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the rank into <span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62464"></span>62464</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Double it.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62466"></span>62466</td>
 <td class="instruction">ADD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the original rank.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62467"></span>62467</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the byte count into <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62468"></span>62468</td>
 <td class="instruction">LD B,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear <span class="register">B</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62470"></span>62470</td>
 <td class="instruction">LDDR</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shuffle the lower scores down.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="62472"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the new score into the freed row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62472"></span>62472</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the score pointer from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62473"></span>62473</td>
 <td class="instruction">LD BC,3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Copy the new 3-byte score into the table.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62476"></span>62476</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62478"></span>62478</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the rank from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="62479"></span>62479</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
@@ -318,10 +484,10 @@ Next: <a href="62480.html">62480</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/62399.html">Switch to hexadecimal</a>.</div>
+<div><a href="../../asm/F3BF.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>
 </html>

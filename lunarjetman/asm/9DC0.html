@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,7 @@ Next: <a href="9E2C.html">9E2C</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="8D06.html">8D06</a>.
+On even frames, find a free slot at <a href="6000.html">Laser_Parameter_1</a> and copy Jetman's column and Y into a new beam.
 </div>
 </div>
 </td>
@@ -49,7 +52,7 @@ Used by the routine at <a href="8D06.html">8D06</a>.
 <span id="9dc0"></span>
 <div class="comments">
 <div class="paragraph">
-Only handle the laser beam on every 4th frame.
+Only fire on even values of <a href="5E42.html">GameTimer</a>.
 </div>
 </div>
 </td>
@@ -58,7 +61,7 @@ Only handle the laser beam on every 4th frame.
 <td class="asm-label">Handler_LaserBeam</td>
 <td class="address-2"><span id="9dc0"></span>9DC0</td>
 <td class="instruction">LD A,($5E42)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="5E42.html">GameTimer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -70,41 +73,41 @@ Only handle the laser beam on every 4th frame.
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dc5"></span>9DC5</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if this is an odd frame.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="9dc6"></span>
 <div class="comments">
 <div class="paragraph">
-Search for a "free" laser beam slot.
+Search for a free laser beam slot.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="asm-label">Handler_LaserBeam_FindSlot</td>
 <td class="address-1"><span id="9dc6"></span>9DC6</td>
 <td class="instruction">LD HL,$6000</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="6000.html">Laser_Param_1</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="6000.html">Laser_Parameter_1</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dc9"></span>9DC9</td>
 <td class="instruction">LD DE,$0018</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0018 (each slot is 18 bytes).</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=0018.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dcc"></span>9DCC</td>
 <td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=04 (counter; there are 4 "slots").</td>
+<td class="comment-1" rowspan="1">Set a slot counter in <span class="register">B</span> for 04 loops.</td>
 </tr>
 <tr>
 <td class="asm-label">LaserBeam_Slot</td>
 <td class="address-2"><span id="9dce"></span>9DCE</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="3">If the slot is not in use, jump to <a href="9DC0.html#9dde">Init_LaserBeam</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="9DC0.html#9dde">Initialise_LaserBeam</a> if this slot is free.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -114,26 +117,26 @@ Search for a "free" laser beam slot.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dd0"></span>9DD0</td>
-<td class="instruction">JR Z,<a href="9DC0.html#9dde">Init_LaserBeam</a></td>
+<td class="instruction">JR Z,<a href="9DC0.html#9dde">Initialise_LaserBeam</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dd2"></span>9DD2</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<span class="register">HL</span>+<span class="register">DE</span> (move onto the next slot).</td>
+<td class="comment-1" rowspan="1">Move onto the next slot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dd3"></span>9DD3</td>
 <td class="instruction">DJNZ <a href="9DC0.html#9dce">LaserBeam_Slot</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="9DC0.html#9dce">LaserBeam_Slot</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the slot counter by one and loop back to <a href="9DC0.html#9dce">LaserBeam_Slot</a> until every slot has been tried.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="9dd5"></span>
 <div class="comments">
 <div class="paragraph">
-All laser beam slots are in use so just return...
+All four laser beam slots are in use.
 </div>
 </div>
 </td>
@@ -149,16 +152,16 @@ All laser beam slots are in use so just return...
 <span id="9dd6"></span>
 <div class="comments">
 <div class="paragraph">
-Possibly the "shoot right" code?
+When firing to the right, step the column on by 10.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">Handler_LaserBeam_0</td>
+<td class="asm-label">Handler_LaserBeam_Loop</td>
 <td class="address-2"><span id="9dd6"></span>9DD6</td>
 <td class="instruction">ADD A,$10</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span>+10.</td>
+<td class="comment-1" rowspan="1">Add 10 to the screen column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -175,252 +178,298 @@ Possibly the "shoot right" code?
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ddc"></span>9DDC</td>
-<td class="instruction">JR <a href="9DC0.html#9dfa">Handler_LaserBeam_2</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="9DC0.html#9dfa">Handler_LaserBeam_2</a>.</td>
+<td class="instruction">JR <a href="9DC0.html#9dfa">Handler_LaserBeam_StoreColumn</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9DC0.html#9dfa">Handler_LaserBeam_StoreColumn</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="9dde"></span>
 <div class="comments">
 <div class="paragraph">
-Initialise a new laser beam.
+Initialise a new laser beam from Jetman.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">Init_LaserBeam</td>
+<td class="asm-label">Initialise_LaserBeam</td>
 <td class="address-2"><span id="9dde"></span>9DDE</td>
 <td class="instruction">LD (HL),$11</td>
-<td class="comment-1" rowspan="1">Mark the laser beam slot as "in-use".</td>
+<td class="comment-1" rowspan="1">Write type 11 to mark the slot in use.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9de0"></span>9DE0</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=Laser beam Y position.</td>
+<td class="comment-1" rowspan="1">Move onto the beam Y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9de1"></span>9DE1</td>
 <td class="instruction">LD DE,$6078</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="6060.html#6078">6078</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="6078.html">Jetman_Slot</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9de4"></span>9DE4</td>
 <td class="instruction">LD B,$0D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=0D.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9de6"></span>9DE6</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch Jetman's type.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9de7"></span>9DE7</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto Jetman's screen column.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9de8"></span>
+<div class="comments">
+<div class="paragraph">
+The actor type is a 1-based sprite ID. Decrease it to work on the 0-based index: bit 3 is set when walking and reset when flying, bit 2 is facing.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9de8"></span>9DE8</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease it to a 0-based sprite index.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9de9"></span>9DE9</td>
 <td class="instruction">BIT 3,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9DC0.html#9def">Handler_LaserBeam_TestFacing</a> if Jetman is flying.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9deb"></span>9DEB</td>
-<td class="instruction">JR Z,<a href="9DC0.html#9def">Handler_LaserBeam_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="9DC0.html#9def">Handler_LaserBeam_TestFacing</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ded"></span>9DED</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the Y offset by two.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dee"></span>9DEE</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">Handler_LaserBeam_1</td>
+<td class="asm-label">Handler_LaserBeam_TestFacing</td>
 <td class="address-2"><span id="9def"></span>9DEF</td>
-<td class="instruction">AND $04</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00000100</td>
+<td class="comment-1" rowspan="1">Keep only bit 2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9df1"></span>9DF1</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch Jetman's screen column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9df2"></span>9DF2</td>
-<td class="instruction">JR NZ,<a href="9DC0.html#9dd6">Handler_LaserBeam_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="9DC0.html#9dd6">Handler_LaserBeam_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9DC0.html#9dd6">Handler_LaserBeam_Loop</a> if Jetman is facing right.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9df4"></span>9DF4</td>
 <td class="instruction">SUB $08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract 08 from the screen column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9df6"></span>9DF6</td>
-<td class="instruction">AND $F8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Keep only bits 3-7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9df8"></span>9DF8</td>
-<td class="instruction">OR $05</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">OR %00000101</td>
+<td class="comment-1" rowspan="1">Set bits 0 and 2.</td>
 </tr>
 <tr>
-<td class="asm-label">Handler_LaserBeam_2</td>
+<td class="routine-comment" colspan="5">
+<span id="9dfa"></span>
+<div class="comments">
+<div class="paragraph">
+Write the beam Y and the X of each of the four pulses.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handler_LaserBeam_StoreColumn</td>
 <td class="address-2"><span id="9dfa"></span>9DFA</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the beam column in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dfb"></span>9DFB</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move onto Jetman's Y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dfc"></span>9DFC</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dfd"></span>9DFD</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dfe"></span>9DFE</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch Jetman's Y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9dff"></span>9DFF</td>
 <td class="instruction">SUB B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the Y offset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e00"></span>9E00</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it as the beam Y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e01"></span>9E01</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the first pulse X.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9e02"></span>
+<div class="comments">
+<div class="paragraph">
+Write the beam column into the four pulses, clearing bit 2 in all but the first.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e02"></span>9E02</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set a pulse counter in <span class="register">B</span> for 03 loops.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e04"></span>9E04</td>
 <td class="instruction">LD (HL),C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the beam column as pulse 01.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e05"></span>9E05</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy it into <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e06"></span>9E06</td>
-<td class="instruction">AND $FB</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %11111011</td>
+<td class="comment-1" rowspan="1">Reset bit 2.</td>
 </tr>
 <tr>
-<td class="asm-label">Handler_LaserBeam_3</td>
+<td class="asm-label">Handler_LaserBeam_WritePulse</td>
 <td class="address-2"><span id="9e08"></span>9E08</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next pulse X.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e09"></span>9E09</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the column without bit 2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e0a"></span>9E0A</td>
-<td class="instruction">DJNZ <a href="9DC0.html#9e08">Handler_LaserBeam_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="9DC0.html#9e08">Handler_LaserBeam_WritePulse</a></td>
+<td class="comment-1" rowspan="1">Decrease the pulse counter by one and loop back to <a href="9DC0.html#9e08">Handler_LaserBeam_WritePulse</a> until pulses 02-04 are written.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9e0c"></span>
+<div class="comments">
+<div class="paragraph">
+Set the beam timer, pick the beam colour and play the laser sound.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e0c"></span>9E0C</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the beam timer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e0d"></span>9E0D</td>
 <td class="instruction">LD A,($5E40)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="5E40.html">RandomNumber</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e10"></span>9E10</td>
-<td class="instruction">AND $18</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00011000</td>
+<td class="comment-1" rowspan="1">Keep only bits 3-4.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e12"></span>9E12</td>
 <td class="instruction">ADD A,$60</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 60.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e14"></span>9E14</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it as the beam timer.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9e15"></span>
+<div class="comments">
+<div class="paragraph">
+Pick the beam colour from the table at <a href="9DC0.html#9e28">Attributes_LaserBeam</a> using bits 0-1 of <a href="5E40.html">RandomNumber</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e15"></span>9E15</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the beam colour.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e16"></span>9E16</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch the slot pointer into <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -432,43 +481,42 @@ Initialise a new laser beam.
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e1a"></span>9E1A</td>
 <td class="instruction">LD A,($5E40)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch <a href="5E40.html">RandomNumber</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e1d"></span>9E1D</td>
-<td class="instruction">AND $03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e1f"></span>9E1F</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Create an offset in <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e20"></span>9E20</td>
 <td class="instruction">LD B,$00</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e22"></span>9E22</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at that colour.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e23"></span>9E23</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the colour.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9e24"></span>9E24</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it to the beam colour.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -481,7 +529,7 @@ Initialise a new laser beam.
 <span id="9e28"></span>
 <div class="comments">
 <div class="paragraph">
-All the attributes a laser beam can be.
+The four colours a laser beam can be.
 </div>
 </div>
 </td>
@@ -489,8 +537,56 @@ All the attributes a laser beam can be.
 <tr>
 <td class="asm-label">Attributes_LaserBeam</td>
 <td class="address-1"><span id="9e28"></span>9E28</td>
-<td class="instruction">DEFB $47,$43,$43,$45</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DEFB $47</td>
+<td class="comment-1" rowspan="1">INK:WHITE, PAPER:BLACK (BRIGHT).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9e29"></span>
+<div class="comments">
+<div class="paragraph">
+The four colours a laser beam can be.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9e29"></span>9E29</td>
+<td class="instruction">DEFB $43</td>
+<td class="comment-1" rowspan="1">INK:MAGENTA, PAPER:BLACK (BRIGHT).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9e2a"></span>
+<div class="comments">
+<div class="paragraph">
+The four colours a laser beam can be.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9e2a"></span>9E2A</td>
+<td class="instruction">DEFB $43</td>
+<td class="comment-1" rowspan="1">INK:MAGENTA, PAPER:BLACK (BRIGHT).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9e2b"></span>
+<div class="comments">
+<div class="paragraph">
+The four colours a laser beam can be.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9e2b"></span>9E2B</td>
+<td class="instruction">DEFB $45</td>
+<td class="comment-1" rowspan="1">INK:CYAN, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -517,10 +613,10 @@ Next: <a href="9E2C.html">9E2C</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/9DC0.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/40384.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

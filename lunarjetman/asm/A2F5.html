@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -25,7 +28,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="A1AA.html">A1AA</a>
+Prev: <a href="A2CF.html">A2CF</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#a2f5">Map</a></td>
 <td class="next">
@@ -33,73 +36,105 @@ Next: <a href="A30A.html">A30A</a>
 </td>
 </tr>
 </table>
-<div class="description">A2F5: Routine at A2F5</div>
+<div class="description">A2F5: Clear Sprite Caches</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="A1AA.html">A1AA</a>, <a href="A826.html">LevelNew</a> and <a href="B52E.html">B52E</a>.
+Write 00 over the cached sprite bytes (*<span class="register">IX</span>+09 to *<span class="register">IX</span>+0F) of each of the 18 actor slots, so that every actor is redrawn from scratch and no stale image is XORed off the redrawn screen. Bytes 00-08 are the actor itself and bytes 10-17 are state specific to its type, so they are left alone.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a2f5"></span>
+<div class="comments">
+<div class="paragraph">
+Start at byte 09 of the first slot, <a href="6000.html">6009</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ClearSpriteCaches</td>
 <td class="address-2"><span id="a2f5"></span>A2F5</td>
 <td class="instruction">LD HL,$6009</td>
 <td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="6000.html">6009</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a2f8"></span>A2F8</td>
 <td class="instruction">LD BC,$0718</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=0718.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">B</span> to 07 cache bytes per slot and <span class="register">C</span> to 18 slots.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a2fb"></span>A2FB</td>
 <td class="instruction">LD DE,$0011</td>
 <td class="comment-1" rowspan="1"><span class="register">DE</span>=0011.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a2fe"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the seven cache bytes of each slot in turn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ClearSpriteCaches_Loop</td>
 <td class="address-2"><span id="a2fe"></span>A2FE</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label">ClearSpriteCaches_WriteByte</td>
 <td class="address-2"><span id="a2ff"></span>A2FF</td>
 <td class="instruction">LD (HL),$00</td>
-<td class="comment-1" rowspan="1">Write 00 to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Write 00 to the current cache byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a301"></span>A301</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Move onto the next cache byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a302"></span>A302</td>
-<td class="instruction">DJNZ <a href="A2F5.html#a2ff">$A2FF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="A2F5.html#a2ff">ClearSpriteCaches_WriteByte</a></td>
+<td class="comment-1" rowspan="1">Decrease the inner counter by one and loop back to <a href="A2F5.html#a2ff">ClearSpriteCaches_WriteByte</a> until this slot is clear.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a304"></span>A304</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>+=<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Skip the rest of the slot.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a305"></span>A305</td>
 <td class="instruction">POP BC</td>
 <td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a306"></span>A306</td>
 <td class="instruction">DEC C</td>
 <td class="comment-1" rowspan="1">Decrease <span class="register">C</span> by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a307"></span>A307</td>
-<td class="instruction">JR NZ,<a href="A2F5.html#a2fe">$A2FE</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="A2F5.html#a2fe">A2FE</a> until <span class="register">C</span> is zero.</td>
+<td class="instruction">JR NZ,<a href="A2F5.html#a2fe">ClearSpriteCaches_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="A2F5.html#a2fe">ClearSpriteCaches_Loop</a> until <span class="register">C</span> is zero.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a309"></span>A309</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
@@ -108,7 +143,7 @@ Used by the routines at <a href="A1AA.html">A1AA</a>, <a href="A826.html">LevelN
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="A1AA.html">A1AA</a>
+Prev: <a href="A2CF.html">A2CF</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#a2f5">Map</a></td>
 <td class="next">
@@ -118,10 +153,10 @@ Next: <a href="A30A.html">A30A</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/A2F5.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/41717.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

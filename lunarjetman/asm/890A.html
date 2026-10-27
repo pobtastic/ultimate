@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,151 +36,216 @@ Next: <a href="8931.html">8931</a>
 </td>
 </tr>
 </table>
-<div class="description">890A: Routine at 890A</div>
+<div class="description">890A: Write Sprite Attributes</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="91E2.html">91E2</a>.
+Paint a rectangle of colours into the attribute buffer, taking one colour byte from the grid at <span class="register">DE</span> for every cell the actor's sprite covers and leaving empty cells alone.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Colour grid</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor slot</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="890a"></span>
+<div class="comments">
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">After <a href="877C.html">DrawSpritePair</a></th>
+<th colspan="1" rowspan="1">After <a href="890A.html">WriteSpriteAttributes</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="pair-redrawn" src="../images/scr/pair-redrawn.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="pair-coloured" src="../images/scr/pair-coloured.png" /></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+Paint the actor colour rectangle into the attribute buffer.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">WriteSpriteAttributes</td>
 <td class="address-2"><span id="890a"></span>890A</td>
 <td class="instruction">LD L,(IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Fetch the screen column and actor Y.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="890d"></span>890D</td>
 <td class="instruction">LD H,(IX+$04)</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8910"></span>8910</td>
 <td class="instruction">CALL <a href="8506.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="8506.html">AttributeAddress</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8913"></span>8913</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="6">Fetch the width and height from the graphic header.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8914"></span>8914</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8915"></span>8915</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8916"></span>8916</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8917"></span>8917</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8918"></span>8918</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label">WriteSpriteAttributes_Loop</td>
 <td class="address-2"><span id="8919"></span>8919</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Stash the counters and attribute address.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="891a"></span>891A</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="891b"></span>
+<div class="comments">
+<div class="paragraph">
+Write the colours along the row, skipping empty attributes.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">WriteSpriteAttributes_WriteInk</td>
 <td class="address-2"><span id="891b"></span>891B</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump to <a href="890A.html#8921">WriteSpriteAttributes_NextColumn</a> if this attribute is empty.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="891c"></span>891C</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="891d"></span>891D</td>
-<td class="instruction">JR Z,<a href="890A.html#8921">$8921</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="890A.html#8921">WriteSpriteAttributes_NextColumn</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="891f"></span>891F</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Write the next colour byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8920"></span>8920</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label">WriteSpriteAttributes_NextColumn</td>
 <td class="address-2"><span id="8921"></span>8921</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move onto the next colour and attribute column, looping back to <a href="890A.html#891b">WriteSpriteAttributes_WriteInk</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8922"></span>8922</td>
 <td class="instruction">INC L</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8923"></span>8923</td>
-<td class="instruction">DJNZ <a href="890A.html#891b">$891B</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="890A.html#891b">WriteSpriteAttributes_WriteInk</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="8925"></span>
+<div class="comments">
+<div class="paragraph">
+Step up one attribute row and repeat until every row is painted.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8925"></span>8925</td>
 <td class="instruction">POP HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="5">Restore this row and step up one attribute row.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8926"></span>8926</td>
 <td class="instruction">LD BC,$0020</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8929"></span>8929</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="892a"></span>892A</td>
 <td class="instruction">SBC HL,BC</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="892c"></span>892C</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="892d"></span>892D</td>
 <td class="instruction">DEC C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the height and loop back to <a href="890A.html#8919">WriteSpriteAttributes_Loop</a> until every row is painted.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="892e"></span>892E</td>
-<td class="instruction">JR NZ,<a href="890A.html#8919">$8919</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="890A.html#8919">WriteSpriteAttributes_Loop</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="8930"></span>8930</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -193,10 +261,10 @@ Next: <a href="8931.html">8931</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/890A.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/35082.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>

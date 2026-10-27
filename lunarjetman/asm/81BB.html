@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../lunarjetman.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,17 @@ Next: <a href="8209.html">8209</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="802C.html">Game_Restart</a>.
+Queues the start-game tune, clears planet RAM and then walks every actor through <a href="82C5.html">JumpTable</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="81bb"></span>
+<div class="comments">
+<div class="paragraph">
+Queue the start-game tune and clear planet RAM.
 </div>
 </div>
 </td>
@@ -48,20 +61,20 @@ Used by the routine at <a href="802C.html">Game_Restart</a>.
 <td class="asm-label">StartGame</td>
 <td class="address-2"><span id="81bb"></span>81BB</td>
 <td class="instruction">LD DE,$BA35</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="B9D2.html#ba35">BA35</a>.</td>
+<td class="comment-1" rowspan="1">Set the tune pointer to <a href="B9D2.html#ba35">Tune_Start_Game</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81be"></span>81BE</td>
-<td class="instruction">CALL <a href="B9BC.html">$B9BC</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B9BC.html">B9BC</a>.</td>
+<td class="instruction">CALL <a href="B9BC.html">QueueTune</a></td>
+<td class="comment-1" rowspan="1">Queue the start-game tune.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="81c1"></span>
 <div class="comments">
 <div class="paragraph">
-Reset Planet data.
+Reset the planet and player state.
 </div>
 </div>
 </td>
@@ -70,19 +83,19 @@ Reset Planet data.
 <td class="asm-label"></td>
 <td class="address-1"><span id="81c1"></span>81C1</td>
 <td class="instruction">LD HL,$5E50</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E50.html">5E50</a>.</td>
+<td class="comment-1" rowspan="1">Set the start address to <a href="5E50.html">PlanetData</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81c4"></span>81C4</td>
 <td class="instruction">LD BC,$6000</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="6000.html">Laser_Param_1</a>.</td>
+<td class="comment-1" rowspan="1">Set the end address to <a href="6000.html">Laser_Parameter_1</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81c7"></span>81C7</td>
-<td class="instruction">CALL <a href="84AD.html#84b2">ResetScreen_0</a></td>
-<td class="comment-1" rowspan="1">Call <a href="84AD.html#84b2">ResetScreen_0</a>.</td>
+<td class="instruction">CALL <a href="84AD.html#84b2">ResetScreen_Fill</a></td>
+<td class="comment-1" rowspan="1">Call <a href="84AD.html#84b2">ResetScreen_Fill</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,8 +112,8 @@ Reset Planet data.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81d0"></span>81D0</td>
-<td class="instruction">CALL <a href="822F.html">$822F</a></td>
-<td class="comment-1" rowspan="1">Call <a href="822F.html">822F</a>.</td>
+<td class="instruction">CALL <a href="822F.html">ResetModifiedCode</a></td>
+<td class="comment-1" rowspan="1">Call <a href="822F.html">ResetModifiedCode</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -113,13 +126,13 @@ Reset Planet data.
 <span id="81d6"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="8258.html">8258</a>.
+Ready the stack and restore Jetman after a teleport.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">StartGame_0</td>
+<td class="asm-label">StartGame_ReadyStack</td>
 <td class="address-2"><span id="81d6"></span>81D6</td>
 <td class="instruction">LD SP,$5E00</td>
 <td class="comment-1" rowspan="1">Set the stack pointer to <a href="5E00.html">GameOptions</a>.</td>
@@ -128,7 +141,7 @@ This entry point is used by the routine at <a href="8258.html">8258</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="81d9"></span>81D9</td>
 <td class="instruction">LD A,($5E68)</td>
-<td class="comment-1" rowspan="3">If <a href="5E68.html">5E68</a> is not zero, call <a href="A1AA.html#a2cf">A2CF</a>.</td>
+<td class="comment-1" rowspan="3">Call <a href="A2CF.html">FinishTeleport</a> if <a href="5E68.html">TeleportRestore</a> is set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -138,7 +151,7 @@ This entry point is used by the routine at <a href="8258.html">8258</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81dd"></span>81DD</td>
-<td class="instruction">CALL NZ,<a href="A1AA.html#a2cf">$A2CF</a></td>
+<td class="instruction">CALL NZ,<a href="A2CF.html">FinishTeleport</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -151,16 +164,16 @@ This entry point is used by the routine at <a href="8258.html">8258</a>.
 <span id="81e1"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="A1AA.html">A1AA</a>.
+Dispatch the current actor through the jump table.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">StartGame_1</td>
+<td class="asm-label">StartGame_DispatchActor</td>
 <td class="address-2"><span id="81e1"></span>81E1</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 00 to <a href="5E5E.html">5E5E</a>.</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="5E5E.html">AlienCount</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -171,23 +184,23 @@ This entry point is used by the routine at <a href="A1AA.html">A1AA</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="81e5"></span>81E5</td>
 <td class="instruction">LD IX,$6078</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="6060.html#6078">6078</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="6078.html">Jetman_Slot</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="81e9"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="8209.html">8209</a> and <a href="8258.html">8258</a>.
+This entry point is used by the routines at <a href="8209.html">FrameUpdate</a> and <a href="8259.html">NextObjectSlot</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">StartGame_2</td>
+<td class="asm-label">StartGame_NextActor</td>
 <td class="address-2"><span id="81e9"></span>81E9</td>
 <td class="instruction">LD A,($5C78)</td>
-<td class="comment-1" rowspan="2"><span class="register">C</span>=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.</td>
+<td class="comment-1" rowspan="2"><span class="register">C</span>=<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -198,95 +211,86 @@ This entry point is used by the routines at <a href="8209.html">8209</a> and <a 
 <td class="asm-label"></td>
 <td class="address-1"><span id="81ed"></span>81ED</td>
 <td class="instruction">LD A,($5E53)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Call <a href="8209.html">FrameUpdate</a> if <a href="5E53.html">LastFrame</a> does not match.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81f0"></span>81F0</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81f1"></span>81F1</td>
-<td class="instruction">CALL NZ,<a href="8209.html">$8209</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL NZ,<a href="8209.html">FrameUpdate</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81f4"></span>81F4</td>
 <td class="instruction">LD HL,$8259</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="8258.html#8259">8259</a>.</td>
+<td class="comment-1" rowspan="2">Push <a href="8259.html">NextObjectSlot</a> as the return address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81f7"></span>81F7</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81f8"></span>81F8</td>
 <td class="instruction">LD BC,$82C5</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="82C5.html">JumpTable</a>.</td>
+<td class="comment-1" rowspan="1">Set the jump-table pointer to <a href="82C5.html">JumpTable</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="81fb"></span>81FB</td>
 <td class="instruction">LD L,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the actor type from *<span class="register">IX</span>+00.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="81fe"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="B6CF.html">B6CF</a>.
+This entry point is used by the routine at <a href="B6CF.html">DispatchObjectState</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">StartGame_3</td>
+<td class="asm-label">StartGame_AfterActor</td>
 <td class="address-2"><span id="81fe"></span>81FE</td>
 <td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="7">Fetch the handler address from <a href="82C5.html">JumpTable</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8200"></span>8200</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8201"></span>8201</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8202"></span>8202</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8203"></span>8203</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8204"></span>8204</td>
 <td class="instruction">LD H,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8205"></span>8205</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -323,10 +327,10 @@ Next: <a href="8209.html">8209</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 9.0.</div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
 <div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/">Source code</a>.</div>
-<div><a href="asm/81BB.html">Switch to decimal</a>.</div>
+<div><a href="../dec/asm/33211.html">Switch to decimal</a>.</div>
 </footer>
 </body>
 </html>
