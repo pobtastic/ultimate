@@ -4,7 +4,7 @@
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @sabrewulf.t2s
 ;   sna2skool.py -H -c sources/sabrewulf.ctl SabreWulf.z80 > sources/sabrewulf/sabrewulf.skool
-;   skool2html.py -H sources/sabrewulf/sabrewulf.skool -T dark
+;   skool2html.py -H sources/sabrewulf/sabrewulf.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
@@ -15,7 +15,7 @@ GameDir=ultimate/sabrewulf
 [Game]
 Game=Sabre Wulf
 Logo=#SCR1,4,0,24,15,$4000,$5800(/images/logo)
-Copyright=&copy; 1984 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.
+Copyright=&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/sabrewulf/
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
@@ -89,20 +89,6 @@ LIST#
 </div>
 
 [Expand]
-#DEF(#COLOUR(id)
-  #MAP(id)(
-    UNKNOWN,
-    0:BLACK,
-    1:BLUE,
-    2:RED,
-    3:MAGENTA,
-    4:GREEN,
-    5:CYAN,
-    6:YELLOW,
-    7:WHITE
-  )
-)
-
 #DEF(#CONVERTFF(addr)
   #LET(length=#PEEK($addr) * #PEEK($addr + $01))
   #FOR($00,{length})||n|
@@ -110,16 +96,16 @@ LIST#
   ||
 )
 
-#DEF(#NOCROP(addr,width,height,attr)(fname) #UDGARRAY($width,attr=$attr,scale=4,step=$width,mask=1,flip=2);($addr)-($addr + ({height} * $width) - $width)-$01-($width * $08)($fname))
+#DEF(#NOCROP(addr,width,height,attr)(fname) #UDGARRAY($width,attr=$attr,scale=4,step=$width,mask=1,flip=2)(($addr)-($addr + ({height} * $width) - $width)-$01-($width * $08))($fname))
 
-#DEF(#CROP(addr,width,height,attr)(fname) #UDGARRAY($width,attr=$attr,scale=4,step=$width,mask=1,flip=2);($addr)-($addr + ({height} * $width) - $width)-$01-($width * $08){$00, $04 * ($08 - ({height} % $08)), $04 * $width * $08, $04 * {height}}($fname))
+#DEF(#CROP(addr,width,height,attr)(fname) #UDGARRAY($width,attr=$attr,scale=4,step=$width,mask=1,flip=2)(($addr)-($addr + ({height} * $width) - $width)-$01-($width * $08)){$00, $04 * ($08 - ({height} % $08)), $04 * $width * $08, $04 * {height}}($fname))
 
 #DEF(#COLOURNOCROP(addr,width,height,attr,awidth,aheight,flip=2)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=$flip);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attr-($attr + $awidth * $aheight)($fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=$flip)($addr-($addr + ($height * $width) - $width)-$01-($width * $08))[$attr-($attr + $awidth * $aheight)]($fname)
 )
 
 #DEF(#COLOURCROP(addr,width,height,attr,awidth,aheight,flip=2)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=$flip);$addr-($addr + ($height * $width) - $width)-$01-($width * $08)@$attr-($attr + $awidth * $aheight){$00, $04 * ($08 - ($aheight % $08)), $04 * $awidth * $08, $04 * $aheight}($fname)
+  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=$flip)($addr-($addr + ($height * $width) - $width)-$01-($width * $08))[$attr-($attr + $awidth * $aheight)]{$00, $04 * ($08 - ($aheight % $08)), $04 * $awidth * $08, $04 * $aheight}($fname)
 )
 
 #DEF(#GRAPHIC(id,base=$BF84,attributes=0)(fname)
@@ -185,7 +171,7 @@ LIST#
     #OVER(x={x},y={y},rmode=$00)(room-background,background-{addr})
     #LET(data={data} + $04)
   )
-  #UDGARRAY*room-background($fname)
+  #FRAMES(room-background)($fname)
   #POPS
 )
 

@@ -1,5 +1,8 @@
 @org=$4000
 @start=$5B80
+@expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+@expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+@expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 
 ; Loading screen
 ;
@@ -470,7 +473,7 @@ g$5E3D DEFB $22
 g$5E3E DEFB $AF
 
 ; Current Menu Item Colour attribute
-@label=Current_MenuAttr
+@label=Current_MenuAttribute
 g$5E3F DEFB $3A
 
 ; Game status buffer entry at 5E40
@@ -655,8 +658,7 @@ g$5EA4 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; Used by the routine at #R$5B80.
 @label=SecurityCheck
 c$5F00 DI            ; Disable interrupts.
- $5F01 LD A,($5C79)  ; #HTML(#REGa=<a
-                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+ $5F01 LD A,($5C79)  ; #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
  $5F04 CP $58        ; {Return if #REGa is not #N$58.
  $5F06 RET NZ        ; }
 ; Continue on to #R$5F07.
@@ -724,8 +726,8 @@ c$5F07 LD HL,$5E00   ; {Write #N$00 to #N$00A3 bytes starting from #N($5E00,
 ; Handle flashing each selection.
  $5F4F LD A,D        ; {Write #REGd to #R$5E3E.
  $5F50 LD ($5E3E),A  ; }
- $5F53 LD HL,$5FA8   ; #REGhl=#R$5FA8(GameSelection_Attributes) + #N$01 (i.e.
-                     ; ignoring "Game Selection" as it doesn't flash).
+ $5F53 LD HL,$5FA8   ; #REGhl=#R$5FA8 (the first selectable line, skipping the
+                     ; title).
  $5F56 LD A,($5E3E)  ; {#REGc=#R$5E3E.
  $5F59 LD C,A        ; }
  $5F5A BIT 1,C       ; {If the joystick option is selected, jump to #R$5F65.
@@ -816,8 +818,14 @@ c$5F97 PUSH HL       ; Stash #REGhl containing the co-ordinate on the stack.
 ; LIST#
 
 ; Game Select Attribute Table
+;
+; One attribute byte per menu line. The routines that flash the
+; selected line set or clear FLASH in the byte for the line being
+; updated. The first byte belongs to the title, so the flashing code
+; starts at #R$5FA8.
 @label=GameSelection_Attributes
 b$5FA7 DEFB $60      ; {#TABLE(default,centre)
+@label=GameSelection_Attributes_Options
  $5FA8 DEFB $47      ; { =h Byte(n) | =h Menu Item }
  $5FA9 DEFB $47      ; { #N$01 | Game Selection }
  $5FAA DEFB $60      ; { #N$02 | 1 Keyboard }
@@ -874,9 +882,9 @@ t$5FB1 DEFM "GAME SELECTIO","N"+$80 ; "GAME SELECTION".
 ;
 ; Used by the routine at #R$5F07.
 @label=StartGame
-c$5FEF XOR A         ; {#HTML(Write #N$00 to #LIST { <a
- $5FF0 LD ($5C78),A  ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>
- $5FF3 LD ($5E74),A  ; } { #R$5E74 } LIST#)}
+c$5FEF XOR A         ; {Write #N$00 to #LIST { #SKOOLKID$5C78(FRAMES) } {
+ $5FF0 LD ($5C78),A  ; #R$5E74 } LIST#
+ $5FF3 LD ($5E74),A  ; }
 ; Reset the players life count.
  $5FF6 LD A,$03      ; {Write starting lives to #R$5E3D.
  $5FF8 LD ($5E3D),A  ; }
@@ -1122,7 +1130,7 @@ c$611B LD A,($5E29)  ; #REGa=#R$5E29.
  $6148 CPL           ; Flip the bits.
  $6149 JR $612E      ; Jump to #R$612E.
 
-; Play square wave sound
+; Play Square Wave
 ;
 ; Used by the routines at #R$60E3, #R$611B and #R$6158.
 ;
@@ -1247,6 +1255,8 @@ c$618C LD A,($5E3E)  ; {If #R$5E3E indicates the control method is via the
 @label=Input_Right
 *$61BC LD A,$FE      ; #REGa=#EVAL($FE, $02, $08).
  $61BE RET           ; Return.
+; This entry point is used by the routines at #R$61C2 and #R$61E0.
+; .
 ; Return "no input".
 @label=Input_None
 *$61BF LD A,$FF      ; #REGa=#EVAL($FF, $02, $08).
@@ -1542,7 +1552,7 @@ c$6353 CALL $7139    ; Call #R$7139.
  $635D JR Z,$6362    ; If #REGa is zero jump to #R$6362.
 ; Else set "day" time.
  $635F CALL $6175    ; Call #R$6175.
-; See #LINK:Pokes#infinite_lives(Infinite Lives).
+; See #LINK(Pokes#infinite_lives)(Infinite Lives).
 @label=GameOver_Skip
 *$6362 LD HL,$5E3D   ; #REGhl=#R$5E3D.
  $6365 DEC (HL)      ; Decrease #R$5E3D by one.
@@ -1681,6 +1691,8 @@ c$63FF LD A,($5E3C)  ; #REGa=#R$5E3C.
  $6449 INC DE        ; Move onto the next #R$5E31(Time) digit.
  $644A DJNZ $6440    ; Decrease counter by one and loop back to #R$6440 until
                      ; counter is zero.
+; This entry point is used by the routine at #R$645A.
+; .
 ; Create a short pause.
 @label=HandlerCup_Delay
 *$644C LD B,$0C      ; #REGb=#N$0C.
@@ -1779,13 +1791,11 @@ c$6498 LD BC,$7CD6   ; #REGbc=#R$7CD6 (one byte past the end of #R$7811).
 ;
 ; Used by the routine at #R$6A9B.
 @label=HandlerTime
-c$64C7 LD A,($5C78)  ; #HTML(#REGa=<a
-                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+c$64C7 LD A,($5C78)  ; #REGa=#SKOOLKID$5C78(FRAMES).
  $64CA CP $32        ; {Return if #REGa < #N$32.
  $64CC RET C         ; }
  $64CD SUB $32       ; #REGa = #REGa - #N$32.
- $64CF LD ($5C78),A  ; #HTML(Write #REGa back to <a
-                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+ $64CF LD ($5C78),A  ; Write #REGa back to #SKOOLKID$5C78(FRAMES).
 ; Update the time from the smallest unit upwards.
 ; .
 ; Handles the "seconds".
@@ -1854,8 +1864,7 @@ c$64F0 BIT 6,A       ; {Return if bit 6 of #REGa is not set (i.e. not a place
  $650C LD HL,$B868   ; #REGhl=#N$B868 (screen location).
  $650F PUSH HL       ; Stash #REGhl on the stack.
  $6510 CALL $6F10    ; Call #R$6F10.
- $6513 LD A,$70      ; #REGa=#N$70 (attribute byte - BLACK ink on YELLOW
-                     ; paper).
+ $6513 LD A,$70      ; #REGa=#COLOUR$70 (attribute byte).
  $6515 EX AF,AF'     ; Switch to the shadow #REGaf register.
  $6516 JR $651F      ; Jump to #R$651F.
 
@@ -2543,6 +2552,9 @@ c$6980 RES 0,(IX+$00) ; Reset bit 0 of the given Terrain Dot entity.
 *$6991 LD A,$86       ; {Write #N$86 to #R$69A6(#N$69A7).
  $6993 LD ($69A7),A   ; }
  $6996 JR $699D       ; Jump to #R$699D.
+; This entry point is used by the routines at #R$625C, #R$6557, #R$65B1 and
+; #R$6949.
+; .
 *$6998 LD A,$C6       ; {Write #N$C6 to #R$69A6(#N$69A7).
  $699A LD ($69A7),A   ; }
 *$699D PUSH BC        ; {Stash #REGbc and #REGhl on the stack.
@@ -2577,12 +2589,10 @@ c$6980 RES 0,(IX+$00) ; Reset bit 0 of the given Terrain Dot entity.
 ;
 ; Used by the routine at #R$68A0.
 @label=DrawPlayArea
-c$69BC LD HL,($5C36) ; {#HTML(Stash <a
- $69BF PUSH HL       ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>
-                     ; on the stack.)}
- $69C0 LD HL,$74B1   ; {#HTML(Write #R$74B1 to <a
- $69C3 LD ($5C36),HL ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
-                     ; }
+c$69BC LD HL,($5C36) ; {Stash #SKOOLKID$5C36(CHARS) on the stack.
+ $69BF PUSH HL       ; }
+ $69C0 LD HL,$74B1   ; {Write #R$74B1 to #SKOOLKID$5C36(CHARS).
+ $69C3 LD ($5C36),HL ; }
  $69C6 LD HL,$7691   ; #REGhl=#R$7691.
  $69C9 LD DE,$7751   ; #REGde=#R$7751.
  $69CC EXX           ; Switch to the shadow registers.
@@ -2631,14 +2641,10 @@ c$69BC LD HL,($5C36) ; {#HTML(Stash <a
 *$6A01 DEC C         ; Decrease the height counter by one.
  $6A02 JR NZ,$69DA   ; Keep jumping back to #R$69DA until the height counter is
                      ; zero.
-; #HTML(All done! Finish by reverting the change to <a
-; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a> and
-; returning.)
- $6A04 POP HL        ; {#HTML(Restore <a
- $6A05 LD ($5C36),HL ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/3D00.html">CHARSET</a>
-                     ; from the stack and write it back to <a
-                     ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
-                     ; }
+; All done! Finish by reverting the change to #SKOOLKID$5C36(CHARS) and
+; returning.
+ $6A04 POP HL        ; {Restore #SKOOLKID$3D00(CHARSET) from the stack and
+ $6A05 LD ($5C36),HL ; write it back to #SKOOLKID$5C36(CHARS).}
  $6A08 RET           ; Return.
 
 ; Routine at 6A09
@@ -3066,13 +3072,12 @@ c$6C96 PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
  $6C9C ADD HL,HL     ; {Calculate offset for ASCII character (#REGhl=#REGhl *
  $6C9D ADD HL,HL     ; 8).
  $6C9E ADD HL,HL     ; }
- $6C9F LD DE,($5C36) ; #HTML(#REGde=<a
-                     ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+ $6C9F LD DE,($5C36) ; #REGde=#SKOOLKID$5C36(CHARS).
  $6CA3 ADD HL,DE     ; {#REGde=#REGhl + #N$3C00. For examples of usage;
  $6CA4 EX DE,HL      ; #TABLE(default,centre,centre,centre,centre,centre)
                      ; { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
                      ; #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
+                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #SKOOLKID($3D00,{result})(#N({result})) }
                      ; )
                      ; TABLE#}
 ; Print the character to the screen.
@@ -3114,6 +3119,8 @@ c$6C96 PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
 c$6CB6 LD HL,$400D   ; #REGhl=#N$400D.
  $6CB9 LD DE,$5E4C   ; #REGde=#R$5E4C.
  $6CBC JR $6CC4      ; Jump to #R$6CC4.
+; This entry point is used by the routine at #R$68A0.
+; .
 ; Sets up the HI score.
 @label=Score_HI
 *$6CBE LD HL,$4018   ; #REGhl=#N$4018.
@@ -3463,7 +3470,7 @@ c$6E32 EX DE,HL      ;
 ;
 ; Calculates the new address for writing a sprite pixel, in an upward
 ; direction, taking into consideration the screen memory layout.
-@label=ScreenPos1PixelAbove
+@label=ScreenPosition1PixelAbove
 c$6ECB DEC H         ; Decrement #REGh to move up one pixel on screen.
  $6ECC LD A,H        ; {Store the inverted result in #REGa.
  $6ECD CPL           ; }
@@ -3995,6 +4002,8 @@ c$7155 LD A,($5E22)  ; #REGa=#R$5E22.
  $7165 INC HL        ;
  $7166 LD D,(HL)     ; }
  $7167 RET           ; Return.
+; This entry point is used by the routine at #R$70D2.
+; .
 ; .
 @label=ActorGetSprite
 *$7168 LD A,(IX+$00) ; Load the sprite ID from the currently active actor.
@@ -4151,7 +4160,7 @@ c$71ED LD A,(IX+$01) ; {Copy actor X position to active actor X position.
 ;
 ; Used by the routine at #R$68A0.
 @label=ResetAttributes
-c$7200 XOR A         ; {Set the border to black.
+c$7200 XOR A         ; {Set the border to #INK$00.
  $7201 OUT ($FE),A   ; }
  $7203 CALL $7211    ; Call #R$7211.
  $7206 LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
@@ -4188,7 +4197,7 @@ c$7211 LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
 ; .
 ; Continue on to #R$7218 to blank the screen buffer.
 
-; Reset Routine
+; Fill Memory
 ;
 ; Used by the routine at #R$7200.
 ;
@@ -4462,7 +4471,7 @@ b$7473 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
  $74AB DEFB %00000011,%10111000 ;
  $74AD DEFB %00000011,%00011100 ;
  $74AF DEFB %00000010,%00000100 ; }
-; #UDGARRAY*explosion-01,$05;explosion-02(explosion-frames)
+; #FRAMES(explosion-01,$05;explosion-02)(explosion-frames)
 
 ; UDG Graphics
 ;
@@ -6265,7 +6274,7 @@ b$7CD6 DEFB $11                 ; Width = #N(#PEEK(#PC)) bytes.
  $7F00 DEFB %00011101,%11000000 ;
  $7F02 DEFB %00001101,%10000000 ;
  $7F04 DEFB %00000000,%10000000 ; }
-; #UDGARRAY*car-01,10;car-02;car-03;car-04;car-05;car-06;car-07;car-08;car-09;car-0A;car-0B;car-0C;car-0D;car-0E;car-0F;car-10(car-ani)
+; #FRAMES(car-01,10;car-02;car-03;car-04;car-05;car-06;car-07;car-08;car-09;car-0A;car-0B;car-0C;car-0D;car-0E;car-0F;car-10)(car-ani)
 
 ; Sprites Table
 @label=SpritesTable

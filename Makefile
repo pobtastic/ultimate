@@ -1,3 +1,4 @@
+# Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
 BUILDDIR = build
 
 OPTIONS  = -d build/html -t

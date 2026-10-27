@@ -1,5 +1,9 @@
+; Copyright Ashby Computers & Graphics Ltd 1983, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
 > $4000 @start=$5B80
+> $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 b $4000 Loading screen
 D $4000 #UDGTABLE { =h Cookie Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
@@ -7,7 +11,7 @@ B $4000,$1800,$20 Pixels
 B $5800,$0300,$20 Attributes
 
 i $5B00
-@ $5B00 expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2;($addr)-($addr+$11)-$01-$10{0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
+@ $5B00 expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2(($addr)-($addr+$11)-$01-$10){0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
 
 c $5B80 Game entry point
 E $5B80 View the equivalent code in;
@@ -38,7 +42,7 @@ E $5F00 View the equivalent code in;
 . { #TRANZAM$5F00 }
 . LIST#
 @ $5F00 label=SecurityCheck
-  $5F00,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+  $5F00,$03 #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
   $5F03,$03 Return if #REGa is not #N$32.
   $5F06,$03 Jump to #R$6298.
 
@@ -129,7 +133,7 @@ D $5F23 Has the frame been updated? #N$00=No #N$01=Yes.
 
 g $5F24 Menu Item Attribute
 D $5F24 Current menu item colour attribute.
-@ $5F24 label=Current_MenuAttr
+@ $5F24 label=Current_MenuAttribute
 B $5F24,$01
 
 g $5F25 Game Delay Timer
@@ -223,9 +227,9 @@ N $5FC8 Set the attributes for the 2UP lives graphic.
   $5FCB,$01 Write #REGa to #REGhl.
   $5FCC,$01 Increment #REGhl by one.
   $5FCD,$01 Write #REGa to #REGhl.
-N $5FCE Set the attributes for the score line (the whole line is INK:#N$45).
+N $5FCE Set the attributes for the score line (the whole line is #COLOUR$45).
   $5FCE,$03 #REGhl=#N$5820.
-  $5FD1,$03 #REGbc=counter:#N$20, INK:#N$45.
+  $5FD1,$03 #REGbc=counter:#N$20, #COLOUR$45.
 @ $5FD4 label=CreateWindow_Loop
   $5FD4,$01 Write #N$45 to the attribute buffer.
   $5FD5,$01 Move onto the next column.
@@ -245,7 +249,7 @@ c $5FE1
   $5FF3,$03 Call #R$7378.
 N $5FF6 #HTML(Self modifying code; this updates the command at #R$7515 to <strong>"CP #N$1A"</strong>.)
   $5FF6,$05 Write #N$1A to #R$7515(#N$7516).
-  $5FFB,$06 #HTML(Write <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> to #R$5F22.)
+  $5FFB,$06 Write #SKOOLKID$5C78(FRAMES) to #R$5F22.
   $6001,$01 Return.
   $6002,$01 #REGa=#REGb.
   $6003,$01 Switch to the shadow registers.
@@ -257,8 +261,8 @@ N $5FF6 #HTML(Self modifying code; this updates the command at #R$7515 to <stron
 B $6011,$06
 
 N $6017 The pantry is constructed like it is a font.
-  $6017,$04 #HTML(Stash <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a> on the stack.)
-  $601B,$06 #HTML(Write #R$7B4A to <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $6017,$04 Stash #SKOOLKID$5C36(CHARS) on the stack.
+  $601B,$06 Write #R$7B4A to #SKOOLKID$5C36(CHARS).
   $6021,$03 #REGa=#R$5F2D.
   $6024,$02,b$01 Keep only bits 0-2.
   $6026,$01 Store the result in #REGb.
@@ -270,19 +274,19 @@ N $6017 The pantry is constructed like it is a font.
 b $613B Pantry Graphic
 @ $613B label=CupboardData
 N $613B The pantry is printed like a font.
-  $613B,$01 Attribute = #PEEK(#PC).
+  $613B,$01 Attribute = #COLOUR(#PEEK(#PC)).
   $613C,$06,b$01 Offsets.
 L $613B,$07,$02
-  $6149,$01 Attribute = #PEEK(#PC).
+  $6149,$01 Attribute = #COLOUR(#PEEK(#PC)).
   $614A,$10,b$01 Offsets.
 
-  $616D,$01 Attribute = #PEEK(#PC).
+  $616D,$01 Attribute = #COLOUR(#PEEK(#PC)).
   $616E,$06,b$01 Offsets.
-  $6174,$01 Attribute = #PEEK(#PC).
+  $6174,$01 Attribute = #COLOUR(#PEEK(#PC)).
   $6175,$05,b$01 Offsets.
-  $6198,$01 Attribute = #PEEK(#PC).
+  $6198,$01 Attribute = #COLOUR(#PEEK(#PC)).
   $6199,$04,b$01 Offsets.
-  $6218,$01 Attribute = #PEEK(#PC).
+  $6218,$01 Attribute = #COLOUR(#PEEK(#PC)).
   $6219,$04,b$01 Offsets.
 
 c $6298 Game Initialisation
@@ -298,9 +302,9 @@ E $6298 View the equivalent code in;
 @ $629E label=GameInitialisation_Loop
 N $6298 Blank the 1UP, 2UP and HI scores.
   $6298,$0A Write #N$00 to #N$0B bytes from #R$5F09 to #N$5F13.
-N $62A2 #HTML(This calculates a "checksum" of the <a href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a> routine.
-.       The expected value at the end is #N$00, and if #R$5F0D does not contain #N$00 then the game is muted.)
-  $62A2,$03 #HTML(#REGhl=<a href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a>.)
+N $62A2 This calculates a "checksum" of the #SKOOLKID$03B5(BEEPER) routine.
+. The expected value at the end is #N$00, and if #R$5F0D does not contain #N$00 then the game is muted.
+  $62A2,$03 #REGhl=#SKOOLKID$03B5(BEEPER).
   $62A5,$02 #REGb=#N$43 (counter).
   $62A7,$01 #REGa=#N$00.
 @ $62A8 label=Mute_Loop
@@ -309,7 +313,7 @@ N $62A2 #HTML(This calculates a "checksum" of the <a href="https://skoolkid.gith
   $62AA,$02 Decrease counter by one and loop back to #R$62A8 until counter is zero.
   $62AC,$02 #REGa=#REGa + #N$68.
   $62AE,$03 Store this number at #R$5F0D.
-  $62B1,$04 #HTML(Write #N$00 to <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C48.html">BORDCR</a>.)
+  $62B1,$04 Write #N$00 to #SKOOLKID$5C48(BORDCR).
 
 @ $62B5 label=Game_Restart
   $62B5,$01 Disable interrupts.
@@ -366,25 +370,25 @@ N $62F6 Handle starting a new game.
   $62F6,$02 Has key "0" been pressed? ("START GAME").
   $62F8,$03 If so, jump to #R$6428.
 N $62FB Handle flashing each selection.
-  $62FB,$03 #REGhl=#R$635F(GameSelection_Attributes)+#N$01 (i.e. ignoring "Game Selection" as it doesn't flash).
+  $62FB,$03 #REGhl=#R$635F (the first selectable line, skipping the title).
   $62FE,$04 #REGc=#R$5F0C.
   $6302,$04 If a 1UP game is selected, jump to #R$631F.
   $6306,$03 Call #R$6324.
-@ $6309 label=MenuAttrHandler
+@ $6309 label=MenuAttributeHandler
   $6309,$02 #REGb=#N$03.
   $630B,$01 #REGa=#REGc.
-@ $630D label=MenuAttrHandler_Loop
+@ $630D label=MenuAttributeHandler_Loop
   $630D,$02,b$01 Keep only bits 0-1.
   $6311,$03 Call #R$6327.
   $6314,$01 Decrease #REGa by one.
   $6315,$02 Decrease counter by one and loop back to #R$630D until counter is zero.
   $6317,$03 Jump back to #R$62BC.
 N $631A Handle flashing 2UP.
-@ $631A label=MenuAttrHandle2UP
+@ $631A label=MenuAttributeHandle2UP
   $631A,$03 Call #R$632E.
   $631D,$02 Jump to #R$6314.
 N $631F Handle flashing joystick.
-@ $631F label=MenuAttrHandleJoystick
+@ $631F label=MenuAttributeHandleJoystick
   $631F,$03 Call #R$632B.
   $6322,$02 Jump to #R$6309.
 N $6324 Set the first menu item, unset the second.
@@ -440,6 +444,12 @@ N $633C There are seven lines of text.
   $635B,$03 Jump to #R$7488.
 
 b $635E Game Select Attribute Table
+@ $635E label=GameSelection_Attributes
+@ $635F label=GameSelection_Attributes_Options
+D $635E One attribute byte per menu line. The routines that flash the
+. selected line set or clear FLASH in the byte for the line being
+. updated. The first byte belongs to the title, so the flashing code
+. starts at #R$635F.
 E $635E View the equivalent code in;
 . #LIST
 . { #ATICATAC$7CEA }
@@ -448,7 +458,6 @@ E $635E View the equivalent code in;
 . { #PSSST$627C }
 . { #TRANZAM$5FA7 }
 . LIST#
-@ $635E label=GameSelection_Attributes
   $635E,$07,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
 . { #N$01 | Game Selection }
@@ -594,7 +603,7 @@ E $6428 View the equivalent code in;
   $645F,$04 Write #N$00 to #R$5F1B to reset the current nasties.
 
 @ $6463 label=MainLoop
-  $6463,$07 #HTML(Compare <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> and #R$5F22.)
+  $6463,$07 Compare #SKOOLKID$5C78(FRAMES) and #R$5F22.
 N $646A If interrupts are enabled, then #R$7160 will be called and DI executed.
   $646A,$04 If they are not equal call #R$7160.
   $646E,$03 #REGhl=#R$71A3.
@@ -608,7 +617,7 @@ N $646A If interrupts are enabled, then #R$7160 will be called and DI executed.
   $647F,$01
   $6480,$01 Increment #REGhl by one.
   $6481,$02
-  $6483,$03 #HTML(Jump to <a href="https://skoolkid.github.io/rom/asm/5CB0.html">NMIADD</a> which should just jump to the address in #REGhl.)
+  $6483,$03 Jump to #SKOOLKID$5CB0(NMIADD) which should just jump to the address in #REGhl.
 
 w $6486 Jump Table
 
@@ -629,7 +638,7 @@ R $6568 DE Music Data
   $6578,$01 Stash #REGde on the stack.
   $6579,$01
   $6589,$02 Stash #REGix on the stack.
-  $658B,$03 #HTML(Call <a href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a.)
+  $658B,$03 Call #SKOOLKID$03B5(BEEPER).
   $658E,$03 Restore #REGix and #REGde from the stack.
   $6591,$01 Increment #REGde by one.
   $6592,$02 Loop back round to the #R$6568(beginning) (we only end when the terminator is reached).
@@ -670,7 +679,7 @@ B $686A,$18
 
 c $6888
 
-c $68B1 Play square wave sound
+c $68B1 Play Square Wave
 @ $68B1 label=PlaySquareWave
 R $68B1 D Duration of wave
   $68B1,$07 Play square wave sound.
@@ -739,7 +748,7 @@ N $6C0A This is a controller with a jump to #R$62B5 to return to the game select
 
 N $6C1E Game Over Messaging
 @ $6C1E label=GameOver_Text
-T $6C1E,$13,h$01,$11:$01 #HTML("GAME OVER PLAYER <em>X</em>" (#N(#PEEK(#PC)) is the attribute).)
+T $6C1E,$13,h$01,$11:$01 #HTML("GAME OVER PLAYER <em>X</em>" (#COLOUR(#PEEK(#PC)) is the attribute).)
 
 c $6C31
   $6C3B,$01 Return.
@@ -820,7 +829,7 @@ N $6DB6 2
   $6DED,$03 Call #R$74EE.
 N $6DF0 3
   $6DF0,$01 Restore #REGaf from the stack.
-  $6DF4,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $6DF4,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $6DF7,$02,b$01 Keep only bits 0-2.
   $6E10,$01 Return.
   $6E1A,$03 #REGhl=#R$5F35.
@@ -930,7 +939,7 @@ N $7152 Called at the beginning of each game loop. Setting a higher pause value 
 c $7160 Frame Update
 @ $7160 label=FrameUpdate
   $7160,$01 Disable interrupts.
-  $7161,$06 #HTML(Store <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> at #R$5F22.)
+  $7161,$06 Store #SKOOLKID$5C78(FRAMES) at #R$5F22.
   $7167,$05 Set #R$5F23 to #N$01 (frame has updated).
   $716C,$02 Stash #REGix on the stack.
   $716E,$06 Write #R$5F55 to #N$71AC.
@@ -1034,8 +1043,8 @@ N $73B5 The UDG for the lives icon.
 @ $73B5 label=UDG_Life
 B $73B5,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
 
-N $73BD Controller for the currently active player.
-@ $73BD label=ControllerActiveLives
+N $73BD Return the 1UP player's lives left.
+@ $73BD label=FetchLives_1UP
   $73BD,$06 If #R$5F21 is not zero then jump to #R$73C7.
 N $73C3 Return currently active players lives left.
 @ $73C3 label=ActivePlayerLives
@@ -1045,8 +1054,8 @@ N $73C7 Return inactive players lives left.
 @ $73C7 label=InactivePlayerLives
   $73C7,$03 #REGa=#R$5F32.
   $73CA,$01 Return.
-N $73CB Controller for the inactive player.
-@ $73CB label=ControllerInactiveLives
+N $73CB Return the 2UP player's lives left.
+@ $73CB label=FetchLives_2UP
   $73CB,$06 If #R$5F21 is zero then jump to #R$73C7.
   $73D1,$02 Jump to #R$73C3.
 
@@ -1163,12 +1172,12 @@ R $7468 HL Screen address
   $7468,$03 Stash #REGbc, #REGde and #REGhl on the stack.
   $746B,$03 Create an offset in #REGhl.
   $746E,$03 #REGhl=#REGhl * 8.
-  $7471,$04 #HTML(#REGde=<a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $7471,$04 #REGde=#SKOOLKID$5C36(CHARS).
   $7475,$02 #REGde=#REGhl + #N$3C00. For examples of usage;
 . #TABLE(default,centre,centre,centre,centre,centre)
 . { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
 . #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, 2, 3, 1, 1)()">#N({result})) }
+. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #SKOOLKID($3D00,{result})(#N({result})) }
 . )
 . TABLE#
 N $7477 Print the character to the screen.
@@ -1240,11 +1249,11 @@ N $74C0 Prints "2UP".
   $74C6,$03 Jump to #R$7488.
 N $74C9 Banner text data.
 @ $74C9 label=1UP_Text
-T $74C9,$04,h$01,$02:$01 "1UP" (#N(#PEEK(#PC)) is the attribute).
+T $74C9,$04,h$01,$02:$01 "1UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $74CD label=2UP_Text
-T $74CD,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
+T $74CD,$04,h$01,$02:$01 "2UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $74D1 label=HI_Text
-T $74D1,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
+T $74D1,$03,h$01,$01:$01 "HI" (#COLOUR(#PEEK(#PC)) is the attribute).
 
 c $74D4 Reset Screen Buffer
 E $74D4 View the equivalent code in;
@@ -1261,7 +1270,7 @@ E $74D4 Continue on to #R$74DB to blank the screen buffer.
   $74D7,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
   $74D9,$02 #REGc=#N$00 (value to write).
 
-c $74DB Reset Routine
+c $74DB Fill Memory
 E $74DB View the equivalent code in;
 . #LIST
 . { #ATICATAC$80BB }
@@ -1290,7 +1299,7 @@ E $74E2 View the equivalent code in;
 . { #TRANZAM$7200 }
 . LIST#
 @ $74E2 label=ResetAttributes
-  $74E2,$03 Set the border to black.
+  $74E2,$03 Set the border to #INK$00.
   $74E5,$03 #REGhl=#R$5800(attribute buffer).
   $74E8,$02 #REGb=#N$5B (i.e. finish once we reach the end of the #R$5800(attribute buffer)).
   $74EA,$02 #REGc=#N$00 (value to write).
@@ -1457,7 +1466,7 @@ N $77E6 Sprite #N$2F - Cake 5
   $77E7 #SPRITE(#PC,7)(cake-05)
 
 b $7807
-E $7807 #UDGARRAY*batter-01,50;batter-02;batter-03;batter-04(batter)
+E $7807 #FRAMES(batter-01,50;batter-02;batter-03;batter-04)(batter)
 N $7807 Frame 1.
   $7807,$01 width = #PEEK(#PC) bytes.
   $7808 #SPRITE(#PC,7)(batter-01*)
@@ -1475,7 +1484,7 @@ N $7846 Frame 4.
   $7847 #SPRITE(#PC,7)(batter-04*)
 
 b $785B Sprite: Flour Explosion
-E $785B #UDGARRAY*explosion-02,50;explosion-01(explosion)
+E $785B #FRAMES(explosion-02,50;explosion-01)(explosion)
 N $785B Frame 1.
   $785B,$01 width = #PEEK(#PC) bytes.
   $785C #SPRITE(#PC,7)(explosion-01*)
@@ -1487,11 +1496,11 @@ N $786C Frame 2.
 b $7883 Sprite: Charlie the Chef
 N $7883 Sprite #N$00 - Frame 1.
   $7883,$01 width = #PEEK(#PC) bytes.
-  $7884 #UDGARRAY2,attr=7,scale=4,step=2,mask=1,flip=2;(#PC)-(#PC+$11)-$01-$10(charlie-01)
+  $7884 #UDGARRAY2,attr=7,scale=4,step=2,mask=1,flip=2((#PC)-(#PC+$11)-$01-$10)(charlie-01)
 
 N $78AC Sprite #N$01 - Frame 2.
   $78AC,$01 width = #PEEK(#PC) bytes.
-  $78AD #UDGARRAY2,attr=7,scale=4,step=2,mask=1,flip=2;(#PC)-(#PC+$11)-$01-$10(charlie-02)
+  $78AD #UDGARRAY2,attr=7,scale=4,step=2,mask=1,flip=2((#PC)-(#PC+$11)-$01-$10)(charlie-02)
 
 N $78D5
   $78D5,$01 width = #PEEK(#PC) bytes.
@@ -1511,7 +1520,7 @@ N $791C Sprite #N$02.
   $791D #SPRITE(#PC,7)(flour)
 
 b $7933 Sprite: Colonel Custard
-E $7933 #UDGARRAY*custard-02,50;custard-01(custard)
+E $7933 #FRAMES(custard-02,50;custard-01)(custard)
 N $7933 Sprite #N$03 - Frame 1.
   $7933,$01 width = #PEEK(#PC) bytes
   $7934 #SPRITE(#PC,6)(custard-01*)
@@ -1521,7 +1530,7 @@ N $794E Sprite #N$04 - Frame 2.
   $794F #SPRITE(#PC,6)(custard-02*)
 
 b $796D Sprite: Chunky Chocolate
-E $796D #UDGARRAY*chocolate-01,50;chocolate-02(chocolate)
+E $796D #FRAMES(chocolate-01,50;chocolate-02)(chocolate)
 N $796D Frame 1.
   $796D,$01 width = #PEEK(#PC) bytes
   $796E #SPRITE(#PC,2)(chocolate-01*)
@@ -1531,7 +1540,7 @@ N $798E Frame 2.
   $798F #SPRITE(#PC,2)(chocolate-02*)
 
 b $79AF Sprite: Sneaky Sugar
-E $79AF #UDGARRAY*sugar-01,50;sugar-02(sugar)
+E $79AF #FRAMES(sugar-01,50;sugar-02)(sugar)
 N $79AF Frame 1.
   $79AF,$01 width = #PEEK(#PC) bytes
   $79B0 #SPRITE(#PC,4)(sugar-01*)
@@ -1541,7 +1550,7 @@ N $79CE Frame 2.
   $79CF #SPRITE(#PC,4)(sugar-02*)
 
 b $79ED Sprite: Mixed Peel
-E $79ED #UDGARRAY*peel-01,50;peel-02(peel)
+E $79ED #FRAMES(peel-01,50;peel-02)(peel)
 N $79ED Frame 1.
   $79ED,$01 width = #PEEK(#PC) bytes
   $79EE #SPRITE(#PC,3)(peel-01*)
@@ -1551,7 +1560,7 @@ N $7A0C Frame 2.
   $7A0D #SPRITE(#PC,3)(peel-02*)
 
 b $7A29 Sprite: Crafty Cheese
-E $7A29 #UDGARRAY*cheese-01,50;cheese-02(cheese)
+E $7A29 #FRAMES(cheese-01,50;cheese-02)(cheese)
 N $7A29 Frame 1.
   $7A29,$01 width = #PEEK(#PC) bytes
   $7A2A #SPRITE(#PC,6)(cheese-01*)
@@ -1585,7 +1594,7 @@ b $7AF3 Sprite: Tin Tin Can
 
 b $7B14 Sprite: Bin Monster
 N $7B14 Sprite #N$23 - Frame 1.
-E $7B14 #UDGARRAY*monster-01,50;monster-02(monster)
+E $7B14 #FRAMES(monster-01,50;monster-02)(monster)
   $7B14,$01 width = #PEEK(#PC) bytes.
   $7B15 #SPRITE(#PC,7)(monster-01*)
 N $7B2F Sprite #N$24 - Frame 2.

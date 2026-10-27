@@ -1,5 +1,8 @@
 @org=$4000
 @start=$5B80
+@expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+@expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+@expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 
 ; Loading screen
 ;
@@ -372,13 +375,13 @@ g$5D07 DEFB $CC
 ; { 6 | Beam length }
 ; { 7 | Colour attribute }
 ; TABLE#
-@label=Laser_Param_1
+@label=Laser_Parameter_1
 g$5D08 DEFB $CC,$2C,$33,$0E,$00,$00,$03,$00 ; Laser Beam #1.
-@label=Laser_Param_2
+@label=Laser_Parameter_2
  $5D10 DEFB $00,$3A,$D7,$2E,$31,$0E,$7D,$4C ; Laser Beam #2.
-@label=Laser_Param_3
+@label=Laser_Parameter_3
  $5D18 DEFB $CC,$CC,$CC,$2C,$34,$0E,$00,$00 ; Laser Beam #3.
-@label=Laser_Param_4
+@label=Laser_Parameter_4
  $5D20 DEFB $04,$00,$00,$3A,$D7,$2E,$31,$0E ; Laser Beam #4.
 
 ; Explosion Sound Parameters
@@ -594,8 +597,7 @@ g$5DD3 DEFB $00
 
 ; Last Frame
 ;
-; #HTML(Holds a copy of the last <a
-; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+; Holds a copy of the last #SKOOLKID$5C78(FRAMES) counter.
 @label=LastFrame
 g$5DD4 DEFB $00
 
@@ -608,7 +610,7 @@ g$5DD5 DEFB $00
 ; Menu Item Attribute
 ;
 ; Current menu item colour attribute.
-@label=Current_MenuAttr
+@label=Current_MenuAttribute
 g$5DD6 DEFB $00
 
 ; "Get Ready" Delay Counter
@@ -774,7 +776,7 @@ t$6061 DEFM "COPYRIGHT 1983 A.C.G. ALL RIGHTS RESERVED" ; "COPYRIGHT 1983
 ;
 ; Blank the screen and write the banner.
 @label=CreateWindow
-c$608A XOR A         ; {Set the border to black.
+c$608A XOR A         ; {Set the border to #INK$00.
  $608B OUT ($FE),A   ; }
  $608D CALL $71B8    ; Call #R$71B8.
  $6090 CALL $71C6    ; Call #R$71C6.
@@ -815,8 +817,7 @@ c$60A9 LD A,($5DF0)  ; #REGa=#R$5DF0.
  $60BD CALL $608A    ; Call #R$608A.
  $60C0 CALL $766D    ; Call #R$766D.
  $60C3 CALL $70A4    ; Call #R$70A4.
- $60C6 LD A,($5C78)  ; #HTML(#REGa=<a
-                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+ $60C6 LD A,($5C78)  ; #REGa=#SKOOLKID$5C78(FRAMES).
  $60C9 LD ($5DD4),A  ; Write #REGa to #R$5DD4.
  $60CC RET           ; Return.
 
@@ -932,25 +933,30 @@ c$616A LD HL,$5DF0   ; #REGhl=#R$5DF0.
 ; { #PSSST$613B }
 ; LIST#
 
-; Routine at 6187
-c$6187 DEFM $47                         ; {"GAME OVER PLAYER 1" (#N(#PEEK(#PC))
+; Game Over P1 Message
+@label=Message_GameOverP1
+t$6187 DEFM $47                         ; {"GAME OVER PLAYER 1" (#N(#PEEK(#PC))
  $6188 DEFM "GAME OVER PLAYER ","1"+$80 ; is the attribute).}
-; This entry point is used by the routines at #R$60A9, #R$60DD and #R$66EB.
-*$619A LD HL,$6010                      ; #REGhl Source address: #R$6010
- $619D LD DE,$5D00                      ; #REGde Target address: #R$5D00
- $61A0 LD BC,$0008                      ; #REGbc=loop counter
- $61A3 LDIR                             ; Action! Copy source to target,
-                                        ; decrease counter, repeat until zero
- $61A5 LD A,$80                         ; #REGa=$80
- $61A7 LD HL,$5CF3                      ; {if bit 0 is set for #R$5CF3 (is this
- $61AA BIT 0,(HL)                       ; a 2UP game) then jump to #R$61B0
- $61AC JR Z,$61B0                       ; }
- $61AE ADD A,$7F                        ; {Add $7F to #REGa and update #R$5DD7
-*$61B0 LD ($5DD7),A                     ; with the result}
- $61B3 LD A,($5DF1)                     ; {Decrease #R$5DF1 by 1
- $61B6 DEC A                            ;
- $61B7 LD ($5DF1),A                     ; }
- $61BA JP $70A4                         ; Jump to #R$70A4
+
+; Player Initialisation
+;
+; Used by the routines at #R$60A9, #R$60DD and #R$66EB.
+@label=PlayerInitialisation
+c$619A LD HL,$6010   ; #REGhl Source address: #R$6010
+ $619D LD DE,$5D00   ; #REGde Target address: #R$5D00
+ $61A0 LD BC,$0008   ; #REGbc=loop counter
+ $61A3 LDIR          ; Action! Copy source to target, decrease counter, repeat
+                     ; until zero
+ $61A5 LD A,$80      ; #REGa=$80
+ $61A7 LD HL,$5CF3   ; {if bit 0 is set for #R$5CF3 (is this a 2UP game) then
+ $61AA BIT 0,(HL)    ; jump to #R$61B0
+ $61AC JR Z,$61B0    ; }
+ $61AE ADD A,$7F     ; {Add $7F to #REGa and update #R$5DD7 with the result
+*$61B0 LD ($5DD7),A  ; }
+ $61B3 LD A,($5DF1)  ; {Decrease #R$5DF1 by 1
+ $61B6 DEC A         ;
+ $61B7 LD ($5DF1),A  ; }
+ $61BA JP $70A4      ; Jump to #R$70A4
 
 ; Routine at 61BD
 ;
@@ -988,8 +994,7 @@ c$61D3 CALL $720E    ;
 ;
 ; Used by the routine at #R$5B80.
 @label=SecurityCheck
-c$61E5 LD A,($5C79)  ; #HTML(#REGa=<a
-                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+c$61E5 LD A,($5C79)  ; #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
  $61E8 CP $83        ; {Return if #REGa is not #N$83.
  $61EA RET NZ        ; }
 ; Continue on to #R$61EB.
@@ -1060,8 +1065,8 @@ c$61EB LD HL,$5CF0   ; {Write #N$00 to #N$0A bytes from #R$5CF0 to #N$5CFA.
 ; Handle flashing each selection.
  $622C LD A,D        ;
  $622D LD ($5CF3),A  ;
- $6230 LD HL,$628E   ; #REGhl=#R$628D(GameSelection_Attributes)+#N$01 (i.e.
-                     ; ignoring "Game Selection" as it doesn't flash).
+ $6230 LD HL,$628E   ; #REGhl=#R$628E (the first selectable line, skipping the
+                     ; title).
  $6233 LD A,($5CF3)  ;
  $6236 LD C,A        ;
  $6237 BIT 0,C       ;
@@ -1137,8 +1142,14 @@ c$6260 LD DE,$628D   ; #REGde=#R$628D.
 ; LIST#
 
 ; Game Select Attribute Table
+;
+; One attribute byte per menu line. The routines that flash the
+; selected line set or clear FLASH in the byte for the line being
+; updated. The first byte belongs to the title, so the flashing code
+; starts at #R$628E.
 @label=GameSelection_Attributes
 b$628D DEFB $47      ; {#TABLE(default,centre)
+@label=GameSelection_Attributes_Options
  $628E DEFB $47      ; { =h Byte(n) | =h Menu Item }
  $628F DEFB $47      ; { #N$01 | Game Selection }
  $6290 DEFB $47      ; { #N$02 | 1 Player Game }
@@ -1193,9 +1204,10 @@ t$6299 DEFM "JETPAC GAME SELECTIO","N"+$80 ; "JETPAC GAME SELECTION".
 ; { #TRANZAM$5FB1 }
 ; LIST#
 
-; Routine at 62FF
+; Print Menu Item
 ;
 ; Used by the routine at #R$6260.
+@label=PrintMenuItem
 c$62FF PUSH HL       ; Store #REGhl on the stack
  $6300 CALL $7308    ;
  $6303 LD A,($5DD6)  ; #REGa=#R$5DD6
@@ -1206,9 +1218,10 @@ c$62FF PUSH HL       ; Store #REGhl on the stack
  $6309 CALL $720E    ;
  $630C JP $7178      ; Jump to #R$7178
 
-; Routine at 630F
+; Reset Players
 ;
 ; Used by the routine at #R$6333.
+@label=ResetPlayers
 c$630F LD B,$02      ; #REGb=$02
 *$6311 PUSH BC       ; Stores #REGbc on the stack
  $6312 XOR A         ; Clear #REGa (sets to $00)
@@ -1244,9 +1257,9 @@ c$6333 LD HL,$5CF4   ; #REGhl=#R$5CF4
  $634D XOR A         ; Clear #REGa (sets to $00)
  $634E LD ($5DCB),A  ; Writes #REGa to #R$5DCB
 ; This entry point is used by the routine at #R$6965.
-*$6351 LD A,($5C78)  ; {#HTML(Compare <a
- $6354 LD C,A        ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>
- $6355 LD A,($5DD4)  ; and #R$5DD4.)}
+*$6351 LD A,($5C78)  ; {Compare #SKOOLKID$5C78(FRAMES) and #R$5DD4.
+ $6354 LD C,A        ;
+ $6355 LD A,($5DD4)  ; }
  $6358 CP C          ;
  $6359 CALL NZ,$6965 ;
  $635C LD HL,$69A8   ; {Stash #R$69A8 on the stack.
@@ -1263,9 +1276,8 @@ c$6333 LD HL,$5CF4   ; #REGhl=#R$5CF4
  $636E INC HL        ;
  $636F LD H,(HL)     ;
  $6370 LD L,A        ; }
- $6371 JP $5CB0      ; #HTML(Jump to <a
-                     ; href="https://skoolkid.github.io/rom/asm/5CB0.html">NMIADD</a>
-                     ; which will jump to the address in #REGhl.)
+ $6371 JP $5CB0      ; Jump to #SKOOLKID$5CB0(NMIADD) which will jump to the
+                     ; address in #REGhl.
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$7D9A }
@@ -1338,6 +1350,8 @@ c$6398 LD HL,($5CF4) ;
 
 ; Update Highscore
 ;
+; Used by the routine at #R$6398.
+; .
 ; The top of the stack will contain either #R$5CF4 or #R$5CF7. The three bytes which make up the players score are
 ;       copied over to the #R$5CF0 memory location.
 @label=UPDATE_HIGHSCORE
@@ -1347,6 +1361,8 @@ c$63CB POP HL        ; Fetch #REGhl off the stack
  $63D2 LDIR          ; Action! Copy source to target, decrease counter, repeat
                      ; until zero
  $63D4 RET           ; Return
+; This entry point is used by the routine at #R$6398.
+; .
 ; Tests to see if the highscore has been beaten by 1UP.
 @label=COMPARE_1UP_SCORE
 *$63D5 LD HL,$5CF4   ; #REGhl=#R$5CF4
@@ -1475,7 +1491,7 @@ c$6498 CALL $7327      ;
  $64E2 JP $71CF        ;
 ; This entry point is used by the routine at #R$651F.
 *$64E5 ADD A,(IX+$06)  ;
-; This entry point is used by the routine at #R$6707.
+; This entry point is used by the routine at #R$6733.
 *$64E8 LD HL,$67C3     ;
  $64EB LD C,A          ;
  $64EC LD B,$00        ;
@@ -1605,6 +1621,7 @@ c$651F CALL $7327      ;
 *$660C OR $20          ;
  $660E LD ($5D46),A    ;
  $6611 RET             ;
+; This entry point is used by the routine at #R$6630.
 *$6612 LD HL,$6620     ;
  $6615 LD A,($5DCE)    ;
  $6618 AND $0F         ;
@@ -1627,41 +1644,57 @@ c$651F CALL $7327      ;
  $662D EX AF,AF'       ;
  $662E LD E,B          ;
  $662F LD H,B          ;
-; This entry point is used by the routine at #R$6965.
-*$6630 LD A,($5D00)    ;
- $6633 AND $3F         ;
- $6635 RET Z           ;
- $6636 CP $03          ;
- $6638 RET NC          ;
- $6639 LD HL,$6030     ; #REGhl=$6030
- $663C LD DE,$5D38     ; #REGde=#R$5D38
- $663F LD BC,$0008     ; #REGbc=$0008
- $6642 LD A,(DE)       ; #REGa=(#REGde)
- $6643 AND A           ;
- $6644 RET NZ          ;
- $6645 LD A,($5D35)    ; {Check if #R$5D35 is $06? Is the ship full of fuel?
- $6648 CP $06          ; }
- $664A RET NC          ;
-*$664B LD A,($5DCC)    ;
- $664E CPL             ;
- $664F AND $0F         ;
- $6651 RET NZ          ;
- $6652 LDIR            ;
- $6654 CALL $6612      ;
- $6657 LD ($5D39),A    ;
- $665A RET             ; Return
-; This entry point is used by the routine at #R$66C7.
-*$665B LD HL,$5D38     ; #REGhl=#R$5D38
- $665E LD B,$0C        ; #REGb=$0C
-; This entry point is used by the routine at #R$60DD.
-*$6660 LD DE,$0008     ; #REGde=$0008
-*$6663 LD (HL),$00     ; Reset the memory held at location #REGhl (set to $00)
- $6665 ADD HL,DE       ; Increase #REGhl by $08
- $6666 DJNZ $6663      ; Decrease #REGb by one, and loop back to #R$6663 until
-                       ; zero
- $6668 RET             ; Return
-; This entry point is used by the routines at #R$66C7 and #R$66EB.
-*$6669 LD A,(IX+$02)   ;
+
+; Drop New Fuel Pod
+;
+; Used by the routine at #R$6965.
+@label=DropFuelPod
+c$6630 LD A,($5D00)  ;
+ $6633 AND $3F       ;
+ $6635 RET Z         ;
+ $6636 CP $03        ;
+ $6638 RET NC        ;
+ $6639 LD HL,$6030   ; #REGhl=$6030
+ $663C LD DE,$5D38   ; #REGde=#R$5D38
+ $663F LD BC,$0008   ; #REGbc=$0008
+ $6642 LD A,(DE)     ; #REGa=(#REGde)
+ $6643 AND A         ;
+ $6644 RET NZ        ;
+ $6645 LD A,($5D35)  ; {Check if #R$5D35 is $06? Is the ship full of fuel?
+ $6648 CP $06        ; }
+ $664A RET NC        ;
+; This entry point is used by the routine at #R$651F.
+*$664B LD A,($5DCC)  ;
+ $664E CPL           ;
+ $664F AND $0F       ;
+ $6651 RET NZ        ;
+ $6652 LDIR          ;
+ $6654 CALL $6612    ;
+ $6657 LD ($5D39),A  ;
+ $665A RET           ; Return
+
+; Reset Rocket Modules State
+;
+; Used by the routine at #R$66C7.
+@label=ResetRocketModState
+c$665B LD HL,$5D38   ; #REGhl=#R$5D38
+ $665E LD B,$0C      ; #REGb=$0C
+
+; Set Objects As Inactive
+;
+; Used by the routine at #R$60DD.
+@label=SetObjsInactive
+c$6660 LD DE,$0008   ; #REGde=$0008
+*$6663 LD (HL),$00   ; Reset the memory held at location #REGhl (set to $00)
+ $6665 ADD HL,DE     ; Increase #REGhl by $08
+ $6666 DJNZ $6663    ; Decrease #REGb by one, and loop back to #R$6663 until
+                     ; zero
+ $6668 RET           ; Return
+
+; Animate Rocket Flames
+;
+; Used by the routines at #R$66C7 and #R$66EB.
+c$6669 LD A,(IX+$02)   ;
  $666C ADD A,$15       ;
  $666E LD (IX+$02),A   ;
  $6671 LD HL,$5DC1     ;
@@ -1701,7 +1734,7 @@ c$651F CALL $7327      ;
  $66C1 CALL $72A0      ;
  $66C4 JP $66A3        ;
 
-; Routine at 66C7
+; Rocket Take Off
 c$66C7 CALL $7327      ;
  $66CA DEC (IX+$02)    ;
  $66CD CALL $67ED      ;
@@ -1716,7 +1749,7 @@ c$66C7 CALL $7327      ;
  $66E4 LD (IX+$05),$00 ;
  $66E8 JP $60A9        ;
 
-; Routine at 66EB
+; Rocket Land
 c$66EB CALL $7327      ;
  $66EE INC (IX+$02)    ;
  $66F1 CALL $67ED      ;
@@ -1728,7 +1761,7 @@ c$66EB CALL $7327      ;
  $6702 CALL $619A      ;
  $6705 JR $6733        ;
 
-; Routine at 6707
+; Update Rocket
 c$6707 CALL $7327      ;
  $670A CALL $6E20      ;
  $670D DEC E           ;
@@ -1746,8 +1779,11 @@ c$6707 CALL $7327      ;
  $672C LD HL,$5DF1     ;
  $672F INC (HL)        ;
  $6730 JP $70A4        ;
-; This entry point is used by the routines at #R$66C7 and #R$66EB.
-*$6733 LD L,(IX+$01)   ;
+
+; Update Rocket Colour
+;
+; Used by the routines at #R$66C7, #R$66EB and #R$6707.
+c$6733 LD L,(IX+$01)   ;
  $6736 LD H,(IX+$02)   ;
  $6739 PUSH HL         ;
  $673A LD A,(IX+$04)   ;
@@ -1937,7 +1973,7 @@ c$6809 LD D,$30      ;
 ; { #LUNARJETMAN$B8C9 }
 ; LIST#
 
-; Play square wave sound
+; Play Square Wave
 ;
 ; .
 ;
@@ -1982,6 +2018,7 @@ c$681E LD C,$08      ;
 ; Set Explosion Sound Defaults
 ;
 ; Used by the routines at #R$63DA, #R$6AEF, #R$6CF5 and #R$6DD3.
+@label=ExplosionInitialise
 c$6834 LD C,A               ;
  $6835 SLA C                ;
  $6837 LD B,$00             ;
@@ -1997,66 +2034,94 @@ c$6834 LD C,A               ;
  $6846 RET                  ;
  $6847 DEFB $0C,$04,$0D,$04 ;
 
-; Routine at 684B
+; Sounds: Player Death
+@label=SoundsPlayerDeath
 c$684B DEC (IX+$01)  ;
  $684E JR Z,$6870    ;
  $6850 LD C,$10      ;
  $6852 JR $685F      ;
 
-; Routine at 6854
-c$6854 DEC (IX+$01)    ;
- $6857 JR Z,$6870      ;
- $6859 LD A,(IX+$01)   ;
- $685C ADD A,$18       ;
- $685E LD C,A          ;
-; This entry point is used by the routine at #R$684B.
-*$685F LD A,$10        ;
- $6861 OUT ($FE),A     ;
- $6863 LD B,C          ;
-*$6864 DJNZ $6864      ; Decrease #REGb by one, and loop back to #R$6864 until
-                       ; zero
- $6866 XOR A           ;
- $6867 OUT ($FE),A     ;
- $6869 LD B,C          ;
-*$686A DJNZ $686A      ; Decrease #REGb by one, and loop back to #R$686A until
-                       ; zero
- $686C DEC C           ;
- $686D JR NZ,$685F     ;
- $686F RET             ;
-; This entry point is used by the routine at #R$684B.
-*$6870 LD (IX+$00),$00 ;
- $6874 RET             ;
-; This entry point is used by the routine at #R$63DA.
-*$6875 PUSH IX         ;
- $6877 LD IX,$5D80     ;
- $687B LD HL,$5D00     ;
- $687E LD C,(HL)       ;
- $687F INC HL          ;
- $6880 LD A,(HL)       ;
- $6881 LD (IX+$01),A   ;
- $6884 INC HL          ;
- $6885 LD A,(HL)       ;
- $6886 LD (IX+$02),A   ;
- $6889 LD A,C          ;
- $688A CALL $68AB      ;
- $688D POP IX          ;
- $688F XOR A           ;
- $6890 LD ($5D00),A    ;
- $6893 RET             ;
-; This entry point is used by the routines at #R$63DA, #R$6AEF, #R$6CF5,
-; #R$6DD3 and #R$7571.
-*$6894 LD A,(IX+$00)   ;
+; Sounds: Enenmy Death
+@label=SoundsEnemyDeath
+c$6854 DEC (IX+$01)  ;
+ $6857 JR Z,$6870    ;
+ $6859 LD A,(IX+$01) ;
+ $685C ADD A,$18     ;
+ $685E LD C,A        ;
+
+; Sounds: Explosion
+;
+; Used by the routine at #R$684B.
+@label=SoundsExplosion
+c$685F LD A,$10      ;
+ $6861 OUT ($FE),A   ;
+ $6863 LD B,C        ;
+*$6864 DJNZ $6864    ; Decrease #REGb by one, and loop back to #R$6864 until
+                     ; zero
+ $6866 XOR A         ;
+ $6867 OUT ($FE),A   ;
+ $6869 LD B,C        ;
+*$686A DJNZ $686A    ; Decrease #REGb by one, and loop back to #R$686A until
+                     ; zero
+ $686C DEC C         ;
+ $686D JR NZ,$685F   ;
+ $686F RET           ;
+
+; End Sound
+;
+; Used by the routines at #R$684B and #R$6854.
+@label=EndSound
+c$6870 LD (IX+$00),$00 ; Shut off sound by setting frequency to zero
+ $6874 RET             ; Return.
+
+; Do explosion after object death
+;
+; Used by the routine at #R$63DA.
+@label=ObjectDeathExplosion
+c$6875 PUSH IX       ;
+ $6877 LD IX,$5D80   ;
+ $687B LD HL,$5D00   ;
+ $687E LD C,(HL)     ;
+ $687F INC HL        ;
+ $6880 LD A,(HL)     ;
+ $6881 LD (IX+$01),A ;
+ $6884 INC HL        ;
+ $6885 LD A,(HL)     ;
+ $6886 LD (IX+$02),A ;
+ $6889 LD A,C        ;
+ $688A CALL $68AB    ;
+ $688D POP IX        ;
+ $688F XOR A         ;
+ $6890 LD ($5D00),A  ;
+ $6893 RET           ;
+
+; End Animation
+;
+; Used by the routines at #R$63DA, #R$6AEF, #R$6CF5, #R$6DD3 and #R$7571.
+@label=EndAnimation
+c$6894 LD A,(IX+$00)   ;
  $6897 AND $C0         ;
  $6899 OR $03          ;
  $689B LD (IX+$05),$00 ;
-*$689F LD (IX+$06),A   ;
+
+; Start Animation
+;
+; Used by the routine at #R$68AB.
+@label=StartAnimation
+c$689F LD (IX+$06),A   ;
  $68A2 LD (IX+$00),$08 ;
  $68A6 LD (IX+$04),$00 ;
  $68AA RET             ;
-*$68AB LD (IX+$05),$01 ;
+
+; Change Animation
+;
+; Used by the routine at #R$6875.
+@label=ChangeAnimation
+c$68AB LD (IX+$05),$01 ;
  $68AF JR $689F        ;
 
-; Routine at 68B1
+; Animate explosion
+@label=AnimateExplosion
 c$68B1 LD HL,$5DCB     ;
  $68B4 INC (HL)        ;
  $68B5 LD C,(IX+$04)   ;
@@ -2762,6 +2827,7 @@ c$6CF5 CALL $6CE7      ;
  $6DD2 INC E           ;
 
 ; Meteor Update
+@label=MeteorUpdate
 c$6DD3 CALL $7327     ;
  $6DD6 LD HL,$5DCB    ; #REGhl=$5DCB.
  $6DD9 INC (HL)       ;
@@ -3048,12 +3114,9 @@ c$6DD3 CALL $7327     ;
 ;
 ; Only handle the laser beam on every 4th frame.
 @label=Handler_LaserBeam
-c$6F91 LD A,($5C78)         ; #HTML(#REGa=<a
-                            ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+c$6F91 LD A,($5C78)         ; #REGa=#SKOOLKID$5C78(FRAMES).
  $6F94 AND %00000011        ; Keep only bits 0-1.
- $6F96 RET NZ               ; #HTML(Return if <a
-                            ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>
-                            ; is non-zero.)
+ $6F96 RET NZ               ; Return if #SKOOLKID$5C78(FRAMES) is non-zero.
 ; Search for a "free" laser beam slot.
  $6F97 LD HL,$5D08          ; #REGhl=#R$5D08.
  $6F9A LD DE,$0008          ; #REGde=#N($0008, $04, $04) (each slot is #N$08
@@ -3069,7 +3132,7 @@ c$6F91 LD A,($5C78)         ; #HTML(#REGa=<a
 ; All laser beam slots are in use so just return...
  $6FA6 RET                  ; Return.
 ; Initialise a new laser beam.
-@label=Init_LaserBeam
+@label=Initialise_LaserBeam
 *$6FA7 LD (HL),$10          ; Mark the laser beam slot as "in-use".
  $6FA9 INC HL               ; #REGhl=Laser beam Y position.
  $6FAA LD DE,$5D00          ; {#REGb=#R$5D00.
@@ -3229,7 +3292,7 @@ c$6FFC LD D,(IX+$01)   ;
 
 ; Display Lives
 ;
-; Used by the routines at #R$60A9, #R$6187 and #R$6707.
+; Used by the routines at #R$60A9, #R$619A and #R$6707.
 ;
 ; .
 ;
@@ -3277,8 +3340,8 @@ c$70A4 LD HL,$0040    ; {Call #R$7308 with #N($0040, $04, $04) (screen buffer
  $70E0 DEFB %00111100 ;
  $70E1 DEFB %00111100 ;
  $70E2 DEFB %01100110 ; }
-; Controller for the currently active player.
-@label=ControllerActiveLives
+; Return the 1UP player's lives left.
+@label=FetchLives_1UP
 *$70E3 LD A,($5DD1)   ; {If #R$5DD1 is not zero then jump to #R$70ED.
  $70E6 AND A          ;
  $70E7 JR NZ,$70ED    ; }
@@ -3290,8 +3353,8 @@ c$70A4 LD HL,$0040    ; {Call #R$7308 with #N($0040, $04, $04) (screen buffer
 @label=InactivePlayerLives
 *$70ED LD A,($5DF9)   ; #REGa=#R$5DF9.
  $70F0 RET            ; Return.
-; Controller for the inactive player.
-@label=ControllerInactiveLives
+; Return the 2UP player's lives left.
+@label=FetchLives_2UP
 *$70F1 LD A,($5DD1)   ; {If #R$5DD1 is zero then jump to #R$70ED.
  $70F4 AND A          ;
  $70F5 JR Z,$70ED     ; }
@@ -3351,11 +3414,15 @@ c$70F9 LD A,($5DD1)  ; {Evaluate #R$5DD1
 c$711C LD HL,$4021   ; #REGhl=#N$4021 (screen buffer address).
  $711F LD DE,$5CF4   ; #REGde=#R$5CF4.
  $7122 JR $7132      ; Jump to #R$7132.
+; This entry point is used by the routines at #R$608A and #R$70F9.
+; .
 ; Sets up the 2UP score.
 @label=Score_2UP
 *$7124 LD HL,$4039   ; #REGhl=#N$4039 (screen buffer address).
  $7127 LD DE,$5CF7   ; #REGde=#R$5CF7.
  $712A JR $7132      ; Jump to #R$7132.
+; This entry point is used by the routine at #R$608A.
+; .
 ; Sets up the HI score.
 @label=Score_HI
 *$712C LD HL,$402D   ; #REGhl=#N$402D (screen buffer address).
@@ -3403,13 +3470,12 @@ c$714C PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
  $7152 ADD HL,HL     ; {#REGhl=#REGhl * #N08.
  $7153 ADD HL,HL     ;
  $7154 ADD HL,HL     ; }
- $7155 LD DE,($5C36) ; #HTML(#REGde=<a
-                     ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+ $7155 LD DE,($5C36) ; #REGde=#SKOOLKID$5C36(CHARS).
  $7159 ADD HL,DE     ; {#REGde=#REGhl + #N$3C00. For examples of usage;
  $715A EX DE,HL      ; #TABLE(default,centre,centre,centre,centre,centre)
                      ; { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
                      ; #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * $08) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
+                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * $08) | #SKOOLKID($3D00,{result})(#N({result})) }
                      ; )
                      ; TABLE#}
 ; Print the character to the screen.
@@ -3545,7 +3611,7 @@ c$71B8 LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
 ; .
 ; Continue on to #R$71BF to blank the screen buffer.
 
-; Reset Routine
+; Fill Memory
 ;
 ; Used by the routine at #R$71C6.
 ;
@@ -3590,8 +3656,8 @@ c$71C6 LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
 
 ; Colourise Sprite
 ;
-; Used by the routines at #R$63DA, #R$6498, #R$651F, #R$6707, #R$68B1, #R$6CF5,
-; #R$6DD3 and #R$73D3.
+; Used by the routines at #R$63DA, #R$6498, #R$651F, #R$6669, #R$6733, #R$68B1,
+; #R$6CF5, #R$6DD3 and #R$73D3.
 @label=ColouriseSprite
 c$71CF EXX                     ; Switch to the shadow registers.
  $71D0 LD HL,($5DCF)           ; #REGhl'=actor co-ordinates.
@@ -3723,7 +3789,7 @@ c$723C CALL $72E3    ;
 
 ; Routine at 725E
 ;
-; Used by the routines at #R$6498 and #R$6707.
+; Used by the routines at #R$6498 and #R$6733.
 c$725E PUSH DE       ;
  $725F CALL $7227    ;
  $7262 EXX           ;
@@ -3758,10 +3824,10 @@ c$726A CALL $723C    ;
  $7294 JP C,$777C    ;
  $7297 SUB C         ;
  $7298 JP $7790      ;
-; This entry point is used by the routines at #R$651F and #R$68B1.
+; This entry point is used by the routines at #R$651F, #R$6669 and #R$68B1.
 *$729B CALL $723F    ;
  $729E JR $72B8      ;
-; This entry point is used by the routines at #R$6498 and #R$651F.
+; This entry point is used by the routines at #R$6498 and #R$6669.
 *$72A0 CALL $7227    ;
  $72A3 JR $72A8      ;
 ; This entry point is used by the routines at #R$651F, #R$6707 and #R$68B1.
@@ -4236,6 +4302,7 @@ c$73D3 CALL $7327      ;
  $756E JP $7406        ;
 
 ; Jetman Walk
+@label=JetmanWalk
 c$7571 CALL $7327      ;
  $7574 CALL $733E      ;
  $7577 BIT 0,A         ;
@@ -4445,9 +4512,9 @@ c$766D LD B,$04      ;
 ;
 ; .
 ;
-; #UDGARRAY6,attr=$04,scale=$04;(#PC);(#PC+$08)x$04;(#PC + $10)(platform)
+; #UDGARRAY6,attr=$04,scale=$04((#PC);(#PC+$08)x$04;(#PC + $10))(platform)
 ; .
-; #UDGARRAY6,attr=$06,scale=$04;(#PC);(#PC+$08)x$02;(#PC + $10)(floor)
+; #UDGARRAY6,attr=$06,scale=$04((#PC);(#PC+$08)x$02;(#PC + $10))(floor)
 ; .
 ; Left-hand Platform UDG
 @label=UDG_Platform
@@ -4836,7 +4903,7 @@ b$7B9E DEFB $0B                 ; Height = #N(#PEEK(#PC)) pixels.
  $7BC6 DEFB %00000001,%11100100 ;
  $7BC8 DEFB %00000100,%01110000 ;
  $7BCA DEFB %00000000,%10010000 ; }
-; #UDGARRAY*round-1-1,50;round-1-2(round-1-frames)
+; #FRAMES(round-1-1,50;round-1-2)(round-1-frames)
 
 ; Explosion Frames
 ;
@@ -4904,7 +4971,7 @@ b$7BCC DEFB $00                           ; Terminator.
  $7C5C DEFB %00000000,%00001110,%00000000 ;
  $7C5F DEFB %00000000,%00000000,%00000000 ;
  $7C62 DEFB %00000000,%00000000,%00000000 ; }
-; #UDGARRAY*exp-01,50;exp-02;exp-03(explosion)
+; #FRAMES(exp-01,50;exp-02;exp-03)(explosion)
 
 ; Ship U3
 ;
@@ -5314,7 +5381,7 @@ b$7E9B DEFB $0E                 ; Height = #N(#PEEK(#PC)) pixels.
  $7ECF DEFB %01101011,%11101010 ;
  $7ED1 DEFB %00011010,%10010100 ;
  $7ED3 DEFB %00010010,%01000000 ; }
-; #UDGARRAY*round-2-1,50;round-2-2(round-2-frames)
+; #FRAMES(round-2-1,50;round-2-2)(round-2-frames)
 
 ; Round 4 Alien Graphics
 b$7ED5 DEFB $07                 ; Height = #N(#PEEK(#PC)) pixels.
@@ -5377,7 +5444,7 @@ b$7EF5 DEFB $10                 ; Height = #N(#PEEK(#PC)) pixels.
  $7F2D DEFB %00111001,%11111100 ;
  $7F2F DEFB %00011111,%11111000 ;
  $7F31 DEFB %00000111,%11100000 ; }
-; #UDGARRAY*round-3-1,50;round-3-2(round-3-frames)
+; #FRAMES(round-3-1,50;round-3-2)(round-3-frames)
 
 ; Round 6 Alien Graphics
 b$7F33 DEFB $0F                 ; Height = #N(#PEEK(#PC)) pixels.
@@ -5441,7 +5508,7 @@ b$7F6F DEFB $0E                 ; Height = #N(#PEEK(#PC)) pixels.
 b$7F8C DEFB $00                 ; Terminator.
  $7F8D DEFB $02                 ; Width = #N(#PEEK(#PC)) bytes.
  $7F8E DEFB $0F                 ; Height = #N(#PEEK(#PC)) pixels.
- $7F8F DEFB %00000000,%01000000 ; {#UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02;(#PC)-(#PC+$11)-$01-$10{0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-1*)
+ $7F8F DEFB %00000000,%01000000 ; {#UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02((#PC)-(#PC+$11)-$01-$10){0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-1*)
  $7F91 DEFB %00000100,%10001000 ;
  $7F93 DEFB %00000010,%01000000 ;
  $7F95 DEFB %00010000,%10010000 ;
@@ -5461,7 +5528,7 @@ b$7F8C DEFB $00                 ; Terminator.
  $7FAF DEFB $00                 ; Terminator.
  $7FB0 DEFB $02                 ; Width = #N(#PEEK(#PC)) bytes.
  $7FB1 DEFB $0F                 ; Height = #N(#PEEK(#PC)) pixels.
- $7FB2 DEFB %00000000,%10000000 ; {#UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02;(#PC)-(#PC+$11)-$01-$10{0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-2*)
+ $7FB2 DEFB %00000000,%10000000 ; {#UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02((#PC)-(#PC+$11)-$01-$10){0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-2*)
  $7FB4 DEFB %00000010,%00000000 ;
  $7FB6 DEFB %00000000,%00000000 ;
  $7FB8 DEFB %00000000,%00100000 ;
@@ -5478,12 +5545,12 @@ b$7F8C DEFB $00                 ; Terminator.
  $7FCE DEFB %10111111,%01111010 ; }
 ; #UDGTABLE(ships,centre,centre,centre,centre)
 ; {
-;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7CCE+n)-($7CCE+n+$11)-$01-$10))(ship-u1-flame)  |
-;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7D37+n)-($7D37+n+$11)-$01-$10))(ship-u2-flame)  |
-;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7C65+n)-($7C65+n+$11)-$01-$10))(ship-u3-flame)  |
-;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7DA0+n)-($7DA0+n+$11)-$01-$10))(ship-u4-flame)
+;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7CCE+n)-($7CCE+n+$11)-$01-$10,;)))(ship-u1-flame)  |
+;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7D37+n)-($7D37+n+$11)-$01-$10,;)))(ship-u2-flame)  |
+;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7C65+n)-($7C65+n+$11)-$01-$10,;)))(ship-u3-flame)  |
+;   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7DA0+n)-($7DA0+n+$11)-$01-$10,;)))(ship-u4-flame)
 ; }
-; { #UDGARRAY*flame-1,50;flame-2(frame-frames)  | #UDGARRAY*flame-1,50;flame-2(frame-frames)  | #UDGARRAY*flame-1,50;flame-2(frame-frames)  | #UDGARRAY*flame-1,50;flame-2(frame-frames) }
+; { #FRAMES(flame-1,50;flame-2)(frame-frames)  | #FRAMES(flame-1,50;flame-2)(frame-frames)  | #FRAMES(flame-1,50;flame-2)(frame-frames)  | #FRAMES(flame-1,50;flame-2)(frame-frames) }
 ; UDGTABLE#
 
 ; Copyright Messaging

@@ -1,5 +1,8 @@
 @org=$4000
 @start=$5B80
+@expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+@expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+@expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 
 ; Loading screen
 ;
@@ -226,7 +229,7 @@ b$4000 DEFB $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,
  $5AE0 DEFB $38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38,$38 ; }
 
 @replace=/#DIMENSIONS/Dimensions #EVAL(#PEEK(#PC + $01) * $08) pixels x #EVAL(#PEEK(#PC + $02), $0A, $02) pixels.
-@expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2;($addr)-($addr+$11)-$01-$10{0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
+@expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2(($addr)-($addr+$11)-$01-$10){0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
 @expand=#DEF(#FONT(id) #EVAL($7B4A + $id * $08))
 i$5B00
 
@@ -448,8 +451,7 @@ g$5E1E DEFB $AF
 
 ; Last Frame
 ;
-; #HTML(Holds a copy of the last <a
-; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+; Holds a copy of the last #SKOOLKID$5C78(FRAMES) counter.
 @label=LastFrame
 g$5E1F DEFB $3A
 
@@ -462,7 +464,7 @@ g$5E20 DEFB $F5
 ; Menu Item Attribute
 ;
 ; Current menu item colour attribute.
-@label=Current_MenuAttr
+@label=Current_MenuAttribute
 g$5E21 DEFB $AC
 
 ; "Get Ready" Delay Counter
@@ -697,7 +699,7 @@ c$5F40 LD HL,$5F26   ; {Copy #N$08 bytes of data from #R$5F26 to #R$5E8C.
 ;
 ; Blank the screen and write the banner.
 @label=CreateWindow
-c$5F53 XOR A         ; {Set the border to black.
+c$5F53 XOR A         ; {Set the border to #INK$00.
  $5F54 OUT ($FE),A   ; }
  $5F56 CALL $7447    ; Call #R$7447.
  $5F59 CALL $7439    ; Call #R$7439.
@@ -713,9 +715,9 @@ c$5F53 XOR A         ; {Set the border to black.
  $5F6A LD (HL),A     ; Write #REGa to #REGhl.
  $5F6B INC HL        ; Increment #REGhl by one.
  $5F6C LD (HL),A     ; Write #REGa to #REGhl.
-; Set the attributes for the score line (the whole line is INK:#N$46).
+; Set the attributes for the score line (the whole line is #COLOUR$46).
  $5F6D LD HL,$5820   ; #REGhl=#N$5820 (attribute buffer).
- $5F70 LD BC,$2046   ; #REGbc=counter:#N$20, INK:#N$46.
+ $5F70 LD BC,$2046   ; #REGbc=counter:#N$20, #COLOUR$46.
 @label=CreateWindow_Loop
 *$5F73 LD (HL),C     ; Write #N$46 to the attribute buffer.
  $5F74 INC L         ; Move onto the next column.
@@ -734,15 +736,16 @@ c$5F80 LD HL,$5E38   ; {Increment #R$5E38 by one (for display purposes).
  $5F84 CALL $5FA0    ; Call #R$5FA0.
  $5F87 CALL $5F40    ; Call #R$5F40.
  $5F8A CALL $6176    ; Call #R$6176.
+; This entry point is used by the routine at #R$6090.
+; .
 ; Initialise the level.
 @label=LevelInit
 *$5F8D CALL $5F53    ; Call #R$5F53.
  $5F90 CALL $602E    ; Call #R$602E.
  $5F93 CALL $5FB0    ; Call #R$5FB0.
  $5F96 CALL $7325    ; Call #R$7325.
- $5F99 LD A,($5C78)  ; {#HTML(Write <a
- $5F9C LD ($5E1F),A  ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>
-                     ; to #R$5E1F.)}
+ $5F99 LD A,($5C78)  ; {Write #SKOOLKID$5C78(FRAMES) to #R$5E1F.
+ $5F9C LD ($5E1F),A  ; }
  $5F9F RET           ; Return.
 ; This entry point is used by the routine at #R$62F7.
 *$5FA0 LD HL,$5F2E   ; {Copy #N$0A bytes of data from #R$5F2E to #R$5E23.
@@ -851,12 +854,10 @@ c$601F LD C,$05      ;
 ;
 ; Used by the routine at #R$5F80.
 @label=DrawPlayArea
-c$602E LD HL,($5C36)        ; {#HTML(Stash <a
- $6031 PUSH HL              ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>
-                            ; on the stack.)}
- $6032 LD HL,$76D6          ; {#HTML(Write #R$76D6 to <a
- $6035 LD ($5C36),HL        ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
-                            ; }
+c$602E LD HL,($5C36)        ; {Stash #SKOOLKID$5C36(CHARS) on the stack.
+ $6031 PUSH HL              ; }
+ $6032 LD HL,$76D6          ; {Write #R$76D6 to #SKOOLKID$5C36(CHARS).
+ $6035 LD ($5C36),HL        ; }
 ; Create the left-hand wall.
  $6038 LD DE,$6087          ; #REGde=#R$6087.
  $603B LD HL,$1800          ; #REGhl=#N$1800 (screen position).
@@ -888,10 +889,11 @@ c$602E LD HL,($5C36)        ; {#HTML(Stash <a
  $606E LD H,A               ;
  $606F DEC C                ; {Decrease #REGc by one and loop back to #R$6062
  $6070 JR NZ,$6062          ; until it is zero.}
- $6072 POP HL               ; {#HTML(Restore <a
- $6073 LD ($5C36),HL        ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>
-                            ; from the stack, and write it back to #N$5C36.)}
+ $6072 POP HL               ; {Restore #SKOOLKID$5C36(CHARS) from the stack,
+ $6073 LD ($5C36),HL        ; and write it back to #N$5C36.}
  $6076 RET                  ; Return.
+; This entry point is used by the routine at #R$601F.
+; .
 ; Enables calling #R$73ED in a loop to reprint a UDG a given number of times
 ; using #REGc.
 @label=PrintString_Wrapper
@@ -979,6 +981,8 @@ c$60FD LD A,"1"+$80  ; #REGa="1" + #N$80 (escape character).
  $6102 CALL $5F53    ; Call #R$5F53.
  $6105 LD DE,$6163   ; #REGde=#R$6163.
  $6108 LD HL,$7038   ; #REGhl=#N$7038.
+; This entry point is used by the routines at #R$6090 and #R$631E.
+; .
 ; Print message and pause, also used by #R$5FB0 and #R$631E.
 @label=GameOverPrint_Pause
 *$610B CALL $73ED    ; Call #R$73ED.
@@ -999,6 +1003,8 @@ c$60FD LD A,"1"+$80  ; #REGa="1" + #N$80 (escape character).
 @label=GameOver2UP
 *$611B LD A,"2"+$80  ; #REGa="2" + #N$80 (escape character).
  $611D JR $60FF      ; Jump to #R$60FF.
+; This entry point is used by the routine at #R$6090.
+; .
 ; This controller simply returns on end. This is for when the game continues
 ; after the messaging.
 @label=GameOver_Controller
@@ -1006,6 +1012,8 @@ c$60FD LD A,"1"+$80  ; #REGa="1" + #N$80 (escape character).
  $6122 AND A         ;
  $6123 JR Z,$60FD    ; }
  $6125 JR $611B      ; Else, jump to #R$611B.
+; This entry point is used by the routine at #R$6090.
+; .
 ; This is a controller with a jump to #R$61EA to return to the game selection
 ; screen.
 @label=GameOver_ControllerRestart
@@ -1127,8 +1135,7 @@ c$61B4 CALL $748F    ;
 ; Used by the routine at #R$5B80.
 @label=SecurityCheck
 c$61C6 DI            ; Disable interrupts.
- $61C7 LD A,($5C79)  ; #HTML(#REGa=<a
-                     ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+ $61C7 LD A,($5C79)  ; #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
  $61CA CP $65        ; {Return if #REGa is not #N$65.
  $61CC RET NZ        ; }
 ; Continue on to #R$61CD.
@@ -1147,10 +1154,9 @@ c$61CD LD HL,$5E00   ; {Write #N$00 to #N$0B bytes from #N$5E00 to #N$5E0B.
 *$61D3 LD (HL),C     ;
  $61D4 INC HL        ;
  $61D5 DJNZ $61D3    ; }
-; #HTML(This calculates a "checksum" of the <a href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a> routine.
-;       The expected value at the end is #N$00, and if #R$5E04 does not contain #N$00 then the game is muted.)
- $61D7 LD HL,$03B5   ; #HTML(#REGhl=<a
-                     ; href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a>.)
+; This calculates a "checksum" of the #SKOOLKID$03B5(BEEPER) routine.
+; The expected value at the end is #N$00, and if #R$5E04 does not contain #N$00 then the game is muted.
+ $61D7 LD HL,$03B5   ; #REGhl=#SKOOLKID$03B5(BEEPER).
  $61DA LD B,$43      ; #REGb=#N$43 (counter).
  $61DC XOR A         ; #REGa=#N$00.
 @label=Mute_Loop
@@ -1160,9 +1166,8 @@ c$61CD LD HL,$5E00   ; {Write #N$00 to #N$0B bytes from #N$5E00 to #N$5E0B.
                      ; counter is zero.
  $61E1 ADD A,$68     ; #REGa=#REGa + #N$68.
  $61E3 LD ($5E04),A  ; Store this number at #R$5E04.
- $61E6 XOR A         ; {#HTML(Write #N$00 to <a
- $61E7 LD ($5C48),A  ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C48.html">BORDCR</a>.)
-                     ; }
+ $61E6 XOR A         ; {Write #N$00 to #SKOOLKID$5C48(BORDCR).
+ $61E7 LD ($5C48),A  ; }
 ; This entry point is used by the routine at #R$60FD.
 @label=Game_Restart
 *$61EA DI            ; Disable interrupts.
@@ -1205,7 +1210,8 @@ c$61CD LD HL,$5E00   ; {Write #N$00 to #N$0B bytes from #N$5E00 to #N$5E0B.
 ; Handle flashing each selection.
  $621C LD A,D        ; {Write #REGd to #R$5E03.
  $621D LD ($5E03),A  ; }
- $6220 LD HL,$627D   ; #REGhl=#R$627D(GameSelection_Attributes).
+ $6220 LD HL,$627D   ; #REGhl=#R$627D (the first selectable line, skipping the
+                     ; title).
  $6223 LD A,($5E03)  ; {#REGc=#R$5E03.
  $6226 LD C,A        ; }
 @label=MenuAttributeCheckPlayer
@@ -1220,11 +1226,11 @@ c$61CD LD HL,$5E00   ; {Write #N$00 to #N$0B bytes from #N$5E00 to #N$5E0B.
 @label=GameSelect_End
 *$6235 JP $61F1      ; Jump back to #R$61F1.
 ; Handle flashing 2UP.
-@label=MenuAttrHandle2UP
+@label=MenuAttributeHandle2UP
 *$6238 CALL $6249    ; Call #R$6249.
  $623B JR $622E      ; Jump to #R$622E.
 ; Handle flashing joystick.
-@label=MenuAttrHandleJoystick
+@label=MenuAttributeHandleJoystick
 *$623D CALL $6249    ; Call #R$6249.
  $6240 JR $6235      ; Jump to #R$6235.
 ; Set the first menu item, unset the second.
@@ -1293,8 +1299,14 @@ c$6250 LD DE,$627C   ; #REGde=#R$627C.
 ; LIST#
 
 ; Game Select Attribute Table
+;
+; One attribute byte per menu line. The routines that flash the
+; selected line set or clear FLASH in the byte for the line being
+; updated. The first byte belongs to the title, so the flashing code
+; starts at #R$627D.
 @label=GameSelection_Attributes
 b$627C DEFB $47      ; {#TABLE(default,centre)
+@label=GameSelection_Attributes_Options
  $627D DEFB $47      ; { =h Byte(n) | =h Menu Item }
  $627E DEFB $47      ; { #N$01 | Game Selection }
  $627F DEFB $47      ; { #N$02 | 1 Player Game }
@@ -1401,6 +1413,8 @@ c$62F7 LD B,$02      ; #REGb=#N$02 (loop counter, max. 2 players).
 @label=Message_SprayBugs
 c$631E DEFM $47                     ; {"SPRAY THE BUGS"
  $631F DEFM "SPRAY THE BUG","S"+$80 ; }
+; This entry point is used by the routine at #R$61CD.
+; .
 ; Start New Game.
 @label=GameStart
 *$632D CALL $5F53                   ; Call #R$5F53.
@@ -1425,9 +1439,9 @@ c$631E DEFM $47                     ; {"SPRAY THE BUGS"
  $6358 LD ($5E16),A                 ; enemy counter.}
 ; This entry point is used by the routines at #R$70ED and #R$7130.
 @label=MainLoop
-*$635B LD A,($5C78)                 ; {#HTML(Compare <a
- $635E LD C,A                       ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>
- $635F LD A,($5E1F)                 ; and #R$5E1F.)}
+*$635B LD A,($5C78)                 ; {Compare #SKOOLKID$5C78(FRAMES) and
+ $635E LD C,A                       ; #R$5E1F.
+ $635F LD A,($5E1F)                 ; }
 ; If interrupts are enabled, then #R$70ED will be called and DI executed.
  $6362 CP C                         ; {If they are not equal call #R$70ED.
  $6363 CALL NZ,$70ED                ; }
@@ -1554,8 +1568,7 @@ c$63E1 LD A,(DE)                            ; Fetch the music data byte.
  $63FE SLA L                                ;
  $6400 RL H                                 ;
  $6402 PUSH IX                              ; Stash #REGix on the stack.
- $6404 CALL $03B5                           ; #HTML(Call <a
-                                            ; href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a.)
+ $6404 CALL $03B5                           ; Call #SKOOLKID$03B5(BEEPER).
  $6407 POP IX                               ; {Restore #REGix and #REGde from
  $6409 POP DE                               ; the stack.}
  $640A INC DE                               ; Increment #REGde by one.
@@ -1642,7 +1655,7 @@ c$6473 LD C,$0F      ; #REGc=#N$0F.
  $64A7 JR NZ,$64A0   ;
  $64A9 RET           ;
 
-; Play square wave sound
+; Play Square Wave
 ;
 ; Used by the routines at #R$6473 and #R$64B8.
 ;
@@ -3186,9 +3199,8 @@ c$70DF LD A,($5E20)  ; {Return if #R$5E20 is not marked as being updated.
 ; Used by the routine at #R$631E.
 @label=FrameUpdate
 c$70ED DI            ; Disable interrupts.
- $70EE LD A,($5C78)  ; {#HTML(Update #R$5E1F with <a
- $70F1 LD ($5E1F),A  ; href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
-                     ; }
+ $70EE LD A,($5C78)  ; {Update #R$5E1F with #SKOOLKID$5C78(FRAMES).
+ $70F1 LD ($5E1F),A  ; }
  $70F4 LD A,$01      ; {Set #R$5E20 as "being updated" (i.e. #N$01).
  $70F6 LD ($5E20),A  ; }
  $70F9 PUSH IX       ; Stash #REGix on the stack.
@@ -3557,8 +3569,8 @@ c$7325 LD HL,$0040    ; {Call #R$759A with #N($0040, $04, $04) (screen buffer
  $7361 DEFB %00111100 ;
  $7362 DEFB %00111100 ;
  $7363 DEFB %01100110 ; }
-; Controller for the currently active player.
-@label=ControllerActiveLives
+; Return the 1UP player's lives left.
+@label=FetchLives_1UP
 *$7364 LD A,($5E1E)   ; {If #R$5E1E is not zero then jump to #R$736E.
  $7367 AND A          ;
  $7368 JR NZ,$736E    ; }
@@ -3570,8 +3582,8 @@ c$7325 LD HL,$0040    ; {Call #R$759A with #N($0040, $04, $04) (screen buffer
 @label=InactivePlayerLives
 *$736E LD A,($5E3A)   ; #REGa=#R$5E3A.
  $7371 RET            ; Return.
-; Controller for the inactive player.
-@label=ControllerInactiveLives
+; Return the 2UP player's lives left.
+@label=FetchLives_2UP
 *$7372 LD A,($5E1E)   ; {If #R$5E1E is zero then jump to #R$736E.
  $7375 AND A          ;
  $7376 JR Z,$736E     ; }
@@ -3640,11 +3652,15 @@ c$737A LD A,($5E1E)  ; {If #R$5E1E is not zero, jump to #R$7385.
 c$739D LD HL,$4021   ; #REGhl=#N$4021 (screen buffer address).
  $73A0 LD DE,$5E05   ; #REGde=#R$5E05.
  $73A3 JR $73B3      ; Jump to #R$73B3.
+; This entry point is used by the routines at #R$5F53 and #R$737A.
+; .
 ; Sets up the 2UP score.
 @label=Score_2UP
 *$73A5 LD HL,$4039   ; #REGhl=#N$4039 (screen buffer address).
  $73A8 LD DE,$5E08   ; #REGde=#R$5E08.
  $73AB JR $73B3      ; Jump to #R$73B3.
+; This entry point is used by the routine at #R$5F53.
+; .
 ; Sets up the HI score.
 @label=Score_HI
 *$73AD LD HL,$402D   ; #REGhl=#N$402D (screen buffer address).
@@ -3692,13 +3708,12 @@ c$73CD PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
  $73D3 ADD HL,HL     ; {#REGhl=#REGhl * 8.
  $73D4 ADD HL,HL     ;
  $73D5 ADD HL,HL     ; }
- $73D6 LD DE,($5C36) ; #HTML(#REGde=<a
-                     ; href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+ $73D6 LD DE,($5C36) ; #REGde=#SKOOLKID$5C36(CHARS).
  $73DA ADD HL,DE     ; {#REGde=#REGhl + #N$3C00. For examples of usage;
  $73DB EX DE,HL      ; #TABLE(default,centre,centre,centre,centre,centre)
                      ; { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
                      ; #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, 2, 3, 1, 1)()">#N({result})) }
+                     ; { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #SKOOLKID($3D00,{result})(#N({result})) }
                      ; )
                      ; TABLE#}
 ; Print the character to the screen.
@@ -3818,7 +3833,7 @@ c$7439 LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
 ; .
 ; Continue on to #R$7440 to blank the screen buffer.
 
-; Reset Routine
+; Fill Memory
 ;
 ; Used by the routine at #R$7447.
 ;
@@ -4059,6 +4074,8 @@ c$7542 LD A,($5E0B)  ; #REGa=actor X position.
  $7545 AND %00000110 ; Keep only bits 1-2.
  $7547 LD C,A        ; Store the result in #REGc.
  $7548 LD A,($5E0D)  ; #REGa=actor movement direction.
+; This entry point is used by the routine at #R$757A.
+; .
 ; Actor: Get Sprite Address
 @label=ActorGetSpriteAddress
 *$754B BIT 6,A       ; {Jump to #R$7551 if bit 6 of sprite header is reset.
@@ -4120,7 +4137,7 @@ c$757A LD A,(IX+$01) ; #REGa=actor X position.
 ;
 ; Calculates the new address for writing a sprite pixel, in an upward
 ; direction, taking into consideration the screen memory layout.
-@label=ScreenPos1PixelAbove
+@label=ScreenPosition1PixelAbove
 c$7585 DEC H         ; Decrement #REGh to move up one pixel on screen.
  $7586 LD A,H        ; Store the result in #REGa.
  $7587 AND %00000111 ; Keep only bits 0-2.
@@ -4424,9 +4441,9 @@ w$761A DEFW $778A    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
 b$769A DEFB $F8         ; Terminator.
  $769B DEFB $03         ; #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
  $769C DEFB $13         ; #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
- $769D DEFB $00,$FF,$00 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC +
+ $769D DEFB $00,$FF,$00 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC +
  $76A0 DEFB $00,$FF,$00 ; ({height} * {width}) - {width})-$01-({width} *
- $76A3 DEFB $00,$FF,$00 ; $08){$00, $04 * $05, $04 * {width} * $08, $04 *
+ $76A3 DEFB $00,$FF,$00 ; $08)){$00, $04 * $05, $04 * {width} * $08, $04 *
  $76A6 DEFB $00,$FF,$00 ; {height}}(flower-01)
  $76A9 DEFB $01,$B9,$80 ;
  $76AC DEFB $03,$F6,$C0 ;
@@ -4493,40 +4510,40 @@ b$76EE DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $76F0 DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $76F1 DEFB $CF,$F0,$E0,$30,$67,$E0,$67,$E0 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $76F1 DEFB $CF,$F0,$E0,$30,$67,$E0,$67,$E0 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $76F9 DEFB $67,$E0,$67,$E0,$67,$E0,$67,$E0 ; + ({height} * {width}) -
  $7701 DEFB $67,$E0,$CF,$F0,$E0,$70,$37,$C0 ; {width})-$01-({width} *
- $7709 DEFB $19,$80,$06,$00,$0F,$00,$0F,$00 ; $08)(can-01)}
+ $7709 DEFB $19,$80,$06,$00,$0F,$00,$0F,$00 ; $08))(can-01)}
 ; #DIMENSIONS
  $7711 DEFB $00                             ; Terminator.
  $7712 DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7713 DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7714 DEFB $33,$FC,$38,$0C,$19,$F8,$19,$F8 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7714 DEFB $33,$FC,$38,$0C,$19,$F8,$19,$F8 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $771C DEFB $19,$F8,$19,$F8,$19,$F8,$19,$F8 ; + ({height} * {width}) -
  $7724 DEFB $19,$F8,$33,$FC,$38,$1C,$0D,$F0 ; {width})-$01-({width} *
- $772C DEFB $06,$60,$01,$80,$03,$C0,$03,$C0 ; $08)(can-02)}
+ $772C DEFB $06,$60,$01,$80,$03,$C0,$03,$C0 ; $08))(can-02)}
 ; #DIMENSIONS
  $7734 DEFB $00                             ; Terminator.
  $7735 DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7736 DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7737 DEFB $0C,$FF,$0E,$03,$06,$7E,$06,$7E ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7737 DEFB $0C,$FF,$0E,$03,$06,$7E,$06,$7E ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $773F DEFB $06,$7E,$06,$7E,$06,$7E,$06,$7E ; + ({height} * {width}) -
  $7747 DEFB $06,$7E,$0C,$FF,$0E,$07,$03,$7C ; {width})-$01-({width} *
- $774F DEFB $01,$98,$00,$60,$00,$F0,$00,$F0 ; $08)(can-03)}
+ $774F DEFB $01,$98,$00,$60,$00,$F0,$00,$F0 ; $08))(can-03)}
 ; #DIMENSIONS
  $7757 DEFB $00                             ; Terminator.
  $7758 DEFB $03                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7759 DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $775A DEFB $03,$3F,$C0,$03,$80,$C0,$01,$9F ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $775A DEFB $03,$3F,$C0,$03,$80,$C0,$01,$9F ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7762 DEFB $80,$01,$9F,$80,$01,$9F,$80,$01 ; + ({height} * {width}) -
  $776A DEFB $9F,$80,$01,$9F,$80,$01,$9F,$80 ; {width})-$01-({width} *
- $7772 DEFB $01,$9F,$80,$03,$3F,$C0,$03,$81 ; $08)(can-04)
+ $7772 DEFB $01,$9F,$80,$03,$3F,$C0,$03,$81 ; $08))(can-04)
  $777A DEFB $C0,$00,$DF,$00,$00,$66,$00,$00 ;
  $7782 DEFB $18,$00,$00,$3C,$00,$00,$3C,$00 ; }
 
@@ -4542,12 +4559,12 @@ b$778A DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $778C DEFB $13                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $778D DEFB $B4,$00,$00,$78,$16,$80,$30,$09 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $778D DEFB $B4,$00,$00,$78,$16,$80,$30,$09 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7795 DEFB $00,$30,$06,$00,$37,$F6,$00,$07 ; + ({height} * {width}) -
- $779D DEFB $70,$00,$7E,$BF,$00,$75,$57,$00 ; {width})-$01-({width} * $08){$00,
- $77A5 DEFB $6A,$AB,$00,$7F,$FF,$00,$00,$00 ; $04 * $05, $04 * {width} * $08,
- $77AD DEFB $00,$3F,$FE,$00,$38,$8E,$00,$34 ; $04 * {height}}(robbie-01*)
- $77B5 DEFB $96,$00,$34,$16,$00,$17,$74,$00 ;
+ $779D DEFB $70,$00,$7E,$BF,$00,$75,$57,$00 ; {width})-$01-({width} *
+ $77A5 DEFB $6A,$AB,$00,$7F,$FF,$00,$00,$00 ; $08)){$00, $04 * $05, $04 *
+ $77AD DEFB $00,$3F,$FE,$00,$38,$8E,$00,$34 ; {width} * $08, $04 *
+ $77B5 DEFB $96,$00,$34,$16,$00,$17,$74,$00 ; {height}}(robbie-01*)
  $77BD DEFB $18,$8C,$00,$0F,$F8,$00,$0C,$18 ;
  $77C5 DEFB $00                             ; }
 ; #DIMENSIONS
@@ -4556,12 +4573,12 @@ b$778A DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $77C8 DEFB $13                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $77C9 DEFB $2D,$00,$00,$1E,$05,$A0,$0C,$02 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $77C9 DEFB $2D,$00,$00,$1E,$05,$A0,$0C,$02 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $77D1 DEFB $40,$0C,$01,$80,$0D,$FD,$80,$01 ; + ({height} * {width}) -
- $77D9 DEFB $DC,$00,$1F,$AF,$C0,$1D,$55,$C0 ; {width})-$01-({width} * $08){$00,
- $77E1 DEFB $1A,$AA,$C0,$1F,$FF,$C0,$00,$00 ; $04 * $05, $04 * {width} * $08,
- $77E9 DEFB $00,$0F,$FF,$80,$0E,$23,$80,$0D ; $04 * {height}}(robbie-02*)
- $77F1 DEFB $25,$80,$0D,$05,$80,$05,$DD,$00 ;
+ $77D9 DEFB $DC,$00,$1F,$AF,$C0,$1D,$55,$C0 ; {width})-$01-({width} *
+ $77E1 DEFB $1A,$AA,$C0,$1F,$FF,$C0,$00,$00 ; $08)){$00, $04 * $05, $04 *
+ $77E9 DEFB $00,$0F,$FF,$80,$0E,$23,$80,$0D ; {width} * $08, $04 *
+ $77F1 DEFB $25,$80,$0D,$05,$80,$05,$DD,$00 ; {height}}(robbie-02*)
  $77F9 DEFB $06,$23,$00,$03,$FE,$00,$03,$06 ;
  $7801 DEFB $00                             ; }
 ; #DIMENSIONS
@@ -4570,12 +4587,12 @@ b$778A DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7804 DEFB $13                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7805 DEFB $00,$01,$68,$0B,$40,$F0,$04,$80 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7805 DEFB $00,$01,$68,$0B,$40,$F0,$04,$80 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $780D DEFB $60,$03,$00,$60,$03,$7F,$60,$00 ; + ({height} * {width}) -
- $7815 DEFB $77,$00,$07,$EB,$F0,$07,$55,$70 ; {width})-$01-({width} * $08){$00,
- $781D DEFB $06,$AA,$B0,$07,$FF,$F0,$00,$00 ; $04 * $05, $04 * {width} * $08,
- $7825 DEFB $00,$03,$FF,$E0,$03,$88,$E0,$03 ; $04 * {height}}(robbie-03*)
- $782D DEFB $49,$60,$03,$41,$60,$01,$77,$40 ;
+ $7815 DEFB $77,$00,$07,$EB,$F0,$07,$55,$70 ; {width})-$01-({width} *
+ $781D DEFB $06,$AA,$B0,$07,$FF,$F0,$00,$00 ; $08)){$00, $04 * $05, $04 *
+ $7825 DEFB $00,$03,$FF,$E0,$03,$88,$E0,$03 ; {width} * $08, $04 *
+ $782D DEFB $49,$60,$03,$41,$60,$01,$77,$40 ; {height}}(robbie-03*)
  $7835 DEFB $01,$88,$C0,$00,$FF,$80,$00,$C1 ;
  $783D DEFB $80                             ; }
 ; #DIMENSIONS
@@ -4584,12 +4601,12 @@ b$778A DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7840 DEFB $13                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7841 DEFB $00,$00,$5A,$02,$D0,$3C,$01,$20 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7841 DEFB $00,$00,$5A,$02,$D0,$3C,$01,$20 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7849 DEFB $18,$00,$C0,$18,$00,$DF,$D8,$00 ; + ({height} * {width}) -
- $7851 DEFB $1D,$C0,$01,$FA,$FC,$01,$D5,$5C ; {width})-$01-({width} * $08){$00,
- $7859 DEFB $01,$AA,$AC,$01,$FF,$FC,$00,$00 ; $04 * $05, $04 * {width} * $08,
- $7861 DEFB $00,$00,$FF,$F8,$00,$E2,$38,$00 ; $04 * {height}}(robbie-04*)
- $7869 DEFB $D2,$58,$00,$D0,$58,$00,$5D,$D0 ;
+ $7851 DEFB $1D,$C0,$01,$FA,$FC,$01,$D5,$5C ; {width})-$01-({width} *
+ $7859 DEFB $01,$AA,$AC,$01,$FF,$FC,$00,$00 ; $08)){$00, $04 * $05, $04 *
+ $7861 DEFB $00,$00,$FF,$F8,$00,$E2,$38,$00 ; {width} * $08, $04 *
+ $7869 DEFB $D2,$58,$00,$D0,$58,$00,$5D,$D0 ; {height}}(robbie-04*)
  $7871 DEFB $00,$62,$30,$00,$3F,$E0,$00,$30 ;
  $7879 DEFB $60                             ; }
 
@@ -4605,84 +4622,88 @@ b$787A DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $787C DEFB $05                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $787D DEFB $E0,$B0,$D8,$68,$38             ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC
+ $787D DEFB $E0,$B0,$D8,$68,$38             ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC
                                             ; + ({height} * {width}) -
-                                            ; {width})-$01-({width} * $08){$00,
-                                            ; $04 * $03, $04 * {width} * $08,
-                                            ; $04 * {height}}(leaf-01)
+                                            ; {width})-$01-({width} *
+                                            ; $08)){$00, $04 * $03, $04 *
+                                            ; {width} * $08, $04 *
+                                            ; {height}}(leaf-01)
 ; #DIMENSIONS
  $7882 DEFB $00                             ; Terminator.
  $7883 DEFB $01                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7884 DEFB $08                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7885 DEFB $F0,$AC,$DE,$EE,$75,$6B,$3D,$0F ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC
+ $7885 DEFB $F0,$AC,$DE,$EE,$75,$6B,$3D,$0F ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC
                                             ; + ({height} * {width}) -
                                             ; {width})-$01-({width} *
-                                            ; $08)(leaf-02)
+                                            ; $08))(leaf-02)
 ; #DIMENSIONS
  $788D DEFB $00                             ; Terminator.
  $788E DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $788F DEFB $0B                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7890 DEFB $F8,$00,$BE,$00,$81,$00,$AF,$80 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7890 DEFB $F8,$00,$BE,$00,$81,$00,$AF,$80 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7898 DEFB $FE,$C0,$73,$C0,$75,$E0,$36,$60 ; + ({height} * {width}) -
- $78A0 DEFB $17,$60,$0F,$A0,$03,$E0         ; {width})-$01-({width} * $08){$00,
-                                            ; $04 * $05, $04 * {width} * $08,
-                                            ; $04 * {height}}(leaf-03)}
+ $78A0 DEFB $17,$60,$0F,$A0,$03,$E0         ; {width})-$01-({width} *
+                                            ; $08)){$00, $04 * $05, $04 *
+                                            ; {width} * $08, $04 *
+                                            ; {height}}(leaf-03)}
 ; #DIMENSIONS
  $78A6 DEFB $00                             ; Terminator.
  $78A7 DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $78A8 DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $78A9 DEFB $FC,$00,$BF,$80,$9F,$E0,$A0,$30 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $78A9 DEFB $FC,$00,$BF,$80,$9F,$E0,$A0,$30 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $78B1 DEFB $D7,$F8,$FB,$FC,$79,$F6,$7A,$06 ; + ({height} * {width}) -
  $78B9 DEFB $7B,$7E,$3B,$3E,$3B,$43,$1B,$6F ; {width})-$01-({width} *
- $78C1 DEFB $0F,$77,$07,$73,$01,$F5,$00,$3F ; $08)(leaf-04)}
+ $78C1 DEFB $0F,$77,$07,$73,$01,$F5,$00,$3F ; $08))(leaf-04)}
 ; #DIMENSIONS
  $78C9 DEFB $08                             ; Terminator.
  $78CA DEFB $01                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $78CB DEFB $05                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $78CC DEFB $07,$0D,$1B,$16,$1C             ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC
+ $78CC DEFB $07,$0D,$1B,$16,$1C             ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC
                                             ; + ({height} * {width}) -
-                                            ; {width})-$01-({width} * $08){$00,
-                                            ; $04 * $03, $04 * {width} * $08,
-                                            ; $04 * {height}}(leaf-05)
+                                            ; {width})-$01-({width} *
+                                            ; $08)){$00, $04 * $03, $04 *
+                                            ; {width} * $08, $04 *
+                                            ; {height}}(leaf-05)
 ; #DIMENSIONS
  $78D1 DEFB $08                             ; Terminator.
  $78D2 DEFB $01                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $78D3 DEFB $08                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $78D4 DEFB $0F,$35,$7B,$77,$AE,$D6,$BC,$F0 ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC
+ $78D4 DEFB $0F,$35,$7B,$77,$AE,$D6,$BC,$F0 ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC
                                             ; + ({height} * {width}) -
                                             ; {width})-$01-({width} *
-                                            ; $08)(leaf-06)
+                                            ; $08))(leaf-06)
 ; #DIMENSIONS
  $78DC DEFB $00                             ; Terminator.
  $78DD DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $78DE DEFB $0B                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $78DF DEFB $00,$1F,$00,$7D,$00,$81,$01,$F5 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $78DF DEFB $00,$1F,$00,$7D,$00,$81,$01,$F5 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $78E7 DEFB $03,$EF,$03,$CE,$07,$AE,$04,$6C ; + ({height} * {width}) -
- $78EF DEFB $06,$E8,$05,$F0,$07,$C0         ; {width})-$01-({width} * $08){$00,
-                                            ; $04 * $05, $04 * {width} * $08,
-                                            ; $04 * {height}}(leaf-07)}
+ $78EF DEFB $06,$E8,$05,$F0,$07,$C0         ; {width})-$01-({width} *
+                                            ; $08)){$00, $04 * $05, $04 *
+                                            ; {width} * $08, $04 *
+                                            ; {height}}(leaf-07)}
 ; #DIMENSIONS
  $78F5 DEFB $00                             ; Terminator.
  $78F6 DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $78F7 DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $78F8 DEFB $00,$3F,$01,$FD,$07,$F9,$0C,$05 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $78F8 DEFB $00,$3F,$01,$FD,$07,$F9,$0C,$05 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7900 DEFB $1F,$ED,$3F,$DF,$3F,$9E,$60,$5E ; + ({height} * {width}) -
  $7908 DEFB $7E,$D7,$7C,$DC,$C2,$DC,$F6,$D8 ; {width})-$01-({width} *
- $7910 DEFB $EE,$F0,$CE,$E0,$AF,$80,$FC,$00 ; $08)(leaf-08)}
+ $7910 DEFB $EE,$F0,$CE,$E0,$AF,$80,$FC,$00 ; $08))(leaf-08)}
 
 ; Sprite: Smoke Bomb
 ;
@@ -4696,22 +4717,22 @@ b$7918 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $791A DEFB $07                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $791B DEFB $60,$F6,$ED,$DF,$7E,$38,$00     ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC
+ $791B DEFB $60,$F6,$ED,$DF,$7E,$38,$00     ; #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC
                                             ; + ({height} * {width}) -
-                                            ; {width})-$01-({width} * $08){$00,
-                                            ; $04, $04 * {width} * $08, $04 *
-                                            ; {height}}(smoke-01)
+                                            ; {width})-$01-({width} *
+                                            ; $08)){$00, $04, $04 * {width} *
+                                            ; $08, $04 * {height}}(smoke-01)
 ; #DIMENSIONS
  $7922 DEFB $00                             ; Terminator.
  $7923 DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7924 DEFB $07                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7925 DEFB %00000000,%11000000             ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7925 DEFB %00000000,%11000000             ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7927 DEFB %00001101,%11100000             ; + ({height} * {width}) -
- $7929 DEFB %00001111,%11110000             ; {width})-$01-({width} * $08){$00,
- $792B DEFB %00000111,%10110000             ; $04, $04 * {width} * $08, $04 *
- $792D DEFB %00001111,%01110000             ; {height}}(smoke-02)
+ $7929 DEFB %00001111,%11110000             ; {width})-$01-({width} *
+ $792B DEFB %00000111,%10110000             ; $08)){$00, $04, $04 * {width} *
+ $792D DEFB %00001111,%01110000             ; $08, $04 * {height}}(smoke-02)
  $792F DEFB %00000110,%11100000             ;
  $7931 DEFB %00000000,%01100000             ; }
 ; #DIMENSIONS
@@ -4720,42 +4741,44 @@ b$7918 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7935 DEFB $08                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7936 DEFB $00,$38,$07,$7B,$0F,$BF,$0F,$DF ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7936 DEFB $00,$38,$07,$7B,$0F,$BF,$0F,$DF ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $793E DEFB $0F,$FF,$05,$FA,$01,$FC,$00,$F8 ; + ({height} * {width}) -
                                             ; {width})-$01-({width} *
-                                            ; $08)(smoke-03)}
+                                            ; $08))(smoke-03)}
 ; #DIMENSIONS
  $7946 DEFB $00                             ; Terminator.
  $7947 DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7948 DEFB $08                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7949 DEFB $6C,$E0,$EF,$E0,$FF,$F8,$FE,$B8 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7949 DEFB $6C,$E0,$EF,$E0,$FF,$F8,$FE,$B8 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7951 DEFB $FF,$F8,$DF,$E0,$DB,$E0,$01,$C0 ; + ({height} * {width}) -
                                             ; {width})-$01-({width} *
-                                            ; $08)(smoke-04)}
+                                            ; $08))(smoke-04)}
 ; #DIMENSIONS
  $7959 DEFB $00                             ; Terminator.
  $795A DEFB $02                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $795B DEFB $09                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $795C DEFB $01,$80,$03,$CC,$1B,$DE,$37,$FF ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $795C DEFB $01,$80,$03,$CC,$1B,$DE,$37,$FF ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7964 DEFB $77,$FF,$FF,$7E,$FF,$79,$EF,$BF ; + ({height} * {width}) -
- $796C DEFB $77,$DE,$07,$8C                 ; {width})-$01-({width} * $08){$00,
-                                            ; $04 * $08, $04 * {width} * $08,
-                                            ; $04 * {height}}(smoke-05)}
+ $796C DEFB $77,$DE,$07,$8C                 ; {width})-$01-({width} *
+                                            ; $08)){$00, $04 * $08, $04 *
+                                            ; {width} * $08, $04 *
+                                            ; {height}}(smoke-05)}
 ; #DIMENSIONS
  $7970 DEFB $00                             ; Terminator.
  $7971 DEFB $03                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7972 DEFB $09                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7973 DEFB $00,$23,$80,$07,$77,$C0,$0F,$EF ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7973 DEFB $00,$23,$80,$07,$77,$C0,$0F,$EF ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $797B DEFB $C0,$0F,$DF,$20,$07,$FF,$F0,$02 ; + ({height} * {width}) -
- $7983 DEFB $FF,$F0,$07,$F5,$F0,$07,$7C,$E0 ; {width})-$01-({width} * $08){$00,
- $798B DEFB $0C,$38,$00,$00,$10,$00         ; $04 * $08, $04 * {width} * $08,
-                                            ; $04 * {height}}(smoke-06)}
+ $7983 DEFB $FF,$F0,$07,$F5,$F0,$07,$7C,$E0 ; {width})-$01-({width} *
+ $798B DEFB $0C,$38,$00,$00,$10,$00         ; $08)){$00, $04 * $08, $04 *
+                                            ; {width} * $08, $04 *
+                                            ; {height}}(smoke-06)}
 
 ; Sprite: Streamer/ Leech Laser
 ;
@@ -4769,9 +4792,9 @@ b$7991 DEFB $00                 ; Terminator.
                                 ; bytes.
  $7993 DEFB $07                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7994 DEFB %00000000,%00111100 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7994 DEFB %00000000,%00111100 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7996 DEFB %00000000,%01111110 ; + ({height} * {width}) -
- $7998 DEFB %00000000,%11100011 ; {width})-$01-({width} * $08){$00, $04, $04 *
+ $7998 DEFB %00000000,%11100011 ; {width})-$01-({width} * $08)){$00, $04, $04 *
  $799A DEFB %11000001,%11000001 ; {width} * $08, $04 * {height}}(streamer-01)
  $799C DEFB %11110011,%10000000 ;
  $799E DEFB %00111111,%00000000 ;
@@ -4782,9 +4805,9 @@ b$7991 DEFB $00                 ; Terminator.
                                 ; bytes.
  $79A4 DEFB $07                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $79A5 DEFB %00111100,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $79A5 DEFB %00111100,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $79A7 DEFB %01111110,%00000000 ; + ({height} * {width}) -
- $79A9 DEFB %11100011,%00000000 ; {width})-$01-({width} * $08){$00, $04, $04 *
+ $79A9 DEFB %11100011,%00000000 ; {width})-$01-({width} * $08)){$00, $04, $04 *
  $79AB DEFB %11000001,%11000001 ; {width} * $08, $04 * {height}}(streamer-02)
  $79AD DEFB %10000000,%11110011 ;
  $79AF DEFB %00000000,%00111111 ;
@@ -4802,11 +4825,11 @@ b$79B3 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $79B5 DEFB $0F                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $79B6 DEFB $00,$70,$00,$E0,$70,$60,$70,$38 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $79B6 DEFB $00,$70,$00,$E0,$70,$60,$70,$38 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $79BE DEFB $70,$0E,$84,$B0,$7F,$FD,$C0,$31 ; + ({height} * {width}) -
- $79C6 DEFB $1F,$E0,$72,$0F,$C0,$E2,$2F,$F0 ; {width})-$01-({width} * $08){$00,
- $79CE DEFB $6E,$EF,$E0,$31,$1F,$F0,$7F,$FF ; $04, $04 * {width} * $08, $04 *
- $79D6 DEFB $C0,$0F,$FF,$E0,$37,$76,$C0,$02 ; {height}}(leech-01)
+ $79C6 DEFB $1F,$E0,$72,$0F,$C0,$E2,$2F,$F0 ; {width})-$01-({width} *
+ $79CE DEFB $6E,$EF,$E0,$31,$1F,$F0,$7F,$FF ; $08)){$00, $04, $04 * {width} *
+ $79D6 DEFB $C0,$0F,$FF,$E0,$37,$76,$C0,$02 ; $08, $04 * {height}}(leech-01)
  $79DE DEFB $34,$40,$00,$20,$00             ; }
 ; #DIMENSIONS
  $79E3 DEFB $00                             ; Terminator.
@@ -4814,11 +4837,11 @@ b$79B3 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $79E5 DEFB $0F                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $79E6 DEFB $00,$71,$B0,$00,$33,$F8,$00,$31 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $79E6 DEFB $00,$71,$B0,$00,$33,$F8,$00,$31 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $79EE DEFB $D8,$01,$C4,$48,$03,$FF,$F4,$0F ; + ({height} * {width}) -
- $79F6 DEFB $11,$F8,$07,$22,$FF,$06,$22,$FE ; {width})-$01-({width} * $08){$00,
- $79FE DEFB $0E,$EE,$FC,$07,$11,$FE,$07,$FF ; $04, $04 * {width} * $08, $04 *
- $7A06 DEFB $FF,$05,$FF,$FC,$01,$F7,$BA,$02 ; {height}}(leech-02)
+ $79F6 DEFB $11,$F8,$07,$22,$FF,$06,$22,$FE ; {width})-$01-({width} *
+ $79FE DEFB $0E,$EE,$FC,$07,$11,$FE,$07,$FF ; $08)){$00, $04, $04 * {width} *
+ $7A06 DEFB $FF,$05,$FF,$FC,$01,$F7,$BA,$02 ; $08, $04 * {height}}(leech-02)
  $7A0E DEFB $4D,$20,$00,$08,$00             ; }
 ; #DIMENSIONS
  $7A13 DEFB $00                             ; Terminator.
@@ -4826,11 +4849,11 @@ b$79B3 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7A15 DEFB $0F                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7A16 DEFB $00,$0E,$00,$06,$0E,$07,$0E,$1C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7A16 DEFB $00,$0E,$00,$06,$0E,$07,$0E,$1C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7A1E DEFB $0E,$0D,$21,$70,$03,$BF,$FE,$07 ; + ({height} * {width}) -
- $7A26 DEFB $F8,$8C,$03,$F4,$4E,$0F,$F4,$47 ; {width})-$01-({width} * $08){$00,
- $7A2E DEFB $07,$F7,$76,$0F,$F8,$8C,$03,$FF ; $04, $04 * {width} * $08, $04 *
- $7A36 DEFB $FE,$07,$FF,$F0,$03,$6E,$EC,$02 ; {height}}(leech-03)
+ $7A26 DEFB $F8,$8C,$03,$F4,$4E,$0F,$F4,$47 ; {width})-$01-({width} *
+ $7A2E DEFB $07,$F7,$76,$0F,$F8,$8C,$03,$FF ; $08)){$00, $04, $04 * {width} *
+ $7A36 DEFB $FE,$07,$FF,$F0,$03,$6E,$EC,$02 ; $08, $04 * {height}}(leech-03)
  $7A3E DEFB $2C,$40,$00,$04,$00             ; }
 ; #DIMENSIONS
  $7A43 DEFB $00                             ; Terminator.
@@ -4838,11 +4861,11 @@ b$79B3 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7A45 DEFB $0F                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7A46 DEFB $0D,$8E,$00,$1F,$CC,$00,$1B,$8C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7A46 DEFB $0D,$8E,$00,$1F,$CC,$00,$1B,$8C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7A4E DEFB $00,$12,$23,$80,$2F,$FF,$C0,$1F ; + ({height} * {width}) -
- $7A56 DEFB $88,$F0,$FF,$44,$E0,$7F,$44,$60 ; {width})-$01-({width} * $08){$00,
- $7A5E DEFB $2F,$77,$70,$7F,$88,$E0,$FF,$FF ; $04, $04 * {width} * $08, $04 *
- $7A66 DEFB $E0,$3F,$FF,$A0,$5D,$EF,$80,$04 ; {height}}(leech-04)
+ $7A56 DEFB $88,$F0,$FF,$44,$E0,$7F,$44,$60 ; {width})-$01-({width} *
+ $7A5E DEFB $2F,$77,$70,$7F,$88,$E0,$FF,$FF ; $08)){$00, $04, $04 * {width} *
+ $7A66 DEFB $E0,$3F,$FF,$A0,$5D,$EF,$80,$04 ; $08, $04 * {height}}(leech-04)
  $7A6E DEFB $B2,$40,$00,$10,$00             ; }
 
 ; Sprite: Interstellar Space Slug
@@ -4857,42 +4880,44 @@ b$7A73 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7A75 DEFB $0C                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7A76 DEFB $7F,$87,$F0,$8F,$DF,$F0,$97,$DF ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7A76 DEFB $7F,$87,$F0,$8F,$DF,$F0,$97,$DF ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7A7E DEFB $E0,$B7,$DF,$80,$CF,$DF,$00,$79 ; + ({height} * {width}) -
- $7A86 DEFB $DE,$00,$03,$DE,$00,$02,$AE,$00 ; {width})-$01-({width} * $08){$00,
- $7A8E DEFB $02,$FE,$00,$03,$7E,$00,$01,$8C ; $04 * $04, $04 * {width} * $08,
- $7A96 DEFB $00,$00,$F8,$00                 ; $04 * {height}}(slug-01)}
+ $7A86 DEFB $DE,$00,$03,$DE,$00,$02,$AE,$00 ; {width})-$01-({width} *
+ $7A8E DEFB $02,$FE,$00,$03,$7E,$00,$01,$8C ; $08)){$00, $04 * $04, $04 *
+ $7A96 DEFB $00,$00,$F8,$00                 ; {width} * $08, $04 *
+                                            ; {height}}(slug-01)}
 ; #DIMENSIONS
  $7A9A DEFB $00                             ; Terminator.
  $7A9B DEFB $04                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7A9C DEFB $08                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7A9D DEFB $00,$00,$0F,$F0,$00,$07,$FF,$D0 ; {#UDGARRAY4,attr=7,scale=4,step=4,flip=2;(#PC)-(#PC
+ $7A9D DEFB $00,$00,$0F,$F0,$00,$07,$FF,$D0 ; {#UDGARRAY4,attr=7,scale=4,step=4,flip=2((#PC)-(#PC
  $7AA5 DEFB $07,$FF,$FC,$20,$08,$FF,$C3,$C0 ; + ({height} * {width}) -
  $7AAD DEFB $09,$7C,$3E,$00,$0B,$63,$E0,$00 ; {width})-$01-({width} *
- $7AB5 DEFB $0C,$FE,$00,$00,$07,$C0,$00,$00 ; $08)(slug-02)}
+ $7AB5 DEFB $0C,$FE,$00,$00,$07,$C0,$00,$00 ; $08))(slug-02)}
 ; #DIMENSIONS
  $7ABD DEFB $00                             ; Terminator.
  $7ABE DEFB $03                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7ABF DEFB $0C                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7AC0 DEFB $0F,$E1,$FE,$0F,$FB,$F1,$07,$FB ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7AC0 DEFB $0F,$E1,$FE,$0F,$FB,$F1,$07,$FB ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7AC8 DEFB $E9,$01,$FB,$ED,$00,$FB,$F3,$00 ; + ({height} * {width}) -
- $7AD0 DEFB $7B,$9E,$00,$7B,$C0,$00,$75,$40 ; {width})-$01-({width} * $08){$00,
- $7AD8 DEFB $00,$7F,$40,$00,$7E,$C0,$00,$31 ; $04 * $04, $04 * {width} * $08,
- $7AE0 DEFB $80,$00,$1F,$00                 ; $04 * {height}}(slug-03)}
+ $7AD0 DEFB $7B,$9E,$00,$7B,$C0,$00,$75,$40 ; {width})-$01-({width} *
+ $7AD8 DEFB $00,$7F,$40,$00,$7E,$C0,$00,$31 ; $08)){$00, $04 * $04, $04 *
+ $7AE0 DEFB $80,$00,$1F,$00                 ; {width} * $08, $04 *
+                                            ; {height}}(slug-03)}
 ; #DIMENSIONS
  $7AE4 DEFB $00                             ; Terminator.
  $7AE5 DEFB $04                             ; #LET(width=#PEEK(#PC)) Width =
                                             ; #N({width}) bytes.
  $7AE6 DEFB $08                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7AE7 DEFB $0F,$F0,$00,$00,$0B,$FF,$E0,$00 ; {#UDGARRAY4,attr=7,scale=4,step=4,flip=2;(#PC)-(#PC
+ $7AE7 DEFB $0F,$F0,$00,$00,$0B,$FF,$E0,$00 ; {#UDGARRAY4,attr=7,scale=4,step=4,flip=2((#PC)-(#PC
  $7AEF DEFB $04,$3F,$FF,$E0,$03,$C3,$FF,$10 ; + ({height} * {width}) -
  $7AF7 DEFB $00,$7C,$3E,$90,$00,$07,$C6,$D0 ; {width})-$01-({width} *
- $7AFF DEFB $00,$00,$7F,$30,$00,$00,$03,$E0 ; $08)(slug-04)}
+ $7AFF DEFB $00,$00,$7F,$30,$00,$00,$03,$E0 ; $08))(slug-04)}
 
 ; Sprite: Menacing Midges
 ;
@@ -4906,12 +4931,12 @@ b$7B07 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7B09 DEFB $13                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7B0A DEFB $20,$08,$00,$00,$1C,$00,$A0,$3E ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7B0A DEFB $20,$08,$00,$00,$1C,$00,$A0,$3E ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7B12 DEFB $00,$20,$6F,$00,$90,$70,$00,$90 ; + ({height} * {width}) -
- $7B1A DEFB $FF,$00,$88,$CF,$00,$84,$F0,$00 ; {width})-$01-({width} * $08){$00,
- $7B22 DEFB $62,$9F,$00,$12,$E0,$00,$4A,$FE ; $04 * $05, $04 * {width} * $08,
- $7B2A DEFB $00,$E6,$FC,$00,$EF,$7B,$80,$5F ; $04 * {height}}(midges-01)
- $7B32 DEFB $84,$40,$57,$00,$20,$79,$00,$20 ;
+ $7B1A DEFB $FF,$00,$88,$CF,$00,$84,$F0,$00 ; {width})-$01-({width} *
+ $7B22 DEFB $62,$9F,$00,$12,$E0,$00,$4A,$FE ; $08)){$00, $04 * $05, $04 *
+ $7B2A DEFB $00,$E6,$FC,$00,$EF,$7B,$80,$5F ; {width} * $08, $04 *
+ $7B32 DEFB $84,$40,$57,$00,$20,$79,$00,$20 ; {height}}(midges-01)
  $7B3A DEFB $3C,$80,$60,$38,$60,$C0,$00,$1F ;
  $7B42 DEFB $00                             ; }
 ; #DIMENSIONS
@@ -4920,12 +4945,12 @@ b$7B07 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7B45 DEFB $12                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7B46 DEFB $02,$00,$80,$00,$01,$C0,$01,$03 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7B46 DEFB $02,$00,$80,$00,$01,$C0,$01,$03 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7B4E DEFB $E0,$01,$06,$E0,$05,$07,$00,$04 ; + ({height} * {width}) -
- $7B56 DEFB $8F,$F0,$04,$4C,$F0,$04,$2F,$78 ; {width})-$01-({width} * $08){$00,
- $7B5E DEFB $06,$2B,$84,$01,$2C,$02,$04,$A8 ; $04 * $06, $04 * {width} * $08,
- $7B66 DEFB $02,$0E,$70,$04,$0E,$F0,$08,$05 ; $04 * {height}}(midges-02)
- $7B6E DEFB $F0,$10,$05,$70,$60,$07,$9F,$80 ;
+ $7B56 DEFB $8F,$F0,$04,$4C,$F0,$04,$2F,$78 ; {width})-$01-({width} *
+ $7B5E DEFB $06,$2B,$84,$01,$2C,$02,$04,$A8 ; $08)){$00, $04 * $06, $04 *
+ $7B66 DEFB $02,$0E,$70,$04,$0E,$F0,$08,$05 ; {width} * $08, $04 *
+ $7B6E DEFB $F0,$10,$05,$70,$60,$07,$9F,$80 ; {height}}(midges-02)
  $7B76 DEFB $03,$C0,$00,$03,$80,$00         ; }
 ; #DIMENSIONS
  $7B7C DEFB $00                             ; Terminator.
@@ -4933,12 +4958,12 @@ b$7B07 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7B7E DEFB $13                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7B7F DEFB $00,$10,$04,$00,$38,$00,$00,$7C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7B7F DEFB $00,$10,$04,$00,$38,$00,$00,$7C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7B87 DEFB $05,$00,$F6,$04,$00,$0E,$09,$00 ; + ({height} * {width}) -
- $7B8F DEFB $FF,$09,$00,$F3,$11,$00,$0F,$21 ; {width})-$01-({width} * $08){$00,
- $7B97 DEFB $00,$F9,$46,$00,$07,$48,$00,$7F ; $04 * $05, $04 * {width} * $08,
- $7B9F DEFB $52,$00,$3F,$67,$01,$DE,$F7,$02 ; $04 * {height}}(midges-03)
- $7BA7 DEFB $21,$FA,$04,$00,$7A,$04,$00,$9E ;
+ $7B8F DEFB $FF,$09,$00,$F3,$11,$00,$0F,$21 ; {width})-$01-({width} *
+ $7B97 DEFB $00,$F9,$46,$00,$07,$48,$00,$7F ; $08)){$00, $04 * $05, $04 *
+ $7B9F DEFB $52,$00,$3F,$67,$01,$DE,$F7,$02 ; {width} * $08, $04 *
+ $7BA7 DEFB $21,$FA,$04,$00,$7A,$04,$00,$9E ; {height}}(midges-03)
  $7BAF DEFB $06,$01,$3C,$03,$06,$1C,$00,$F8 ;
  $7BB7 DEFB $00                             ; }
 ; #DIMENSIONS
@@ -4947,12 +4972,12 @@ b$7B07 DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7BBA DEFB $12                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7BBB DEFB $01,$00,$40,$03,$80,$00,$07,$C0 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7BBB DEFB $01,$00,$40,$03,$80,$00,$07,$C0 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7BC3 DEFB $80,$0F,$60,$80,$00,$E0,$A0,$0F ; + ({height} * {width}) -
- $7BCB DEFB $F1,$20,$0F,$32,$20,$1E,$F4,$20 ; {width})-$01-({width} * $08){$00,
- $7BD3 DEFB $21,$D4,$60,$40,$34,$80,$40,$15 ; $04 * $06, $04 * {width} * $08,
- $7BDB DEFB $20,$20,$0E,$70,$10,$0F,$70,$08 ; $04 * {height}}(midges-04)
- $7BE3 DEFB $0F,$A0,$06,$0E,$A0,$01,$F9,$E0 ;
+ $7BCB DEFB $F1,$20,$0F,$32,$20,$1E,$F4,$20 ; {width})-$01-({width} *
+ $7BD3 DEFB $21,$D4,$60,$40,$34,$80,$40,$15 ; $08)){$00, $04 * $06, $04 *
+ $7BDB DEFB $20,$20,$0E,$70,$10,$0F,$70,$08 ; {width} * $08, $04 *
+ $7BE3 DEFB $0F,$A0,$06,$0E,$A0,$01,$F9,$E0 ; {height}}(midges-04)
  $7BEB DEFB $00,$03,$C0,$00,$01,$C0         ; }
 
 ; Sprite: Insect Repellent/ Super Space Slug Spray
@@ -4967,9 +4992,9 @@ b$7BF1 DEFB $00                 ; Terminator.
                                 ; bytes.
  $7BF3 DEFB $07                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7BF4 DEFB %00000000,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7BF4 DEFB %00000000,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7BF6 DEFB %01111000,%00000000 ; + ({height} * {width}) -
- $7BF8 DEFB %11111110,%00000000 ; {width})-$01-({width} * $08){$00, $04, $04 *
+ $7BF8 DEFB %11111110,%00000000 ; {width})-$01-({width} * $08)){$00, $04, $04 *
  $7BFA DEFB %11111111,%10000000 ; {width} * $08, $04 * {height} -
  $7BFC DEFB %10111111,%10000000 ; $04}(repellent-01)
  $7BFE DEFB %11001110,%00000000 ;
@@ -4980,9 +5005,9 @@ b$7BF1 DEFB $00                 ; Terminator.
                                 ; bytes.
  $7C04 DEFB $08                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7C05 DEFB %00000011,%11000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7C05 DEFB %00000011,%11000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7C07 DEFB %00000111,%11110000 ; + ({height} * {width}) -
- $7C09 DEFB %00001111,%11111100 ; {width})-$01-({width} * $08)(repellent-02)
+ $7C09 DEFB %00001111,%11111100 ; {width})-$01-({width} * $08))(repellent-02)
  $7C0B DEFB %00001011,%11111111 ;
  $7C0D DEFB %00001001,%11111111 ;
  $7C0F DEFB %00001100,%00111100 ;
@@ -4994,9 +5019,9 @@ b$7BF1 DEFB $00                 ; Terminator.
                                 ; bytes.
  $7C17 DEFB $07                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7C18 DEFB %00000000,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7C18 DEFB %00000000,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7C1A DEFB %00000000,%00011110 ; + ({height} * {width}) -
- $7C1C DEFB %00000000,%01111111 ; {width})-$01-({width} * $08){$00, $04, $04 *
+ $7C1C DEFB %00000000,%01111111 ; {width})-$01-({width} * $08)){$00, $04, $04 *
  $7C1E DEFB %00000001,%11111111 ; {width} * $08, $04 * {height} -
  $7C20 DEFB %00000001,%11111101 ; $04}(repellent-03)
  $7C22 DEFB %00000000,%01110011 ;
@@ -5007,9 +5032,9 @@ b$7BF1 DEFB $00                 ; Terminator.
                                 ; bytes.
  $7C28 DEFB $08                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7C29 DEFB %00000011,%11000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7C29 DEFB %00000011,%11000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7C2B DEFB %00001111,%11100000 ; + ({height} * {width}) -
- $7C2D DEFB %00111111,%11110000 ; {width})-$01-({width} * $08)(repellent-04)
+ $7C2D DEFB %00111111,%11110000 ; {width})-$01-({width} * $08))(repellent-04)
  $7C2F DEFB %11111111,%11010000 ;
  $7C31 DEFB %11111111,%10010000 ;
  $7C33 DEFB %00111100,%00110000 ;
@@ -5028,10 +5053,10 @@ b$7C39 DEFB $F8                                 ; Terminator.
                                                 ; = #N({width}) bytes.
  $7C3B DEFB $12                                 ; #LET(height=#PEEK(#PC))
                                                 ; Height = #N({height}) pixels.
- $7C3C DEFB $0E,$B9,$60                         ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7C3C DEFB $0E,$B9,$60                         ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7C3F DEFB $19,$B6,$98                         ; + ({height} * {width}) -
  $7C42 DEFB $06,$76,$64                         ; {width})-$01-({width} *
- $7C45 DEFB $06,$6E,$60                         ; $08){$00, $04 * $06, $04 *
+ $7C45 DEFB $06,$6E,$60                         ; $08)){$00, $04 * $06, $04 *
  $7C48 DEFB $0E,$6E,$70                         ; {width} * $08, $04 *
  $7C4B DEFB $0D,$65,$70                         ; {height}}(flower-02)
  $7C4E DEFB $0D,$95,$70                         ;
@@ -5052,10 +5077,10 @@ b$7C39 DEFB $F8                                 ; Terminator.
                                                 ; = #N({width}) bytes.
  $7C74 DEFB $1E                                 ; #LET(height=#PEEK(#PC))
                                                 ; Height = #N({height}) pixels.
- $7C75 DEFB $01,$5C,$80                         ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7C75 DEFB $01,$5C,$80                         ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7C78 DEFB $87,$5C,$C0                         ; + ({height} * {width}) -
  $7C7B DEFB $FC,$AD,$70                         ; {width})-$01-({width} *
- $7C7E DEFB $78,$AD,$1C                         ; $08){$00, $04 * $02, $04 *
+ $7C7E DEFB $78,$AD,$1C                         ; $08)){$00, $04 * $02, $04 *
  $7C81 DEFB $01,$6D,$8E                         ; {width} * $08, $04 *
  $7C84 DEFB $03,$5E,$C3                         ; {height}}(flower-03)
  $7C87 DEFB $0E,$DF,$70                         ;
@@ -5088,10 +5113,10 @@ b$7C39 DEFB $F8                                 ; Terminator.
                                                 ; = #N({width}) bytes.
  $7CD1 DEFB $38                                 ; #LET(height=#PEEK(#PC))
                                                 ; Height = #N({height}) pixels.
- $7CD2 DEFB $00,$00,$00,$03,$FF,$C0,$00,$00,$00 ; {#UDGARRAY9,scale=4,step=9,flip=2;(#PC)-(#PC
+ $7CD2 DEFB $00,$00,$00,$03,$FF,$C0,$00,$00,$00 ; {#UDGARRAY9,scale=4,step=9,flip=2((#PC)-(#PC
  $7CDB DEFB $00,$00,$00,$03,$FF,$C0,$00,$00,$00 ; + ({height} * {width}) -
  $7CE4 DEFB $00,$00,$01,$80,$7F,$23,$00,$00,$00 ; {width})-$01-({width} *
- $7CED DEFB $00,$00,$09,$C7,$BF,$67,$08,$00,$00 ; $08)@$6775-$6786;$676C-$6774;$6763-$676B;$6751-$6762;$6748-$6750(flower-04)
+ $7CED DEFB $00,$00,$09,$C7,$BF,$67,$08,$00,$00 ; $08))[$6775-$6786;$676C-$6774;$6763-$676B;$6751-$6762;$6748-$6750](flower-04)
  $7CF6 DEFB $00,$00,$19,$EF,$BE,$F7,$18,$00,$00 ;
  $7CFF DEFB $00,$08,$19,$EF,$DD,$EF,$9C,$40,$00 ;
  $7D08 DEFB $00,$08,$1D,$EF,$ED,$EF,$BC,$E0,$00 ;
@@ -5157,10 +5182,10 @@ b$7ECA DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7ECC DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7ECD DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7ECD DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7ED5 DEFB $00,$00,$00,$00,$00,$0C,$00,$01 ; + ({height} * {width}) -
  $7EDD DEFB $DE,$C0,$03,$DF,$C0,$03,$EF,$C0 ; {width})-$01-({width} *
- $7EE5 DEFB $03,$AC,$70,$03,$DF,$F8,$01,$FF ; $08)(explosion-01*)
+ $7EE5 DEFB $03,$AC,$70,$03,$DF,$F8,$01,$FF ; $08))(explosion-01*)
  $7EED DEFB $F8,$00,$2F,$B0,$00,$33,$00,$00 ;
  $7EF5 DEFB $0E,$00,$00,$00,$00,$00,$00,$00 ; }
 ; #DIMENSIONS
@@ -5169,10 +5194,10 @@ b$7ECA DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7EFF DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7F00 DEFB $00,$00,$00,$00,$00,$00,$00,$7C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7F00 DEFB $00,$00,$00,$00,$00,$00,$00,$7C ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7F08 DEFB $00,$00,$E6,$00,$0E,$FE,$C0,$1F ; + ({height} * {width}) -
  $7F10 DEFB $7F,$E0,$1F,$BF,$C0,$1F,$D7,$F8 ; {width})-$01-({width} *
- $7F18 DEFB $0F,$EF,$FC,$1F,$EF,$EC,$17,$DF ; $08)(explosion-02*)
+ $7F18 DEFB $0F,$EF,$FC,$1F,$EF,$EC,$17,$DF ; $08))(explosion-02*)
  $7F20 DEFB $BC,$1E,$FF,$D8,$09,$BF,$C0,$07 ;
  $7F28 DEFB $1F,$80,$00,$00,$00,$00,$00,$00 ; }
 ; #DIMENSIONS
@@ -5181,10 +5206,10 @@ b$7ECA DEFB $00                             ; Terminator.
                                             ; #N({width}) bytes.
  $7F32 DEFB $10                             ; #LET(height=#PEEK(#PC)) Height =
                                             ; #N({height}) pixels.
- $7F33 DEFB $01,$F0,$00,$07,$F8,$86,$0F,$FE ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC
+ $7F33 DEFB $01,$F0,$00,$07,$F8,$86,$0F,$FE ; {#UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC
  $7F3B DEFB $F0,$6B,$FE,$F8,$FC,$FF,$FC,$FF ; + ({height} * {width}) -
  $7F43 DEFB $7F,$78,$FF,$BE,$E4,$FF,$7E,$5E ; {width})-$01-({width} *
- $7F4B DEFB $7E,$F9,$BF,$7B,$FF,$DF,$DD,$FE ; $08)(explosion-03*)
+ $7F4B DEFB $7E,$F9,$BF,$7B,$FF,$DF,$DD,$FE ; $08))(explosion-03*)
  $7F53 DEFB $FF,$3F,$EF,$BE,$6F,$EF,$C4,$67 ;
  $7F5B DEFB $D3,$F8,$3B,$9C,$E0,$0F,$0E,$C0 ; }
 
@@ -5200,10 +5225,10 @@ b$7F63 DEFB $00                 ; Terminator.
                                 ; bytes.
  $7F65 DEFB $12                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7F66 DEFB %11111111,%11111111 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7F66 DEFB %11111111,%11111111 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7F68 DEFB %01111111,%11111111 ; + ({height} * {width}))-$01-({width} *
- $7F6A DEFB %01111111,%11111111 ; $08){$00, $04 * $07, $04 * {width} * $08, $08
- $7F6C DEFB %01010001,%01010001 ; * {height}}(fertiliser*)
+ $7F6A DEFB %01111111,%11111111 ; $08)){$00, $04 * $07, $04 * {width} * $08,
+ $7F6C DEFB %01010001,%01010001 ; $08 * {height}}(fertiliser*)
  $7F6E DEFB %01010101,%01010111 ;
  $7F70 DEFB %01010011,%00010111 ;
  $7F72 DEFB %01010101,%01010111 ;
@@ -5231,9 +5256,9 @@ b$7F8A DEFB $00                 ; Terminator.
                                 ; bytes.
  $7F8C DEFB $10                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7F8D DEFB %11000000,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7F8D DEFB %11000000,%00000000 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7F8F DEFB %11100000,%00000000 ; + ({height} * {width}) -
- $7F91 DEFB %01110000,%00000000 ; {width})-$01-({width} * $08)(swatter*)
+ $7F91 DEFB %01110000,%00000000 ; {width})-$01-({width} * $08))(swatter*)
  $7F93 DEFB %00111000,%00000000 ;
  $7F95 DEFB %00011100,%00000000 ;
  $7F97 DEFB %00001110,%01100000 ;
@@ -5260,10 +5285,10 @@ b$7FAD DEFB $00                 ; Terminator.
                                 ; bytes.
  $7FAF DEFB $11                 ; #LET(height=#PEEK(#PC)) Height = #N({height})
                                 ; pixels.
- $7FB0 DEFB %00000011,%11111110 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC
+ $7FB0 DEFB %00000011,%11111110 ; {#UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC
  $7FB2 DEFB %00000010,%01111110 ; + ({height} * {width}))-$01-({width} *
- $7FB4 DEFB %00000010,%01111110 ; $08){$00, $04 * $07, $04 * {width} * $08, $08
- $7FB6 DEFB %00000010,%01111110 ; * {height}}(watering-can*)
+ $7FB4 DEFB %00000010,%01111110 ; $08)){$00, $04 * $07, $04 * {width} * $08,
+ $7FB6 DEFB %00000010,%01111110 ; $08 * {height}}(watering-can*)
  $7FB8 DEFB %00000010,%01111110 ;
  $7FBA DEFB %00000110,%01111110 ;
  $7FBC DEFB %00001110,%01111110 ;

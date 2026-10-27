@@ -1,5 +1,9 @@
+; Copyright Ashby Computers & Graphics Ltd 1983, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
 > $4000 @start=$5B80
+> $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 b $4000 Loading screen
 D $4000 #UDGTABLE { =h Atic Atac Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
@@ -121,7 +125,7 @@ g $5E21 Lives
 B $5E21,$01
 
 g $5E22 Current menu item colour attribute
-@ $5E22 label=Current_MenuAttr
+@ $5E22 label=Current_MenuAttribute
 
 g $5E23 Line Counter
 g $5E24 Line Flags
@@ -205,7 +209,7 @@ E $6000 View the equivalent code in;
 @ $6000 label=SecurityCheck
   $6000,$01 Disable interrupts.
   $6001,$03 Set the stack pointer to #N$5E00.
-  $6004,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+  $6004,$03 #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
   $6007,$03 Return if #REGa is not #N$25.
   $600A,$03 Jump to #R$7C19.
 
@@ -1820,11 +1824,11 @@ E $7CF8 View the equivalent code in;
 
 t $7D51 Copyright Messaging
 @ $7D51 label=Message_Copyright
-  $7D51,$21,h$01,c$01,$1E:$01 Attribute: #N(#PEEK(#PC)) + "© 1983 A.C.G. ALL RIGHTS RESERVED".
+  $7D51,$21,h$01,c$01,$1E:$01 Attribute: #COLOUR(#PEEK(#PC)) + "© 1983 A.C.G. ALL RIGHTS RESERVED".
 
 t $7D72 Game Selection Title text
 @ $7D72 label=GameSelection_Title
-  $7D72,$18,h$01,$16:$01 Attribute: #N(#PEEK(#PC)) + "ATICATAC GAME SELECTION".
+  $7D72,$18,h$01,$16:$01 Attribute: #COLOUR(#PEEK(#PC)) + "ATICATAC GAME SELECTION".
 
 c $7D8A Write Menu Line
 E $7D8A View the equivalent code in;
@@ -1878,13 +1882,13 @@ c $7DC3 Main Loop
   $7DD6,$04 #REGix=#R$EEE0.
   $7DDA,$02 Jump to #R$7E23.
 
-  $7DDC,$04 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $7DDC,$04 #REGa=#SKOOLKID$5C78(FRAMES).
   $7DE0,$03 #REGa=#R$5E03.
   $7DE7,$03 #REGa=#R$EA91.
   $7DED,$03 #REGhl=#R$7DF3.
   $7DF3,$03 #REGde=#N($0008, $04, $04).
   $7DFB,$03 #REGde=#R$EE60.
-  $7E03,$04 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $7E03,$04 #REGa=#SKOOLKID$5C78(FRAMES).
   $7E07,$03 #REGa=#R$5E03.
   $7E0E,$03 #REGhl=#R$7E13.
   $7E13,$03 #REGde=#N($0010, $04, $04).
@@ -1933,7 +1937,7 @@ E $80AA View the equivalent code in #COOKIE$5FB7.
 E $80AA View the equivalent code in #PSSST$5F53.
   $80AA,$03 Call #R$80C2.
   $80AD,$03 Call #R$80B4.
-  $80B0,$03 Set the border to black.
+  $80B0,$03 Set the border to #INK$00.
   $80B3,$01 Return.
 
 c $80B4 Reset Screen Buffer
@@ -1951,7 +1955,7 @@ E $80B4 Continue on to #R$80BB to blank the screen buffer.
   $80B7,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
   $80B9,$02 #REGc=#N$00 (value to write).
 
-c $80BB Reset Routine
+c $80BB Fill Memory
 E $80BB View the equivalent code in;
 . #LIST
 . { #COOKIE$74DB }
@@ -1997,12 +2001,12 @@ c $80D2 Handler: Wizard
 c $81DB Handler: Axe
 @ $81DB label=HandlerAxe
   $81DB,$03 Call #R$9FFB to prepare for the mask.
-  $81DE,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $81DE,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $81E1,$01
   $81E2,$01
   $81E3,$02,b$01 Keep only bits 0-2 (there are 8 animation frames).
   $81E5,$02 Add #N$40 to point to the correct frame/ sprite ID (the axe base sprite ID is: #R($A4BE + $40 * $02)(#N$40)).
-  $81EA,$04 Store the attribute byte #N$42 (BRIGHT red).
+  $81EA,$04 Store the attribute byte #COLOUR$42.
   $81EE,$02 Jump to #R$8209.
 
 c $81F0 Handler: Fireball
@@ -2013,7 +2017,7 @@ E $81F0 Continue on to #R$8209.
   $81F7,$02,b$01 Keep only bits 0-2 (there are 8 animation frames).
   $81F9,$02 Add #N$34 to point to the correct frame/ sprite ID (the fireball base sprite ID is: #R($A4BE + $34 * $02)(#N$34)).
   $81FB,$03 Write the new frame/ sprite ID back to the entity.
-  $81FE,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $81FE,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $8202,$02,b$01 Keep only bit 1.
 
 c $8209 Handler: Weapon
@@ -2039,7 +2043,7 @@ N $82C3 Set the sword direction to match the players direction.
 c $82F1 Handler: Sword
 @ $82F1 label=HandlerSword
   $82F1,$03 Call #R$9FFB to prepare for the mask.
-  $82F4,$04 Store the attribute byte #N$46 (BRIGHT yellow).
+  $82F4,$04 Store the attribute byte #COLOUR$46.
   $82F8,$03 #REGhl=#N$EA9F.
   $82FB,$03 Call #R$82C3.
   $82FE,$03 Jump to #R$8209.
@@ -2098,7 +2102,7 @@ N $8C4F From #REGhl being set above (and for each loop), decrementing #N($0000, 
   $8C56,$03 Jump to #R$7C29.
 N $8C59 "Game Over" messaging.
 @ $8C59 label=StringGameOver
-T $8C59,$0A,h$01,$08:$01 Attribute: #N(#PEEK(#PC)) + "GAME OVER".
+T $8C59,$0A,h$01,$08:$01 Attribute: #COLOUR(#PEEK(#PC)) + "GAME OVER".
 
 c $8C63 Handler: Food Item
 @ $8C63 label=HandlerFoodItem
@@ -2243,7 +2247,7 @@ c $95A9
 
 c $95DA Clock Tick
 @ $95DA label=ClockTick
-  $95DA,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $95DA,$03 #REGa=#SKOOLKID$5C78(FRAMES).
 
 @ $9607 label=PrintClock
 
@@ -2278,11 +2282,11 @@ N $966B Handle printing the "visited percentage".
   $967A,$02 #REGb=#N$01.
   $967C,$03 Jump to #R$A1BF.
 @ $967F label=StringTime
-T $967F,$10,h$01,$0E:$01 Attribute: #N(#PEEK(#PC)) + "TIME".
+T $967F,$10,h$01,$0E:$01 Attribute: #COLOUR(#PEEK(#PC)) + "TIME".
 @ $968F label=StringScore
-T $968F,$10,h$01,$0E:$01 Attribute: #N(#PEEK(#PC)) + "SCORE".
+T $968F,$10,h$01,$0E:$01 Attribute: #COLOUR(#PEEK(#PC)) + "SCORE".
 @ $969F label=StringMoney
-T $969F,$10,h$01,$0E:$01 Attribute: #N(#PEEK(#PC)) + "".
+T $969F,$10,h$01,$0E:$01 Attribute: #COLOUR(#PEEK(#PC)) + "".
 
 c $96AF Visit Room
 @ $96AF label=VisitRoom
@@ -2333,8 +2337,8 @@ N $970A Show the game statistics.
 N $970D Disappointingly cut into the "normal" game over routine.
   $970D,$03 Jump to #R$8C4A.
 N $9710 Congratulations messaging.
-T $9710,$10,h$01,$0E:$01 Attribute: #N(#PEEK(#PC)) + "CONGRATULATIONS".
-T $9720,$11,h$01,$0F:$01 Attribute: #N(#PEEK(#PC)) + "YOU HAVE ESCAPED".
+T $9710,$10,h$01,$0E:$01 Attribute: #COLOUR(#PEEK(#PC)) + "CONGRATULATIONS".
+T $9720,$11,h$01,$0F:$01 Attribute: #COLOUR(#PEEK(#PC)) + "YOU HAVE ESCAPED".
 
 c $98D2 Set Key Positions
 @ $98D2 label=SetKeyPositions
@@ -2923,10 +2927,10 @@ b $B4AC Graphic Attributes: Big Door Frame
 b $AD2E Sprite: Knight
 E $AD2E #UDGTABLE(default,centre)
 . { =h Down | =h Up | =h Left | =h Right }{
-.   #UDGARRAY*knight-down-01,25;knight-down-02;knight-down-03;knight-down-02(knight-down) |
-.   #UDGARRAY*knight-up-01,25;knight-up-02;knight-up-03;knight-up-02(knight-up) |
-.   #UDGARRAY*knight-left-01,25;knight-left-02;knight-left-03;knight-left-02(knight-left) |
-.   #UDGARRAY*knight-right-01,25;knight-right-02;knight-right-03;knight-right-02(knight-right)
+.   #FRAMES(knight-down-01,25;knight-down-02;knight-down-03;knight-down-02)(knight-down) |
+.   #FRAMES(knight-up-01,25;knight-up-02;knight-up-03;knight-up-02)(knight-up) |
+.   #FRAMES(knight-left-01,25;knight-left-02;knight-left-03;knight-left-02)(knight-left) |
+.   #FRAMES(knight-right-01,25;knight-right-02;knight-right-03;knight-right-02)(knight-right)
 . }
 . UDGTABLE#
 N $AD2E Down Frame 1.
@@ -3046,10 +3050,10 @@ b $B528 Graphic Attributes: Ghost Picture
 b $B536 Sprite: Serf
 E $B536 #UDGTABLE(default,centre)
 . { =h Down | =h Up | =h Left | =h Right }{
-.   #UDGARRAY*serf-down-01,25;serf-down-02;serf-down-03;serf-down-02(serf-down) |
-.   #UDGARRAY*serf-up-01,25;serf-up-02;serf-up-03;serf-up-02(serf-up) |
-.   #UDGARRAY*serf-left-01,25;serf-left-02;serf-left-03;serf-left-02(serf-left) |
-.   #UDGARRAY*serf-right-01,25;serf-right-02;serf-right-03;serf-right-02(serf-right)
+.   #FRAMES(serf-down-01,25;serf-down-02;serf-down-03;serf-down-02)(serf-down) |
+.   #FRAMES(serf-up-01,25;serf-up-02;serf-up-03;serf-up-02)(serf-up) |
+.   #FRAMES(serf-left-01,25;serf-left-02;serf-left-03;serf-left-02)(serf-left) |
+.   #FRAMES(serf-right-01,25;serf-right-02;serf-right-03;serf-right-02)(serf-right)
 . }
 . UDGTABLE#
 N $B536 Down Frame 1.
@@ -3113,10 +3117,10 @@ b $B774 Graphic Attributes: Clock
 b $B786 Sprite: Wizard
 E $B786 #UDGTABLE(default,centre)
 . { =h Down | =h Up | =h Left | =h Right }{
-.   #UDGARRAY*wizard-down-01,25;wizard-down-02;wizard-down-03;wizard-down-02(wizard-down) |
-.   #UDGARRAY*wizard-up-01,25;wizard-up-02;wizard-up-03;wizard-up-02(wizard-up) |
-.   #UDGARRAY*wizard-left-01,25;wizard-left-02;wizard-left-03;wizard-left-02(wizard-left) |
-.   #UDGARRAY*wizard-right-01,25;wizard-right-02;wizard-right-03;wizard-right-02(wizard-right)
+.   #FRAMES(wizard-down-01,25;wizard-down-02;wizard-down-03;wizard-down-02)(wizard-down) |
+.   #FRAMES(wizard-up-01,25;wizard-up-02;wizard-up-03;wizard-up-02)(wizard-up) |
+.   #FRAMES(wizard-left-01,25;wizard-left-02;wizard-left-03;wizard-left-02)(wizard-left) |
+.   #FRAMES(wizard-right-01,25;wizard-right-02;wizard-right-03;wizard-right-02)(wizard-right)
 . }
 . UDGTABLE#
 N $B786 Down Frame 1.
@@ -3201,7 +3205,7 @@ N $BA37 Frame 8.
   $BA38,$20,$02 #SPRITE$3E(sword-08)
 
 b $BA58 Sprite: Axe
-E $BA58 #UDGARRAY*axe-01,25;axe-02;axe-03;axe-04;axe-05;axe-06;axe-07;axe-08(axe)
+E $BA58 #FRAMES(axe-01,25;axe-02;axe-03;axe-04;axe-05;axe-06;axe-07;axe-08)(axe)
 N $BA58 Frame 1.
   $BA58,$01 Height = #N(#PEEK(#PC)) pixels.
   $BA59,$20,$02 #SPRITE$3F(axe-01*)
@@ -3235,7 +3239,7 @@ N $BB3F Frame 8.
   $BB40,$20,$02 #SPRITE$46(axe-08*)
 
 b $BB60 Sprite: Fireball
-E $BB60 #UDGARRAY*fireball-01,25;fireball-02;fireball-03;fireball-04(fireball)
+E $BB60 #FRAMES(fireball-01,25;fireball-02;fireball-03;fireball-04)(fireball)
 N $BB60 Frame 1.
   $BB60,$01 Height = #N(#PEEK(#PC)) pixels.
   $BB61,$1E,$02 #SPRITE$33(fireball-01*)
@@ -3336,7 +3340,7 @@ b $C219 Sprite: Ice Cream
   $C21A,$20,$02 #SPRITE$53(icecream)
 
 b $C23A Sprite: Sparkle
-E $C23A #UDGARRAY*sparkle-04,25;sparkle-03;sparkle-02;sparkle-01(sparkle)
+E $C23A #FRAMES(sparkle-04,25;sparkle-03;sparkle-02;sparkle-01)(sparkle)
 N $C23A Frame 1.
   $C23A,$01 Height = #N(#PEEK(#PC)) pixels.
   $C23B,$18,$02 #SPRITE$57(sparkle-01*)
@@ -3619,8 +3623,8 @@ b $CDE2 Sprite: Skull
 b $CE01 Sprite: Witch
 E $CE01 #UDGTABLE(default,centre)
 . { =h Left | =h Right }{
-.   #UDGARRAY*witch-left-01,25;witch-left-02(witch-left) |
-.   #UDGARRAY*witch-right-01,25;witch-right-02(witch-right)
+.   #FRAMES(witch-left-01,25;witch-left-02)(witch-left) |
+.   #FRAMES(witch-right-01,25;witch-right-02)(witch-right)
 . }
 . UDGTABLE#
 N $CE01 Left Frame 1.
@@ -3642,8 +3646,8 @@ N $CE88 Right Frame 2.
 b $CEB5 Sprite: Monk
 E $CEB5 #UDGTABLE(default,centre)
 . { =h Left | =h Right }{
-.   #UDGARRAY*monk-left-01,25;monk-left-02(monk-left) |
-.   #UDGARRAY*monk-right-01,25;monk-right-02(monk-right)
+.   #FRAMES(monk-left-01,25;monk-left-02)(monk-left) |
+.   #FRAMES(monk-right-01,25;monk-right-02)(monk-right)
 . }
 . UDGTABLE#
 N $CEB5 Left Frame 1.
@@ -3751,7 +3755,7 @@ b $D3B8 Graphic Attributes: Skeleton
   $D3BA,$19,$05 #GRAPHIC$25,1(skeleton-colour)
 
 b $D3D3 Sprite: Hunchback
-E $D3D3 #UDGARRAY*hunchback-01,25;hunchback-02;hunchback-03;hunchback-02(hunchback)
+E $D3D3 #FRAMES(hunchback-01,25;hunchback-02;hunchback-03;hunchback-02)(hunchback)
 N $D3D3 Frame 1.
   $D3D3,$01 Height = #N(#PEEK(#PC)) pixels.
   $D3D4,$30,$02 #SPRITE$9B(hunchback-01*)

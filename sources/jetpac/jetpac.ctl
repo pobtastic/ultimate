@@ -1,5 +1,9 @@
+; Copyright Ashby Computers & Graphics Ltd 1983, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
 > $4000 @start=$5B80
+> $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 b $4000 Loading screen
 D $4000 #UDGTABLE { =h JetPac Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
@@ -125,13 +129,13 @@ D $5D08 #TABLE(default,centre) { =h Bytes(n) | =h Variable }
 . { 6 | Beam length }
 . { 7 | Colour attribute }
 . TABLE#
-@ $5D08 label=Laser_Param_1
+@ $5D08 label=Laser_Parameter_1
 B $5D08,$08 Laser Beam #1.
-@ $5D10 label=Laser_Param_2
+@ $5D10 label=Laser_Parameter_2
 B $5D10,$08 Laser Beam #2.
-@ $5D18 label=Laser_Param_3
+@ $5D18 label=Laser_Parameter_3
 B $5D18,$08 Laser Beam #3.
-@ $5D20 label=Laser_Param_4
+@ $5D20 label=Laser_Parameter_4
 B $5D20,$08 Laser Beam #4.
 
 g $5D28 Explosion Sound Parameters
@@ -306,7 +310,7 @@ g $5DD2 ???
 g $5DD3 ???
 
 g $5DD4 Last Frame
-D $5DD4 #HTML(Holds a copy of the last <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+D $5DD4 Holds a copy of the last #SKOOLKID$5C78(FRAMES) counter.
 @ $5DD4 label=LastFrame
 B $5DD4,$01
 
@@ -317,7 +321,7 @@ B $5DD5,$01
 
 g $5DD6 Menu Item Attribute
 D $5DD6 Current menu item colour attribute.
-@ $5DD6 label=Current_MenuAttr
+@ $5DD6 label=Current_MenuAttribute
 B $5DD6,$01
 
 g $5DD7 "Get Ready" Delay Counter
@@ -392,7 +396,7 @@ E $608A View the equivalent code in;
 . LIST#
 @ $608A label=CreateWindow
 N $608A Blank the screen and write the banner.
-  $608A,$03 Set the border to black.
+  $608A,$03 Set the border to #INK$00.
   $608D,$03 Call #R$71B8.
   $6090,$03 Call #R$71C6.
   $6093,$03 Call #R$7192.
@@ -418,7 +422,7 @@ M $60AC,$04 If #R$5DF0 % $04 (every 4th level) ... then continue and reset the r
   $60BD,$03 Call #R$608A.
   $60C0,$03 Call #R$766D.
   $60C3,$03 Call #R$70A4.
-  $60C6,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $60C6,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $60C9,$03 Write #REGa to #R$5DD4.
   $60CC,$01 Return.
 
@@ -463,7 +467,7 @@ N $617D This looks complicated but it's just grabbing the data from #REGde, grab
 
 t $6187 Game Over P1 Message
 @ $6187 label=Message_GameOverP1
-  $6187,$13,h$01,$11:$01 "GAME OVER PLAYER 1" (#N(#PEEK(#PC)) is the attribute).
+  $6187,$13,h$01,$11:$01 "GAME OVER PLAYER 1" (#COLOUR(#PEEK(#PC)) is the attribute).
 
 c $619A Player Initialisation
 @ $619A label=PlayerInitialisation
@@ -505,7 +509,7 @@ E $61E5 View the equivalent code in;
 . { #TRANZAM$5F00 }
 . LIST#
 @ $61E5 label=SecurityCheck
-  $61E5,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+  $61E5,$03 #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
   $61E8,$03 Return if #REGa is not #N$83.
 
 c $61EB Game Initialisation
@@ -560,7 +564,7 @@ N $6227 Handle starting a new game.
   $6227,$02 Has key "5" been pressed? ("5 START GAME").
   $6229,$03 If so, jump to #R$6333.
 N $622C Handle flashing each selection.
-  $6230,$03 #REGhl=#R$628D(GameSelection_Attributes)+#N$01 (i.e. ignoring "Game Selection" as it doesn't flash).
+  $6230,$03 #REGhl=#R$628E (the first selectable line, skipping the title).
 
 c $6260 Game Selection Menu
 E $6260 View the equivalent code in;
@@ -599,6 +603,12 @@ N $626A There are six lines of text.
   $628C,$01 Return.
 
 b $628D Game Select Attribute Table
+@ $628D label=GameSelection_Attributes
+@ $628E label=GameSelection_Attributes_Options
+D $628D One attribute byte per menu line. The routines that flash the
+. selected line set or clear FLASH in the byte for the line being
+. updated. The first byte belongs to the title, so the flashing code
+. starts at #R$628E.
 E $628D View the equivalent code in;
 . #LIST
 . { #ATICATAC$7CEA }
@@ -607,7 +617,6 @@ E $628D View the equivalent code in;
 . { #PSSST$627C }
 . { #TRANZAM$5FA7 }
 . LIST#
-@ $628D label=GameSelection_Attributes
   $628D,$06,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
 . { #N$01 | Game Selection }
@@ -702,14 +711,14 @@ E $6333 View the equivalent code in;
   $6349,$04 #REGix=#R$5D30
   $634D,$01 Clear #REGa (sets to $00)
   $634E,$03 Writes #REGa to #R$5DCB
-  $6351,$07 #HTML(Compare <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> and #R$5DD4.)
+  $6351,$07 Compare #SKOOLKID$5C78(FRAMES) and #R$5DD4.
   $635C,$04 Stash #R$69A8 on the stack.
   $6360,$03 #REGhl=#R$6374.
   $6366,$01 #REGa=#REGa * #N$02.
   $6367,$02,b$01 Keep only bits 1-6.
   $6369,$03 Create an offset in #REGbc.
   $636C,$05 #REGhl=the address held at #R$6374 + offset.
-  $6371,$03 #HTML(Jump to <a href="https://skoolkid.github.io/rom/asm/5CB0.html">NMIADD</a> which will jump to the address in #REGhl.)
+  $6371,$03 Jump to #SKOOLKID$5CB0(NMIADD) which will jump to the address in #REGhl.
 
 w $6374 Jump Table
 @ $6374 label=JumpTable
@@ -843,7 +852,7 @@ E $6809 View the equivalent code in;
 . LIST#
 @ $6809 label=SoundsPickupItem
 
-c $680D Play square wave sound
+c $680D Play Square Wave
 @ $680D label=PlaySquareWave
 R $680D D Duration of wave
   $680D,$04 #REGa=#N$10 (speaker on = bit 4).
@@ -986,9 +995,9 @@ c $6DD3 Meteor Update
 c $6F91 Handler: Laser Beam
 @ $6F91 label=Handler_LaserBeam
 N $6F91 Only handle the laser beam on every 4th frame.
-  $6F91,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $6F91,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $6F94,$02,b$01 Keep only bits 0-1.
-  $6F96,$01 #HTML(Return if <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> is non-zero.)
+  $6F96,$01 Return if #SKOOLKID$5C78(FRAMES) is non-zero.
 N $6F97 Search for a "free" laser beam slot.
   $6F97,$03 #REGhl=#R$5D08.
   $6F9A,$03 #REGde=#N($0008, $04, $04) (each slot is #N$08 bytes).
@@ -1000,7 +1009,7 @@ N $6F97 Search for a "free" laser beam slot.
 N $6FA6 All laser beam slots are in use so just return...
   $6FA6,$01 Return.
 N $6FA7 Initialise a new laser beam.
-@ $6FA7 label=Init_LaserBeam
+@ $6FA7 label=Initialise_LaserBeam
   $6FA7,$02 Mark the laser beam slot as "in-use".
   $6FA9,$01 #REGhl=Laser beam Y position.
   $6FAA,$05 #REGb=#R$5D00.
@@ -1075,8 +1084,8 @@ N $70DB The UDG for the lives icon.
 @ $70DB label=UDG_Life
 B $70DB,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
 
-N $70E3 Controller for the currently active player.
-@ $70E3 label=ControllerActiveLives
+N $70E3 Return the 1UP player's lives left.
+@ $70E3 label=FetchLives_1UP
   $70E3,$06 If #R$5DD1 is not zero then jump to #R$70ED.
 N $70E9 Return currently active players lives left.
 @ $70E9 label=ActivePlayerLives
@@ -1086,8 +1095,8 @@ N $70ED Return inactive players lives left.
 @ $70ED label=InactivePlayerLives
   $70ED,$03 #REGa=#R$5DF9.
   $70F0,$01 Return.
-N $70F1 Controller for the inactive player.
-@ $70F1 label=ControllerInactiveLives
+N $70F1 Return the 2UP player's lives left.
+@ $70F1 label=FetchLives_2UP
   $70F1,$06 If #R$5DD1 is zero then jump to #R$70ED.
   $70F7,$02 Jump to #R$70E9.
 
@@ -1167,12 +1176,12 @@ R $714C HL Screen address
   $714C,$03 Stash #REGbc, #REGde and #REGhl on the stack.
   $714F,$03 Create an offset in #REGhl.
   $7152,$03 #REGhl=#REGhl * #N08.
-  $7155,$04 #HTML(#REGde=<a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $7155,$04 #REGde=#SKOOLKID$5C36(CHARS).
   $7159,$02 #REGde=#REGhl + #N$3C00. For examples of usage;
 . #TABLE(default,centre,centre,centre,centre,centre)
 . { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
 . #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * $08) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
+. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * $08) | #SKOOLKID($3D00,{result})(#N({result})) }
 . )
 . TABLE#
 N $715B Print the character to the screen.
@@ -1252,11 +1261,11 @@ N $71A4 Prints "2UP".
   $71AA,$03 Jump to #R$711C.
 N $71AD Banner text data.
 @ $71AD label=1UP_Text
-T $71AD,$04,h$01,$02:$01 "1UP" (#N(#PEEK(#PC)) is the attribute).
+T $71AD,$04,h$01,$02:$01 "1UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $71B1 label=2UP_Text
-T $71B1,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
+T $71B1,$04,h$01,$02:$01 "2UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $71B5 label=HI_Text
-T $71B5,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
+T $71B5,$03,h$01,$01:$01 "HI" (#COLOUR(#PEEK(#PC)) is the attribute).
 
 c $71B8 Reset Screen Buffer
 E $71B8 View the equivalent code in;
@@ -1273,7 +1282,7 @@ E $71B8 Continue on to #R$71BF to blank the screen buffer.
   $71BB,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
   $71BD,$02 #REGc=#N$00 (value to write).
 
-c $71BF Reset Routine
+c $71BF Fill Memory
 E $71BF View the equivalent code in;
 . #LIST
 . { #ATICATAC$80BB }
@@ -1568,8 +1577,8 @@ c $766D
 b $76E2 Platform Graphics
 @ $76E2 label=UDG_Platform
 D $76E2 Middle section repeats for both floor and platforms
-N $76E2 #UDGARRAY6,attr=$04,scale=$04;(#PC);(#PC+$08)x$04;(#PC + $10)(platform)
-N $76E2 #UDGARRAY6,attr=$06,scale=$04;(#PC);(#PC+$08)x$02;(#PC + $10)(floor)
+N $76E2 #UDGARRAY6,attr=$04,scale=$04((#PC);(#PC+$08)x$04;(#PC + $10))(platform)
+N $76E2 #UDGARRAY6,attr=$06,scale=$04((#PC);(#PC+$08)x$02;(#PC + $10))(floor)
 N $76E2 Left-hand Platform UDG
 B $76E2 #UDG#(#PC),attr=$04
 N $76EA Middle Platform UDG
@@ -1697,7 +1706,7 @@ N $7B53 Walking Frame Right 4
   $7B56 #JETMAN$0B(wlk-r-4)
 
 b $7B9E Round 1 Alien Graphics
-E $7B9E #UDGARRAY*round-1-1,50;round-1-2(round-1-frames)
+E $7B9E #FRAMES(round-1-1,50;round-1-2)(round-1-frames)
 N $7B9E Frame 1
   $7B9E,$01 Height = #N(#PEEK(#PC)) pixels.
   $7B9F,$16,b$02 #ALIEN$00(round-1-1*)
@@ -1706,7 +1715,7 @@ N $7BB5 Frame 2
   $7BB6,$16,b$02 #ALIEN$01(round-1-2*)
 
 b $7BCC Explosion Frames
-E $7BCC #UDGARRAY*exp-01,50;exp-02;exp-03(explosion)
+E $7BCC #FRAMES(exp-01,50;exp-02;exp-03)(explosion)
 N $7BCC Small.
   $7BCC,$01 Terminator.
   $7BCD,$01 Width = #N(#PEEK(#PC)) bytes.
@@ -1842,7 +1851,7 @@ b $7E80 Sprite: Gemstone
   $7E83,$18,b$02 #COLLECTABLE$14(gemstone)
 
 b $7E9B Round 2 Alien Graphics
-E $7E9B #UDGARRAY*round-2-1,50;round-2-2(round-2-frames)
+E $7E9B #FRAMES(round-2-1,50;round-2-2)(round-2-frames)
 N $7E9B Frame 1
   $7E9B,$01 Height = #N(#PEEK(#PC)) pixels.
   $7E9C,$1C,b$02 #ALIEN$02(round-2-1*)
@@ -1859,7 +1868,7 @@ b $7EE4 Round 5 Alien Graphics
   $7EE5,$10,b$02 #ALIEN$08(round-5-1)
 
 b $7EF5 Round 3 Alien Graphics
-E $7EF5 #UDGARRAY*round-3-1,50;round-3-2(round-3-frames)
+E $7EF5 #FRAMES(round-3-1,50;round-3-2)(round-3-frames)
 N $7EF5 Frame 1
   $7EF5,$01 Height = #N(#PEEK(#PC)) pixels.
   $7EF6,$20,b$02 #ALIEN$04(round-3-1*)
@@ -1883,25 +1892,25 @@ b $7F6F Round 8 Alien Graphics
 b $7F8C Flame Graphics
 E $7F8C #UDGTABLE(ships,centre,centre,centre,centre)
 . {
-.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7CCE+n)-($7CCE+n+$11)-$01-$10))(ship-u1-flame)  |
-.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7D37+n)-($7D37+n+$11)-$01-$10))(ship-u2-flame)  |
-.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7C65+n)-($7C65+n+$11)-$01-$10))(ship-u3-flame)  |
-.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2#FOR($03,$49,$23)(n,;($7DA0+n)-($7DA0+n+$11)-$01-$10))(ship-u4-flame)
+.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7CCE+n)-($7CCE+n+$11)-$01-$10,;)))(ship-u1-flame)  |
+.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7D37+n)-($7D37+n+$11)-$01-$10,;)))(ship-u2-flame)  |
+.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7C65+n)-($7C65+n+$11)-$01-$10,;)))(ship-u3-flame)  |
+.   #UDGARRAY#($02,attr=$07,scale=$04,step=$02,flip=2(#FOR($03,$49,$23)(n,($7DA0+n)-($7DA0+n+$11)-$01-$10,;)))(ship-u4-flame)
 . }
-. { #UDGARRAY*flame-1,50;flame-2(frame-frames)  | #UDGARRAY*flame-1,50;flame-2(frame-frames)  | #UDGARRAY*flame-1,50;flame-2(frame-frames)  | #UDGARRAY*flame-1,50;flame-2(frame-frames) }
+. { #FRAMES(flame-1,50;flame-2)(frame-frames)  | #FRAMES(flame-1,50;flame-2)(frame-frames)  | #FRAMES(flame-1,50;flame-2)(frame-frames)  | #FRAMES(flame-1,50;flame-2)(frame-frames) }
 . UDGTABLE#
 N $7F8C Flame Frame 1
   $7F8C,$01 Terminator.
   $7F8D,$01 Width = #N(#PEEK(#PC)) bytes.
   $7F8E,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7F8F,$1E,b$02 #UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02;(#PC)-(#PC+$11)-$01-$10{0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-1*)
+  $7F8F,$1E,b$02 #UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02((#PC)-(#PC+$11)-$01-$10){0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-1*)
 
 S $7FAD,$02
 N $7FAF Flame Frame 2
   $7FAF,$01 Terminator.
   $7FB0,$01 Width = #N(#PEEK(#PC)) bytes.
   $7FB1,$01 Height = #N(#PEEK(#PC)) pixels.
-  $7FB2,$1E,b$02 #UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02;(#PC)-(#PC+$11)-$01-$10{0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-2*)
+  $7FB2,$1E,b$02 #UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02((#PC)-(#PC+$11)-$01-$10){0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-2*)
 
 t $7FD0 Copyright Messaging
 @ $7FD0 label=Message_Copyright2

@@ -1,4 +1,8 @@
+; Copyright Ashby Computers & Graphics Ltd 1984, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
+> $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 b $4000 Loading screen
 D $4000 #UDGTABLE { =h Sabre Wulf Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
@@ -994,7 +998,7 @@ g $96A4 Some Width
 g $96A5
 
 g $96A8 Current Menu Item Colour attribute
-@ $96A8 label=Current_MenuAttr
+@ $96A8 label=Current_MenuAttribute
   $96A8,$01
 
 b $96A9
@@ -1102,7 +1106,7 @@ E $995A View the equivalent code in;
 . { #TRANZAM$5F00 }
 . LIST#
 @ $995A label=SecurityCheck
-  $995A,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+  $995A,$03 #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
   $995D,$03 Return if #REGa is not #N$7D.
 
 c $9960 Game Initialisation
@@ -1116,21 +1120,21 @@ E $9960 View the equivalent code in;
 . LIST#
 @ $9960 label=GameInitialisation
   $9960,$03 Call #R$BB9F.
-  $9963,$03 Set the border to black.
+  $9963,$03 Set the border to #INK$00.
   $9966,$03 Call #R$BB8F.
   $9969,$03 Call #R$BB81.
   $996C,$03 Call #R$B902.
-N $996F Set the attributes for the top banner (the whole line is INK:#N$47).
+N $996F Set the attributes for the top banner (the whole line is #COLOUR$47).
   $996F,$03 #REGhl=#N$5800 (attribute buffer).
-  $9972,$03 #REGbc=counter:#N$20, INK:#N$47.
+  $9972,$03 #REGbc=counter:#N$20, #COLOUR$47.
 @ $9975 label=CreateWindow_Loop_Banner
   $9975,$01 Write #N$47 to the attribute buffer.
   $9976,$01 Move onto the next column.
   $9977,$02 Decrease counter by one and loop back to #R$9975 until counter is zero.
   $9979,$03 Call #R$B563.
-N $997C Set the attributes for the score line (the whole line is INK:#N$46).
+N $997C Set the attributes for the score line (the whole line is #COLOUR$46).
   $997C,$03 #REGhl=#N$5820 (attribute buffer).
-  $997F,$03 #REGbc=counter:#N$20, INK:#N$46.
+  $997F,$03 #REGbc=counter:#N$20, #COLOUR$46.
 @ $9982 label=CreateWindow_Loop_Score
   $9982,$01 Write #N$46 to the attribute buffer.
   $9983,$01 Move onto the next column.
@@ -1153,11 +1157,11 @@ N $9992 Writes #N$00 to every address from #R$9698 to #R$995A.
   $99AA,$03 #REGsp=#R$6000.
   $99AD,$01 Enable interrupts.
   $99AE,$04 #REGix=#R$970E.
-  $99B2,$04 #HTML(#REGc=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $99B2,$04 #REGc=#SKOOLKID$5C78(FRAMES).
   $99B6,$03 #REGa=#R$9696.
 @ $99BC label=FrameUpdate
   $99BC,$01 Disable interrupts.
-  $99BD,$06 #HTML(Store <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> at #R$9696.)
+  $99BD,$06 Store #SKOOLKID$5C78(FRAMES) at #R$9696.
   $99C3,$05 Set #R$9697 to #N$01 (frame has updated).
 
   $99CC,$04 #REGix=#R$9702.
@@ -1244,7 +1248,7 @@ c $9AF9
 c $9B0D
   $9B0D,$03 #REGa=#R$9695.
   $9B10,$02,b$01 Keep bits 0-6.
-  $9B18,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $9B18,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $9B1B,$02,b$01 Keep bits 0-6.
   $9B23,$03 #REGa=#R$9703.
   $9B29,$03 #REGbc=#N$1717.
@@ -1651,7 +1655,7 @@ B $A29D
 
 c $A2BD
   $A2BD,$03 #REGhl=#R$DDEC.
-  $A2C0,$04 #HTML(#REGe=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $A2C0,$04 #REGe=#SKOOLKID$5C78(FRAMES).
   $A2C4,$03 #REGa=#R$9693.
   $A2C7,$02,b$01 Keep only bits 0-4.
   $A2C9,$01 Store the result in #REGd.
@@ -1813,7 +1817,7 @@ c $A5CD
   $A5D5,$03 #REGa=#R$9695.
   $A5D8,$02,b$01 Keep only bits 0-2.
   $A5DD,$03 #REGbc=#R$A601.
-  $A5ED,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $A5ED,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $A5F0,$02,b$01 Keep only bits 0-2.
   $A5FA,$01 Return.
 
@@ -1896,7 +1900,7 @@ c $A70D
   $A718,$02 Jump to #R$A6A6.
 
   $A71A,$03 #REGa=#REGix+#N$02.
-  $A724,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $A724,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $A727,$02,b$01 Keep only bits 0-5.
   $A72E,$03 Jump to #R$A69D.
   $A731,$03 #REGhl=#N($0010,$04,$04).
@@ -2121,12 +2125,12 @@ b $AAC1 Game Over Messaging
 D $AAC1 This message is altered directly to change from "1" to "2" for the correct player.
 .       See #R$AA6A and #R$AA98.
 @ $AAC1 label=GameOver_Text
-  $AAC1,$01 Attribute: #N(#PEEK(#PC)).
+  $AAC1,$01 Attribute: #COLOUR(#PEEK(#PC)).
 T $AAC2,$12,$11:$01 #HTML("GAME OVER PLAYER <em>X</em>".)
 
 b $AAD4 Adventure Completed Messaging
 @ $AAD4 label=AdventureCompleted_Text
-  $AAD4,$01 Attribute: #N(#PEEK(#PC)).
+  $AAD4,$01 Attribute: #COLOUR(#PEEK(#PC)).
 T $AAD5,$18,$17:$01 "#STR(#PC)".
 
 c $AAED
@@ -2152,7 +2156,7 @@ c $AC28
 . { Shift | Z | X | C | V }
 . TABLE#
 
-  $AC40,$04 #HTML(#REGhl=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $AC40,$04 #REGhl=#SKOOLKID$5C78(FRAMES).
 
   $AC4D,$02,b$01 Keep only bit 1.
   $AC4F,$02,b$01
@@ -2247,7 +2251,8 @@ N $ADE5
   $ADE5,$03 Call #R$B0A3.
 N $ADE8 Check if the player is under the influence of an orchid.
   $ADE8,$03 #REGa=the colour of the player.
-  $ADEB,$04 If the player is not using attribute #N$47 (white) then jump to #R$AE34.
+  $ADEB,$04 If the player is not using attribute #COLOUR$47 then jump to
+. #R$AE34.
 N $ADEF Controllers for player controls.
 N $ADEF Handle "fire".
   $ADEF,$04 Jump to #R$AE34 if "fire" was pressed.
@@ -2295,7 +2300,7 @@ c $AE4B
   $AE54,$03 #REGa=#REGix+#N$00 (sprite reference).
   $AE57,$02,b$01 Set bit 3.
   $AE59,$03 Write the result back to #REGix+#N$00 (sprite reference).
-  $AE5C,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $AE5C,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $AE5F,$02,b$01 Keep only bits 0-1.
   $AE62,$03 #REGc=#REGix+#N$00 (sprite reference).
   $AE65,$03 #REGa=#R$9695.
@@ -2307,7 +2312,7 @@ c $AE4B
 
 c $AE7A Handler: Orchid Timer
 @ $AE7A label=HandlerOrchidTimer
-  $AE7A,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $AE7A,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $AE7D,$02,b$01 Keep only bit 0.
   $AE7F,$01 Return every other FRAME.
   $AE80,$03 #REGa=#R$96B0.
@@ -2315,7 +2320,7 @@ c $AE7A Handler: Orchid Timer
   $AE85,$01 Decrease #REGa by one.
   $AE86,$03 Write #REGa back to #R$96B0.
   $AE89,$01 Return if #REGa is not zero.
-  $AE8A,$04 Set #REGix+#N$05 (entity colour) to #N$47 (white).
+  $AE8A,$04 Set #REGix+#N$05 (entity colour) to #COLOUR$47.
   $AE8E,$01 Return.
 
 c $AE8F Handler: Yellow Orchid
@@ -2440,7 +2445,7 @@ N $AF55 Is Sabreman white?
 
   $AF8F,$02,b$01 Keep only bits 0-2.
 
-  $AF98,$04 Set #REGix+#N$05 (entity colour) to #N$47 (white).
+  $AF98,$04 Set #REGix+#N$05 (entity colour) to #COLOUR$47.
   $AF9C,$03 Call #R$BB24.
 
   $AFA3,$01 Return.
@@ -2470,7 +2475,7 @@ c $AFE8
   $AFF1,$03 #REGa=#REGix+#N$06.
   $AFF4,$03 Call #R$B031.
 
-  $AFFF,$03 #REGa=#N$96AD.
+  $AFFF,$03 #REGa=#R$96AD.
 
   $B006,$03 #REGa=#REGix+#N$07.
   $B009,$03 Call #R$B031.
@@ -2502,7 +2507,7 @@ c $B053
   $B077,$01 Return.
 
 c $B078
-  $B078,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $B078,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $B07B,$02,b$01 Keep only bit 0.
   $B08E,$02,b$01 Keep only bits 0-1.
   $B092,$02,b$01 Keep only bits 2-7.
@@ -3242,11 +3247,11 @@ N $B575 Prints "2UP".
   $B57B,$03 Jump to #R$B53D.
 N $B57E Banner text data.
 @ $B57E label=1UP_Text
-T $B57E,$04,h$01,$02:$01 "1UP" (#N(#PEEK(#PC)) is the attribute).
+T $B57E,$04,h$01,$02:$01 "1UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $B582 label=2UP_Text
-T $B582,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
+T $B582,$04,h$01,$02:$01 "2UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $B586 label=HI_Text
-T $B586,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
+T $B586,$03,h$01,$01:$01 "HI" (#COLOUR(#PEEK(#PC)) is the attribute).
 
 c $B589 Print Character
 E $B589 View the equivalent code in;
@@ -3263,12 +3268,12 @@ R $B589 HL Screen address
   $B589,$03 Stash #REGbc, #REGde and #REGhl on the stack.
   $B58C,$03 Create an offset in #REGhl.
   $B58F,$03 Calculate offset for ASCII character (#REGhl=#REGhl * 8).
-  $B592,$04 #HTML(#REGde=<a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $B592,$04 #REGde=#SKOOLKID$5C36(CHARS).
   $B596,$02 #REGde=#REGhl + #N$3C00. For examples of usage;
 . #TABLE(default,centre,centre,centre,centre,centre)
 . { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
 . #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
+. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #SKOOLKID($3D00,{result})(#N({result})) }
 . )
 . TABLE#
 N $B598 Print the character to the screen.
@@ -3593,8 +3598,8 @@ N $B7F4 2UP has no lives.
   $B7F6,$03 Call #R$B589.
   $B7F9,$02 #REGa=ASCII " " (SPACE).
   $B7FB,$03 Jump to #R$B589.
-N $B7FE Controller for the currently active player.
-@ $B7FE label=ControllerActiveLives
+N $B7FE Return the 1UP player's lives left.
+@ $B7FE label=FetchLives_1UP
   $B7FE,$06 If #R$969E is not zero then jump to #R$B808.
 N $B804 Return currently active players lives left.
 @ $B804 label=ActivePlayerLives
@@ -3604,8 +3609,8 @@ N $B808 Return inactive players lives left.
 @ $B808 label=InactivePlayerLives
   $B808,$03 #REGa=#R$96E0.
   $B80B,$01 Return.
-N $B80C Controller for the inactive player.
-@ $B80C label=ControllerInactiveLives
+N $B80C Return the 2UP player's lives left.
+@ $B80C label=FetchLives_2UP
   $B80C,$06 If #R$969E is zero then jump to #R$B808.
   $B812,$02 Jump to #R$B804.
 
@@ -3673,7 +3678,7 @@ E $B8AD View the equivalent code in;
   $B8CB,$01 Return.
 
 c $B8CC Screen Address One Pixel Below
-@ $B8CC label=ScreenPos1PixelBelow
+@ $B8CC label=ScreenPosition1PixelBelow
 R $B8CC HL Current position
 R $B8CC O:HL Address for new position
 N $B8CC Calculates the new address for writing a sprite pixel, in a downward direction, taking into consideration the screen memory layout.
@@ -3961,7 +3966,7 @@ E $BB81 Continue on to #R$BB88 to blank the screen buffer.
   $BB84,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
   $BB86,$02 #REGc=#N$00 (value to write).
 
-c $BB88 Reset Routine
+c $BB88 Fill Memory
 E $BB88 View the equivalent code in;
 . #LIST
 . { #ATICATAC$80BB }
@@ -4136,7 +4141,7 @@ R $BD7B DE Music data terminated by #N$FF
   $BD90,$01 #REGa=.
   $BD93,$02,b$01 Keep only bits 0-1.
   $BD96,$01 Stash #REGde on the stack.
-  $BDA1,$03 Set the border to black.
+  $BDA1,$03 Set the border to #INK$00.
 M $BDAB,$04 Flip speaker on (set bit 4).
   $BDAB,$02,b$01
   $BDAF,$02 Decrease counter by one and loop back to #R$BDAF until counter is zero.
@@ -4220,7 +4225,7 @@ R $BF6D C Number of times to repeat
   $BF71,$02 Keep looping back to #R$BF6D until the note counter is zero.
   $BF73,$01 Return.
 
-c $BF74 Play Square Wave Sound
+c $BF74 Play Square Wave
 @ $BF74 label=PlaySquareWave
 E $BF74 View the equivalent code in;
 . #LIST
@@ -4356,10 +4361,10 @@ N $C3F0 Frame 2.
 b $C40C Sprite: Sabreman
 E $C40C #UDGTABLE(default,centre)
 . { =h Down | =h Up | =h Left (fighting) | =h Right (fighting) }{
-.   #UDGARRAY*1C,25;1D;1E;1D(sabreman-down) |
-.   #UDGARRAY*18,25;19;1A;19(sabreman-up) |
-.   #UDGARRAY*20,25;21;22;23;24;23;26;21(sabreman-left-fighting) |
-.   #UDGARRAY*28,25;29;2A;2B;2C;2B;2D;29(sabreman-right-fighting)
+.   #FRAMES(1C,25;1D;1E;1D)(sabreman-down) |
+.   #FRAMES(18,25;19;1A;19)(sabreman-up) |
+.   #FRAMES(20,25;21;22;23;24;23;26;21)(sabreman-left-fighting) |
+.   #FRAMES(28,25;29;2A;2B;2C;2B;2D;29)(sabreman-right-fighting)
 . }
 . UDGTABLE#
 N $C40C Up Frame 1.
@@ -4485,8 +4490,8 @@ N $C8EB Right Fighting Frame 6.
 b $C92C Sprite: Rhino
 E $C92C #UDGTABLE(default,centre)
 . { =h Left | =h Right }{
-.   #UDGARRAY*31,25;30(rhino-left) |
-.   #UDGARRAY*33,25;32(rhino-right)
+.   #FRAMES(31,25;30)(rhino-left) |
+.   #FRAMES(33,25;32)(rhino-right)
 . }
 . UDGTABLE#
 N $C92C Left Frame 1.

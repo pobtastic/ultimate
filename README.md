@@ -16,6 +16,19 @@ A disassembly of the [Spectrum](https://en.wikipedia.org/wiki/ZX_Spectrum) games
 * [Sabre Wulf](https://en.wikipedia.org/wiki/Sabre_Wulf)
 * ~~[Underwurlde](https://en.wikipedia.org/wiki/Underwurlde)~~
 
+~~### 1985:~~
+* ~~[Alien 8](https://en.wikipedia.org/wiki/Alien_8)~~
+* ~~[Gunfright](https://en.wikipedia.org/wiki/Gunfright)~~
+* ~~[Nightshade](https://en.wikipedia.org/wiki/Nightshade_(1985_video_game))~~
+
+~~### 1986:~~
+* ~~[Cyberun](https://en.wikipedia.org/wiki/Cyberun)~~
+* ~~[Pentagram](https://en.wikipedia.org/wiki/Pentagram_(video_game))~~
+
+~~### 1987:~~
+* ~~[Bubbler](https://en.wikipedia.org/wiki/Bubbler_(video_game))~~
+* ~~[Martianoids](https://en.wikipedia.org/wiki/Martianoids)~~
+
 Created using [SkoolKit](https://skoolkit.ca).
 
 Browse the latest release:

@@ -1,5 +1,9 @@
+; Copyright Ashby Computers & Graphics Ltd 1983, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
 > $4000 @start=$5B80
+> $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 b $4000 Loading screen
 D $4000 #UDGTABLE { =h PSSST Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
@@ -9,7 +13,7 @@ B $5800,$0300,$20 Attributes
 i $5B00
 
 @ $5B00 replace=/#DIMENSIONS/Dimensions #EVAL(#PEEK(#PC + $01) * $08) pixels x #EVAL(#PEEK(#PC + $02), $0A, $02) pixels.
-@ $5B00 expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2;($addr)-($addr+$11)-$01-$10{0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
+@ $5B00 expand=#DEF(#SPRITE(addr,attr) #UDGARRAY2,attr=$attr,scale=4,step=2,mask=1,flip=2(($addr)-($addr+$11)-$01-$10){0,($10-#PEEK($addr-1))*4,$10*4,#PEEK($addr-1)*4})
 @ $5B00 expand=#DEF(#FONT(id) #EVAL($7B4A + $id * $08))
 
 c $5B80 Game entry point
@@ -122,7 +126,7 @@ D $5E1E Either #N$00 for 1UP or #N$FF for 2UP.
 @ $5E1E label=Current_Player
 
 g $5E1F Last Frame
-D $5E1F #HTML(Holds a copy of the last <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> counter.)
+D $5E1F Holds a copy of the last #SKOOLKID$5C78(FRAMES) counter.
 @ $5E1F label=LastFrame
 
 g $5E20 Frame Updated
@@ -131,7 +135,7 @@ D $5E20 Has the frame been updated? #N$00=No #N$01=Yes.
 
 g $5E21 Menu Item Attribute
 D $5E21 Current menu item colour attribute.
-@ $5E21 label=Current_MenuAttr
+@ $5E21 label=Current_MenuAttribute
 B $5E21,$01
 
 g $5E22 "Get Ready" Delay Counter
@@ -270,7 +274,7 @@ g $5EB4
 
 t $5EF5 Copyright Messaging
 @ $5EF5 label=Message_Copyright
-  $5EF5,$21,h$01,c$01,$1E:$01 Attribute: #N(#PEEK(#PC)) + "© 1983 A.C.G. ALL RIGHTS RESERVED".
+  $5EF5,$21,h$01,c$01,$1E:$01 Attribute: #COLOUR(#PEEK(#PC)) + "© 1983 A.C.G. ALL RIGHTS RESERVED".
 
 b $5F16
 
@@ -297,7 +301,7 @@ c $5F40 Reset Flower/ Leaf states
 c $5F53 Create Game Window
 @ $5F53 label=CreateWindow
 N $5F53 Blank the screen and write the banner.
-  $5F53,$03 Set the border to black.
+  $5F53,$03 Set the border to #INK$00.
   $5F56,$03 Call #R$7447.
   $5F59,$03 Call #R$7439.
   $5F5C,$03 Call #R$7413.
@@ -312,9 +316,9 @@ N $5F67 Set the attributes for the 2UP lives graphic.
   $5F6A,$01 Write #REGa to #REGhl.
   $5F6B,$01 Increment #REGhl by one.
   $5F6C,$01 Write #REGa to #REGhl.
-N $5F6D Set the attributes for the score line (the whole line is INK:#N$46).
+N $5F6D Set the attributes for the score line (the whole line is #COLOUR$46).
   $5F6D,$03 #REGhl=#N$5820 (attribute buffer).
-  $5F70,$03 #REGbc=counter:#N$20, INK:#N$46.
+  $5F70,$03 #REGbc=counter:#N$20, #COLOUR$46.
 @ $5F73 label=CreateWindow_Loop
   $5F73,$01 Write #N$46 to the attribute buffer.
   $5F74,$01 Move onto the next column.
@@ -335,7 +339,7 @@ N $5F8D Initialise the level.
   $5F90,$03 Call #R$602E.
   $5F93,$03 Call #R$5FB0.
   $5F96,$03 Call #R$7325.
-  $5F99,$06 #HTML(Write <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> to #R$5E1F.)
+  $5F99,$06 Write #SKOOLKID$5C78(FRAMES) to #R$5E1F.
   $5F9F,$01 Return.
 
 c $5FA05E94
@@ -371,8 +375,8 @@ c $601F
 
 c $602E Draw PlayArea
 @ $602E label=DrawPlayArea
-  $602E,$04 #HTML(Stash <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a> on the stack.)
-  $6032,$06 #HTML(Write #R$76D6 to <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $602E,$04 Stash #SKOOLKID$5C36(CHARS) on the stack.
+  $6032,$06 Write #R$76D6 to #SKOOLKID$5C36(CHARS).
 N $6038 Create the left-hand wall.
   $6038,$03 #REGde=#R$6087.
   $603B,$03 #REGhl=#N$1800 (screen position).
@@ -398,7 +402,7 @@ N $605A Create the floor.
   $6064,$03 Call #R$6077.
   $6067
   $606F,$03 Decrease #REGc by one and loop back to #R$6062 until it is zero.
-  $6072,$04 #HTML(Restore <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a> from the stack, and write it back to #N$5C36.)
+  $6072,$04 Restore #SKOOLKID$5C36(CHARS) from the stack, and write it back to #N$5C36.
   $6076,$01 Return.
 N $6077 Enables calling #R$73ED in a loop to reprint a UDG a given number of times using #REGc.
 @ $6077 label=PrintString_Wrapper
@@ -418,7 +422,7 @@ B $608D,$03 Floor attribute + UDG ID #N$01 + UDG ID #N$02+#N$80 (EOL).
 
 c $6090 Player Turn Ends
 @ $6090 label=Message_Eaten
-T $6090,$1A,h$01,$18:$01 Attribute: #N(#PEEK(#PC)) + "YOUR PLANT HAS BEEN EATEN".
+T $6090,$1A,h$01,$18:$01 Attribute: #COLOUR(#PEEK(#PC)) + "YOUR PLANT HAS BEEN EATEN".
 @ $60AA label=PlayerTurnEnds
   $60AA,$04 Reset #R$5E3C.
   $60AE,$08
@@ -547,7 +551,7 @@ c $61C6 Security Check
 @ $61C6 label=SecurityCheck
 E $61C6 Continue on to #R$61CD.
   $61C6,$01 Disable interrupts.
-  $61C7,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+  $61C7,$03 #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
   $61CA,$03 Return if #REGa is not #N$65.
 
 c $61CD Game Initialisation
@@ -563,9 +567,9 @@ N $61CD Blank the 1UP, 2UP and HI scores.
 @ $61CD label=GameInitialisation
   $61CD,$0A Write #N$00 to #N$0B bytes from #N$5E00 to #N$5E0B.
 @ $61D3 label=GameInitialisation_Loop
-N $61D7 #HTML(This calculates a "checksum" of the <a href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a> routine.
-.       The expected value at the end is #N$00, and if #R$5E04 does not contain #N$00 then the game is muted.)
-  $61D7,$03 #HTML(#REGhl=<a href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a>.)
+N $61D7 This calculates a "checksum" of the #SKOOLKID$03B5(BEEPER) routine.
+. The expected value at the end is #N$00, and if #R$5E04 does not contain #N$00 then the game is muted.
+  $61D7,$03 #REGhl=#SKOOLKID$03B5(BEEPER).
   $61DA,$02 #REGb=#N$43 (counter).
   $61DC,$01 #REGa=#N$00.
 @ $61DD label=Mute_Loop
@@ -574,7 +578,7 @@ N $61D7 #HTML(This calculates a "checksum" of the <a href="https://skoolkid.gith
   $61DF,$02 Decrease counter by one and loop back to #R$61DD until counter is zero.
   $61E1,$02 #REGa=#REGa + #N$68.
   $61E3,$03 Store this number at #R$5E04.
-  $61E6,$04 #HTML(Write #N$00 to <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C48.html">BORDCR</a>.)
+  $61E6,$04 Write #N$00 to #SKOOLKID$5C48(BORDCR).
 
 @ $61EA label=Game_Restart
   $61EA,$01 Disable interrupts.
@@ -616,7 +620,7 @@ N $6217 Handle starting a new game.
   $6219,$03 If so, jump to #R$632D.
 N $621C Handle flashing each selection.
   $621C,$04 Write #REGd to #R$5E03.
-  $6220,$03 #REGhl=#R$627D(GameSelection_Attributes).
+  $6220,$03 #REGhl=#R$627D (the first selectable line, skipping the title).
   $6223,$04 #REGc=#R$5E03.
 @ $6227 label=MenuAttributeCheckPlayer
   $6227,$04 If a 2UP game is selected, jump to #R$6238.
@@ -628,11 +632,11 @@ N $622E Check control method.
 @ $6235 label=GameSelect_End
   $6235,$03 Jump back to #R$61F1.
 N $6238 Handle flashing 2UP.
-@ $6238 label=MenuAttrHandle2UP
+@ $6238 label=MenuAttributeHandle2UP
   $6238,$03 Call #R$6249.
   $623B,$02 Jump to #R$622E.
 N $623D Handle flashing joystick.
-@ $623D label=MenuAttrHandleJoystick
+@ $623D label=MenuAttributeHandleJoystick
   $623D,$03 Call #R$6249.
   $6240,$02 Jump to #R$6235.
   $6240,$02 Jump to #R$6235.
@@ -688,6 +692,12 @@ N $6273 Print the copyright footer.
   $6279,$03 Jump to #R$73ED.
 
 b $627C Game Select Attribute Table
+@ $627C label=GameSelection_Attributes
+@ $627D label=GameSelection_Attributes_Options
+D $627C One attribute byte per menu line. The routines that flash the
+. selected line set or clear FLASH in the byte for the line being
+. updated. The first byte belongs to the title, so the flashing code
+. starts at #R$627D.
 E $627C View the equivalent code in;
 . #LIST
 . { #ATICATAC$7CEA }
@@ -696,7 +706,6 @@ E $627C View the equivalent code in;
 . { #LUNARJETMAN$810E }
 . { #TRANZAM$5FA7 }
 . LIST#
-@ $627C label=GameSelection_Attributes
   $627C,$06,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
 . { #N$01 | Game Selection }
@@ -810,7 +819,7 @@ N $632D Start New Game.
   $6353,$04 #REGix=#R$5E8C.
   $6357,$04 Write #N$00 to #R$5E16 to reset the enemy counter.
 @ $635B label=MainLoop
-  $635B,$07 #HTML(Compare <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> and #R$5E1F.)
+  $635B,$07 Compare #SKOOLKID$5C78(FRAMES) and #R$5E1F.
 N $6362 If interrupts are enabled, then #R$70ED will be called and DI executed.
   $6362,$04 If they are not equal call #R$70ED.
   $6366,$03 #REGhl=#R$7130(generate new actor routine).
@@ -868,7 +877,7 @@ R $63E1 DE Music Data
   $63F1,$01 Stash #REGde on the stack.
   $63F2,$01
   $6402,$02 Stash #REGix on the stack.
-  $6404,$03 #HTML(Call <a href="https://skoolkid.github.io/rom/asm/03B5.html">BEEPER</a.)
+  $6404,$03 Call #SKOOLKID$03B5(BEEPER).
   $6407,$03 Restore #REGix and #REGde from the stack.
   $640A,$01 Increment #REGde by one.
   $640B,$02 Loop back round to the #R$63E1(beginning) (we only end when the terminator is reached).
@@ -893,7 +902,7 @@ c $6473 Sound Effects
 
   $64A3,$03 Call #R$64AA.
 
-c $64AA Play square wave sound
+c $64AA Play Square Wave
 @ $64AA label=PlaySquareWave
 R $64AA D Duration of wave
   $64AA,$04 #REGa=#N$10 (speaker on = bit 4).
@@ -1143,7 +1152,7 @@ E $70DF View the equivalent code in;
 c $70ED Frame Update
 @ $70ED label=FrameUpdate
   $70ED,$01 Disable interrupts.
-  $70EE,$06 #HTML(Update #R$5E1F with <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $70EE,$06 Update #R$5E1F with #SKOOLKID$5C78(FRAMES).
   $70F4,$05 Set #R$5E20 as "being updated" (i.e. #N$01).
   $70F9,$02 Stash #REGix on the stack.
   $70FB,$06 Write #R$5E8C to #R$713C(#N$713D).
@@ -1301,8 +1310,8 @@ N $735C The UDG for the lives icon.
 @ $735C label=UDG_Life
 B $735C,$08,b$01 #UDGTABLE(default,centre) { #UDG#(#PC),attr=$07 } UDGTABLE#
 
-N $7364 Controller for the currently active player.
-@ $7364 label=ControllerActiveLives
+N $7364 Return the 1UP player's lives left.
+@ $7364 label=FetchLives_1UP
   $7364,$06 If #R$5E1E is not zero then jump to #R$736E.
 N $736A Return currently active players Lives left.
 @ $736A label=ActivePlayerLives
@@ -1312,8 +1321,8 @@ N $736E Return inactive players Lives left.
 @ $736E label=InactivePlayerLives
   $736E,$03 #REGa=#R$5E3A.
   $7371,$01 Return.
-N $7372 Controller for the inactive player.
-@ $7372 label=ControllerInactiveLives
+N $7372 Return the 2UP player's lives left.
+@ $7372 label=FetchLives_2UP
   $7372,$06 If #R$5E1E is zero then jump to #R$736E.
   $7378,$02 Jump to #R$736A.
 
@@ -1407,12 +1416,12 @@ R $73CD HL Screen address
   $73CD,$03 Stash #REGbc, #REGde and #REGhl on the stack.
   $73D0,$03 Create an offset in #REGhl.
   $73D3,$03 #REGhl=#REGhl * 8.
-  $73D6,$04 #HTML(#REGde=<a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $73D6,$04 #REGde=#SKOOLKID$5C36(CHARS).
   $73DA,$02 #REGde=#REGhl + #N$3C00. For examples of usage;
 . #TABLE(default,centre,centre,centre,centre,centre)
 . { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
 . #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, 2, 3, 1, 1)()">#N({result})) }
+. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #SKOOLKID($3D00,{result})(#N({result})) }
 . )
 . TABLE#
 N $73DC Print the character to the screen.
@@ -1484,11 +1493,11 @@ N $7425 Prints "2UP".
   $742B,$03 Jump to #R$73ED.
 N $742E Banner text data.
 @ $742E label=1UP_Text
-T $742E,$04,h$01,$02:$01 "1UP" (#N(#PEEK(#PC)) is the attribute).
+T $742E,$04,h$01,$02:$01 "1UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $7432 label=2UP_Text
-T $7432,$04,h$01,$02:$01 "2UP" (#N(#PEEK(#PC)) is the attribute).
+T $7432,$04,h$01,$02:$01 "2UP" (#COLOUR(#PEEK(#PC)) is the attribute).
 @ $7436 label=HI_Text
-T $7436,$03,h$01,$01:$01 "HI" (#N(#PEEK(#PC)) is the attribute).
+T $7436,$03,h$01,$01:$01 "HI" (#COLOUR(#PEEK(#PC)) is the attribute).
 
 c $7439 Reset Screen Buffer
 E $7439 View the equivalent code in;
@@ -1505,7 +1514,7 @@ E $7439 Continue on to #R$7440 to blank the screen buffer.
   $743C,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
   $743E,$02 #REGc=#N$00 (value to write).
 
-c $7440 Reset Routine
+c $7440 Fill Memory
 E $7440 View the equivalent code in;
 . #LIST
 . { #ATICATAC$80BB }
@@ -1646,7 +1655,7 @@ c $7585 Calculate screen address one pixel above current position
 N $7585 Calculates the new address for writing a sprite pixel, in an upward direction, taking into consideration the screen memory layout.
 R $7585 HL Current position
 R $7585 O:HL Address for new position
-@ $7585 label=ScreenPos1PixelAbove
+@ $7585 label=ScreenPosition1PixelAbove
   $7585,$01 Decrement #REGh to move up one pixel on screen.
   $7586,$01 Store the result in #REGa.
   $7587,$02,b$01 Keep only bits 0-2.
@@ -1753,7 +1762,7 @@ N $769A #DIMENSIONS
   $769A,$01 Terminator.
   $769B,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $769C,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $769D,$39,$03 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(flower-01)
+  $769D,$39,$03 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(flower-01)
 
 b $76D6 UDG Graphics
 @ $76D6 label=UDG_Brick
@@ -1771,308 +1780,308 @@ N $76EE #DIMENSIONS
   $76EE,$01 Terminator.
   $76EF,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $76F0,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $76F1 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(can-01)
+  $76F1 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(can-01)
 
 N $7711 #DIMENSIONS
   $7711,$01 Terminator.
   $7712,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7713,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7714 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(can-02)
+  $7714 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(can-02)
 
 N $7734 #DIMENSIONS
   $7734,$01 Terminator.
   $7735,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7736,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7737 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(can-03)
+  $7737 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(can-03)
 
 N $7757 #DIMENSIONS
   $7757,$01 Terminator.
   $7758,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7759,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $775A #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(can-04)
+  $775A #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(can-04)
 
 b $778A Sprite: Robbie the robot
 N $778A #DIMENSIONS
   $778A,$01 Terminator.
   $778B,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $778C,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $778D #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-01*)
+  $778D #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-01*)
 
 N $77C6 #DIMENSIONS
   $77C6,$01 Terminator.
   $77C7,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $77C8,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $77C9 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-02*)
+  $77C9 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-02*)
 
 N $7802 #DIMENSIONS
   $7802,$01 Terminator.
   $7803,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7804,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7805 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-03*)
+  $7805 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-03*)
 
 N $783E #DIMENSIONS
   $783E,$01 Terminator.
   $783F,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7840,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7841 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-04*)
+  $7841 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(robbie-04*)
 
 b $787A Sprite: Leaves
 N $787A #DIMENSIONS
   $787A,$01 Terminator.
   $787B,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $787C,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $787D #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $03, $04 * {width} * $08, $04 * {height}}(leaf-01)
+  $787D #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $03, $04 * {width} * $08, $04 * {height}}(leaf-01)
 
 N $7882 #DIMENSIONS
   $7882,$01 Terminator.
   $7883,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7884,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7885 #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(leaf-02)
+  $7885 #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(leaf-02)
 
 N $788D #DIMENSIONS
   $788D,$01 Terminator.
   $788E,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $788F,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7890 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(leaf-03)
+  $7890 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(leaf-03)
 
 N $78A6 #DIMENSIONS
   $78A6,$01 Terminator.
   $78A7,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $78A8,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $78A9 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(leaf-04)
+  $78A9 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(leaf-04)
 
 N $78C9 #DIMENSIONS
   $78C9,$01 Terminator.
   $78CA,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $78CB,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $78CC #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $03, $04 * {width} * $08, $04 * {height}}(leaf-05)
+  $78CC #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $03, $04 * {width} * $08, $04 * {height}}(leaf-05)
 
 N $78D1 #DIMENSIONS
   $78D1,$01 Terminator.
   $78D2,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $78D3,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $78D4 #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(leaf-06)
+  $78D4 #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(leaf-06)
 
 N $78DC #DIMENSIONS
   $78DC,$01 Terminator.
   $78DD,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $78DE,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $78DF #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(leaf-07)
+  $78DF #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(leaf-07)
 
 N $78F5 #DIMENSIONS
   $78F5,$01 Terminator.
   $78F6,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $78F7,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $78F8 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(leaf-08)
+  $78F8 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(leaf-08)
 
 b $7918 Sprite: Smoke Bomb
 N $7918 #DIMENSIONS
   $7918,$01 Terminator.
   $7919,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $791A,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $791B #UDGARRAY1,attr=7,scale=4,step=1,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(smoke-01)
+  $791B #UDGARRAY1,attr=7,scale=4,step=1,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(smoke-01)
 
 N $7922 #DIMENSIONS
   $7922,$01 Terminator.
   $7923,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7924,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7925,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(smoke-02)
+  $7925,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(smoke-02)
 
 N $7933 #DIMENSIONS
   $7933,$01 Terminator.
   $7934,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7935,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7936 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(smoke-03)
+  $7936 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(smoke-03)
 
 N $7946 #DIMENSIONS
   $7946,$01 Terminator.
   $7947,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7948,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7949 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(smoke-04)
+  $7949 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(smoke-04)
 
 N $7959 #DIMENSIONS
   $7959,$01 Terminator.
   $795A,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $795B,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $795C #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $08, $04 * {width} * $08, $04 * {height}}(smoke-05)
+  $795C #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $08, $04 * {width} * $08, $04 * {height}}(smoke-05)
 
 N $7970 #DIMENSIONS
   $7970,$01 Terminator.
   $7971,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7972,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7973 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $08, $04 * {width} * $08, $04 * {height}}(smoke-06)
+  $7973 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $08, $04 * {width} * $08, $04 * {height}}(smoke-06)
 
 b $7991 Sprite: Streamer/ Leech Laser
 N $7991 #DIMENSIONS
   $7991,$01 Terminator.
   $7992,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7993,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7994,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(streamer-01)
+  $7994,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(streamer-01)
 
 N $79A2 #DIMENSIONS
   $79A2,$01 Terminator.
   $79A3,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $79A4,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $79A5,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(streamer-02)
+  $79A5,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(streamer-02)
 
 b $79B3 Sprite: Scuttling Leech
 N $79B3 #DIMENSIONS
   $79B3,$01 Terminator.
   $79B4,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $79B5,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $79B6 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-01)
+  $79B6 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-01)
 
 N $79E3 #DIMENSIONS
   $79E3,$01 Terminator.
   $79E4,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $79E5,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $79E6 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-02)
+  $79E6 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-02)
 
 N $7A13 #DIMENSIONS
   $7A13,$01 Terminator.
   $7A14,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7A15,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7A16 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-03)
+  $7A16 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-03)
 
 N $7A43 #DIMENSIONS
   $7A43,$01 Terminator.
   $7A44,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7A45,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7A46 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-04)
+  $7A46 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height}}(leech-04)
 
 b $7A73 Sprite: Interstellar Space Slug
 N $7A73 #DIMENSIONS
   $7A73,$01 Terminator.
   $7A74,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7A75,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7A76 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $04, $04 * {width} * $08, $04 * {height}}(slug-01)
+  $7A76 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $04, $04 * {width} * $08, $04 * {height}}(slug-01)
 
 N $7A9A #DIMENSIONS
   $7A9A,$01 Terminator.
   $7A9B,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7A9C,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7A9D #UDGARRAY4,attr=7,scale=4,step=4,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(slug-02)
+  $7A9D #UDGARRAY4,attr=7,scale=4,step=4,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(slug-02)
 
 N $7ABD #DIMENSIONS
   $7ABD,$01 Terminator.
   $7ABE,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7ABF,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7AC0 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $04, $04 * {width} * $08, $04 * {height}}(slug-03)
+  $7AC0 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $04, $04 * {width} * $08, $04 * {height}}(slug-03)
 
 N $7AE4 #DIMENSIONS
   $7AE4,$01 Terminator.
   $7AE5,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7AE6,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7AE7 #UDGARRAY4,attr=7,scale=4,step=4,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(slug-04)
+  $7AE7 #UDGARRAY4,attr=7,scale=4,step=4,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(slug-04)
 
 b $7B07 Sprite: Menacing Midges
 N $7B07 #DIMENSIONS
   $7B07,$01 Terminator.
   $7B08,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7B09,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7B0A #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(midges-01)
+  $7B0A #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(midges-01)
 
 N $7B43 #DIMENSIONS
   $7B43,$01 Terminator.
   $7B44,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7B45,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7B46 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $06, $04 * {width} * $08, $04 * {height}}(midges-02)
+  $7B46 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $06, $04 * {width} * $08, $04 * {height}}(midges-02)
 
 N $7B7C #DIMENSIONS
   $7B7C,$01 Terminator.
   $7B7D,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7B7E,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7B7F #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(midges-03)
+  $7B7F #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $05, $04 * {width} * $08, $04 * {height}}(midges-03)
 
 N $7BB8 #DIMENSIONS
   $7BB8,$01 Terminator.
   $7BB9,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7BBA,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7BBB #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $06, $04 * {width} * $08, $04 * {height}}(midges-04)
+  $7BBB #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $06, $04 * {width} * $08, $04 * {height}}(midges-04)
 
 b $7BF1 Sprite: Insect Repellent/ Super Space Slug Spray
 N $7BF1 #DIMENSIONS
   $7BF1,$01 Terminator.
   $7BF2,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7BF3,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7BF4,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height} - $04}(repellent-01)
+  $7BF4,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height} - $04}(repellent-01)
 
 N $7C02 #DIMENSIONS
   $7C02,$01 Terminator.
   $7C03,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7C04,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7C05,$10,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(repellent-02)
+  $7C05,$10,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(repellent-02)
 
 N $7C15 #DIMENSIONS
   $7C15,$01 Terminator.
   $7C16,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7C17,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7C18,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04, $04 * {width} * $08, $04 * {height} - $04}(repellent-03)
+  $7C18,$0E,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04, $04 * {width} * $08, $04 * {height} - $04}(repellent-03)
 
 N $7C26 #DIMENSIONS
   $7C26,$01 Terminator.
   $7C27,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7C28,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7C29,$10,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(repellent-04)
+  $7C29,$10,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(repellent-04)
 
 b $7C39 Sprite: Flower (Others)
 N $7C39 #DIMENSIONS
   $7C39,$01 Terminator.
   $7C3A,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7C3B,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7C3C,$36,$03 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $06, $04 * {width} * $08, $04 * {height}}(flower-02)
+  $7C3C,$36,$03 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $06, $04 * {width} * $08, $04 * {height}}(flower-02)
 
 N $7C72 #DIMENSIONS
   $7C72,$01 Terminator.
   $7C73,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7C74,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7C75,$5A,$03 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08){$00, $04 * $02, $04 * {width} * $08, $04 * {height}}(flower-03)
+  $7C75,$5A,$03 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)){$00, $04 * $02, $04 * {width} * $08, $04 * {height}}(flower-03)
 
 N $7CCF For attributes see #R$6748. #DIMENSIONS
   $7CCF,$01 Terminator.
   $7CD0,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7CD1,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7CD2,$1F8,$09 #UDGARRAY9,scale=4,step=9,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)@$6775-$6786;$676C-$6774;$6763-$676B;$6751-$6762;$6748-$6750(flower-04)
+  $7CD2,$1F8,$09 #UDGARRAY9,scale=4,step=9,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))[$6775-$6786;$676C-$6774;$6763-$676B;$6751-$6762;$6748-$6750](flower-04)
 
 b $7ECA Sprite: Explosions
 N $7ECA #DIMENSIONS
   $7ECA,$01 Terminator.
   $7ECB,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7ECC,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7ECD #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(explosion-01*)
+  $7ECD #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(explosion-01*)
 
 N $7EFD #DIMENSIONS
   $7EFD,$01 Terminator.
   $7EFE,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7EFF,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7F00 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(explosion-02*)
+  $7F00 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(explosion-02*)
 
 N $7F30 #DIMENSIONS
   $7F30,$01 Terminator.
   $7F31,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7F32,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7F33 #UDGARRAY3,attr=7,scale=4,step=3,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(explosion-03*)
+  $7F33 #UDGARRAY3,attr=7,scale=4,step=3,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(explosion-03*)
 
 b $7F63 Sprite: Fertiliser
 N $7F63 #DIMENSIONS
   $7F63,$01 Terminator.
   $7F64,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7F65,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7F66,$24,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}))-$01-({width} * $08){$00, $04 * $07, $04 * {width} * $08, $08 * {height}}(fertiliser*)
+  $7F66,$24,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}))-$01-({width} * $08)){$00, $04 * $07, $04 * {width} * $08, $08 * {height}}(fertiliser*)
 
 b $7F8A Sprite: Fly Swat
 N $7F8A #DIMENSIONS
   $7F8A,$01 Terminator.
   $7F8B,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7F8C,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7F8D,$20,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08)(swatter*)
+  $7F8D,$20,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}) - {width})-$01-({width} * $08))(swatter*)
 
 b $7FAD Sprite: Watering Can
 N $7FAD #DIMENSIONS
   $7FAD,$01 Terminator.
   $7FAE,$01 #LET(width=#PEEK(#PC)) Width = #N({width}) bytes.
   $7FAF,$01 #LET(height=#PEEK(#PC)) Height = #N({height}) pixels.
-  $7FB0,$22,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2;(#PC)-(#PC + ({height} * {width}))-$01-({width} * $08){$00, $04 * $07, $04 * {width} * $08, $08 * {height}}(watering-can*)
+  $7FB0,$22,b$02 #UDGARRAY2,attr=7,scale=4,step=2,flip=2((#PC)-(#PC + ({height} * {width}))-$01-({width} * $08)){$00, $04 * $07, $04 * {width} * $08, $08 * {height}}(watering-can*)
 
 b $7FD2
 

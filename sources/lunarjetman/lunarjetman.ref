@@ -4,19 +4,20 @@
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @lunarjetman.t2s
 ;   sna2skool.py -H -c sources/lunarjetman/lunarjetman.ctl LunarJetman.z80 > sources/lunarjetman/lunarjetman.skool
-;   skool2html.py -H sources/lunarjetman/lunarjetman.skool -T dark
+;   skool2html.py -H sources/lunarjetman/lunarjetman.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref;lunarjetmanGraphics.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;lunarjetmanGraphics.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/lunarjetman
 
 [Game]
 Game=Lunar Jetman
-Logo=#SCR1,0,0,31,8,$4000,$5800(/images/logo)
-Copyright=&copy; 1983 Ultimate Play the Game &copy; 2024 ArcadeGeek LTD.
+Logo=#SCR$01,$00,$00,$1F,$08,$4000,$5800(/images/logo)
+Copyright=&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/lunarjetman/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;lunarjetman.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
@@ -29,9 +30,9 @@ Graphics
 DataTables
 Reference
 
-[Index:Graphics:Graphics]
+[Index:Graphics:Graphics And Sounds]
 Graphics
-Sprites
+Sound
 
 [Index:Reference:Reference]
 Changelog
@@ -41,18 +42,17 @@ Credits
 
 [Links]
 Graphics=[Graphics]
-Sprites=[Sprites]
 
 [Paths]
 Credits=reference/credits.html
 Graphics=graphics/graphics.html
-Sprites=graphics/sprites.html
+Sound=sound/sounds.html
 
 [Page:Graphics]
 SectionPrefix=Graphics
 
-[Page:Sprites]
-SectionPrefix=Sprites
+[Page:Sound]
+SectionPrefix=Audio
 
 [Page:Credits]
 PageContent=#INCLUDE(Credits)
@@ -63,97 +63,60 @@ PageContent=#INCLUDE(Credits)
   research and documentation already done and made available by:
 #LIST
   { <a href="https://mrcook.uk/">Michael R. Cook</a> }
-  { <a href="https://www.angelfire.com/retro/carcass/ultimate/lunar/luntip.htm">Matthew Carrier</a> }
+  { <a href="https://web.archive.org/web/20240429184336/https://www.angelfire.com/retro/carcass/ultimate/lunar/luntip.htm">Matthew Carrier</a> }
 LIST#
   This game shares a lot of functionality with Jetpac, and Michaels' disassembly work was
   invaluable!
 </div>
 
 [Expand]
-#DEF(#COLOUR(id)
-  #LET(ink=$id&$07)#IF({ink}>$00)(INK:
-    #MAP({ink})(
-      UNKNOWN,
-      0:BLACK,
-      1:BLUE,
-      2:RED,
-      3:MAGENTA,
-      4:GREEN,
-      5:CYAN,
-      6:YELLOW,
-      7:WHITE
-    )
-  )
-  #LET(paper=$id>>$03&$07)#IF({paper}>$00)(PAPER:
-    #MAP({paper})(
-      UNKNOWN,
-      0:BLACK,
-      1:BLUE,
-      2:RED,
-      3:MAGENTA,
-      4:GREEN,
-      5:CYAN,
-      6:YELLOW,
-      7:WHITE
-    )
-  )
-  #LET(bright=$id&$40)
-  #IF({bright}>$00)((BRIGHT))
-  #LET(flash=$id&$80)
-  #IF({flash}>$00)(FLASH: ON)
-)
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr+(((({height}+$07)/$08)*$08)*$size)-$01)-$01-($size*$08))($fname))
 
-#DEF(#CONVERTFF(addr)
-  #LET(length=#PEEK($addr)*#PEEK($addr+$01))
-  #FOR($00,{length})||n|
-    #IF(#PEEK($02+$addr+n)==$FF)(#POKES(($02+$addr+n),$47))
-  ||
-)
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr+(((({height}+$07)/$08)*$08)*$size)-$01)-$01-($size*$08)){$00,$04*($08-({height}%$08)),$04*$size*$08,$04*{height}}($fname))
 
-#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr+({height}*$size)-$size)-$01-($size*$08)($fname))
-
-#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2);($addr)-($addr+({height}*$size)-$size)-$01-($size*$08){$00,$04*($08-({height}%$08)),$04*$size*$08,$04*{height}}($fname))
-
-#DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr+($height*$width)-$width)-$01-($width*$08)@$attrtable-($attrtable+$width*$height)($fname)
-)
-
-#DEF(#COLOURCROP(addr,width,height,attrtable)(fname)
-  #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2);$addr-($addr+($height*$width)-$width)-$01-($width*$08)@$attrtable-($attrtable+$width*$height){$00,$04*($08-($height%$08)),$04*$width*$08,$04*$height}($fname)
-)
-
-#DEF(#ROVER(id)(fname)
-  #GRAPHIC($id,$BAE2)($fname)
-)
-
-#DEF(#GRAPHIC(id,base=$BAC0,attrbase=$00)(fname)
-  #LET(offset=$id*$02)
+#DEF(#GRAPHIC(id,base=$BAC0,attr=$07)(fname)
+  #LET(offset=($id-$01)*$02)
   #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
   #LET(width=#PEEK({addr}))
   #LET(height=#PEEK({addr}+$01))
-  #IF($attrbase>$00)||
-    #LET(attr=#PEEK($attrbase+{offset})+#PEEK($A64E+{offset}+$01)*$100)
-    #LET(awidth=#PEEK({attr}))
-    #LET(aheight=#PEEK({attr}+$01))
-    #PUSHS
-    #CONVERTFF({attr})
-    #IF({height}%$08)(
-      #COLOURCROP({addr}+$02,{width},{height},{attr}+$02,{awidth},{aheight})($fname),
-      #COLOURNOCROP({addr}+$02,{width},{height},{attr}+$02,{awidth},{aheight})($fname)
-    )
-    #POPS
-  |
-    #IF({height}%$08)(
-      #CROP({addr}+$02,{width},$07)($fname),
-      #NOCROP({addr}+$02,{width},$07)($fname)
-    )
-  ||
+  #IF({height}%$08)(
+    #CROP({addr}+$02,{width},$attr)($fname),
+    #NOCROP({addr}+$02,{width},$attr)($fname)
+  )
 )
 
-#DEF(#SPRITE(id,base=$BAC0)(fname)
-  #LET(offset=$id*$02)
+#DEF(#SPRITE(id,base=$BAC0,size=$02,attr=$07)(fname)
+  #LET(offset=($id-$01)*$02)
   #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
-  #LET(height=#PEEK({addr}))#IF({height}%$08)(#CROP({addr}+$01,$02,$07)($fname),#NOCROP({addr}+$01,$02,$07)($fname)))
+  #LET(height=#PEEK({addr}))
+  #IF({height}%$08)(
+    #CROP({addr}+$01,$size,$attr)($fname),
+    #NOCROP({addr}+$01,$size,$attr)($fname)
+  )
+)
+
+#DEF(#ROVERCROPNARROW(addr)(fname) #UDGARRAY$07,scale=4,step=$07,mask=1,flip=2(($addr)-($addr+(((({height}+$07)/$08)*$08)*$07)-$01)-$01-($07*$08))[($BCA0)-($BCA6);($BCA7)-($BCAD);($BCAE)-($BCB4);($BCB5)-($BCBB)]{$00,$04*($08-({height}%$08)),$04*$07*$08,$04*{height}}($fname))
+
+#DEF(#ROVERCROPWIDE(addr)(fname) #UDGARRAY$08,scale=4,step=$08,mask=1,flip=2(($addr)-($addr+(((({height}+$07)/$08)*$08)*$08)-$01)-$01-($08*$08))[($BCA0)-($BCA6);($BCA6);($BCA7)-($BCAD);($BCAD);($BCAE)-($BCB4);($BCB4);($BCB5)-($BCBB);($BCBB)]{$00,$04*($08-({height}%$08)),$04*$08*$08,$04*{height}}($fname))
+
+#DEF(#ROVER(id,base=$BAC0)(fname)
+  #LET(offset=($id-$01)*$02)
+  #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
+  #LET(width=#PEEK({addr}))
+  #LET(height=#PEEK({addr}+$01))
+  #IF({width}==$07)(
+    #ROVERCROPNARROW({addr}+$02)($fname),
+    #ROVERCROPWIDE({addr}+$02)($fname)
+  )
+)
+
+#DEF(#SPRITEDATA()(fname)
+  #LET(height=#PEEK(#PC-$01))
+  #IF({height}%$08)(
+    #CROP(#PC,$02,$07)($fname),
+    #NOCROP(#PC,$02,$07)($fname)
+  )
+)
 
 #DEF(#SPRITENAME(id)
   #MAP($id)(
@@ -245,21 +208,21 @@ LIST#
     85:"Meteor: Frame 6",
     86:"Meteor: Frame 7",
     87:"Meteor: Frame 8",
-    88:"None",
-    89:"None",
-    90:?,
-    91:?,
-    92:"Frame 1",
-    93:"Frame 2",
-    94:"Frame 3",
-    95:"Frame 4",
-    96:"Frame 5",
-    97:"Frame 6",
-    98:"Frame 7",
+    88:"Player Shot",
+    89:"Player Shot",
+    90:"Player Shot",
+    91:"Player Shot",
+    92:"Sparkle Burst: Frame 1",
+    93:"Sparkle Burst: Frame 2",
+    94:"Sparkle Burst: Frame 3",
+    95:"Sparkle Burst: Frame 4",
+    96:"Sparkle Burst: Frame 5",
+    97:"Sparkle Burst: Frame 6",
+    98:"Sparkle Burst: Frame 7",
     99:"None",
-    100:?,
-    101:?,
-    102:?,
+    100:"Small Explosion: Frame 1",
+    101:"Small Explosion: Frame 2",
+    102:"Small Explosion: Frame 3",
     103:"None",
     104:"Alien Base: Frame 1",
     105:"Alien Base: Frame 2",
@@ -291,8 +254,8 @@ LIST#
     131:"Missile Flame: Frame 2",
     132:"Missile: Frame up-right",
     133:"None",
-    134:"",
-    135:"",
+    134:"Missile Flame: Frame 3",
+    135:"Missile Flame: Frame 4",
     136:"The Block: Frame 1",
     137:"The Block: Frame 2",
     138:"The Block: Frame 3",
@@ -309,14 +272,14 @@ LIST#
     149:"Alien Base Plasma: Frame 4",
     150:"Alien Base Plasma: Frame 3",
     151:"Alien Base Plasma: Frame 2",
-    152:"",
-    153:"",
-    154:"",
-    155:"",
-    156:"",
-    157:"",
-    158:"",
-    159:"",
+    152:"Unused",
+    153:"Unused",
+    154:"Unused",
+    155:"Unused",
+    156:"Unused",
+    157:"Unused",
+    158:"Unused",
+    159:"Unused",
     160:"Missile: Left",
     161:"None",
     162:"Missile Flame: Left Frame 1",
@@ -339,8 +302,8 @@ LIST#
     179:"Spinner: Frame 4",
     180:"Spinner: Frame 5",
     181:"Spinner: Frame 6",
-    182:"",
-    183:"",
+    182:"The Pip",
+    183:"The Pip",
     184:"Shooter: Frame 1",
     185:"Shooter: Frame 2",
     186:"Shooter: Frame 3",
@@ -348,19 +311,19 @@ LIST#
     188:"Shooter: Frame 5",
     189:"Shooter: Frame 6",
     190:"Shooter: Frame 7",
-    191:"",
-    192:"",
-    193:"",
-    194:"",
-    195:"",
-    196:"",
-    197:"",
-    198:"",
-    199:"",
-    200:"",
-    201:"",
-    202:"",
-    203:"",
+    191:"The Block: Frame 8",
+    192:"Crater",
+    193:"Crater",
+    194:"Crater",
+    195:"Crater",
+    196:"Crater",
+    197:"Crater",
+    198:"Crater",
+    199:"Crater",
+    200:"Linked Object",
+    201:"Linked Object",
+    202:"Linked Object",
+    203:"Linked Object",
     204:"Saturn: Frame 1",
     205:"Saturn: Frame 2",
     206:"Saturn: Frame 3",
@@ -381,18 +344,18 @@ LIST#
     221:"Jetman: Falling Frame 2",
     222:"Jetman: Falling Frame 3",
     223:"Jetman: Falling Frame 4",
-    224:"",
-    225:"",
-    226:"",
-    227:"",
-    228:"",
-    229:"",
-    230:"",
-    231:"",
-    232:"",
-    233:"",
-    234:"",
-    235:"",
+    224:"Explosion: Frame 1",
+    225:"Explosion: Frame 2",
+    226:"Explosion: Frame 3",
+    227:"Explosion: Frame 4",
+    228:"Explosion: Frame 5",
+    229:"Explosion: Frame 6",
+    230:"Explosion: Frame 7",
+    231:"Explosion: Frame 8",
+    232:"Explosion: Frame 9",
+    233:"Explosion: Frame 10",
+    234:"Explosion: Frame 11",
+    235:"Explosion: Frame 12",
     236:"Bomb: Frame 1",
     237:"Bomb: Frame 2",
     238:"Bomb: Frame 3",

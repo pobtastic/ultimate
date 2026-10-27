@@ -1,5 +1,9 @@
+; Copyright Ashby Computers & Graphics Ltd 1983, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
 > $4000 @start=$5B80
+> $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
+> $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 b $4000 Loading screen
 D $4000 #UDGTABLE { =h Tranz Am Loading Screen } { #SCR$02(loading) } UDGTABLE#
 @ $4000 label=Loading
@@ -189,7 +193,7 @@ D $5E3E #TABLE(default,centre,centre)
 B $5E3E,$01
 
 g $5E3F Current Menu Item Colour attribute
-@ $5E3F label=Current_MenuAttr
+@ $5E3F label=Current_MenuAttribute
 B $5E3F,$01
 
 g $5E40
@@ -305,7 +309,7 @@ E $5F00 View the equivalent code in;
 . LIST#
 @ $5F00 label=SecurityCheck
   $5F00,$01 Disable interrupts.
-  $5F01,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>+#N$01.)
+  $5F01,$03 #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
   $5F04,$03 Return if #REGa is not #N$58.
 
 c $5F07 Game Initialisation
@@ -354,7 +358,7 @@ N $5F4A Handle starting a new game.
   $5F4C,$03 If it has then jump to #R$5FEF.
 N $5F4F Handle flashing each selection.
   $5F4F,$04 Write #REGd to #R$5E3E.
-  $5F53,$03 #REGhl=#R$5FA8(GameSelection_Attributes) + #N$01 (i.e. ignoring "Game Selection" as it doesn't flash).
+  $5F53,$03 #REGhl=#R$5FA8 (the first selectable line, skipping the title).
   $5F56,$04 #REGc=#R$5E3E.
   $5F5A,$04 If the joystick option is selected, jump to #R$5F65.
 N $5F5E Set the first menu item, unset the second.
@@ -425,6 +429,12 @@ E $5F97 View the equivalent code in;
   $5FA4,$03 Jump to #R$6524.
 
 b $5FA7 Game Select Attribute Table
+@ $5FA7 label=GameSelection_Attributes
+@ $5FA8 label=GameSelection_Attributes_Options
+D $5FA7 One attribute byte per menu line. The routines that flash the
+. selected line set or clear FLASH in the byte for the line being
+. updated. The first byte belongs to the title, so the flashing code
+. starts at #R$5FA8.
 E $5FA7 View the equivalent code in;
 . #LIST
 . { #ATICATAC$7CEA }
@@ -433,7 +443,6 @@ E $5FA7 View the equivalent code in;
 . { #LUNARJETMAN$810E }
 . { #PSSST$627C }
 . LIST#
-@ $5FA7 label=GameSelection_Attributes
   $5FA7,$05,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
 . { #N$01 | Game Selection }
@@ -488,7 +497,7 @@ E $5FEF View the equivalent code in;
 . { #PSSST$631E }
 . LIST#
 @ $5FEF label=StartGame
-  $5FEF,$07 #HTML(Write #N$00 to #LIST { <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a> } { #R$5E74 } LIST#)
+  $5FEF,$07 Write #N$00 to #LIST { #SKOOLKID$5C78(FRAMES) } { #R$5E74 } LIST#
 N $5FF6 Reset the players life count.
   $5FF6,$05 Write starting lives to #R$5E3D.
 N $5FFB Reset the players score (#N$03 digits).
@@ -669,7 +678,7 @@ c $611B Sounds: Cup/ Refuel
   $6148,$01 Flip the bits.
   $6149,$02 Jump to #R$612E.
 
-c $614B Play square wave sound
+c $614B Play Square Wave
 @ $614B label=PlaySquareWave
 R $614B D Duration of wave
   $614B,$03 Call #R$60FB.
@@ -941,7 +950,7 @@ N $6359 Give a 50/50 chance of "Night Driver" mode.
   $635D,$02 If #REGa is zero jump to #R$6362.
 N $635F Else set "day" time.
   $635F,$03 Call #R$6175.
-N $6362 See #LINK:Pokes#infinite_lives(Infinite Lives).
+N $6362 See #LINK(Pokes#infinite_lives)(Infinite Lives).
 @ $6362 label=GameOver_Skip
   $6362,$03 #REGhl=#R$5E3D.
   $6365,$01 Decrease #R$5E3D by one.
@@ -1116,10 +1125,10 @@ N $649D Limit the number to 0-63.
 
 c $64C7 Handler: Update Time
 @ $64C7 label=HandlerTime
-  $64C7,$03 #HTML(#REGa=<a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $64C7,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $64CA,$03 Return if #REGa < #N$32.
   $64CD,$02 #REGa = #REGa - #N$32.
-  $64CF,$03 #HTML(Write #REGa back to <a href="https://skoolkid.github.io/rom/asm/5C78.html">FRAMES</a>.)
+  $64CF,$03 Write #REGa back to #SKOOLKID$5C78(FRAMES).
 N $64D2 Update the time from the smallest unit upwards.
 N $64D2 Handles the "seconds".
   $64D2,$03 #REGhl=#R$5E33.
@@ -1170,7 +1179,7 @@ N $650B Output the place name to the screen.
   $650C,$03 #REGhl=#N$B868 (screen location).
   $650F,$01 Stash #REGhl on the stack.
   $6510,$03 Call #R$6F10.
-  $6513,$02 #REGa=#N$70 (attribute byte - BLACK ink on YELLOW paper).
+  $6513,$02 #REGa=#COLOUR$70 (attribute byte).
   $6515,$01 Switch to the shadow #REGaf register.
   $6516,$02 Jump to #R$651F.
 
@@ -1423,7 +1432,7 @@ N $692C Remove the messaging.
   $6939,$03 Jump to #R$651F.
 N $693C Messging data.
 @ $693C label=NightDriver_Text
-T $693C,$0D,h$01,$0B:$01 "NIGHT DRIVER" (#N(#PEEK(#PC)) is the attribute).
+T $693C,$0D,h$01,$0B:$01 "NIGHT DRIVER" (#COLOUR(#PEEK(#PC)) is the attribute).
 
 c $6949 Plot Map Points
 @ $6949 label=PlotMapPoints
@@ -1498,8 +1507,8 @@ N $69A6 #TABLE(default,centre,centre)
 
 c $69BC Draw PlayArea
 @ $69BC label=DrawPlayArea
-  $69BC,$04 #HTML(Stash <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a> on the stack.)
-  $69C0,$06 #HTML(Write #R$74B1 to <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $69BC,$04 Stash #SKOOLKID$5C36(CHARS) on the stack.
+  $69C0,$06 Write #R$74B1 to #SKOOLKID$5C36(CHARS).
   $69C6,$03 #REGhl=#R$7691.
   $69C9,$03 #REGde=#R$7751.
   $69CC,$01 Switch to the shadow registers.
@@ -1539,8 +1548,8 @@ N $69F8 Account for the Spectrum screen layout in memory.
 @ $6A01 label=DrawPlayArea_Skip
   $6A01,$01 Decrease the height counter by one.
   $6A02,$02 Keep jumping back to #R$69DA until the height counter is zero.
-N $6A04 #HTML(All done! Finish by reverting the change to <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a> and returning.)
-  $6A04,$04 #HTML(Restore <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/3D00.html">CHARSET</a> from the stack and write it back to <a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+N $6A04 All done! Finish by reverting the change to #SKOOLKID$5C36(CHARS) and returning.
+  $6A04,$04 Restore #SKOOLKID$3D00(CHARSET) from the stack and write it back to #SKOOLKID$5C36(CHARS).
   $6A08,$01 Return.
 
 c $6A09
@@ -1634,7 +1643,7 @@ N $6ACB Handles updating the dashboard values.
 N $6AE4 Spacing "text" used for overwriting messaging.
 @ $6AE4 label=Blank_Text_Attribute
 @ $6AE5 label=Blank_Text
-T $6AE4,$11,h$01,$0F:$01 Contains #N$0F spaces (#N(#PEEK(#PC)) is the attribute).
+T $6AE4,$11,h$01,$0F:$01 Contains #N$0F spaces (#COLOUR(#PEEK(#PC)) is the attribute).
 
 c $6AF5 Handler: Objects
 @ $6AF5 label=HandlerObjects
@@ -1795,12 +1804,12 @@ R $6C96 HL Screen address
   $6C96,$03 Stash #REGbc, #REGde and #REGhl on the stack.
   $6C99,$03 Create an offset in #REGhl.
   $6C9C,$03 Calculate offset for ASCII character (#REGhl=#REGhl * 8).
-  $6C9F,$04 #HTML(#REGde=<a href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C36.html">CHARS</a>.)
+  $6C9F,$04 #REGde=#SKOOLKID$5C36(CHARS).
   $6CA3,$02 #REGde=#REGhl + #N$3C00. For examples of usage;
 . #TABLE(default,centre,centre,centre,centre,centre)
 . { =h Letter | =h ASCII Value | =h * 8 (offset) | =h CHARS + offset }
 . #FOREACH($55,$4C,$54,$49,$4D,$41,$54,$45)(value,
-. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #HTML(<a href="https://skoolkid.github.io/rom/asm/3D00.html##N({result}, $02, $03, $01, $01)()">#N({result})) }
+. { #LET(result=$3C00 + value * $08) "#CHR(value)" | #N(value) | #N(value * 8) | #SKOOLKID($3D00,{result})(#N({result})) }
 . )
 . TABLE#
 N $6CA5 Print the character to the screen.
@@ -2012,7 +2021,7 @@ c $6ECB Screen Address One Pixel Above
 R $6ECB HL Current position
 R $6ECB O:HL Address for new position
 N $6ECB Calculates the new address for writing a sprite pixel, in an upward direction, taking into consideration the screen memory layout.
-@ $6ECB label=ScreenPos1PixelAbove
+@ $6ECB label=ScreenPosition1PixelAbove
   $6ECB,$01 Decrement #REGh to move up one pixel on screen.
   $6ECC,$02 Store the inverted result in #REGa.
   $6ECE,$02,b$01 Keep only bits 0-2.
@@ -2375,7 +2384,7 @@ E $7200 View the equivalent code in;
 . { #PSSST$7447 }
 . LIST#
 @ $7200 label=ResetAttributes
-  $7200,$03 Set the border to black.
+  $7200,$03 Set the border to #INK$00.
   $7203,$03 Call #R$7211.
   $7206,$03 #REGhl=#R$5800(attribute buffer).
   $7209,$02 #REGb=#N$5B (i.e. finish once we reach the end of the #R$5800(attribute buffer)).
@@ -2397,7 +2406,7 @@ E $7211 Continue on to #R$7218 to blank the screen buffer.
   $7214,$02 #REGb=#N$58 (i.e. finish once we reach the start of #R$5800(attribute buffer)).
   $7216,$02 #REGc=#N$00 (value to write).
 
-c $7218 Reset Routine
+c $7218 Fill Memory
 E $7218 View the equivalent code in;
 . #LIST
 . { #ATICATAC$80BB }
@@ -2488,7 +2497,7 @@ b $7458 Sprite: Bush
   $7459,$1A,b$02 #SPRITE$02(bush)
 
 b $7473 Sprite: Explosion
-E $7473 #UDGARRAY*explosion-01,$05;explosion-02(explosion-frames)
+E $7473 #FRAMES(explosion-01,$05;explosion-02)(explosion-frames)
 N $7473 Frame #N$01
   $7473,$01 Height = #N(#PEEK(#PC)) pixels.
   $7474,$20,b$02 #SPRITE$20(explosion-01*)
@@ -2518,7 +2527,7 @@ b $7811 Map Points
 L $7811,$03,$197
 
 b $7CD6 Sprite: Car
-E $7CD6 #UDGARRAY*car-01,10;car-02;car-03;car-04;car-05;car-06;car-07;car-08;car-09;car-0A;car-0B;car-0C;car-0D;car-0E;car-0F;car-10(car-ani)
+E $7CD6 #FRAMES(car-01,10;car-02;car-03;car-04;car-05;car-06;car-07;car-08;car-09;car-0A;car-0B;car-0C;car-0D;car-0E;car-0F;car-10)(car-ani)
 N $7CD6 Frame #N$01.
   $7CD6,$01 Width = #N(#PEEK(#PC)) bytes.
   $7CD7,$22,b$02 #CAR$00(car-01*)
