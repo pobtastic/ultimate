@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,24 +44,26 @@ Next: <a href="AECF.html">AECF</a>
 <div class="paragraph">
 Used by the routine at <a href="AECF.html">GamePlayEntry</a>.
 </div>
+<div class="paragraph">
+Used while the game is waiting to start the active player. Makes a low tone every sixteen frames and flashes the score label of the active player ("1UP" or "2UP").
 </div>
-</td>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
 </tr>
 <tr>
-<td class="routine-comment" colspan="5">
-<span id="aea1"></span>
-<div class="comments">
-<div class="paragraph">
-Controller for handling whether to action 1UP or 2UP score label.
-</div>
-</div>
+<td class="register">HL</td>
+<td class="register-desc">Address of the delay counter in <a href="96B5.html">GameDelayTimer</a></td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">ScoreLabelFlash</td>
 <td class="address-2"><span id="aea1"></span>AEA1</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the start-of-turn delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -69,14 +74,14 @@ Controller for handling whether to action 1UP or 2UP score label.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aea4"></span>AEA4</td>
-<td class="instruction">CALL Z,<a href="BF2A.html">$BF2A</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL Z,<a href="BF2A.html">PlayLowTone</a></td>
+<td class="comment-1" rowspan="1">Play the low tone if the start-of-turn delay is a multiple of 10 (every sixteenth frame).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aea7"></span>AEA7</td>
 <td class="instruction">LD A,($969E)</td>
-<td class="comment-1" rowspan="3">If <a href="969E.html">Flag_ActivePlayer</a> is not zero, jump to <a href="AEA1.html#aeca">FlashScoreLabel2UP</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="AEA1.html#aeca">FlashScoreLabel2UP</a> to flash the 2UP score label if 2UP is the active player (<a href="969E.html">Flag_ActivePlayer</a> is not zero).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -118,13 +123,13 @@ Set flash state for the 3-attributes of the score label.
 <td class="asm-label">FlashText</td>
 <td class="address-2"><span id="aeb0"></span>AEB0</td>
 <td class="instruction">CALL <a href="B8DD.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B8DD.html">AttributeAddress</a>.</td>
+<td class="comment-1" rowspan="1">Find the attribute address of the score label.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aeb3"></span>AEB3</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (counter for the three letters in a score label).</td>
+<td class="comment-1" rowspan="1">Set the letter counter in <span class="register">B</span> to 03 (one for each letter of a score label).</td>
 </tr>
 <tr>
 <td class="asm-label">FlashText_Loop</td>
@@ -148,13 +153,13 @@ Set flash state for the 3-attributes of the score label.
 <td class="asm-label"></td>
 <td class="address-1"><span id="aeb9"></span>AEB9</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increase the attribute pointer by one.</td>
+<td class="comment-1" rowspan="1">Move onto the next attribute.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aeba"></span>AEBA</td>
 <td class="instruction">DJNZ <a href="AEA1.html#aeb5">FlashText_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="AEA1.html#aeb5">FlashText_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the letter counter by one and loop back to <a href="AEA1.html#aeb5">FlashText_Loop</a> until all three letters have been flashed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -167,6 +172,9 @@ Set flash state for the 3-attributes of the score label.
 <span id="aebd"></span>
 <div class="comments">
 <div class="paragraph">
+This entry point is used by the routine at <a href="AECF.html">GamePlayEntry</a>.
+</div>
+<div class="paragraph">
 Unset flash state for the 3-attributes of the score label.
 </div>
 </div>
@@ -176,13 +184,13 @@ Unset flash state for the 3-attributes of the score label.
 <td class="asm-label">UnsetFlashText</td>
 <td class="address-2"><span id="aebd"></span>AEBD</td>
 <td class="instruction">CALL <a href="B8DD.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B8DD.html">AttributeAddress</a>.</td>
+<td class="comment-1" rowspan="1">Find the attribute address of the score label.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aec0"></span>AEC0</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (counter for the three letters in a score label).</td>
+<td class="comment-1" rowspan="1">Set the letter counter in <span class="register">B</span> to 03 (one for each letter of a score label).</td>
 </tr>
 <tr>
 <td class="asm-label">UnsetFlashText_Loop</td>
@@ -206,13 +214,13 @@ Unset flash state for the 3-attributes of the score label.
 <td class="asm-label"></td>
 <td class="address-1"><span id="aec6"></span>AEC6</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increase the attribute pointer by one.</td>
+<td class="comment-1" rowspan="1">Move onto the next attribute.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aec7"></span>AEC7</td>
 <td class="instruction">DJNZ <a href="AEA1.html#aec2">UnsetFlashText_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="AEA1.html#aec2">UnsetFlashText_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the letter counter by one and loop back to <a href="AEA1.html#aec2">UnsetFlashText_Loop</a> until all three letters have been unflashed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -248,6 +256,7 @@ Flash 2UP score label.
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/cookie/asm/7020.html">Cookie</a></li>
+<li><a href="/ultimate/lunarjetman/asm/8C3E.html">Lunar Jetman</a></li>
 </ul>
 </div>
 </div>

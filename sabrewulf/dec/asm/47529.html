@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,94 +42,131 @@ Next: <a href="47563.html">47563</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="42624.html">42624</a>, <a href="44375.html">44375</a> and <a href="44783.html">GamePlay_Start</a>.
+Used by the routines at <a href="42624.html">HandlerOrchid</a>, <a href="44381.html">DisplayActor</a> and <a href="44783.html">GamePlay_Start</a>.
+</div>
+<div class="paragraph">
+Moves an entity on the screen, by erasing the sprite at its old position (saved by <a href="47883.html">StoreEntity</a>) and drawing it at its new one.
+</div>
+<div class="paragraph">
+Both sprites are drawn with XOR, a row at a time, so that the rows are alternated between the two sprites and the screen is never without the sprite for long. If the sprites are offset vertically, the rows of the sprite that has no matching row in the other one are drawn first.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After <a href="47529.html">DisplayEntity</a> and <a href="47908.html">ColourEntity</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="display-entity-before" src="../../images/scr/display-entity-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="display-entity-after" src="../../images/scr/display-entity-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">DisplayEntity</td>
 <td class="address-2"><span id="47529"></span>47529</td>
 <td class="instruction">CALL <a href="47465.html">PrepDraw2</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47465.html">PrepDraw2</a>.</td>
+<td class="comment-1" rowspan="1">Prepare the registers for the sprite at its new position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47532"></span>47532</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
+<td class="comment-1" rowspan="1">Switch to the registers of the old sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47533"></span>47533</td>
 <td class="instruction">CALL <a href="47417.html">PrepDraw23</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47417.html">PrepDraw23</a>.</td>
+<td class="comment-1" rowspan="1">Prepare the registers for the sprite at its old position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47536"></span>47536</td>
 <td class="instruction">LD A,(38561)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38561.html">Saved_Y</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the old Y position from <a href="38561.html">Previous_Y_Position</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47539"></span>47539</td>
 <td class="instruction">SUB (IX+4)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the new Y position of the entity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47542"></span>47542</td>
-<td class="instruction">JP Z,<a href="47578.html#47604">47604</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="47578.html#47604">XORSpriteLoop_Reload</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="47578.html#47604">XORSpriteLoop_Reload</a> if the Y position has not changed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47545"></span>47545</td>
-<td class="instruction">JP M,<a href="47563.html">47563</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP M,<a href="47563.html">DisplayEntity_NewLower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="47563.html">DisplayEntity_NewLower</a> if the sprite has moved down the screen.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="47548"></span>
+<div class="comments">
+<div class="paragraph">
+The old sprite is lower than the new one, so draw the bottom rows of the old sprite on their own first.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47548"></span>47548</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the number of rows that stand alone to <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47549"></span>47549</td>
 <td class="instruction">LD A,(38563)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38563.html">SomeHeight</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows of the old sprite from <a href="38563.html">Old_Sprite_Row_Count</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47552"></span>47552</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare it with the number of rows that stand alone.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47553"></span>47553</td>
-<td class="instruction">JP C,<a href="47578.html#47604">47604</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP C,<a href="47578.html#47604">XORSpriteLoop_Reload</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="47578.html#47604">XORSpriteLoop_Reload</a> if the old sprite has no more rows than that, so that the sprites do not overlap and are each drawn in full.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47556"></span>47556</td>
 <td class="instruction">SUB C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the number of rows that stand alone.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47557"></span>47557</td>
 <td class="instruction">LD (38563),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the number of rows that remain to <a href="38563.html">Old_Sprite_Row_Count</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47560"></span>47560</td>
-<td class="instruction">JP <a href="47578.html">47578</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="47578.html">47578</a>.</td>
+<td class="instruction">JP <a href="47578.html">XORSpriteLoop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="47578.html">XORSpriteLoop</a> to draw those rows of the old sprite on their own.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -134,6 +174,12 @@ Used by the routines at <a href="42624.html">42624</a>, <a href="44375.html">443
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/aticatac/dec/asm/40906.html">Atic Atac</a></li>
+<li><a href="/ultimate/cookie/dec/asm/30156.html">Cookie</a></li>
+<li><a href="/ultimate/jetpac/dec/asm/29290.html">Jetpac</a></li>
+<li><a href="/ultimate/pssst/dec/asm/29931.html">Pssst</a></li>
+<li><a href="/ultimate/tranzam/dec/asm/28929.html">Tranz Am</a></li>
+<li><a href="/ultimate/tranzam/dec/asm/28936.html">Tranz Am</a></li>
+<li><a href="/ultimate/underwurlde/dec/asm/38647.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,28 @@ Next: <a href="45573.html">45573</a>
 </td>
 </tr>
 </table>
-<div class="description">45524: Routine at B1D4</div>
+<div class="description">45524: Initialise Game</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
 Used by the routine at <a href="39264.html">GameInitialisation</a>.
+</div>
+<div class="paragraph">
+Sets up the state of both players ready for a new game, builds the first room and starts the turn of player 1. A one player game gives player 2 no lives.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After <a href="45524.html">InitialiseGame</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="initialise-game-before" src="../../images/scr/initialise-game-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="initialise-game-after" src="../../images/scr/initialise-game-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 </td>
@@ -55,14 +73,16 @@ Initialise player 2.
 </td>
 </tr>
 <tr>
+<td class="asm-label">InitialiseGame</td>
 <td class="address-2"><span id="45524"></span>45524</td>
-<td class="instruction">CALL <a href="45598.html">45598</a></td>
-<td class="comment-1" rowspan="1">Call <a href="45598.html">45598</a>.</td>
+<td class="instruction">CALL <a href="45598.html">InitialisePlayer</a></td>
+<td class="comment-1" rowspan="1">Initialise the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45527"></span>45527</td>
 <td class="instruction">CALL <a href="45621.html">ChangePlayer</a></td>
-<td class="comment-1" rowspan="1">Call <a href="45621.html">ChangePlayer</a>.</td>
+<td class="comment-1" rowspan="1">Swap over to the other player.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -75,9 +95,10 @@ Initialise player 1.
 </td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45530"></span>45530</td>
-<td class="instruction">CALL <a href="45598.html">45598</a></td>
-<td class="comment-1" rowspan="1">Call <a href="45598.html">45598</a>.</td>
+<td class="instruction">CALL <a href="45598.html">InitialisePlayer</a></td>
+<td class="comment-1" rowspan="1">Initialise the player.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -90,85 +111,103 @@ Always start on player 1.
 </td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45533"></span>45533</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 0 to <a href="38558.html">Flag_ActivePlayer</a>.</td>
+<td class="comment-1" rowspan="2">Set the active player to 1UP in <a href="38558.html">Flag_ActivePlayer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45534"></span>45534</td>
 <td class="instruction">LD (38558),A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45537"></span>45537</td>
 <td class="instruction">CALL <a href="47996.html">ClearPlayArea_Attributes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47996.html">ClearPlayArea_Attributes</a>.</td>
+<td class="comment-1" rowspan="1">Clear the attribute buffer of the play area.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45540"></span>45540</td>
 <td class="instruction">CALL <a href="47964.html">ClearPlayArea</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47964.html">ClearPlayArea</a>.</td>
+<td class="comment-1" rowspan="1">Clear the play area.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45543"></span>45543</td>
 <td class="instruction">LD A,(38546)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38546.html">GameOptions</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the game options from <a href="38546.html">GameOptions</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45546"></span>45546</td>
 <td class="instruction">AND %00000001</td>
 <td class="comment-1" rowspan="1">Keep only bit 0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45548"></span>45548</td>
-<td class="instruction">JR NZ,<a href="45524.html#45553">45553</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="45524.html#45553">45553</a> if this is a two player game.</td>
+<td class="instruction">JR NZ,<a href="45524.html#45553">InitialiseGame_StartTurn</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45524.html#45553">InitialiseGame_StartTurn</a> if this is a two player game.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45550"></span>45550</td>
 <td class="instruction">LD (38624),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <a href="38624.html">InactivePlayer_Lives</a>.</td>
+<td class="comment-1" rowspan="1">Set the number of lives of player 2 in <a href="38624.html">InactivePlayer_Lives</a> to zero.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="45553"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="45573.html">45573</a>.
+This entry point is used by the routine at <a href="45573.html">SwitchPlayer</a>.
+</div>
+<div class="paragraph">
+This is also where the next player joins in after the other player has died.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">InitialiseGame_StartTurn</td>
 <td class="address-2"><span id="45553"></span>45553</td>
-<td class="instruction">CALL <a href="45495.html">45495</a></td>
-<td class="comment-1" rowspan="1">Call <a href="45495.html">45495</a>.</td>
+<td class="instruction">CALL <a href="45495.html">StartTurn</a></td>
+<td class="comment-1" rowspan="1">Start the turn.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45556"></span>45556</td>
 <td class="instruction">LD IX,38658</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="38658.html">ImmortalData</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the player's actor at <a href="38658.html">ImmortalData</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45560"></span>45560</td>
 <td class="instruction">CALL <a href="40227.html">VisitRoom</a></td>
-<td class="comment-1" rowspan="1">Call <a href="40227.html">VisitRoom</a>.</td>
+<td class="comment-1" rowspan="1">Mark the room as visited.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45563"></span>45563</td>
-<td class="instruction">CALL <a href="42851.html">42851</a></td>
-<td class="comment-1" rowspan="1">Call <a href="42851.html">42851</a>.</td>
+<td class="instruction">CALL <a href="42851.html">LoadOrchid</a></td>
+<td class="comment-1" rowspan="1">Load the orchid for the room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45566"></span>45566</td>
-<td class="instruction">CALL <a href="41787.html">41787</a></td>
-<td class="comment-1" rowspan="1">Call <a href="41787.html">41787</a>.</td>
+<td class="instruction">CALL <a href="41787.html">SetUpRoomObjects</a></td>
+<td class="comment-1" rowspan="1">Set up the objects in the room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45569"></span>45569</td>
-<td class="instruction">CALL <a href="48093.html">48093</a></td>
-<td class="comment-1" rowspan="1">Call <a href="48093.html">48093</a>.</td>
+<td class="instruction">CALL <a href="48093.html">DrawCurrentRoom</a></td>
+<td class="comment-1" rowspan="1">Draw the current room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="45572"></span>45572</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>

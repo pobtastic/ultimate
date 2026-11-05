@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,6 +44,28 @@ Next: <a href="A2CE.html">A2CE</a>
 <div class="paragraph">
 Used by the routine at <a href="9147.html">EnterRoom</a>.
 </div>
+<div class="paragraph">
+Sets the attributes of the side panel. The whole panel is filled with a colour that is picked from the attribute of the room, and then a shape and some bands of colour are put on top. <a href="8093.html#809a">ClearPlayArea_Row</a>, which fills a block of cells with a value, does most of the work.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a240"></span>
+<div class="comments">
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="panel-attributes-before" src="../images/scr/panel-attributes-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="panel-attributes-after" src="../images/scr/panel-attributes-after.png" /></td>
+</tr>
+</table>
+</div>
 </div>
 </td>
 </tr>
@@ -48,373 +73,401 @@ Used by the routine at <a href="9147.html">EnterRoom</a>.
 <td class="asm-label">DrawSidePanelAttrs</td>
 <td class="address-2"><span id="a240"></span>A240</td>
 <td class="instruction">LD HL,$00C0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=C0 (the Y position is 00 and the X position is C0), which is the top left of the side panel.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a243"></span>A243</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a246"></span>A246</td>
 <td class="instruction">LD BC,$0818</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=08 (the width of the panel in cells) and <span class="register">C</span>=18 (the number of rows).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a249"></span>
+<div class="comments">
+<div class="paragraph">
+Pick the colour for the panel. Take the inverse of bits 0-2 of the attribute of the room, unless that is less than 02 when 44 is used.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a249"></span>A249</td>
 <td class="instruction">LD A,($5E1A)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the room attribute from <a href="5E1A.html">CurrentRoom_Attribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a24c"></span>A24C</td>
 <td class="instruction">CPL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flip the bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a24d"></span>A24D</td>
-<td class="instruction">AND $07</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a24f"></span>A24F</td>
 <td class="instruction">CP $02</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A240.html#a255">DrawSidePanelAttrs_Colour</a> if the colour is 02 or more.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a251"></span>A251</td>
-<td class="instruction">JR NC,<a href="A240.html#a255">DrawSidePanelAttrs_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="A240.html#a255">DrawSidePanelAttrs_Colour</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a253"></span>A253</td>
 <td class="instruction">LD A,$44</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=44.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawSidePanelAttrs_0</td>
+<td class="asm-label">DrawSidePanelAttrs_Colour</td>
 <td class="address-2"><span id="a255"></span>A255</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Keep the attribute of the panel in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a256"></span>A256</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the attribute of the panel on the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawSidePanelAttrs_1</td>
+<td class="asm-label">DrawSidePanelAttrs_Row</td>
 <td class="address-2"><span id="a257"></span>A257</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the width and the number of rows on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a258"></span>A258</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the attribute address on the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawSidePanelAttrs_2</td>
+<td class="asm-label">DrawSidePanelAttrs_Cell</td>
 <td class="address-2"><span id="a259"></span>A259</td>
 <td class="instruction">LD (HL),E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the attribute of the panel to the cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a25a"></span>A25A</td>
 <td class="instruction">INC L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move to the next cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a25b"></span>A25B</td>
-<td class="instruction">DJNZ <a href="A240.html#a259">DrawSidePanelAttrs_2</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="A240.html#a259">DrawSidePanelAttrs_Cell</a></td>
+<td class="comment-1" rowspan="1">Decrease the width by one and loop back to <a href="A240.html#a259">DrawSidePanelAttrs_Cell</a> until the row is done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a25d"></span>A25D</td>
 <td class="instruction">POP HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the attribute address from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a25e"></span>A25E</td>
 <td class="instruction">LD BC,$0020</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span>=0020.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a261"></span>A261</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move down a row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a262"></span>A262</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the width and the number of rows from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a263"></span>A263</td>
 <td class="instruction">DEC C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the number of rows by one and loop back to <a href="A240.html#a257">DrawSidePanelAttrs_Row</a> until all of the rows have been set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a264"></span>A264</td>
-<td class="instruction">JR NZ,<a href="A240.html#a257">DrawSidePanelAttrs_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A240.html#a257">DrawSidePanelAttrs_Row</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a266"></span>
+<div class="comments">
+<div class="paragraph">
+Fill a square of three by three cells, and then a cell and a square of two by two cells below it, with the attribute of the room. Then put the attribute of the panel back in the middle of the three by three square.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a266"></span>A266</td>
 <td class="instruction">LD HL,$90C8</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=90C8 (the Y position is 90 and the X position is C8).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a269"></span>A269</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a26c"></span>A26C</td>
 <td class="instruction">LD A,($5E1A)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the room attribute from <a href="5E1A.html">CurrentRoom_Attribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a26f"></span>A26F</td>
 <td class="instruction">LD BC,$0303</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (the width) and <span class="register">C</span>=03 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a272"></span>A272</td>
-<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells with the attribute of the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a275"></span>A275</td>
 <td class="instruction">INC L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move to the next cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a276"></span>A276</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the attribute of the room to the cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a277"></span>A277</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move down a row (<span class="register">DE</span> is 0020 after the call).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a278"></span>A278</td>
 <td class="instruction">LD BC,$0202</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=02 (the width) and <span class="register">C</span>=02 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a27b"></span>A27B</td>
-<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells with the attribute of the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a27e"></span>A27E</td>
 <td class="instruction">LD HL,$98D0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=98D0 (the Y position is 98 and the X position is D0).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a281"></span>A281</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a284"></span>A284</td>
 <td class="instruction">POP DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the attribute of the panel from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a285"></span>A285</td>
 <td class="instruction">LD (HL),E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it to the cell.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a286"></span>
+<div class="comments">
+<div class="paragraph">
+Colour the bands of the panel from the bottom upwards. Each is filled with <a href="8093.html#809a">ClearPlayArea_Row</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a286"></span>A286</td>
 <td class="instruction">LD HL,$7DC8</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=7DC8 (the Y position is 7D and the X position is C8).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a289"></span>A289</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a28c"></span>A28C</td>
 <td class="instruction">LD BC,$0603</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=06 (the width) and <span class="register">C</span>=03 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a28f"></span>A28F</td>
 <td class="instruction">LD A,$47</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=47 (bright white).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a291"></span>A291</td>
-<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a294"></span>A294</td>
 <td class="instruction">LD HL,$5FC8</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=5FC8 (the Y position is 5F and the X position is C8).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a297"></span>A297</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a29a"></span>A29A</td>
 <td class="instruction">LD BC,$0604</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=06 (the width) and <span class="register">C</span>=04 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a29d"></span>A29D</td>
 <td class="instruction">LD A,$46</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=46 (bright yellow).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a29f"></span>A29F</td>
-<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2a2"></span>A2A2</td>
 <td class="instruction">LD HL,$48C8</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=48C8 (the Y position is 48 and the X position is C8).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2a5"></span>A2A5</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2a8"></span>A2A8</td>
 <td class="instruction">LD BC,$0601</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=06 (the width) and <span class="register">C</span>=01 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2ab"></span>A2AB</td>
 <td class="instruction">LD A,$45</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=45 (bright cyan).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2ad"></span>A2AD</td>
-<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2b0"></span>A2B0</td>
 <td class="instruction">LD BC,$0601</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=06 (the width) and <span class="register">C</span>=01 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2b3"></span>A2B3</td>
 <td class="instruction">LD A,$47</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=47 (bright white).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2b5"></span>A2B5</td>
-<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells in the next row down.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2b8"></span>A2B8</td>
 <td class="instruction">LD HL,$38C8</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=38C8 (the Y position is 38 and the X position is C8).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2bb"></span>A2BB</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2be"></span>A2BE</td>
 <td class="instruction">LD BC,$0601</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=06 (the width) and <span class="register">C</span>=01 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2c1"></span>A2C1</td>
 <td class="instruction">LD A,$43</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=43 (bright magenta).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2c3"></span>A2C3</td>
-<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2c6"></span>A2C6</td>
 <td class="instruction">LD BC,$0601</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=06 (the width) and <span class="register">C</span>=01 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2c9"></span>A2C9</td>
 <td class="instruction">LD A,$47</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=47 (bright white).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a2cb"></span>A2CB</td>
-<td class="instruction">JP <a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP <a href="8093.html#809a">ClearPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="8093.html#809a">ClearPlayArea_Row</a> to fill the cells in the next row down.</td>
 </tr>
 </table>
 <table class="asm-navigation">

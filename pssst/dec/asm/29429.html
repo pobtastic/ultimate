@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pssst.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -25,7 +28,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="29282.html">29282</a>
+Prev: <a href="29417.html">29417</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#29429">Map</a></td>
 <td class="next">
@@ -33,13 +36,19 @@ Next: <a href="29477.html">29477</a>
 </td>
 </tr>
 </table>
-<div class="description">29429: Bug Collision</div>
+<div class="description">29429: Check Bug Robbie Collision</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="25837.html">25837</a>.
+Used by the routine at <a href="25837.html">UpdateBugCommon</a>.
+</div>
+<div class="paragraph">
+Tests whether a bug is touching Robbie. Robbie only counts when his state is 1 or 2 (empty-handed or carrying a can), so a collision cannot happen while he is exploding.
+</div>
+<div class="paragraph">
+The two collide when their X positions differ by less than 16 and their Y positions are close enough. The vertical limit is 18 when Robbie is lower down the screen than the bug, or the bug's height (from *<span class="register">IX</span>+7) when the bug is lower down.
 </div>
 </div>
 <table class="input">
@@ -57,11 +66,11 @@ Used by the routine at <a href="25837.html">25837</a>.
 </tr>
 <tr>
 <td class="register">E</td>
-<td class="register-desc">0 no collision</td>
+<td class="register-desc">0 No collision</td>
 </tr>
 <tr>
 <td class="register">E</td>
-<td class="register-desc">1 collision</td>
+<td class="register-desc">1 Collision</td>
 </tr>
 </table>
 </td>
@@ -70,19 +79,19 @@ Used by the routine at <a href="25837.html">25837</a>.
 <td class="asm-label">BugCollision</td>
 <td class="address-2"><span id="29429"></span>29429</td>
 <td class="instruction">LD HL,24172</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24172.html">State_Robbie_Active</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24172.html">State_Robbie_Active</a> (Robbie).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29432"></span>29432</td>
 <td class="instruction">LD E,0</td>
-<td class="comment-1" rowspan="1"><span class="register">E</span>=Default value 0 (no collision).</td>
+<td class="comment-1" rowspan="1"><span class="register">E</span>=0 (the default result, no collision).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29434"></span>29434</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="24172.html">State_Robbie_Active</a>.</td>
+<td class="comment-1" rowspan="1">Fetch Robbie's state.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -94,31 +103,41 @@ Used by the routine at <a href="25837.html">25837</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="29437"></span>29437</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">A</span> by one.</td>
+<td class="comment-1" rowspan="1">Decrease the state of Robbie by one (zero if he is empty-handed).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29438"></span>29438</td>
 <td class="instruction">JR Z,<a href="29429.html#29442">BugCollision_X</a></td>
-<td class="comment-1" rowspan="1">If <span class="register">A</span> is zero then jump to <a href="29429.html#29442">BugCollision_X</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="29429.html#29442">BugCollision_X</a> if Robbie is empty-handed (state 1).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29440"></span>29440</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">A</span> by one again.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29441"></span>29441</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if Robbie is not carrying a can (state 2).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="29442"></span>
+<div class="comments">
+<div class="paragraph">
+Check the horizontal distance.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">BugCollision_X</td>
 <td class="address-2"><span id="29442"></span>29442</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=<a href="24172.html#24173">State_Robbie_Pos_X</a>.</td>
+<td class="comment-1" rowspan="2"><span class="register">A</span>=Robbie's X position (from <a href="24172.html#24173">State_Robbie_Pos_X</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -129,13 +148,13 @@ Used by the routine at <a href="25837.html">25837</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="29444"></span>29444</td>
 <td class="instruction">SUB (IX+1)</td>
-<td class="comment-1" rowspan="1">Robbie X position - bug X Position.</td>
+<td class="comment-1" rowspan="1">Subtract the bug's X position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29447"></span>29447</td>
 <td class="instruction">JP P,<a href="29429.html#29452">BugCollision_Test_X</a></td>
-<td class="comment-1" rowspan="2">Make sure we have a positive byte.</td>
+<td class="comment-1" rowspan="2">Make sure the difference is positive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -146,7 +165,7 @@ Used by the routine at <a href="25837.html">25837</a>.
 <td class="asm-label">BugCollision_Test_X</td>
 <td class="address-2"><span id="29452"></span>29452</td>
 <td class="instruction">CP 16</td>
-<td class="comment-1" rowspan="2">Return if <span class="register">A</span> &gt;= 16.</td>
+<td class="comment-1" rowspan="2">Return if the difference is 16 or more.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -154,49 +173,60 @@ Used by the routine at <a href="25837.html">25837</a>.
 <td class="instruction">RET NC</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="29455"></span>
+<div class="comments">
+<div class="paragraph">
+Check the vertical distance.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29455"></span>29455</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="24172.html#24174">State_Robbie_Pos_Y</a>.</td>
+<td class="comment-1" rowspan="1">Move on to Robbie's Y position.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="29456"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="29282.html">29282</a>.
+This entry point is used by the routine at <a href="29282.html">CreateBug</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">BugCollision_0</td>
+<td class="asm-label">BugCollision_Y</td>
 <td class="address-2"><span id="29456"></span>29456</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">}</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=Robbie's Y position (from <a href="24172.html#24174">State_Robbie_Pos_Y</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29457"></span>29457</td>
 <td class="instruction">SUB (IX+2)</td>
-<td class="comment-1" rowspan="1">Robbie Y position - bug Y position.</td>
+<td class="comment-1" rowspan="1">Subtract the bug's Y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29460"></span>29460</td>
 <td class="instruction">JP P,<a href="29429.html#29470">BugCollision_SetHeight</a></td>
-<td class="comment-1" rowspan="2">Set <span class="register">D</span> to 18 if it's a positive number.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="29429.html#29470">BugCollision_SetHeight</a> if Robbie is lower down the screen than the bug.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29463"></span>29463</td>
 <td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the difference positive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29465"></span>29465</td>
 <td class="instruction">LD D,(IX+7)</td>
-<td class="comment-1" rowspan="1"><span class="register">D</span>=bug sprite height.</td>
+<td class="comment-1" rowspan="1"><span class="register">D</span>=the bug's height (from *<span class="register">IX</span>+7).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -214,7 +244,7 @@ This entry point is used by the routine at <a href="29282.html">29282</a>.
 <td class="asm-label">BugCollision_Test_Y</td>
 <td class="address-2"><span id="29472"></span>29472</td>
 <td class="instruction">CP D</td>
-<td class="comment-1" rowspan="2">Return if <span class="register">D</span> &gt;= <span class="register">A</span>.</td>
+<td class="comment-1" rowspan="2">Return if the difference is <span class="register">D</span> or more.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -227,6 +257,9 @@ This entry point is used by the routine at <a href="29282.html">29282</a>.
 <div class="comments">
 <div class="paragraph">
 A collision has been detected.
+</div>
+<div class="paragraph">
+See <a href="../reference/pokes.html#immunity">Immunity</a>.
 </div>
 </div>
 </td>
@@ -247,7 +280,7 @@ A collision has been detected.
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="29282.html">29282</a>
+Prev: <a href="29417.html">29417</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#29429">Map</a></td>
 <td class="next">

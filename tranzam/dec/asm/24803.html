@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,12 @@ Next: <a href="24827.html">24827</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="28019.html">HandlerAccelerate</a>.
+Used by the routines at <a href="28160.html">BounceY</a> and <a href="28185.html">BounceX</a>.
+</div>
+<div class="paragraph">
+Plays eight groups of four square waves using <a href="24907.html">PlaySquareWave</a>. The period of each group comes from one of the first eight bytes of the ROM, with bit 7 set (so the period is never less than 128). This is the sound made when the car reaches the edge of the map. <audio controls="" src="../../audio/bounce.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/bounce.wav">link to the audio</a> instead.</p>
+</audio>
 </div>
 </div>
 </td>
@@ -48,31 +56,31 @@ Used by the routine at <a href="28019.html">HandlerAccelerate</a>.
 <td class="asm-label">SoundsBounce</td>
 <td class="address-2"><span id="24803"></span>24803</td>
 <td class="instruction">LD HL,0</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=0000.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the start of the ROM, which supplies the periods of the waves.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24806"></span>24806</td>
 <td class="instruction">LD C,8</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=8.</td>
+<td class="comment-1" rowspan="1">Set the group counter to 8 one for each group of waves.</td>
 </tr>
 <tr>
 <td class="asm-label">SoundsBounce_Loop</td>
 <td class="address-2"><span id="24808"></span>24808</td>
 <td class="instruction">LD E,4</td>
-<td class="comment-1" rowspan="1"><span class="register">E</span>=4.</td>
+<td class="comment-1" rowspan="1">Set the wave counter to 4 for the waves in each group.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24810"></span>24810</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=the byte pointed to by <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the next ROM byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24811"></span>24811</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Move on to the next ROM byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -90,43 +98,52 @@ Used by the routine at <a href="28019.html">HandlerAccelerate</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24816"></span>24816</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Store the result in <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Set the period of the waves in this group.</td>
 </tr>
 <tr>
 <td class="asm-label">SoundsBounce_Play</td>
 <td class="address-2"><span id="24817"></span>24817</td>
 <td class="instruction">CALL <a href="24907.html">PlaySquareWave</a></td>
-<td class="comment-1" rowspan="1">Call <a href="24907.html">PlaySquareWave</a>.</td>
+<td class="comment-1" rowspan="1">Play a square wave using <a href="24907.html">PlaySquareWave</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24820"></span>24820</td>
 <td class="instruction">DEC E</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">E</span> by one.</td>
+<td class="comment-1" rowspan="2">Decrease the wave counter by one and loop back to <a href="24803.html#24817">SoundsBounce_Play</a> until all of the waves in the group have been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24821"></span>24821</td>
 <td class="instruction">JR NZ,<a href="24803.html#24817">SoundsBounce_Play</a></td>
-<td class="comment-1" rowspan="1">If <span class="register">E</span> is not zero, jump to <a href="24803.html#24817">SoundsBounce_Play</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24823"></span>24823</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">C</span> by one.</td>
+<td class="comment-1" rowspan="2">Decrease the group counter by one and loop back to <a href="24803.html#24808">SoundsBounce_Loop</a> until all of the groups have been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24824"></span>24824</td>
 <td class="instruction">JR NZ,<a href="24803.html#24808">SoundsBounce_Loop</a></td>
-<td class="comment-1" rowspan="1">If <span class="register">C</span> is not zero, jump to <a href="24803.html#24808">SoundsBounce_Loop</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24826"></span>24826</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/underwurlde/dec/asm/41331.html">Underwurlde</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

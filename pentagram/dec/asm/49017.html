@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at 49017</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="48998.html">48998</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#49017">Map</a></td>
+<td class="next">
+Next: <a href="49166.html">49166</a>
+</td>
+</tr>
+</table>
+<div class="description">49017: Handle Pickup And Drop</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="50240.html">HandlePlayerLegs</a>.
+</div>
+<div class="paragraph">
+Deals with the key for picking up and dropping objects. The key only does something once for each time that it is pressed, and only if the player is standing on the ground, away from the walls.
+</div>
+<div class="paragraph">
+If the player is touching an object that can be carried, it is picked up. The player carries three objects at most, so if the carried objects are all in use the oldest one is dropped in its place. If the player is not touching anything, the object that is in the last place of the inventory (the oldest one) is dropped, if there is a free object record and nothing is in the way above the player. When that place is empty, the carried objects are only moved along one place towards it.
+</div>
+<div class="paragraph">
+An object is dropped by creating it in a free object record, at the position of the player, who is moved up out of the way.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Record of the object of the legs of the player</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49017"></span>
+<div class="comments">
+<div class="paragraph">
+Do nothing if the key is still being held down from the last time.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop</td>
+<td class="address-2"><span id="49017"></span>49017</td>
+<td class="instruction">LD A,(42816)</td>
+<td class="comment-1" rowspan="1">Fetch the flag from <a href="42816.html">PickupDropPressedFlag</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49020"></span>49020</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49166.html">CheckActionKeyReleased</a> if the key was already being held down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49021"></span>49021</td>
+<td class="instruction">JP NZ,<a href="49166.html">CheckActionKeyReleased</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49024"></span>
+<div class="comments">
+<div class="paragraph">
+The key was not being held, so find out if it is pressed, and if the player is able to pick things up or drop them.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49024"></span>49024</td>
+<td class="instruction">CALL <a href="48998.html">TestPickupDropKey</a></td>
+<td class="comment-1" rowspan="2">Return if the key is not being pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49027"></span>49027</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49028"></span>49028</td>
+<td class="instruction">CALL <a href="50339.html">TestPlayerInRoom</a></td>
+<td class="comment-1" rowspan="2">Return if the player is touching a wall.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49031"></span>49031</td>
+<td class="instruction">RET NC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49032"></span>49032</td>
+<td class="instruction">BIT 3,(IX+12)</td>
+<td class="comment-1" rowspan="2">Return if the player is jumping.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49036"></span>49036</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49037"></span>49037</td>
+<td class="instruction">BIT 2,(IX+12)</td>
+<td class="comment-1" rowspan="2">Return if the player is not on the ground.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49041"></span>49041</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49042"></span>49042</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Clear the flag that says that there is no room to drop an object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49043"></span>49043</td>
+<td class="instruction">LD (42817),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49046"></span>49046</td>
+<td class="instruction">LD A,(IX+3)</td>
+<td class="comment-1" rowspan="2">Stash the height of the player in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49049"></span>49049</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49050"></span>49050</td>
+<td class="instruction">ADD A,12</td>
+<td class="comment-1" rowspan="2">Raise the player by 12.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49052"></span>49052</td>
+<td class="instruction">LD (IX+3),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49055"></span>49055</td>
+<td class="instruction">CALL <a href="48923.html">TestObjectIntersections</a></td>
+<td class="comment-1" rowspan="1">Call <a href="48923.html">TestObjectIntersections</a> to find out if there is room for the player there.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49058"></span>49058</td>
+<td class="instruction">LD (IX+3),B</td>
+<td class="comment-1" rowspan="1">Put the player back where it was.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49061"></span>49061</td>
+<td class="instruction">JR NC,<a href="49017.html#49068">HandlePickupAndDrop_Start</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="49017.html#49068">HandlePickupAndDrop_Start</a> if there is room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49063"></span>49063</td>
+<td class="instruction">LD A,1</td>
+<td class="comment-1" rowspan="2">Set the flag that says that there is no room to drop an object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49065"></span>49065</td>
+<td class="instruction">LD (42817),A</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Start</td>
+<td class="address-2"><span id="49068"></span>49068</td>
+<td class="instruction">LD A,1</td>
+<td class="comment-1" rowspan="2">Set the flag that says that the key is being held down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49070"></span>49070</td>
+<td class="instruction">LD (42816),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49073"></span>49073</td>
+<td class="instruction">LD (42784),A</td>
+<td class="comment-1" rowspan="1">Set the flag to redraw the inventory in <a href="42784.html">ObjectsCarriedChangedFlag</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49076"></span>49076</td>
+<td class="instruction">LD B,48</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of the number of ordinary object records, which is 48.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49078"></span>
+<div class="comments">
+<div class="paragraph">
+Make the player larger by 4 along each axis, so that it can touch objects that are close.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49078"></span>49078</td>
+<td class="instruction">LD L,(IX+4)</td>
+<td class="comment-1" rowspan="4">Make the half size along x larger by 4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49081"></span>49081</td>
+<td class="instruction">LD A,L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49082"></span>49082</td>
+<td class="instruction">ADD A,4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49084"></span>49084</td>
+<td class="instruction">LD (IX+4),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49087"></span>49087</td>
+<td class="instruction">LD H,(IX+5)</td>
+<td class="comment-1" rowspan="4">Make the half size along y larger by 4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49090"></span>49090</td>
+<td class="instruction">LD A,H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49091"></span>49091</td>
+<td class="instruction">ADD A,4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49093"></span>49093</td>
+<td class="instruction">LD (IX+5),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49096"></span>49096</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the old half sizes along x and y on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49097"></span>49097</td>
+<td class="instruction">LD L,(IX+6)</td>
+<td class="comment-1" rowspan="4">Make the size along z larger by 4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49100"></span>49100</td>
+<td class="instruction">LD A,L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49101"></span>49101</td>
+<td class="instruction">ADD A,4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49103"></span>49103</td>
+<td class="instruction">LD (IX+6),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49106"></span>49106</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the old size along z on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49107"></span>49107</td>
+<td class="instruction">LD IY,43055</td>
+<td class="comment-1" rowspan="1">Start with the first ordinary object record, <a href="42863.html#43055">ObjectsTable_RoomObjects</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49111"></span>
+<div class="comments">
+<div class="paragraph">
+Look for an object that can be picked up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Search</td>
+<td class="address-2"><span id="49111"></span>49111</td>
+<td class="instruction">CALL <a href="49364.html">TestObjectCanBePickedUp</a></td>
+<td class="comment-1" rowspan="1">Call <a href="49364.html">TestObjectCanBePickedUp</a> to test if the object can be picked up and touches the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49114"></span>49114</td>
+<td class="instruction">JP C,<a href="49319.html">PickUpObject</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="49319.html">PickUpObject</a> to pick it up if it does.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49117"></span>49117</td>
+<td class="instruction">LD DE,32</td>
+<td class="comment-1" rowspan="2">Move on to the next object record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49120"></span>49120</td>
+<td class="instruction">ADD IY,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49122"></span>49122</td>
+<td class="instruction">DJNZ <a href="49017.html#49111">HandlePickupAndDrop_Search</a></td>
+<td class="comment-1" rowspan="1">Decrease the counter and loop until all the records have been tried.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49124"></span>
+<div class="comments">
+<div class="paragraph">
+Nothing can be picked up, so look for a free object record to drop an object in.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49124"></span>49124</td>
+<td class="instruction">CALL <a href="48998.html">TestPickupDropKey</a></td>
+<td class="comment-1" rowspan="2">Jump to <a href="49017.html#49148">HandlePickupAndDrop_Done</a> if the key is no longer pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49127"></span>49127</td>
+<td class="instruction">JR Z,<a href="49017.html#49148">HandlePickupAndDrop_Done</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49129"></span>49129</td>
+<td class="instruction">LD DE,32</td>
+<td class="comment-1" rowspan="1">Set the size of an object record in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49132"></span>49132</td>
+<td class="instruction">LD B,48</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of the number of ordinary object records.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49134"></span>49134</td>
+<td class="instruction">LD IY,43055</td>
+<td class="comment-1" rowspan="1">Start with the first ordinary object record.</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_FindFree</td>
+<td class="address-2"><span id="49138"></span>49138</td>
+<td class="instruction">LD A,(IY+0)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="49175.html">DropObject</a> to drop an object if this record is free.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49141"></span>49141</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49142"></span>49142</td>
+<td class="instruction">JR Z,<a href="49175.html">DropObject</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49144"></span>49144</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="2">Advance to the next record and loop until all of them have been tried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49146"></span>49146</td>
+<td class="instruction">DJNZ <a href="49017.html#49138">HandlePickupAndDrop_FindFree</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49148"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="49175.html">DropObject</a>.
+</div>
+<div class="paragraph">
+Put the size of the player back to what it was, and make a noise.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Done</td>
+<td class="address-2"><span id="49148"></span>49148</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="2">Restore the old size along z.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49149"></span>49149</td>
+<td class="instruction">LD (IX+6),L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49152"></span>49152</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the old half sizes along x and y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49153"></span>49153</td>
+<td class="instruction">LD (IX+4),L</td>
+<td class="comment-1" rowspan="2">Put the old half sizes back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49156"></span>49156</td>
+<td class="instruction">LD (IX+5),H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49159"></span>49159</td>
+<td class="instruction">LD HL,261</td>
+<td class="comment-1" rowspan="2">Start a sound effect with a type of 1 and a count of 5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49162"></span>49162</td>
+<td class="instruction">LD (42825),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49165"></span>49165</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/dec/asm/49166.html">Knight Lore</a></li>
+<li><a href="/ultimate/alien8/dec/asm/48491.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="48998.html">48998</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#49017">Map</a></td>
+<td class="next">
+Next: <a href="49166.html">49166</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../../asm/BF79.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -25,7 +28,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="6A9B.html">6A9B</a>
+Prev: <a href="6AE4.html">6AE4</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#6af5">Map</a></td>
 <td class="next">
@@ -39,7 +42,10 @@ Next: <a href="6B12.html">6B12</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="6A9B.html">6A9B</a>.
+Used by the routine at <a href="6A9B.html">HandlerPlayer</a>.
+</div>
+<div class="paragraph">
+Looks after the objects (07 slots from <a href="5E50.html">Object_1_State</a>). <a href="6B47.html">DrawObjects</a> sets bit 7 of the sprite ID of each object that is in view, so for each slot this clears that bit for objects still in view, erases the objects which are no longer in view and frees their slots. Empty slots just waste a little time.
 </div>
 </div>
 </td>
@@ -48,24 +54,24 @@ Used by the routine at <a href="6A9B.html">6A9B</a>.
 <td class="asm-label">HandlerObjects</td>
 <td class="address-2"><span id="6af5"></span>6AF5</td>
 <td class="instruction">LD HL,$5E50</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E50.html">Object_1_State</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the first object (<a href="5E50.html">Object_1_State</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6af8"></span>6AF8</td>
 <td class="instruction">LD B,$07</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=07.</td>
+<td class="comment-1" rowspan="1">Set the object counter to 07.</td>
 </tr>
 <tr>
 <td class="asm-label">CheckObjectActive</td>
 <td class="address-2"><span id="6afa"></span>6AFA</td>
 <td class="instruction">BIT 7,(HL)</td>
-<td class="comment-1" rowspan="2">If bit 7 is not set on the current objects sprite ID value, jump to <a href="6B12.html">6B12</a>.</td>
+<td class="comment-1" rowspan="2">If bit 7 is not set on the current objects sprite ID value, jump to <a href="6B12.html">EraseObject</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6afc"></span>6AFC</td>
-<td class="instruction">JR Z,<a href="6B12.html">$6B12</a></td>
+<td class="instruction">JR Z,<a href="6B12.html">EraseObject</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -84,34 +90,47 @@ Used by the routine at <a href="6A9B.html">6A9B</a>.
 <span id="6b02"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="6B12.html">6B12</a>.
+This entry point is used by the routine at <a href="6B12.html">EraseObject</a>.
+</div>
+<div class="paragraph">
+An empty slot; spend some time so that the frame takes about as long as it does for a used one.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">HandlerObjects_0</td>
+<td class="asm-label">HandlerObjects_EmptySlot</td>
 <td class="address-2"><span id="6b02"></span>6B02</td>
 <td class="instruction">PUSH HL</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="6b03"></span>
+<div class="comments">
+<div class="paragraph">
+See <a href="../reference/pokes.html#make_the_game_go_faster">Make The Game Go Faster</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6b03"></span>6B03</td>
 <td class="instruction">LD HL,$0118</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=0118.</td>
+<td class="comment-1" rowspan="1">Set the delay counter to 0118.</td>
 </tr>
 <tr>
 <td class="asm-label">ObjectPauseLoop</td>
 <td class="address-2"><span id="6b06"></span>6B06</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Decrease the delay counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6b07"></span>6B07</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="3">If <span class="register">HL</span> is not zero, jump to <a href="6AF5.html#6b06">ObjectPauseLoop</a>.</td>
+<td class="comment-1" rowspan="3">Loop back to <a href="6AF5.html#6b06">ObjectPauseLoop</a> until the delay counter is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -133,7 +152,7 @@ This entry point is used by the routine at <a href="6B12.html">6B12</a>.
 <td class="asm-label">NextObject</td>
 <td class="address-2"><span id="6b0c"></span>6B0C</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2">Increment <span class="register">HL</span> by two.</td>
+<td class="comment-1" rowspan="2">Move on to the Y position of the object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -145,7 +164,7 @@ This entry point is used by the routine at <a href="6B12.html">6B12</a>.
 <span id="6b0e"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="6B12.html">6B12</a>.
+This entry point is used by the routine at <a href="6B12.html">EraseObject</a>.
 </div>
 </div>
 </td>
@@ -154,13 +173,13 @@ This entry point is used by the routine at <a href="6B12.html">6B12</a>.
 <td class="asm-label">NextObject_2</td>
 <td class="address-2"><span id="6b0e"></span>6B0E</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Move on to the next object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6b0f"></span>6B0F</td>
 <td class="instruction">DJNZ <a href="6AF5.html#6afa">CheckObjectActive</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="6AF5.html#6afa">CheckObjectActive</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the object counter by one and loop back to <a href="6AF5.html#6afa">CheckObjectActive</a> until all 07 objects have been checked.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -172,7 +191,7 @@ This entry point is used by the routine at <a href="6B12.html">6B12</a>.
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="6A9B.html">6A9B</a>
+Prev: <a href="6AE4.html">6AE4</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#6af5">Map</a></td>
 <td class="next">

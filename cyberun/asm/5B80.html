@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cyberun: Routine at 5B80</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cyberun.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="4000.html">4000</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#5b80">Map</a></td>
+<td class="next">
+Next: <a href="5C00.html">5C00</a>
+</td>
+</tr>
+</table>
+<div class="description">5B80: Decryption Routine</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The loader copies this routine here and runs it once the encrypted game has been loaded to 5E80. The helper at <a href="../loader/6000.html">6000</a> copies this stub here and the move routine to FC00. It first moves the game down to its home at 5C80 (see <a href="FC00.html">CopyGameDown</a>) and then decrypts it, one byte at a time and from the top down, by running RRD over 9E00 bytes starting at FA00. Each RRD passes a nibble along from one byte to the next, so the whole game is stored shifted by half a byte. Control then goes to <a href="5C80.html">StartGame</a>. Once the game is running the space up to 5BFF is reused, for the records of the segments of the four tiles that <a href="D0BD.html">DrawTerrain</a> makes (starting at 5B80, 5BA5, 5BCA and 5BEF). That routine also sets the stack pointer to 5B7A.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="5b80"></span>
+<div class="comments">
+<div class="paragraph">
+Set up the stack and move the game down into place.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GameEntry</td>
+<td class="address-2"><span id="5b80"></span>5B80</td>
+<td class="instruction">LD SP,$FE00</td>
+<td class="comment-1" rowspan="1">Set the stack pointer to FE00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b83"></span>5B83</td>
+<td class="instruction">DI</td>
+<td class="comment-1" rowspan="1">Disable interrupts.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b84"></span>5B84</td>
+<td class="instruction">CALL <a href="FC00.html">CopyGameDown</a></td>
+<td class="comment-1" rowspan="1">Call <a href="FC00.html">CopyGameDown</a> to move the game down to 5C80.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="5b87"></span>
+<div class="comments">
+<div class="paragraph">
+Decrypt every byte from FA00 down to 5C01.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b87"></span>5B87</td>
+<td class="instruction">LD HL,$FA00</td>
+<td class="comment-1" rowspan="1">Set the start address in <span class="register">HL</span> to FA00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b8a"></span>5B8A</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear the nibble carried between bytes in <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b8b"></span>5B8B</td>
+<td class="instruction">LD BC,$9E00</td>
+<td class="comment-1" rowspan="1">Set the byte count in <span class="register">BC</span> to 9E00.</td>
+</tr>
+<tr>
+<td class="asm-label">Decryption_Loop</td>
+<td class="address-2"><span id="5b8e"></span>5B8E</td>
+<td class="instruction">RRD</td>
+<td class="comment-1" rowspan="1">Rotate the nibbles of the current byte through <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b90"></span>5B90</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Move down to the previous byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b91"></span>5B91</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="2">Decrease the low byte of the counter by one and loop back to <a href="5B80.html#5b8e">Decryption_Loop</a> until none remain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b92"></span>5B92</td>
+<td class="instruction">JR NZ,<a href="5B80.html#5b8e">Decryption_Loop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b94"></span>5B94</td>
+<td class="instruction">DJNZ <a href="5B80.html#5b8e">Decryption_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the high byte of the counter by one and loop back to <a href="5B80.html#5b8e">Decryption_Loop</a> until every byte has been decrypted.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b96"></span>5B96</td>
+<td class="instruction">JP <a href="5C80.html">StartGame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="5C80.html">StartGame</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="4000.html">4000</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#5b80">Map</a></td>
+<td class="next">
+Next: <a href="5C00.html">5C00</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/">Source code</a>.</div>
+<div><a href="../dec/asm/23424.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

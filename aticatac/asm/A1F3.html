@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,6 +44,18 @@ Next: <a href="A219.html">A219</a>
 <div class="paragraph">
 Used by the routines at <a href="7CAF.html">GameMenu</a>, <a href="8C35.html">GameOver</a>, <a href="9641.html">GameStats</a> and <a href="96EC.html">GameComplete</a>.
 </div>
+<div class="paragraph">
+Prints a string of characters, and sets the attribute of each character cell it uses. The string data starts with the attribute, followed by the characters, and bit 7 of the last character is set to mark the end of the string.    <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="print-string-before" src="../images/scr/print-string-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="print-string-after" src="../images/scr/print-string-after.png" /></td>
+</tr>
+</table>
+</div>
 </div>
 <table class="input">
 <tr class="asm-input-header">
@@ -49,6 +64,10 @@ Used by the routines at <a href="7CAF.html">GameMenu</a>, <a href="8C35.html">Ga
 <tr>
 <td class="register">DE</td>
 <td class="register-desc">Pointer to string data</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">The position (the Y position in <span class="register">H</span> and the X position in <span class="register">L</span>)</td>
 </tr>
 </table>
 </td>
@@ -63,7 +82,7 @@ Used by the routines at <a href="7CAF.html">GameMenu</a>, <a href="8C35.html">Ga
 <td class="asm-label"></td>
 <td class="address-1"><span id="a1f4"></span>A1F4</td>
 <td class="instruction">CALL <a href="9BA2.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="9BA2.html">ScreenAddress</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="9BA2.html">ScreenAddress</a> to get the screen address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,7 +118,7 @@ Used by the routines at <a href="7CAF.html">GameMenu</a>, <a href="8C35.html">Ga
 <td class="asm-label"></td>
 <td class="address-1"><span id="a1fc"></span>A1FC</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -137,14 +156,14 @@ This entry point is used by the routine at <a href="7D8A.html">MenuWriteText</a>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a205"></span>A205</td>
-<td class="instruction">CALL <a href="A1D3.html">PrintCharacter</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A1D3.html">PrintCharacter</a>.</td>
+<td class="instruction">CALL <a href="A1D3.html">PrintScreen</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A1D3.html">PrintScreen</a> to print the character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a208"></span>A208</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">DE</span> by one.</td>
+<td class="comment-1" rowspan="1">Move <span class="register">DE</span> on to the next character of the string.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -168,7 +187,7 @@ This entry point is used by the routine at <a href="7D8A.html">MenuWriteText</a>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a20c"></span>A20C</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">L</span> by one.</td>
+<td class="comment-1" rowspan="1">Move <span class="register">L</span> on to the next attribute cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -180,7 +199,7 @@ This entry point is used by the routine at <a href="7D8A.html">MenuWriteText</a>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a20e"></span>A20E</td>
 <td class="instruction">JR <a href="A1F3.html#a1ff">PrintString_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="A1F3.html#a1ff">PrintString_Loop</a>.</td>
+<td class="comment-1" rowspan="1">Jump back to <a href="A1F3.html#a1ff">PrintString_Loop</a> to print the next character of the string.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -201,8 +220,8 @@ Because the last character contains the terminator, it needs to be handled separ
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a212"></span>A212</td>
-<td class="instruction">CALL <a href="A1D3.html">PrintCharacter</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A1D3.html">PrintCharacter</a>.</td>
+<td class="instruction">CALL <a href="A1D3.html">PrintScreen</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A1D3.html">PrintScreen</a> to print the character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -235,9 +254,11 @@ Because the last character contains the terminator, it needs to be handled separ
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/cookie/asm/7488.html">Cookie</a></li>
 <li><a href="/ultimate/jetpac/asm/716C.html">Jetpac</a></li>
-<li><a href="/ultimate/lunarjetman/asm/0000.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/lunarjetman/asm/8A11.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/asm/73ED.html">Pssst</a></li>
-<li><a href="/ultimate/tranzam/asm/0000.html">Tranz Am</a></li>
+<li><a href="/ultimate/sabrewulf/asm/B53D.html">Sabre Wulf</a></li>
+<li><a href="/ultimate/tranzam/asm/6518.html">Tranz Am</a></li>
+<li><a href="/ultimate/underwurlde/asm/9C3C.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

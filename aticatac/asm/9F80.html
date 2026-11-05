@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -25,7 +28,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="9F56.html">9F56</a>
+Prev: <a href="9F74.html">9F74</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#9f80">Map</a></td>
 <td class="next">
@@ -41,48 +44,61 @@ Next: <a href="9F9F.html">9F9F</a>
 <div class="paragraph">
 Used by the routines at <a href="9F56.html">RemoveEntity</a> and <a href="9FCA.html">DisplayEntity</a>.
 </div>
+<div class="paragraph">
+Gets everything ready to draw (or erase) the sprite at the position which was last recorded by <a href="9FFB.html">StoreEntity</a>. Sprites are drawn using the exclusive OR operation, so drawing a sprite for a second time erases it.
 </div>
+<div class="paragraph">
+The number of rows to draw is written to <a href="5E18.html">Old_Sprite_Row_Count</a>, and the shifting routine at <a href="9ECE.html">DrawOldSpriteRow_Aligned</a> is set up to move the sprite along by the position MOD 08 pixels.
+</div>
+</div>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">00</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The address of the first row of sprite data to draw</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">The screen address of the bottom row of the sprite</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrepDraw23</td>
 <td class="address-2"><span id="9f80"></span>9F80</td>
 <td class="instruction">CALL <a href="9E86.html">GetSpriteA</a></td>
-<td class="comment-1" rowspan="1">Call <a href="9E86.html">GetSpriteA</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the address of the old sprite with <a href="9E86.html">GetSpriteA</a>.</td>
 </tr>
 <tr>
-<td class="routine-comment" colspan="5">
-<span id="9f83"></span>
-<div class="comments">
-<div class="paragraph">
-This entry point is used by the routines at <a href="9E9B.html">9E9B</a> and <a href="9F56.html">RemoveEntity</a>.
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="asm-label">PrepDraw23_0</td>
-<td class="address-2"><span id="9f83"></span>9F83</td>
+<td class="asm-label">PrepDraw23_NoFetch</td>
+<td class="address-1"><span id="9f83"></span>9F83</td>
 <td class="instruction">LD HL,($5E16)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E16.html">Saved_X</a> (saved X position).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E16.html">Previous_X_Position</a> (the saved X position in <span class="register">L</span> and the saved Y position in <span class="register">H</span>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f86"></span>9F86</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f87"></span>9F87</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">A</span> by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f88"></span>9F88</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Multiply by 02.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -94,43 +110,52 @@ This entry point is used by the routines at <a href="9E9B.html">9E9B</a> and <a 
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f8b"></span>9F8B</td>
 <td class="instruction">CP $0E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9F80.html#9f91">PrepDraw23_Shift</a> if this is not the maximum offset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f8d"></span>9F8D</td>
-<td class="instruction">JR NZ,<a href="9F80.html#9f91">PrepDraw23_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="9F80.html#9f91">PrepDraw23_Shift</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f8f"></span>9F8F</td>
 <td class="instruction">LD A,$E8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Use the offset which jumps to the code for sprites which are aligned to a character cell.</td>
 </tr>
 <tr>
-<td class="asm-label">PrepDraw23_1</td>
+<td class="routine-comment" colspan="5">
+<span id="9f91"></span>
+<div class="comments">
+<div class="paragraph">
+Self modifying code; this updates the operand of the JR command at <a href="9ECE.html#9ee4">9EE5</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrepDraw23_Shift</td>
 <td class="address-2"><span id="9f91"></span>9F91</td>
 <td class="instruction">LD ($9EE5),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the offset to <a href="9ECE.html#9ee4">9EE5</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f94"></span>9F94</td>
 <td class="instruction">CALL <a href="9BA2.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="9BA2.html">ScreenAddress</a> to get the screen address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f97"></span>9F97</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the number of rows in the sprite (the first byte of the sprite data).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f98"></span>9F98</td>
 <td class="instruction">LD ($5E18),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the number of rows to <a href="5E18.html">Old_Sprite_Row_Count</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -143,16 +168,16 @@ This entry point is used by the routine at <a href="9F9F.html">PrepDraw2</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">PrepDraw23_2</td>
+<td class="asm-label">PrepDraw23_Finish</td>
 <td class="address-2"><span id="9f9b"></span>9F9B</td>
 <td class="instruction">LD C,$00</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">C</span>=00.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9f9d"></span>9F9D</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move past the height byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -166,6 +191,7 @@ This entry point is used by the routine at <a href="9F9F.html">PrepDraw2</a>.
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/sabrewulf/asm/B939.html">Sabre Wulf</a></li>
+<li><a href="/ultimate/underwurlde/asm/9657.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>
@@ -175,7 +201,7 @@ View the equivalent code in; <ul class="">
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="9F56.html">9F56</a>
+Prev: <a href="9F74.html">9F74</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#9f80">Map</a></td>
 <td class="next">

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,218 +36,304 @@ Next: <a href="A6D4.html">A6D4</a>
 </td>
 </tr>
 </table>
-<div class="description">A680: Routine at A680</div>
+<div class="description">A680: Handler: Orchid</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Handles an orchid (sprite IDs 48 to 4F). An orchid goes through a cycle of growing, staying in bloom for a short time, shrinking and then staying hidden for a while. The lowest three bits of the sprite ID are the stage of growth and a timer in <span class="register">IX</span>+06 and <span class="register">IX</span>+07 counts down how long it is before the next change (see <a href="A6D4.html">ChangeOrchidStage</a>). The timer only counts down while the player is alive and the game delay timer in <a href="96B5.html">GameDelayTimer</a> is zero.
+</div>
+<div class="paragraph">
+Once the orchid has finished growing it can be touched by the player (see <a href="A737.html">TestOrchidTouched</a>). The stem of the orchid is coloured bright green and the flower is coloured with the colour of the orchid.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the orchid</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerOrchid</td>
+<td class="address-2"><span id="a680"></span>A680</td>
+<td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
+<td class="comment-1" rowspan="1">Remember the previous position of the orchid.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a683"></span>A683</td>
+<td class="instruction">LD L,(IX+$06)</td>
+<td class="comment-1" rowspan="2">Fetch the timer of the orchid.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a686"></span>A686</td>
+<td class="instruction">LD H,(IX+$07)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a689"></span>A689</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Jump to <a href="A6D4.html">ChangeOrchidStage</a> to change the stage of the orchid if the timer is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a68a"></span>A68A</td>
+<td class="instruction">OR L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a68b"></span>A68B</td>
+<td class="instruction">JR Z,<a href="A6D4.html">ChangeOrchidStage</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a68d"></span>
+<div class="comments">
+<div class="paragraph">
+Count down the timer if the player is alive and the game delay is over.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="address-2"><span id="a680"></span>A680</td>
-<td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB0B.html">StoreEntity</a>.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="a683"></span>A683</td>
-<td class="instruction">LD L,(IX+$06)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="a686"></span>A686</td>
-<td class="instruction">LD H,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="a689"></span>A689</td>
-<td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="a68a"></span>A68A</td>
-<td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="a68b"></span>A68B</td>
-<td class="instruction">JR Z,<a href="A6D4.html">$A6D4</a></td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a68d"></span>A68D</td>
 <td class="instruction">LD A,($9702)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player from <a href="9702.html">ImmortalData</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a690"></span>A690</td>
 <td class="instruction">SUB $10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract 10 (the first Sabreman sprite ID).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a692"></span>A692</td>
 <td class="instruction">CP $20</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A680.html#a69d">HandlerOrchid_StoreTimer</a> if the player is not alive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a694"></span>A694</td>
-<td class="instruction">JR NC,<a href="A680.html#a69d">$A69D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="A680.html#a69d">HandlerOrchid_StoreTimer</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a696"></span>A696</td>
 <td class="instruction">LD A,($96B5)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the start-of-turn delay from <a href="96B5.html">GameDelayTimer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a699"></span>A699</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the flags.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a69a"></span>A69A</td>
-<td class="instruction">JR NZ,<a href="A680.html#a69d">$A69D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A680.html#a69d">HandlerOrchid_StoreTimer</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A680.html#a69d">HandlerOrchid_StoreTimer</a> if the start-of-turn delay is still running.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a69c"></span>A69C</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the timer by one.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="a69d"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="A70D.html">A70D</a>.
+This entry point is used by the routine at <a href="A70D.html">GrowOrchid</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerOrchid_StoreTimer</td>
 <td class="address-2"><span id="a69d"></span>A69D</td>
 <td class="instruction">LD (IX+$06),L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Store the timer of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6a0"></span>A6A0</td>
 <td class="instruction">LD (IX+$07),H</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6a3"></span>A6A3</td>
-<td class="instruction">CALL <a href="A737.html">$A737</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A737.html">A737</a>.</td>
+<td class="instruction">CALL <a href="A737.html">TestOrchidTouched</a></td>
+<td class="comment-1" rowspan="1">Test whether the player is touching the orchid.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="a6a6"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="A6D4.html">A6D4</a> and <a href="A70D.html">A70D</a>.
+This entry point is used by the routines at <a href="A6D4.html">ChangeOrchidStage</a> and <a href="A70D.html">GrowOrchid</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerOrchid_Draw</td>
 <td class="address-2"><span id="a6a6"></span>A6A6</td>
 <td class="instruction">CALL <a href="B9A9.html">DisplayEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B9A9.html">DisplayEntity</a>.</td>
+<td class="comment-1" rowspan="1">Display the orchid.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a6a9"></span>
+<div class="comments">
+<div class="paragraph">
+Colour the stem of the orchid.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6a9"></span>A6A9</td>
 <td class="instruction">LD L,(IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Fetch the X and Y position of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6ac"></span>A6AC</td>
 <td class="instruction">LD H,(IX+$04)</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6af"></span>A6AF</td>
 <td class="instruction">CALL <a href="B8DD.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B8DD.html">AttributeAddress</a>.</td>
+<td class="comment-1" rowspan="1">Find the attribute address of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6b2"></span>A6B2</td>
 <td class="instruction">LD C,$01</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=01.</td>
+<td class="comment-1" rowspan="1">Set the number of rows in <span class="register">C</span> to 01.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6b4"></span>A6B4</td>
 <td class="instruction">LD D,$44</td>
-<td class="comment-1" rowspan="1"><span class="register">D</span>=44.</td>
+<td class="comment-1" rowspan="1">Set the colour in <span class="register">D</span> to 44 (bright green).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6b6"></span>A6B6</td>
 <td class="instruction">LD B,$02</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=02.</td>
+<td class="comment-1" rowspan="1">Set the number of columns in <span class="register">B</span> to 02.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6b8"></span>A6B8</td>
-<td class="instruction">CALL <a href="A680.html#a6c8">$A6C8</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A680.html#a6c8">A6C8</a>.</td>
+<td class="instruction">CALL <a href="A680.html#a6c8">HandlerOrchid_Colour</a></td>
+<td class="comment-1" rowspan="1">Colour the stem of the orchid.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a6bb"></span>
+<div class="comments">
+<div class="paragraph">
+Colour the flower if the orchid has started to grow.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6bb"></span>A6BB</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6be"></span>A6BE</td>
 <td class="instruction">AND %00000111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
+<td class="comment-1" rowspan="1">Keep only the stage of growth (bits 0-2).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6c0"></span>A6C0</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if the orchid is hidden.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6c1"></span>A6C1</td>
 <td class="instruction">LD C,$01</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=01.</td>
+<td class="comment-1" rowspan="1">Set the number of rows in <span class="register">C</span> to 01.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6c3"></span>A6C3</td>
 <td class="instruction">LD D,(IX+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the colour of the orchid into <span class="register">D</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6c6"></span>A6C6</td>
 <td class="instruction">LD B,$02</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=02.</td>
+<td class="comment-1" rowspan="1">Set the number of columns in <span class="register">B</span> to 02.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a6c8"></span>
+<div class="comments">
+<div class="paragraph">
+The orchid is one column wider when it is not fully grown.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerOrchid_Colour</td>
 <td class="address-2"><span id="a6c8"></span>A6C8</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6cb"></span>A6CB</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flip the bits, so that a fully grown orchid gives zero.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6cc"></span>A6CC</td>
 <td class="instruction">AND %00000111</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6ce"></span>A6CE</td>
-<td class="instruction">JR NZ,<a href="A680.html#a6d1">$A6D1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A680.html#a6d1">HandlerOrchid_ColourRows</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A680.html#a6d1">HandlerOrchid_ColourRows</a> if the orchid is not fully grown.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a6d0"></span>A6D0</td>
 <td class="instruction">INC B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add one to the number of columns.</td>
 </tr>
 <tr>
+<td class="asm-label">HandlerOrchid_ColourRows</td>
 <td class="address-2"><span id="a6d1"></span>A6D1</td>
-<td class="instruction">JP <a href="BB45.html">AttrDrawUnchanged</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="BB45.html">AttrDrawUnchanged</a>.</td>
+<td class="instruction">JP <a href="BB45.html">ColourRows</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BB45.html">ColourRows</a> to colour the rows.</td>
 </tr>
 </table>
 <table class="asm-navigation">

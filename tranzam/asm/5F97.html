@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,32 +44,57 @@ Next: <a href="5FA7.html">5FA7</a>
 <div class="paragraph">
 Used by the routines at <a href="5F6C.html">GameMenu</a>, <a href="6353.html">GameOver</a>, <a href="63FF.html">HandlerCup</a> and <a href="6483.html">DisplayBestTime</a>.
 </div>
+<div class="paragraph">
+Prints a line of text and sets the attributes for it. The last character of the text has bit 7 set. The attribute is held at <a href="5E3F.html">Current_MenuAttribute</a>.  <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="write-menu-line-before" src="../images/scr/write-menu-line-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="write-menu-line-after" src="../images/scr/write-menu-line-after.png" /></td>
+</tr>
+</table>
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Pixel co-ordinates (<span class="register">H</span> is the Y position, <span class="register">L</span> the X position)</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Pointer to the text</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">MenuWriteText</td>
 <td class="address-2"><span id="5f97"></span>5F97</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> containing the co-ordinate on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the text position on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="5f98"></span>5F98</td>
 <td class="instruction">CALL <a href="6F10.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6F10.html">ScreenAddress</a>.</td>
+<td class="comment-1" rowspan="1">Convert the text position to a screen address using <a href="6F10.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="5f9b"></span>5F9B</td>
 <td class="instruction">LD A,($5E3F)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=the menu attribute byte from <a href="5E3F.html">Current_MenuAttribute</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the colour of the line from <a href="5E3F.html">Current_MenuAttribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="5f9e"></span>5F9E</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="1">Switch to the shadow <span class="register">AF</span> register.</td>
+<td class="comment-1" rowspan="1">Hold the colour in <span class="register">A'</span> ready for the string printer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -78,19 +106,19 @@ Used by the routines at <a href="5F6C.html">GameMenu</a>, <a href="6353.html">Ga
 <td class="asm-label"></td>
 <td class="address-1"><span id="5fa0"></span>5FA0</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the text position from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="5fa1"></span>5FA1</td>
 <td class="instruction">CALL <a href="7097.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7097.html">AttributeAddress</a>.</td>
+<td class="comment-1" rowspan="1">Convert the text position to an attribute address using <a href="7097.html">AttributeAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="5fa4"></span>5FA4</td>
 <td class="instruction">JP <a href="6518.html#6524">PrintString_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="6518.html#6524">PrintString_Loop</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="6518.html#6524">PrintString_Loop</a> to print the text and set the attributes.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -99,9 +127,11 @@ Used by the routines at <a href="5F6C.html">GameMenu</a>, <a href="6353.html">Ga
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/aticatac/asm/7D8A.html">Atic Atac</a></li>
 <li><a href="/ultimate/cookie/asm/63E0.html">Cookie</a></li>
-<li><a href="/ultimate/jetpac/asm/0000.html">Jetpac</a></li>
-<li><a href="/ultimate/lunarjetman/asm/0000.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/jetpac/asm/62FF.html">Jetpac</a></li>
+<li><a href="/ultimate/lunarjetman/asm/81AB.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/asm/62E7.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/asm/B52D.html">Sabre Wulf</a></li>
+<li><a href="/ultimate/underwurlde/asm/91B0.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

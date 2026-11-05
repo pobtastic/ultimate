@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,58 +36,108 @@ Next: <a href="A3E0.html">A3E0</a>
 </td>
 </tr>
 </table>
-<div class="description">A3C5: Routine at A3C5</div>
+<div class="description">A3C5: Handler: Appearing Nastie</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Handles a nastie which is appearing (sprite IDs 01 to 05). Each time it is handled the sprite ID goes up by one, until it reaches 06 and <a href="A3E0.html">HandlerChooseNastie</a> turns it into a real nastie. If the player attacks it while it is appearing then it is blown up by <a href="A4A6.html">BlowUpActor</a>, and if it is in a different room to the player it is counted off by <a href="A493.html">ExpireActor</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Nastie record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a3c5"></span>
+<div class="comments">
+<div class="paragraph">
+Count off the nastie if it is not in the same room as the player.
+</div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerAppearingNastie</td>
 <td class="address-2"><span id="a3c5"></span>A3C5</td>
 <td class="instruction">LD A,($9703)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="9702.html#9703">9703</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="9702.html#9703">9703</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3c8"></span>A3C8</td>
 <td class="instruction">CP (IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A493.html">ExpireActor</a> if the nastie is in a different room to the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3cb"></span>A3CB</td>
-<td class="instruction">JP NZ,<a href="A493.html">$A493</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="A493.html">ExpireActor</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3ce"></span>A3CE</td>
 <td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB0B.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Remember the previous position of the nastie.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a3d1"></span>
+<div class="comments">
+<div class="paragraph">
+Blow up the nastie if the player is attacking it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3d1"></span>A3D1</td>
-<td class="instruction">CALL <a href="A3B7.html">$A3B7</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A3B7.html">A3B7</a>.</td>
+<td class="instruction">CALL <a href="A3B7.html">TestAttackOverlap</a></td>
+<td class="comment-1" rowspan="1">Test whether the player is attacking the nastie.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3d4"></span>A3D4</td>
-<td class="instruction">JP C,<a href="A4A1.html#a4a6">$A4A6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP C,<a href="A4A6.html">BlowUpActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A4A6.html">BlowUpActor</a> to blow up the nastie if the player is attacking it.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a3d7"></span>
+<div class="comments">
+<div class="paragraph">
+Move the nastie on to the next sprite and make a sound, the pitch of which depends on the sprite ID.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3d7"></span>A3D7</td>
 <td class="instruction">INC (IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move the nastie on to the next appearing sprite.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3da"></span>A3DA</td>
-<td class="instruction">CALL <a href="BF08.html">$BF08</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BF08.html">BF08</a>.</td>
+<td class="instruction">CALL <a href="BF08.html">PlayAppearingSound</a></td>
+<td class="comment-1" rowspan="1">Play the appearing sound.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a3dd"></span>A3DD</td>
-<td class="instruction">JP <a href="AD57.html#ad5d">$AD5D</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="AD57.html#ad5d">AD5D</a>.</td>
+<td class="instruction">JP <a href="AD5D.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD5D.html">DisplayActor</a> to display the nastie.</td>
 </tr>
 </table>
 <table class="asm-navigation">

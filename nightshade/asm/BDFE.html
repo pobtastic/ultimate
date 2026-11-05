@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at BDFE</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BC8E.html">BC8E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bdfe">Map</a></td>
+<td class="next">
+Next: <a href="BEDF.html">BEDF</a>
+</td>
+</tr>
+</table>
+<div class="description">BDFE: Start Game</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="5E00.html">GameEntry</a>.
+</div>
+<div class="paragraph">
+Checks that the game was started by the tape loader, clears the game variables, shows the game selection menu, sets up the status panel and the first life, and then falls into the main loop.
+</div>
+<div class="paragraph">
+The first check is part of the copy protection: the game returns to BASIC if the high byte of the system variable FRAMES is not 63 (the loader arranges for it to be). The routine at <a href="C1DB.html">BuildRandomTable</a> makes a second check on the memory refresh register.
+</div>
+<div class="paragraph">
+<table class="">
+<tr>
+<td class="" colspan="1" rowspan="1"><img alt="start-game" src="../images/scr/start-game.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bdfe"></span>
+<div class="comments">
+<div class="paragraph">
+Check that the game was started by the tape loader.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">StartGame</td>
+<td class="address-2"><span id="bdfe"></span>BDFE</td>
+<td class="instruction">LD A,($5C79)</td>
+<td class="comment-1" rowspan="3">Return if the high byte of the system variable FRAMES (5C79) is not 63.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be01"></span>BE01</td>
+<td class="instruction">CP $63</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be03"></span>BE03</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be04"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the game variables.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be04"></span>BE04</td>
+<td class="instruction">LD SP,$5E00</td>
+<td class="comment-1" rowspan="1">Set the stack pointer to 5E00 so that the stack grows down from the start of the game.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be07"></span>BE07</td>
+<td class="instruction">LD HL,$BBAA</td>
+<td class="comment-1" rowspan="1">Point at the start of the game variables (<a href="BBAA.html">RandomSeed</a>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be0a"></span>BE0A</td>
+<td class="instruction">LD BC,$0254</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to clear to 0254.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be0d"></span>BE0D</td>
+<td class="instruction">JR <a href="BDFE.html#be15">StartGame_Clear</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDFE.html#be15">StartGame_Clear</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be0f"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="CC56.html">GameOver</a> and <a href="CD10.html">UpdateLogoPiece</a>.
+</div>
+<div class="paragraph">
+Starting a new game after a game over keeps the random seed, the font pointer, the stack pointer and the control settings at the start of the game variables.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">StartGame_KeepSettings</td>
+<td class="address-2"><span id="be0f"></span>BE0F</td>
+<td class="instruction">DEFB $21,$B4,$BB,$01,$4A,$02</td>
+<td class="comment-1" rowspan="1">Instructions skipped when starting from scratch: load <span class="register">HL</span> with <a href="BBB4.html">CellColumn</a> and <span class="register">BC</span> with 024A.</td>
+</tr>
+<tr>
+<td class="asm-label">StartGame_Clear</td>
+<td class="address-2"><span id="be15"></span>BE15</td>
+<td class="instruction">CALL <a href="E5BA.html">FillMemory</a></td>
+<td class="comment-1" rowspan="1">Clear the game variables.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be18"></span>
+<div class="comments">
+<div class="paragraph">
+Seed the random number generator and show the game selection menu.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be18"></span>BE18</td>
+<td class="instruction">LD HL,($5C78)</td>
+<td class="comment-1" rowspan="1">Fetch the low word of the system variable FRAMES.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1b"></span>BE1B</td>
+<td class="instruction">LD ($BBB2),HL</td>
+<td class="comment-1" rowspan="1">Use it as the starting value of the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1e"></span>BE1E</td>
+<td class="instruction">CALL <a href="E59D.html">ClearScreen</a></td>
+<td class="comment-1" rowspan="1">Clear the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be21"></span>BE21</td>
+<td class="instruction">CALL <a href="E0FB.html">BuildShiftTables</a></td>
+<td class="comment-1" rowspan="1">Build the pixel shifting tables used when drawing sprites.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be24"></span>BE24</td>
+<td class="instruction">CALL <a href="C8CA.html">GameMenu</a></td>
+<td class="comment-1" rowspan="1">Show the game selection menu.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be27"></span>BE27</td>
+<td class="instruction">LD DE,$C7F8</td>
+<td class="comment-1" rowspan="1">Point at the notes of the start-of-game tune.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2a"></span>BE2A</td>
+<td class="instruction">CALL <a href="C656.html">PlayMusic</a></td>
+<td class="comment-1" rowspan="1">Play the tune.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be2d"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the status panel around the playing area.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2d"></span>BE2D</td>
+<td class="instruction">CALL <a href="E59D.html">ClearScreen</a></td>
+<td class="comment-1" rowspan="1">Clear the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be30"></span>BE30</td>
+<td class="instruction">CALL <a href="CA55.html">DrawPlayingAreaBorder</a></td>
+<td class="comment-1" rowspan="1">Draw the border of the playing area.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be33"></span>BE33</td>
+<td class="instruction">CALL <a href="C83F.html">DrawInventoryTube</a></td>
+<td class="comment-1" rowspan="1">Draw the inventory tube.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be36"></span>BE36</td>
+<td class="instruction">LD HL,$0F38</td>
+<td class="comment-1" rowspan="1">Set the screen position of the word "SCORE" (0F38).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be39"></span>BE39</td>
+<td class="instruction">LD DE,$C2E7</td>
+<td class="comment-1" rowspan="1">Point at the text "SCORE".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be3c"></span>BE3C</td>
+<td class="instruction">CALL <a href="C9EF.html#c9fc">PrintStringWithAttribute</a></td>
+<td class="comment-1" rowspan="1">Print "SCORE".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be3f"></span>BE3F</td>
+<td class="instruction">CALL <a href="C2FF.html">PrintScore</a></td>
+<td class="comment-1" rowspan="1">Print the score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be42"></span>BE42</td>
+<td class="instruction">CALL <a href="C2C8.html">DrawCompassIcon</a></td>
+<td class="comment-1" rowspan="1">Draw the compass icon.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be45"></span>BE45</td>
+<td class="instruction">CALL <a href="C29A.html">DrawCompassText</a></td>
+<td class="comment-1" rowspan="1">Draw the compass text.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be48"></span>BE48</td>
+<td class="instruction">CALL <a href="E200.html#e206">ClearScreenBuffer</a></td>
+<td class="comment-1" rowspan="1">Clear the playing area.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be4b"></span>
+<div class="comments">
+<div class="paragraph">
+Set up the first life.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be4b"></span>BE4B</td>
+<td class="instruction">LD A,$0A</td>
+<td class="comment-1" rowspan="2">Set the player's speed to 0A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be4d"></span>BE4D</td>
+<td class="instruction">LD ($BBBE),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be50"></span>BE50</td>
+<td class="instruction">LD A,($BEDD)</td>
+<td class="comment-1" rowspan="1">Fetch the opcode of the instruction at <a href="BDFE.html#bedd">BEDD</a> (18).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be53"></span>BE53</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="2">Divide it by four to get six lives.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be55"></span>BE55</td>
+<td class="instruction">SRL A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be57"></span>BE57</td>
+<td class="instruction">LD ($BBCD),A</td>
+<td class="comment-1" rowspan="1">Set the number of lives.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be5a"></span>BE5A</td>
+<td class="instruction">CALL <a href="CB7B.html">ChooseStartPosition</a></td>
+<td class="comment-1" rowspan="1">Choose a random starting position for the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be5d"></span>BE5D</td>
+<td class="instruction">LD A,$40</td>
+<td class="comment-1" rowspan="2">Set the direction that the player starts facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be5f"></span>BE5F</td>
+<td class="instruction">LD ($CC3C),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be62"></span>BE62</td>
+<td class="instruction">CALL <a href="CBC5.html">StartNewLife</a></td>
+<td class="comment-1" rowspan="1">Start the player's first life.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be65"></span>BE65</td>
+<td class="instruction">CALL <a href="D8E7.html">PlaceMonsters</a></td>
+<td class="comment-1" rowspan="1">Place the four monsters in the village.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be68"></span>BE68</td>
+<td class="instruction">CALL <a href="D88E.html">PlaceItems</a></td>
+<td class="comment-1" rowspan="1">Place the starting items in the village.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be6b"></span>BE6B</td>
+<td class="instruction">CALL <a href="C1FD.html">DrawMonsterIcons</a></td>
+<td class="comment-1" rowspan="1">Draw the icons of the four monsters in the status panel.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be6e"></span>BE6E</td>
+<td class="instruction">CALL <a href="C1DB.html">BuildRandomTable</a></td>
+<td class="comment-1" rowspan="1">Build the table of random values.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be71"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="CC56.html">GameOver</a>.
+</div>
+<div class="paragraph">
+The main loop. Each pass updates every object, draws the view, and then checks for the game being paused.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop</td>
+<td class="address-2"><span id="be71"></span>BE71</td>
+<td class="instruction">LD IX,$BC8E</td>
+<td class="comment-1" rowspan="1">Start with the first object, which is the player.</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_UpdateObjects</td>
+<td class="address-2"><span id="be75"></span>BE75</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be78"></span>BE78</td>
+<td class="instruction">LD BC,$D599</td>
+<td class="comment-1" rowspan="1">Point at the table of routines that handle each type of object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be7b"></span>BE7B</td>
+<td class="instruction">CALL <a href="D593.html">JumpToTableRoutine</a></td>
+<td class="comment-1" rowspan="1">Run the routine that handles this type of object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be7e"></span>BE7E</td>
+<td class="instruction">CALL <a href="C5BB.html">RandomNumber</a></td>
+<td class="comment-1" rowspan="1">Update the random number generator.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be81"></span>BE81</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1">Set the size of an object to 10 bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be84"></span>BE84</td>
+<td class="instruction">ADD IX,BC</td>
+<td class="comment-1" rowspan="1">Move on to the next object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be86"></span>BE86</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Get the address of the next object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be88"></span>BE88</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be89"></span>BE89</td>
+<td class="instruction">LD BC,$BDFE</td>
+<td class="comment-1" rowspan="1">Point at the end of the object table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8c"></span>BE8C</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract the end of the object table from the address of the next object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8d"></span>BE8D</td>
+<td class="instruction">SBC HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8f"></span>BE8F</td>
+<td class="instruction">JR C,<a href="BDFE.html#be75">MainLoop_UpdateObjects</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="BDFE.html#be75">MainLoop_UpdateObjects</a> until every object has been updated.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be91"></span>
+<div class="comments">
+<div class="paragraph">
+Run the once-per-frame updates.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be91"></span>BE91</td>
+<td class="instruction">CALL <a href="C5B4.html">IncrementFrameCounter</a></td>
+<td class="comment-1" rowspan="1">Increase the frame counter and update the random number generator.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be94"></span>BE94</td>
+<td class="instruction">LD A,($BBFF)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="BDFE.html#becd">MainLoop_Redraw</a> if the game has finished (the flag at <a href="BBFF.html">GameFinishedFlag</a> is set), skipping the rest of the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be97"></span>BE97</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be98"></span>BE98</td>
+<td class="instruction">JP NZ,<a href="BDFE.html#becd">MainLoop_Redraw</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be9b"></span>BE9B</td>
+<td class="instruction">CALL <a href="C5CE.html">SpawnItem</a></td>
+<td class="comment-1" rowspan="1">Update the creatures that chase the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be9e"></span>BE9E</td>
+<td class="instruction">CALL <a href="CDE8.html">SpawnBall</a></td>
+<td class="comment-1" rowspan="1">Update the shots fired at the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea1"></span>BEA1</td>
+<td class="instruction">CALL <a href="BF95.html">SpawnGhost</a></td>
+<td class="comment-1" rowspan="1">Spawn a new creature if it is time to do so.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea4"></span>BEA4</td>
+<td class="instruction">CALL <a href="D76C.html">SpawnBonus</a></td>
+<td class="comment-1" rowspan="1">Update the ghost.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea7"></span>BEA7</td>
+<td class="instruction">CALL <a href="C3BD.html">PlaySoundEffect</a></td>
+<td class="comment-1" rowspan="1">Play the next note of the current sound effect.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beaa"></span>BEAA</td>
+<td class="instruction">CALL <a href="C4DC.html">ColourInventoryItems</a></td>
+<td class="comment-1" rowspan="1">Update the items shown in the inventory tube.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bead"></span>BEAD</td>
+<td class="instruction">CALL <a href="CF08.html">DrawView</a></td>
+<td class="comment-1" rowspan="1">Draw the view of the village into the screen buffer.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="beb0"></span>
+<div class="comments">
+<div class="paragraph">
+Colour the area around the player according to the player's health.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb0"></span>BEB0</td>
+<td class="instruction">LD A,($BBF3)</td>
+<td class="comment-1" rowspan="1">Fetch the player's health.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb3"></span>BEB3</td>
+<td class="instruction">LD HL,$C065</td>
+<td class="comment-1" rowspan="1">Point at the table of attribute colours.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb6"></span>BEB6</td>
+<td class="instruction">CALL <a href="E596.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Add the health to the address to point at its colour.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb9"></span>BEB9</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beba"></span>BEBA</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Switch to the shadow <span class="register">AF</span> to hold the attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bebb"></span>BEBB</td>
+<td class="instruction">LD HL,$7070</td>
+<td class="comment-1" rowspan="1">Set the position of the player's feet on the screen (7070).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bebe"></span>BEBE</td>
+<td class="instruction">CALL <a href="E579.html">CalculateAttributeAddress</a></td>
+<td class="comment-1" rowspan="1">Get the address in the attribute buffer for this position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec1"></span>BEC1</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">Set the width of the area to 04 attributes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec3"></span>BEC3</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Fetch the attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec4"></span>BEC4</td>
+<td class="instruction">CALL <a href="C898.html">ColourPlayerAttributes</a></td>
+<td class="comment-1" rowspan="1">Colour the attributes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec7"></span>BEC7</td>
+<td class="instruction">CALL <a href="CBAC.html">CheckPlayerDead</a></td>
+<td class="comment-1" rowspan="1">Check whether the player has lost a life.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beca"></span>BECA</td>
+<td class="instruction">CALL <a href="D865.html">CheckMonstersDefeated</a></td>
+<td class="comment-1" rowspan="1">Check whether the player has beaten all four monsters.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="becd"></span>
+<div class="comments">
+<div class="paragraph">
+Update the screen and check for the pause key.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Redraw</td>
+<td class="address-2"><span id="becd"></span>BECD</td>
+<td class="instruction">CALL <a href="E200.html">CopyBuffersToScreen</a></td>
+<td class="comment-1" rowspan="1">Copy the screen buffer onto the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed0"></span>BED0</td>
+<td class="instruction">LD A,($BBFB)</td>
+<td class="comment-1" rowspan="1">Fetch the flag at <a href="BBFB.html">FlashColour</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed3"></span>BED3</td>
+<td class="instruction">LD ($BBFC),A</td>
+<td class="comment-1" rowspan="1">Keep a copy of it for the next frame in <a href="BBFC.html">PreviousFlashColour</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed6"></span>BED6</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear the accumulator.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed7"></span>BED7</td>
+<td class="instruction">LD ($BBFB),A</td>
+<td class="comment-1" rowspan="1">Reset the flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beda"></span>BEDA</td>
+<td class="instruction">CALL <a href="E32C.html">PauseGame</a></td>
+<td class="comment-1" rowspan="1">Check whether the game has been paused.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bedd"></span>BEDD</td>
+<td class="instruction">JR <a href="BDFE.html#be71">MainLoop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="BDFE.html#be71">MainLoop</a> for the next frame.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BC8E.html">BC8E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bdfe">Map</a></td>
+<td class="next">
+Next: <a href="BEDF.html">BEDF</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/48638.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

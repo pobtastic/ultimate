@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Underwurlde: Routine at 9728</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../underwurlde.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="9719.html">9719</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#38696">Map</a></td>
+<td class="next">
+Next: <a href="975B.html">975B</a>
+</td>
+</tr>
+</table>
+<div class="description">9728: XOR Sprite Loop</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="962A.html">DrawEntity</a>, <a href="9636.html">RemoveEntity</a> and <a href="96F7.html">DisplayEntity</a>.
+</div>
+<div class="paragraph">
+Draws the old sprite and the new sprite a row at a time, alternating between the two, until every row of both has been drawn. The set of registers that is current on entry belongs to the old sprite, which is drawn by <a href="975B.html">DrawOldEntityRow</a>. The other set belongs to the new sprite, which is drawn by <a href="97E1.html">DrawNewEntityRow</a>.
+</div>
+<div class="paragraph">
+In each set <span class="register">HL</span> is the screen address of the next row (the sprites are drawn from the bottom row upwards), <span class="register">DE</span> points at the pixel data and <span class="register">B</span> is the page of the shift table. <span class="register">C</span> counts the rows that remain.
+</div>
+<div class="paragraph">
+When both counts reach zero, the counts that are held in <a href="8EE2.html">Old_Sprite_Row_Count</a> (old sprite) and <a href="8EE3.html">New_Sprite_Row_Count</a> (new sprite) are loaded and the whole process repeats. The routine returns when those are zero as well. This allows the rows that have no partner to be drawn first (see <a href="96F7.html">DisplayEntity</a>).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="38696"></span>
+<div class="comments">
+<div class="paragraph">
+Draw a row of the old sprite, if it has any rows left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">XORSpriteLoop</td>
+<td class="address-2"><span id="38696"></span>9728</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the row count of the old sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38697"></span>9729</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="9728.html#38716">XORSpriteLoop_NewOnly</a> if there are no rows left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38698"></span>972A</td>
+<td class="instruction">JR Z,<a href="9728.html#38716">XORSpriteLoop_NewOnly</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38700"></span>972C</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="1">Decrease the row count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38701"></span>972D</td>
+<td class="instruction">CALL <a href="975B.html">DrawOldEntityRow</a></td>
+<td class="comment-1" rowspan="1">Draw a row of the old sprite.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="38704"></span>
+<div class="comments">
+<div class="paragraph">
+Draw a row of the new sprite, if it has any rows left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38704"></span>9730</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the registers of the new sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38705"></span>9731</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the row count of the new sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38706"></span>9732</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="9728.html#38713">XORSpriteLoop_OldRow</a> if there are no rows left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38707"></span>9733</td>
+<td class="instruction">JR Z,<a href="9728.html#38713">XORSpriteLoop_OldRow</a></td>
+</tr>
+<tr>
+<td class="asm-label">XORSpriteLoop_NewRow</td>
+<td class="address-2"><span id="38709"></span>9735</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="1">Decrease the row count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38710"></span>9736</td>
+<td class="instruction">CALL <a href="97E1.html">DrawNewEntityRow</a></td>
+<td class="comment-1" rowspan="1">Draw a row of the new sprite.</td>
+</tr>
+<tr>
+<td class="asm-label">XORSpriteLoop_OldRow</td>
+<td class="address-2"><span id="38713"></span>9739</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the registers of the old sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38714"></span>973A</td>
+<td class="instruction">JR <a href="9728.html#38696">XORSpriteLoop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="9728.html">XORSpriteLoop</a> to draw the next pair of rows.</td>
+</tr>
+<tr>
+<td class="asm-label">XORSpriteLoop_NewOnly</td>
+<td class="address-2"><span id="38716"></span>973C</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the registers of the new sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38717"></span>973D</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the row count of the new sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38718"></span>973E</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="9728.html#38709">XORSpriteLoop_NewRow</a> if there are rows left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38719"></span>973F</td>
+<td class="instruction">JR NZ,<a href="9728.html#38709">XORSpriteLoop_NewRow</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="38721"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="9719.html">DisplayEntity_NewLower</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">XORSpriteLoop_Done</td>
+<td class="address-2"><span id="38721"></span>9741</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the registers of the old sprite.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="38722"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="96F7.html">DisplayEntity</a>.
+</div>
+<div class="paragraph">
+Both of the counts are zero. Load the row counts that were stored by the preparation routines and go round again, unless they are zero too.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">XORSpriteLoop_Reload</td>
+<td class="address-2"><span id="38722"></span>9742</td>
+<td class="instruction">LD A,($8EE2)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows of the old sprite from <a href="8EE2.html">Old_Sprite_Row_Count</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38725"></span>9745</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Copy the number of rows to <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38726"></span>9746</td>
+<td class="instruction">LD A,($8EE3)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows of the new sprite from <a href="8EE3.html">New_Sprite_Row_Count</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38729"></span>9749</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="1">Combine it with the number of rows of the old sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38730"></span>974A</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if there are no rows left to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38731"></span>974B</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="8EE2.html">Old_Sprite_Row_Count</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38732"></span>974C</td>
+<td class="instruction">LD ($8EE2),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38735"></span>974F</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the registers of the new sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38736"></span>9750</td>
+<td class="instruction">LD A,($8EE3)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows of the new sprite from <a href="8EE3.html">New_Sprite_Row_Count</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38739"></span>9753</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Copy the number of rows to <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38740"></span>9754</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Set the number of rows to store to 00.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="38741"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="9719.html">DisplayEntity_NewLower</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">XORSpriteLoop_StoreNew</td>
+<td class="address-2"><span id="38741"></span>9755</td>
+<td class="instruction">LD ($8EE3),A</td>
+<td class="comment-1" rowspan="1">Store <span class="register">A</span> in <a href="8EE3.html">New_Sprite_Row_Count</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38744"></span>9758</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the registers of the old sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="38745"></span>9759</td>
+<td class="instruction">JR <a href="9728.html#38696">XORSpriteLoop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="9728.html">XORSpriteLoop</a> to start drawing rows.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/aticatac/asm/9E9B.html">Atic Atac</a></li>
+<li><a href="/ultimate/cookie/asm/763A.html">Cookie</a></li>
+<li><a href="/ultimate/lunarjetman/asm/858E.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/sabrewulf/asm/B9DA.html">Sabre Wulf</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="9719.html">9719</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#38696">Map</a></td>
+<td class="next">
+Next: <a href="975B.html">975B</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/underwurlde/">Source code</a>.</div>
+<div><a href="../dec/asm/38696.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

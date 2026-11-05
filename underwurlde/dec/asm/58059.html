@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Underwurlde: Routine at 58059</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../underwurlde.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="57989.html">57989</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#58059">Map</a></td>
+<td class="next">
+Next: <a href="58400.html">58400</a>
+</td>
+</tr>
+</table>
+<div class="description">58059: Handle Carrying Eagle</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Handler for the object types 92 to 95 an eagle that carries Sabreman (see <a href="45177.html">Handle_Flying_Creature</a>). Bit 0 of the type is the frame of the animation, which follows bit 1 of the tick counter, and bit 1 is set when the x velocity is negative.
+</div>
+<div class="paragraph">
+While Sabreman is being carried his record has the sprite id 96 to 99. The eagle puts his position in bytes 8 (x) and 9 (y) of his record (at <a href="36602.html#36642">Sabreman_Carried_X_Position</a> and <a href="36602.html#36643">Sabreman_Carried_Y_Position</a>), where <a href="58736.html">Handle_Carried_Sabreman</a> picks it up. The y position is 16 more than that of the eagle, so he hangs below it.
+</div>
+<div class="paragraph">
+The eagle flies towards a target (byte 12 is the x position and byte 14 the y position, see <a href="46911.html">Choose_Eagle_Target</a>). Each call changes each velocity by one towards the target. The x velocity is kept between 208 and 55 and the y velocity between 199 and 55. The target changes when the eagle bounces off a decoration, a bubble, the floor, the ceiling or a wall. The eagle can also fly through the gaps in the frame of a room, and into the next room. The player can nudge the eagle with the controls (see <a href="58400.html">Steer_Eagle</a>).
+</div>
+<div class="paragraph">
+The eagle lets go (see <a href="58651.html">Check_Eagle_Release</a>) when the low byte of FRAMES is zero, or when Sabreman has set bit 5 of his redraw flags, if it is in the open part of the room. If the sprite id of Sabreman is less than 28 (he is not being carried), the eagle lets go at once (see <a href="58710.html">Release_Sabreman</a>).
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record of the eagle</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle</td>
+<td class="address-2"><span id="58059"></span>58059</td>
+<td class="instruction">CALL <a href="39071.html">StoreEntity</a></td>
+<td class="comment-1" rowspan="1">Save the state of the eagle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58062"></span>58062</td>
+<td class="instruction">LD A,(36634)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite id of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58065"></span>58065</td>
+<td class="instruction">CP 28</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58710.html">Release_Sabreman</a> if he is not being carried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58067"></span>58067</td>
+<td class="instruction">JP C,<a href="58710.html">Release_Sabreman</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58070"></span>58070</td>
+<td class="instruction">CALL <a href="58400.html">Steer_Eagle</a></td>
+<td class="comment-1" rowspan="1">Nudge the eagle if the player presses a direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58073"></span>58073</td>
+<td class="instruction">CALL <a href="39116.html">Read_World_Map</a></td>
+<td class="comment-1" rowspan="1">Read the world map entry of the room that the eagle is in. The flags of the room are returned in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58076"></span>58076</td>
+<td class="instruction">LD A,(23672)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of FRAMES.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58079"></span>58079</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Call <a href="58651.html">Check_Eagle_Release</a> to let go of Sabreman if the low byte of FRAMES is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58080"></span>58080</td>
+<td class="instruction">CALL Z,<a href="58651.html">Check_Eagle_Release</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58083"></span>58083</td>
+<td class="instruction">LD A,(36649)</td>
+<td class="comment-1" rowspan="1">Fetch the redraw flags of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58086"></span>58086</td>
+<td class="instruction">BIT 5,A</td>
+<td class="comment-1" rowspan="1">Test bit 5, which Sabreman sets to ask the eagle to let go.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58088"></span>58088</td>
+<td class="instruction">RES 5,A</td>
+<td class="comment-1" rowspan="1">Reset bit 5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58090"></span>58090</td>
+<td class="instruction">LD (36649),A</td>
+<td class="comment-1" rowspan="1">Store the redraw flags of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58093"></span>58093</td>
+<td class="instruction">CALL NZ,<a href="58651.html">Check_Eagle_Release</a></td>
+<td class="comment-1" rowspan="1">Call <a href="58651.html">Check_Eagle_Release</a> to let go of Sabreman if bit 5 was set.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58096"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="45177.html">Handle_Flying_Creature</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Carry</td>
+<td class="address-2"><span id="58096"></span>58096</td>
+<td class="instruction">LD A,1</td>
+<td class="comment-1" rowspan="2">Set the flag at <a href="36593.html">Type_5C_Active_Flag</a> to show that an eagle is carrying Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58098"></span>58098</td>
+<td class="instruction">LD (36593),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58101"></span>58101</td>
+<td class="instruction">LD A,(IX+3)</td>
+<td class="comment-1" rowspan="1">Fetch the y position of the eagle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58104"></span>58104</td>
+<td class="instruction">ADD A,16</td>
+<td class="comment-1" rowspan="1">Add 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58106"></span>58106</td>
+<td class="instruction">CP 159</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58116">Handle_Carrying_Eagle_Set_Carry_Position</a> if the result is less than 159.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58108"></span>58108</td>
+<td class="instruction">JR C,<a href="58059.html#58116">Handle_Carrying_Eagle_Set_Carry_Position</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58110"></span>58110</td>
+<td class="instruction">BIT 4,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58116">Handle_Carrying_Eagle_Set_Carry_Position</a> if the room has no floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58112"></span>58112</td>
+<td class="instruction">JR Z,<a href="58059.html#58116">Handle_Carrying_Eagle_Set_Carry_Position</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58114"></span>58114</td>
+<td class="instruction">LD A,159</td>
+<td class="comment-1" rowspan="1">Limit the y position to 159.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Set_Carry_Position</td>
+<td class="address-2"><span id="58116"></span>58116</td>
+<td class="instruction">LD (36643),A</td>
+<td class="comment-1" rowspan="1">Set the y position of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58119"></span>58119</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the x position of the eagle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58122"></span>58122</td>
+<td class="instruction">LD (36642),A</td>
+<td class="comment-1" rowspan="1">Set the x position of Sabreman.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58125"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the type of the eagle. Bit 0 follows bit 1 of the tick counter and bit 1 is set when the x velocity is negative.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58125"></span>58125</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the eagle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58128"></span>58128</td>
+<td class="instruction">AND %11111110</td>
+<td class="comment-1" rowspan="1">Reset bit 0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58130"></span>58130</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the type without bit 0 in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58131"></span>58131</td>
+<td class="instruction">LD A,(36566)</td>
+<td class="comment-1" rowspan="1">Fetch the tick counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58134"></span>58134</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Move bit 1 into bit 0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58135"></span>58135</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep only that bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58137"></span>58137</td>
+<td class="instruction">ADD A,C</td>
+<td class="comment-1" rowspan="1">Add the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58138"></span>58138</td>
+<td class="instruction">BIT 7,(IX+8)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58148">Handle_Carrying_Eagle_Face_Right</a> if the x velocity is positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58142"></span>58142</td>
+<td class="instruction">JR Z,<a href="58059.html#58148">Handle_Carrying_Eagle_Face_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58144"></span>58144</td>
+<td class="instruction">OR %00000010</td>
+<td class="comment-1" rowspan="1">Set bit 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58146"></span>58146</td>
+<td class="instruction">JR <a href="58059.html#58150">Handle_Carrying_Eagle_Store_Type</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58059.html#58150">Handle_Carrying_Eagle_Store_Type</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Face_Right</td>
+<td class="address-2"><span id="58148"></span>58148</td>
+<td class="instruction">AND %11111101</td>
+<td class="comment-1" rowspan="1">Reset bit 1.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Store_Type</td>
+<td class="address-2"><span id="58150"></span>58150</td>
+<td class="instruction">LD (IX+0),A</td>
+<td class="comment-1" rowspan="1">Store the type of the eagle.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58153"></span>
+<div class="comments">
+<div class="paragraph">
+Change the x velocity by one towards the target.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58153"></span>58153</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the x position of the eagle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58156"></span>58156</td>
+<td class="instruction">CP (IX+12)</td>
+<td class="comment-1" rowspan="1">Compare it with the x position of the target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58159"></span>58159</td>
+<td class="instruction">LD A,(IX+8)</td>
+<td class="comment-1" rowspan="1">Fetch the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58162"></span>58162</td>
+<td class="instruction">JP NC,<a href="58435.html">Accelerate_Eagle_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58435.html">Accelerate_Eagle_Left</a> if the eagle is at or to the right of the target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58165"></span>58165</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one to the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58166"></span>58166</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58174">Handle_Carrying_Eagle_Store_X_Velocity</a> if the x velocity is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58168"></span>58168</td>
+<td class="instruction">JR NZ,<a href="58059.html#58174">Handle_Carrying_Eagle_Store_X_Velocity</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58170"></span>58170</td>
+<td class="instruction">CP 56</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58177">Handle_Carrying_Eagle_Adjust_Y_Velocity</a> if the x velocity has reached 56.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58172"></span>58172</td>
+<td class="instruction">JR NC,<a href="58059.html#58177">Handle_Carrying_Eagle_Adjust_Y_Velocity</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58174"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="58435.html">Accelerate_Eagle_Left</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Store_X_Velocity</td>
+<td class="address-2"><span id="58174"></span>58174</td>
+<td class="instruction">LD (IX+8),A</td>
+<td class="comment-1" rowspan="1">Store the x velocity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58177"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="58435.html">Accelerate_Eagle_Left</a>.
+</div>
+<div class="paragraph">
+Change the y velocity by one towards the target.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Adjust_Y_Velocity</td>
+<td class="address-2"><span id="58177"></span>58177</td>
+<td class="instruction">LD A,(IX+3)</td>
+<td class="comment-1" rowspan="1">Fetch the y position of the eagle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58180"></span>58180</td>
+<td class="instruction">CP (IX+14)</td>
+<td class="comment-1" rowspan="1">Compare it with the y position of the target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58183"></span>58183</td>
+<td class="instruction">LD A,(IX+9)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58186"></span>58186</td>
+<td class="instruction">JP NC,<a href="58449.html">Accelerate_Eagle_Up</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58449.html">Accelerate_Eagle_Up</a> if the eagle is at or below the target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58189"></span>58189</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one to the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58190"></span>58190</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58198">Handle_Carrying_Eagle_Store_Y_Velocity</a> if the y velocity is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58192"></span>58192</td>
+<td class="instruction">JR NZ,<a href="58059.html#58198">Handle_Carrying_Eagle_Store_Y_Velocity</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58194"></span>58194</td>
+<td class="instruction">CP 56</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58201">Handle_Carrying_Eagle_Check_Contact</a> if the y velocity has reached 56.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58196"></span>58196</td>
+<td class="instruction">JR NC,<a href="58059.html#58201">Handle_Carrying_Eagle_Check_Contact</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58198"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="58449.html">Accelerate_Eagle_Up</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Store_Y_Velocity</td>
+<td class="address-2"><span id="58198"></span>58198</td>
+<td class="instruction">LD (IX+9),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58201"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="58449.html">Accelerate_Eagle_Up</a>.
+</div>
+<div class="paragraph">
+Check for contact with the decorations and the bubbles, and bounce off them.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Check_Contact</td>
+<td class="address-2"><span id="58201"></span>58201</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the flags of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58202"></span>58202</td>
+<td class="instruction">CALL <a href="46142.html">Check_Decoration_Contact</a></td>
+<td class="comment-1" rowspan="1">Check for contact with the decorations.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58205"></span>58205</td>
+<td class="instruction">LD D,C</td>
+<td class="comment-1" rowspan="1">Store the result in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58206"></span>58206</td>
+<td class="instruction">CALL <a href="57780.html">Check_Bubble_Contact</a></td>
+<td class="comment-1" rowspan="1">Check for contact with the bubbles.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58209"></span>58209</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Copy the result to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58210"></span>58210</td>
+<td class="instruction">OR D</td>
+<td class="comment-1" rowspan="1">Combine it with the result for the decorations.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58211"></span>58211</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Store the combined result in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58212"></span>58212</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the flags of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58213"></span>58213</td>
+<td class="instruction">BIT 2,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a> if the eagle is not touching anything.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58215"></span>58215</td>
+<td class="instruction">JR Z,<a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58217"></span>58217</td>
+<td class="instruction">BIT 1,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58241">Handle_Carrying_Eagle_Check_Underside</a> if the eagle is not on top of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58219"></span>58219</td>
+<td class="instruction">JR Z,<a href="58059.html#58241">Handle_Carrying_Eagle_Check_Underside</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58221"></span>58221</td>
+<td class="instruction">BIT 5,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58256">Handle_Carrying_Eagle_Check_Sides</a> if the object is a bubble and the eagle is away from the middle of it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58223"></span>58223</td>
+<td class="instruction">JR NZ,<a href="58059.html#58256">Handle_Carrying_Eagle_Check_Sides</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58225"></span>58225</td>
+<td class="instruction">LD A,(IX+9)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58228"></span>58228</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a> if the eagle is moving up already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58229"></span>58229</td>
+<td class="instruction">JP M,<a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58232"></span>58232</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert the y velocity, to send the eagle up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58233"></span>58233</td>
+<td class="instruction">LD (IX+9),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58236"></span>58236</td>
+<td class="instruction">CALL <a href="46911.html">Choose_Eagle_Target</a></td>
+<td class="comment-1" rowspan="1">Choose a new target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58239"></span>58239</td>
+<td class="instruction">JR <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Check_Underside</td>
+<td class="address-2"><span id="58241"></span>58241</td>
+<td class="instruction">BIT 0,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58256">Handle_Carrying_Eagle_Check_Sides</a> if the eagle is not near the middle of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58243"></span>58243</td>
+<td class="instruction">JR NZ,<a href="58059.html#58256">Handle_Carrying_Eagle_Check_Sides</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58245"></span>58245</td>
+<td class="instruction">LD A,(IX+9)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58248"></span>58248</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58256">Handle_Carrying_Eagle_Check_Sides</a> if the eagle is moving down already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58249"></span>58249</td>
+<td class="instruction">JP P,<a href="58059.html#58256">Handle_Carrying_Eagle_Check_Sides</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58252"></span>58252</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert the y velocity, to send the eagle down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58253"></span>58253</td>
+<td class="instruction">LD (IX+9),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Check_Sides</td>
+<td class="address-2"><span id="58256"></span>58256</td>
+<td class="instruction">LD A,(IX+8)</td>
+<td class="comment-1" rowspan="1">Fetch the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58259"></span>58259</td>
+<td class="instruction">BIT 7,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58276">Handle_Carrying_Eagle_Bounce_Left</a> if the eagle is not to the right of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58261"></span>58261</td>
+<td class="instruction">JR Z,<a href="58059.html#58276">Handle_Carrying_Eagle_Bounce_Left</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58263"></span>58263</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a> if the eagle is moving to the right already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58264"></span>58264</td>
+<td class="instruction">JP P,<a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58267"></span>58267</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58268"></span>58268</td>
+<td class="instruction">LD (IX+8),A</td>
+<td class="comment-1" rowspan="1">Store the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58271"></span>58271</td>
+<td class="instruction">CALL <a href="46911.html">Choose_Eagle_Target</a></td>
+<td class="comment-1" rowspan="1">Choose a new target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58274"></span>58274</td>
+<td class="instruction">JR <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Bounce_Left</td>
+<td class="address-2"><span id="58276"></span>58276</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a> if the eagle is moving to the left already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58277"></span>58277</td>
+<td class="instruction">JP M,<a href="58059.html#58287">Handle_Carrying_Eagle_Move_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58280"></span>58280</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58281"></span>58281</td>
+<td class="instruction">LD (IX+8),A</td>
+<td class="comment-1" rowspan="1">Store the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58284"></span>58284</td>
+<td class="instruction">CALL <a href="46911.html">Choose_Eagle_Target</a></td>
+<td class="comment-1" rowspan="1">Choose a new target.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58287"></span>
+<div class="comments">
+<div class="paragraph">
+Move the eagle horizontally.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Move_X</td>
+<td class="address-2"><span id="58287"></span>58287</td>
+<td class="instruction">LD A,(IX+11)</td>
+<td class="comment-1" rowspan="1">Fetch the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58290"></span>58290</td>
+<td class="instruction">AND %11101110</td>
+<td class="comment-1" rowspan="1">Reset bits 0 and 4 (the ceiling and the floor).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58292"></span>58292</td>
+<td class="instruction">LD (IX+11),A</td>
+<td class="comment-1" rowspan="1">Store the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58295"></span>58295</td>
+<td class="instruction">LD L,(IX+8)</td>
+<td class="comment-1" rowspan="1">Fetch the x velocity into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58298"></span>58298</td>
+<td class="instruction">BIT 7,L</td>
+<td class="comment-1" rowspan="1">Test the sign of the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58300"></span>58300</td>
+<td class="instruction">LD H,0</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the x velocity (as a word).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58302"></span>58302</td>
+<td class="instruction">JR Z,<a href="58059.html#58306">Handle_Carrying_Eagle_Set_Sabreman_Velocity</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58059.html#58306">Handle_Carrying_Eagle_Set_Sabreman_Velocity</a> if the x velocity is positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58304"></span>58304</td>
+<td class="instruction">LD H,255</td>
+<td class="comment-1" rowspan="1">Set the high byte of the x velocity to 255 to extend the sign.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Set_Sabreman_Velocity</td>
+<td class="address-2"><span id="58306"></span>58306</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Copy the x velocity to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58307"></span>58307</td>
+<td class="instruction">SRA A</td>
+<td class="comment-1" rowspan="4">Divide it by sixteen, keeping its sign.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58309"></span>58309</td>
+<td class="instruction">SRA A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58311"></span>58311</td>
+<td class="instruction">SRA A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58313"></span>58313</td>
+<td class="instruction">SRA A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58315"></span>58315</td>
+<td class="instruction">LD (36640),A</td>
+<td class="comment-1" rowspan="1">Set the x velocity of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58318"></span>58318</td>
+<td class="instruction">CALL <a href="60994.html">Move_Object_Horizontally</a></td>
+<td class="comment-1" rowspan="1">Move the eagle horizontally (see <a href="60994.html">Move_Object_Horizontally</a>). The new x position is returned in <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58321"></span>58321</td>
+<td class="instruction">JP Z,<a href="58463.html">Limit_Eagle_Sideways_Movement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58463.html">Limit_Eagle_Sideways_Movement</a> if the new x position is less than 128.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58324"></span>58324</td>
+<td class="instruction">CP 208</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58345">Handle_Carrying_Eagle_Store_X</a> if the new x position is less than 208.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58326"></span>58326</td>
+<td class="instruction">JR C,<a href="58059.html#58345">Handle_Carrying_Eagle_Store_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58328"></span>58328</td>
+<td class="instruction">BIT 2,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58463.html#58494">Limit_Eagle_Sideways_Movement_Right_Gap</a> if the room has no wall on the right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58330"></span>58330</td>
+<td class="instruction">JP Z,<a href="58463.html#58494">Limit_Eagle_Sideways_Movement_Right_Gap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58333"></span>58333</td>
+<td class="instruction">LD A,(IX+8)</td>
+<td class="comment-1" rowspan="1">Fetch the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58336"></span>58336</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58337"></span>58337</td>
+<td class="instruction">LD (IX+8),A</td>
+<td class="comment-1" rowspan="1">Store the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58340"></span>58340</td>
+<td class="instruction">CALL <a href="46911.html">Choose_Eagle_Target</a></td>
+<td class="comment-1" rowspan="1">Choose a new target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58343"></span>58343</td>
+<td class="instruction">LD A,207</td>
+<td class="comment-1" rowspan="1">Set the x position to 207.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58345"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="58463.html">Limit_Eagle_Sideways_Movement</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Store_X</td>
+<td class="address-2"><span id="58345"></span>58345</td>
+<td class="instruction">LD (IX+1),A</td>
+<td class="comment-1" rowspan="1">Store the x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58348"></span>58348</td>
+<td class="instruction">LD A,(IX+11)</td>
+<td class="comment-1" rowspan="1">Fetch the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58351"></span>58351</td>
+<td class="instruction">AND %10111011</td>
+<td class="comment-1" rowspan="1">Reset bits 2 and 6 (the right and left walls).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58353"></span>58353</td>
+<td class="instruction">LD (IX+11),A</td>
+<td class="comment-1" rowspan="1">Store the contact flags.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58356"></span>
+<div class="comments">
+<div class="paragraph">
+Move the eagle vertically.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58356"></span>58356</td>
+<td class="instruction">LD L,(IX+9)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58359"></span>58359</td>
+<td class="instruction">BIT 7,L</td>
+<td class="comment-1" rowspan="1">Test the sign of the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58361"></span>58361</td>
+<td class="instruction">LD H,0</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the y velocity (as a word).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58363"></span>58363</td>
+<td class="instruction">JR Z,<a href="58059.html#58367">Handle_Carrying_Eagle_Move_Y</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58059.html#58367">Handle_Carrying_Eagle_Move_Y</a> if the y velocity is positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58365"></span>58365</td>
+<td class="instruction">LD H,255</td>
+<td class="comment-1" rowspan="1">Set the high byte of the y velocity to 255 to extend the sign.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Move_Y</td>
+<td class="address-2"><span id="58367"></span>58367</td>
+<td class="instruction">CALL <a href="61012.html">Move_Object_Vertically</a></td>
+<td class="comment-1" rowspan="1">Move the eagle vertically (see <a href="61012.html">Move_Object_Vertically</a>). The new y position is returned in <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58370"></span>58370</td>
+<td class="instruction">JP Z,<a href="58518.html">Limit_Eagle_Vertical_Movement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="58518.html">Limit_Eagle_Vertical_Movement</a> if the new y position is less than 128.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58373"></span>58373</td>
+<td class="instruction">CP 159</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58059.html#58394">Handle_Carrying_Eagle_Store_Y</a> if the new y position is less than 159.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58375"></span>58375</td>
+<td class="instruction">JR C,<a href="58059.html#58394">Handle_Carrying_Eagle_Store_Y</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58377"></span>58377</td>
+<td class="instruction">BIT 4,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="58518.html#58550">Limit_Eagle_Vertical_Movement_Bottom_Gap</a> if the room has no floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58379"></span>58379</td>
+<td class="instruction">JP Z,<a href="58518.html#58550">Limit_Eagle_Vertical_Movement_Bottom_Gap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58382"></span>58382</td>
+<td class="instruction">LD A,(IX+9)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58385"></span>58385</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58386"></span>58386</td>
+<td class="instruction">LD (IX+9),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58389"></span>58389</td>
+<td class="instruction">CALL <a href="46911.html">Choose_Eagle_Target</a></td>
+<td class="comment-1" rowspan="1">Choose a new target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58392"></span>58392</td>
+<td class="instruction">LD A,159</td>
+<td class="comment-1" rowspan="1">Set the y position to 159.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="58394"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="58518.html">Limit_Eagle_Vertical_Movement</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Carrying_Eagle_Store_Y</td>
+<td class="address-2"><span id="58394"></span>58394</td>
+<td class="instruction">LD (IX+3),A</td>
+<td class="comment-1" rowspan="1">Store the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="58397"></span>58397</td>
+<td class="instruction">JP <a href="38603.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="38603.html">Update_Object_Sprite</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="57989.html">57989</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#58059">Map</a></td>
+<td class="next">
+Next: <a href="58400.html">58400</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/underwurlde/">Source code</a>.</div>
+<div><a href="../../asm/E2CB.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

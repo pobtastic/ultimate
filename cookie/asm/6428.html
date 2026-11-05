@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -29,7 +32,7 @@ Prev: <a href="6416.html">6416</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#6428">Map</a></td>
 <td class="next">
-Next: <a href="6486.html">6486</a>
+Next: <a href="6457.html">6457</a>
 </td>
 </tr>
 </table>
@@ -41,6 +44,9 @@ Next: <a href="6486.html">6486</a>
 <div class="paragraph">
 Used by the routine at <a href="6298.html">GameInitialisation</a>.
 </div>
+<div class="paragraph">
+Starts a new game when "0" is pressed on the game selection menu. The screen is blanked, the opening tune is played (unless the sound is muted) and the data for the game is reset. Then the first level is set up, and the game carries on in the main loop.
+</div>
 </div>
 </td>
 </tr>
@@ -48,19 +54,29 @@ Used by the routine at <a href="6298.html">GameInitialisation</a>.
 <td class="asm-label">StartGame</td>
 <td class="address-2"><span id="6428"></span>6428</td>
 <td class="instruction">CALL <a href="74E2.html">ResetAttributes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="74E2.html">ResetAttributes</a>.</td>
+<td class="comment-1" rowspan="1">Blank the attribute buffer using <a href="74E2.html">ResetAttributes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="642b"></span>642B</td>
 <td class="instruction">CALL <a href="74D4.html">ResetScreen</a></td>
-<td class="comment-1" rowspan="1">Call <a href="74D4.html">ResetScreen</a>.</td>
+<td class="comment-1" rowspan="1">Blank the screen buffer using <a href="74D4.html">ResetScreen</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="642e"></span>
+<div class="comments">
+<div class="paragraph">
+Play the opening tune, unless the sound is muted.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="642e"></span>642E</td>
 <td class="instruction">LD A,($5F0D)</td>
-<td class="comment-1" rowspan="3">If <a href="5F0D.html">Sound_Enable</a> is not zero then jump to <a href="6428.html#643a">SkipMusic</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="6428.html#643a">SkipMusic</a> if <a href="5F0D.html">Sound_Enable</a> is not zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -76,21 +92,31 @@ Used by the routine at <a href="6298.html">GameInitialisation</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6434"></span>6434</td>
 <td class="instruction">LD DE,$65C8</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="6568.html#65c8">MusicData</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="65C8.html">MusicData</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6437"></span>6437</td>
 <td class="instruction">CALL <a href="6568.html">PlayMusic</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6568.html">PlayMusic</a>.</td>
+<td class="comment-1" rowspan="1">Play the tune using <a href="6568.html">PlayMusic</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="643a"></span>
+<div class="comments">
+<div class="paragraph">
+Reset both of the level numbers which are shown on the screen.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">SkipMusic</td>
 <td class="address-2"><span id="643a"></span>643A</td>
 <td class="instruction">XOR A</td>
 <td class="comment-1" rowspan="3">Write 00 to; <ul class="">
-<li><a href="5F2D.html#5f30">1UP_Ingredients</a></li>
-<li><a href="5F31.html#5f34">2UP_Ingredients</a></li>
+<li><a href="5F30.html">ActivePlayer_LevelNumber</a></li>
+<li><a href="5F34.html">InactivePlayer_LevelNumber</a></li>
 </ul></td>
 </tr>
 <tr>
@@ -104,10 +130,20 @@ Used by the routine at <a href="6298.html">GameInitialisation</a>.
 <td class="instruction">LD ($5F34),A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="6441"></span>
+<div class="comments">
+<div class="paragraph">
+Blank everything from the 1UP score to the end of the last actor slot, which resets the scores, the sprite data and all of the actors.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6441"></span>6441</td>
 <td class="instruction">LD HL,$5F0E</td>
-<td class="comment-1" rowspan="7">Write 00 to 76 bytes, from 5F0E to 5F84.</td>
+<td class="comment-1" rowspan="7">Write 00 to every byte from <a href="5F0E.html">1UP_Score_1</a> to 5F84 (77 bytes).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -142,209 +178,33 @@ Used by the routine at <a href="6298.html">GameInitialisation</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="644e"></span>644E</td>
-<td class="instruction">CALL <a href="63F0.html">PlayersInit</a></td>
-<td class="comment-1" rowspan="1">Call <a href="63F0.html">PlayersInit</a>.</td>
+<td class="instruction">CALL <a href="63F0.html">NewGame</a></td>
+<td class="comment-1" rowspan="1">Set up the data for both players using <a href="63F0.html">NewGame</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6451"></span>6451</td>
-<td class="instruction">CALL <a href="7186.html">$7186</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7186.html">7186</a>.</td>
+<td class="instruction">CALL <a href="7186.html">ResetModifiedCode</a></td>
+<td class="comment-1" rowspan="1">Reset the self modifying code using <a href="7186.html">ResetModifiedCode</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6454"></span>6454</td>
-<td class="instruction">CALL <a href="6C58.html">GameInit</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6C58.html">GameInit</a>.</td>
+<td class="instruction">CALL <a href="6C58.html">SetUpLevel</a></td>
+<td class="comment-1" rowspan="1">Set up the first level using <a href="6C58.html">SetUpLevel</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
-<span id="6457"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="7198.html">7198</a>.
+Continue on to <a href="6457.html">MainLoop_NewPass</a>.
 </div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="asm-label">MainLoopResetStack</td>
-<td class="address-2"><span id="6457"></span>6457</td>
-<td class="instruction">LD SP,$5F00</td>
-<td class="comment-1" rowspan="1">Set the stack pointer to <a href="5F00.html">SecurityCheck</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="645a"></span>645A</td>
-<td class="instruction">EI</td>
-<td class="comment-1" rowspan="1">Enable interrupts.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="645b"></span>645B</td>
-<td class="instruction">LD IX,$5F55</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="5F55.html">BufferIngredients</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="645f"></span>645F</td>
-<td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 00 to <a href="5F1B.html">5F1B</a> to reset the current nasties.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6460"></span>6460</td>
-<td class="instruction">LD ($5F1B),A</td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="6463"></span>
-<div class="comments">
-<div class="paragraph">
-This entry point is used by the routines at <a href="7160.html">FrameUpdate</a> and <a href="7198.html">7198</a>.
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="asm-label">MainLoop</td>
-<td class="address-2"><span id="6463"></span>6463</td>
-<td class="instruction">LD A,($5C78)</td>
-<td class="comment-1" rowspan="3">Compare <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> and <a href="5F22.html">LastFrame</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6466"></span>6466</td>
-<td class="instruction">LD C,A</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6467"></span>6467</td>
-<td class="instruction">LD A,($5F22)</td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="646a"></span>
-<div class="comments">
-<div class="paragraph">
-If interrupts are enabled, then <a href="7160.html">FrameUpdate</a> will be called and DI executed.
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="646a"></span>646A</td>
-<td class="instruction">CP C</td>
-<td class="comment-1" rowspan="2">If they are not equal call <a href="7160.html">FrameUpdate</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="646b"></span>646B</td>
-<td class="instruction">CALL NZ,<a href="7160.html">FrameUpdate</a></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="646e"></span>646E</td>
-<td class="instruction">LD HL,$71A3</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="7198.html#71a3">71A3</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6471"></span>6471</td>
-<td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6472"></span>6472</td>
-<td class="instruction">LD HL,$6486</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="6486.html">6486</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6475"></span>6475</td>
-<td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+00.</td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="6478"></span>
-<div class="comments">
-<div class="paragraph">
-This entry point is used by the routine at <a href="65E8.html">65E8</a>.
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="asm-label">StartGame_0</td>
-<td class="address-2"><span id="6478"></span>6478</td>
-<td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> * 2.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6479"></span>6479</td>
-<td class="instruction">AND %01111110</td>
-<td class="comment-1" rowspan="1">Keep only bits 1-6.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="647b"></span>647B</td>
-<td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="2">Create an offset in <span class="register">BC</span>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="647c"></span>647C</td>
-<td class="instruction">LD B,$00</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="647e"></span>647E</td>
-<td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<span class="register">HL</span> + offset.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="647f"></span>647F</td>
-<td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6480"></span>6480</td>
-<td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6481"></span>6481</td>
-<td class="instruction">LD H,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6482"></span>6482</td>
-<td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="6483"></span>6483</td>
-<td class="instruction">JP $5CB0</td>
-<td class="comment-1" rowspan="1">Jump to <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB0.html">NMIADD</a> which should just jump to the address in <span class="register">HL</span>.</td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<div class="comments">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/aticatac/asm/7D9A.html">Atic Atac</a></li>
 <li><a href="/ultimate/jetpac/asm/6333.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/asm/81BB.html">Lunar Jetman</a></li>
-<li><a href="/ultimate/pssst/asm/631E.html">Pssst</a></li>
+<li><a href="/ultimate/pssst/asm/632D.html">Pssst</a></li>
 <li><a href="/ultimate/tranzam/asm/5FEF.html">Tranz Am</a></li>
 </ul>
 </div>
@@ -359,7 +219,7 @@ Prev: <a href="6416.html">6416</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#6428">Map</a></td>
 <td class="next">
-Next: <a href="6486.html">6486</a>
+Next: <a href="6457.html">6457</a>
 </td>
 </tr>
 </table>

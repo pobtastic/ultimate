@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Atic Atac: Routine at 84CD</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="845F.html">845F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#84cd">Map</a></td>
+<td class="next">
+Next: <a href="8566.html">8566</a>
+</td>
+</tr>
+</table>
+<div class="description">84CD: Move Creature</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="862E.html">HandlerGhostlet</a>, <a href="8672.html">HandlerSpikey</a>, <a href="871A.html">HandlerBlob</a>, <a href="87A6.html">HandlerGhoul</a>, <a href="8988.html">HandlerFrankenstein</a>, <a href="8A2F.html">HandlerWitch</a>, <a href="8A80.html">HandlerMonk</a> and <a href="8AFF.html">HandlerHunchback</a>.
+</div>
+<div class="paragraph">
+Moves a creature by its velocities, and turns it around if it would leave the room. Then, if the player is in the room, the creature is displayed by <a href="8E26.html#8e8e">HandlerCharacter_Display</a>. The creatures that are not bosses are removed instead if the player is not a character sprite any more (the sprite ID is 31 or more). The creature is kept within the room by comparing its distance from the centre of the room (58 across and 68 down) to the size of the room.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The creature entity</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The size of the room (width in <span class="register">E</span> and height in <span class="register">D</span>)</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="84cd"></span>
+<div class="comments">
+<div class="paragraph">
+Move the creature horizontally. The X velocity is at offset 08.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature</td>
+<td class="address-2"><span id="84cd"></span>84CD</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the X position of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84d0"></span>84D0</td>
+<td class="instruction">ADD A,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Add the X velocity of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84d3"></span>84D3</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the new X position in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84d4"></span>84D4</td>
+<td class="instruction">SUB $58</td>
+<td class="comment-1" rowspan="1">Subtract 58 (the horizontal centre of the room).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84d6"></span>84D6</td>
+<td class="instruction">JR C,<a href="84CD.html#84e8">MoveCreature_CheckLeft</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="84CD.html#84e8">MoveCreature_CheckLeft</a> if the creature is left of the centre.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84d8"></span>84D8</td>
+<td class="instruction">CP E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="84CD.html#84f8">MoveCreature_Vertical</a> if the new position is still inside the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84d9"></span>84D9</td>
+<td class="instruction">JR C,<a href="84CD.html#84f8">MoveCreature_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84db"></span>84DB</td>
+<td class="instruction">RES 0,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Reset bit 0 of the direction of the creature, so it is heading left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84df"></span>84DF</td>
+<td class="instruction">LD (IX+$08),$FE</td>
+<td class="comment-1" rowspan="1">Set the X velocity of the creature to -02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84e3"></span>84E3</td>
+<td class="instruction">LD C,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Keep the old X position in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84e6"></span>84E6</td>
+<td class="instruction">JR <a href="84CD.html#84f8">MoveCreature_Vertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="84CD.html#84f8">MoveCreature_Vertical</a> to move the creature vertically.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature_CheckLeft</td>
+<td class="address-2"><span id="84e8"></span>84E8</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84ea"></span>84EA</td>
+<td class="instruction">CP E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="84CD.html#84f8">MoveCreature_Vertical</a> if the new position is still inside the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84eb"></span>84EB</td>
+<td class="instruction">JR C,<a href="84CD.html#84f8">MoveCreature_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84ed"></span>84ED</td>
+<td class="instruction">SET 0,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Set bit 0 of the direction of the creature, so it is heading right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84f1"></span>84F1</td>
+<td class="instruction">LD C,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Keep the old X position in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84f4"></span>84F4</td>
+<td class="instruction">LD (IX+$08),$02</td>
+<td class="comment-1" rowspan="1">Set the X velocity of the creature to 02.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="84f8"></span>
+<div class="comments">
+<div class="paragraph">
+Move the creature vertically. The Y velocity is at offset 09.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature_Vertical</td>
+<td class="address-2"><span id="84f8"></span>84F8</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Fetch the Y position of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84fb"></span>84FB</td>
+<td class="instruction">ADD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Add the Y velocity of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84fe"></span>84FE</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the new Y position in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="84ff"></span>84FF</td>
+<td class="instruction">SUB $68</td>
+<td class="comment-1" rowspan="1">Subtract 68 (the vertical centre of the room).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8501"></span>8501</td>
+<td class="instruction">JR C,<a href="84CD.html#8513">MoveCreature_CheckTop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="84CD.html#8513">MoveCreature_CheckTop</a> if the creature is above the centre.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8503"></span>8503</td>
+<td class="instruction">CP D</td>
+<td class="comment-1" rowspan="2">Jump to <a href="84CD.html#8523">MoveCreature_Store</a> if the new position is still inside the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8504"></span>8504</td>
+<td class="instruction">JR C,<a href="84CD.html#8523">MoveCreature_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8506"></span>8506</td>
+<td class="instruction">RES 1,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Reset bit 1 of the direction of the creature, so it is heading up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="850a"></span>850A</td>
+<td class="instruction">LD (IX+$09),$FE</td>
+<td class="comment-1" rowspan="1">Set the Y velocity of the creature to -02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="850e"></span>850E</td>
+<td class="instruction">LD B,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Keep the old Y position in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8511"></span>8511</td>
+<td class="instruction">JR <a href="84CD.html#8523">MoveCreature_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="84CD.html#8523">MoveCreature_Store</a> to save the new position of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature_CheckTop</td>
+<td class="address-2"><span id="8513"></span>8513</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8515"></span>8515</td>
+<td class="instruction">CP D</td>
+<td class="comment-1" rowspan="2">Jump to <a href="84CD.html#8523">MoveCreature_Store</a> if the new position is still inside the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8516"></span>8516</td>
+<td class="instruction">JR C,<a href="84CD.html#8523">MoveCreature_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8518"></span>8518</td>
+<td class="instruction">SET 1,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Set bit 1 of the direction of the creature, so it is heading down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="851c"></span>851C</td>
+<td class="instruction">LD B,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Keep the old Y position in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="851f"></span>851F</td>
+<td class="instruction">LD (IX+$09),$02</td>
+<td class="comment-1" rowspan="1">Set the Y velocity of the creature to 02.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="8523"></span>
+<div class="comments">
+<div class="paragraph">
+Save the new position, and then display the creature if the player is in the same room.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature_Store</td>
+<td class="address-2"><span id="8523"></span>8523</td>
+<td class="instruction">LD (IX+$03),C</td>
+<td class="comment-1" rowspan="1">Update the X position of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8526"></span>8526</td>
+<td class="instruction">LD (IX+$04),B</td>
+<td class="comment-1" rowspan="1">Update the Y position of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8529"></span>8529</td>
+<td class="instruction">LD A,($EA91)</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="EA90.html#ea91">PlayerRoom</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="852c"></span>852C</td>
+<td class="instruction">CP (IX+$01)</td>
+<td class="comment-1" rowspan="2">Return if the creature is not in the same room as the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="852f"></span>852F</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8530"></span>8530</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8533"></span>8533</td>
+<td class="instruction">AND %11111100</td>
+<td class="comment-1" rowspan="1">Keep only bits 2-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8535"></span>8535</td>
+<td class="instruction">CP $9C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="84CD.html#8547">MoveCreature_Display</a> if the creature is a hunchback (9C to 9F).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8537"></span>8537</td>
+<td class="instruction">JR Z,<a href="84CD.html#8547">MoveCreature_Display</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8539"></span>8539</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep only bits 4-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="853b"></span>853B</td>
+<td class="instruction">CP $70</td>
+<td class="comment-1" rowspan="2">Jump to <a href="84CD.html#8547">MoveCreature_Display</a> if the creature is a boss (70 to 7F).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="853d"></span>853D</td>
+<td class="instruction">JR Z,<a href="84CD.html#8547">MoveCreature_Display</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="853f"></span>853F</td>
+<td class="instruction">LD A,($EA90)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player from <a href="EA90.html">Player</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8542"></span>8542</td>
+<td class="instruction">CP $31</td>
+<td class="comment-1" rowspan="2">Jump to <a href="875F.html">PopCreature</a> if the player sprite ID is 31 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8544"></span>8544</td>
+<td class="instruction">JP NC,<a href="875F.html">PopCreature</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature_Display</td>
+<td class="address-2"><span id="8547"></span>8547</td>
+<td class="instruction">JP <a href="8E26.html#8e8e">HandlerCharacter_Display</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="8E26.html#8e8e">HandlerCharacter_Display</a> to display the creature.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="854a"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="845F.html">HandlerPumpkin</a>.
+</div>
+<div class="paragraph">
+Speed up the X velocity towards -02 which is used when the creature is heading left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature_SlowLeft</td>
+<td class="address-2"><span id="854a"></span>854A</td>
+<td class="instruction">LD A,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Fetch the X velocity of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="854d"></span>854D</td>
+<td class="instruction">CP $FE</td>
+<td class="comment-1" rowspan="2">Jump to <a href="845F.html#84ae">HandlerPumpkin_VelocityY</a> if it is already -02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="854f"></span>854F</td>
+<td class="instruction">JP Z,<a href="845F.html#84ae">HandlerPumpkin_VelocityY</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8552"></span>8552</td>
+<td class="instruction">DEC (IX+$08)</td>
+<td class="comment-1" rowspan="1">Decrease the X velocity by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8555"></span>8555</td>
+<td class="instruction">JP <a href="845F.html#84ae">HandlerPumpkin_VelocityY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="845F.html#84ae">HandlerPumpkin_VelocityY</a> to work out the vertical velocity of the pumpkin.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="8558"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="845F.html">HandlerPumpkin</a>.
+</div>
+<div class="paragraph">
+Speed up the Y velocity towards -02 which is used when the creature is heading up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveCreature_SlowUp</td>
+<td class="address-2"><span id="8558"></span>8558</td>
+<td class="instruction">LD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the Y velocity of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="855b"></span>855B</td>
+<td class="instruction">CP $FE</td>
+<td class="comment-1" rowspan="2">Jump to <a href="845F.html#84bf">HandlerPumpkin_Animate</a> if it is already -02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="855d"></span>855D</td>
+<td class="instruction">JP Z,<a href="845F.html#84bf">HandlerPumpkin_Animate</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8560"></span>8560</td>
+<td class="instruction">DEC (IX+$09)</td>
+<td class="comment-1" rowspan="1">Decrease the Y velocity by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8563"></span>8563</td>
+<td class="instruction">JP <a href="845F.html#84bf">HandlerPumpkin_Animate</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="845F.html#84bf">HandlerPumpkin_Animate</a> to animate the pumpkin.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="845F.html">845F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#84cd">Map</a></td>
+<td class="next">
+Next: <a href="8566.html">8566</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/aticatac/">Source code</a>.</div>
+<div><a href="../dec/asm/33997.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

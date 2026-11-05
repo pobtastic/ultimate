@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at B58A</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B55A.html">B55A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b58a">Map</a></td>
+<td class="next">
+Next: <a href="B638.html">B638</a>
+</td>
+</tr>
+</table>
+<div class="description">B58A: Draw Objects In Order</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="B19E.html">DrawChangedObjects</a>.
+</div>
+<div class="paragraph">
+Draws every object in the draw list at <a href="B55A.html">DrawList</a>, back to front, so that the nearer objects are drawn over the further ones.
+</div>
+<div class="paragraph">
+The routine looks at the objects in the list in turn, and draws the first one that no other undrawn object has to be drawn before. To decide that, it compares the object that it is considering (held in <span class="register">IX</span>) with each of the other undrawn objects (held in <span class="register">IY</span>) along the three axes. Each axis gives a code of 0, 1 or 2: 1 when the two overlap on that axis, and 0 or 2 when they are apart. For x and for the height, 0 means that the object considered is in front of the other and 2 that it is behind it; for y it is the other way round. The three codes make up a number from 0 to 26 (the code for x is multiplied by 9, and for y by 3), which selects a routine from the table at <a href="B638.html">SortJumpTable</a>.
+</div>
+<div class="paragraph">
+When the object considered is in front of the other one, and so must be drawn after it, the other one becomes the object that is considered instead and the search starts again from the beginning of the list. A list of the objects that have been looked at in this way, at <a href="B6CD.html">ObjectsTriedList</a>, stops this from going on forever if there is a loop of objects that each have to be drawn after another: in that case the object that closed the loop is drawn.
+</div>
+<div class="paragraph">
+Each time an object is drawn, bit 7 of its entry in the list is set, and the sort starts again at the beginning of the list.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b58a"></span>
+<div class="comments">
+<div class="paragraph">
+Start with no objects drawn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder</td>
+<td class="address-2"><span id="b58a"></span>B58A</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="A714.html">DrawingWorkCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b58b"></span>B58B</td>
+<td class="instruction">LD ($A714),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b58e"></span>B58E</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Stash <span class="register">IX</span> and <span class="register">IY</span> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b590"></span>B590</td>
+<td class="instruction">PUSH IY</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b592"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="B66E.html">ResolveObjectOrder</a>.
+</div>
+<div class="paragraph">
+Find the first object in the list that has not been drawn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_Restart</td>
+<td class="address-2"><span id="b592"></span>B592</td>
+<td class="instruction">LD DE,$B55A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the start of the draw list, <a href="B55A.html">DrawList</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_NextCandidate</td>
+<td class="address-2"><span id="b595"></span>B595</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the next object number from the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b596"></span>B596</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b597"></span>B597</td>
+<td class="instruction">CP $FF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B66E.html#b6c8">ResolveObjectOrder_Done</a> if the end of the list has been reached, as every object has been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b599"></span>B599</td>
+<td class="instruction">JP Z,<a href="B66E.html#b6c8">ResolveObjectOrder_Done</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b59c"></span>B59C</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58A.html#b595">DrawObjectsInOrder_NextCandidate</a> if the object has already been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b59e"></span>B59E</td>
+<td class="instruction">JR NZ,<a href="B58A.html#b595">DrawObjectsInOrder_NextCandidate</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5a0"></span>B5A0</td>
+<td class="instruction">CALL <a href="B520.html">FindObjectAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B520.html">FindObjectAddress</a> to get the address of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5a3"></span>B5A3</td>
+<td class="instruction">LD ($A719),DE</td>
+<td class="comment-1" rowspan="1">Write the list pointer to <a href="A719.html">FirstListPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5a7"></span>B5A7</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Copy the address of the object to <span class="register">IX</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5a8"></span>B5A8</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b5aa"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="B66E.html">ResolveObjectOrder</a>.
+</div>
+<div class="paragraph">
+Compare it with each of the other undrawn objects in the list.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_NextOther</td>
+<td class="address-2"><span id="b5aa"></span>B5AA</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the next object number from the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5ab"></span>B5AB</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5ac"></span>B5AC</td>
+<td class="instruction">CP $FF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B66E.html#b6b3">ResolveObjectOrder_Draw</a> if the end of the list has been reached, as nothing has to be drawn before the object considered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5ae"></span>B5AE</td>
+<td class="instruction">JP Z,<a href="B66E.html#b6b3">ResolveObjectOrder_Draw</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5b1"></span>B5B1</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58A.html#b5aa">DrawObjectsInOrder_NextOther</a> if the object has already been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5b3"></span>B5B3</td>
+<td class="instruction">JR NZ,<a href="B58A.html#b5aa">DrawObjectsInOrder_NextOther</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5b5"></span>B5B5</td>
+<td class="instruction">CALL <a href="B520.html">FindObjectAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B520.html">FindObjectAddress</a> to get the address of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5b8"></span>B5B8</td>
+<td class="instruction">LD ($A71B),DE</td>
+<td class="comment-1" rowspan="1">Write the list pointer to <a href="A71B.html">SecondListPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5bc"></span>B5BC</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Copy the address of the object to <span class="register">IY</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5bd"></span>B5BD</td>
+<td class="instruction">POP IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5bf"></span>B5BF</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IX</span> to <span class="register">BC</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5c1"></span>B5C1</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5c2"></span>B5C2</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B58A.html#b5aa">DrawObjectsInOrder_NextOther</a> if the other object is the object considered, as an object is not compared with itself.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5c3"></span>B5C3</td>
+<td class="instruction">SBC HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5c5"></span>B5C5</td>
+<td class="instruction">JR Z,<a href="B58A.html#b5aa">DrawObjectsInOrder_NextOther</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5c7"></span>B5C7</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Start with a code of zero in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b5c9"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the heights. The code is 0 if the object considered is above the other and so in front, 1 if they overlap and 2 if it is below the other.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5c9"></span>B5C9</td>
+<td class="instruction">LD A,(IY+$03)</td>
+<td class="comment-1" rowspan="3">Fetch the height of the top of the other object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5cc"></span>B5CC</td>
+<td class="instruction">ADD A,(IY+$06)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5cf"></span>B5CF</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5d0"></span>B5D0</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="2">Subtract it from the height of the bottom of the object considered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5d3"></span>B5D3</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5d4"></span>B5D4</td>
+<td class="instruction">JR NC,<a href="B58A.html#b5e5">DrawObjectsInOrder_CompareY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58A.html#b5e5">DrawObjectsInOrder_CompareY</a> if the object considered is above the other.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5d6"></span>B5D6</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="3">Fetch the height of the top of the object considered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5d9"></span>B5D9</td>
+<td class="instruction">ADD A,(IX+$06)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5dc"></span>B5DC</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5dd"></span>B5DD</td>
+<td class="instruction">LD A,(IY+$03)</td>
+<td class="comment-1" rowspan="2">Subtract it from the height of the bottom of the other object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5e0"></span>B5E0</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5e1"></span>B5E1</td>
+<td class="instruction">JR C,<a href="B58A.html#b5e4">DrawObjectsInOrder_HeightCode</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58A.html#b5e4">DrawObjectsInOrder_HeightCode</a> if the two overlap.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5e3"></span>B5E3</td>
+<td class="instruction">INC C</td>
+<td class="comment-1" rowspan="1">Add one to the code, as the object considered is below the other.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_HeightCode</td>
+<td class="address-2"><span id="b5e4"></span>B5E4</td>
+<td class="instruction">INC C</td>
+<td class="comment-1" rowspan="1">Add one to the code.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b5e5"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the y positions, which add three or six to the code. The code is 0 if the object considered has the higher y position and so is behind, 1 if they overlap and 2 if it has the lower y position and so is in front.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_CompareY</td>
+<td class="address-2"><span id="b5e5"></span>B5E5</td>
+<td class="instruction">LD A,(IY+$02)</td>
+<td class="comment-1" rowspan="3">Fetch the highest y position of the other object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5e8"></span>B5E8</td>
+<td class="instruction">ADD A,(IY+$05)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5eb"></span>B5EB</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5ec"></span>B5EC</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="3">Subtract it from the lowest y position of the object considered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5ef"></span>B5EF</td>
+<td class="instruction">SUB (IX+$05)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5f2"></span>B5F2</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5f3"></span>B5F3</td>
+<td class="instruction">JR NC,<a href="B58A.html#b60b">DrawObjectsInOrder_CompareX</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58A.html#b60b">DrawObjectsInOrder_CompareX</a> if the object considered has the higher y position, and is behind.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5f5"></span>B5F5</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="3">Fetch the highest y position of the object considered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5f8"></span>B5F8</td>
+<td class="instruction">ADD A,(IX+$05)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5fb"></span>B5FB</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5fc"></span>B5FC</td>
+<td class="instruction">LD A,(IY+$02)</td>
+<td class="comment-1" rowspan="3">Subtract it from the lowest y position of the other object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b5ff"></span>B5FF</td>
+<td class="instruction">SUB (IY+$05)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b602"></span>B602</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b603"></span>B603</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b604"></span>B604</td>
+<td class="instruction">JR C,<a href="B58A.html#b608">DrawObjectsInOrder_YCode</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58A.html#b608">DrawObjectsInOrder_YCode</a> if the two overlap.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b606"></span>B606</td>
+<td class="instruction">ADD A,$03</td>
+<td class="comment-1" rowspan="1">Add three to the code, as the object considered has the lower y position.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_YCode</td>
+<td class="address-2"><span id="b608"></span>B608</td>
+<td class="instruction">ADD A,$03</td>
+<td class="comment-1" rowspan="1">Add three to the code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b60a"></span>B60A</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Set the code.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b60b"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the x positions, which add nine or eighteen to the code. The code is 0 if the object considered has the higher x position and so is in front, 1 if they overlap and 2 if it has the lower x position and so is behind.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_CompareX</td>
+<td class="address-2"><span id="b60b"></span>B60B</td>
+<td class="instruction">LD A,(IY+$01)</td>
+<td class="comment-1" rowspan="3">Fetch the highest x position of the other object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b60e"></span>B60E</td>
+<td class="instruction">ADD A,(IY+$04)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b611"></span>B611</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b612"></span>B612</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="3">Subtract it from the lowest x position of the object considered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b615"></span>B615</td>
+<td class="instruction">SUB (IX+$04)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b618"></span>B618</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b619"></span>B619</td>
+<td class="instruction">JR NC,<a href="B58A.html#b631">DrawObjectsInOrder_Dispatch</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58A.html#b631">DrawObjectsInOrder_Dispatch</a> if the object considered has the higher x position, and is in front.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b61b"></span>B61B</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="3">Fetch the highest x position of the object considered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b61e"></span>B61E</td>
+<td class="instruction">ADD A,(IX+$04)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b621"></span>B621</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b622"></span>B622</td>
+<td class="instruction">LD A,(IY+$01)</td>
+<td class="comment-1" rowspan="3">Subtract it from the lowest x position of the other object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b625"></span>B625</td>
+<td class="instruction">SUB (IY+$04)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b628"></span>B628</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b629"></span>B629</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b62a"></span>B62A</td>
+<td class="instruction">JR C,<a href="B58A.html#b62e">DrawObjectsInOrder_XCode</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58A.html#b62e">DrawObjectsInOrder_XCode</a> if the two overlap.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b62c"></span>B62C</td>
+<td class="instruction">ADD A,$09</td>
+<td class="comment-1" rowspan="1">Add nine to the code, as the object considered has the lower x position.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_XCode</td>
+<td class="address-2"><span id="b62e"></span>B62E</td>
+<td class="instruction">ADD A,$09</td>
+<td class="comment-1" rowspan="1">Add nine to the code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b630"></span>B630</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Set the code.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b631"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to the routine for the combination of codes, using the code to find its address in the table at <a href="B638.html">SortJumpTable</a>. The dispatch code of the main loop at <a href="AF87.html#b003">RunGame_JumpViaTable</a> is used for this.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObjectsInOrder_Dispatch</td>
+<td class="address-2"><span id="b631"></span>B631</td>
+<td class="instruction">LD L,C</td>
+<td class="comment-1" rowspan="1">Set <span class="register">L</span> to the combined code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b632"></span>B632</td>
+<td class="instruction">LD BC,$B638</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="B638.html">SortJumpTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b635"></span>B635</td>
+<td class="instruction">JP <a href="AF87.html#b003">RunGame_JumpViaTable</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF87.html#b003">RunGame_JumpViaTable</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/asm/CEBB.html">Knight Lore</a></li>
+<li><a href="/ultimate/alien8/asm/C785.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B55A.html">B55A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b58a">Map</a></td>
+<td class="next">
+Next: <a href="B638.html">B638</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/46474.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

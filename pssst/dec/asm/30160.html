@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pssst.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,19 @@ Next: <a href="30234.html">30234</a>
 </td>
 </tr>
 </table>
-<div class="description">30160: Erase Sprite</div>
+<div class="description">30160: Draw Sprite Rows</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="29861.html">29861</a> and <a href="29980.html">29980</a>.
+Used by the routines at <a href="29861.html">SetUpPreviousSprite</a> and <a href="29980.html">DrawSprite</a>.
+</div>
+<div class="paragraph">
+Erases the previous sprite and draws the new one, one pixel row at a time, working up the screen from the bottom row. The main registers hold the previous sprite and the shadow registers hold the new sprite. A row of the previous sprite is cleared by ANDing the screen with the inverted sprite data. A row of the new sprite is ORed onto the screen.
+</div>
+<div class="paragraph">
+The first pass handles the rows where only one of the two sprites has any data. The heights at <a href="24075.html#24080">24080</a> and <a href="24075.html#24081">24081</a> then give the rows both sprites have in common, which are done on the second pass.
 </div>
 </div>
 <table class="input">
@@ -48,19 +57,19 @@ Used by the routines at <a href="29861.html">29861</a> and <a href="29980.html">
 </tr>
 <tr>
 <td class="register">B</td>
-<td class="register-desc">Loop counter</td>
+<td class="register-desc">Sprite width in bytes</td>
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Actor Y position, or zero?</td>
+<td class="register-desc">Number of rows left to process</td>
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address into a sprite/buffer</td>
+<td class="register-desc">Address into a sprite</td>
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Address in the DISPLAY_FILE</td>
+<td class="register-desc">Address in the screen buffer</td>
 </tr>
 </table>
 </td>
@@ -69,29 +78,31 @@ Used by the routines at <a href="29861.html">29861</a> and <a href="29980.html">
 <td class="asm-label">MaskSprite</td>
 <td class="address-2"><span id="30160"></span>30160</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="3">Jump to <a href="30160.html#30203">MaskSprite_4</a> if the sprites vertical position is zero.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the number of rows left of the previous sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30161"></span>30161</td>
 <td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Set the flags.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30162"></span>30162</td>
-<td class="instruction">JR Z,<a href="30160.html#30203">MaskSprite_4</a></td>
+<td class="instruction">JR Z,<a href="30160.html#30203">MaskSprite_NewOnly</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="30160.html#30203">MaskSprite_NewOnly</a> if there are no more rows of the previous sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30164"></span>30164</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Else decrement.</td>
+<td class="comment-1" rowspan="1">Decrease the row counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30165"></span>30165</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">BC</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Stash the counter and the screen address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -103,38 +114,40 @@ Used by the routines at <a href="29861.html">29861</a> and <a href="29980.html">
 <span id="30167"></span>
 <div class="comments">
 <div class="paragraph">
-Loop to create a mask of the sprite and it write to the screen.
+Clear one row of the previous sprite from the screen.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_0</td>
+<td class="asm-label">MaskSprite_Erase</td>
 <td class="address-2"><span id="30167"></span>30167</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=sprite byte.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30168"></span>30168</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="3">Create mask and write to screen.</td>
+<td class="comment-1" rowspan="1">Invert it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30169"></span>30169</td>
 <td class="instruction">AND (HL)</td>
+<td class="comment-1" rowspan="1">Remove the sprite pixels from the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30170"></span>30170</td>
 <td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Write the result back to the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30171"></span>30171</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Move onto the next byte.</td>
+<td class="comment-1" rowspan="1">Move onto the next byte of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -145,60 +158,72 @@ Loop to create a mask of the sprite and it write to the screen.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30173"></span>30173</td>
-<td class="instruction">DJNZ <a href="30160.html#30167">MaskSprite_0</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="30160.html#30167">MaskSprite_0</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="30160.html#30167">MaskSprite_Erase</a></td>
+<td class="comment-1" rowspan="1">Decrease the width counter by one and loop back to <a href="30160.html#30167">MaskSprite_Erase</a> until the whole row of the sprite has been erased.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30175"></span>30175</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the screen address from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30176"></span>30176</td>
 <td class="instruction">CALL <a href="30085.html">ScreenPosition1PixelAbove</a></td>
-<td class="comment-1" rowspan="1">Call <a href="30085.html">ScreenPosition1PixelAbove</a>.</td>
+<td class="comment-1" rowspan="1">Move up one pixel row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30179"></span>30179</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the counter from the stack.</td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="routine-comment" colspan="5">
+<span id="30180"></span>
+<div class="comments">
+<div class="paragraph">
+Switch to the new sprite.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MaskSprite_Draw</td>
 <td class="address-1"><span id="30180"></span>30180</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30181"></span>30181</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="3">Jump to <a href="30160.html#30200">MaskSprite_3</a> if <span class="register">C</span> is zero.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the number of rows left of the new sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30182"></span>30182</td>
 <td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Set the flags.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30183"></span>30183</td>
-<td class="instruction">JR Z,<a href="30160.html#30200">MaskSprite_3</a></td>
+<td class="instruction">JR Z,<a href="30160.html#30200">MaskSprite_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="30160.html#30200">MaskSprite_Next</a> if there are no more rows of the new sprite.</td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_1</td>
+<td class="asm-label">MaskSprite_Draw_Row</td>
 <td class="address-2"><span id="30185"></span>30185</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the row counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30186"></span>30186</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">BC</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Stash the counter and the screen address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -206,214 +231,234 @@ Loop to create a mask of the sprite and it write to the screen.
 <td class="instruction">PUSH HL</td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_2</td>
+<td class="routine-comment" colspan="5">
+<span id="30188"></span>
+<div class="comments">
+<div class="paragraph">
+Draw one row of the new sprite onto the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MaskSprite_Draw_Loop</td>
 <td class="address-2"><span id="30188"></span>30188</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch a byte of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30189"></span>30189</td>
 <td class="instruction">OR (HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Combine it with the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30190"></span>30190</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the result back to the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30191"></span>30191</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next byte of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30192"></span>30192</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30193"></span>30193</td>
-<td class="instruction">DJNZ <a href="30160.html#30188">MaskSprite_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="30160.html#30188">MaskSprite_Draw_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the width counter by one and loop back to <a href="30160.html#30188">MaskSprite_Draw_Loop</a> until the whole row of the sprite has been drawn.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30195"></span>30195</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the screen address from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30196"></span>30196</td>
 <td class="instruction">CALL <a href="30085.html">ScreenPosition1PixelAbove</a></td>
-<td class="comment-1" rowspan="1">Call <a href="30085.html">ScreenPosition1PixelAbove</a>.</td>
+<td class="comment-1" rowspan="1">Move up one pixel row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30199"></span>30199</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the counter from the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_3</td>
+<td class="asm-label">MaskSprite_Next</td>
 <td class="address-2"><span id="30200"></span>30200</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch back to the previous sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30201"></span>30201</td>
 <td class="instruction">JR <a href="30160.html#30160">MaskSprite</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="30160.html">MaskSprite</a> to do the next pair of rows.</td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_4</td>
+<td class="routine-comment" colspan="5">
+<span id="30203"></span>
+<div class="comments">
+<div class="paragraph">
+There are no more rows of the previous sprite, so only the new sprite is left to draw.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MaskSprite_NewOnly</td>
 <td class="address-2"><span id="30203"></span>30203</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the new sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30204"></span>30204</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the number of rows left of the new sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30205"></span>30205</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the flags.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30206"></span>30206</td>
-<td class="instruction">JR NZ,<a href="30160.html#30185">MaskSprite_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="30160.html#30185">MaskSprite_Draw_Row</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="30160.html#30185">MaskSprite_Draw_Row</a> if there are rows to draw.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="30208"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="29861.html">29861</a>.
+This entry point is used by the routine at <a href="29861.html">SetUpPreviousSprite</a>.
+</div>
+<div class="paragraph">
+Both sprites have been drawn as far as their rows go.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_5</td>
+<td class="asm-label">MaskSprite_Finish</td>
 <td class="address-2"><span id="30208"></span>30208</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch back to the previous sprite.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="30209"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="29861.html">29861</a>.
+This entry point is used by the routine at <a href="29861.html">SetUpPreviousSprite</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_6</td>
+<td class="asm-label">MaskSprite_Finish_Previous</td>
 <td class="address-2"><span id="30209"></span>30209</td>
 <td class="instruction">LD A,(24080)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Fetch the remaining row count of the previous sprite from <a href="24075.html#24080">24080</a> and keep it in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30212"></span>30212</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30213"></span>30213</td>
 <td class="instruction">LD A,(24081)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the remaining row count of the new sprite from <a href="24075.html#24081">24081</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30216"></span>30216</td>
 <td class="instruction">OR C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Combine them.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30217"></span>30217</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if there are no rows left on either sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30218"></span>30218</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Clear <a href="24075.html#24080">24080</a> so that it is only used once.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30219"></span>30219</td>
 <td class="instruction">LD (24080),A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30222"></span>30222</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the new sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30223"></span>30223</td>
 <td class="instruction">LD A,(24081)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Fetch the remaining row count from <a href="24075.html#24081">24081</a> and keep the remaining row count of the new sprite in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30226"></span>30226</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30227"></span>30227</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=0.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="30228"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="29861.html">29861</a>.
+This entry point is used by the routine at <a href="29861.html">SetUpPreviousSprite</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">MaskSprite_7</td>
+<td class="asm-label">MaskSprite_Finish_ClearNew</td>
 <td class="address-2"><span id="30228"></span>30228</td>
 <td class="instruction">LD (24081),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 0 to <a href="24075.html#24081">24081</a> so that it is only used once.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30231"></span>30231</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch back to the previous sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30232"></span>30232</td>
 <td class="instruction">JR <a href="30160.html#30160">MaskSprite</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="30160.html">MaskSprite</a> to process the rows both sprites have.</td>
 </tr>
 </table>
 <table class="asm-navigation">

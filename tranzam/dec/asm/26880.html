@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,6 +44,9 @@ Next: <a href="26896.html">26896</a>
 <div class="paragraph">
 Used by the routine at <a href="26784.html">CreateWindow</a>.
 </div>
+<div class="paragraph">
+Fills a block of the attribute buffer with 118 (INK:YELLOW, PAPER:YELLOW (BRIGHT)), which forms part of the border of the play area.
+</div>
 </div>
 <table class="input">
 <tr class="asm-input-header">
@@ -48,15 +54,15 @@ Used by the routine at <a href="26784.html">CreateWindow</a>.
 </tr>
 <tr>
 <td class="register">B</td>
-<td class="register-desc">Count for width</td>
+<td class="register-desc">Width of the block (in cells)</td>
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Count for height</td>
+<td class="register-desc">Height of the block (in rows)</td>
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Attribute address</td>
+<td class="register-desc">Attribute address of the top left of the block</td>
 </tr>
 </table>
 </td>
@@ -65,25 +71,25 @@ Used by the routine at <a href="26784.html">CreateWindow</a>.
 <td class="asm-label">AttributesPlayArea</td>
 <td class="address-2"><span id="26880"></span>26880</td>
 <td class="instruction">LD E,B</td>
-<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Keep the width of the block in <span class="register">E</span>.</td>
 </tr>
 <tr>
-<td class="asm-label">AttributesPlayArea_0</td>
+<td class="asm-label">AttributesPlayArea_Row</td>
 <td class="address-2"><span id="26881"></span>26881</td>
 <td class="instruction">LD B,E</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Set the cell counter to the width of the block.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26882"></span>26882</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the start of the row on the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">AttributesPlayArea_1</td>
+<td class="asm-label">AttributesPlayArea_Column</td>
 <td class="address-2"><span id="26883"></span>26883</td>
 <td class="instruction">LD (HL),118</td>
-<td class="comment-1" rowspan="1">Write 118 to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Set the attribute of the cell to 118.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -94,32 +100,32 @@ Used by the routine at <a href="26784.html">CreateWindow</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26886"></span>26886</td>
-<td class="instruction">DJNZ <a href="26880.html#26883">AttributesPlayArea_1</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="26880.html#26883">AttributesPlayArea_1</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="26880.html#26883">AttributesPlayArea_Column</a></td>
+<td class="comment-1" rowspan="1">Decrease the cell counter by one and loop back to <a href="26880.html#26883">AttributesPlayArea_Column</a> until the row is done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26888"></span>26888</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the address of the start of the row from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26889"></span>26889</td>
-<td class="instruction">CALL <a href="26896.html">26896</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26896.html">26896</a>.</td>
+<td class="instruction">CALL <a href="26896.html">MoveDownOneRow</a></td>
+<td class="comment-1" rowspan="1">Call <a href="26896.html">MoveDownOneRow</a> to move down a row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26892"></span>26892</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">C</span> by one.</td>
+<td class="comment-1" rowspan="1">Decrease the row counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26893"></span>26893</td>
-<td class="instruction">JR NZ,<a href="26880.html#26881">AttributesPlayArea_0</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="26880.html#26881">AttributesPlayArea_0</a> until <span class="register">C</span> is zero.</td>
+<td class="instruction">JR NZ,<a href="26880.html#26881">AttributesPlayArea_Row</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="26880.html#26881">AttributesPlayArea_Row</a> until all of the rows have been done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

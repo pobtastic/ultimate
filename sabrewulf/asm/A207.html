@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,153 +36,212 @@ Next: <a href="A234.html">A234</a>
 </td>
 </tr>
 </table>
-<div class="description">A207: Routine at A207</div>
+<div class="description">A207: Show Amulet</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="A18C.html">A18C</a>.
+Used by the routine at <a href="A18C.html">TestPlayerProgress</a>.
+</div>
+<div class="paragraph">
+Clears the play area and draws the amulet in the middle of the screen. The amulet is drawn as four graphics, one for each piece. Every piece is drawn as a plain red silhouette, unless it has been collected, in which case it is drawn in full colour. Each of the graphics is drawn by <a href="BBF7.html#bc0b">DrawRoom_Process</a>, which holds two sets of attributes for each graphic, the second of which is only used when <a href="96B2.html">AttributeSetFlag</a> is set.
+</div>
+<div class="paragraph">
+Once the amulet has been drawn the poem is shown by <a href="A234.html">HandlerPoems</a>.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After <a href="A207.html">ShowAmulet</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="show-amulet-before" src="../images/scr/show-amulet-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="show-amulet-after" src="../images/scr/show-amulet-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the player</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ShowAmulet</td>
+<td class="address-2"><span id="a207"></span>A207</td>
+<td class="instruction">CALL <a href="BB7C.html">ClearPlayArea_Attributes</a></td>
+<td class="comment-1" rowspan="1">Clear the attribute buffer of the play area.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a20a"></span>A20A</td>
+<td class="instruction">CALL <a href="BB5C.html">ClearPlayArea</a></td>
+<td class="comment-1" rowspan="1">Clear the play area.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a20d"></span>A20D</td>
+<td class="instruction">LD A,(IX+$0B)</td>
+<td class="comment-1" rowspan="1">Fetch the amulet pieces collected from <a href="9702.html#970d">970D</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a210"></span>A210</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Stash the amulet pieces collected in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a211"></span>A211</td>
+<td class="instruction">LD HL,$C374</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the table of amulet graphics and positions at <a href="C374.html">AmuletGraphicsTable</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a214"></span>
+<div class="comments">
+<div class="paragraph">
+Draw each of the amulet pieces in turn.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="address-2"><span id="a207"></span>A207</td>
-<td class="instruction">CALL <a href="BB7C.html">ClearPlayArea_Attributes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB7C.html">ClearPlayArea_Attributes</a>.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="a20a"></span>A20A</td>
-<td class="instruction">CALL <a href="BB5C.html">ClearPlayArea</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB5C.html">ClearPlayArea</a>.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="a20d"></span>A20D</td>
-<td class="instruction">LD A,(IX+$0B)</td>
-<td class="comment-1" rowspan="2"><span class="register">C</span>=<span class="register">IX</span>+0B.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="a210"></span>A210</td>
-<td class="instruction">LD C,A</td>
-</tr>
-<tr>
-<td class="address-1"><span id="a211"></span>A211</td>
-<td class="instruction">LD HL,$C374</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="C374.html">C374</a>.</td>
-</tr>
-<tr>
+<td class="asm-label">ShowAmulet_Loop</td>
 <td class="address-2"><span id="a214"></span>A214</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Fetch the address of the next graphic from the table into <span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a215"></span>A215</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a216"></span>A216</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a217"></span>A217</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump to <a href="A234.html">HandlerPoems</a> if the end of the table has been reached (the address is zero).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a218"></span>A218</td>
 <td class="instruction">OR D</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a219"></span>A219</td>
 <td class="instruction">JR Z,<a href="A234.html">HandlerPoems</a></td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a21b"></span>A21B</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the position of the graphic.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a21c"></span>A21C</td>
 <td class="instruction">SRL C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift the collected flag for this amulet piece out of <span class="register">C</span> and into the carry flag.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a21e"></span>A21E</td>
-<td class="instruction">JR NC,<a href="A207.html#a225">$A225</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="A207.html#a225">ShowAmulet_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A207.html#a225">ShowAmulet_Draw</a> if the amulet piece has not been collected.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a220"></span>A220</td>
 <td class="instruction">LD A,$01</td>
-<td class="comment-1" rowspan="2">Write 01 to <a href="96B1.html#96b2">96B2</a>.</td>
+<td class="comment-1" rowspan="2">Write 01 to <a href="96B2.html">AttributeSetFlag</a> so that the graphic is drawn in full colour.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a222"></span>A222</td>
 <td class="instruction">LD ($96B2),A</td>
 </tr>
 <tr>
+<td class="asm-label">ShowAmulet_Draw</td>
 <td class="address-2"><span id="a225"></span>A225</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the amulet pieces remaining on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a226"></span>A226</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Fetch the position of the graphic from the table (<span class="register">C</span> is the X position and <span class="register">B</span> the Y position).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a227"></span>A227</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a228"></span>A228</td>
 <td class="instruction">LD B,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a229"></span>A229</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next table entry.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a22a"></span>A22A</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the table pointer on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a22b"></span>A22B</td>
 <td class="instruction">LD H,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Copy the position to <span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a22c"></span>A22C</td>
 <td class="instruction">LD L,C</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a22d"></span>A22D</td>
 <td class="instruction">CALL <a href="BBF7.html#bc0b">DrawRoom_Process</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BBF7.html#bc0b">DrawRoom_Process</a>.</td>
+<td class="comment-1" rowspan="1">Draw the graphic of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a230"></span>A230</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">HL</span> and <span class="register">BC</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Restore the table pointer and the amulet pieces remaining from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a231"></span>A231</td>
 <td class="instruction">POP BC</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a232"></span>A232</td>
-<td class="instruction">JR <a href="A207.html#a214">$A214</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="A207.html#a214">A214</a>.</td>
+<td class="instruction">JR <a href="A207.html#a214">ShowAmulet_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="A207.html#a214">ShowAmulet_Loop</a> to draw the next amulet piece.</td>
 </tr>
 </table>
 <table class="asm-navigation">

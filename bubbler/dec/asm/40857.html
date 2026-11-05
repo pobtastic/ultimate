@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at 40857</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40825.html">40825</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40857">Map</a></td>
+<td class="next">
+Next: <a href="41150.html">41150</a>
+</td>
+</tr>
+</table>
+<div class="description">40857: Sort Draw List</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="52497.html">RunFrame</a> and <a href="57328.html">RunGame</a>.
+</div>
+<div class="paragraph">
+Sorts the draw list at <a href="45051.html">DrawList</a> into the order in which the items must be drawn, and builds the sorted list at <a href="44943.html">SortedDrawList</a>. This is a painter's algorithm: an item can only be drawn after every item which is behind it. Each item in the lists has three bytes: flags, and the address of its record. Bit 0 of the flags is set if the record is an entity, and reset if it is a compact record with the three coordinates at offsets 2 4 and 6 which is given the size 6 6 1. Bit 7 is set once the item has been moved to the sorted list. . The routine takes the first item which has not been moved, and compares it with each of the other items which have not been moved. The result for each pair is a number in the range 0-26 made from the relation along the first, second and third coordinates (0 for 'the other item is before this one', 1 for 'they overlap' and 2 for 'the other item is after this one'). The number selects a routine from the table at <a href="41150.html">DrawOrderTable</a>. If the other item has to be drawn first then it becomes the item under consideration (unless it has been tried already, which would be a loop). When an item has no other item that has to be drawn before it, it is moved to the sorted list and the whole process starts again.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList</td>
+<td class="address-2"><span id="40857"></span>40857</td>
+<td class="instruction">LD HL,44943</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the sorted list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40860"></span>40860</td>
+<td class="instruction">LD (41338),HL</td>
+<td class="comment-1" rowspan="1">Store it as the address of the next free place in the sorted list.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40863"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="41337.html">MoveItemToSortedList</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_Next</td>
+<td class="address-2"><span id="40863"></span>40863</td>
+<td class="instruction">LD DE,45051</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the start of the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_FirstLoop</td>
+<td class="address-2"><span id="40866"></span>40866</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the flags of the next item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40867"></span>40867</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move onto the address of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40868"></span>40868</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40869"></span>40869</td>
+<td class="instruction">JP Z,<a href="41368.html">EndSortedList</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="41368.html">EndSortedList</a> if this is the end of the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40872"></span>40872</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="1">Test whether the item has been moved already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40874"></span>40874</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the flags in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40875"></span>40875</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the address of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40876"></span>40876</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40877"></span>40877</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move onto the second byte of the address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40878"></span>40878</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40879"></span>40879</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40880"></span>40880</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move onto the next item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40881"></span>40881</td>
+<td class="instruction">JR NZ,<a href="40857.html#40866">SortDrawList_FirstLoop</a></td>
+<td class="comment-1" rowspan="1">Jump back to look at the next item if this one has been moved already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40883"></span>40883</td>
+<td class="instruction">LD (41390),DE</td>
+<td class="comment-1" rowspan="1">Store the address of the next item as that of the item under consideration.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40887"></span>40887</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="2">Copy the address of the record into <span class="register">IX</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40888"></span>40888</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40890"></span>40890</td>
+<td class="instruction">RR L</td>
+<td class="comment-1" rowspan="1">Rotate bit 0 of the flags into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40892"></span>40892</td>
+<td class="instruction">JR C,<a href="40857.html#40925">SortDrawList_SecondLoop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#40925">SortDrawList_SecondLoop</a> if the record is an entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40894"></span>40894</td>
+<td class="instruction">LD L,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the first coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40897"></span>40897</td>
+<td class="instruction">LD H,(IX+3)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the first coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40900"></span>40900</td>
+<td class="instruction">LD (40827),HL</td>
+<td class="comment-1" rowspan="1">Store the first coordinate in the first scratch item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40903"></span>40903</td>
+<td class="instruction">LD L,(IX+4)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the second coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40906"></span>40906</td>
+<td class="instruction">LD H,(IX+5)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the second coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40909"></span>40909</td>
+<td class="instruction">LD (40830),HL</td>
+<td class="comment-1" rowspan="1">Store the second coordinate in the first scratch item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40912"></span>40912</td>
+<td class="instruction">LD L,(IX+6)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the third coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40915"></span>40915</td>
+<td class="instruction">LD H,(IX+7)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the third coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40918"></span>40918</td>
+<td class="instruction">LD (40833),HL</td>
+<td class="comment-1" rowspan="1">Store the third coordinate in the first scratch item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40921"></span>40921</td>
+<td class="instruction">LD IX,40825</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="40825.html">ScratchItems</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40925"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="41204.html">IgnoreItem</a>, <a href="41207.html">IgnoreOverlap</a>, <a href="41210.html">DrawOtherItemFirst</a> and <a href="41310.html">ResolveFullOverlap</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_SecondLoop</td>
+<td class="address-2"><span id="40925"></span>40925</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the flags of the next item to compare.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40926"></span>40926</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move onto the address of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40927"></span>40927</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40928"></span>40928</td>
+<td class="instruction">JP Z,<a href="41337.html">MoveItemToSortedList</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="41337.html">MoveItemToSortedList</a> if the end of the list has been reached, as no other item has to go first.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40931"></span>40931</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="1">Test whether the item has been moved already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40933"></span>40933</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the flags in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40934"></span>40934</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the address of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40935"></span>40935</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40936"></span>40936</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move onto the second byte of the address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40937"></span>40937</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40938"></span>40938</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40939"></span>40939</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move onto the next item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40940"></span>40940</td>
+<td class="instruction">JR NZ,<a href="40857.html#40925">SortDrawList_SecondLoop</a></td>
+<td class="comment-1" rowspan="1">Jump back to look at the next item if this one has been moved already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40942"></span>40942</td>
+<td class="instruction">LD (41392),DE</td>
+<td class="comment-1" rowspan="1">Store the address of the next item as that of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40946"></span>40946</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="2">Copy the address of the record into <span class="register">IY</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40947"></span>40947</td>
+<td class="instruction">POP IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40949"></span>40949</td>
+<td class="instruction">RR L</td>
+<td class="comment-1" rowspan="1">Rotate bit 0 of the flags into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40951"></span>40951</td>
+<td class="instruction">JR C,<a href="40857.html#40987">SortDrawList_Compare</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#40987">SortDrawList_Compare</a> if the record is an entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40953"></span>40953</td>
+<td class="instruction">LD L,(IY+2)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the first coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40956"></span>40956</td>
+<td class="instruction">LD H,(IY+3)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the first coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40959"></span>40959</td>
+<td class="instruction">LD (40843),HL</td>
+<td class="comment-1" rowspan="1">Store the first coordinate in the second scratch item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40962"></span>40962</td>
+<td class="instruction">LD L,(IY+4)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the second coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40965"></span>40965</td>
+<td class="instruction">LD H,(IY+5)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the second coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40968"></span>40968</td>
+<td class="instruction">LD (40846),HL</td>
+<td class="comment-1" rowspan="1">Store the second coordinate in the second scratch item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40971"></span>40971</td>
+<td class="instruction">LD L,(IY+6)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the third coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40974"></span>40974</td>
+<td class="instruction">LD H,(IY+7)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the third coordinate of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40977"></span>40977</td>
+<td class="instruction">LD (40849),HL</td>
+<td class="comment-1" rowspan="1">Store the third coordinate in the second scratch item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40980"></span>40980</td>
+<td class="instruction">LD IY,40841</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at <a href="40825.html#40841">ScratchItems_Second</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40984"></span>40984</td>
+<td class="instruction">LD BC,40841</td>
+<td class="comment-1" rowspan="1">Use it as the address to compare against.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40987"></span>
+<div class="comments">
+<div class="paragraph">
+Skip the pair if both are the same item.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_Compare</td>
+<td class="address-2"><span id="40987"></span>40987</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Copy the address of the item under consideration into <span class="register">HL</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40989"></span>40989</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40990"></span>40990</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Compare it with the address of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40991"></span>40991</td>
+<td class="instruction">SBC HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40993"></span>40993</td>
+<td class="instruction">JR Z,<a href="40857.html#40925">SortDrawList_SecondLoop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#40925">SortDrawList_SecondLoop</a> if they are the same item.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40995"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the third coordinate of the two items, and put the result in <span class="register">C</span>: 0 if the other item is entirely before this one, 1 if they overlap, and 2 if the other item is entirely after this one.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40995"></span>40995</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40996"></span>40996</td>
+<td class="instruction">LD C,0</td>
+<td class="comment-1" rowspan="1">Clear the result.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="40998"></span>40998</td>
+<td class="instruction">LD H,(IY+8)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the third coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41001"></span>41001</td>
+<td class="instruction">LD L,(IY+9)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the third coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41004"></span>41004</td>
+<td class="instruction">LD D,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41006"></span>41006</td>
+<td class="instruction">LD E,(IY+13)</td>
+<td class="comment-1" rowspan="1">Fetch the third size of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41009"></span>41009</td>
+<td class="instruction">DEC E</td>
+<td class="comment-1" rowspan="1">Subtract one to make the last position it covers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41010"></span>41010</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Find the last position that the other item covers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41011"></span>41011</td>
+<td class="instruction">LD D,(IX+8)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the third coordinate of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41014"></span>41014</td>
+<td class="instruction">LD E,(IX+9)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the third coordinate of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41017"></span>41017</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract the position of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41019"></span>41019</td>
+<td class="instruction">JR C,<a href="40857.html#41041">SortDrawList_Second</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#41041">SortDrawList_Second</a> if the other item ends before this one begins.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41021"></span>41021</td>
+<td class="instruction">LD L,(IX+13)</td>
+<td class="comment-1" rowspan="1">Fetch the third size of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41024"></span>41024</td>
+<td class="instruction">LD H,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41026"></span>41026</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Find the position just beyond this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41027"></span>41027</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41028"></span>41028</td>
+<td class="instruction">LD H,(IY+8)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the third coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41031"></span>41031</td>
+<td class="instruction">LD L,(IY+9)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the third coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41034"></span>41034</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract the position beyond this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41035"></span>41035</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41037"></span>41037</td>
+<td class="instruction">JR C,<a href="40857.html#41040">SortDrawList_ThirdAdd</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#41040">SortDrawList_ThirdAdd</a> if the other item starts before the end of this one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41039"></span>41039</td>
+<td class="instruction">INC C</td>
+<td class="comment-1" rowspan="1">Add one to the result.</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_ThirdAdd</td>
+<td class="address-2"><span id="41040"></span>41040</td>
+<td class="instruction">INC C</td>
+<td class="comment-1" rowspan="1">Add one to the result.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41041"></span>
+<div class="comments">
+<div class="paragraph">
+Do the same for the second coordinate, adding 3 to the result for an overlap and 6 for the other item being entirely after this one.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_Second</td>
+<td class="address-2"><span id="41041"></span>41041</td>
+<td class="instruction">LD H,(IY+5)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the second coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41044"></span>41044</td>
+<td class="instruction">LD L,(IY+6)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the second coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41047"></span>41047</td>
+<td class="instruction">LD D,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41049"></span>41049</td>
+<td class="instruction">LD E,(IY+12)</td>
+<td class="comment-1" rowspan="1">Fetch the second size of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41052"></span>41052</td>
+<td class="instruction">DEC E</td>
+<td class="comment-1" rowspan="1">Subtract one to make the last position it covers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41053"></span>41053</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Find the last position that the other item covers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41054"></span>41054</td>
+<td class="instruction">LD D,(IX+5)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the second coordinate of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41057"></span>41057</td>
+<td class="instruction">LD E,(IX+6)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the second coordinate of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41060"></span>41060</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract the position of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41062"></span>41062</td>
+<td class="instruction">JR C,<a href="40857.html#41088">SortDrawList_First</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#41088">SortDrawList_First</a> if the other item ends before this one begins.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41064"></span>41064</td>
+<td class="instruction">LD L,(IX+12)</td>
+<td class="comment-1" rowspan="1">Fetch the second size of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41067"></span>41067</td>
+<td class="instruction">LD H,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41069"></span>41069</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Find the position just beyond this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41070"></span>41070</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41071"></span>41071</td>
+<td class="instruction">LD H,(IY+5)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the second coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41074"></span>41074</td>
+<td class="instruction">LD L,(IY+6)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the second coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41077"></span>41077</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract the position beyond this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41078"></span>41078</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41080"></span>41080</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the result so far.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41081"></span>41081</td>
+<td class="instruction">JR C,<a href="40857.html#41085">SortDrawList_SecondAdd</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#41085">SortDrawList_SecondAdd</a> if the other item starts before the end of this one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41083"></span>41083</td>
+<td class="instruction">ADD A,3</td>
+<td class="comment-1" rowspan="1">Add 3 to the result.</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_SecondAdd</td>
+<td class="address-2"><span id="41085"></span>41085</td>
+<td class="instruction">ADD A,3</td>
+<td class="comment-1" rowspan="1">Add 3 to the result.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41087"></span>41087</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Store the result.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41088"></span>
+<div class="comments">
+<div class="paragraph">
+Do the same for the first coordinate, adding 9 to the result for an overlap and 18 for the other item being entirely after this one.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_First</td>
+<td class="address-2"><span id="41088"></span>41088</td>
+<td class="instruction">LD H,(IY+2)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the first coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41091"></span>41091</td>
+<td class="instruction">LD L,(IY+3)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the first coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41094"></span>41094</td>
+<td class="instruction">LD D,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41096"></span>41096</td>
+<td class="instruction">LD E,(IY+11)</td>
+<td class="comment-1" rowspan="1">Fetch the first size of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41099"></span>41099</td>
+<td class="instruction">DEC E</td>
+<td class="comment-1" rowspan="1">Subtract one to make the last position it covers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41100"></span>41100</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Find the last position that the other item covers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41101"></span>41101</td>
+<td class="instruction">LD D,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the first coordinate of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41104"></span>41104</td>
+<td class="instruction">LD E,(IX+3)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the first coordinate of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41107"></span>41107</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract the position of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41109"></span>41109</td>
+<td class="instruction">JR C,<a href="40857.html#41135">SortDrawList_Dispatch</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#41135">SortDrawList_Dispatch</a> if the other item ends before this one begins.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41111"></span>41111</td>
+<td class="instruction">LD L,(IX+11)</td>
+<td class="comment-1" rowspan="1">Fetch the first size of this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41114"></span>41114</td>
+<td class="instruction">LD H,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41116"></span>41116</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Find the position just beyond this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41117"></span>41117</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41118"></span>41118</td>
+<td class="instruction">LD H,(IY+2)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the first coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41121"></span>41121</td>
+<td class="instruction">LD L,(IY+3)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the first coordinate of the other item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41124"></span>41124</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract the position beyond this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41125"></span>41125</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41127"></span>41127</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the result so far.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41128"></span>41128</td>
+<td class="instruction">JR C,<a href="40857.html#41132">SortDrawList_FirstAdd</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40857.html#41132">SortDrawList_FirstAdd</a> if the other item starts before the end of this one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41130"></span>41130</td>
+<td class="instruction">ADD A,9</td>
+<td class="comment-1" rowspan="1">Add 9 to the result.</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_FirstAdd</td>
+<td class="address-2"><span id="41132"></span>41132</td>
+<td class="instruction">ADD A,9</td>
+<td class="comment-1" rowspan="1">Add 9 to the result.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41134"></span>41134</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Store the result.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41135"></span>
+<div class="comments">
+<div class="paragraph">
+Use the result to jump to the routine in the table at <a href="41150.html">DrawOrderTable</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SortDrawList_Dispatch</td>
+<td class="address-2"><span id="41135"></span>41135</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the result.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41136"></span>41136</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double it to make the offset into the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41137"></span>41137</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back to the normal registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41138"></span>41138</td>
+<td class="instruction">LD HL,41150</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="41150.html">DrawOrderTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41141"></span>41141</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Copy the offset into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41142"></span>41142</td>
+<td class="instruction">LD B,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41144"></span>41144</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the offset to find the entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41145"></span>41145</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41146"></span>41146</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move onto the second byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41147"></span>41147</td>
+<td class="instruction">LD H,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41148"></span>41148</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Combine them into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41149"></span>41149</td>
+<td class="instruction">JP (HL)</td>
+<td class="comment-1" rowspan="1">Jump to the routine.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="40825.html">40825</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#40857">Map</a></td>
+<td class="next">
+Next: <a href="41150.html">41150</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../../asm/9F99.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

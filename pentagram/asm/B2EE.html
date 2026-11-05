@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at B2EE</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B2C5.html">B2C5</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b2ee">Map</a></td>
+<td class="next">
+Next: <a href="B37F.html">B37F</a>
+</td>
+</tr>
+</table>
+<div class="description">B2EE: Get Sprite Address</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="B3D3.html">DrawObject</a> and <a href="B938.html">CalculateSpriteSize</a>.
+</div>
+<div class="paragraph">
+Makes sure that the sprite of an object faces the way the object does. The sprite data holds its own state in the top two bits of its first byte: bit 7 says that it is upside down and bit 6 that it is mirrored. If either differs from the flags of the object (bits 7 and 6 of its flag byte) the sprite data is flipped to match, in place.
+</div>
+<div class="paragraph">
+A sprite is held as rows of pairs of bytes, one pair per 08 pixels, with the mask byte first. Its bottom row comes first. Flipping it upside down swaps the rows over; mirroring it reverses the bits of each byte and the order of the bytes in each row.
+</div>
+<div class="paragraph">
+If the type of the object has no sprite, the routine returns to the caller of its caller.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Address of the sprite</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b2ee"></span>
+<div class="comments">
+<div class="paragraph">
+Find the sprite of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress</td>
+<td class="address-2"><span id="b2ee"></span>B2EE</td>
+<td class="instruction">LD L,(IX+$00)</td>
+<td class="comment-1" rowspan="3">Fetch the type of the object and double it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2f1"></span>B2F1</td>
+<td class="instruction">LD H,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2f3"></span>B2F3</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2f4"></span>B2F4</td>
+<td class="instruction">LD BC,$6DD7</td>
+<td class="comment-1" rowspan="2">Find the entry for the type in the sprite table, <a href="6DD7.html">SpriteTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2f7"></span>B2F7</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2f8"></span>B2F8</td>
+<td class="instruction">LD E,(HL)</td>
+<td class="comment-1" rowspan="3">Fetch the address of the sprite in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2f9"></span>B2F9</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2fa"></span>B2FA</td>
+<td class="instruction">LD D,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2fb"></span>B2FB</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B2EE.html#b302">GetSpriteAddress_Vertical</a> if the sprite exists, which is when its first byte is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2fc"></span>B2FC</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2fd"></span>B2FD</td>
+<td class="instruction">JR NZ,<a href="B2EE.html#b302">GetSpriteAddress_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ff"></span>B2FF</td>
+<td class="instruction">INC SP</td>
+<td class="comment-1" rowspan="2">Otherwise discard the return address of the caller...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b300"></span>B300</td>
+<td class="instruction">INC SP</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b301"></span>B301</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">...and return to the caller of the caller.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b302"></span>
+<div class="comments">
+<div class="paragraph">
+Flip the sprite upside down if its state differs from that of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_Vertical</td>
+<td class="address-2"><span id="b302"></span>B302</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the address of the sprite on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b303"></span>B303</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Compare the first byte of the sprite with the flags of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b304"></span>B304</td>
+<td class="instruction">XOR (IX+$07)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b307"></span>B307</td>
+<td class="instruction">AND %10000000</td>
+<td class="comment-1" rowspan="1">Keep only bit 7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b309"></span>B309</td>
+<td class="instruction">JR Z,<a href="B2EE.html#b343">GetSpriteAddress_Horizontal</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B2EE.html#b343">GetSpriteAddress_Horizontal</a> if they are the same.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b30b"></span>B30B</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="3">Toggle bit 7 of the sprite state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b30c"></span>B30C</td>
+<td class="instruction">XOR $80</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b30e"></span>B30E</td>
+<td class="instruction">LD (DE),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b30f"></span>B30F</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Rotate the width up by one bit, to double it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b310"></span>B310</td>
+<td class="instruction">AND %00011110</td>
+<td class="comment-1" rowspan="1">Keep the doubled width, which is the number of bytes in a row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b312"></span>B312</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Set <span class="register">B</span> to the row length.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b313"></span>B313</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b314"></span>B314</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the height of the sprite in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b315"></span>B315</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b316"></span>B316</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the first row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b317"></span>B317</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="2">Stash the row length and the height, and the address of the data, on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b318"></span>B318</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b319"></span>B319</td>
+<td class="instruction">LD E,C</td>
+<td class="comment-1" rowspan="4">Set <span class="register">DE</span> to the height and clear <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b31a"></span>B31A</td>
+<td class="instruction">LD D,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b31c"></span>B31C</td>
+<td class="instruction">LD H,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b31d"></span>B31D</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_Multiply</td>
+<td class="address-2"><span id="b31e"></span>B31E</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="2">Multiply the height by the row length, to get the size of the data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b31f"></span>B31F</td>
+<td class="instruction">DJNZ <a href="B2EE.html#b31e">GetSpriteAddress_Multiply</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b321"></span>B321</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="2">Restore the address of the data and the row length.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b322"></span>B322</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b323"></span>B323</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the address of the data to get the address of the end of it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b324"></span>B324</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the end of the sprite data against its start.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b325"></span>B325</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="2">Call <a href="B519.html">AddAToHL</a> to add the row length to <span class="register">HL</span>, which then points to the end of the first row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b326"></span>B326</td>
+<td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b329"></span>B329</td>
+<td class="instruction">DEC DE</td>
+<td class="comment-1" rowspan="2">Line up the last byte of the last row with that of the first row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b32a"></span>B32A</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b32b"></span>B32B</td>
+<td class="instruction">SRL C</td>
+<td class="comment-1" rowspan="1">Halve the height to get the number of pairs of rows to swap.</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_SwapRows</td>
+<td class="address-2"><span id="b32d"></span>B32D</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the counters on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_SwapByte</td>
+<td class="address-2"><span id="b32e"></span>B32E</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="5">Swap a byte of the lower row with a byte of the upper row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b32f"></span>B32F</td>
+<td class="instruction">LD C,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b330"></span>B330</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b331"></span>B331</td>
+<td class="instruction">LD A,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b332"></span>B332</td>
+<td class="instruction">LD (DE),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b333"></span>B333</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="2">Move both pointers back to the previous byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b334"></span>B334</td>
+<td class="instruction">DEC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b335"></span>B335</td>
+<td class="instruction">DJNZ <a href="B2EE.html#b32e">GetSpriteAddress_SwapByte</a></td>
+<td class="comment-1" rowspan="1">Decrease the byte counter and loop until the rows have been swapped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b337"></span>B337</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the counters from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b338"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next pair of rows: the upper pointer on to the end of the next row, while the lower pointer is already at the end of the row below.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b338"></span>B338</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="2">Call <a href="B519.html">AddAToHL</a> to add the row length to <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b339"></span>B339</td>
+<td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b33c"></span>B33C</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="2">Call <a href="B519.html">AddAToHL</a> to add the row length to <span class="register">HL</span> again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b33d"></span>B33D</td>
+<td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b340"></span>B340</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="2">Count down the row pairs and jump to <a href="B2EE.html#b32d">GetSpriteAddress_SwapRows</a> until they are swapped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b341"></span>B341</td>
+<td class="instruction">JR NZ,<a href="B2EE.html#b32d">GetSpriteAddress_SwapRows</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b343"></span>
+<div class="comments">
+<div class="paragraph">
+Mirror the sprite if its state differs from that of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_Horizontal</td>
+<td class="address-2"><span id="b343"></span>B343</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the address of the sprite from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b344"></span>B344</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the address of the sprite on the stack again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b345"></span>B345</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Compare the first byte of the sprite with the flags of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b346"></span>B346</td>
+<td class="instruction">XOR (IX+$07)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b349"></span>B349</td>
+<td class="instruction">AND %01000000</td>
+<td class="comment-1" rowspan="1">Keep only bit 6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b34b"></span>B34B</td>
+<td class="instruction">JR Z,<a href="B2EE.html#b37d">GetSpriteAddress_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B2EE.html#b37d">GetSpriteAddress_Done</a> if they are the same.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b34d"></span>B34D</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="3">Toggle bit 6 of the sprite state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b34e"></span>B34E</td>
+<td class="instruction">XOR $40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b350"></span>B350</td>
+<td class="instruction">LD (DE),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b351"></span>B351</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b353"></span>B353</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="2">Set <span class="register">B</span> and <span class="register">C</span> to the width in byte columns.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b354"></span>B354</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b355"></span>B355</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b356"></span>B356</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b357"></span>B357</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the height as the row counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b358"></span>B358</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the first row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b359"></span>B359</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Start at the first row of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b35a"></span>B35A</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the address of the first row on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b35b"></span>B35B</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b35c"></span>B35C</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore it into <span class="register">HL'</span> to read the data with.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b35d"></span>B35D</td>
+<td class="instruction">LD B,$F1</td>
+<td class="comment-1" rowspan="1">Use the table of reversed bytes, whose page is F1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b35f"></span>B35F</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back to the main registers.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b360"></span>
+<div class="comments">
+<div class="paragraph">
+Read a row, reversing the bits of each byte, and stack each pair of bytes.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_ReadRow</td>
+<td class="address-2"><span id="b360"></span>B360</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b361"></span>B361</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="3">Look up the mask byte in the table of reversed bytes, and keep the result in the low byte of <span class="register">DE'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b362"></span>B362</td>
+<td class="instruction">LD A,(BC)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b363"></span>B363</td>
+<td class="instruction">LD E,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b364"></span>B364</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the pixel byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b365"></span>B365</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="3">Do the same with the pixel byte, keeping the result in the high byte of <span class="register">DE'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b366"></span>B366</td>
+<td class="instruction">LD A,(BC)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b367"></span>B367</td>
+<td class="instruction">LD D,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b368"></span>B368</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b369"></span>B369</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the reversed pair on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b36a"></span>B36A</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back to the main registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b36b"></span>B36B</td>
+<td class="instruction">DJNZ <a href="B2EE.html#b360">GetSpriteAddress_ReadRow</a></td>
+<td class="comment-1" rowspan="1">Decrease the column counter and loop until the row has been read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b36d"></span>B36D</td>
+<td class="instruction">LD B,C</td>
+<td class="comment-1" rowspan="1">Restore the column counter.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b36e"></span>
+<div class="comments">
+<div class="paragraph">
+Write the pairs back in the opposite order.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_WriteRow</td>
+<td class="address-2"><span id="b36e"></span>B36E</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Take a pair from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b36f"></span>B36F</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Write the mask byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b370"></span>B370</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b371"></span>B371</td>
+<td class="instruction">LD (HL),D</td>
+<td class="comment-1" rowspan="1">Write the pixel byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b372"></span>B372</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b373"></span>B373</td>
+<td class="instruction">DJNZ <a href="B2EE.html#b36e">GetSpriteAddress_WriteRow</a></td>
+<td class="comment-1" rowspan="1">Decrease the column counter and loop until the row has been written.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b375"></span>B375</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Swap in the row counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b376"></span>B376</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B2EE.html#b37d">GetSpriteAddress_Done</a> once the last row has been mirrored.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b377"></span>B377</td>
+<td class="instruction">JR Z,<a href="B2EE.html#b37d">GetSpriteAddress_Done</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b379"></span>B379</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Stash the row counter again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b37a"></span>B37A</td>
+<td class="instruction">LD B,C</td>
+<td class="comment-1" rowspan="1">Restore the column counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b37b"></span>B37B</td>
+<td class="instruction">JR <a href="B2EE.html#b360">GetSpriteAddress_ReadRow</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B2EE.html#b360">GetSpriteAddress_ReadRow</a> to do the next row.</td>
+</tr>
+<tr>
+<td class="asm-label">GetSpriteAddress_Done</td>
+<td class="address-2"><span id="b37d"></span>B37D</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the address of the sprite from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b37e"></span>B37E</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/asm/D6EF.html">Knight Lore</a></li>
+<li><a href="/ultimate/alien8/asm/CFFE.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B2C5.html">B2C5</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b2ee">Map</a></td>
+<td class="next">
+Next: <a href="B37F.html">B37F</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/45806.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

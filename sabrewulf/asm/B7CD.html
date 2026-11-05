@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,26 @@ Next: <a href="B814.html">B814</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="9F6A.html">GameComplete</a>, <a href="A2F8.html">A2F8</a>, <a href="AA27.html">AA27</a> and <a href="B1B7.html">B1B7</a>.
+Used by the routines at <a href="9F6A.html">GameComplete</a>, <a href="A2F8.html">AddLife</a>, <a href="AA27.html">HandlePlayerDeath</a> and <a href="B1B7.html">StartTurn</a>.
+</div>
+<div class="paragraph">
+Shows the number of lives of each player at the top of the screen as a digit followed by a small picture of Sabreman. If a player has no lives left then spaces are printed. The lives of player 1 are on the left and the lives of player 2 are on the right.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="display-lives-before" src="../images/scr/display-lives-before.png" /></td>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">After <a href="B7CD.html">DisplayPlayerLives</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="display-lives-after" src="../images/scr/display-lives-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 </td>
@@ -58,19 +80,19 @@ Controller for 1UP lives.
 <td class="asm-label">DisplayPlayerLives</td>
 <td class="address-2"><span id="b7cd"></span>B7CD</td>
 <td class="instruction">LD HL,$4008</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=4008 (screen buffer address) for 1UP lives.</td>
+<td class="comment-1" rowspan="1">Set the screen address of the 1UP lives in <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7d0"></span>B7D0</td>
 <td class="instruction">CALL <a href="B7CD.html#b7fe">FetchLives_1UP</a></td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=1UP lives remaining (by calling <a href="B7CD.html#b7fe">FetchLives_1UP</a>).</td>
+<td class="comment-1" rowspan="1">Fetch the number of lives of 1UP.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7d3"></span>B7D3</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">If 1UP lives are zero, jump to <a href="B7CD.html#b7ef">Handler1UPNoLives</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B7CD.html#b7ef">Handler1UPNoLives</a> if 1UP has no lives left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -81,7 +103,7 @@ Controller for 1UP lives.
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7d6"></span>B7D6</td>
 <td class="instruction">CALL <a href="B7CD.html#b7e2">HandlerDisplayLives</a></td>
-<td class="comment-1" rowspan="1">Else, there are lives to display so call <a href="B7CD.html#b7e2">HandlerDisplayLives</a>.</td>
+<td class="comment-1" rowspan="1">Display the lives of 1UP.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -97,19 +119,19 @@ Controller for 2UP lives.
 <td class="asm-label">Controller2UPLives</td>
 <td class="address-2"><span id="b7d9"></span>B7D9</td>
 <td class="instruction">LD HL,$4016</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=4016 (screen buffer address) for 2UP lives.</td>
+<td class="comment-1" rowspan="1">Set the screen address of the 2UP lives in <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7dc"></span>B7DC</td>
 <td class="instruction">CALL <a href="B7CD.html#b80c">FetchLives_2UP</a></td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=2UP lives remaining (by calling <a href="B7CD.html#b80c">FetchLives_2UP</a>).</td>
+<td class="comment-1" rowspan="1">Fetch the number of lives of 2UP.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7df"></span>B7DF</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">If 2UP lives are zero, jump to <a href="B7CD.html#b7f4">Handler2UPNoLives</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B7CD.html#b7f4">Handler2UPNoLives</a> if 2UP has no lives left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -130,25 +152,25 @@ Handles displaying the lives count and UDG character.
 <td class="asm-label">HandlerDisplayLives</td>
 <td class="address-2"><span id="b7e2"></span>B7E2</td>
 <td class="instruction">ADD A,$30</td>
-<td class="comment-1" rowspan="1">Add 30 to convert to an ASCII character (starting at "0" character).</td>
+<td class="comment-1" rowspan="1">Convert the number of lives to an ASCII digit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7e4"></span>B7E4</td>
 <td class="instruction">CALL <a href="B589.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B589.html">PrintScreen</a>.</td>
+<td class="comment-1" rowspan="1">Print the number of lives.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7e7"></span>B7E7</td>
 <td class="instruction">LD DE,$B814</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="B814.html">UDG_Life</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the life icon at <a href="B814.html">UDG_Life</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7ea"></span>B7EA</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">BC</span> and <span class="register">DE</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Stash <span class="register">BC</span> and <span class="register">DE</span> on the stack, ready for <a href="B589.html#b599">PrintScreen_Write</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -158,8 +180,8 @@ Handles displaying the lives count and UDG character.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7ec"></span>B7EC</td>
-<td class="instruction">JP <a href="B589.html#b599">PrintScreen_0</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="B589.html#b599">PrintScreen_0</a>.</td>
+<td class="instruction">JP <a href="B589.html#b599">PrintScreen_Write</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B589.html#b599">PrintScreen_Write</a> to draw the life icon.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -175,7 +197,7 @@ Handles displaying the lives count and UDG character.
 <td class="asm-label">Handler1UPNoLives</td>
 <td class="address-2"><span id="b7ef"></span>B7EF</td>
 <td class="instruction">CALL <a href="B7CD.html#b7f4">Handler2UPNoLives</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B7CD.html#b7f4">Handler2UPNoLives</a>.</td>
+<td class="comment-1" rowspan="1">Clear the lives of 1UP.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -197,25 +219,25 @@ Handles displaying the lives count and UDG character.
 <td class="asm-label">Handler2UPNoLives</td>
 <td class="address-2"><span id="b7f4"></span>B7F4</td>
 <td class="instruction">LD A,$20</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=ASCII " " (SPACE).</td>
+<td class="comment-1" rowspan="1">Set the character to a space.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7f6"></span>B7F6</td>
 <td class="instruction">CALL <a href="B589.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B589.html">PrintScreen</a>.</td>
+<td class="comment-1" rowspan="1">Print a space, to clear the number of lives.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7f9"></span>B7F9</td>
 <td class="instruction">LD A,$20</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=ASCII " " (SPACE).</td>
+<td class="comment-1" rowspan="1">Set the character to a space.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b7fb"></span>B7FB</td>
 <td class="instruction">JP <a href="B589.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="B589.html">PrintScreen</a>.</td>
+<td class="comment-1" rowspan="1">Print a space, to clear the life icon.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -231,7 +253,7 @@ Return the 1UP player's lives left.
 <td class="asm-label">FetchLives_1UP</td>
 <td class="address-2"><span id="b7fe"></span>B7FE</td>
 <td class="instruction">LD A,($969E)</td>
-<td class="comment-1" rowspan="3">If <a href="969E.html">Flag_ActivePlayer</a> is not zero then jump to <a href="B7CD.html#b808">InactivePlayerLives</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B7CD.html#b808">InactivePlayerLives</a> if the active player is 2UP (so 1UP is inactive).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -257,7 +279,7 @@ Return currently active players lives left.
 <td class="asm-label">ActivePlayerLives</td>
 <td class="address-2"><span id="b804"></span>B804</td>
 <td class="instruction">LD A,($96BD)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="96BD.html">ActivePlayer_Lives</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the lives of the active player from <a href="96BD.html">ActivePlayer_Lives</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -279,7 +301,7 @@ Return inactive players lives left.
 <td class="asm-label">InactivePlayerLives</td>
 <td class="address-2"><span id="b808"></span>B808</td>
 <td class="instruction">LD A,($96E0)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="96E0.html">InactivePlayer_Lives</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the lives of the inactive player from <a href="96E0.html">InactivePlayer_Lives</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -301,7 +323,7 @@ Return the 2UP player's lives left.
 <td class="asm-label">FetchLives_2UP</td>
 <td class="address-2"><span id="b80c"></span>B80C</td>
 <td class="instruction">LD A,($969E)</td>
-<td class="comment-1" rowspan="3">If <a href="969E.html">Flag_ActivePlayer</a> is zero then jump to <a href="B7CD.html#b808">InactivePlayerLives</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B7CD.html#b808">InactivePlayerLives</a> if the active player is 1UP (so 2UP is inactive).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -324,12 +346,10 @@ Return the 2UP player's lives left.
 <div class="comments">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
-<li><a href="/ultimate/aticatac/asm/0000.html">Atic Atac</a></li>
 <li><a href="/ultimate/cookie/asm/7378.html">Cookie</a></li>
 <li><a href="/ultimate/jetpac/asm/70A4.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/asm/894F.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/asm/7325.html">Pssst</a></li>
-<li><a href="/ultimate/tranzam/asm/0000.html">Tranz Am</a></li>
 </ul>
 </div>
 </div>

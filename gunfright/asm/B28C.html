@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at B28C</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B280.html">B280</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b28c">Map</a></td>
+<td class="next">
+Next: <a href="B2E9.html">B2E9</a>
+</td>
+</tr>
+</table>
+<div class="description">B28C: Draw Wide Sprite</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="B280.html">DrawWideSprites</a>.
+</div>
+<div class="paragraph">
+Draws a sprite which is eight rows high and four bytes wide into a buffer which has twenty four bytes in each row. The pixels are combined with what is already in the buffer. The horizontal pixel position is in <a href="A220.html">SpriteHorizontalPosition</a>: if it is not a multiple of eight, the sprite data is a list of indexes into the tables which shift a byte by two, four or six pixels, and the sprite takes five bytes in each row of the buffer. The routine takes the data from the stack to make it faster.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">The number of the sprite</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">The address in the buffer</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b28c"></span>
+<div class="comments">
+<div class="paragraph">
+Find the data of the sprite.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawWideSprite</td>
+<td class="address-2"><span id="b28c"></span>B28C</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap the address in the buffer into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b28d"></span>B28D</td>
+<td class="instruction">LD BC,$6AC6</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="6AC6.html">PosterImagePointers</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b290"></span>B290</td>
+<td class="instruction">CALL <a href="C75C.html">GetTableEntry</a></td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the data of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b293"></span>B293</td>
+<td class="instruction">LD ($A21D),SP</td>
+<td class="comment-1" rowspan="1">Save the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b297"></span>B297</td>
+<td class="instruction">LD SP,HL</td>
+<td class="comment-1" rowspan="1">Point the stack pointer at the data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b298"></span>B298</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap the address in the buffer back into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b299"></span>B299</td>
+<td class="instruction">LD A,($A220)</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal pixel position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b29c"></span>B29C</td>
+<td class="instruction">AND %00000110</td>
+<td class="comment-1" rowspan="1">Keep the offset within the byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b29e"></span>B29E</td>
+<td class="instruction">JR Z,<a href="B28C.html#b2d6">DrawWideSprite_Aligned</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B28C.html#b2d6">DrawWideSprite_Aligned</a> if the sprite is on a byte boundary.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b2a0"></span>
+<div class="comments">
+<div class="paragraph">
+The sprite is not on a byte boundary, so shift it using the shift tables.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a0"></span>B2A0</td>
+<td class="instruction">OR %11111000</td>
+<td class="comment-1" rowspan="1">Make the offset the high byte of the address of a shift table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a2"></span>B2A2</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">D</span> at the shift table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a3"></span>B2A3</td>
+<td class="instruction">LD A,$08</td>
+<td class="comment-1" rowspan="1">Set the number of rows to eight.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawWideSprite_ShiftedRow</td>
+<td class="address-2"><span id="b2a5"></span>B2A5</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the number of rows in the alternate accumulator.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a6"></span>B2A6</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Fetch the indexes for the first two bytes of a row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a7"></span>B2A7</td>
+<td class="instruction">LD E,C</td>
+<td class="comment-1" rowspan="1">Copy the first index into <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a8"></span>B2A8</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the shifted first byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a9"></span>B2A9</td>
+<td class="instruction">OR (HL)</td>
+<td class="comment-1" rowspan="1">Combine it with the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2aa"></span>B2AA</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Write it to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ab"></span>B2AB</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the second byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ac"></span>B2AC</td>
+<td class="instruction">INC D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">D</span> at the overflow table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ad"></span>B2AD</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the overflow of the first byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ae"></span>B2AE</td>
+<td class="instruction">DEC D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">D</span> back at the shift table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2af"></span>B2AF</td>
+<td class="instruction">LD E,B</td>
+<td class="comment-1" rowspan="1">Copy the second index into <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b0"></span>B2B0</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap the buffer address into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b1"></span>B2B1</td>
+<td class="instruction">OR (HL)</td>
+<td class="comment-1" rowspan="1">Combine the overflow with the shifted second byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b2"></span>B2B2</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Write it to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b3"></span>B2B3</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the third byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b4"></span>B2B4</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">Point <span class="register">H</span> at the overflow table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b5"></span>B2B5</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the overflow of the second byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b6"></span>B2B6</td>
+<td class="instruction">DEC H</td>
+<td class="comment-1" rowspan="1">Point <span class="register">H</span> back at the shift table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b7"></span>B2B7</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Fetch the indexes for the next two bytes of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b8"></span>B2B8</td>
+<td class="instruction">LD L,C</td>
+<td class="comment-1" rowspan="1">Copy the third index into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b9"></span>B2B9</td>
+<td class="instruction">OR (HL)</td>
+<td class="comment-1" rowspan="1">Combine the third byte with the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ba"></span>B2BA</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Write it to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2bb"></span>B2BB</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the fourth byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2bc"></span>B2BC</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">Point <span class="register">H</span> at the overflow table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2bd"></span>B2BD</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the overflow of the third byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2be"></span>B2BE</td>
+<td class="instruction">DEC H</td>
+<td class="comment-1" rowspan="1">Point <span class="register">H</span> back at the shift table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2bf"></span>B2BF</td>
+<td class="instruction">LD L,B</td>
+<td class="comment-1" rowspan="1">Copy the fourth index into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c0"></span>B2C0</td>
+<td class="instruction">OR (HL)</td>
+<td class="comment-1" rowspan="1">Combine it with the shifted fourth byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c1"></span>B2C1</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Write it to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c2"></span>B2C2</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the fifth byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c3"></span>B2C3</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">Point <span class="register">H</span> at the overflow table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c4"></span>B2C4</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap the buffer address into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c5"></span>B2C5</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the overflow of the fourth byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c6"></span>B2C6</td>
+<td class="instruction">OR (HL)</td>
+<td class="comment-1" rowspan="1">Combine it with the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c7"></span>B2C7</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Write it to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c8"></span>B2C8</td>
+<td class="instruction">DEC D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">D</span> back at the shift table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2c9"></span>B2C9</td>
+<td class="instruction">LD BC,$0014</td>
+<td class="comment-1" rowspan="1">Set the distance to the next row of the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2cc"></span>B2CC</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Move on to the next row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2cd"></span>B2CD</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ce"></span>B2CE</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Count down the rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2cf"></span>B2CF</td>
+<td class="instruction">JR NZ,<a href="B28C.html#b2a5">DrawWideSprite_ShiftedRow</a></td>
+<td class="comment-1" rowspan="1">Loop back until all eight rows have been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawWideSprite_Done</td>
+<td class="address-2"><span id="b2d1"></span>B2D1</td>
+<td class="instruction">LD SP,($A21D)</td>
+<td class="comment-1" rowspan="1">Restore the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2d5"></span>B2D5</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b2d6"></span>
+<div class="comments">
+<div class="paragraph">
+The sprite is on a byte boundary, so copy the bytes straight to the buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawWideSprite_Aligned</td>
+<td class="address-2"><span id="b2d6"></span>B2D6</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">Set the number of rows to eight.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawWideSprite_AlignedRow</td>
+<td class="address-2"><span id="b2d8"></span>B2D8</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Fetch two bytes of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2d9"></span>B2D9</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Write the first to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2da"></span>B2DA</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the second byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2db"></span>B2DB</td>
+<td class="instruction">LD (HL),D</td>
+<td class="comment-1" rowspan="1">Write the second to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2dc"></span>B2DC</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the third byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2dd"></span>B2DD</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Fetch two more bytes of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2de"></span>B2DE</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Write the third to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2df"></span>B2DF</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the fourth byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2e0"></span>B2E0</td>
+<td class="instruction">LD (HL),D</td>
+<td class="comment-1" rowspan="1">Write the fourth to the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2e1"></span>B2E1</td>
+<td class="instruction">LD DE,$0015</td>
+<td class="comment-1" rowspan="1">Set the distance to the next row of the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2e4"></span>B2E4</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move on to the next row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2e5"></span>B2E5</td>
+<td class="instruction">DJNZ <a href="B28C.html#b2d8">DrawWideSprite_AlignedRow</a></td>
+<td class="comment-1" rowspan="1">Loop back until all eight rows have been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2e7"></span>B2E7</td>
+<td class="instruction">JR <a href="B28C.html#b2d1">DrawWideSprite_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B28C.html#b2d1">DrawWideSprite_Done</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B280.html">B280</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b28c">Map</a></td>
+<td class="next">
+Next: <a href="B2E9.html">B2E9</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/45708.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,16 @@ Next: <a href="A79F.html">A79F</a>
 </td>
 </tr>
 </table>
-<div class="description">A763: Routine at A763</div>
+<div class="description">A763: Load Orchid</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="B1D4.html">B1D4</a> and <a href="BBAE.html">BBAE</a>.
+Used by the routines at <a href="B1D4.html">InitialiseGame</a> and <a href="BBAE.html">DrawRoomContents</a>.
+</div>
+<div class="paragraph">
+Sets up the orchid for the room the player is in, using the state of the orchid held in <a href="A7F8.html">TableOrchidTypes</a> and its position in <a href="D6A6.html">TableOrchidPositions</a>. The record is built in <a href="97DA.html">OrchidData</a>. This is the opposite of <a href="A79F.html">SaveOrchid</a>.
 </div>
 </div>
 <table class="input">
@@ -48,220 +54,260 @@ Used by the routines at <a href="B1D4.html">B1D4</a> and <a href="BBAE.html">BBA
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Actor Entity</td>
+<td class="register-desc">Actor record of the player</td>
 </tr>
 </table>
 </td>
 </tr>
 <tr>
+<td class="asm-label">LoadOrchid</td>
 <td class="address-2"><span id="a763"></span>A763</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+01 (current location).</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a766"></span>A766</td>
 <td class="instruction">CALL <a href="A7E8.html">HandlerOrchidType</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A7E8.html">HandlerOrchidType</a>.</td>
+<td class="comment-1" rowspan="1">Find the state of the orchid for the room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a769"></span>A769</td>
 <td class="instruction">LD DE,$97DA</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="97DA.html">OrchidData</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the orchid's actor record at <a href="97DA.html">OrchidData</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a76c"></span>A76C</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="3"><span class="register">BC</span>=the orchid type from <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="3">Fetch the state of the orchid from the table into <span class="register">C</span> and <span class="register">B</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a76d"></span>A76D</td>
 <td class="instruction">INC HL</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a76e"></span>A76E</td>
 <td class="instruction">LD B,(HL)</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a76f"></span>A76F</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Copy the first byte of the state to <span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a770"></span>A770</td>
 <td class="instruction">AND %00000111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
+<td class="comment-1" rowspan="1">Keep only the stage of growth (bits 0-2).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a772"></span>A772</td>
 <td class="instruction">OR %01001000</td>
-<td class="comment-1" rowspan="1">Set bits 3 and 6.</td>
+<td class="comment-1" rowspan="1">Set bits 3 and 6, giving a sprite ID of 48 to 4F.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a774"></span>A774</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the sprite ID of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a775"></span>A775</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the room of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a776"></span>A776</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the room of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a779"></span>A779</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the room of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a77a"></span>A77A</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the direction of growth of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a77b"></span>A77B</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the first byte of the state to <span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a77c"></span>A77C</td>
 <td class="instruction">AND %00001000</td>
-<td class="comment-1" rowspan="1">Keep only bit 3.</td>
+<td class="comment-1" rowspan="1">Keep only the direction of growth (bit 3).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a77e"></span>A77E</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the direction of growth of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a77f"></span>A77F</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the X position of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a780"></span>A780</td>
 <td class="instruction">CALL <a href="A7D4.html">HandlerOrchidPosition</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A7D4.html">HandlerOrchidPosition</a>.</td>
+<td class="comment-1" rowspan="1">Find the position of the orchid for the room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a783"></span>A783</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X position of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a784"></span>A784</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the Y position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a785"></span>A785</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the X position of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a786"></span>A786</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the Y position of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a787"></span>A787</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the Y position of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a788"></span>A788</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the Y position of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a789"></span>A789</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the colour of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a78a"></span>A78A</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the second byte of the state to <span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a78b"></span>A78B</td>
 <td class="instruction">AND %00000111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
+<td class="comment-1" rowspan="1">Keep only the colour (bits 0-2).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a78d"></span>A78D</td>
 <td class="instruction">OR %01000000</td>
-<td class="comment-1" rowspan="1">Set bit 6.</td>
+<td class="comment-1" rowspan="1">Set bit 6 (bright).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a78f"></span>A78F</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the colour of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a790"></span>A790</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the timer of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a791"></span>A791</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the second byte of the state to <span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a792"></span>A792</td>
 <td class="instruction">AND %11111000</td>
-<td class="comment-1" rowspan="1">Keep only bits 3-7.</td>
+<td class="comment-1" rowspan="1">Keep only the low bits of the timer (bits 3-7).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a794"></span>A794</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the low byte of the timer of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a795"></span>A795</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the high byte of the timer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a796"></span>A796</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the first byte of the state to <span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a797"></span>A797</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="4">Rotate the first byte of the state right four times.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a798"></span>A798</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a799"></span>A799</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a79a"></span>A79A</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a79b"></span>A79B</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
+<td class="comment-1" rowspan="1">Keep only the high bits of the timer (bits 0-3).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a79d"></span>A79D</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the high byte of the timer of the orchid.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a79e"></span>A79E</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>

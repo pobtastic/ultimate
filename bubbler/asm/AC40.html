@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at AC40</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AB8F.html">AB8F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ac40">Map</a></td>
+<td class="next">
+Next: <a href="ACF4.html">ACF4</a>
+</td>
+</tr>
+</table>
+<div class="description">AC40: Build Draw List</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="CD11.html">RunFrame</a> and <a href="DFF0.html">RunGame</a>.
+</div>
+<div class="paragraph">
+Builds the list of items to be drawn for the current frame, at <a href="AFFB.html">DrawList</a>. Each item is three bytes: a flag byte followed by the address of the record to draw. The flag is 01 for an entity (see <a href="B540.html">Entities</a>), 02 for one of the 0C extra records at <a href="B708.html">ExtraRecords</a> and 03 for one of the 14-byte records at <a href="BBF7.html">Records</a>. The list ends with a zero byte, and <a href="B06C.html">DrawListPointer</a> holds the address of the next free item.
+</div>
+<div class="paragraph">
+Every entity that is in use and not hidden is prepared with <a href="AD07.html">PrepareEntityItem</a>. The matching extra record is then prepared as well, if it has been flagged as visible.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ac40"></span>
+<div class="comments">
+<div class="paragraph">
+Start with an empty list and with no table records, and go through the 0C entities and their extra records.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildDrawList</td>
+<td class="address-2"><span id="ac40"></span>AC40</td>
+<td class="instruction">LD HL,$AFFB</td>
+<td class="comment-1" rowspan="2">Make the next free item of the draw list the start of the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac43"></span>AC43</td>
+<td class="instruction">LD ($B06C),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac46"></span>AC46</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Clear the count of table records that have been prepared.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac47"></span>AC47</td>
+<td class="instruction">LD ($F500),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac4a"></span>AC4A</td>
+<td class="instruction">LD IX,$B540</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="B540.html">Entities</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac4e"></span>AC4E</td>
+<td class="instruction">LD IY,$B708</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at <a href="B708.html">ExtraRecords</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac52"></span>AC52</td>
+<td class="instruction">LD HL,$F501</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the start of the table of records.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac55"></span>AC55</td>
+<td class="instruction">LD B,$0C</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> for the 0C entities.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildDrawList_Loop</td>
+<td class="address-2"><span id="ac57"></span>AC57</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the counter on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac58"></span>AC58</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac5b"></span>AC5B</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac5c"></span>AC5C</td>
+<td class="instruction">JR Z,<a href="AC40.html#acb9">BuildDrawList_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AC40.html#acb9">BuildDrawList_Next</a> if the entity is not in use.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ac5e"></span>
+<div class="comments">
+<div class="paragraph">
+Add the entity to the draw list, unless it is hidden.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac5e"></span>AC5E</td>
+<td class="instruction">BIT 7,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Test bit 7 of field 01 of the entity, which is set if it is hidden.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac62"></span>AC62</td>
+<td class="instruction">CALL Z,<a href="AD07.html">PrepareEntityItem</a></td>
+<td class="comment-1" rowspan="1">Add the entity to the draw list if it is not hidden.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac65"></span>AC65</td>
+<td class="instruction">BIT 7,(IY+$09)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AC40.html#acb9">BuildDrawList_Next</a> if the extra record is not in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac69"></span>AC69</td>
+<td class="instruction">JR Z,<a href="AC40.html#acb9">BuildDrawList_Next</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ac6b"></span>
+<div class="comments">
+<div class="paragraph">
+Build the temporary entity from the extra record, so that the extra record can be drawn in the same way as an entity.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac6b"></span>AC6B</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1">Stash the entity and the table pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac6d"></span>AC6D</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the table pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac6e"></span>AC6E</td>
+<td class="instruction">LD L,(IY+$00)</td>
+<td class="comment-1" rowspan="3">Copy the screen position of the extra record into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac71"></span>AC71</td>
+<td class="instruction">LD H,(IY+$01)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac74"></span>AC74</td>
+<td class="instruction">LD ($B7B2),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac77"></span>AC77</td>
+<td class="instruction">LD L,(IY+$02)</td>
+<td class="comment-1" rowspan="3">Copy the x coordinate of the extra record into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac7a"></span>AC7A</td>
+<td class="instruction">LD H,(IY+$03)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac7d"></span>AC7D</td>
+<td class="instruction">LD ($B7A6),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac80"></span>AC80</td>
+<td class="instruction">LD L,(IY+$04)</td>
+<td class="comment-1" rowspan="3">Copy the y coordinate of the extra record into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac83"></span>AC83</td>
+<td class="instruction">LD H,(IY+$05)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac86"></span>AC86</td>
+<td class="instruction">LD ($B7A9),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac89"></span>AC89</td>
+<td class="instruction">LD L,(IY+$06)</td>
+<td class="comment-1" rowspan="3">Copy the z coordinate of the extra record into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac8c"></span>AC8C</td>
+<td class="instruction">LD H,(IY+$07)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac8f"></span>AC8F</td>
+<td class="instruction">LD ($B7AC),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac92"></span>AC92</td>
+<td class="instruction">LD A,(IY+$0B)</td>
+<td class="comment-1" rowspan="3">Copy the width of the extra record into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac95"></span>AC95</td>
+<td class="instruction">AND $0F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac97"></span>AC97</td>
+<td class="instruction">LD ($B7BA),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac9a"></span>AC9A</td>
+<td class="instruction">LD A,(IY+$0C)</td>
+<td class="comment-1" rowspan="3">Copy the height of the extra record into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac9d"></span>AC9D</td>
+<td class="instruction">AND $3F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac9f"></span>AC9F</td>
+<td class="instruction">LD ($B7BB),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aca2"></span>ACA2</td>
+<td class="instruction">LD IX,$B7A4</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="B7A4.html">TemporaryEntity</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aca6"></span>ACA6</td>
+<td class="instruction">LD (IX+$00),$02</td>
+<td class="comment-1" rowspan="1">Make it an entity of type 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acaa"></span>ACAA</td>
+<td class="instruction">CALL <a href="B8E2.html">ConvertEntityPosition</a></td>
+<td class="comment-1" rowspan="1">Find its address in the screen buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acad"></span>ACAD</td>
+<td class="instruction">LD (IY+$08),L</td>
+<td class="comment-1" rowspan="2">Store the address in the extra record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acb0"></span>ACB0</td>
+<td class="instruction">LD (IY+$09),H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acb3"></span>ACB3</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the table pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acb4"></span>ACB4</td>
+<td class="instruction">CALL <a href="AD07.html#ad17">PrepareEntityItem_Table</a></td>
+<td class="comment-1" rowspan="1">Add the temporary entity to the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acb7"></span>ACB7</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Restore the entity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="acb9"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next entity and the next extra record.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildDrawList_Next</td>
+<td class="address-2"><span id="acb9"></span>ACB9</td>
+<td class="instruction">LD DE,$0026</td>
+<td class="comment-1" rowspan="2">Move <span class="register">IX</span> on to the next entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acbc"></span>ACBC</td>
+<td class="instruction">ADD IX,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acbe"></span>ACBE</td>
+<td class="instruction">LD E,$0D</td>
+<td class="comment-1" rowspan="2">Move <span class="register">IY</span> on to the next extra record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acc0"></span>ACC0</td>
+<td class="instruction">ADD IY,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acc2"></span>ACC2</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acc3"></span>ACC3</td>
+<td class="instruction">DJNZ <a href="AC40.html#ac57">BuildDrawList_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the counter and loop back to <a href="AC40.html#ac57">BuildDrawList_Loop</a> until all 0C entities have been done.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="acc5"></span>
+<div class="comments">
+<div class="paragraph">
+Add the records of the objects of the level that are in view to the draw list.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildDrawList_Records</td>
+<td class="address-1"><span id="acc5"></span>ACC5</td>
+<td class="instruction">LD HL,($B06C)</td>
+<td class="comment-1" rowspan="1">Fetch the next free item of the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acc8"></span>ACC8</td>
+<td class="instruction">LD A,($BBF6)</td>
+<td class="comment-1" rowspan="1">Fetch the number of records.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="accb"></span>ACCB</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="accc"></span>ACCC</td>
+<td class="instruction">JR Z,<a href="AC40.html#acee">BuildDrawList_End</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AC40.html#acee">BuildDrawList_End</a> if there are none.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acce"></span>ACCE</td>
+<td class="instruction">LD IY,$BBF7</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at <a href="BBF7.html">Records</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acd2"></span>ACD2</td>
+<td class="instruction">LD BC,$0014</td>
+<td class="comment-1" rowspan="1">Set the length of a record, 14.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildDrawList_RecordLoop</td>
+<td class="address-2"><span id="acd5"></span>ACD5</td>
+<td class="instruction">BIT 7,(IY+$0A)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AC40.html#ace9">BuildDrawList_RecordNext</a> if the record is not to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acd9"></span>ACD9</td>
+<td class="instruction">JR Z,<a href="AC40.html#ace9">BuildDrawList_RecordNext</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acdb"></span>ACDB</td>
+<td class="instruction">RES 7,(IY+$0A)</td>
+<td class="comment-1" rowspan="1">Reset the bit so that the record is only drawn once.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acdf"></span>ACDF</td>
+<td class="instruction">LD (HL),$03</td>
+<td class="comment-1" rowspan="1">Mark the item as a record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ace1"></span>ACE1</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Copy the address of the record into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ace3"></span>ACE3</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ace4"></span>ACE4</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="4">Store the address of the record in the item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ace5"></span>ACE5</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ace6"></span>ACE6</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ace7"></span>ACE7</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ace8"></span>ACE8</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next item.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildDrawList_RecordNext</td>
+<td class="address-2"><span id="ace9"></span>ACE9</td>
+<td class="instruction">ADD IY,BC</td>
+<td class="comment-1" rowspan="1">Move <span class="register">IY</span> on to the next record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aceb"></span>ACEB</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrease the number of records by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acec"></span>ACEC</td>
+<td class="instruction">JR NZ,<a href="AC40.html#acd5">BuildDrawList_RecordLoop</a></td>
+<td class="comment-1" rowspan="1">Loop back to <a href="AC40.html#acd5">BuildDrawList_RecordLoop</a> until all of the records have been done.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildDrawList_End</td>
+<td class="address-2"><span id="acee"></span>ACEE</td>
+<td class="instruction">LD (HL),$00</td>
+<td class="comment-1" rowspan="1">Mark the end of the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acf0"></span>ACF0</td>
+<td class="instruction">LD ($B06C),HL</td>
+<td class="comment-1" rowspan="1">Store the new end of the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="acf3"></span>ACF3</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AB8F.html">AB8F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ac40">Map</a></td>
+<td class="next">
+Next: <a href="ACF4.html">ACF4</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/44096.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

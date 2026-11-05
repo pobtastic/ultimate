@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at 44132</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44080.html">44080</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44132">Map</a></td>
+<td class="next">
+Next: <a href="44340.html">44340</a>
+</td>
+</tr>
+</table>
+<div class="description">44132: Use Action Key</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Handles the action key, which picks up a program from the cell that is in front of the robot, drops a program into it, or installs a program in a socket (a cell of type 15). It only works when the robot is at the start of a cell, and the key has to be released between presses. The programs that the robot carries are kept in a queue, which is handled by <a href="44340.html">QueueProgram</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="44132"></span>
+<div class="comments">
+<div class="paragraph">
+The first part of the code works out the position of the cell in front of the robot. These entry points are used when the robot is heading up, right and left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Up</td>
+<td class="address-2"><span id="44132"></span>44132</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="4">Move up one cell, keeping the Y cell within the map.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44133"></span>44133</td>
+<td class="instruction">INC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44134"></span>44134</td>
+<td class="instruction">AND 63</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44136"></span>44136</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44137"></span>44137</td>
+<td class="instruction">JR <a href="44132.html#44209">UseActionKey_Cell</a></td>
+<td class="comment-1" rowspan="1">Jump to use the cell.</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Right</td>
+<td class="address-2"><span id="44139"></span>44139</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="4">Move right one cell, keeping the X cell within the map.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44140"></span>44140</td>
+<td class="instruction">INC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44141"></span>44141</td>
+<td class="instruction">AND 63</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44143"></span>44143</td>
+<td class="instruction">LD D,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44144"></span>44144</td>
+<td class="instruction">JR <a href="44132.html#44209">UseActionKey_Cell</a></td>
+<td class="comment-1" rowspan="1">Jump to use the cell.</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Left</td>
+<td class="address-2"><span id="44146"></span>44146</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="4">Move left one cell, keeping the X cell within the map.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44147"></span>44147</td>
+<td class="instruction">DEC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44148"></span>44148</td>
+<td class="instruction">AND 63</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44150"></span>44150</td>
+<td class="instruction">LD D,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44151"></span>44151</td>
+<td class="instruction">JR <a href="44132.html#44209">UseActionKey_Cell</a></td>
+<td class="comment-1" rowspan="1">Jump to use the cell.</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Release</td>
+<td class="address-2"><span id="44153"></span>44153</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Clear the flag that says that the action key has been used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44154"></span>44154</td>
+<td class="instruction">LD (38482),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44157"></span>44157</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="44158"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="43779.html">MoveRobotHorizontally</a>.
+</div>
+<div class="paragraph">
+This is the entry point of the routine.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey</td>
+<td class="address-2"><span id="44158"></span>44158</td>
+<td class="instruction">CALL <a href="44755.html">GetPosition</a></td>
+<td class="comment-1" rowspan="1">Fetch the position of the robot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44161"></span>44161</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Return if the robot is not at the start of a cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44162"></span>44162</td>
+<td class="instruction">OR E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44163"></span>44163</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44164"></span>44164</td>
+<td class="instruction">LD A,(38437)</td>
+<td class="comment-1" rowspan="3">Jump to clear the flag if the action key is not being pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44167"></span>44167</td>
+<td class="instruction">AND 64</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44169"></span>44169</td>
+<td class="instruction">JR Z,<a href="44132.html#44153">UseActionKey_Release</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44171"></span>44171</td>
+<td class="instruction">LD A,(38482)</td>
+<td class="comment-1" rowspan="3">Return if the action key has been used already.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44174"></span>44174</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44175"></span>44175</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44176"></span>44176</td>
+<td class="instruction">LD A,1</td>
+<td class="comment-1" rowspan="2">Set the flag that says that the action key has been used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44178"></span>44178</td>
+<td class="instruction">LD (38482),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44181"></span>44181</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="4">Start effect 0 (four tones) for <a href="49114.html">PlaySoundStep</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44182"></span>44182</td>
+<td class="instruction">LD HL,4</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44185"></span>44185</td>
+<td class="instruction">LD (38536),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44188"></span>44188</td>
+<td class="instruction">EXX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44189"></span>44189</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the robot...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44192"></span>44192</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="2">...and turn it into the direction that it is heading in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44193"></span>44193</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44194"></span>44194</td>
+<td class="instruction">AND 3</td>
+<td class="comment-1" rowspan="2">Jump if the robot is heading in direction zero (X decreasing).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44196"></span>44196</td>
+<td class="instruction">JR Z,<a href="44132.html#44146">UseActionKey_Left</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44198"></span>44198</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump if the robot is heading in direction one (Y increasing).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44199"></span>44199</td>
+<td class="instruction">JR Z,<a href="44132.html#44132">UseActionKey_Up</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44201"></span>44201</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump if the robot is heading in direction two (X increasing).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44202"></span>44202</td>
+<td class="instruction">JR Z,<a href="44132.html#44139">UseActionKey_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44204"></span>44204</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="4">Otherwise move down one cell, keeping the Y cell within the map.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44205"></span>44205</td>
+<td class="instruction">DEC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44206"></span>44206</td>
+<td class="instruction">AND 63</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44208"></span>44208</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Cell</td>
+<td class="address-2"><span id="44209"></span>44209</td>
+<td class="instruction">LD (44479),DE</td>
+<td class="comment-1" rowspan="1">Keep the X position of the cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44213"></span>44213</td>
+<td class="instruction">LD (44481),HL</td>
+<td class="comment-1" rowspan="1">...and the Y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44216"></span>44216</td>
+<td class="instruction">CALL <a href="49047.html">FindMapCell</a></td>
+<td class="comment-1" rowspan="1">Find the cell using <a href="49047.html">FindMapCell</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44219"></span>44219</td>
+<td class="instruction">LD HL,(38446)</td>
+<td class="comment-1" rowspan="1">Fetch the address of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44222"></span>44222</td>
+<td class="instruction">JR Z,<a href="44132.html#44235">UseActionKey_Queue</a></td>
+<td class="comment-1" rowspan="1">Jump if the cell is empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44224"></span>44224</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the contents of the cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44225"></span>44225</td>
+<td class="instruction">AND 15</td>
+<td class="comment-1" rowspan="1">...and keep the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44227"></span>44227</td>
+<td class="instruction">CP 6</td>
+<td class="comment-1" rowspan="2">Jump if the cell is a program (type 6).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44229"></span>44229</td>
+<td class="instruction">JR Z,<a href="44132.html#44235">UseActionKey_Queue</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44231"></span>44231</td>
+<td class="instruction">CP 15</td>
+<td class="comment-1" rowspan="2">Return if the cell is not a socket (type 15).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44233"></span>44233</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44234"></span>44234</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Use zero, as there is no program to pick up.</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Queue</td>
+<td class="address-2"><span id="44235"></span>44235</td>
+<td class="instruction">CALL <a href="44340.html">QueueProgram</a></td>
+<td class="comment-1" rowspan="1">Add the program, or zero, to the queue using <a href="44340.html">QueueProgram</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44238"></span>44238</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump if a program was pushed out of the queue.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44239"></span>44239</td>
+<td class="instruction">JR NZ,<a href="44132.html#44253">UseActionKey_Drop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44241"></span>44241</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the contents of the cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44242"></span>44242</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">...and keep them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44243"></span>44243</td>
+<td class="instruction">AND 15</td>
+<td class="comment-1" rowspan="1">Keep the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44245"></span>44245</td>
+<td class="instruction">CP 15</td>
+<td class="comment-1" rowspan="2">Return if the cell is a socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44247"></span>44247</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44248"></span>44248</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the contents of the cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44249"></span>44249</td>
+<td class="instruction">AND 240</td>
+<td class="comment-1" rowspan="1">...clear the type, so that the program has gone...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44251"></span>44251</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44252"></span>44252</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Drop</td>
+<td class="address-2"><span id="44253"></span>44253</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the contents of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44254"></span>44254</td>
+<td class="instruction">AND 15</td>
+<td class="comment-1" rowspan="1">Keep the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44256"></span>44256</td>
+<td class="instruction">CP 15</td>
+<td class="comment-1" rowspan="1">Test whether it is a socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44258"></span>44258</td>
+<td class="instruction">LD A,6</td>
+<td class="comment-1" rowspan="1">Use type 6, so that the program is dropped on the floor...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44260"></span>44260</td>
+<td class="instruction">JR NZ,<a href="44132.html#44333">UseActionKey_Store</a></td>
+<td class="comment-1" rowspan="1">...unless the cell is a socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44262"></span>44262</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the address of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44263"></span>44263</td>
+<td class="instruction">CALL <a href="40030.html">FindSector</a></td>
+<td class="comment-1" rowspan="1">Find the sector that the robot is in using <a href="40030.html">FindSector</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44266"></span>44266</td>
+<td class="instruction">LD E,D</td>
+<td class="comment-1" rowspan="1">Put the sector number in <span class="register">E</span>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44267"></span>44267</td>
+<td class="instruction">LD D,0</td>
+<td class="comment-1" rowspan="1">...and clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44269"></span>44269</td>
+<td class="instruction">LD HL,41825</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="41825.html">SectorEnergy</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44272"></span>44272</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the sector number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44273"></span>44273</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the energy of the sector.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44274"></span>44274</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump if there is none.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44275"></span>44275</td>
+<td class="instruction">JR Z,<a href="44132.html#44285">UseActionKey_Refuse</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44277"></span>44277</td>
+<td class="instruction">LD HL,38491</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="38491.html">SectorFlags</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44280"></span>44280</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the sector number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44281"></span>44281</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the flag of the sector.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44282"></span>44282</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to install the program if the sector has not been activated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44283"></span>44283</td>
+<td class="instruction">JR Z,<a href="44132.html#44323">UseActionKey_Install</a></td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Refuse</td>
+<td class="address-2"><span id="44285"></span>44285</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the address of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44286"></span>44286</td>
+<td class="instruction">LD IY,39088</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at the first of the two entities that are used for clouds.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44290"></span>44290</td>
+<td class="instruction">LD DE,16</td>
+<td class="comment-1" rowspan="1">Each entity is 16 bytes long.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44293"></span>44293</td>
+<td class="instruction">LD A,(IY+0)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44296"></span>44296</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump if it is not in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44297"></span>44297</td>
+<td class="instruction">JR Z,<a href="44132.html#44306">UseActionKey_Up_StartSmoke</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44299"></span>44299</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Move on to the second entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44301"></span>44301</td>
+<td class="instruction">LD A,(IY+0)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44304"></span>44304</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if it is in use as well.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44305"></span>44305</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Up_StartSmoke</td>
+<td class="address-2"><span id="44306"></span>44306</td>
+<td class="instruction">LD (IY+0),84</td>
+<td class="comment-1" rowspan="1">Start a cloud of smoke in the entity (type 84).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44310"></span>44310</td>
+<td class="instruction">LD A,(44480)</td>
+<td class="comment-1" rowspan="1">Fetch the X cell where the program was refused...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44313"></span>44313</td>
+<td class="instruction">LD (IY+2),A</td>
+<td class="comment-1" rowspan="1">...and use it for the cloud.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44316"></span>44316</td>
+<td class="instruction">LD A,(44482)</td>
+<td class="comment-1" rowspan="1">Fetch the Y cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44319"></span>44319</td>
+<td class="instruction">LD (IY+4),A</td>
+<td class="comment-1" rowspan="1">...and use it for the cloud.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44322"></span>44322</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Install</td>
+<td class="address-2"><span id="44323"></span>44323</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the address of the cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44324"></span>44324</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">...and save it again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44325"></span>44325</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Save the sector number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44326"></span>44326</td>
+<td class="instruction">CALL <a href="44466.html">InstallProgram</a></td>
+<td class="comment-1" rowspan="1">Add the program to the sector using <a href="44466.html">InstallProgram</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44329"></span>44329</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the sector number...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44330"></span>44330</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">...and the address of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44331"></span>44331</td>
+<td class="instruction">LD A,2</td>
+<td class="comment-1" rowspan="1">Use type 2, which is an installed program.</td>
+</tr>
+<tr>
+<td class="asm-label">UseActionKey_Store</td>
+<td class="address-2"><span id="44333"></span>44333</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the new type of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44334"></span>44334</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the contents of the cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44335"></span>44335</td>
+<td class="instruction">AND 240</td>
+<td class="comment-1" rowspan="1">...keep the initial type...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44337"></span>44337</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="1">...and combine it with the new type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44338"></span>44338</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the contents of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="44339"></span>44339</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="44080.html">44080</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#44132">Map</a></td>
+<td class="next">
+Next: <a href="44340.html">44340</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../../asm/AC64.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

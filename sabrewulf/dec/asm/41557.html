@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -29,7 +32,7 @@ Prev: <a href="41524.html">41524</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41557">Map</a></td>
 <td class="next">
-Next: <a href="41661.html">41661</a>
+Next: <a href="41629.html">41629</a>
 </td>
 </tr>
 </table>
@@ -39,7 +42,13 @@ Next: <a href="41661.html">41661</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="45598.html">45598</a>.
+Used by the routine at <a href="45598.html">InitialisePlayer</a>.
+</div>
+<div class="paragraph">
+Sets up the four amulet pieces in <a href="38910.html">AmuletData</a>. The random seed in <a href="38549.html">RandomNumber</a> selects one of eight sets of four rooms (see <a href="41629.html">Initialisation_Amulet</a>) and each piece is put at the first position in the room's layout (see <a href="56428.html">ObjectLocation</a>). The pieces are numbered 144 to 147 and are all drawn in bright yellow (70).
+</div>
+<div class="paragraph">
+This is used when a new game is started.
 </div>
 </div>
 </td>
@@ -48,13 +57,13 @@ Used by the routine at <a href="45598.html">45598</a>.
 <td class="asm-label">PlaceAmuletPieces</td>
 <td class="address-2"><span id="41557"></span>41557</td>
 <td class="instruction">LD IX,38910</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="38910.html">AmuletData</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the first amulet piece record at <a href="38910.html">AmuletData</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41561"></span>41561</td>
 <td class="instruction">LD A,(38549)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38549.html">38549</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the random seed from <a href="38549.html">RandomNumber</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -66,42 +75,42 @@ Used by the routine at <a href="45598.html">45598</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41566"></span>41566</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="2">Create an offset.</td>
+<td class="comment-1" rowspan="1">Stash the set number in <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41567"></span>41567</td>
 <td class="instruction">LD H,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41569"></span>41569</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Multiply the set number by four, as there are four rooms in each set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41570"></span>41570</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41571"></span>41571</td>
 <td class="instruction">LD BC,41629</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at the sets of amulet piece rooms at <a href="41629.html">Initialisation_Amulet</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41574"></span>41574</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="41557.html#41629">Initialisation_Amulet</a> + (<span class="register">A</span> * 2).</td>
+<td class="comment-1" rowspan="1">Add the set offset to get the address of the chosen set of rooms.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41575"></span>41575</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the chosen set of rooms.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -117,205 +126,189 @@ There are four pieces of the amulet to collect.
 <td class="asm-label"></td>
 <td class="address-1"><span id="41576"></span>41576</td>
 <td class="instruction">LD B,4</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=4.</td>
+<td class="comment-1" rowspan="1">Set the amulet piece counter in <span class="register">B</span> to 4.</td>
 </tr>
 <tr>
 <td class="asm-label">PlaceAmuletPieces_Loop</td>
 <td class="address-2"><span id="41578"></span>41578</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash the counter on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the amulet piece counter on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41579"></span>41579</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Copy the amulet piece counter to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41580"></span>41580</td>
 <td class="instruction">ADD A,143</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 143 giving a sprite ID of 144 to 147.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41582"></span>41582</td>
 <td class="instruction">LD (IX+0),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the sprite ID of the amulet piece.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41585"></span>41585</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the room for this amulet piece.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41586"></span>41586</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next room in the set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41587"></span>41587</td>
 <td class="instruction">LD (IX+1),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the room of the amulet piece.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41590"></span>
+<div class="comments">
+<div class="paragraph">
+Find the layout of the room, and from it the position of the piece.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41590"></span>41590</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Use the room as the offset into the layout table.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41591"></span>41591</td>
 <td class="instruction">LD H,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41593"></span>41593</td>
 <td class="instruction">LD BC,24678</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="24678.html">Layout</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at the layout table at <a href="24678.html">Layout</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41596"></span>41596</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the layout table address to get the address of the layout number for the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41597"></span>41597</td>
 <td class="instruction">LD L,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the layout number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41598"></span>41598</td>
 <td class="instruction">LD H,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41600"></span>41600</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Multiply the layout number by eight, as there are eight bytes of positions for each layout.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41601"></span>41601</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41602"></span>41602</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41603"></span>41603</td>
 <td class="instruction">LD BC,56428</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="56428.html">ObjectLocation</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at the table of object positions at <a href="56428.html">ObjectLocation</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41606"></span>41606</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the table address to get the first position for the layout.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41607"></span>41607</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41608"></span>41608</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the Y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41609"></span>41609</td>
 <td class="instruction">LD (IX+3),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the X position of the amulet piece.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41612"></span>41612</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the Y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41613"></span>41613</td>
 <td class="instruction">LD (IX+4),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the Y position of the amulet piece.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41616"></span>41616</td>
 <td class="instruction">LD (IX+5),70</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the colour of the amulet piece to INK:YELLOW, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41620"></span>41620</td>
 <td class="instruction">LD BC,12</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=12.</td>
+<td class="comment-1" rowspan="1">Set the size of an actor record in <span class="register">BC</span> to 12.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41623"></span>41623</td>
 <td class="instruction">ADD IX,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next actor record.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41625"></span>41625</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore the counter from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the amulet piece counter from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41626"></span>41626</td>
 <td class="instruction">DJNZ <a href="41557.html#41578">PlaceAmuletPieces_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="41557.html#41578">PlaceAmuletPieces_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the amulet piece counter by one and loop back to <a href="41557.html#41578">PlaceAmuletPieces_Loop</a> until all four pieces have been placed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41628"></span>41628</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
-</tr>
-<tr>
-<td class="asm-label">Initialisation_Amulet</td>
-<td class="address-1"><span id="41629"></span>41629</td>
-<td class="instruction">DEFB 67,145,77,203,157,172,45,38</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="41637"></span>41637</td>
-<td class="instruction">DEFB 225,115,68,45,53,195,77,169</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="41645"></span>41645</td>
-<td class="instruction">DEFB 138,77,225,82,67,88,57,231</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="41653"></span>41653</td>
-<td class="instruction">DEFB 89,167,226,145,38,53,203,163</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -325,7 +318,7 @@ Prev: <a href="41524.html">41524</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41557">Map</a></td>
 <td class="next">
-Next: <a href="41661.html">41661</a>
+Next: <a href="41629.html">41629</a>
 </td>
 </tr>
 </table>

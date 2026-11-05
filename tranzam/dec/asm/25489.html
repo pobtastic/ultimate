@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,11 +44,23 @@ Next: <a href="25562.html">25562</a>
 <div class="paragraph">
 Used by the routine at <a href="24559.html">StartGame</a>.
 </div>
+<div class="paragraph">
+Sets up a new game with three lives, no cups collected, and the miles and time reset. Continues into <a href="25489.html#25511">PlayerInit</a> which sets up the first car.  <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="new-game-before" src="../../images/scr/new-game-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="new-game-after" src="../../images/scr/new-game-after.png" /></td>
+</tr>
+</table>
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">GameInit</td>
+<td class="asm-label">NewGame</td>
 <td class="address-2"><span id="25489"></span>25489</td>
 <td class="instruction">LD A,3</td>
 <td class="comment-1" rowspan="2">Write starting lives to <a href="24125.html">Player_Lives</a> (duplicate of <a href="24559.html#24566">24566</a> - possibly so POKEs would appear to not work?)</td>
@@ -66,10 +81,10 @@ This entry point is used by the routine at <a href="25599.html">HandlerCup</a>.
 </td>
 </tr>
 <tr>
-<td class="asm-label">GameInit_0</td>
+<td class="asm-label">NewGame_ResetCups</td>
 <td class="address-2"><span id="25494"></span>25494</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 0 to <a href="24124.html">Cups_Collected</a>.</td>
+<td class="comment-1" rowspan="2">Set the number of cups collected to 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -79,8 +94,8 @@ This entry point is used by the routine at <a href="25599.html">HandlerCup</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25498"></span>25498</td>
-<td class="instruction">CALL <a href="25752.html">25752</a></td>
-<td class="comment-1" rowspan="1">Call <a href="25752.html">25752</a>.</td>
+<td class="instruction">CALL <a href="25752.html">RandomiseCups</a></td>
+<td class="comment-1" rowspan="1">Put the cups back at new positions using <a href="25752.html">RandomiseCups</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -96,31 +111,31 @@ Reset miles and time.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25501"></span>25501</td>
 <td class="instruction">LD HL,24109</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24109.html">Miles</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the miles (<a href="24109.html">Miles</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25504"></span>25504</td>
 <td class="instruction">LD B,7</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=7 (counter).</td>
+<td class="comment-1" rowspan="1">Set the byte counter to 7 to cover the miles and the time.</td>
 </tr>
 <tr>
 <td class="asm-label">GameInit_Reset</td>
 <td class="address-2"><span id="25506"></span>25506</td>
 <td class="instruction">LD (HL),0</td>
-<td class="comment-1" rowspan="1">Write 0 to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Clear a byte of the miles and time.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25508"></span>25508</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25509"></span>25509</td>
 <td class="instruction">DJNZ <a href="25489.html#25506">GameInit_Reset</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="25489.html#25506">GameInit_Reset</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the byte counter by one and loop back to <a href="25489.html#25506">GameInit_Reset</a> until the miles and time have been cleared.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -129,6 +144,9 @@ Reset miles and time.
 <div class="paragraph">
 This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 </div>
+<div class="paragraph">
+Set up a new car.
+</div>
 </div>
 </td>
 </tr>
@@ -136,31 +154,31 @@ This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 <td class="asm-label">PlayerInit</td>
 <td class="address-2"><span id="25511"></span>25511</td>
 <td class="instruction">CALL <a href="26784.html">CreateWindow</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26784.html">CreateWindow</a>.</td>
+<td class="comment-1" rowspan="1">Create the game window using <a href="26784.html">CreateWindow</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25514"></span>25514</td>
-<td class="instruction">CALL <a href="25918.html">25918</a></td>
-<td class="comment-1" rowspan="1">Call <a href="25918.html">25918</a>.</td>
+<td class="instruction">CALL <a href="25918.html">LocatePlayerMarker</a></td>
+<td class="comment-1" rowspan="1">Call <a href="25918.html">LocatePlayerMarker</a> to find where the player's marker is on the map.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25517"></span>25517</td>
-<td class="instruction">CALL <a href="25943.html#25966">25966</a></td>
-<td class="comment-1" rowspan="1">Call <a href="25943.html#25966">25966</a>.</td>
+<td class="instruction">CALL <a href="25943.html#25966">FlashPlayerMarker_SaveByte</a></td>
+<td class="comment-1" rowspan="1">Call <a href="25943.html#25966">FlashPlayerMarker_SaveByte</a> to save the screen byte at the position of the marker.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25520"></span>25520</td>
-<td class="instruction">CALL <a href="27646.html">27646</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27646.html">27646</a>.</td>
+<td class="instruction">CALL <a href="27646.html">FindFirstObject</a></td>
+<td class="comment-1" rowspan="1">Find the first object using <a href="27646.html">FindFirstObject</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25523"></span>25523</td>
-<td class="instruction">CALL <a href="27145.html">27145</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27145.html">27145</a>.</td>
+<td class="instruction">CALL <a href="27145.html">InitialiseEntities</a></td>
+<td class="comment-1" rowspan="1">Set up the entities using <a href="27145.html">InitialiseEntities</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -179,7 +197,7 @@ This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 <td class="instruction">LD H,0</td>
 <td class="comment-1" rowspan="4">Write 0000 to; <ul class="">
 <li><a href="24076.html">Temperature</a></li>
-<li><a href="24078.html">24078</a></li>
+<li><a href="24078.html">Unknown_5E0E</a></li>
 <li><a href="24080.html">Player_Direction</a></li>
 </ul></td>
 </tr>
@@ -202,7 +220,7 @@ This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25543"></span>25543</td>
 <td class="instruction">LD HL,3136</td>
-<td class="comment-1" rowspan="2">Write 3136 to <a href="24069.html">PlayerMapPosition</a>.</td>
+<td class="comment-1" rowspan="2">Set the player's X position on the map (<a href="24068.html#24069">PlayerMapPosition</a>) to 3136.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -213,7 +231,7 @@ This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25549"></span>25549</td>
 <td class="instruction">LD HL,1600</td>
-<td class="comment-1" rowspan="2">Write 1600 to <a href="24072.html">24072</a>.</td>
+<td class="comment-1" rowspan="2">Set the player's Y position on the map (<a href="24071.html#24072">PlayerMapPositionY</a>) to 1600.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -224,7 +242,7 @@ This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25555"></span>25555</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 0 to <a href="24143.html">24143</a>.</td>
+<td class="comment-1" rowspan="2">Clear the last place visited (<a href="24143.html">LastPlaceVisited</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -234,8 +252,20 @@ This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25559"></span>25559</td>
-<td class="instruction">JP <a href="27646.html">27646</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="27646.html">27646</a>.</td>
+<td class="instruction">JP <a href="27646.html">FindFirstObject</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="27646.html">FindFirstObject</a> to find the first object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/cookie/dec/asm/25584.html">Cookie</a></li>
+<li><a href="/ultimate/lunarjetman/dec/asm/43084.html">Lunar Jetman</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

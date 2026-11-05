@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,31 +36,43 @@ Next: <a href="91ED.html">91ED</a>
 </td>
 </tr>
 </table>
-<div class="description">91C5: Handler: Trap Open</div>
+<div class="description">91C5: Handle Trap Open</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+The handler for a trapdoor that is open (sprite ID 19). If the low byte of the random number seed at <a href="5E05.html">RandomSeed</a> is not zero then the trapdoor is used by <a href="9731.html">FallThroughTrapdoor</a>. Otherwise <a href="91C5.html#91cc">HandlerTrap_Toggle</a> closes it.
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The trapdoor entity</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">HandlerTrapOpen</td>
 <td class="address-2"><span id="91c5"></span>91C5</td>
 <td class="instruction">LD A,($5E05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the random seed from <a href="5E05.html">RandomSeed</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91c8"></span>91C8</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test whether it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91c9"></span>91C9</td>
-<td class="instruction">JP NZ,<a href="96EC.html#9731">GameComplete_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="9731.html">FallThroughTrapdoor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9731.html">FallThroughTrapdoor</a> if it is not.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -66,86 +81,89 @@ Next: <a href="91ED.html">91ED</a>
 <div class="paragraph">
 This entry point is used by the routine at <a href="91BC.html">HandlerTrapClosed</a>.
 </div>
+<div class="paragraph">
+Change the trapdoor from open to closed or the other way round. It is erased and drawn again with a temporary attribute.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">HandlerTrapOpen_0</td>
+<td class="asm-label">HandlerTrap_Toggle</td>
 <td class="address-2"><span id="91cc"></span>91CC</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the attribute of the trapdoor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91cf"></span>91CF</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash it on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91d0"></span>91D0</td>
-<td class="instruction">OR $03</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">OR %00000011</td>
+<td class="comment-1" rowspan="1">Set bits 0-1, which is temporary.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91d2"></span>91D2</td>
 <td class="instruction">LD (IX+$05),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the attribute of the trapdoor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91d5"></span>91D5</td>
-<td class="instruction">CALL <a href="91FE.html#9213">HandlerRoomItem_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="9213.html">DrawItemGraphic</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9213.html">DrawItemGraphic</a> to erase the trapdoor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91d8"></span>91D8</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the trapdoor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91db"></span>91DB</td>
-<td class="instruction">XOR $01</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">XOR %00000001</td>
+<td class="comment-1" rowspan="1">Flip bit 0, which changes the trapdoor from open to closed or the other way round.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91dd"></span>91DD</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the sprite ID of the trapdoor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91e0"></span>91E0</td>
-<td class="instruction">CALL <a href="91FE.html#9213">HandlerRoomItem_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="9213.html">DrawItemGraphic</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9213.html">DrawItemGraphic</a> to draw the trapdoor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91e3"></span>91E3</td>
 <td class="instruction">POP AF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the attribute of the trapdoor from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91e4"></span>91E4</td>
 <td class="instruction">LD (IX+$05),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it to the attribute of the trapdoor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91e7"></span>91E7</td>
 <td class="instruction">CALL <a href="91FE.html">HandlerRoomItem</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="91FE.html">HandlerRoomItem</a> to handle a room item that does nothing.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91ea"></span>91EA</td>
 <td class="instruction">JP <a href="A46E.html">SoundsDoor</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A46E.html">SoundsDoor</a> to make the sound of a door.</td>
 </tr>
 </table>
 <table class="asm-navigation">

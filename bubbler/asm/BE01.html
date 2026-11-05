@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at BE01</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BDBB.html">BDBB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#be01">Map</a></td>
+<td class="next">
+Next: <a href="BF41.html">BF41</a>
+</td>
+</tr>
+</table>
+<div class="description">BE01: Add Object Entity</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BFA5.html">DrawObject</a>.
+</div>
+<div class="paragraph">
+Called by <a href="BFA5.html">DrawObject</a> for an object that can be an entity. Checks that the object is in view and, if it is of kind 02 03 or 04 makes an entity for it in the pool of four entities at <a href="B540.html">B670</a>. The entity is of type 0C for kind 02 and type 10 for the other two. Any object that is in view is also recorded with <a href="BF41.html">RecordObject</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The object, which is three bytes</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">The screen column of the object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be01"></span>
+<div class="comments">
+<div class="paragraph">
+Check that the object is not off the left or right edge of the view.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity</td>
+<td class="address-2"><span id="be01"></span>BE01</td>
+<td class="instruction">BIT 7,H</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE01.html#be0e">AddObjectEntity_RightEdge</a> if bit 7 of the high byte of the screen column is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be03"></span>BE03</td>
+<td class="instruction">JR NZ,<a href="BE01.html#be0e">AddObjectEntity_RightEdge</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be05"></span>BE05</td>
+<td class="instruction">LD BC,$0028</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span> is 28 the margin on the left of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be08"></span>BE08</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the margin to the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be09"></span>BE09</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Rotate bit 7 of the high byte into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be0b"></span>BE0B</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is off the left edge of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be0c"></span>BE0C</td>
+<td class="instruction">JR <a href="BE01.html#be14">AddObjectEntity_Position</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BE01.html#be14">AddObjectEntity_Position</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_RightEdge</td>
+<td class="address-2"><span id="be0e"></span>BE0E</td>
+<td class="instruction">LD BC,$80E0</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span> is 80E0 the right edge of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be11"></span>BE11</td>
+<td class="instruction">SBC HL,BC</td>
+<td class="comment-1" rowspan="1">Subtract it from the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be13"></span>BE13</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is off the right edge of the view.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be14"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the coordinates of the object. The x coordinate is the column of the cell and the upper four bits of the first byte of the object. The y coordinate is the row of the cell and the lower four bits, multiplied by sixteen. They are kept on the stack for the entity.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Position</td>
+<td class="address-2"><span id="be14"></span>BE14</td>
+<td class="instruction">LD A,($5CBA)</td>
+<td class="comment-1" rowspan="2">Fetch the row of the cell and keep it in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be17"></span>BE17</td>
+<td class="instruction">LD D,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be18"></span>BE18</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1b"></span>BE1B</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="4">Multiply it by sixteen, to move the lower four bits to the top...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1c"></span>BE1C</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1d"></span>BE1D</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1e"></span>BE1E</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1f"></span>BE1F</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">...and keep the result in <span class="register">E</span>, as the low byte of the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be20"></span>BE20</td>
+<td class="instruction">LD HL,($5CB8)</td>
+<td class="comment-1" rowspan="1">Fetch the column of the cell into <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be23"></span>BE23</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be26"></span>BE26</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep the upper four bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be28"></span>BE28</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep them in <span class="register">L</span>, as the low byte of the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be29"></span>BE29</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Save the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2a"></span>BE2A</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the x coordinate.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be2b"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the screen row of the object. This is half of the difference between its x and y coordinates, plus the offset to the view, less the height of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2b"></span>BE2B</td>
+<td class="instruction">SRL D</td>
+<td class="comment-1" rowspan="2">Halve the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2d"></span>BE2D</td>
+<td class="instruction">RR E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2f"></span>BE2F</td>
+<td class="instruction">SRL H</td>
+<td class="comment-1" rowspan="2">Halve the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be31"></span>BE31</td>
+<td class="instruction">RR L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be33"></span>BE33</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract half of the y coordinate from half of the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be35"></span>BE35</td>
+<td class="instruction">LD DE,($C061)</td>
+<td class="comment-1" rowspan="1">Fetch the offset to the view from the drawing code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be39"></span>BE39</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be3a"></span>BE3A</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be3d"></span>BE3D</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep the height in bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be3f"></span>BE3F</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be40"></span>BE40</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be43"></span>BE43</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Move bit 6, the top bit of the height, to bit 7...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be44"></span>BE44</td>
+<td class="instruction">AND %10000000</td>
+<td class="comment-1" rowspan="1">...and keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be46"></span>BE46</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the other bits of the height to find the height of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be47"></span>BE47</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep the low byte of the height in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be48"></span>BE48</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be4a"></span>BE4A</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract the height from the screen row.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be4c"></span>
+<div class="comments">
+<div class="paragraph">
+Check that the object is not above or below the view.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be4c"></span>BE4C</td>
+<td class="instruction">BIT 7,H</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE01.html#be5a">AddObjectEntity_TopMargin</a> if bit 7 of the high byte of the screen row is not set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be4e"></span>BE4E</td>
+<td class="instruction">JR Z,<a href="BE01.html#be5a">AddObjectEntity_TopMargin</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be50"></span>BE50</td>
+<td class="instruction">LD DE,$80A4</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span> is 80A4 the bottom of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be53"></span>BE53</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract it from the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be55"></span>BE55</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be56"></span>BE56</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be57"></span>BE57</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is below the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be58"></span>BE58</td>
+<td class="instruction">JR <a href="BE01.html#be63">AddObjectEntity_Pool</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BE01.html#be63">AddObjectEntity_Pool</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_TopMargin</td>
+<td class="address-2"><span id="be5a"></span>BE5A</td>
+<td class="instruction">LD DE,$0028</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span> is 28 the margin at the top of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be5d"></span>BE5D</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the margin to the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be5e"></span>BE5E</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Rotate bit 7 of the high byte into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be60"></span>BE60</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be61"></span>BE61</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be62"></span>BE62</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is above the view.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be63"></span>
+<div class="comments">
+<div class="paragraph">
+Only objects of kind 02 03 and 04 that are not hidden have an entity. Record all of the others.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Pool</td>
+<td class="address-2"><span id="be63"></span>BE63</td>
+<td class="instruction">LD IY,$B670</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at the pool of four entities for objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be67"></span>BE67</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be6a"></span>BE6A</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BF41.html">RecordObject</a> to record the object if it has one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be6c"></span>BE6C</td>
+<td class="instruction">JP NZ,<a href="BF41.html">RecordObject</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be6f"></span>BE6F</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep the kind of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be71"></span>BE71</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE01.html#be7e">AddObjectEntity_Search</a> if it is kind 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be73"></span>BE73</td>
+<td class="instruction">JR Z,<a href="BE01.html#be7e">AddObjectEntity_Search</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be75"></span>BE75</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE01.html#be7e">AddObjectEntity_Search</a> if it is kind 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be77"></span>BE77</td>
+<td class="instruction">JR Z,<a href="BE01.html#be7e">AddObjectEntity_Search</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be79"></span>BE79</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BF41.html">RecordObject</a> to record the object if it is not kind 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be7b"></span>BE7B</td>
+<td class="instruction">JP NZ,<a href="BF41.html">RecordObject</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be7e"></span>
+<div class="comments">
+<div class="paragraph">
+Search the pool for an entity that is not in use.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Search</td>
+<td class="address-2"><span id="be7e"></span>BE7E</td>
+<td class="instruction">LD A,$04</td>
+<td class="comment-1" rowspan="1">Set the number of entities left to try to 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be80"></span>BE80</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the y coordinate into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be81"></span>BE81</td>
+<td class="instruction">LD DE,$0026</td>
+<td class="comment-1" rowspan="1">Set the size of an entity, 26.</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Next</td>
+<td class="address-2"><span id="be84"></span>BE84</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Save the number of entities left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be85"></span>BE85</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be88"></span>BE88</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be89"></span>BE89</td>
+<td class="instruction">JP NZ,<a href="BE01.html#bf39">AddObjectEntity_NextEntity</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BE01.html#bf39">AddObjectEntity_NextEntity</a> if the entity is in use.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be8c"></span>
+<div class="comments">
+<div class="paragraph">
+Make the entity. It starts as type 0C which is kind 02.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8c"></span>BE8C</td>
+<td class="instruction">LD (IY+$02),B</td>
+<td class="comment-1" rowspan="1">Store the high byte of the x coordinate in field 02 of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8f"></span>BE8F</td>
+<td class="instruction">LD (IY+$03),C</td>
+<td class="comment-1" rowspan="1">Store the low byte of the x coordinate in field 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be92"></span>BE92</td>
+<td class="instruction">LD (IY+$05),H</td>
+<td class="comment-1" rowspan="1">Store the high byte of the y coordinate in field 05.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be95"></span>BE95</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be96"></span>BE96</td>
+<td class="instruction">ADD A,$04</td>
+<td class="comment-1" rowspan="1">Add 04 to put the entity in the middle of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be98"></span>BE98</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be99"></span>BE99</td>
+<td class="instruction">LD (IY+$06),L</td>
+<td class="comment-1" rowspan="1">Store it in field 06.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be9c"></span>BE9C</td>
+<td class="instruction">LD (IY+$1C),$00</td>
+<td class="comment-1" rowspan="1">Set the animation counter in field 1C to 00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea0"></span>BEA0</td>
+<td class="instruction">LD (IY+$1D),$20</td>
+<td class="comment-1" rowspan="1">Set the first and last frames in field 1D to 20.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea4"></span>BEA4</td>
+<td class="instruction">LD (IY+$00),$0C</td>
+<td class="comment-1" rowspan="1">Set the type of the entity to 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea8"></span>BEA8</td>
+<td class="instruction">LD (IY+$0B),$0C</td>
+<td class="comment-1" rowspan="1">Set the size in field 0B to 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beac"></span>BEAC</td>
+<td class="instruction">LD (IY+$0C),$0C</td>
+<td class="comment-1" rowspan="1">Set the size in field 0C to 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb0"></span>BEB0</td>
+<td class="instruction">LD (IY+$0D),$01</td>
+<td class="comment-1" rowspan="1">Set field 0D to 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb4"></span>BEB4</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb7"></span>BEB7</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep the kind of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb9"></span>BEB9</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE01.html#bed5">AddObjectEntity_Fields</a> if it is kind 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bebb"></span>BEBB</td>
+<td class="instruction">JR Z,<a href="BE01.html#bed5">AddObjectEntity_Fields</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bebd"></span>BEBD</td>
+<td class="instruction">LD (IY+$00),$10</td>
+<td class="comment-1" rowspan="1">Change the type of the entity to 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec1"></span>BEC1</td>
+<td class="instruction">LD (IY+$1D),$00</td>
+<td class="comment-1" rowspan="1">Set the first and last frames in field 1D to 00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec5"></span>BEC5</td>
+<td class="instruction">LD (IY+$0D),$0A</td>
+<td class="comment-1" rowspan="1">Set field 0D to 0A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec9"></span>BEC9</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE01.html#bed5">AddObjectEntity_Fields</a> if it is kind 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="becb"></span>BECB</td>
+<td class="instruction">JR Z,<a href="BE01.html#bed5">AddObjectEntity_Fields</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="becd"></span>BECD</td>
+<td class="instruction">LD (IY+$1D),$11</td>
+<td class="comment-1" rowspan="1">Set the first and last frames in field 1D to 11 for kind 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed1"></span>BED1</td>
+<td class="instruction">LD (IY+$0D),$10</td>
+<td class="comment-1" rowspan="1">Set field 0D to 10.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bed5"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the z coordinate of the entity from the height of the object, less one.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Fields</td>
+<td class="address-2"><span id="bed5"></span>BED5</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed8"></span>BED8</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep the height in bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beda"></span>BEDA</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bedb"></span>BEDB</td>
+<td class="instruction">LD (IY+$08),$01</td>
+<td class="comment-1" rowspan="1">Set the high byte of the z coordinate in field 08 to 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bedf"></span>BEDF</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee2"></span>BEE2</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Move bit 6, the top bit of the height, to bit 7...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee3"></span>BEE3</td>
+<td class="instruction">AND %10000000</td>
+<td class="comment-1" rowspan="1">...and keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee5"></span>BEE5</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the other bits of the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee6"></span>BEE6</td>
+<td class="instruction">SUB $01</td>
+<td class="comment-1" rowspan="1">Take away one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee8"></span>BEE8</td>
+<td class="instruction">LD (IY+$09),A</td>
+<td class="comment-1" rowspan="1">Store it in field 09 as the low byte of the z coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beeb"></span>BEEB</td>
+<td class="instruction">JR NC,<a href="BE01.html#bef0">AddObjectEntity_SetFrame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BE01.html#bef0">AddObjectEntity_SetFrame</a> if it did not go below zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beed"></span>BEED</td>
+<td class="instruction">DEC (IY+$08)</td>
+<td class="comment-1" rowspan="1">Decrease the high byte of the z coordinate by one.</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_SetFrame</td>
+<td class="address-2"><span id="bef0"></span>BEF0</td>
+<td class="instruction">LD A,(IY+$1D)</td>
+<td class="comment-1" rowspan="1">Fetch the first frame of the entity from field 1D.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bef3"></span>BEF3</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bef5"></span>BEF5</td>
+<td class="instruction">OR %10000000</td>
+<td class="comment-1" rowspan="1">Set bit 7 to hide the entity until it is known to be in view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bef7"></span>BEF7</td>
+<td class="instruction">LD (IY+$01),A</td>
+<td class="comment-1" rowspan="1">Store it as the frame of the entity in field 01.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="befa"></span>
+<div class="comments">
+<div class="paragraph">
+Remember the address of the object in fields 1A and 1B of the entity.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="befa"></span>BEFA</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Put the address of the object into <span class="register">DE</span>, via the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="befc"></span>BEFC</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="befd"></span>BEFD</td>
+<td class="instruction">LD (IY+$1A),D</td>
+<td class="comment-1" rowspan="1">Store the high byte in field 1A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf00"></span>BF00</td>
+<td class="instruction">LD (IY+$1B),E</td>
+<td class="comment-1" rowspan="1">Store the low byte in field 1B.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf03"></span>
+<div class="comments">
+<div class="paragraph">
+Check that the new entity is in view, and free it again if it is not.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf03"></span>BF03</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers, to keep the coordinates.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf04"></span>BF04</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1">Save the address of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf06"></span>BF06</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Put the address of the new entity into <span class="register">IX</span>, via the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf08"></span>BF08</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf0a"></span>BF0A</td>
+<td class="instruction">LD (IX+$16),$00</td>
+<td class="comment-1" rowspan="1">Set the width of the sprite in field 16 to 00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf0e"></span>BF0E</td>
+<td class="instruction">LD (IX+$17),$18</td>
+<td class="comment-1" rowspan="1">Set the height of the sprite in field 17 to 18.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf12"></span>BF12</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1">Set the margin to 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf15"></span>BF15</td>
+<td class="instruction">CALL <a href="AEB0.html">TestEntityVisible</a></td>
+<td class="comment-1" rowspan="1">Test whether the entity is in view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf18"></span>BF18</td>
+<td class="instruction">JR NZ,<a href="BE01.html#bf26">AddObjectEntity_Visible</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BE01.html#bf26">AddObjectEntity_Visible</a> if it is.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1a"></span>BF1A</td>
+<td class="instruction">LD (IX+$00),$00</td>
+<td class="comment-1" rowspan="1">Set the type of the entity to 00 to free it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1e"></span>BF1E</td>
+<td class="instruction">LD (IX+$01),$80</td>
+<td class="comment-1" rowspan="1">Set the frame of the entity to 80 so that it is hidden.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf22"></span>BF22</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Restore the address of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf24"></span>BF24</td>
+<td class="instruction">JR <a href="BE01.html#bf36">AddObjectEntity_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BE01.html#bf36">AddObjectEntity_Done</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf26"></span>
+<div class="comments">
+<div class="paragraph">
+The entity is in view. Work out where it is on the screen and which sprite it has, and mark the object as having an entity so that it is not made again.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Visible</td>
+<td class="address-2"><span id="bf26"></span>BF26</td>
+<td class="instruction">CALL <a href="AE0D.html">ProjectEntity</a></td>
+<td class="comment-1" rowspan="1">Work out the screen position of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf29"></span>BF29</td>
+<td class="instruction">CALL <a href="AF21.html">SetEntitySize</a></td>
+<td class="comment-1" rowspan="1">Fetch the sprite of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2c"></span>BF2C</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Restore the address of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2e"></span>BF2E</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Take the return address off the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2f"></span>BF2F</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Take the screen column of the object off the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf30"></span>BF30</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Take the second and third bytes of the object off the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf31"></span>BF31</td>
+<td class="instruction">SET 7,B</td>
+<td class="comment-1" rowspan="1">Set bit 7 of the third byte, to show that the object has an entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf33"></span>BF33</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Put the bytes of the object back on the stack...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf34"></span>BF34</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">...then the screen column...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf35"></span>BF35</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">...and then the return address.</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Done</td>
+<td class="address-2"><span id="bf36"></span>BF36</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back to the main registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf37"></span>BF37</td>
+<td class="instruction">JR <a href="BE01.html#bf40">AddObjectEntity_Record</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BE01.html#bf40">AddObjectEntity_Record</a> to record the object.</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_NextEntity</td>
+<td class="address-2"><span id="bf39"></span>BF39</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Move on to the next entity of the pool.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3b"></span>BF3B</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Restore the number of entities left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3c"></span>BF3C</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrease the number of entities left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3d"></span>BF3D</td>
+<td class="instruction">JP NZ,<a href="BE01.html#be84">AddObjectEntity_Next</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="BE01.html#be84">AddObjectEntity_Next</a> until all four have been tried.</td>
+</tr>
+<tr>
+<td class="asm-label">AddObjectEntity_Record</td>
+<td class="address-2"><span id="bf40"></span>BF40</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the y coordinate back into <span class="register">DE</span>, and carry on into <a href="BF41.html">RecordObject</a> to record the object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+Continue on to <a href="BF41.html">RecordObject</a>.
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BDBB.html">BDBB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#be01">Map</a></td>
+<td class="next">
+Next: <a href="BF41.html">BF41</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/48641.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

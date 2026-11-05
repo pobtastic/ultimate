@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at A50A</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A4EC.html">A4EC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#a50a">Map</a></td>
+<td class="next">
+Next: <a href="A59D.html">A59D</a>
+</td>
+</tr>
+</table>
+<div class="description">A50A: Check Top Score</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="C049.html">CheckSheriffLost</a>.
+</div>
+<div class="paragraph">
+Called when the last life of the last player has been lost. It works out which player scored most, and if that score beats the top score of the day it shows the "WELL DONE" screen and stores the new top score. Either way the game then goes back to the title screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a50a"></span>
+<div class="comments">
+<div class="paragraph">
+The player states are swapped first so that the first player's score is in the current position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore</td>
+<td class="address-2"><span id="a50a"></span>A50A</td>
+<td class="instruction">CALL <a href="A6EA.html">SwapPlayerStates</a></td>
+<td class="comment-1" rowspan="1">Swap the states of the two players.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a50d"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="C049.html">CheckSheriffLost</a>.
+</div>
+<div class="paragraph">
+Compare the two scores, most significant byte first.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_SkipSwap</td>
+<td class="address-2"><span id="a50d"></span>A50D</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Set the number of bytes in a score to three.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a50f"></span>A50F</td>
+<td class="instruction">LD DE,$A257</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A257.html">Bounty</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a512"></span>A512</td>
+<td class="instruction">LD HL,$A26A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A26A.html">OtherPlayerState</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_CompareScoresLoop</td>
+<td class="address-2"><span id="a515"></span>A515</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the current score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a516"></span>A516</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">Compare it with the same byte of the other score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a517"></span>A517</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="2">Move on to the next byte of each score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a518"></span>A518</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a519"></span>A519</td>
+<td class="instruction">JR C,<a href="A50A.html#a51f">CheckTopScore_SecondPlayer</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A50A.html#a51f">CheckTopScore_SecondPlayer</a> if the other score is higher.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a51b"></span>A51B</td>
+<td class="instruction">JR NZ,<a href="A50A.html#a538">CheckTopScore_FirstPlayer</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A50A.html#a538">CheckTopScore_FirstPlayer</a> if the current score is higher.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a51d"></span>A51D</td>
+<td class="instruction">DJNZ <a href="A50A.html#a515">CheckTopScore_CompareScoresLoop</a></td>
+<td class="comment-1" rowspan="1">Loop back until all three bytes have been compared.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a51f"></span>
+<div class="comments">
+<div class="paragraph">
+The other player has the higher score (or the two are equal).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_SecondPlayer</td>
+<td class="address-2"><span id="a51f"></span>A51F</td>
+<td class="instruction">LD C,$01</td>
+<td class="comment-1" rowspan="1">Set the winner to be player two.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a521"></span>A521</td>
+<td class="instruction">LD DE,$A26A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A26A.html">OtherPlayerState</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a524"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the winning score with the top score of the day.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_CompareWithTopScore</td>
+<td class="address-2"><span id="a524"></span>A524</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the address of the winning score on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a525"></span>A525</td>
+<td class="instruction">LD HL,$A5D2</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A5D2.html">TopScore</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a528"></span>A528</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Set the number of bytes in a score to three.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_CompareWithTopScoreLoop</td>
+<td class="address-2"><span id="a52a"></span>A52A</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the winning score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a52b"></span>A52B</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">Compare it with the same byte of the top score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a52c"></span>A52C</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="2">Move on to the next byte of each score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a52d"></span>A52D</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a52e"></span>A52E</td>
+<td class="instruction">JR C,<a href="A50A.html#a534">CheckTopScore_NotBeaten</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A50A.html#a534">CheckTopScore_NotBeaten</a> if the winning score is lower.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a530"></span>A530</td>
+<td class="instruction">JR NZ,<a href="A50A.html#a53f">CheckTopScore_Winner</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A50A.html#a53f">CheckTopScore_Winner</a> if the winning score is higher.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a532"></span>A532</td>
+<td class="instruction">DJNZ <a href="A50A.html#a52a">CheckTopScore_CompareWithTopScoreLoop</a></td>
+<td class="comment-1" rowspan="1">Loop back until all three bytes have been compared.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_NotBeaten</td>
+<td class="address-2"><span id="a534"></span>A534</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">The top score has not been beaten, so discard the address of the winning score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a535"></span>A535</td>
+<td class="instruction">JP <a href="A36D.html#a37e">RestartGame</a></td>
+<td class="comment-1" rowspan="1">Restart the game from the title screen.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a538"></span>
+<div class="comments">
+<div class="paragraph">
+The current player has the higher score.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_FirstPlayer</td>
+<td class="address-2"><span id="a538"></span>A538</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Set the winner to be player one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a53a"></span>A53A</td>
+<td class="instruction">LD DE,$A257</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A257.html">Bounty</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a53d"></span>A53D</td>
+<td class="instruction">JR <a href="A50A.html#a524">CheckTopScore_CompareWithTopScore</a></td>
+<td class="comment-1" rowspan="1">Join in with the comparison with the top score.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a53f"></span>
+<div class="comments">
+<div class="paragraph">
+The top score has been beaten.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTopScore_Winner</td>
+<td class="address-2"><span id="a53f"></span>A53F</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the winning player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a540"></span>A540</td>
+<td class="instruction">ADD A,$31</td>
+<td class="comment-1" rowspan="1">Convert it to the character for the player number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a542"></span>A542</td>
+<td class="instruction">LD ($A5B0),A</td>
+<td class="comment-1" rowspan="1">Write it into the "PLAYER" text.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a545"></span>A545</td>
+<td class="instruction">LD E,$00</td>
+<td class="comment-1" rowspan="1">Set the attribute to INK:BLACK, PAPER:BLACK.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a547"></span>A547</td>
+<td class="instruction">CALL <a href="D6D3.html">SetAttributes</a></td>
+<td class="comment-1" rowspan="1">Clear the attributes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a54a"></span>A54A</td>
+<td class="instruction">CALL <a href="D6DB.html">ClearScreen</a></td>
+<td class="comment-1" rowspan="1">Clear the pixels of the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a54d"></span>A54D</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Retrieve the address of the winning score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a54e"></span>A54E</td>
+<td class="instruction">LD HL,$A5D2</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A5D2.html">TopScore</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a551"></span>A551</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Set the number of bytes in a score to three.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a553"></span>A553</td>
+<td class="instruction">CALL <a href="A6EA.html#a6f2">SwapBytes</a></td>
+<td class="comment-1" rowspan="1">Swap the two scores, which stores the new top score.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a556"></span>A556</td>
+<td class="instruction">LD DE,$A5D2</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A5D2.html">TopScore</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a559"></span>A559</td>
+<td class="instruction">LD HL,$A5CB</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A59D.html#a5cb">ScoreMessages_ScoreDigits</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a55c"></span>A55C</td>
+<td class="instruction">CALL <a href="A4EC.html#a4f2">ConvertDigits</a></td>
+<td class="comment-1" rowspan="1">Convert the score to digits.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a55f"></span>
+<div class="comments">
+<div class="paragraph">
+Print the first line.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a55f"></span>A55F</td>
+<td class="instruction">LD HL,$4087</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at 4087 (in the screen buffer).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a562"></span>A562</td>
+<td class="instruction">LD DE,$A59D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A59D.html">ScoreMessages</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a565"></span>A565</td>
+<td class="instruction">CALL <a href="AA9A.html">PrintLargeText</a></td>
+<td class="comment-1" rowspan="1">Print it in large letters.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a568"></span>
+<div class="comments">
+<div class="paragraph">
+Print the second line.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a568"></span>A568</td>
+<td class="instruction">LD HL,$40E8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at 40E8 (in the screen buffer).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a56b"></span>A56B</td>
+<td class="instruction">LD DE,$A5A8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A59D.html#a5a8">ScoreMessages_Player</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a56e"></span>A56E</td>
+<td class="instruction">CALL <a href="AA9A.html">PrintLargeText</a></td>
+<td class="comment-1" rowspan="1">Print it in large letters.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a571"></span>
+<div class="comments">
+<div class="paragraph">
+Print the third line.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a571"></span>A571</td>
+<td class="instruction">LD HL,$4846</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at 4846 (in the screen buffer).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a574"></span>A574</td>
+<td class="instruction">LD DE,$A5B2</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A59D.html#a5b2">ScoreMessages_TodaysTop</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a577"></span>A577</td>
+<td class="instruction">CALL <a href="AA9A.html">PrintLargeText</a></td>
+<td class="comment-1" rowspan="1">Print it in large letters.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a57a"></span>
+<div class="comments">
+<div class="paragraph">
+Print the fourth line.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a57a"></span>A57A</td>
+<td class="instruction">LD HL,$48A8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at 48A8 (in the screen buffer).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a57d"></span>A57D</td>
+<td class="instruction">LD DE,$A5BE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A59D.html#a5be">ScoreMessages_ScoreIs</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a580"></span>A580</td>
+<td class="instruction">CALL <a href="AA9A.html">PrintLargeText</a></td>
+<td class="comment-1" rowspan="1">Print it in large letters.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a583"></span>
+<div class="comments">
+<div class="paragraph">
+Print the fifth line.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a583"></span>A583</td>
+<td class="instruction">LD HL,$5048</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at 5048 (in the screen buffer).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a586"></span>A586</td>
+<td class="instruction">LD DE,$A5C8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A59D.html#a5c8">ScoreMessages_Score</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a589"></span>A589</td>
+<td class="instruction">CALL <a href="AA9A.html">PrintLargeText</a></td>
+<td class="comment-1" rowspan="1">Print it in large letters.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a58c"></span>A58C</td>
+<td class="instruction">LD DE,$B1E0</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="B1E0.html">FanfareTune</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a58f"></span>A58F</td>
+<td class="instruction">CALL <a href="AF8F.html">PlayMusic</a></td>
+<td class="comment-1" rowspan="1">Play the tune.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a592"></span>A592</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">Set the number of delay loops to four.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a594"></span>A594</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="1">Set the length of each delay loop.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a597"></span>A597</td>
+<td class="instruction">CALL <a href="AE82.html">WaitForAWhile</a></td>
+<td class="comment-1" rowspan="1">Wait for a while.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a59a"></span>A59A</td>
+<td class="instruction">JP <a href="A36D.html#a37e">RestartGame</a></td>
+<td class="comment-1" rowspan="1">Restart the game from the title screen.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A4EC.html">A4EC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#a50a">Map</a></td>
+<td class="next">
+Next: <a href="A59D.html">A59D</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/42250.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

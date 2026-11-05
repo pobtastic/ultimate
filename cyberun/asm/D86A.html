@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cyberun: Routine at D86A</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cyberun.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D85E.html">D85E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d86a">Map</a></td>
+<td class="next">
+Next: <a href="D8DA.html">D8DA</a>
+</td>
+</tr>
+</table>
+<div class="description">D86A: Draw Edge Pixels</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="D729.html">EndSegment</a>.
+</div>
+<div class="paragraph">
+Draws the pixels that finish the edge of a flat segment when the horizontal offset is not a multiple of eight. Nothing is drawn unless the segment is flat, its shape code (see <a href="5C34.html">EndShape</a>) is 13 or 93 and steps have been flagged. The four bytes come from <a href="D851.html">EdgePatternsRight</a> or <a href="D85E.html">EdgePatternsLeft</a>, depending on the type, and are stored going up the screen at the address in <a href="CE49.html">SegmentScreenAddress</a>, except that only 02 are stored when the segment is at the top or bottom of the area.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Address of the drawing record at <a href="DDF8.html#dedc">ScrollWorld_Record</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawEdgePixels</td>
+<td class="address-2"><span id="d86a"></span>D86A</td>
+<td class="instruction">LD A,($CE37)</td>
+<td class="comment-1" rowspan="1">The vertical step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d86d"></span>D86D</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d86e"></span>D86E</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d86f"></span>D86F</td>
+<td class="instruction">LD A,($5C34)</td>
+<td class="comment-1" rowspan="1">The segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d872"></span>D872</td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 7F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d874"></span>D874</td>
+<td class="instruction">CP $13</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is not 13.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d876"></span>D876</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d877"></span>D877</td>
+<td class="instruction">LD A,($5C2F)</td>
+<td class="comment-1" rowspan="1">The flagged steps.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d87a"></span>D87A</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d87b"></span>D87B</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d87c"></span>D87C</td>
+<td class="instruction">LD HL,$D851</td>
+<td class="comment-1" rowspan="1">The edge patterns right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d87f"></span>D87F</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Read offset 03 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d882"></span>D882</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D86A.html#d888">DrawEdgePixels_Table</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d883"></span>D883</td>
+<td class="instruction">JR Z,<a href="D86A.html#d888">DrawEdgePixels_Table</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d885"></span>D885</td>
+<td class="instruction">LD HL,$D85E</td>
+<td class="comment-1" rowspan="1">The edge patterns left.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawEdgePixels_Table</td>
+<td class="address-2"><span id="d888"></span>D888</td>
+<td class="instruction">LD A,($CE41)</td>
+<td class="comment-1" rowspan="1">The horizontal offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d88b"></span>D88B</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d88d"></span>D88D</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d88e"></span>D88E</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Step <span class="register">A</span> back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d88f"></span>D88F</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Step <span class="register">A</span> back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d890"></span>D890</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d891"></span>D891</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d892"></span>D892</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d894"></span>D894</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span> gains <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d895"></span>D895</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap <span class="register">DE</span> and <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d896"></span>D896</td>
+<td class="instruction">LD A,($D85D)</td>
+<td class="comment-1" rowspan="1">The edge flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d899"></span>D899</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Is <span class="register">A</span> zero?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d89a"></span>D89A</td>
+<td class="instruction">LD HL,($CE49)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="CE49.html">SegmentScreenAddress</a> into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d89d"></span>D89D</td>
+<td class="instruction">JR Z,<a href="D86A.html#d8aa">DrawEdgePixels_Address</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D86A.html#d8aa">DrawEdgePixels_Address</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d89f"></span>D89F</td>
+<td class="instruction">LD (IX+$01),$00</td>
+<td class="comment-1" rowspan="1">Store 00 at offset 01 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a3"></span>D8A3</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a4"></span>D8A4</td>
+<td class="instruction">SUB $20</td>
+<td class="comment-1" rowspan="1">Subtract 20 from <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a6"></span>D8A6</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1"><span class="register">L</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a7"></span>D8A7</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a8"></span>D8A8</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a9"></span>D8A9</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawEdgePixels_Address</td>
+<td class="address-2"><span id="d8aa"></span>D8AA</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ab"></span>D8AB</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ac"></span>D8AC</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ad"></span>D8AD</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ae"></span>D8AE</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 1F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b0"></span>D8B0</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Step <span class="register">A</span> back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b1"></span>D8B1</td>
+<td class="instruction">CP $1C</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is 1C or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b3"></span>D8B3</td>
+<td class="instruction">RET NC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b4"></span>D8B4</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b6"></span>D8B6</td>
+<td class="instruction">LD A,($5C2D)</td>
+<td class="comment-1" rowspan="1">The segment screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b9"></span>D8B9</td>
+<td class="instruction">CP $B9</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D86A.html#d8cb">DrawEdgePixels_Rows</a> if <span class="register">A</span> is not B9.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8bb"></span>D8BB</td>
+<td class="instruction">JR NZ,<a href="D86A.html#d8cb">DrawEdgePixels_Rows</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8bd"></span>D8BD</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8be"></span>D8BE</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8bf"></span>D8BF</td>
+<td class="instruction">LD H,$57</td>
+<td class="comment-1" rowspan="1"><span class="register">H</span>=57.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c1"></span>D8C1</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c2"></span>D8C2</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 1F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c4"></span>D8C4</td>
+<td class="instruction">OR %11000000</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c6"></span>D8C6</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1"><span class="register">L</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c7"></span>D8C7</td>
+<td class="instruction">LD B,$02</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c9"></span>D8C9</td>
+<td class="instruction">JR <a href="D86A.html#d8d1">DrawEdgePixels_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D86A.html#d8d1">DrawEdgePixels_Draw</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawEdgePixels_Rows</td>
+<td class="address-2"><span id="d8cb"></span>D8CB</td>
+<td class="instruction">CP $19</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D86A.html#d8d1">DrawEdgePixels_Draw</a> if <span class="register">A</span> is not 19.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8cd"></span>D8CD</td>
+<td class="instruction">JR NZ,<a href="D86A.html#d8d1">DrawEdgePixels_Draw</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8cf"></span>D8CF</td>
+<td class="instruction">LD B,$02</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=02.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawEdgePixels_Draw</td>
+<td class="address-2"><span id="d8d1"></span>D8D1</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d2"></span>D8D2</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> where <span class="register">HL</span> points.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d3"></span>D8D3</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d4"></span>D8D4</td>
+<td class="instruction">CALL <a href="A1C3.html">MoveUpARow</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A1C3.html">MoveUpARow</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d7"></span>D8D7</td>
+<td class="instruction">DJNZ <a href="D86A.html#d8d1">DrawEdgePixels_Draw</a></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">B</span> and jump to <a href="D86A.html#d8d1">DrawEdgePixels_Draw</a> until none remain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d9"></span>D8D9</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D85E.html">D85E</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d86a">Map</a></td>
+<td class="next">
+Next: <a href="D8DA.html">D8DA</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/">Source code</a>.</div>
+<div><a href="../dec/asm/55402.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at CD11</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CCD2.html">CCD2</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cd11">Map</a></td>
+<td class="next">
+Next: <a href="CE59.html">CE59</a>
+</td>
+</tr>
+</table>
+<div class="description">CD11: Run Frame</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="DFF0.html">RunGame</a>.
+</div>
+<div class="paragraph">
+Runs one frame of the game. First the timers are updated and then the player is controlled, updated and projected. The view is scrolled, the other entities are updated, and then the draw list is built, sorted and drawn. Finally the messages are updated.
+</div>
+<div class="paragraph">
+The counter in <a href="5D00.html">JumpCounter</a> is used for the player jumping and for the death of the player. Purpose of its values is not yet known.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cd11"></span>
+<div class="comments">
+<div class="paragraph">
+Count down the timer, if it is running.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame</td>
+<td class="address-2"><span id="cd11"></span>CD11</td>
+<td class="instruction">LD A,($A2DF)</td>
+<td class="comment-1" rowspan="1">Fetch the countdown timer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd14"></span>CD14</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd15"></span>CD15</td>
+<td class="instruction">JR Z,<a href="CD11.html#cd1b">RunFrame_Gauge</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cd1b">RunFrame_Gauge</a> if it has stopped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd17"></span>CD17</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Decrease the timer by one and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd18"></span>CD18</td>
+<td class="instruction">LD ($A2DF),A</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cd1b"></span>
+<div class="comments">
+<div class="paragraph">
+Drain the first gauge by 10 and redraw it. If it has run out then the player bursts, provided that it is still the player.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Gauge</td>
+<td class="address-2"><span id="cd1b"></span>CD1B</td>
+<td class="instruction">LD HL,($A59F)</td>
+<td class="comment-1" rowspan="1">Fetch the target of the first gauge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd1e"></span>CD1E</td>
+<td class="instruction">LD DE,$0010</td>
+<td class="comment-1" rowspan="1">Set the amount to drain, 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd21"></span>CD21</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Take the amount away.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd22"></span>CD22</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd24"></span>CD24</td>
+<td class="instruction">JR C,<a href="CD11.html#cd32">RunFrame_Burst</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cd32">RunFrame_Burst</a> if the gauge has run out.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd26"></span>CD26</td>
+<td class="instruction">LD ($A59F),HL</td>
+<td class="comment-1" rowspan="1">Store the new target of the gauge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd29"></span>CD29</td>
+<td class="instruction">LD IX,$A59D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="A59D.html">Gauges</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd2d"></span>CD2D</td>
+<td class="instruction">CALL <a href="A5A5.html">UpdateGauge</a></td>
+<td class="comment-1" rowspan="1">Move the bar of the gauge one step towards its target.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd30"></span>CD30</td>
+<td class="instruction">JR <a href="CD11.html#cd3f">RunFrame_Spawn</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cd3f">RunFrame_Spawn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Burst</td>
+<td class="address-2"><span id="cd32"></span>CD32</td>
+<td class="instruction">LD A,($B540)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the player entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd35"></span>CD35</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrease it by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd36"></span>CD36</td>
+<td class="instruction">JR NZ,<a href="CD11.html#cd3f">RunFrame_Spawn</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cd3f">RunFrame_Spawn</a> if it is not of type 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd38"></span>CD38</td>
+<td class="instruction">LD IX,$B540</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="B540.html">Entities</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd3c"></span>CD3C</td>
+<td class="instruction">CALL <a href="9924.html">StartBurst</a></td>
+<td class="comment-1" rowspan="1">Burst the player.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cd3f"></span>
+<div class="comments">
+<div class="paragraph">
+Update the points where creatures appear, on every fourth frame.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Spawn</td>
+<td class="address-2"><span id="cd3f"></span>CD3F</td>
+<td class="instruction">LD A,($A2DD)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd42"></span>CD42</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Use bits 0-1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd44"></span>CD44</td>
+<td class="instruction">CALL Z,<a href="9748.html">UpdateSpawnPoints</a></td>
+<td class="comment-1" rowspan="1">Update the spawn points if this is a fourth frame.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cd47"></span>
+<div class="comments">
+<div class="paragraph">
+Control the player, if it is still an entity of type 01. Animate it, and update the direction gauge if the heading has changed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Player</td>
+<td class="address-1"><span id="cd47"></span>CD47</td>
+<td class="instruction">LD IX,$B540</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="B540.html">Entities</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd4b"></span>CD4B</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the player entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd4e"></span>CD4E</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrease it by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd4f"></span>CD4F</td>
+<td class="instruction">JP NZ,<a href="CD11.html#ce00">RunFrame_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#ce00">RunFrame_Draw</a> if the player is not of type 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd52"></span>CD52</td>
+<td class="instruction">CALL <a href="AB0F.html">ControlPlayer</a></td>
+<td class="comment-1" rowspan="1">Read the controls and turn or speed up the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd55"></span>CD55</td>
+<td class="instruction">CALL <a href="AF48.html">AnimateEntity</a></td>
+<td class="comment-1" rowspan="1">Animate the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd58"></span>CD58</td>
+<td class="instruction">LD A,(IX+$11)</td>
+<td class="comment-1" rowspan="1">Fetch the heading of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd5b"></span>CD5B</td>
+<td class="instruction">XOR (IX+$22)</td>
+<td class="comment-1" rowspan="1">Find which bits of it have changed since the heading that is shown on the gauge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd5e"></span>CD5E</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Keep the bits that give the direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd60"></span>CD60</td>
+<td class="instruction">CALL NZ,<a href="CCC5.html">UpdateDirectionGauge</a></td>
+<td class="comment-1" rowspan="1">Update the direction gauge if the heading has changed.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cd63"></span>
+<div class="comments">
+<div class="paragraph">
+Count the frames of the counter at <a href="5D00.html">JumpCounter</a>, if it is running. Purpose of its values from 01 to 05 is not yet known; the player is held still for them, and the values from F0 on are the player landing.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Counter</td>
+<td class="address-1"><span id="cd63"></span>CD63</td>
+<td class="instruction">LD A,($5D00)</td>
+<td class="comment-1" rowspan="1">Fetch the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd66"></span>CD66</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd67"></span>CD67</td>
+<td class="instruction">JR Z,<a href="CD11.html#cd82">RunFrame_Ground</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cd82">RunFrame_Ground</a> if it is not running.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd69"></span>CD69</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one to the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd6a"></span>CD6A</td>
+<td class="instruction">LD ($5D00),A</td>
+<td class="comment-1" rowspan="1">Store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd6d"></span>CD6D</td>
+<td class="instruction">CP $F0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD11.html#cdcc">RunFrame_Fall</a> if the player is landing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd6f"></span>CD6F</td>
+<td class="instruction">JR NC,<a href="CD11.html#cdcc">RunFrame_Fall</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd71"></span>CD71</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CCD2.html">SettlePlayer</a> to settle the player and set the landing frame if it is 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd73"></span>CD73</td>
+<td class="instruction">JP Z,<a href="CCD2.html">SettlePlayer</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd76"></span>CD76</td>
+<td class="instruction">SUB $05</td>
+<td class="comment-1" rowspan="1">Take away 05.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd78"></span>CD78</td>
+<td class="instruction">JR NZ,<a href="CCD2.html#cd0b">SettlePlayer_Continue</a></td>
+<td class="comment-1" rowspan="1">Settle the player if the counter is not at 05.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd7a"></span>CD7A</td>
+<td class="instruction">LD ($5D00),A</td>
+<td class="comment-1" rowspan="1">Stop the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd7d"></span>CD7D</td>
+<td class="instruction">CALL <a href="9F40.html">PlayShortRisingSweep</a></td>
+<td class="comment-1" rowspan="1">Play the short rising sweep.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd80"></span>CD80</td>
+<td class="instruction">JR <a href="CD11.html#cd8d">RunFrame_Update</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cd8d">RunFrame_Update</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cd82"></span>
+<div class="comments">
+<div class="paragraph">
+Move the player. If it is on the ground then it is not animated.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Ground</td>
+<td class="address-2"><span id="cd82"></span>CD82</td>
+<td class="instruction">BIT 7,(IX+$1E)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD11.html#cd8d">RunFrame_Update</a> if it is not on the ground.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd86"></span>CD86</td>
+<td class="instruction">JR Z,<a href="CD11.html#cd8d">RunFrame_Update</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd88"></span>CD88</td>
+<td class="instruction">CALL <a href="D037.html">MoveEntity</a></td>
+<td class="comment-1" rowspan="1">Move the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd8b"></span>CD8B</td>
+<td class="instruction">JR <a href="CD11.html#cdf8">RunFrame_Entities</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cdf8">RunFrame_Entities</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Update</td>
+<td class="address-2"><span id="cd8d"></span>CD8D</td>
+<td class="instruction">LD E,(IX+$1F)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the player above the ground before it moves.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd90"></span>CD90</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash it on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd91"></span>CD91</td>
+<td class="instruction">CALL <a href="D037.html">MoveEntity</a></td>
+<td class="comment-1" rowspan="1">Move the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd94"></span>CD94</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the old height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd95"></span>CD95</td>
+<td class="instruction">LD A,(IX+$1E)</td>
+<td class="comment-1" rowspan="1">Read field 1E of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd98"></span>CD98</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Use bits 0-5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd9a"></span>CD9A</td>
+<td class="instruction">JR NZ,<a href="CD11.html#cdf8">RunFrame_Entities</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cdf8">RunFrame_Entities</a> if any of them are set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd9c"></span>CD9C</td>
+<td class="instruction">LD A,(IX+$1F)</td>
+<td class="comment-1" rowspan="1">Fetch the new height of the player above the ground.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd9f"></span>CD9F</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda0"></span>CDA0</td>
+<td class="instruction">JR Z,<a href="CD11.html#cdc2">RunFrame_Still</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cdc2">RunFrame_Still</a> if the player is on the ground.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cda2"></span>
+<div class="comments">
+<div class="paragraph">
+Choose the frame of the player from its height above the ground.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda2"></span>CDA2</td>
+<td class="instruction">LD B,$02</td>
+<td class="comment-1" rowspan="1">Use frame 02 if the player is lower than it was.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda4"></span>CDA4</td>
+<td class="instruction">CP E</td>
+<td class="comment-1" rowspan="1">Compare the new height with the old height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda5"></span>CDA5</td>
+<td class="instruction">JR C,<a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a> if it is lower.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda7"></span>CDA7</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Use frame 03 if the height is less than 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda9"></span>CDA9</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a> if the height is below 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdab"></span>CDAB</td>
+<td class="instruction">JR C,<a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdad"></span>CDAD</td>
+<td class="instruction">LD B,$01</td>
+<td class="comment-1" rowspan="1">Use frame 01 if the height is less than 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdaf"></span>CDAF</td>
+<td class="instruction">CP $0C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a> if the height is below 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb1"></span>CDB1</td>
+<td class="instruction">JR C,<a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb3"></span>CDB3</td>
+<td class="instruction">INC B</td>
+<td class="comment-1" rowspan="1">Use frame 02 if the height is less than 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb4"></span>CDB4</td>
+<td class="instruction">CP $10</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a> if the height is below 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb6"></span>CDB6</td>
+<td class="instruction">JR C,<a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb8"></span>CDB8</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">Use frame 04 if the height is less than 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdba"></span>CDBA</td>
+<td class="instruction">CP $16</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a> if the height is below 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdbc"></span>CDBC</td>
+<td class="instruction">JR C,<a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdbe"></span>CDBE</td>
+<td class="instruction">LD B,$02</td>
+<td class="comment-1" rowspan="1">Otherwise use frame 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc0"></span>CDC0</td>
+<td class="instruction">JR <a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cdc2"></span>
+<div class="comments">
+<div class="paragraph">
+The player is on the ground. If it was in the air a moment ago it has just landed, so start the counter at F0.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Still</td>
+<td class="address-2"><span id="cdc2"></span>CDC2</td>
+<td class="instruction">OR E</td>
+<td class="comment-1" rowspan="1">Combine the old height with the new height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc3"></span>CDC3</td>
+<td class="instruction">JR Z,<a href="CD11.html#cdf8">RunFrame_Entities</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cdf8">RunFrame_Entities</a> if the player was already on the ground.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc5"></span>CDC5</td>
+<td class="instruction">LD A,$F0</td>
+<td class="comment-1" rowspan="1">Start the counter for the player landing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc7"></span>CDC7</td>
+<td class="instruction">LD ($5D00),A</td>
+<td class="comment-1" rowspan="1">Store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdca"></span>CDCA</td>
+<td class="instruction">JR <a href="CD11.html#cdcf">RunFrame_Frame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cdcf">RunFrame_Frame</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Fall</td>
+<td class="address-2"><span id="cdcc"></span>CDCC</td>
+<td class="instruction">CALL <a href="D037.html">MoveEntity</a></td>
+<td class="comment-1" rowspan="1">Move the player.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cdcf"></span>
+<div class="comments">
+<div class="paragraph">
+Choose the frame of the player from the counter of the landing, which is frame 01 until the counter reaches F2 and then frame 03. The counter is stopped after F3.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Frame</td>
+<td class="address-2"><span id="cdcf"></span>CDCF</td>
+<td class="instruction">LD B,$01</td>
+<td class="comment-1" rowspan="1">Use frame 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd1"></span>CDD1</td>
+<td class="instruction">LD A,($5D00)</td>
+<td class="comment-1" rowspan="1">Fetch the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd4"></span>CDD4</td>
+<td class="instruction">CP $F2</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a> if it is lower.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd6"></span>CDD6</td>
+<td class="instruction">JR C,<a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd8"></span>CDD8</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Use frame 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdda"></span>CDDA</td>
+<td class="instruction">SUB $F3</td>
+<td class="comment-1" rowspan="1">Take away F3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cddc"></span>CDDC</td>
+<td class="instruction">JR NZ,<a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a> if the landing has not finished.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdde"></span>CDDE</td>
+<td class="instruction">LD ($5D00),A</td>
+<td class="comment-1" rowspan="1">Stop the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde1"></span>CDE1</td>
+<td class="instruction">JR <a href="CD11.html#cde5">RunFrame_SetFrame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cde5">RunFrame_SetFrame</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cde3"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="CCD2.html">SettlePlayer</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Land</td>
+<td class="address-2"><span id="cde3"></span>CDE3</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Use frame 03.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cde5"></span>
+<div class="comments">
+<div class="paragraph">
+Show the frame of the player, and set the size of its sprite, if it has changed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_SetFrame</td>
+<td class="address-2"><span id="cde5"></span>CDE5</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Read field 01 of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde8"></span>CDE8</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde9"></span>CDE9</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep the number of the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdeb"></span>CDEB</td>
+<td class="instruction">CP B</td>
+<td class="comment-1" rowspan="1">Compare it with the new frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdec"></span>CDEC</td>
+<td class="instruction">JR Z,<a href="CD11.html#cdf8">RunFrame_Entities</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#cdf8">RunFrame_Entities</a> if it has not changed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdee"></span>CDEE</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the flags in field 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdef"></span>CDEF</td>
+<td class="instruction">AND %11100000</td>
+<td class="comment-1" rowspan="1">Keep the flags in bits 5-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf1"></span>CDF1</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">Combine them with the new frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf2"></span>CDF2</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Store them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf5"></span>CDF5</td>
+<td class="instruction">CALL <a href="AF21.html">SetEntitySize</a></td>
+<td class="comment-1" rowspan="1">Set the size of the sprite.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cdf8"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="CCD2.html">SettlePlayer</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Entities</td>
+<td class="address-2"><span id="cdf8"></span>CDF8</td>
+<td class="instruction">LD A,($5CDE)</td>
+<td class="comment-1" rowspan="1">Read the byte at <a href="5CDE.html">GameVariable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdfb"></span>CDFB</td>
+<td class="instruction">AND %00010000</td>
+<td class="comment-1" rowspan="1">Keep bit 4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdfd"></span>CDFD</td>
+<td class="instruction">CALL NZ,<a href="A630.html">CreatePuff</a></td>
+<td class="comment-1" rowspan="1">Create an entity of type 05 if the bit is set.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ce00"></span>
+<div class="comments">
+<div class="paragraph">
+Work out where the player is on the screen and scroll the view to follow it. Then update the entities and the extra records, build and sort the draw list, and draw it. If SPACE or CAPS SHIFT is pressed the game is paused here.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Draw</td>
+<td class="address-2"><span id="ce00"></span>CE00</td>
+<td class="instruction">CALL <a href="ADF9.html">ProjectPlayerEntity</a></td>
+<td class="comment-1" rowspan="1">Project the player on to the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce03"></span>CE03</td>
+<td class="instruction">LD IX,$B540</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="B540.html">Entities</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce07"></span>CE07</td>
+<td class="instruction">CALL <a href="CC71.html">ScrollView</a></td>
+<td class="comment-1" rowspan="1">Scroll the view to follow the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce0a"></span>CE0A</td>
+<td class="instruction">CALL <a href="CEE2.html">UpdateEntities</a></td>
+<td class="comment-1" rowspan="1">Update the other entities.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce0d"></span>CE0D</td>
+<td class="instruction">CALL <a href="CE84.html">UpdateExtraRecords</a></td>
+<td class="comment-1" rowspan="1">Update the extra records.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce10"></span>CE10</td>
+<td class="instruction">CALL <a href="AC40.html">BuildDrawList</a></td>
+<td class="comment-1" rowspan="1">Build the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce13"></span>CE13</td>
+<td class="instruction">CALL <a href="9F99.html">SortDrawList</a></td>
+<td class="comment-1" rowspan="1">Sort the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce16"></span>CE16</td>
+<td class="instruction">CALL <a href="B06E.html">DrawItems</a></td>
+<td class="comment-1" rowspan="1">Draw the items of the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce19"></span>CE19</td>
+<td class="instruction">CALL <a href="A837.html">PauseGame</a></td>
+<td class="comment-1" rowspan="1">Pause the game if a key is pressed.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ce1c"></span>
+<div class="comments">
+<div class="paragraph">
+Print the message that is scrolling in or out, if there is one. It is printed in two parts, one of which is chosen by the state of the message.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1c"></span>CE1C</td>
+<td class="instruction">LD A,($CE59)</td>
+<td class="comment-1" rowspan="1">Fetch the state of the message.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1f"></span>CE1F</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce20"></span>CE20</td>
+<td class="instruction">JR Z,<a href="CD11.html#ce39">RunFrame_Message</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#ce39">RunFrame_Message</a> if there is no message.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce22"></span>CE22</td>
+<td class="instruction">LD DE,$CE5A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="CE5A.html">ExitClosedMessages</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce25"></span>CE25</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrease the state by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce26"></span>CE26</td>
+<td class="instruction">JR Z,<a href="CD11.html#ce2b">RunFrame_Skip</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#ce2b">RunFrame_Skip</a> if it is the first message.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce28"></span>CE28</td>
+<td class="instruction">LD DE,$CE72</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="CE5A.html#ce72">ExitClosedMessages_Second</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Skip</td>
+<td class="address-2"><span id="ce2b"></span>CE2B</td>
+<td class="instruction">CALL <a href="A923.html">PrintText</a></td>
+<td class="comment-1" rowspan="1">Print the first part of the message.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce2e"></span>CE2E</td>
+<td class="instruction">CALL <a href="A923.html">PrintText</a></td>
+<td class="comment-1" rowspan="1">Print the second part of the message.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce31"></span>CE31</td>
+<td class="instruction">LD A,($CE59)</td>
+<td class="comment-1" rowspan="1">Fetch the state of the message.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce34"></span>CE34</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Halve it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce36"></span>CE36</td>
+<td class="instruction">LD ($CE59),A</td>
+<td class="comment-1" rowspan="1">Store it.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Message</td>
+<td class="address-2"><span id="ce39"></span>CE39</td>
+<td class="instruction">CALL <a href="E4CC.html">UpdateScreen</a></td>
+<td class="comment-1" rowspan="1">Copy the screen buffer to the screen.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ce3c"></span>
+<div class="comments">
+<div class="paragraph">
+Check what has happened to the player.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce3c"></span>CE3C</td>
+<td class="instruction">LD A,($B540)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the player entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce3f"></span>CE3F</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce40"></span>CE40</td>
+<td class="instruction">JR NZ,<a href="CD11.html#ce4e">RunFrame_Dead</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD11.html#ce4e">RunFrame_Dead</a> if the player is still there.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce42"></span>CE42</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">The player has gone, so set <span class="register">A</span> to 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce43"></span>CE43</td>
+<td class="instruction">LD ($AA5A),A</td>
+<td class="comment-1" rowspan="1">Store it to show that a life has been lost.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce46"></span>CE46</td>
+<td class="instruction">LD A,($A5A0)</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the target of the first gauge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce49"></span>CE49</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce4a"></span>CE4A</td>
+<td class="instruction">CALL Z,<a href="A51C.html">ScrollTimeOutMessage</a></td>
+<td class="comment-1" rowspan="1">Show the time out message if the gauge is empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce4d"></span>CE4D</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Dead</td>
+<td class="address-2"><span id="ce4e"></span>CE4E</td>
+<td class="instruction">LD A,($B542)</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the x coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce51"></span>CE51</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce52"></span>CE52</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if it is zero, which is when the player has left the level.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce53"></span>CE53</td>
+<td class="instruction">CALL <a href="AD9E.html">RestoreItemRows</a></td>
+<td class="comment-1" rowspan="1">Put the rows of the screen buffer back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce56"></span>CE56</td>
+<td class="instruction">JP <a href="CD11.html#cd11">RunFrame</a></td>
+<td class="comment-1" rowspan="1">Run the next frame.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CCD2.html">CCD2</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cd11">Map</a></td>
+<td class="next">
+Next: <a href="CE59.html">CE59</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/52497.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

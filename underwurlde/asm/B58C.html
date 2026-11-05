@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Underwurlde: Routine at B58C</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../underwurlde.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B57A.html">B57A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#46476">Map</a></td>
+<td class="next">
+Next: <a href="B6D3.html">B6D3</a>
+</td>
+</tr>
+</table>
+<div class="description">B58C: Move Thrown Weapon</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="EA7D.html">Handle_Fire</a> and <a href="EA9C.html">Handle_Projectile</a>.
+</div>
+<div class="paragraph">
+Moves a weapon in flight. The projectiles (see <a href="EA9C.html">Handle_Projectile</a>) and the fire (see <a href="EA7D.html">Handle_Fire</a>) are moved by this routine too.
+</div>
+<div class="paragraph">
+The object is removed if Sabreman is not in its room, or if bit 0 of byte 07 is set, which <a href="B6F4.html">Check_Weapon_Record_Hit</a> does when the weapon hits a creature. If it touches a decoration (see <a href="B43E.html">Check_Decoration_Contact</a>) it bursts into dust (see <a href="DEDA.html">Burst_Into_Dust</a>) unless it lands on top, when it bounces.
+</div>
+<div class="paragraph">
+The y velocity increases by four each time, up to 78. The x and y positions are moved by the velocities (multiplied by sixteen, with the fractions in bytes 0A and 0D). The weapon bursts when it hits a wall, bounces off the floor (making a puff of dust) and off the ceiling, and is removed when it leaves the room through a gap. While it is in a gap the contact flags of the weapon and the flags of the room are changed, as for a creature (see <a href="B079.html#45681">Handle_Flying_Creature_Set_Gap_Flags</a>).
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon</td>
+<td class="address-2"><span id="46476"></span>B58C</td>
+<td class="instruction">LD A,($8F1C)</td>
+<td class="comment-1" rowspan="1">Fetch the room x of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46479"></span>B58F</td>
+<td class="instruction">CP (IX+$02)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> if the object is in a different room x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46482"></span>B592</td>
+<td class="instruction">JP NZ,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46485"></span>B595</td>
+<td class="instruction">LD A,($8F1E)</td>
+<td class="comment-1" rowspan="1">Fetch the room y of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46488"></span>B598</td>
+<td class="instruction">CP (IX+$04)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> if the object is in a different room y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46491"></span>B59B</td>
+<td class="instruction">JP NZ,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46494"></span>B59E</td>
+<td class="instruction">BIT 0,(IX+$07)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B6D3.html">Remove_Thrown_Weapon</a> if the object has been marked for removal.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46498"></span>B5A2</td>
+<td class="instruction">JP NZ,<a href="B6D3.html">Remove_Thrown_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46501"></span>B5A5</td>
+<td class="instruction">CALL <a href="B43E.html">Check_Decoration_Contact</a></td>
+<td class="comment-1" rowspan="1">Check for contact with a decoration.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46504"></span>B5A8</td>
+<td class="instruction">BIT 2,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46533">Move_Thrown_Weapon_Move</a> if the object does not touch one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46506"></span>B5AA</td>
+<td class="instruction">JR Z,<a href="B58C.html#46533">Move_Thrown_Weapon_Move</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46508"></span>B5AC</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Copy the result to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46509"></span>B5AD</td>
+<td class="instruction">AND %00000010</td>
+<td class="comment-1" rowspan="1">Keep only bit 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46511"></span>B5AF</td>
+<td class="instruction">JP Z,<a href="DEDA.html">Burst_Into_Dust</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="DEDA.html">Burst_Into_Dust</a> if the object is not on top of the decoration, so that it bursts into dust.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46514"></span>B5B2</td>
+<td class="instruction">LD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46517"></span>B5B5</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert it, to bounce.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46518"></span>B5B6</td>
+<td class="instruction">LD (IX+$09),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46521"></span>B5B9</td>
+<td class="instruction">LD A,$A0</td>
+<td class="comment-1" rowspan="1">Start from the level of the floor (A0).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46523"></span>B5BB</td>
+<td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="1">Subtract <span class="register">B</span> to get the y position of the top of the decoration.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46524"></span>B5BC</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Store the y position, so that the object is on top.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46527"></span>B5BF</td>
+<td class="instruction">CALL <a href="DEB8.html">Make_Dust_Puff</a></td>
+<td class="comment-1" rowspan="1">Make a puff of dust.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46530"></span>B5C2</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46533"></span>
+<div class="comments">
+<div class="paragraph">
+Move the object. First the y velocity is increased by four, up to a limit of 78.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Move</td>
+<td class="address-2"><span id="46533"></span>B5C5</td>
+<td class="instruction">CALL <a href="98CC.html">Read_World_Map</a></td>
+<td class="comment-1" rowspan="1">Read the world map entry of the room that the object is in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46536"></span>B5C8</td>
+<td class="instruction">LD A,(IX+$0B)</td>
+<td class="comment-1" rowspan="1">Fetch the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46539"></span>B5CB</td>
+<td class="instruction">OR E</td>
+<td class="comment-1" rowspan="1">Combine them with the flags of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46540"></span>B5CC</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Store the result in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46541"></span>B5CD</td>
+<td class="instruction">LD (IX+$0B),$00</td>
+<td class="comment-1" rowspan="1">Clear the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46545"></span>B5D1</td>
+<td class="instruction">LD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46548"></span>B5D4</td>
+<td class="instruction">ADD A,$04</td>
+<td class="comment-1" rowspan="1">Add four to the y velocity, as gravity pulls the weapon down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46550"></span>B5D6</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46560">Move_Thrown_Weapon_Store_Y_Velocity</a> if the y velocity is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46552"></span>B5D8</td>
+<td class="instruction">JR NZ,<a href="B58C.html#46560">Move_Thrown_Weapon_Store_Y_Velocity</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46554"></span>B5DA</td>
+<td class="instruction">CP $78</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46560">Move_Thrown_Weapon_Store_Y_Velocity</a> if the y velocity is less than 78.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46556"></span>B5DC</td>
+<td class="instruction">JR C,<a href="B58C.html#46560">Move_Thrown_Weapon_Store_Y_Velocity</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46558"></span>B5DE</td>
+<td class="instruction">LD A,$78</td>
+<td class="comment-1" rowspan="1">Limit the y velocity to 78.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Store_Y_Velocity</td>
+<td class="address-2"><span id="46560"></span>B5E0</td>
+<td class="instruction">LD (IX+$09),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46563"></span>
+<div class="comments">
+<div class="paragraph">
+Add the x velocity, multiplied by sixteen, to the x position and its fraction. <span class="register">A</span> is zero or one to say whether the velocity is positive or negative.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46563"></span>B5E3</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Fetch the x velocity into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46566"></span>B5E6</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Set <span class="register">A</span> to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46567"></span>B5E7</td>
+<td class="instruction">BIT 7,L</td>
+<td class="comment-1" rowspan="1">Test the sign of the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46569"></span>B5E9</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the x velocity (as a word).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46571"></span>B5EB</td>
+<td class="instruction">JR Z,<a href="B58C.html#46576">Move_Thrown_Weapon_Add_X_Velocity</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58C.html#46576">Move_Thrown_Weapon_Add_X_Velocity</a> if the x velocity is positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46573"></span>B5ED</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Set <span class="register">A</span> to one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46574"></span>B5EE</td>
+<td class="instruction">LD H,$FF</td>
+<td class="comment-1" rowspan="1">Set the high byte of the x velocity to FF to extend the sign.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Add_X_Velocity</td>
+<td class="address-2"><span id="46576"></span>B5F0</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="4">Multiply the x velocity by sixteen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46577"></span>B5F1</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46578"></span>B5F2</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46579"></span>B5F3</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46580"></span>B5F4</td>
+<td class="instruction">LD C,(IX+$0A)</td>
+<td class="comment-1" rowspan="1">Fetch the fraction of the x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46583"></span>B5F7</td>
+<td class="instruction">LD B,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46586"></span>B5FA</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46587"></span>B5FB</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46591">Move_Thrown_Weapon_Check_Wrap</a> if the x velocity is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46588"></span>B5FC</td>
+<td class="instruction">JR Z,<a href="B58C.html#46591">Move_Thrown_Weapon_Check_Wrap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46590"></span>B5FE</td>
+<td class="instruction">CCF</td>
+<td class="comment-1" rowspan="1">Invert the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Check_Wrap</td>
+<td class="address-2"><span id="46591"></span>B5FF</td>
+<td class="instruction">JP NC,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> if the x position has wrapped round.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46594"></span>B602</td>
+<td class="instruction">LD (IX+$0A),L</td>
+<td class="comment-1" rowspan="1">Store the new fraction of the x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46597"></span>B605</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Fetch the new x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46598"></span>B606</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46680">Move_Thrown_Weapon_Test_Left_Edge</a> if the x position is less than 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46600"></span>B608</td>
+<td class="instruction">JP Z,<a href="B58C.html#46680">Move_Thrown_Weapon_Test_Left_Edge</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46603"></span>B60B</td>
+<td class="instruction">CP $D8</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46619">Move_Thrown_Weapon_Store_X</a> if the x position is less than D8.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46605"></span>B60D</td>
+<td class="instruction">JR C,<a href="B58C.html#46619">Move_Thrown_Weapon_Store_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46607"></span>B60F</td>
+<td class="instruction">BIT 2,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46710">Move_Thrown_Weapon_Test_Right_Gap</a> if the room has no right wall.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46609"></span>B611</td>
+<td class="instruction">JP Z,<a href="B58C.html#46710">Move_Thrown_Weapon_Test_Right_Gap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46612"></span>B614</td>
+<td class="instruction">LD (IX+$01),$D7</td>
+<td class="comment-1" rowspan="1">Set the x position to D7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46616"></span>B618</td>
+<td class="instruction">JP <a href="DEDA.html">Burst_Into_Dust</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="DEDA.html">Burst_Into_Dust</a>, so that the object bursts into dust against the wall.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Store_X</td>
+<td class="address-2"><span id="46619"></span>B61B</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Store the x position.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46622"></span>
+<div class="comments">
+<div class="paragraph">
+Do the same with the y velocity and the y position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46622"></span>B61E</td>
+<td class="instruction">LD L,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46625"></span>B621</td>
+<td class="instruction">BIT 7,L</td>
+<td class="comment-1" rowspan="1">Test the sign of the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46627"></span>B623</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the y velocity (as a word).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46629"></span>B625</td>
+<td class="instruction">JR Z,<a href="B58C.html#46633">Move_Thrown_Weapon_Add_Y_Velocity</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58C.html#46633">Move_Thrown_Weapon_Add_Y_Velocity</a> if the y velocity is positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46631"></span>B627</td>
+<td class="instruction">LD H,$FF</td>
+<td class="comment-1" rowspan="1">Set the high byte of the y velocity to FF to extend the sign.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Add_Y_Velocity</td>
+<td class="address-2"><span id="46633"></span>B629</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="4">Multiply the y velocity by sixteen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46634"></span>B62A</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46635"></span>B62B</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46636"></span>B62C</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46637"></span>B62D</td>
+<td class="instruction">LD C,(IX+$0D)</td>
+<td class="comment-1" rowspan="1">Fetch the fraction of the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46640"></span>B630</td>
+<td class="instruction">LD B,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46643"></span>B633</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46644"></span>B634</td>
+<td class="instruction">LD (IX+$0D),L</td>
+<td class="comment-1" rowspan="1">Store the new fraction of the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46647"></span>B637</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Fetch the new y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46648"></span>B638</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46741">Move_Thrown_Weapon_Test_Top_Edge</a> if the y position is less than 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46650"></span>B63A</td>
+<td class="instruction">JP Z,<a href="B58C.html#46741">Move_Thrown_Weapon_Test_Top_Edge</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46653"></span>B63D</td>
+<td class="instruction">CP $9F</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a> if the y position is less than 9F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46655"></span>B63F</td>
+<td class="instruction">JR C,<a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46657"></span>B641</td>
+<td class="instruction">BIT 4,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46776">Move_Thrown_Weapon_Test_Bottom_Gap</a> if the room has no floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46659"></span>B643</td>
+<td class="instruction">JP Z,<a href="B58C.html#46776">Move_Thrown_Weapon_Test_Bottom_Gap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46662"></span>B646</td>
+<td class="instruction">LD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46665"></span>B649</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert it, to bounce off the floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46666"></span>B64A</td>
+<td class="instruction">LD (IX+$09),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46669"></span>B64D</td>
+<td class="instruction">CALL <a href="DEB8.html">Make_Dust_Puff</a></td>
+<td class="comment-1" rowspan="1">Make a puff of dust.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46672"></span>B650</td>
+<td class="instruction">LD A,$9F</td>
+<td class="comment-1" rowspan="1">Set the y position to 9F.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Store_Y</td>
+<td class="address-2"><span id="46674"></span>B652</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Store the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46677"></span>B655</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Test_Left_Edge</td>
+<td class="address-2"><span id="46680"></span>B658</td>
+<td class="instruction">CP $18</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46619">Move_Thrown_Weapon_Store_X</a> if the x position is 18 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46682"></span>B65A</td>
+<td class="instruction">JP NC,<a href="B58C.html#46619">Move_Thrown_Weapon_Store_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46685"></span>B65D</td>
+<td class="instruction">BIT 6,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46696">Move_Thrown_Weapon_Test_Left_Gap</a> if the room has no left wall.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46687"></span>B65F</td>
+<td class="instruction">JR Z,<a href="B58C.html#46696">Move_Thrown_Weapon_Test_Left_Gap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46689"></span>B661</td>
+<td class="instruction">LD (IX+$01),$18</td>
+<td class="comment-1" rowspan="1">Set the x position to 18.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46693"></span>B665</td>
+<td class="instruction">JP <a href="DEDA.html">Burst_Into_Dust</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="DEDA.html">Burst_Into_Dust</a>, so that the object bursts into dust against the wall.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Test_Left_Gap</td>
+<td class="address-2"><span id="46696"></span>B668</td>
+<td class="instruction">CP $08</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46724">Move_Thrown_Weapon_Set_Gap_Flags</a> if the x position is 08 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46698"></span>B66A</td>
+<td class="instruction">JR NC,<a href="B58C.html#46724">Move_Thrown_Weapon_Set_Gap_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46700"></span>B66C</td>
+<td class="instruction">BIT 0,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> if the object has not been drawn yet, to remove it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46704"></span>B670</td>
+<td class="instruction">JP NZ,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46707"></span>B673</td>
+<td class="instruction">JP <a href="B6D3.html">Remove_Thrown_Weapon</a></td>
+<td class="comment-1" rowspan="1">Remove the object and erase it.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Test_Right_Gap</td>
+<td class="address-2"><span id="46710"></span>B676</td>
+<td class="instruction">CP $F0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46724">Move_Thrown_Weapon_Set_Gap_Flags</a> if the x position is less than F0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46712"></span>B678</td>
+<td class="instruction">JR C,<a href="B58C.html#46724">Move_Thrown_Weapon_Set_Gap_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46714"></span>B67A</td>
+<td class="instruction">BIT 0,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> if the object has not been drawn yet, to remove it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46718"></span>B67E</td>
+<td class="instruction">JP NZ,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46721"></span>B681</td>
+<td class="instruction">JP <a href="B6D3.html">Remove_Thrown_Weapon</a></td>
+<td class="comment-1" rowspan="1">Remove the object and erase it.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Set_Gap_Flags</td>
+<td class="address-2"><span id="46724"></span>B684</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Save the x position in <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46725"></span>B685</td>
+<td class="instruction">LD A,(IX+$0B)</td>
+<td class="comment-1" rowspan="1">Fetch the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46728"></span>B688</td>
+<td class="instruction">OR %00010001</td>
+<td class="comment-1" rowspan="1">Set bits 0 and 4, which makes the ceiling and the floor seem to be present.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46730"></span>B68A</td>
+<td class="instruction">LD (IX+$0B),A</td>
+<td class="comment-1" rowspan="1">Store the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46733"></span>B68D</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Copy the flags of the room to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46734"></span>B68E</td>
+<td class="instruction">OR %00010001</td>
+<td class="comment-1" rowspan="1">Set bits 0 and 4 too.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46736"></span>B690</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Store them in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46737"></span>B691</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Restore the x position from <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46738"></span>B692</td>
+<td class="instruction">JP <a href="B58C.html#46619">Move_Thrown_Weapon_Store_X</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58C.html#46619">Move_Thrown_Weapon_Store_X</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Test_Top_Edge</td>
+<td class="address-2"><span id="46741"></span>B695</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a> if the y position is 40 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46743"></span>B697</td>
+<td class="instruction">JR NC,<a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46745"></span>B699</td>
+<td class="instruction">BIT 0,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46762">Move_Thrown_Weapon_Test_Top_Gap</a> if the room has no ceiling.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46747"></span>B69B</td>
+<td class="instruction">JP Z,<a href="B58C.html#46762">Move_Thrown_Weapon_Test_Top_Gap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46750"></span>B69E</td>
+<td class="instruction">LD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46753"></span>B6A1</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert it, to bounce off the ceiling.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46754"></span>B6A2</td>
+<td class="instruction">LD (IX+$09),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46757"></span>B6A5</td>
+<td class="instruction">LD A,$40</td>
+<td class="comment-1" rowspan="1">Set the y position to 40.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46759"></span>B6A7</td>
+<td class="instruction">JP <a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Test_Top_Gap</td>
+<td class="address-2"><span id="46762"></span>B6AA</td>
+<td class="instruction">CP $20</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46790">Move_Thrown_Weapon_Set_Vertical_Gap_Flags</a> if the y position is 20 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46764"></span>B6AC</td>
+<td class="instruction">JR NC,<a href="B58C.html#46790">Move_Thrown_Weapon_Set_Vertical_Gap_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46766"></span>B6AE</td>
+<td class="instruction">BIT 0,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> if the object has not been drawn yet, to remove it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46770"></span>B6B2</td>
+<td class="instruction">JP NZ,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46773"></span>B6B5</td>
+<td class="instruction">JP <a href="B6D3.html">Remove_Thrown_Weapon</a></td>
+<td class="comment-1" rowspan="1">Remove the object and erase it.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Test_Bottom_Gap</td>
+<td class="address-2"><span id="46776"></span>B6B8</td>
+<td class="instruction">CP $BF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B58C.html#46790">Move_Thrown_Weapon_Set_Vertical_Gap_Flags</a> if the y position is less than BF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46778"></span>B6BA</td>
+<td class="instruction">JR C,<a href="B58C.html#46790">Move_Thrown_Weapon_Set_Vertical_Gap_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46780"></span>B6BC</td>
+<td class="instruction">BIT 0,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> if the object has not been drawn yet, to remove it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46784"></span>B6C0</td>
+<td class="instruction">JP NZ,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46787"></span>B6C3</td>
+<td class="instruction">JP <a href="B6D3.html">Remove_Thrown_Weapon</a></td>
+<td class="comment-1" rowspan="1">Remove the object and erase it.</td>
+</tr>
+<tr>
+<td class="asm-label">Move_Thrown_Weapon_Set_Vertical_Gap_Flags</td>
+<td class="address-2"><span id="46790"></span>B6C6</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Save the y position in <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46791"></span>B6C7</td>
+<td class="instruction">LD A,(IX+$0B)</td>
+<td class="comment-1" rowspan="1">Fetch the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46794"></span>B6CA</td>
+<td class="instruction">OR %01000100</td>
+<td class="comment-1" rowspan="1">Set bits 2 and 6, which makes the side walls seem to be present.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46796"></span>B6CC</td>
+<td class="instruction">LD (IX+$0B),A</td>
+<td class="comment-1" rowspan="1">Store the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46799"></span>B6CF</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Restore the y position from <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46800"></span>B6D0</td>
+<td class="instruction">JP <a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B58C.html#46674">Move_Thrown_Weapon_Store_Y</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B57A.html">B57A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#46476">Map</a></td>
+<td class="next">
+Next: <a href="B6D3.html">B6D3</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/underwurlde/">Source code</a>.</div>
+<div><a href="../dec/asm/46476.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

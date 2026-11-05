@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at AF25</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF1D.html">AF1D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#af25">Map</a></td>
+<td class="next">
+Next: <a href="AF72.html">AF72</a>
+</td>
+</tr>
+</table>
+<div class="description">AF25: Move Lights</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="9F4D.html">WaitForFrame</a> and <a href="BB86.html">StartGameSequence</a>.
+</div>
+<div class="paragraph">
+Moves the lights that travel around the frame of the screen, and starts a new one when it is asked to. This is done every frame. There are eight lights, each of which is a type, a delay, and the address of the attribute that it is in. The lights follow the cells of the frame, which have an attribute of 48, and a light finishes when it gets back to the top left of the frame.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">01 to start a new light, or 00 to leave the lights as they are</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">F</td>
+<td class="register-desc">The zero flag is set if no lights are in use</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveLights</td>
+<td class="address-2"><span id="af25"></span>AF25</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">There are eight lights.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af27"></span>AF27</td>
+<td class="instruction">LD HL,$AF8E</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="AF8E.html">Lights</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af2a"></span>AF2A</td>
+<td class="instruction">LD DE,$0004</td>
+<td class="comment-1" rowspan="1">Each light is four bytes long.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af2d"></span>AF2D</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to check whether any lights are in use if a new light is not wanted.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af2e"></span>AF2E</td>
+<td class="instruction">JR Z,<a href="AF1D.html">CheckLights</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveLights_FindFree</td>
+<td class="address-2"><span id="af30"></span>AF30</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the light.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af31"></span>AF31</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to start a new light if the slot is not in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af32"></span>AF32</td>
+<td class="instruction">JR Z,<a href="AEED.html">StartLight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af34"></span>AF34</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move on to the next light.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af35"></span>AF35</td>
+<td class="instruction">DJNZ <a href="AF25.html#af30">MoveLights_FindFree</a></td>
+<td class="comment-1" rowspan="1">Loop back until all of the lights have been tried.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="af37"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="AEED.html">StartLight</a> and <a href="AF1D.html">CheckLights</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveLights_Update</td>
+<td class="address-2"><span id="af37"></span>AF37</td>
+<td class="instruction">LD IX,$AF8E</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the first light.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="af3b"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="AF7A.html">NextLight</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveLights_Light</td>
+<td class="address-2"><span id="af3b"></span>AF3B</td>
+<td class="instruction">LD A,($9617)</td>
+<td class="comment-1" rowspan="1">Fetch the random number...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af3e"></span>AF3E</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af3f"></span>AF3F</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="2">Add a number from the memory refresh register...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af41"></span>AF41</td>
+<td class="instruction">ADD A,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af42"></span>AF42</td>
+<td class="instruction">LD ($9617),A</td>
+<td class="comment-1" rowspan="1">...and store the new random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af45"></span>AF45</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the light.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af48"></span>AF48</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to the next light if it is not in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af49"></span>AF49</td>
+<td class="instruction">JR Z,<a href="AF7A.html">NextLight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af4b"></span>AF4B</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the delay of the light.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af4e"></span>AF4E</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump if it has run out.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af4f"></span>AF4F</td>
+<td class="instruction">JR Z,<a href="AF25.html#af55">MoveLights_NextLight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af51"></span>AF51</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Take one off the delay...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af52"></span>AF52</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveLights_NextLight</td>
+<td class="address-2"><span id="af55"></span>AF55</td>
+<td class="instruction">LD E,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the address of the attribute of the light...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af58"></span>AF58</td>
+<td class="instruction">LD D,(IX+$03)</td>
+<td class="comment-1" rowspan="1">...into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af5b"></span>AF5B</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Clear the flag that says that the light has turned.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af5c"></span>AF5C</td>
+<td class="instruction">LD ($9629),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af5f"></span>AF5F</td>
+<td class="instruction">LD HL,$AF7A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="AF7A.html">NextLight</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af62"></span>AF62</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">...and make the routine return there when it has finished.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af63"></span>AF63</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the light...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af66"></span>AF66</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">...and turn it into the direction that it is heading in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af67"></span>AF67</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af68"></span>AF68</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af69"></span>AF69</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="1">Keep the direction...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af6b"></span>AF6B</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">...and use it as the index into the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af6c"></span>AF6C</td>
+<td class="instruction">LD BC,$AF72</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="AF72.html">LightHandlers</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af6f"></span>AF6F</td>
+<td class="instruction">JP <a href="993C.html#997a">MainLoop_Dispatch_Table</a></td>
+<td class="comment-1" rowspan="1">...and jump to the routine for the direction, using <a href="993C.html#997a">MainLoop_Dispatch_Table</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF1D.html">AF1D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#af25">Map</a></td>
+<td class="next">
+Next: <a href="AF72.html">AF72</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../dec/asm/44837.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

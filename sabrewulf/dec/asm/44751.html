@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -38,14 +41,26 @@ Next: <a href="44783.html">44783</a>
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Handles Sabreman while walking (sprite IDs 16 to 31), but first deals with the delay at the start of each turn. While the delay timer in <a href="38581.html">GameDelayTimer</a> is running, the player is neither drawn nor controlled and the score label of the player is flashed by <a href="44705.html">ScoreLabelFlash</a>. When the delay ends the flash is turned off, the player is drawn and the normal handling at <a href="44783.html">GamePlay_Start</a> starts.
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the player</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">GamePlayEntry</td>
 <td class="address-2"><span id="44751"></span>44751</td>
 <td class="instruction">LD HL,38581</td>
-<td class="comment-1" rowspan="4">If <a href="38581.html">GameDelayTimer</a> is zero, jump to <a href="44783.html">GamePlay_Start</a>.</td>
+<td class="comment-1" rowspan="4">Jump to <a href="44783.html">GamePlay_Start</a> if the start-of-turn delay in <a href="38581.html">GameDelayTimer</a> is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -66,19 +81,19 @@ Next: <a href="44783.html">44783</a>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44758"></span>44758</td>
 <td class="instruction">DEC (HL)</td>
-<td class="comment-1" rowspan="1">Decrement <a href="38581.html">GameDelayTimer</a> by one.</td>
+<td class="comment-1" rowspan="1">Decrease the start-of-turn delay by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44759"></span>44759</td>
 <td class="instruction">JR NZ,<a href="44705.html">ScoreLabelFlash</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="44705.html">ScoreLabelFlash</a> if the delay timer is still active.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="44705.html">ScoreLabelFlash</a> to flash the score label if the start-of-turn delay is still running.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44761"></span>44761</td>
 <td class="instruction">LD A,(38558)</td>
-<td class="comment-1" rowspan="3">If <a href="38558.html">Flag_ActivePlayer</a> says that 2UP is the active player, jump to<a href="44751.html#44778">Game2UP_UnsetFlash</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="44751.html#44778">Game2UP_UnsetFlash</a> if 2UP is the active player (<a href="38558.html">Flag_ActivePlayer</a> is not zero).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -110,19 +125,19 @@ Handle turning off flash for 1UP score label.
 <td class="asm-label">Game1UP_UnsetFlash</td>
 <td class="address-2"><span id="44770"></span>44770</td>
 <td class="instruction">CALL <a href="44705.html#44733">UnsetFlashText</a></td>
-<td class="comment-1" rowspan="1">Call <a href="44705.html#44733">UnsetFlashText</a>.</td>
+<td class="comment-1" rowspan="1">Stop the score label flashing.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44773"></span>44773</td>
 <td class="instruction">CALL <a href="47385.html">DrawEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47385.html">DrawEntity</a>.</td>
+<td class="comment-1" rowspan="1">Draw the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44776"></span>44776</td>
 <td class="instruction">JR <a href="44783.html">GamePlay_Start</a></td>
-<td class="comment-1" rowspan="1">Jump <a href="44783.html">GamePlay_Start</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="44783.html">GamePlay_Start</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -138,13 +153,13 @@ Handle turning off flash for 2UP score label.
 <td class="asm-label">Game2UP_UnsetFlash</td>
 <td class="address-2"><span id="44778"></span>44778</td>
 <td class="instruction">LD HL,216</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=000,216 (position of the 2UP score label).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=000,216 (position of 2UP label).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="44781"></span>44781</td>
 <td class="instruction">JR <a href="44751.html#44770">Game1UP_UnsetFlash</a></td>
-<td class="comment-1" rowspan="1">Jump <a href="44751.html#44770">Game1UP_UnsetFlash</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="44751.html#44770">Game1UP_UnsetFlash</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -152,6 +167,8 @@ Handle turning off flash for 2UP score label.
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/cookie/dec/asm/28744.html">Cookie</a></li>
+<li><a href="/ultimate/jetpac/dec/asm/29618.html">Jetpac</a></li>
+<li><a href="/ultimate/pssst/dec/asm/28090.html">Pssst</a></li>
 </ul>
 </div>
 </div>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,45 @@ Next: <a href="40227.html">40227</a>
 </td>
 </tr>
 </table>
-<div class="description">40134: Print Rooms Visited</div>
+<div class="description">40134: Print Percentage Explored</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="43626.html">GameOver_1UP</a>.
+Used by the routine at <a href="43626.html">GameOver_1UP_Messaging</a>.
+</div>
+<div class="paragraph">
+Works out how much of the jungle the player has explored and prints the result as a percentage on the game over screen.
+</div>
+<div class="paragraph">
+The number of rooms visited (the bits set in the bitmap at <a href="38591.html">VisitedRooms</a>) plus the number of amulet pieces collected (the bits set in the low four bits of <a href="38658.html#38669">38669</a>) is converted into a percentage of 0260 (the 256 rooms plus the four amulet pieces). The result is held as two BCD bytes in <a href="38582.html">Percentage_Hundreds</a> (the hundreds) and <a href="38583.html">PreviousGameOptions</a> (the tens and units) before being printed.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="percentage-before" src="../../images/scr/percentage-before.png" /></td>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">After <a href="40134.html">PrintRoomsVisited</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="percentage-after" src="../../images/scr/percentage-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40134"></span>
+<div class="comments">
+<div class="paragraph">
+Count the number of rooms which have been visited.
 </div>
 </div>
 </td>
@@ -48,319 +83,354 @@ Used by the routine at <a href="43626.html">GameOver_1UP</a>.
 <td class="asm-label">PrintRoomsVisited</td>
 <td class="address-2"><span id="40134"></span>40134</td>
 <td class="instruction">LD DE,0</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0000.</td>
+<td class="comment-1" rowspan="1">Set the count of rooms visited and amulet pieces collected in <span class="register">DE</span> to 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40137"></span>40137</td>
 <td class="instruction">LD BC,2080</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=2080.</td>
+<td class="comment-1" rowspan="1">Set the bit counter in <span class="register">B</span> to 8 and the byte counter in <span class="register">C</span> to 32.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40140"></span>40140</td>
 <td class="instruction">LD HL,38591</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="38591.html">VisitedRooms</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the visited rooms bitmap at <a href="38591.html">VisitedRooms</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_0</td>
+<td class="asm-label">PrintRoomsVisited_CountByte</td>
 <td class="address-2"><span id="40143"></span>40143</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the counters on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40144"></span>40144</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the next byte of the visited rooms bitmap.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40145"></span>40145</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next byte of the bitmap.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_1</td>
+<td class="asm-label">PrintRoomsVisited_CountBit</td>
 <td class="address-2"><span id="40146"></span>40146</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate the bit for the next room into the carry flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40147"></span>40147</td>
-<td class="instruction">JR NC,<a href="40134.html#40150">PrintRoomsVisited_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="40134.html#40150">PrintRoomsVisited_NextBit</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40134.html#40150">PrintRoomsVisited_NextBit</a> if the room has not been visited.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40149"></span>40149</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the room to the count in <span class="register">DE</span>.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_2</td>
+<td class="asm-label">PrintRoomsVisited_NextBit</td>
 <td class="address-2"><span id="40150"></span>40150</td>
-<td class="instruction">DJNZ <a href="40134.html#40146">PrintRoomsVisited_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="40134.html#40146">PrintRoomsVisited_CountBit</a></td>
+<td class="comment-1" rowspan="1">Decrease the bit counter by one and loop back to <a href="40134.html#40146">PrintRoomsVisited_CountBit</a> until all eight rooms in the byte have been checked.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40152"></span>40152</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the counters from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40153"></span>40153</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the byte counter by one and jump back to <a href="40134.html#40143">PrintRoomsVisited_CountByte</a> until all 32 bytes of the bitmap have been counted.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40154"></span>40154</td>
-<td class="instruction">JR NZ,<a href="40134.html#40143">PrintRoomsVisited_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="40134.html#40143">PrintRoomsVisited_CountByte</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40156"></span>
+<div class="comments">
+<div class="paragraph">
+Add the number of amulet pieces which have been collected.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40156"></span>40156</td>
 <td class="instruction">LD A,(38669)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38658.html#38669">38669</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the amulet pieces collected from <a href="38658.html#38669">38669</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40159"></span>40159</td>
 <td class="instruction">LD B,4</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=4.</td>
+<td class="comment-1" rowspan="1">Set the amulet piece counter in <span class="register">B</span> to 4.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_3</td>
+<td class="asm-label">PrintRoomsVisited_CountPiece</td>
 <td class="address-2"><span id="40161"></span>40161</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate the flag for the next amulet piece into the carry flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40162"></span>40162</td>
-<td class="instruction">JR NC,<a href="40134.html#40165">PrintRoomsVisited_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="40134.html#40165">PrintRoomsVisited_NextPiece</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40134.html#40165">PrintRoomsVisited_NextPiece</a> if the amulet piece has not been collected.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40164"></span>40164</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the amulet piece to the count in <span class="register">DE</span>.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_4</td>
+<td class="asm-label">PrintRoomsVisited_NextPiece</td>
 <td class="address-2"><span id="40165"></span>40165</td>
-<td class="instruction">DJNZ <a href="40134.html#40161">PrintRoomsVisited_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="40134.html#40161">PrintRoomsVisited_CountPiece</a></td>
+<td class="comment-1" rowspan="1">Decrease the amulet piece counter by one and loop back to <a href="40134.html#40161">PrintRoomsVisited_CountPiece</a> until all four pieces have been checked.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40167"></span>
+<div class="comments">
+<div class="paragraph">
+Multiply the count by 25206 (65536 * 100 / 0260) by repeated addition. Every time the sum in <span class="register">HL</span> overflows the carry is added to <span class="register">A</span>, which is kept in BCD, so <span class="register">A</span> ends up holding the percentage.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40167"></span>40167</td>
 <td class="instruction">LD BC,25206</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="25162.html#25206">25206</a>.</td>
+<td class="comment-1" rowspan="1">Set the multiplier in <span class="register">BC</span> to 25206.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40170"></span>40170</td>
 <td class="instruction">LD HL,0</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=0000.</td>
+<td class="comment-1" rowspan="1">Clear the running total in <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40173"></span>40173</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear the percentage in <span class="register">A</span>.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_5</td>
+<td class="asm-label">PrintRoomsVisited_Multiply</td>
 <td class="address-2"><span id="40174"></span>40174</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the multiplier to the running total.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40175"></span>40175</td>
 <td class="instruction">ADC A,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add any carry to the percentage.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40177"></span>40177</td>
 <td class="instruction">DAA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Adjust the percentage to be a BCD number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40178"></span>40178</td>
 <td class="instruction">DEC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the count of rooms and amulet pieces by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40179"></span>40179</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the percentage so far on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40180"></span>40180</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump to <a href="40134.html#40187">PrintRoomsVisited_Store</a> if the count has run out.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40181"></span>40181</td>
 <td class="instruction">OR D</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40182"></span>40182</td>
-<td class="instruction">JR Z,<a href="40134.html#40187">PrintRoomsVisited_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="40134.html#40187">PrintRoomsVisited_Store</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40184"></span>40184</td>
 <td class="instruction">POP AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the percentage so far from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40185"></span>40185</td>
-<td class="instruction">JR <a href="40134.html#40174">PrintRoomsVisited_5</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="40134.html#40174">PrintRoomsVisited_5</a>.</td>
+<td class="instruction">JR <a href="40134.html#40174">PrintRoomsVisited_Multiply</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="40134.html#40174">PrintRoomsVisited_Multiply</a> to keep adding.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_6</td>
+<td class="routine-comment" colspan="5">
+<span id="40187"></span>
+<div class="comments">
+<div class="paragraph">
+Round the result up and store the percentage as BCD.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrintRoomsVisited_Store</td>
 <td class="address-2"><span id="40187"></span>40187</td>
 <td class="instruction">POP AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the percentage from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40188"></span>40188</td>
 <td class="instruction">LD BC,40</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the rounding value in <span class="register">BC</span> to 40.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40191"></span>40191</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the rounding value to the running total.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40192"></span>40192</td>
 <td class="instruction">ADC A,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add any carry to the percentage.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40194"></span>40194</td>
 <td class="instruction">DAA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Adjust the percentage to be a BCD number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40195"></span>40195</td>
 <td class="instruction">LD (38583),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the tens and units of the percentage in <a href="38583.html">PreviousGameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40198"></span>40198</td>
 <td class="instruction">LD A,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the hundreds in <span class="register">A</span> to 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40200"></span>40200</td>
 <td class="instruction">ADC A,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the carry flag (the percentage is 256 if it is set).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40202"></span>40202</td>
 <td class="instruction">DAA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Adjust the hundreds to be a BCD number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40203"></span>40203</td>
 <td class="instruction">LD (38582),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the hundreds of the percentage in <a href="38582.html">Percentage_Hundreds</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40206"></span>
+<div class="comments">
+<div class="paragraph">
+Print the percentage, leaving out the hundreds digit if it is zero.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40206"></span>40206</td>
 <td class="instruction">LD HL,18680</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=18680.</td>
+<td class="comment-1" rowspan="1">Set the print position in <span class="register">HL</span> to 18680 in the screen buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40209"></span>40209</td>
 <td class="instruction">LD DE,38582</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="38581.html#38582">38582</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the percentage at <a href="38582.html">Percentage_Hundreds</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40212"></span>40212</td>
 <td class="instruction">LD B,1</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=1.</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to print in <span class="register">B</span> to 1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40214"></span>40214</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump to <a href="40134.html#40222">PrintRoomsVisited_SkipHundreds</a> if the hundreds are zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40215"></span>40215</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40216"></span>40216</td>
-<td class="instruction">JR Z,<a href="40134.html#40222">PrintRoomsVisited_7</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="40134.html#40222">PrintRoomsVisited_SkipHundreds</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40218"></span>40218</td>
 <td class="instruction">INC B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Print both bytes of the percentage.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40219"></span>40219</td>
-<td class="instruction">JP <a href="46540.html#46576">Score_1UP_0</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="46540.html#46576">Score_1UP_0</a>.</td>
+<td class="instruction">JP <a href="46540.html#46576">PrintScore_LowDigit</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="46540.html#46576">PrintScore_LowDigit</a> to print the low digit of the first byte and then the digits of the second byte.</td>
 </tr>
 <tr>
-<td class="asm-label">PrintRoomsVisited_7</td>
+<td class="asm-label">PrintRoomsVisited_SkipHundreds</td>
 <td class="address-2"><span id="40222"></span>40222</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move the print position on past the unused hundreds digit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40223"></span>40223</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the tens and units of the percentage.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40224"></span>40224</td>
 <td class="instruction">JP <a href="46540.html#46564">PrintScore_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="46540.html#46564">PrintScore_Loop</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="46540.html#46564">PrintScore_Loop</a> to print both digits of the byte.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

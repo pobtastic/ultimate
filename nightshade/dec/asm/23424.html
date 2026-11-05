@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at 23424</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="16384.html">16384</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#23424">Map</a></td>
+<td class="next">
+Next: <a href="23728.html">23728</a>
+</td>
+</tr>
+</table>
+<div class="description">23424: Decryption Routine</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The stub that the tape loader runs after loading the game, which arrives scrambled at 24576 (34816 bytes of it). It unscrambles the game in place, moves it down by 512 bytes so that it starts at <a href="24064.html">GameEntry</a>, and jumps there.
+</div>
+<div class="paragraph">
+Each pair of bytes is unscrambled by a single RLD: the low nibble of the first byte of the pair is replaced by the high nibble of the second byte, the high nibble of the second byte by its low nibble, and the low nibble of the second byte by the old low nibble of the first byte.
+</div>
+<div class="paragraph">
+The routine also sets bit 7 of the memory refresh register <span class="register">R</span>. Nothing in the game ever clears that bit, and the game resets the computer if it is clear when the check at <a href="49627.html">BuildRandomTable</a> runs, which defeats any attempt to start the game without going through this stub. The random number generator at <a href="50619.html">RandomNumber</a> also reads <span class="register">R</span>, so that bit keeps those values in the range 128 to 255.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="23424"></span>
+<div class="comments">
+<div class="paragraph">
+Set bit 7 of the memory refresh register for the random number generator.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Decryption</td>
+<td class="address-2"><span id="23424"></span>23424</td>
+<td class="instruction">DI</td>
+<td class="comment-1" rowspan="1">Disable interrupts.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23425"></span>23425</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Fetch the memory refresh register into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23427"></span>23427</td>
+<td class="instruction">OR %10000000</td>
+<td class="comment-1" rowspan="1">Set bit 7. The Z80 leaves that bit as it is written, so <a href="50619.html">RandomNumber</a> always mixes a value from 128 to 255 into the random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23429"></span>23429</td>
+<td class="instruction">LD R,A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> back to the memory refresh register.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="23431"></span>
+<div class="comments">
+<div class="paragraph">
+Unscramble the whole game, a pair of bytes at a time.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23431"></span>23431</td>
+<td class="instruction">LD DE,24576</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE</span> to 24576 the first byte of the first pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23434"></span>23434</td>
+<td class="instruction">LD HL,24577</td>
+<td class="comment-1" rowspan="1">Set <span class="register">HL</span> to 24577 the second byte of the first pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23437"></span>23437</td>
+<td class="instruction">LD BC,17408</td>
+<td class="comment-1" rowspan="1">Set a pair counter in <span class="register">BC</span> to 17408.</td>
+</tr>
+<tr>
+<td class="asm-label">Decryption_Loop</td>
+<td class="address-2"><span id="23440"></span>23440</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23441"></span>23441</td>
+<td class="instruction">RLD</td>
+<td class="comment-1" rowspan="1">Rotate the nibbles of the pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23443"></span>23443</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Write the unscrambled first byte back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23444"></span>23444</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="2">Move <span class="register">DE</span> on to the first byte of the next pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23445"></span>23445</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23446"></span>23446</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move <span class="register">HL</span> on to the second byte of the next pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23447"></span>23447</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23448"></span>23448</td>
+<td class="instruction">DEC BC</td>
+<td class="comment-1" rowspan="1">Decrease the pair counter by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23449"></span>23449</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Jump back to <a href="23424.html#23440">Decryption_Loop</a> until every pair has been unscrambled.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23450"></span>23450</td>
+<td class="instruction">OR C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23451"></span>23451</td>
+<td class="instruction">JR NZ,<a href="23424.html#23440">Decryption_Loop</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="23453"></span>
+<div class="comments">
+<div class="paragraph">
+Move the unscrambled game down so that it starts at <a href="24064.html">GameEntry</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23453"></span>23453</td>
+<td class="instruction">LD HL,24576</td>
+<td class="comment-1" rowspan="4">Move 34816 bytes from 24576 down to <a href="24064.html">GameEntry</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23456"></span>23456</td>
+<td class="instruction">LD DE,24064</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23459"></span>23459</td>
+<td class="instruction">LD BC,34816</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23462"></span>23462</td>
+<td class="instruction">LDIR</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="23464"></span>23464</td>
+<td class="instruction">JP <a href="24064.html">GameEntry</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="24064.html">GameEntry</a> to start the game.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/gunfright/dec/asm/23424.html">Gunfright</a></li>
+<li><a href="/ultimate/lunarjetman/dec/asm/23424.html">Lunar Jetman</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="16384.html">16384</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#23424">Map</a></td>
+<td class="next">
+Next: <a href="23728.html">23728</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../../asm/5B80.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

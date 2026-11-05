@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cyberun: Routine at AD48</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cyberun.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AD46.html">AD46</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ad48">Map</a></td>
+<td class="next">
+Next: <a href="ADBE.html">ADBE</a>
+</td>
+</tr>
+</table>
+<div class="description">AD48: Prepare Draw</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="90EC.html">ProcessObjectFlags</a>, <a href="938D.html">UpdateObject</a> and <a href="AC60.html">UpdateMapObjects</a>.
+</div>
+<div class="paragraph">
+Sets up the drawing of the new sprite of an object. Finds the sprite from its type and state, and its position on the screen (which frees the slot if it is off screen). If the object is exploding (bit 3 of offset 17), the explosion count in the bottom three bits is increased and the slot is freed when it reaches eight; the count is also used as the dissolve step in A302. The attribute of the sprite is taken from offset 0D, which holds two colours; the choice between them depends on bit 0 of the frame counter at <a href="9A64.html">FrameCounter</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Address of the object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrepareDraw</td>
+<td class="address-2"><span id="ad48"></span>AD48</td>
+<td class="instruction">LD ($AD46),IX</td>
+<td class="comment-1" rowspan="1">Update the current object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad4c"></span>AD4C</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad4d"></span>AD4D</td>
+<td class="instruction">LD ($A302),A</td>
+<td class="comment-1" rowspan="1">No dissolve yet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad50"></span>AD50</td>
+<td class="instruction">CALL <a href="ADBE.html">FetchFrameSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="ADBE.html">FetchFrameSprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad53"></span>AD53</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash <span class="register">DE</span> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad54"></span>AD54</td>
+<td class="instruction">CALL <a href="ADD8.html">FindObjectScreenPosition</a></td>
+<td class="comment-1" rowspan="1">Call <a href="ADD8.html">FindObjectScreenPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad57"></span>AD57</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Bring <span class="register">DE</span> back off the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad58"></span>AD58</td>
+<td class="instruction">BIT 3,(IX+$17)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AD48.html#ad84">PrepareDraw_Colour</a> if bit 3 of offset 17 of <span class="register">IX</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad5c"></span>AD5C</td>
+<td class="instruction">JR Z,<a href="AD48.html#ad84">PrepareDraw_Colour</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad5e"></span>AD5E</td>
+<td class="instruction">LD A,(IX+$17)</td>
+<td class="comment-1" rowspan="1">The second set of flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad61"></span>AD61</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad63"></span>AD63</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad64"></span>AD64</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad65"></span>AD65</td>
+<td class="instruction">CP $08</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AD48.html#ad73">PrepareDraw_Attributes</a> if <span class="register">A</span> is not 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad67"></span>AD67</td>
+<td class="instruction">JR NZ,<a href="AD48.html#ad73">PrepareDraw_Attributes</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad69"></span>AD69</td>
+<td class="instruction">LD (IX+$00),$FF</td>
+<td class="comment-1" rowspan="1">Store FF at offset 00 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad6d"></span>AD6D</td>
+<td class="instruction">RES 7,(IX+$10)</td>
+<td class="comment-1" rowspan="1">Reset bit 7 of offset 10 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad71"></span>AD71</td>
+<td class="instruction">JR <a href="AD48.html#ad84">PrepareDraw_Colour</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD48.html#ad84">PrepareDraw_Colour</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">PrepareDraw_Attributes</td>
+<td class="address-2"><span id="ad73"></span>AD73</td>
+<td class="instruction">LD A,(IX+$17)</td>
+<td class="comment-1" rowspan="1">The second set of flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad76"></span>AD76</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in F0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad78"></span>AD78</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad79"></span>AD79</td>
+<td class="instruction">OR %00001000</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad7b"></span>AD7B</td>
+<td class="instruction">LD (IX+$17),A</td>
+<td class="comment-1" rowspan="1">Write the second set of flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad7e"></span>AD7E</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad7f"></span>AD7F</td>
+<td class="instruction">OR %10000000</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad81"></span>AD81</td>
+<td class="instruction">LD ($A302),A</td>
+<td class="comment-1" rowspan="1">The dissolve step of the explosion.</td>
+</tr>
+<tr>
+<td class="asm-label">PrepareDraw_Colour</td>
+<td class="address-2"><span id="ad84"></span>AD84</td>
+<td class="instruction">LD A,(IX+$10)</td>
+<td class="comment-1" rowspan="1">The flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad87"></span>AD87</td>
+<td class="instruction">LD ($5C31),A</td>
+<td class="comment-1" rowspan="1">Update the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad8a"></span>AD8A</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Return if bit 7 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad8c"></span>AD8C</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad8d"></span>AD8D</td>
+<td class="instruction">LD C,(IX+$0D)</td>
+<td class="comment-1" rowspan="1">The attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad90"></span>AD90</td>
+<td class="instruction">LD A,($9A64)</td>
+<td class="comment-1" rowspan="1">The frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad93"></span>AD93</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad95"></span>AD95</td>
+<td class="instruction">JR Z,<a href="AD48.html#ada3">PrepareDraw_Colour2</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD48.html#ada3">PrepareDraw_Colour2</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad97"></span>AD97</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad98"></span>AD98</td>
+<td class="instruction">AND %00001000</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad9a"></span>AD9A</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad9b"></span>AD9B</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad9c"></span>AD9C</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad9d"></span>AD9D</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad9e"></span>AD9E</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ad9f"></span>AD9F</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ada1"></span>ADA1</td>
+<td class="instruction">JR <a href="AD48.html#adb4">PrepareDraw_Attribute</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD48.html#adb4">PrepareDraw_Attribute</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">PrepareDraw_Colour2</td>
+<td class="address-2"><span id="ada3"></span>ADA3</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ada4"></span>ADA4</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 70.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ada6"></span>ADA6</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Shift <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ada8"></span>ADA8</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Shift <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adaa"></span>ADAA</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Shift <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adac"></span>ADAC</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Shift <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adae"></span>ADAE</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adaf"></span>ADAF</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adb0"></span>ADB0</td>
+<td class="instruction">AND %10000000</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adb2"></span>ADB2</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Shift <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label">PrepareDraw_Attribute</td>
+<td class="address-2"><span id="adb4"></span>ADB4</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adb5"></span>ADB5</td>
+<td class="instruction">LD ($AF03),A</td>
+<td class="comment-1" rowspan="1">The attribute of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adb8"></span>ADB8</td>
+<td class="instruction">CALL <a href="A1D9.html">ClipSecondSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A1D9.html">ClipSecondSprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="adbb"></span>ADBB</td>
+<td class="instruction">JP <a href="A247.html">SelectDrawSprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A247.html">SelectDrawSprite</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AD46.html">AD46</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ad48">Map</a></td>
+<td class="next">
+Next: <a href="ADBE.html">ADBE</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/">Source code</a>.</div>
+<div><a href="../dec/asm/44360.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

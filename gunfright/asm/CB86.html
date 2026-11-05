@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at CB86</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CB60.html">CB60</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cb86">Map</a></td>
+<td class="next">
+Next: <a href="CC13.html">CC13</a>
+</td>
+</tr>
+</table>
+<div class="description">CB86: Turn Sheriff</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="C930.html">HandleSheriff</a>.
+</div>
+<div class="paragraph">
+Turns the sheriff to face the way the controls say. Bits 6 and 7 are the heading, and bits 0 to 2 count down a turn. Left and right turn him a quarter when the controls are the keyboard or bit 3 of <a href="A21C.html">Options</a> is clear. Otherwise he turns a quarter at a time towards the direction that is pressed, and bit 2 is set when he faces it.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">The controls</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The address of the sheriff</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">The controls</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cb86"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="CC13.html">SetFacingFlags</a> while a turn is still counting.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff</td>
+<td class="address-2"><span id="cb86"></span>CB86</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading and the time left in a turn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb89"></span>CB89</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the time left in a turn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb8b"></span>CB8B</td>
+<td class="instruction">JR Z,<a href="CB86.html#cb93">TurnSheriff_Choose</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cb93">TurnSheriff_Choose</a> if the sheriff is not turning.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb8d"></span>CB8D</td>
+<td class="instruction">DEC (IX+$06)</td>
+<td class="comment-1" rowspan="1">Count down the time.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb90"></span>CB90</td>
+<td class="instruction">JP <a href="CC13.html">SetFacingFlags</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CC13.html">SetFacingFlags</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cb93"></span>
+<div class="comments">
+<div class="paragraph">
+Use the keyboard unless a joystick is set to give a direction.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Choose</td>
+<td class="address-2"><span id="cb93"></span>CB93</td>
+<td class="instruction">LD HL,$A21C</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A21C.html">Options</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb96"></span>CB96</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A21C.html">Options</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb97"></span>CB97</td>
+<td class="instruction">AND %00000110</td>
+<td class="comment-1" rowspan="1">Keep the bits for the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb99"></span>CB99</td>
+<td class="instruction">JR Z,<a href="CB86.html#cbfd">TurnSheriff_Keyboard</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cbfd">TurnSheriff_Keyboard</a> if the controls are the keyboard.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb9b"></span>CB9B</td>
+<td class="instruction">BIT 3,(HL)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbfd">TurnSheriff_Keyboard</a> if bit 3 of <a href="A21C.html">Options</a> is not set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb9d"></span>CB9D</td>
+<td class="instruction">JR Z,<a href="CB86.html#cbfd">TurnSheriff_Keyboard</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cb9f"></span>CB9F</td>
+<td class="instruction">LD A,($A268)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A268.html">ViewRotation</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cba2"></span>CBA2</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep the lowest bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cba4"></span>CBA4</td>
+<td class="instruction">CALL NZ,<a href="CD23.html">SwapControls</a></td>
+<td class="comment-1" rowspan="1">Call <a href="CD23.html">SwapControls</a> if the view is rotated.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cba7"></span>
+<div class="comments">
+<div class="paragraph">
+Turn towards the direction that is pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cba7"></span>CBA7</td>
+<td class="instruction">BIT 0,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbaf">TurnSheriff_Right</a> if left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cba9"></span>CBA9</td>
+<td class="instruction">JR NZ,<a href="CB86.html#cbaf">TurnSheriff_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbab"></span>CBAB</td>
+<td class="instruction">BIT 2,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbbf">TurnSheriff_Up</a> if up is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbad"></span>CBAD</td>
+<td class="instruction">JR NZ,<a href="CB86.html#cbbf">TurnSheriff_Up</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbaf"></span>
+<div class="comments">
+<div class="paragraph">
+The controls are not for up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Right</td>
+<td class="address-2"><span id="cbaf"></span>CBAF</td>
+<td class="instruction">BIT 1,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbe5">TurnSheriff_ToRight</a> if right is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb1"></span>CBB1</td>
+<td class="instruction">JR NZ,<a href="CB86.html#cbe5">TurnSheriff_ToRight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb3"></span>CBB3</td>
+<td class="instruction">BIT 4,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbec">TurnSheriff_ToDown</a> if down is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb5"></span>CBB5</td>
+<td class="instruction">JR NZ,<a href="CB86.html#cbec">TurnSheriff_ToDown</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb7"></span>CBB7</td>
+<td class="instruction">BIT 0,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbf3">TurnSheriff_ToLeft</a> if left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb9"></span>CBB9</td>
+<td class="instruction">JR NZ,<a href="CB86.html#cbf3">TurnSheriff_ToLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbbb"></span>CBBB</td>
+<td class="instruction">RES 2,E</td>
+<td class="comment-1" rowspan="1">Clear bit 2 of the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbbd"></span>CBBD</td>
+<td class="instruction">JR <a href="CB86.html#cbfd">TurnSheriff_Keyboard</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cbfd">TurnSheriff_Keyboard</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbbf"></span>
+<div class="comments">
+<div class="paragraph">
+The controls are for up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Up</td>
+<td class="address-2"><span id="cbbf"></span>CBBF</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbc2"></span>
+<div class="comments">
+<div class="paragraph">
+How far is the heading from the direction that is wanted?
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Difference</td>
+<td class="address-2"><span id="cbc2"></span>CBC2</td>
+<td class="instruction">AND %11000000</td>
+<td class="comment-1" rowspan="1">Keep only the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbc4"></span>CBC4</td>
+<td class="instruction">RES 2,E</td>
+<td class="comment-1" rowspan="1">Clear bit 2 of the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbc6"></span>CBC6</td>
+<td class="instruction">JR Z,<a href="CB86.html#cbfa">TurnSheriff_Facing</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cbfa">TurnSheriff_Facing</a> if he already faces that way.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbc8"></span>CBC8</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbd7">TurnSheriff_Back</a> if he is a quarter turn away.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbca"></span>CBCA</td>
+<td class="instruction">JR Z,<a href="CB86.html#cbd7">TurnSheriff_Back</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbcc"></span>CBCC</td>
+<td class="instruction">CP $C0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbde">TurnSheriff_Forward</a> if he is three quarter turns away.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbce"></span>CBCE</td>
+<td class="instruction">JR Z,<a href="CB86.html#cbde">TurnSheriff_Forward</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd0"></span>CBD0</td>
+<td class="instruction">LD A,($A218)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A218.html">FirstRandomNumber</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd3"></span>CBD3</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cbde">TurnSheriff_Forward</a> if it is less than 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd5"></span>CBD5</td>
+<td class="instruction">JR C,<a href="CB86.html#cbde">TurnSheriff_Forward</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbd7"></span>
+<div class="comments">
+<div class="paragraph">
+Turn back a quarter.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Back</td>
+<td class="address-2"><span id="cbd7"></span>CBD7</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbda"></span>CBDA</td>
+<td class="instruction">SUB $40</td>
+<td class="comment-1" rowspan="1">Take a quarter turn off it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbdc"></span>CBDC</td>
+<td class="instruction">JR <a href="CB86.html#cc0e">TurnSheriff_Start</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cc0e">TurnSheriff_Start</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbde"></span>
+<div class="comments">
+<div class="paragraph">
+Turn on a quarter.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Forward</td>
+<td class="address-2"><span id="cbde"></span>CBDE</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbe1"></span>CBE1</td>
+<td class="instruction">ADD A,$40</td>
+<td class="comment-1" rowspan="1">Add a quarter turn to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbe3"></span>CBE3</td>
+<td class="instruction">JR <a href="CB86.html#cc0e">TurnSheriff_Start</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cc0e">TurnSheriff_Start</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbe5"></span>
+<div class="comments">
+<div class="paragraph">
+The controls are for right.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_ToRight</td>
+<td class="address-2"><span id="cbe5"></span>CBE5</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbe8"></span>CBE8</td>
+<td class="instruction">SUB $40</td>
+<td class="comment-1" rowspan="1">Take a quarter turn off it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbea"></span>CBEA</td>
+<td class="instruction">JR <a href="CB86.html#cbc2">TurnSheriff_Difference</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cbc2">TurnSheriff_Difference</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbec"></span>
+<div class="comments">
+<div class="paragraph">
+The controls are for down.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_ToDown</td>
+<td class="address-2"><span id="cbec"></span>CBEC</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbef"></span>CBEF</td>
+<td class="instruction">SUB $80</td>
+<td class="comment-1" rowspan="1">Take two quarter turns off it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf1"></span>CBF1</td>
+<td class="instruction">JR <a href="CB86.html#cbc2">TurnSheriff_Difference</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cbc2">TurnSheriff_Difference</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbf3"></span>
+<div class="comments">
+<div class="paragraph">
+The controls are for left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_ToLeft</td>
+<td class="address-2"><span id="cbf3"></span>CBF3</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf6"></span>CBF6</td>
+<td class="instruction">SUB $C0</td>
+<td class="comment-1" rowspan="1">Take three quarter turns off it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf8"></span>CBF8</td>
+<td class="instruction">JR <a href="CB86.html#cbc2">TurnSheriff_Difference</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB86.html#cbc2">TurnSheriff_Difference</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbfa"></span>
+<div class="comments">
+<div class="paragraph">
+The sheriff faces the way he was asked to.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Facing</td>
+<td class="address-2"><span id="cbfa"></span>CBFA</td>
+<td class="instruction">SET 2,E</td>
+<td class="comment-1" rowspan="2">Set bit 2 of the controls and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbfc"></span>CBFC</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cbfd"></span>
+<div class="comments">
+<div class="paragraph">
+Left and right turn the sheriff a quarter.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Keyboard</td>
+<td class="address-2"><span id="cbfd"></span>CBFD</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc00"></span>CC00</td>
+<td class="instruction">BIT 0,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cc08">TurnSheriff_KeyboardRight</a> if left is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc02"></span>CC02</td>
+<td class="instruction">JR Z,<a href="CB86.html#cc08">TurnSheriff_KeyboardRight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc04"></span>CC04</td>
+<td class="instruction">SUB $40</td>
+<td class="comment-1" rowspan="1">Take a quarter turn off the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc06"></span>CC06</td>
+<td class="instruction">OR %00000001</td>
+<td class="comment-1" rowspan="1">Start a turn.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cc08"></span>
+<div class="comments">
+<div class="paragraph">
+Right turns him the other way.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_KeyboardRight</td>
+<td class="address-2"><span id="cc08"></span>CC08</td>
+<td class="instruction">BIT 1,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB86.html#cc10">TurnSheriff_Store</a> if right is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc0a"></span>CC0A</td>
+<td class="instruction">JR Z,<a href="CB86.html#cc10">TurnSheriff_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc0c"></span>CC0C</td>
+<td class="instruction">ADD A,$40</td>
+<td class="comment-1" rowspan="1">Add a quarter turn to the heading.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cc0e"></span>
+<div class="comments">
+<div class="paragraph">
+Start a turn and store the heading.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Start</td>
+<td class="address-2"><span id="cc0e"></span>CC0E</td>
+<td class="instruction">OR %00000001</td>
+<td class="comment-1" rowspan="1">Start a turn.</td>
+</tr>
+<tr>
+<td class="asm-label">TurnSheriff_Store</td>
+<td class="address-2"><span id="cc10"></span>CC10</td>
+<td class="instruction">LD (IX+$06),A</td>
+<td class="comment-1" rowspan="1">Set the heading.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+Continue on to <a href="CC13.html">SetFacingFlags</a>.
+</div>
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/nightshade/asm/DB89.html">Nightshade</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CB60.html">CB60</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cb86">Map</a></td>
+<td class="next">
+Next: <a href="CC13.html">CC13</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/52102.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

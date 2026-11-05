@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pssst.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -29,51 +32,69 @@ Prev: <a href="29980.html">29980</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#30018">Map</a></td>
 <td class="next">
-Next: <a href="30056.html">30056</a>
+Next: <a href="30074.html">30074</a>
 </td>
 </tr>
 </table>
-<div class="description">30018: Actor: Get Position/ Direction</div>
+<div class="description">30018: Prepare Old Sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="29861.html">29861</a>.
+Used by the routine at <a href="29861.html">SetUpPreviousSprite</a>.
+</div>
+<div class="paragraph">
+Finds the graphic for the previous state of an object, using the copy of its X position and state that <a href="30137.html">StoreEntity</a> saved at <a href="24075.html">Actor</a>. The rest of the routine, from <a href="30018.html#30027">ActorGetSpriteAddress</a>, is shared with <a href="30074.html">ActorMoveSprite</a>.
+</div>
+<div class="paragraph">
+The sprite is looked up in <a href="30234.html">SpritesTable</a> (for types 1-3) or <a href="30234.html#30282">SpritesTable_Other</a> (for types 4-13). The entry is chosen by the object type (the state with bits 6 and 7 removed), by the X position within a character cell and by bit 6 of the state, which selects the second set of sprites.
 </div>
 </div>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Address of the sprite</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ActorFindPosDir</td>
+<td class="asm-label">PrepareOldSprite</td>
 <td class="address-2"><span id="30018"></span>30018</td>
 <td class="instruction">LD A,(24075)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=actor X position.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the saved X position (from <a href="24075.html">Actor</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30021"></span>30021</td>
 <td class="instruction">AND %00000110</td>
-<td class="comment-1" rowspan="1">Keep only bits 1-2.</td>
+<td class="comment-1" rowspan="1">Keep only bits 1-2 (the X position within a character cell, in steps of two pixels).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30023"></span>30023</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Store the result in <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Keep the X position bits in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30024"></span>30024</td>
 <td class="instruction">LD A,(24077)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=actor movement direction.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the saved state (from <a href="24075.html#24077">24077</a>).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="30027"></span>
 <div class="comments">
 <div class="paragraph">
-Actor: Get Sprite Address
+This entry point is used by the routine at <a href="30074.html">ActorMoveSprite</a>.
+</div>
+<div class="paragraph">
+Find the sprite from the state in <span class="register">A</span> and the X position bits in <span class="register">C</span>.
 </div>
 </div>
 </td>
@@ -82,60 +103,66 @@ Actor: Get Sprite Address
 <td class="asm-label">ActorGetSpriteAddress</td>
 <td class="address-2"><span id="30027"></span>30027</td>
 <td class="instruction">BIT 6,A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="30018.html#30033">ActorFindPosDir_0</a> if bit 6 of sprite header is reset.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="30018.html#30033">ActorGetSpriteAddress_Type</a> if bit 6 of the state is clear.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30029"></span>30029</td>
-<td class="instruction">JR Z,<a href="30018.html#30033">ActorFindPosDir_0</a></td>
+<td class="instruction">JR Z,<a href="30018.html#30033">ActorGetSpriteAddress_Type</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30031"></span>30031</td>
 <td class="instruction">SET 3,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set bit 3 of <span class="register">C</span> to select the second set of sprites.</td>
 </tr>
 <tr>
-<td class="asm-label">ActorFindPosDir_0</td>
+<td class="asm-label">ActorGetSpriteAddress_Type</td>
 <td class="address-2"><span id="30033"></span>30033</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the state by one (so that type 1 becomes 0).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30034"></span>30034</td>
 <td class="instruction">CP 3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="30018.html#30056">ActorGetSpriteAddress_OtherTypes</a> if the result is 3 or more.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30036"></span>30036</td>
-<td class="instruction">JR NC,<a href="30056.html">30056</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="30018.html#30056">ActorGetSpriteAddress_OtherTypes</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="30038"></span>
+<div class="comments">
+<div class="paragraph">
+Types 1-3 have eight sprites each (four X positions for each of the two directions).
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30038"></span>30038</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="4">Multiply the type by 16 (the length of a type's entries in the table).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30039"></span>30039</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30040"></span>30040</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30041"></span>30041</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -147,7 +174,7 @@ Actor: Get Sprite Address
 <td class="asm-label"></td>
 <td class="address-1"><span id="30044"></span>30044</td>
 <td class="instruction">OR C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add in the X position and direction bits from <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -156,37 +183,28 @@ Actor: Get Sprite Address
 <td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="30234.html">SpritesTable</a>.</td>
 </tr>
 <tr>
-<td class="routine-comment" colspan="5">
-<span id="30048"></span>
-<div class="comments">
-<div class="paragraph">
-This entry point is used by the routine at <a href="30056.html">30056</a>.
-</div>
-</div>
-</td>
-</tr>
-<tr>
-<td class="asm-label">ActorFindPosDir_1</td>
+<td class="asm-label">ActorGetSpriteAddress_Lookup</td>
 <td class="address-2"><span id="30048"></span>30048</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="2">Create an offset in <span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="1">Store the offset in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30049"></span>30049</td>
 <td class="instruction">LD B,0</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30051"></span>30051</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=sprite table + offset.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=the table address + the offset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30052"></span>30052</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="3"><span class="register">DE</span>=sprite address.</td>
+<td class="comment-1" rowspan="3">Fetch the sprite address into <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -204,6 +222,97 @@ This entry point is used by the routine at <a href="30056.html">30056</a>.
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="30056"></span>
+<div class="comments">
+<div class="paragraph">
+Types 4 and above have four sprites each, which only change with bit 2 of the X position and with the direction.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ActorGetSpriteAddress_OtherTypes</td>
+<td class="address-2"><span id="30056"></span>30056</td>
+<td class="instruction">SUB 3</td>
+<td class="comment-1" rowspan="1">Subtract 3 from the type (it is already one less than the real type), so that type 4 becomes 0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30058"></span>30058</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="3">Multiply the type by 8 (the length of a type's entries in the table).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30059"></span>30059</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30060"></span>30060</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30061"></span>30061</td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Keep only bits 3-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30063"></span>30063</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Store the result in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30064"></span>30064</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30065"></span>30065</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Move the X position bits and the direction bit down by one place.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30066"></span>30066</td>
+<td class="instruction">AND %00000110</td>
+<td class="comment-1" rowspan="1">Keep only bits 1-2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30068"></span>30068</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">Add in the type offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30069"></span>30069</td>
+<td class="instruction">LD HL,30282</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="30234.html#30282">SpritesTable_Other</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="30072"></span>30072</td>
+<td class="instruction">JR <a href="30018.html#30048">ActorGetSpriteAddress_Lookup</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="30018.html#30048">ActorGetSpriteAddress_Lookup</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/tranzam/dec/asm/28850.html">Tranz Am</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
 </table>
 <table class="asm-navigation">
 <tr>
@@ -212,7 +321,7 @@ Prev: <a href="29980.html">29980</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#30018">Map</a></td>
 <td class="next">
-Next: <a href="30056.html">30056</a>
+Next: <a href="30074.html">30074</a>
 </td>
 </tr>
 </table>

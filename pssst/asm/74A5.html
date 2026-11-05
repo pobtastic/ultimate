@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pssst.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,36 +36,47 @@ Next: <a href="751C.html">751C</a>
 </td>
 </tr>
 </table>
-<div class="description">74A5: Routine at 74A5</div>
+<div class="description">74A5: Set Up Previous Sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="751C.html">751C</a>.
+Used by the routine at <a href="751C.html">DrawSprite</a>.
+</div>
+<div class="paragraph">
+Sprites are drawn by erasing the previous image and drawing the new one at the same time, a row at a time. The routines from here to <a href="74A5.html#74f2">DisplayEntity_Compare</a> prepare the two images: the main registers hold one sprite and the shadow registers hold the other. Each is set up with the screen address in <span class="register">HL</span>, the sprite width in <span class="register">B</span>, a row count of zero in <span class="register">C</span> and the sprite data pointer in <span class="register">DE</span>.
+</div>
+<div class="paragraph">
+This entry point finds the previous sprite from the temporary actor state at <a href="5E0B.html">Actor</a>, using <a href="7542.html">PrepareOldSprite</a> to get its graphic.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">SetUpPreviousSprite</td>
 <td class="address-2"><span id="74a5"></span>74A5</td>
-<td class="instruction">CALL <a href="7542.html">ActorFindPosDir</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="7542.html">PrepareOldSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7542.html">PrepareOldSprite</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="74a8"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="66A6.html">66A6</a>, <a href="69E8.html">69E8</a>, <a href="6C53.html">6C53</a> and <a href="751C.html">751C</a>.
+This entry point is used by the routines at <a href="66A6.html">UpdateBloomingFlower</a>, <a href="69E8.html">UpdateStreamer</a>, <a href="6C53.html">UpdateLeaf</a> and <a href="751C.html">DrawSprite</a>.
+</div>
+<div class="paragraph">
+Sets up the previous sprite using the sprite data address in <span class="register">DE</span>, rather than looking it up.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">SetUpPreviousSprite_Address</td>
 <td class="address-2"><span id="74a8"></span>74A8</td>
 <td class="instruction">LD HL,($5E0B)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the previous X and Y position from <a href="5E0B.html">Actor</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -71,363 +85,463 @@ This entry point is used by the routines at <a href="66A6.html">66A6</a>, <a hre
 <div class="paragraph">
 This entry point is used by the routine at <a href="65F7.html">AnimateExplosion</a>.
 </div>
+<div class="paragraph">
+The first byte of the sprite is a horizontal offset in pixels.
+</div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">SetUpPreviousSprite_Offset</td>
 <td class="address-2"><span id="74ab"></span>74AB</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the horizontal offset.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74ac"></span>74AC</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the sprite width.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74ad"></span>74AD</td>
 <td class="instruction">ADD A,L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the horizontal offset to the X position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74ae"></span>74AE</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the result back in <span class="register">L</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74af"></span>74AF</td>
 <td class="instruction">CALL <a href="759A.html">ScreenAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Convert the position into a screen address using <a href="759A.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74b2"></span>74B2</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite width.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74b3"></span>74B3</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the width counter in <span class="register">B</span> to the sprite width.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74b4"></span>74B4</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the sprite height.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74b5"></span>74B5</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite height.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74b6"></span>74B6</td>
 <td class="instruction">LD ($5E10),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store it in <a href="5E0B.html#5e10">5E10</a> as the height of the previous sprite.</td>
 </tr>
 <tr>
+<td class="asm-label">SetUpSprite_Finish</td>
 <td class="address-2"><span id="74b9"></span>74B9</td>
 <td class="instruction">LD C,$00</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the row count in <span class="register">C</span> to 00 (no rows have been drawn yet).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74bb"></span>74BB</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the first byte of the sprite graphic data.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74bc"></span>74BC</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="74bd"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="751C.html">751C</a>.
+This entry point is used by the routine at <a href="751C.html">DrawSprite</a>.
+</div>
+<div class="paragraph">
+Sets up the sprite of the actor in <span class="register">IX</span>, using <a href="757A.html">ActorMoveSprite</a> to get its graphic.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">SetUpSprite</td>
 <td class="address-2"><span id="74bd"></span>74BD</td>
 <td class="instruction">CALL <a href="757A.html">ActorMoveSprite</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="757A.html">ActorMoveSprite</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="74c0"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="66A6.html">66A6</a>, <a href="69E8.html">69E8</a>, <a href="6C53.html">6C53</a> and <a href="751C.html">751C</a>.
+This entry point is used by the routines at <a href="66A6.html">UpdateBloomingFlower</a>, <a href="69E8.html">UpdateStreamer</a>, <a href="6C53.html">UpdateLeaf</a> and <a href="751C.html">DrawSprite</a>.
+</div>
+<div class="paragraph">
+Sets up the sprite using the sprite data address in <span class="register">DE</span>, at the position held in the actor object.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">SetUpSprite_Address</td>
 <td class="address-2"><span id="74c0"></span>74C0</td>
 <td class="instruction">LD L,(IX+$01)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Fetch the X and Y position from *<span class="register">IX</span>+01 and *<span class="register">IX</span>+02.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74c3"></span>74C3</td>
 <td class="instruction">LD H,(IX+$02)</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="74c6"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="5FDE.html">5FDE</a>.
+This entry point is used by the routine at <a href="5FDE.html">DrawCubbyHoleItem</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">SetUpSprite_Offset</td>
 <td class="address-2"><span id="74c6"></span>74C6</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the horizontal offset.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74c7"></span>74C7</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the sprite width.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74c8"></span>74C8</td>
 <td class="instruction">ADD A,L</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the horizontal offset to the X position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74c9"></span>74C9</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the result back in <span class="register">L</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74ca"></span>74CA</td>
 <td class="instruction">LD ($5E1A),HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the screen position in <a href="5E1A.html">SpritePosition</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74cd"></span>74CD</td>
 <td class="instruction">CALL <a href="759A.html">ScreenAddress</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Convert the position into a screen address using <a href="759A.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74d0"></span>74D0</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite width.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74d1"></span>74D1</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the width counter in <span class="register">B</span> to the sprite width.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74d2"></span>74D2</td>
 <td class="instruction">LD ($5E0F),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store it in <a href="5E0B.html#5e0f">NewSprite_Width</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74d5"></span>74D5</td>
 <td class="instruction">INC DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the sprite height.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74d6"></span>74D6</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite height.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74d7"></span>74D7</td>
 <td class="instruction">LD ($5E11),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store it in <a href="5E0B.html#5e11">5E11</a> as the height of the new sprite.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74da"></span>74DA</td>
 <td class="instruction">LD ($5E0E),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store it in <a href="5E0B.html#5e0e">5E0E</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74dd"></span>74DD</td>
-<td class="instruction">JR <a href="74A5.html#74b9">$74B9</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="74A5.html#74b9">SetUpSprite_Finish</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="74A5.html#74b9">SetUpSprite_Finish</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="74df"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="6D0C.html">6D0C</a>.
+This entry point is used by the routine at <a href="6D0C.html">UpdateFlower</a>.
+</div>
+<div class="paragraph">
+Moves a sprite using the same sprite data in <span class="register">DE</span> for both the previous image (erased) and the new image (drawn).
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">ReplaceSprite</td>
 <td class="address-2"><span id="74df"></span>74DF</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the sprite data pointer on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74e0"></span>74E0</td>
-<td class="instruction">CALL <a href="74A5.html#74a8">$74A8</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="74A5.html#74a8">SetUpPreviousSprite_Address</a></td>
+<td class="comment-1" rowspan="1">Set up the previous sprite using <a href="74A5.html#74a8">SetUpPreviousSprite_Address</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74e3"></span>74E3</td>
 <td class="instruction">EXX</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74e4"></span>74E4</td>
 <td class="instruction">POP DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the sprite data pointer from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74e5"></span>74E5</td>
-<td class="instruction">CALL <a href="74A5.html#74c0">$74C0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="74A5.html#74c0">SetUpSprite_Address</a></td>
+<td class="comment-1" rowspan="1">Set up the new sprite using <a href="74A5.html#74c0">SetUpSprite_Address</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74e8"></span>74E8</td>
 <td class="instruction">EXX</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74e9"></span>74E9</td>
-<td class="instruction">JR <a href="74A5.html#74f2">$74F2</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="74A5.html#74f2">DisplayEntity_Compare</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="74A5.html#74f2">DisplayEntity_Compare</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="74eb"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="6ED2.html">6ED2</a>, <a href="6EF1.html">6EF1</a> and <a href="721A.html">721A</a>.
+This entry point is used by the routines at <a href="6ED2.html">UpdateSprayCan</a>, <a href="6F31.html">DrawObject</a> and <a href="721A.html">UpdateBonusItem</a>.
+</div>
+<div class="paragraph">
+Display Entity. Erases the previous sprite of the actor in <span class="register">IX</span> and draws the new one.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After <a href="74A5.html#74eb">DisplayEntity</a></th>
+<th colspan="1" rowspan="1">After <a href="7450.html">ColouriseSprite</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="move-sprite-before" src="../images/scr/move-sprite-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="move-sprite-drawn" src="../images/scr/move-sprite-drawn.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="move-sprite-coloured" src="../images/scr/move-sprite-coloured.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">DisplayEntity</td>
 <td class="address-2"><span id="74eb"></span>74EB</td>
-<td class="instruction">CALL <a href="74A5.html#74bd">$74BD</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="74A5.html#74bd">SetUpSprite</a></td>
+<td class="comment-1" rowspan="1">Set up the new sprite using <a href="74A5.html#74bd">SetUpSprite</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74ee"></span>74EE</td>
 <td class="instruction">EXX</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74ef"></span>74EF</td>
-<td class="instruction">CALL <a href="74A5.html#74a5">$74A5</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="74A5.html#74a5">SetUpPreviousSprite</a></td>
+<td class="comment-1" rowspan="1">Set up the previous sprite using <a href="74A5.html">SetUpPreviousSprite</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="74f2"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="66A6.html">66A6</a>, <a href="69E8.html">69E8</a> and <a href="6C53.html">6C53</a>.
+This entry point is used by the routines at <a href="66A6.html">UpdateBloomingFlower</a>, <a href="69E8.html">UpdateStreamer</a> and <a href="6C53.html">UpdateLeaf</a>.
+</div>
+<div class="paragraph">
+Work out how many rows of one sprite lie beyond the other.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">DisplayEntity_Compare</td>
 <td class="address-2"><span id="74f2"></span>74F2</td>
 <td class="instruction">LD A,($5E0C)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the previous Y position from <a href="5E0B.html#5e0c">5E0C</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74f5"></span>74F5</td>
 <td class="instruction">SUB (IX+$02)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the new Y position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74f8"></span>74F8</td>
-<td class="instruction">JP Z,<a href="75D0.html#7601">MaskSprite_6</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="75D0.html#7601">MaskSprite_Finish_Previous</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="75D0.html#7601">MaskSprite_Finish_Previous</a> if the two sprites start on the same row.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74fb"></span>74FB</td>
-<td class="instruction">JP M,<a href="74A5.html#750d">$750D</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP M,<a href="74A5.html#750d">DisplayEntity_NewLower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="74A5.html#750d">DisplayEntity_NewLower</a> if the new sprite starts lower down the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74fe"></span>74FE</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the number of extra rows in <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="74ff"></span>74FF</td>
 <td class="instruction">LD A,($5E10)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the height of the previous sprite from <a href="5E0B.html#5e10">5E10</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7502"></span>7502</td>
 <td class="instruction">CP C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare it with the number of extra rows.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7503"></span>7503</td>
-<td class="instruction">JP C,<a href="75D0.html#7601">MaskSprite_6</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP C,<a href="75D0.html#7601">MaskSprite_Finish_Previous</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="75D0.html#7601">MaskSprite_Finish_Previous</a> if the sprites do not overlap.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7506"></span>7506</td>
 <td class="instruction">SUB C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the extra rows from the height of the previous sprite.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7507"></span>7507</td>
 <td class="instruction">LD ($5E10),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it back to <a href="5E0B.html#5e10">5E10</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="750a"></span>750A</td>
 <td class="instruction">JP <a href="75D0.html">MaskSprite</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="75D0.html">MaskSprite</a> to erase the extra rows of the previous sprite first.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="750d"></span>
+<div class="comments">
+<div class="paragraph">
+The new sprite starts lower down the screen, so its extra rows are drawn first.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DisplayEntity_NewLower</td>
 <td class="address-2"><span id="750d"></span>750D</td>
 <td class="instruction">EXX</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="750e"></span>750E</td>
 <td class="instruction">NEG</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Make the number of extra rows positive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7510"></span>7510</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the number of extra rows in <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7511"></span>7511</td>
 <td class="instruction">LD A,($5E11)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the height of the new sprite from <a href="5E0B.html#5e11">5E11</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7514"></span>7514</td>
 <td class="instruction">CP C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare it with the number of extra rows.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7515"></span>7515</td>
-<td class="instruction">JP C,<a href="75D0.html#7600">MaskSprite_5</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP C,<a href="75D0.html#7600">MaskSprite_Finish</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="75D0.html#7600">MaskSprite_Finish</a> if the sprites do not overlap.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7518"></span>7518</td>
 <td class="instruction">SUB C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the extra rows from the height of the new sprite.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7519"></span>7519</td>
-<td class="instruction">JP <a href="75D0.html#7614">MaskSprite_7</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP <a href="75D0.html#7614">MaskSprite_Finish_ClearNew</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="75D0.html#7614">MaskSprite_Finish_ClearNew</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">

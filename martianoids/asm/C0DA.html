@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at C0DA</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C0CF.html">C0CF</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c0da">Map</a></td>
+<td class="next">
+Next: <a href="C11C.html">C11C</a>
+</td>
+</tr>
+</table>
+<div class="description">C0DA: Play Note</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="C0B6.html">PlayMusic_WaitKey</a> and <a href="C0CF.html">PlayMusic</a>.
+</div>
+<div class="paragraph">
+Plays one note of a tune, by making a tone, or by waiting if it is a rest. The bottom six bits of the note byte are the number of the note (zero is a rest) and the top two bits are one less than the length. The pitch and the duration of the note are found from a table of three bytes for each note: the delay for each half cycle (as two bytes), then the number of cycles that last for the shortest note. The length multiplies it.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Note byte</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Address of the note</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Address of the next note</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayNote</td>
+<td class="address-2"><span id="c0da"></span>C0DA</td>
+<td class="instruction">AND $3F</td>
+<td class="comment-1" rowspan="1">Keep the note number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0dc"></span>C0DC</td>
+<td class="instruction">JR Z,<a href="C11C.html">PlayRest</a></td>
+<td class="comment-1" rowspan="1">Jump to make a rest if the note number is zero.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c0de"></span>
+<div class="comments">
+<div class="paragraph">
+Look up the delays and the number of cycles in the table at <a href="C132.html">NoteTable</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0de"></span>C0DE</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="2">Put the note number in <span class="register">HL</span>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0df"></span>C0DF</td>
+<td class="instruction">LD H,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e1"></span>C0E1</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">...double it...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e2"></span>C0E2</td>
+<td class="instruction">CALL <a href="BF92.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">...and add the note number to give three times it, using <a href="BF92.html">AddAToHL</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e5"></span>C0E5</td>
+<td class="instruction">LD BC,$C132</td>
+<td class="comment-1" rowspan="2">Add the address of the table of notes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e8"></span>C0E8</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e9"></span>C0E9</td>
+<td class="instruction">LD B,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the first byte of the delay into <span class="register">B</span>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ea"></span>C0EA</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0eb"></span>C0EB</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="2">...and the second into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ec"></span>C0EC</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ed"></span>C0ED</td>
+<td class="instruction">LD L,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the number of cycles of the shortest note.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ee"></span>C0EE</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Make it a 16-bit number.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c0f0"></span>
+<div class="comments">
+<div class="paragraph">
+Bits 6 and 7 of the note are the length, less one.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f0"></span>C0F0</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="3">Fetch the note byte again and rotate the bits of the length to the bottom.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f1"></span>C0F1</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f2"></span>C0F2</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f3"></span>C0F3</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="1">Keep them...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f5"></span>C0F5</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">...and add one to give the length.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f6"></span>C0F6</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Save the address of the note.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f7"></span>C0F7</td>
+<td class="instruction">LD E,L</td>
+<td class="comment-1" rowspan="2">Copy the number of cycles of the shortest note into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f8"></span>C0F8</td>
+<td class="instruction">LD D,H</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c0f9"></span>
+<div class="comments">
+<div class="paragraph">
+Multiply the number of cycles by the length of the note.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_Process_Multiply</td>
+<td class="address-2"><span id="c0f9"></span>C0F9</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump if the length has been counted down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0fa"></span>C0FA</td>
+<td class="instruction">JR Z,<a href="C0DA.html#c0ff">PlayMusic_Process_Finished</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0fc"></span>C0FC</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Otherwise add on the number of cycles of the shortest note again...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0fd"></span>C0FD</td>
+<td class="instruction">JR <a href="C0DA.html#c0f9">PlayMusic_Process_Multiply</a></td>
+<td class="comment-1" rowspan="1">...and loop back.</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_Process_Finished</td>
+<td class="address-2"><span id="c0ff"></span>C0FF</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the address of the note.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c100"></span>
+<div class="comments">
+<div class="paragraph">
+Each pass of this loop makes one cycle of the note, so the length of the note is the number of cycles.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_Process_Cycle</td>
+<td class="address-2"><span id="c100"></span>C100</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Save the delay.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c101"></span>C101</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Switch the speaker off (and set the border to black).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c102"></span>C102</td>
+<td class="instruction">OUT ($FE),A</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_Process_LowWait</td>
+<td class="address-2"><span id="c104"></span>C104</td>
+<td class="instruction">DJNZ <a href="C0DA.html#c104">PlayMusic_Process_LowWait</a></td>
+<td class="comment-1" rowspan="1">Wait for the time of the low half of a cycle...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c106"></span>C106</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="2">Count down the rest of the delay.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c107"></span>C107</td>
+<td class="instruction">JR NZ,<a href="C0DA.html#c104">PlayMusic_Process_LowWait</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c109"></span>C109</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the delay.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c10a"></span>C10A</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Save the delay again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c10b"></span>C10B</td>
+<td class="instruction">LD A,$10</td>
+<td class="comment-1" rowspan="2">Switch the speaker on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c10d"></span>C10D</td>
+<td class="instruction">OUT ($FE),A</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_Process_HighWait</td>
+<td class="address-2"><span id="c10f"></span>C10F</td>
+<td class="instruction">DJNZ <a href="C0DA.html#c10f">PlayMusic_Process_HighWait</a></td>
+<td class="comment-1" rowspan="1">Wait for the time of the high half of a cycle...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c111"></span>C111</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="2">Count down the rest of the delay.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c112"></span>C112</td>
+<td class="instruction">JR NZ,<a href="C0DA.html#c10f">PlayMusic_Process_HighWait</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c114"></span>C114</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the delay.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c115"></span>C115</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="4">Count down the number of cycles, and loop back until it reaches zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c116"></span>C116</td>
+<td class="instruction">LD A,H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c117"></span>C117</td>
+<td class="instruction">OR L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c118"></span>C118</td>
+<td class="instruction">JR NZ,<a href="C0DA.html#c100">PlayMusic_Process_Cycle</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c11a"></span>C11A</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the next note.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c11b"></span>C11B</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/alien8/asm/B4C5.html">Alien 8</a></li>
+<li><a href="/ultimate/cyberun/asm/9AB4.html">Cyberun</a></li>
+<li><a href="/ultimate/gunfright/asm/AF9A.html">Gunfright</a></li>
+<li><a href="/ultimate/nightshade/asm/C661.html">Nightshade</a></li>
+<li><a href="/ultimate/pentagram/asm/D6C0.html">Pentagram</a></li>
+<li><a href="/ultimate/sabrewulf/asm/BD7B.html">Sabre Wulf</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C0CF.html">C0CF</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c0da">Map</a></td>
+<td class="next">
+Next: <a href="C11C.html">C11C</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../dec/asm/49370.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

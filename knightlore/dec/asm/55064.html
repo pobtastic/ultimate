@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Knight Lore: Routine at 55064</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../knightlore.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="55044.html">55044</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#55064">Map</a></td>
+<td class="next">
+Next: <a href="55168.html">55168</a>
+</td>
+</tr>
+</table>
+<div class="description">55064: Print Sprite</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="48250.html">PrintLivesGraphic</a>, <a href="48868.html">PrintSprites</a>, <a href="48965.html">DisplayObjectsCarried</a>, <a href="50084.html">DisplaySunMoonFrame</a> and <a href="53836.html">PrintTableSprite</a>.
+</div>
+<div class="paragraph">
+Draws the sprite of an object into the screen buffer, at the pixel coordinates of the object. The sprite is made of pairs of bytes, a mask byte and then a data byte, which are put on the buffer with the mask clearing the background. A sprite that does not start on a byte boundary has each pair shifted across two bytes, with the tables built by <a href="54942.html">BuildLookupTables</a>. The routine copies the sprite with unrolled code, which it enters part of the way along, so that it does as many columns as the sprite has. To do this it changes the code, and it uses the stack pointer to read the data of the sprite, so the interrupts have to be off.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Address of the object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrintSprite</td>
+<td class="address-2"><span id="55064"></span>55064</td>
+<td class="instruction">CALL <a href="55023.html">GetSpriteAddress</a></td>
+<td class="comment-1" rowspan="1">Find the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55067"></span>55067</td>
+<td class="instruction">LD A,(IX+26)</td>
+<td class="comment-1" rowspan="1">Fetch the pixel X coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55070"></span>55070</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the bits of the position in the byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55072"></span>55072</td>
+<td class="instruction">JR Z,<a href="55064.html#55151">PrintSprite_Aligned</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="55064.html#55151">PrintSprite_Aligned</a> if the sprite is on a byte boundary.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55074"></span>55074</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Double the number of bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55075"></span>55075</td>
+<td class="instruction">AND %00001110</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55077"></span>55077</td>
+<td class="instruction">OR %11110000</td>
+<td class="comment-1" rowspan="1">Make it the page of the table of shifted bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55079"></span>55079</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Stash the page in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55080"></span>55080</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the width of the sprite, and move on to the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55081"></span>55081</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55082"></span>55082</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55084"></span>55084</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one for the byte that the shifted sprite spills into.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55085"></span>55085</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55086"></span>55086</td>
+<td class="instruction">LD (IX+24),A</td>
+<td class="comment-1" rowspan="1">Set the width in bytes of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55089"></span>55089</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Take one off it to work out the number of pairs, less one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55090"></span>55090</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep it in the low three bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55092"></span>55092</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="4">Multiply it by sixteen, which is the size of the code for a pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55093"></span>55093</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55094"></span>55094</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55095"></span>55095</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55096"></span>55096</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55098"></span>55098</td>
+<td class="instruction">ADD A,80</td>
+<td class="comment-1" rowspan="1">Add 80 to get the offset from the end of the unrolled code.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintSprite_Patch</td>
+<td class="address-2"><span id="55100"></span>55100</td>
+<td class="instruction">LD (55213),A</td>
+<td class="comment-1" rowspan="1">Change the offset of the jump into the unrolled code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55103"></span>55103</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the width in bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55104"></span>55104</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55105"></span>55105</td>
+<td class="instruction">ADD A,34</td>
+<td class="comment-1" rowspan="1">Add 34 to get the step from the end of one line to the start of the next.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55107"></span>55107</td>
+<td class="instruction">LD (55297),A</td>
+<td class="comment-1" rowspan="1">Change the step in the code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55110"></span>55110</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the height of the sprite, and move on to the data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55111"></span>55111</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55112"></span>55112</td>
+<td class="instruction">LD (IX+25),A</td>
+<td class="comment-1" rowspan="1">Set the height in lines of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55115"></span>55115</td>
+<td class="instruction">ADD A,(IX+27)</td>
+<td class="comment-1" rowspan="1">Add the pixel Y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55118"></span>55118</td>
+<td class="instruction">SUB 192</td>
+<td class="comment-1" rowspan="1">Take the number of lines on the screen off it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55120"></span>55120</td>
+<td class="instruction">JR C,<a href="55064.html#55130">PrintSprite_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="55064.html#55130">PrintSprite_Draw</a> if the sprite does not go off the top of the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55122"></span>55122</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the number of lines that are off the screen positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55124"></span>55124</td>
+<td class="instruction">ADD A,(IX+25)</td>
+<td class="comment-1" rowspan="1">Take it off the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55127"></span>55127</td>
+<td class="instruction">LD (IX+25),A</td>
+<td class="comment-1" rowspan="1">Set the height in lines of the object.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintSprite_Draw</td>
+<td class="address-2"><span id="55130"></span>55130</td>
+<td class="instruction">LD C,(IX+26)</td>
+<td class="comment-1" rowspan="1">Fetch the pixel X coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55133"></span>55133</td>
+<td class="instruction">LD B,(IX+27)</td>
+<td class="comment-1" rowspan="1">Fetch the pixel Y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55136"></span>55136</td>
+<td class="instruction">CALL <a href="55313.html">CalculateBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Find the address in the screen buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55139"></span>55139</td>
+<td class="instruction">LD (23465),SP</td>
+<td class="comment-1" rowspan="1">Keep the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55143"></span>55143</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="3">Point the stack pointer at the data of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55144"></span>55144</td>
+<td class="instruction">LD SP,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55145"></span>55145</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55146"></span>55146</td>
+<td class="instruction">LD A,(IX+25)</td>
+<td class="comment-1" rowspan="1">Fetch the number of lines.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55149"></span>55149</td>
+<td class="instruction">JR <a href="55210.html">DrawLines</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="55210.html">DrawLines</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="55151"></span>
+<div class="comments">
+<div class="paragraph">
+The sprite is on a byte boundary, so the bytes do not need to be shifted.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrintSprite_Aligned</td>
+<td class="address-2"><span id="55151"></span>55151</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the width of the sprite, and move on to the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55152"></span>55152</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55153"></span>55153</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55155"></span>55155</td>
+<td class="instruction">LD (IX+24),A</td>
+<td class="comment-1" rowspan="1">Set the width in bytes of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55158"></span>55158</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55159"></span>55159</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Multiply it by eight, which is the size of the code for a column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55160"></span>55160</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55161"></span>55161</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55162"></span>55162</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55164"></span>55164</td>
+<td class="instruction">SUB 6</td>
+<td class="comment-1" rowspan="1">Take 6 off it to get the offset from the end of the unrolled code.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="55166"></span>55166</td>
+<td class="instruction">JR <a href="55064.html#55100">PrintSprite_Patch</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="55064.html#55100">PrintSprite_Patch</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/alien8/dec/asm/53287.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="55044.html">55044</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#55064">Map</a></td>
+<td class="next">
+Next: <a href="55168.html">55168</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/knightlore/">Source code</a>.</div>
+<div><a href="../../asm/D718.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

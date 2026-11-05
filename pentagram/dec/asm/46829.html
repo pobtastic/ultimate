@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at 46829</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="46813.html">46813</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#46829">Map</a></td>
+<td class="next">
+Next: <a href="46914.html">46914</a>
+</td>
+</tr>
+</table>
+<div class="description">46829: Block Movement</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="47481.html">ApplyGravityAndMove</a> and <a href="50717.html">MovePlayer</a>.
+</div>
+<div class="paragraph">
+Moves an object by its speeds along the three axes, which are held in the object, and stops it where it is blocked by a wall or by another object. The speeds are changed to the distances that the object has actually moved. The routine records what blocked the object in its collision flags: bit 0 is set if it was stopped on x, bit 1 if it was stopped on y and bit 2 if it was stopped on z, which also means that the object is standing on the floor or on another object. These flags are cleared first.
+</div>
+<div class="paragraph">
+The object is flagged as being moved while this happens, so that the tests for collisions with other objects ignore it, and so that this routine ignores a second call for it.
+</div>
+<div class="paragraph">
+The z axis is done first, then x, then y. The speed is first cut down to what the walls (or the floor) allow, and then to what the other objects allow.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46829"></span>
+<div class="comments">
+<div class="paragraph">
+Return if the object is already being moved. If not, flag that it is and clear the collision flags of the last move.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BlockMovement</td>
+<td class="address-2"><span id="46829"></span>46829</td>
+<td class="instruction">BIT 1,(IX+7)</td>
+<td class="comment-1" rowspan="2">Return if the object is already being moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46833"></span>46833</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46834"></span>46834</td>
+<td class="instruction">SET 1,(IX+7)</td>
+<td class="comment-1" rowspan="1">Flag that the object is being moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46838"></span>46838</td>
+<td class="instruction">LD A,(IX+12)</td>
+<td class="comment-1" rowspan="1">Fetch the collision flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46841"></span>46841</td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Clear the flags for x, y and z.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46843"></span>46843</td>
+<td class="instruction">LD (IX+12),A</td>
+<td class="comment-1" rowspan="1">Write the flags back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46846"></span>46846</td>
+<td class="instruction">LD L,0</td>
+<td class="comment-1" rowspan="2">Start with no speed along y in <span class="register">L</span> and none along x in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46848"></span>46848</td>
+<td class="instruction">LD C,L</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46849"></span>
+<div class="comments">
+<div class="paragraph">
+Move along the z axis.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46849"></span>46849</td>
+<td class="instruction">LD A,(IX+11)</td>
+<td class="comment-1" rowspan="4">Fetch the speed along z into <span class="register">H</span>, and jump to <a href="46829.html#46866">BlockMovement_X</a> if it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46852"></span>46852</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46853"></span>46853</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46854"></span>46854</td>
+<td class="instruction">JR Z,<a href="46829.html#46866">BlockMovement_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46856"></span>46856</td>
+<td class="instruction">CALL <a href="47459.html">StopObjectAtFloor</a></td>
+<td class="comment-1" rowspan="1">Call <a href="47459.html">StopObjectAtFloor</a> to cut the speed down so that the object stays above the floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46859"></span>46859</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Jump to <a href="46829.html#46866">BlockMovement_X</a> if that has left no speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46860"></span>46860</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46861"></span>46861</td>
+<td class="instruction">JR Z,<a href="46829.html#46866">BlockMovement_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46863"></span>46863</td>
+<td class="instruction">CALL <a href="47072.html">BlockMovementInZ</a></td>
+<td class="comment-1" rowspan="1">Call <a href="47072.html">BlockMovementInZ</a> to cut the speed down so that the object does not go through another object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46866"></span>
+<div class="comments">
+<div class="paragraph">
+Move along the x axis.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BlockMovement_X</td>
+<td class="address-2"><span id="46866"></span>46866</td>
+<td class="instruction">LD A,(IX+9)</td>
+<td class="comment-1" rowspan="4">Fetch the speed along x into <span class="register">C</span>, and jump to <a href="46829.html#46883">BlockMovement_Y</a> if it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46869"></span>46869</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46870"></span>46870</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46871"></span>46871</td>
+<td class="instruction">JR Z,<a href="46829.html#46883">BlockMovement_Y</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46873"></span>46873</td>
+<td class="instruction">CALL <a href="47330.html">KeepObjectInRoomInX</a></td>
+<td class="comment-1" rowspan="1">Call <a href="47330.html">KeepObjectInRoomInX</a> to cut the speed down so that the object stays inside the walls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46876"></span>46876</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="3">Jump to <a href="46829.html#46883">BlockMovement_Y</a> if that has left no speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46877"></span>46877</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46878"></span>46878</td>
+<td class="instruction">JR Z,<a href="46829.html#46883">BlockMovement_Y</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46880"></span>46880</td>
+<td class="instruction">CALL <a href="46914.html">BlockMovementInX</a></td>
+<td class="comment-1" rowspan="1">Call <a href="46914.html">BlockMovementInX</a> to cut the speed down so that the object does not go through another object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46883"></span>
+<div class="comments">
+<div class="paragraph">
+Move along the y axis.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BlockMovement_Y</td>
+<td class="address-2"><span id="46883"></span>46883</td>
+<td class="instruction">LD A,(IX+10)</td>
+<td class="comment-1" rowspan="4">Fetch the speed along y into <span class="register">L</span>, and jump to <a href="46829.html#46900">BlockMovement_Store</a> if it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46886"></span>46886</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46887"></span>46887</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46888"></span>46888</td>
+<td class="instruction">JR Z,<a href="46829.html#46900">BlockMovement_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46890"></span>46890</td>
+<td class="instruction">CALL <a href="47373.html">KeepObjectInRoomInY</a></td>
+<td class="comment-1" rowspan="1">Call <a href="47373.html">KeepObjectInRoomInY</a> to cut the speed down so that the object stays inside the walls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46893"></span>46893</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Jump to <a href="46829.html#46900">BlockMovement_Store</a> if that has left no speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46894"></span>46894</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46895"></span>46895</td>
+<td class="instruction">JR Z,<a href="46829.html#46900">BlockMovement_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46897"></span>46897</td>
+<td class="instruction">CALL <a href="46993.html">BlockMovementInY</a></td>
+<td class="comment-1" rowspan="1">Call <a href="46993.html">BlockMovementInY</a> to cut the speed down so that the object does not go through another object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46900"></span>
+<div class="comments">
+<div class="paragraph">
+Store the distances that the object can move, and finish.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BlockMovement_Store</td>
+<td class="address-2"><span id="46900"></span>46900</td>
+<td class="instruction">LD (IX+9),C</td>
+<td class="comment-1" rowspan="1">Write the distance along x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46903"></span>46903</td>
+<td class="instruction">LD (IX+10),L</td>
+<td class="comment-1" rowspan="1">Write the distance along y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46906"></span>46906</td>
+<td class="instruction">LD (IX+11),H</td>
+<td class="comment-1" rowspan="1">Write the distance along z.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46909"></span>46909</td>
+<td class="instruction">RES 1,(IX+7)</td>
+<td class="comment-1" rowspan="1">Flag that the object is not being moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46913"></span>46913</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/dec/asm/52037.html">Knight Lore</a></li>
+<li><a href="/ultimate/alien8/dec/asm/50242.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="46813.html">46813</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#46829">Map</a></td>
+<td class="next">
+Next: <a href="46914.html">46914</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../../asm/B6ED.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

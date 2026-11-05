@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at B3D3</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B3B6.html">B3B6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b3d3">Map</a></td>
+<td class="next">
+Next: <a href="B44F.html">B44F</a>
+</td>
+</tr>
+</table>
+<div class="description">B3D3: Draw Object</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="B66E.html">ResolveObjectOrder</a>.
+</div>
+<div class="paragraph">
+Draws the sprite of an object into the buffer, using whatever of the room has already been drawn as the background. An object of type 01 is only a marker that something has to be erased, so it is removed instead of being drawn.
+</div>
+<div class="paragraph">
+The sprite data is for whole bytes. If the screen x co-ordinate of the object is not a multiple of eight, the sprite is shifted to the right by the difference as it is drawn, which makes it one byte wider. Sprites are at most five bytes wide.
+</div>
+<div class="paragraph">
+The drawing is done by two pieces of code that are set up for the width of the sprite. Each is made of a run of identical units, one for each byte column, and a jump into the run, which is patched with a displacement, starts it at the first unit that is needed. The stack pointer is made to point at the sprite data, so that each pair of bytes can be fetched with a POP.
+</div>
+<div class="paragraph">
+Each pair is a mask byte followed by a pixel byte. The bits of the buffer that are under the mask are cleared and then the pixel byte is merged in.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b3d3"></span>
+<div class="comments">
+<div class="paragraph">
+An object of type 01 only marks an area to be erased, so it is freed and not drawn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject</td>
+<td class="address-2"><span id="b3d3"></span>B3D3</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B3D3.html#b3df">DrawObject_Project</a> if the type of the object is not 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3d6"></span>B3D6</td>
+<td class="instruction">CP $01</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3d8"></span>B3D8</td>
+<td class="instruction">JR NZ,<a href="B3D3.html#b3df">DrawObject_Project</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3da"></span>B3DA</td>
+<td class="instruction">LD (IX+$00),$00</td>
+<td class="comment-1" rowspan="1">Set the type of the object to 00 which frees it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3de"></span>B3DE</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b3df"></span>
+<div class="comments">
+<div class="paragraph">
+Work out where on the screen the sprite goes and fetch the sprite, flipped to the right way round.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Project</td>
+<td class="address-2"><span id="b3df"></span>B3DF</td>
+<td class="instruction">RES 4,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Clear the flag that says the object needs drawing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3e3"></span>B3E3</td>
+<td class="instruction">CALL <a href="B2C5.html">CalculatePixelCoordinates</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B2C5.html">CalculatePixelCoordinates</a> to work out the screen position of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3e6"></span>B3E6</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is above the top of the screen.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b3e7"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="BA3D.html">DisplayObjectsCarried</a>, <a href="BDD5.html">PrintTableSprite</a>, <a href="BDDE.html">PrintSprites</a> and <a href="C29A.html">DrawLives</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Sprite</td>
+<td class="address-2"><span id="b3e7"></span>B3E7</td>
+<td class="instruction">CALL <a href="B2EE.html">GetSpriteAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B2EE.html">GetSpriteAddress</a> to flip the sprite if needed and get its address in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b3ea"></span>
+<div class="comments">
+<div class="paragraph">
+Set up the drawing code for a sprite that has to be shifted.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3ea"></span>B3EA</td>
+<td class="instruction">LD A,(IX+$1A)</td>
+<td class="comment-1" rowspan="1">Fetch the screen x co-ordinate of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3ed"></span>B3ED</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the number of bits to shift by.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3ef"></span>B3EF</td>
+<td class="instruction">JR Z,<a href="B3D3.html#b43e">DrawObject_Aligned</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B3D3.html#b43e">DrawObject_Aligned</a> if there is no shift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3f1"></span>B3F1</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Double it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3f2"></span>B3F2</td>
+<td class="instruction">AND %00001110</td>
+<td class="comment-1" rowspan="1">Keep the number as an even number of pages.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3f4"></span>B3F4</td>
+<td class="instruction">OR %11110000</td>
+<td class="comment-1" rowspan="1">Add the page of the first shift table, F0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3f6"></span>B3F6</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Set <span class="register">H</span> to the page of the table for this shift.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b3f7"></span>
+<div class="comments">
+<div class="paragraph">
+The sprite is a byte wider when it is shifted. Set that width in the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3f7"></span>B3F7</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the first byte of the sprite, which holds its width, and move on to the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3f8"></span>B3F8</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3f9"></span>B3F9</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3fb"></span>B3FB</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one for the extra byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3fc"></span>B3FC</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Stash the width in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b3fd"></span>B3FD</td>
+<td class="instruction">LD (IX+$18),A</td>
+<td class="comment-1" rowspan="1">Write it to the object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b400"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the displacement that jumps into the shifted code at the first unit that is needed. A unit is 10 bytes long, and the last of them ends at <a href="B479.html#b4cd">B4CD</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b400"></span>B400</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Subtract one to get the width of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b401"></span>B401</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the width (which is at most five).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b403"></span>B403</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="4">Multiply it by sixteen, the size of a unit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b404"></span>B404</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b405"></span>B405</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b406"></span>B406</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b407"></span>B407</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b409"></span>B409</td>
+<td class="instruction">ADD A,$50</td>
+<td class="comment-1" rowspan="1">Add 50 the distance from the displacement to the end of the units.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_SetOffset</td>
+<td class="address-2"><span id="b40b"></span>B40B</td>
+<td class="instruction">LD ($B47C),A</td>
+<td class="comment-1" rowspan="1">Write it into the jump that starts the drawing, at B47C.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b40e"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the amount to add to the buffer address to get from the end of a row of the sprite to the start of the next.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b40e"></span>B40E</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="2">Fetch the width, and invert it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b40f"></span>B40F</td>
+<td class="instruction">CPL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b410"></span>B410</td>
+<td class="instruction">ADD A,$22</td>
+<td class="comment-1" rowspan="1">Add 22 which makes the amount 21 less the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b412"></span>B412</td>
+<td class="instruction">LD ($B4D0),A</td>
+<td class="comment-1" rowspan="1">Write it to the code that finishes a row, at B4D0.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b415"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the height of the sprite, and cut it down if the sprite sticks out above the top of the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b415"></span>B415</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the height and move on to the data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b416"></span>B416</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b417"></span>B417</td>
+<td class="instruction">LD (IX+$19),A</td>
+<td class="comment-1" rowspan="1">Write the height to the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b41a"></span>B41A</td>
+<td class="instruction">ADD A,(IX+$1B)</td>
+<td class="comment-1" rowspan="1">Add the bottom of the sprite to get the top of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b41d"></span>B41D</td>
+<td class="instruction">SUB $C0</td>
+<td class="comment-1" rowspan="1">Subtract C0 to see how far it sticks out of the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b41f"></span>B41F</td>
+<td class="instruction">JR C,<a href="B3D3.html#b429">DrawObject_SetAddress</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B3D3.html#b429">DrawObject_SetAddress</a> if it does not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b421"></span>B421</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate the amount.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b423"></span>B423</td>
+<td class="instruction">ADD A,(IX+$19)</td>
+<td class="comment-1" rowspan="2">Subtract it from the height, and write that to the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b426"></span>B426</td>
+<td class="instruction">LD (IX+$19),A</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b429"></span>
+<div class="comments">
+<div class="paragraph">
+Find where in the buffer the sprite starts and set the stack pointer to the data.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_SetAddress</td>
+<td class="address-2"><span id="b429"></span>B429</td>
+<td class="instruction">LD C,(IX+$1A)</td>
+<td class="comment-1" rowspan="2">Set <span class="register">BC</span> to the pixel co-ordinates of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b42c"></span>B42C</td>
+<td class="instruction">LD B,(IX+$1B)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b42f"></span>B42F</td>
+<td class="instruction">CALL <a href="B37F.html">CalculateBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B37F.html">CalculateBufferAddress</a> to get the address in the buffer in <span class="register">BC</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b432"></span>B432</td>
+<td class="instruction">LD ($A717),SP</td>
+<td class="comment-1" rowspan="1">Save the stack pointer in <a href="A717.html">SavedStackPointer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b436"></span>B436</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="3">Point the stack pointer at the sprite data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b437"></span>B437</td>
+<td class="instruction">LD SP,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b438"></span>B438</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b439"></span>B439</td>
+<td class="instruction">LD A,(IX+$19)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b43c"></span>B43C</td>
+<td class="instruction">JR <a href="B479.html">DrawLines</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B479.html">DrawLines</a> to start drawing.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b43e"></span>
+<div class="comments">
+<div class="paragraph">
+Set up the drawing code for a sprite that is not shifted. Each unit of it is 08 bytes long, and the last of them ends at <a href="B479.html#b4ce">DrawLines_FinishRow</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Aligned</td>
+<td class="address-2"><span id="b43e"></span>B43E</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the first byte of the sprite, which holds its width, and move on to the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b43f"></span>B43F</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b440"></span>B440</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b442"></span>B442</td>
+<td class="instruction">LD (IX+$18),A</td>
+<td class="comment-1" rowspan="1">Write the width to the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b445"></span>B445</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Stash the width in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b446"></span>B446</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Multiply it by eight, the size of a unit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b447"></span>B447</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b448"></span>B448</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b449"></span>B449</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b44b"></span>B44B</td>
+<td class="instruction">SUB $06</td>
+<td class="comment-1" rowspan="1">Subtract 06 which makes the jump end at the last unit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b44d"></span>B44D</td>
+<td class="instruction">JR <a href="B3D3.html#b40b">DrawObject_SetOffset</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B3D3.html#b40b">DrawObject_SetOffset</a> to write the displacement and carry on.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/asm/D704.html">Knight Lore</a></li>
+<li><a href="/ultimate/alien8/asm/D013.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B3B6.html">B3B6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b3d3">Map</a></td>
+<td class="next">
+Next: <a href="B44F.html">B44F</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/46035.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

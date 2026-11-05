@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at CBAB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CB89.html">CB89</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cbab">Map</a></td>
+<td class="next">
+Next: <a href="CC09.html">CC09</a>
+</td>
+</tr>
+</table>
+<div class="description">CBAB: Create Creature</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="AF87.html">RunGame</a>.
+</div>
+<div class="paragraph">
+Makes a random creature, when the countdown has finished, and there is room for it. It is called once for each frame.
+</div>
+<div class="paragraph">
+The routine does not make a creature in a room that has a special object in it. Otherwise it counts down the timer at <a href="A73D.html">SpawnTimer</a> (which is set by <a href="CC31.html">SetCreatureTimer</a>) and, when that is over, tries once for every four frames (judging by the random seed) to make a creature in one of the two object records reserved for creatures. If both are being used, nothing is done.
+</div>
+<div class="paragraph">
+The creature that is made comes from the template of an object at <a href="CC11.html">CreatureTemplate</a>, which is copied into the free record. After that the template is changed to a new creature of a random type, in a random place that is high above the floor, ready for the next time. If it is found to overlap another object there, its type is set to zero instead, which makes the object that is copied the next time one that does not exist.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CreateCreature</td>
+<td class="address-2"><span id="cbab"></span>CBAB</td>
+<td class="instruction">LD A,($A742)</td>
+<td class="comment-1" rowspan="1">Fetch the special object flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbae"></span>CBAE</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if there is a special object in the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbaf"></span>CBAF</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb0"></span>CBB0</td>
+<td class="instruction">LD HL,$A73D</td>
+<td class="comment-1" rowspan="1">Take the creature timer, <a href="A73D.html">SpawnTimer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb3"></span>CBB3</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">Decrease the timer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb4"></span>CBB4</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if it is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb5"></span>CBB5</td>
+<td class="instruction">LD (HL),$01</td>
+<td class="comment-1" rowspan="1">Set the timer to one, so that it is zero again after the next frame unless it is changed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbb7"></span>CBB7</td>
+<td class="instruction">LD A,($A70D)</td>
+<td class="comment-1" rowspan="1">Fetch the random seed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbba"></span>CBBA</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep the lowest two bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbbc"></span>CBBC</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return unless they are zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbbd"></span>CBBD</td>
+<td class="instruction">CALL <a href="CC31.html">SetCreatureTimer</a></td>
+<td class="comment-1" rowspan="1">Call <a href="CC31.html">SetCreatureTimer</a> to set the timer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbc0"></span>CBC0</td>
+<td class="instruction">LD HL,$A7EF</td>
+<td class="comment-1" rowspan="1">Start at the first of the objects for creatures, <a href="A76F.html#a7ef">ObjectsTable_Creatures</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbc3"></span>CBC3</td>
+<td class="instruction">LD BC,$0020</td>
+<td class="comment-1" rowspan="1">Set the size of an object, 20 in <span class="register">BC</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbc6"></span>CBC6</td>
+<td class="instruction">LD DE,$CC11</td>
+<td class="comment-1" rowspan="1">Take the template of the creature, <a href="CC11.html">CreatureTemplate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbc9"></span>CBC9</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbca"></span>CBCA</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CBAB.html#cbd1">CreateCreature_Copy</a> if it is free.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbcb"></span>CBCB</td>
+<td class="instruction">JR Z,<a href="CBAB.html#cbd1">CreateCreature_Copy</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbcd"></span>CBCD</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Move on to the second object for creatures.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbce"></span>CBCE</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbcf"></span>CBCF</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if it is not free either.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd0"></span>CBD0</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label">CreateCreature_Copy</td>
+<td class="address-2"><span id="cbd1"></span>CBD1</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the template against the free object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd2"></span>CBD2</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Take the template as the object being filled in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd3"></span>CBD3</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd5"></span>CBD5</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy the template into the free object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbd7"></span>CBD7</td>
+<td class="instruction">LD A,($A70D)</td>
+<td class="comment-1" rowspan="1">Fetch the random seed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbda"></span>CBDA</td>
+<td class="instruction">AND %00101111</td>
+<td class="comment-1" rowspan="1">Keep bits 0-3 and bit 5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbdc"></span>CBDC</td>
+<td class="instruction">ADD A,$68</td>
+<td class="comment-1" rowspan="1">Add the start of the area for creatures, 68.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbde"></span>CBDE</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Set the x position of the creature in the template.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbe1"></span>CBE1</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Fetch a random number from the refresh register.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbe3"></span>CBE3</td>
+<td class="instruction">AND %00101111</td>
+<td class="comment-1" rowspan="1">Keep bits 0-3 and bit 5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbe5"></span>CBE5</td>
+<td class="instruction">ADD A,$68</td>
+<td class="comment-1" rowspan="1">Add the start of the area for creatures, 68.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbe7"></span>CBE7</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Set the y position of the creature in the template.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbea"></span>CBEA</td>
+<td class="instruction">LD A,($A70D)</td>
+<td class="comment-1" rowspan="1">Fetch the random seed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbed"></span>CBED</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="3">Move bits 3-5 to bits 0-2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbee"></span>CBEE</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbef"></span>CBEF</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf0"></span>CBF0</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf2"></span>CBF2</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Put the offset in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf3"></span>CBF3</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf5"></span>CBF5</td>
+<td class="instruction">LD DE,$CC09</td>
+<td class="comment-1" rowspan="1">Take the types of creatures, <a href="CC09.html">CreatureTypes</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf8"></span>CBF8</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbf9"></span>CBF9</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbfa"></span>CBFA</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Set the type of the creature in the template.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cbfd"></span>CBFD</td>
+<td class="instruction">CALL <a href="B2C5.html">CalculatePixelCoordinates</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B2C5.html">CalculatePixelCoordinates</a> to work out where the creature is on the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc00"></span>CC00</td>
+<td class="instruction">CALL <a href="BF1B.html">TestObjectIntersections</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BF1B.html">TestObjectIntersections</a> to find out if the creature overlaps an object where it is.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc03"></span>CC03</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if it does not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc04"></span>CC04</td>
+<td class="instruction">LD (IX+$00),$00</td>
+<td class="comment-1" rowspan="1">Set the type in the template to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cc08"></span>CC08</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CB89.html">CB89</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cbab">Map</a></td>
+<td class="next">
+Next: <a href="CC09.html">CC09</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/52139.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,6 +44,28 @@ Next: <a href="32382.html">32382</a>
 <div class="paragraph">
 Used by the routine at <a href="32195.html">MainLoop</a>.
 </div>
+<div class="paragraph">
+Reached at the end of every pass of <a href="32195.html">MainLoop</a>. Looks up the list of items for the current room in <a href="30077.html">RoomTable</a> and runs the handler of each one through <a href="32403.html">ProcessRoomItem</a>. Each entry in a list is the address of an item record in the initial entity data at <a href="24589.html">Initialisation_Player</a>. Once the list is finished the counter at <a href="24082.html">CounterLow</a> is incremented and, on the first pass, <a href="37521.html">DrawRoomEntities</a> draws all of the entities in the room and bit 0 of <a href="24084.html">GameFlags</a> is set. The random number seed at <a href="24069.html">RandomSeed</a> is then stirred, the pick-up key, the pause keys and the food are dealt with and the main loop is restarted, unless the player is in room 142 which ends the game with <a href="38636.html">GameComplete</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="32291"></span>
+<div class="comments">
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="draw-room-before" src="../../images/scr/draw-room-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="draw-room-after" src="../../images/scr/draw-room-after.png" /></td>
+</tr>
+</table>
+</div>
 </div>
 </td>
 </tr>
@@ -48,13 +73,13 @@ Used by the routine at <a href="32195.html">MainLoop</a>.
 <td class="asm-label">DrawRoom</td>
 <td class="address-2"><span id="32291"></span>32291</td>
 <td class="instruction">LD A,(60049)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="60049.html">PlayerRoom</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32294"></span>32294</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="3">Create an offset in <span class="register">HL</span> (<span class="register">A</span> * 2).</td>
+<td class="comment-1" rowspan="3">Double the room number to create an offset in <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -70,7 +95,7 @@ Used by the routine at <a href="32195.html">MainLoop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="32298"></span>32298</td>
 <td class="instruction">LD BC,30077</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span>=<a href="30077.html">RoomTable</a> + offset.</td>
+<td class="comment-1" rowspan="2">Find the entry for the room in the table of item lists at <a href="30077.html">RoomTable</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -81,7 +106,7 @@ Used by the routine at <a href="32195.html">MainLoop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="32302"></span>32302</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="4"><span class="register">HL</span>=the current room data.</td>
+<td class="comment-1" rowspan="4">Fetch the address of the list of items for the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -102,205 +127,243 @@ Used by the routine at <a href="32195.html">MainLoop</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="32306"></span>32306</td>
 <td class="instruction">LD (24091),HL</td>
-<td class="comment-1" rowspan="1">Stash the room data pointer at <a href="24091.html">CurrentRoom</a>.</td>
+<td class="comment-1" rowspan="1">Update the room pointer in <a href="24091.html">CurrentRoom</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="32309"></span>
+<div class="comments">
+<div class="paragraph">
+Each pass of this loop reads one item from the list.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">Decor_Loop</td>
 <td class="address-1"><span id="32309"></span>32309</td>
 <td class="instruction">LD HL,(24091)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24091.html">CurrentRoom</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the pointer to the next entry in the list of items.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32312"></span>32312</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the item address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32313"></span>32313</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move on to the next entry in the list and write the pointer to <a href="24091.html">CurrentRoom</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32314"></span>32314</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32315"></span>32315</td>
 <td class="instruction">LD (24091),HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32318"></span>32318</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Fetch the address of the item.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32319"></span>32319</td>
 <td class="instruction">LD H,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32320"></span>32320</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32321"></span>32321</td>
 <td class="instruction">OR H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="32403.html">ProcessRoomItem</a> to process the item if the list has not ended (the item address is not zero).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32322"></span>32322</td>
-<td class="instruction">JR NZ,<a href="32382.html#32403">ProcessAction_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="32403.html">ProcessRoomItem</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="32324"></span>
+<div class="comments">
+<div class="paragraph">
+The list is finished (it is terminated by an address of 0).
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32324"></span>32324</td>
 <td class="instruction">LD HL,(24082)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24082.html">CounterLow</a>.</td>
+<td class="comment-1" rowspan="3">Increment the counter held in <a href="24082.html">CounterLow</a> by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32327"></span>32327</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32328"></span>32328</td>
 <td class="instruction">LD (24082),HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32331"></span>32331</td>
 <td class="instruction">LD HL,24084</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24084.html">GameFlags</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="32291.html#32341">DrawRoom_Finish</a> if bit 0 of <a href="24084.html">GameFlags</a> is set (the entities are drawn).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32334"></span>32334</td>
 <td class="instruction">BIT 0,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32336"></span>32336</td>
-<td class="instruction">JR NZ,<a href="32291.html#32341">DrawRoom_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="32291.html#32341">DrawRoom_Finish</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32338"></span>32338</td>
-<td class="instruction">CALL <a href="37458.html#37521">HandlerCaveDoorLocked_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="37521.html">DrawRoomEntities</a></td>
+<td class="comment-1" rowspan="1">Call <a href="37521.html">DrawRoomEntities</a> to draw the entities in this room.</td>
 </tr>
 <tr>
-<td class="asm-label">DrawRoom_0</td>
+<td class="asm-label">DrawRoom_Finish</td>
 <td class="address-2"><span id="32341"></span>32341</td>
 <td class="instruction">LD HL,24084</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24084.html">GameFlags</a>.</td>
+<td class="comment-1" rowspan="2">Set bit 0 of <a href="24084.html">GameFlags</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32344"></span>32344</td>
 <td class="instruction">SET 0,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="32346"></span>
+<div class="comments">
+<div class="paragraph">
+Stir the random number seed with FRAMES and the counter.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32346"></span>32346</td>
 <td class="instruction">LD HL,(24069)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the random seed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32349"></span>32349</td>
 <td class="instruction">LD DE,(23672)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch FRAMES.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32353"></span>32353</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add FRAMES to the random seed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32354"></span>32354</td>
 <td class="instruction">LD A,(24082)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="24082.html">CounterLow</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the counter.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32357"></span>32357</td>
 <td class="instruction">ADD A,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Add the counter to the random seed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32358"></span>32358</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32359"></span>32359</td>
 <td class="instruction">LD (24069),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the new random seed.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="32362"></span>
+<div class="comments">
+<div class="paragraph">
+Read the pick-up key, check for the game being paused and spawn food.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32362"></span>32362</td>
-<td class="instruction">CALL <a href="37458.html#37771">HandlerCaveDoorLocked_18</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="37771.html">ReadPickupKey</a></td>
+<td class="comment-1" rowspan="1">Call <a href="37771.html">ReadPickupKey</a> to read the key to pick up an item.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32365"></span>32365</td>
-<td class="instruction">CALL <a href="38025.html">38025</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="38025.html">PauseGame</a></td>
+<td class="comment-1" rowspan="1">Call <a href="38025.html">PauseGame</a> to check whether the game is paused.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32368"></span>32368</td>
-<td class="instruction">CALL <a href="39122.html#39204">SetKeyPositions_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="39204.html">SpawnFood</a></td>
+<td class="comment-1" rowspan="1">Call <a href="39204.html">SpawnFood</a> to spawn the food.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="32371"></span>
+<div class="comments">
+<div class="paragraph">
+Finish the game if the player has reached the final room.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32371"></span>32371</td>
 <td class="instruction">LD A,(60049)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="60049.html">PlayerRoom</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32374"></span>32374</td>
 <td class="instruction">CP 142</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="38636.html">GameComplete</a> if the player is in room 142.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32376"></span>32376</td>
 <td class="instruction">JP Z,<a href="38636.html">GameComplete</a></td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="32379"></span>32379</td>
 <td class="instruction">JP <a href="32195.html">MainLoop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="32195.html">MainLoop</a>.</td>
+<td class="comment-1" rowspan="1">Jump back to <a href="32195.html">MainLoop</a> to run the next pass of the main loop.</td>
 </tr>
 </table>
 <table class="asm-navigation">

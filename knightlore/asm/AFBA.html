@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Knight Lore: Routine at AFBA</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../knightlore.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AFB7.html">AFB7</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#afba">Map</a></td>
+<td class="next">
+Next: <a href="B088.html">B088</a>
+</td>
+</tr>
+</table>
+<div class="description">AFBA: Run Game</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="CA9A.html">LeaveRoomToWest</a>.
+</div>
+<div class="paragraph">
+The main game loop. The first call builds the objects of the room the player is in. Then every pass of the loop visits each of the 28 objects in the objects table in turn, calling the routine for its graphic number from the jump table at <a href="B096.html">UpdateRoutineTable</a> to move and update it. Once every object has been dealt with the objects are sorted and drawn, the screen is brought up to date and the game waits a little (the more objects in view, the shorter the wait) before the next pass.
+</div>
+<div class="paragraph">
+<table class="">
+<tr>
+<th colspan="1" rowspan="1">After the first pass</th>
+</tr>
+<tr>
+<td class="" colspan="1" rowspan="1"><img alt="run-game" src="../images/scr/run-game.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame</td>
+<td class="address-2"><span id="afba"></span>AFBA</td>
+<td class="instruction">CALL <a href="D1E6.html">BuildRoomObjects</a></td>
+<td class="comment-1" rowspan="1">Build the objects for the room the player is in.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afbd"></span>
+<div class="comments">
+<div class="paragraph">
+Every pass of the main loop starts here. The random seed used by the fire is refreshed, then each object in the table is updated in turn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_Frame</td>
+<td class="address-2"><span id="afbd"></span>AFBD</td>
+<td class="instruction">LD A,($5BA2)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc0"></span>AFC0</td>
+<td class="instruction">LD ($5BBC),A</td>
+<td class="comment-1" rowspan="1">Store it as the seed for the fire (it is stepped for every object).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc3"></span>AFC3</td>
+<td class="instruction">LD IX,$5C08</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="5C08.html">ObjectsTable</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afc7"></span>
+<div class="comments">
+<div class="paragraph">
+Update the object that <span class="register">IX</span> points at.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_NextObject</td>
+<td class="address-2"><span id="afc7"></span>AFC7</td>
+<td class="instruction">LD SP,$5BA0</td>
+<td class="comment-1" rowspan="1">Reset the stack pointer, as the update routines do not have to tidy up the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afca"></span>AFCA</td>
+<td class="instruction">LD HL,$5BBC</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="5BBC.html">FireSeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afcd"></span>AFCD</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">Step the fire seed on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afce"></span>AFCE</td>
+<td class="instruction">LD HL,$AFE4</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="AFBA.html#afe4">RunGame_ObjectUpdated</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd1"></span>AFD1</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash it on the stack, so that the update routine returns there.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd2"></span>AFD2</td>
+<td class="instruction">CALL <a href="CE49.html">SaveSpriteInfo</a></td>
+<td class="comment-1" rowspan="1">Work out the screen position and size of the object, and keep a note of its old ones.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afd5"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="BF11.html">HandleLastAppearingSparkle</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_UpdateObject</td>
+<td class="address-2"><span id="afd5"></span>AFD5</td>
+<td class="instruction">LD L,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the graphic number of the object into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd8"></span>AFD8</td>
+<td class="instruction">LD BC,$B096</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="B096.html">UpdateRoutineTable</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afdb"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="B566.html">HandleEndingSparkles</a>, <a href="B9CC.html">GetGuardSpeeds</a>, <a href="C9FB.html">SetPlayerSpeed</a> and <a href="CEBB.html">DrawObjectsInOrder</a>.
+</div>
+<div class="paragraph">
+Jump to the routine whose address is held in word <span class="register">L</span> of the table that <span class="register">BC</span> points at (<span class="register">H</span> is cleared first).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_JumpToHandler</td>
+<td class="address-2"><span id="afdb"></span>AFDB</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>, so that <span class="register">HL</span> holds the graphic number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afdd"></span>AFDD</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double it to get the offset of a word in the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afde"></span>AFDE</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the address of the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afdf"></span>AFDF</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read the low byte of the routine address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe0"></span>AFE0</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe1"></span>AFE1</td>
+<td class="instruction">LD H,(HL)</td>
+<td class="comment-1" rowspan="1">Read the high byte into <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe2"></span>AFE2</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Put the low byte into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe3"></span>AFE3</td>
+<td class="instruction">JP (HL)</td>
+<td class="comment-1" rowspan="1">Jump to the update routine.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afe4"></span>
+<div class="comments">
+<div class="paragraph">
+The update routine of each object returns here.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_ObjectUpdated</td>
+<td class="address-1"><span id="afe4"></span>AFE4</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Read the refresh register, which is as good as random.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe6"></span>AFE6</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Move it into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe7"></span>AFE7</td>
+<td class="instruction">LD A,($5BA5)</td>
+<td class="comment-1" rowspan="1">Fetch the second random seed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afea"></span>AFEA</td>
+<td class="instruction">ADD A,C</td>
+<td class="comment-1" rowspan="1">Add the random value to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afeb"></span>AFEB</td>
+<td class="instruction">LD ($5BA5),A</td>
+<td class="comment-1" rowspan="1">Store it back as the new second seed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afee"></span>AFEE</td>
+<td class="instruction">LD BC,$0020</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to the size of an object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aff1"></span>AFF1</td>
+<td class="instruction">ADD IX,BC</td>
+<td class="comment-1" rowspan="1">Move <span class="register">IX</span> on to the next object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aff3"></span>AFF3</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IX</span> to <span class="register">HL</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aff5"></span>AFF5</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aff6"></span>AFF6</td>
+<td class="instruction">LD BC,$6108</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to the address just beyond the objects table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aff9"></span>AFF9</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract it from <span class="register">HL</span>, to see if <span class="register">IX</span> is past the end of the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="affa"></span>AFFA</td>
+<td class="instruction">SBC HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="affc"></span>AFFC</td>
+<td class="instruction">JR NC,<a href="AFBA.html#b000">RunGame_FinishFrame</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AFBA.html#b000">RunGame_FinishFrame</a> if every object has been updated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="affe"></span>AFFE</td>
+<td class="instruction">JR <a href="AFBA.html#afc7">RunGame_NextObject</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="AFBA.html#afc7">RunGame_NextObject</a> for the next object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b000"></span>
+<div class="comments">
+<div class="paragraph">
+Every object has been updated; now finish the frame.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_FinishFrame</td>
+<td class="address-2"><span id="b000"></span>B000</td>
+<td class="instruction">LD HL,($5BA2)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b003"></span>B003</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Increase it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b004"></span>B004</td>
+<td class="instruction">LD ($5BA2),HL</td>
+<td class="comment-1" rowspan="1">Store it again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b007"></span>B007</td>
+<td class="instruction">LD A,($5BA5)</td>
+<td class="comment-1" rowspan="1">Fetch the second random seed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b00a"></span>B00A</td>
+<td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="3">Add the byte of the ROM that the frame counter points at, and the frame counter itself, to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b00b"></span>B00B</td>
+<td class="instruction">ADD A,L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b00c"></span>B00C</td>
+<td class="instruction">ADD A,H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b00d"></span>B00D</td>
+<td class="instruction">LD ($5BA5),A</td>
+<td class="comment-1" rowspan="1">Store it as the new second seed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b010"></span>B010</td>
+<td class="instruction">LD HL,$5BB2</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="5BB2.html">NotFirstRoomFlag</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b013"></span>B013</td>
+<td class="instruction">SET 0,(HL)</td>
+<td class="comment-1" rowspan="1">Set bit 0, so that the special objects table gets updated the next time round.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b015"></span>B015</td>
+<td class="instruction">CALL <a href="D50E.html">PauseGame</a></td>
+<td class="comment-1" rowspan="1">Check for the pause key.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b018"></span>B018</td>
+<td class="instruction">CALL <a href="B8A9.html">SpawnCauldronBubbles</a></td>
+<td class="comment-1" rowspan="1">Create the bubbles of the cauldron if the player is in the cauldron room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b01b"></span>B01B</td>
+<td class="instruction">CALL <a href="CE62.html">ListObjectsToDraw</a></td>
+<td class="comment-1" rowspan="1">Make a list of the objects that need to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b01e"></span>B01E</td>
+<td class="instruction">CALL <a href="D59F.html">DrawChangedObjects</a></td>
+<td class="comment-1" rowspan="1">Draw the objects of the list into the screen buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b021"></span>B021</td>
+<td class="instruction">LD A,($5BC5)</td>
+<td class="comment-1" rowspan="1">Fetch the rising blocks flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b024"></span>B024</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b025"></span>B025</td>
+<td class="instruction">CALL NZ,<a href="B454.html">PlaySoundFromHeight_PlaySoundFromValue</a></td>
+<td class="comment-1" rowspan="1">Play the sound of rising blocks if there are any.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b028"></span>
+<div class="comments">
+<div class="paragraph">
+Slow the game down when few objects were drawn this frame: the delay is made up of as many short delay loops as the number of objects drawn is below 06.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b028"></span>B028</td>
+<td class="instruction">LD A,($5BBE)</td>
+<td class="comment-1" rowspan="1">Fetch the number of objects that were drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b02b"></span>B02B</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b02d"></span>B02D</td>
+<td class="instruction">ADD A,$06</td>
+<td class="comment-1" rowspan="1">Add 06 to it, to get the number of delay loops.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b02f"></span>B02F</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Copy it into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b030"></span>B030</td>
+<td class="instruction">JP M,<a href="AFBA.html#b03f">RunGame_UpdateDisplay</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AFBA.html#b03f">RunGame_UpdateDisplay</a> if it is negative (more than 06 objects were drawn).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b033"></span>B033</td>
+<td class="instruction">JR Z,<a href="AFBA.html#b03f">RunGame_UpdateDisplay</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AFBA.html#b03f">RunGame_UpdateDisplay</a> if it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_Delay</td>
+<td class="address-2"><span id="b035"></span>B035</td>
+<td class="instruction">LD HL,$0500</td>
+<td class="comment-1" rowspan="1">Set <span class="register">HL</span> to the number of times to count down for each delay loop.</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_DelayLoop</td>
+<td class="address-2"><span id="b038"></span>B038</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Decrement the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b039"></span>B039</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="2">Check whether the counter has reached zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b03a"></span>B03A</td>
+<td class="instruction">OR H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b03b"></span>B03B</td>
+<td class="instruction">JR NZ,<a href="AFBA.html#b038">RunGame_DelayLoop</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="AFBA.html#b038">RunGame_DelayLoop</a> until the counter is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b03d"></span>B03D</td>
+<td class="instruction">DJNZ <a href="AFBA.html#b035">RunGame_Delay</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="AFBA.html#b035">RunGame_Delay</a> until all of the delay loops are done.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b03f"></span>
+<div class="comments">
+<div class="paragraph">
+If a new room has just been entered, draw the panel and the scenery.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_UpdateDisplay</td>
+<td class="address-2"><span id="b03f"></span>B03F</td>
+<td class="instruction">LD A,($5BB7)</td>
+<td class="comment-1" rowspan="1">Fetch the flag which says that the room has just been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b042"></span>B042</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AFBA.html#b074">RunGame_Continue</a> if it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b043"></span>B043</td>
+<td class="instruction">JR Z,<a href="AFBA.html#b074">RunGame_Continue</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b045"></span>B045</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Reset the flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b046"></span>B046</td>
+<td class="instruction">LD ($5BB7),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b049"></span>B049</td>
+<td class="instruction">LD A,($5BAD)</td>
+<td class="comment-1" rowspan="1">Fetch the attribute of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b04c"></span>B04C</td>
+<td class="instruction">CALL <a href="D556.html">FillAttributes</a></td>
+<td class="comment-1" rowspan="1">Colour the whole screen with it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b04f"></span>B04F</td>
+<td class="instruction">CALL <a href="BF45.html#bf4e">DisplayObjects</a></td>
+<td class="comment-1" rowspan="1">Draw the objects the player is carrying.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b052"></span>B052</td>
+<td class="instruction">CALL <a href="D2EF.html">SetBorderAttributes</a></td>
+<td class="comment-1" rowspan="1">Colour the panel.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b055"></span>B055</td>
+<td class="instruction">CALL <a href="D30D.html">ColourSunMoon</a></td>
+<td class="comment-1" rowspan="1">Colour the sun and moon window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b058"></span>B058</td>
+<td class="instruction">CALL <a href="D255.html">DrawPanel</a></td>
+<td class="comment-1" rowspan="1">Draw the panel.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b05b"></span>B05B</td>
+<td class="instruction">LD IX,$C44D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="C44D.html">SunMoonObject</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b05f"></span>B05F</td>
+<td class="instruction">CALL <a href="C3A4.html">DisplaySunMoonFrame</a></td>
+<td class="comment-1" rowspan="1">Draw the sun or moon.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b062"></span>B062</td>
+<td class="instruction">CALL <a href="BCCA.html">PrintDayCaption</a></td>
+<td class="comment-1" rowspan="1">Draw the day number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b065"></span>B065</td>
+<td class="instruction">CALL <a href="BC66.html">PrintDays</a></td>
+<td class="comment-1" rowspan="1">Draw the number of days.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b068"></span>B068</td>
+<td class="instruction">CALL <a href="BC7A.html">PrintLivesGraphic</a></td>
+<td class="comment-1" rowspan="1">Draw the lives graphics.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b06b"></span>B06B</td>
+<td class="instruction">CALL <a href="BCA3.html">PrintLives</a></td>
+<td class="comment-1" rowspan="1">Print the number of lives.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b06e"></span>B06E</td>
+<td class="instruction">CALL <a href="D56F.html">UpdateScreen</a></td>
+<td class="comment-1" rowspan="1">Copy the screen buffer to the display.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b071"></span>B071</td>
+<td class="instruction">CALL <a href="B088.html">ResetWipeFlags</a></td>
+<td class="comment-1" rowspan="1">Reset the wipe flag of all of the objects.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b074"></span>
+<div class="comments">
+<div class="paragraph">
+Start another frame, or lose a life if the player is gone.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunGame_Continue</td>
+<td class="address-2"><span id="b074"></span>B074</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Write 00 to *<a href="5BC5.html">SparkleHeight</a> (the rising blocks flag).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b075"></span>B075</td>
+<td class="instruction">LD ($5BC5),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b078"></span>B078</td>
+<td class="instruction">LD IX,$5C08</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="5C08.html">ObjectsTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b07c"></span>B07C</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the graphic number of the bottom half of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b07f"></span>B07F</td>
+<td class="instruction">OR (IX+$20)</td>
+<td class="comment-1" rowspan="1">Combine it with the graphic number of the top half of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b082"></span>B082</td>
+<td class="instruction">JP Z,<a href="AFB7.html">StartLife</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AFB7.html">StartLife</a> if neither half is present, as the player has been killed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b085"></span>B085</td>
+<td class="instruction">JP <a href="AFBA.html#afbd">RunGame_Frame</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="AFBA.html#afbd">RunGame_Frame</a> for another pass of the game loop.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/alien8/asm/A68B.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AFB7.html">AFB7</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#afba">Map</a></td>
+<td class="next">
+Next: <a href="B088.html">B088</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/knightlore/">Source code</a>.</div>
+<div><a href="../dec/asm/44986.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

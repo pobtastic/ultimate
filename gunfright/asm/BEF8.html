@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at BEF8</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BEE5.html">BEE5</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bef8">Map</a></td>
+<td class="next">
+Next: <a href="BFA3.html">BFA3</a>
+</td>
+</tr>
+</table>
+<div class="description">BEF8: Draw Flipped Sprite</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BDAE.html">DrawSprite</a>.
+</div>
+<div class="paragraph">
+Draws a sprite which is flipped, so that it faces the other way. It works in the same way as <a href="BDAE.html">DrawSprite</a>, but it draws from the right-hand end of each row to the left, and the tables turn the bits of each byte round as well as shifting them.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The address of the sprite data</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The address of the object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bef8"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the horizontal pixel position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite</td>
+<td class="address-2"><span id="bef8"></span>BEF8</td>
+<td class="instruction">LD A,($A220)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A220.html">SpriteHorizontalPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="befb"></span>BEFB</td>
+<td class="instruction">AND %00000110</td>
+<td class="comment-1" rowspan="1">Keep the shift, which is zero, two, four or six pixels.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="befd"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the sprite unshifted.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="befd"></span>BEFD</td>
+<td class="instruction">JP Z,<a href="BEF8.html#bf8d">DrawFlippedSprite_Aligned</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BEF8.html#bf8d">DrawFlippedSprite_Aligned</a> if there is no shift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf00"></span>BF00</td>
+<td class="instruction">OR %11110001</td>
+<td class="comment-1" rowspan="1">Make the high byte of the address of the table for the shift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf02"></span>BF02</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Set <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf03"></span>BF03</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the number of columns of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf04"></span>BF04</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf05"></span>BF05</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the low three bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf07"></span>BF07</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one, as a shifted sprite is one byte wider.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf08"></span>BF08</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the widened column count in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf09"></span>
+<div class="comments">
+<div class="paragraph">
+Store the number of bytes in a row of the sprite.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf09"></span>BF09</td>
+<td class="instruction">LD ($A222),A</td>
+<td class="comment-1" rowspan="1">Set <a href="A222.html">SpriteRowBytes</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf0c"></span>BF0C</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Take one off again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf0d"></span>BF0D</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the low three bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf0f"></span>BF0F</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf10"></span>BF10</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep twice the column count in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf11"></span>BF11</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Multiply it by eight to make sixteen times the number of columns.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf12"></span>BF12</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf13"></span>BF13</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf14"></span>BF14</td>
+<td class="instruction">ADD A,C</td>
+<td class="comment-1" rowspan="1">Add the double to make eighteen times.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf15"></span>BF15</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make it negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf17"></span>BF17</td>
+<td class="instruction">ADD A,$5D</td>
+<td class="comment-1" rowspan="1">Add 5D which gives the distance from <a href="BFD6.html#bfd8">DrawFlipped_SpriteJump</a> to the code for the number of columns. Each column has eighteen bytes of code.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite_SetJump</td>
+<td class="address-2"><span id="bf19"></span>BF19</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the number of columns on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1a"></span>BF1A</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the high byte of the shift table on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1b"></span>BF1B</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1d"></span>BF1D</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BEF8.html#bf22">DrawFlippedSprite_SetJumpAddress</a> if the distance is positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1e"></span>BF1E</td>
+<td class="instruction">JP P,<a href="BEF8.html#bf22">DrawFlippedSprite_SetJumpAddress</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf21"></span>BF21</td>
+<td class="instruction">DEC H</td>
+<td class="comment-1" rowspan="1">Make <span class="register">HL</span> negative.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite_SetJumpAddress</td>
+<td class="address-2"><span id="bf22"></span>BF22</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Put the distance in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf23"></span>BF23</td>
+<td class="instruction">LD BC,$BFD8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="BFD6.html#bfd8">DrawFlipped_SpriteJump</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf26"></span>BF26</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the distance to give the address to jump to.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf27"></span>
+<div class="comments">
+<div class="paragraph">
+Set the address of the jump at <a href="A224.html">SpriteJumpOpcode</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf27"></span>BF27</td>
+<td class="instruction">LD ($A225),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="A225.html">SpriteJumpAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2a"></span>BF2A</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the shift table from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2b"></span>BF2B</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the number of bytes in a row from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2c"></span>BF2C</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the number of bytes in a row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2d"></span>BF2D</td>
+<td class="instruction">ADD A,$17</td>
+<td class="comment-1" rowspan="1">Add 17 to give twenty three more than the number of bytes.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf2f"></span>
+<div class="comments">
+<div class="paragraph">
+Store the distance from the end of a row to the start of the next.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2f"></span>BF2F</td>
+<td class="instruction">LD ($A227),A</td>
+<td class="comment-1" rowspan="1">Set <a href="A227.html">SpriteRowStep</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf32"></span>BF32</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap the address of the sprite data into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf33"></span>BF33</td>
+<td class="instruction">LD C,$70</td>
+<td class="comment-1" rowspan="1">Set the number of rows in the buffer.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf35"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the vertical position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf35"></span>BF35</td>
+<td class="instruction">LD A,($A221)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A221.html">SpriteVerticalPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf38"></span>BF38</td>
+<td class="instruction">SUB $48</td>
+<td class="comment-1" rowspan="1">Subtract the position of the bottom row of the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3a"></span>BF3A</td>
+<td class="instruction">JR C,<a href="BEF8.html#bf6c">DrawFlippedSprite_BelowBottom</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BEF8.html#bf6c">DrawFlippedSprite_BelowBottom</a> if the sprite starts below it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3c"></span>BF3C</td>
+<td class="instruction">SUB C</td>
+<td class="comment-1" rowspan="1">Subtract the number of rows in the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3d"></span>BF3D</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the sprite starts above the top.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3e"></span>BF3E</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make it positive, which is the number of rows up to the top.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf40"></span>BF40</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">Compare it with the number of rows in the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf41"></span>BF41</td>
+<td class="instruction">JR C,<a href="BEF8.html#bf44">DrawFlippedSprite_FirstByte</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BEF8.html#bf44">DrawFlippedSprite_FirstByte</a> if there is room for fewer rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf43"></span>BF43</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Use the number of rows in the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite_FirstByte</td>
+<td class="address-2"><span id="bf44"></span>BF44</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the first byte of data.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf45"></span>
+<div class="comments">
+<div class="paragraph">
+Store the number of rows to draw.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf45"></span>BF45</td>
+<td class="instruction">LD ($A223),A</td>
+<td class="comment-1" rowspan="1">Set <a href="A223.html">SpriteRowsLeft</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite_StartRows</td>
+<td class="address-2"><span id="bf48"></span>BF48</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap the address of the data into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf49"></span>BF49</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the high byte of the shift table on the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf4a"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the pixel position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf4a"></span>BF4A</td>
+<td class="instruction">LD HL,($A220)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A220.html">SpriteHorizontalPosition</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf4d"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the number of bytes in a row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf4d"></span>BF4D</td>
+<td class="instruction">LD A,($A222)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A222.html">SpriteRowBytes</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf50"></span>BF50</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Take one off.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf51"></span>BF51</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Multiply it by eight to give the pixels in all but one of the columns.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf52"></span>BF52</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf53"></span>BF53</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf54"></span>BF54</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add it to the horizontal position, to give the right-hand end of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf55"></span>BF55</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Set it in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf56"></span>
+<div class="comments">
+<div class="paragraph">
+Find the address in the buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf56"></span>BF56</td>
+<td class="instruction">CALL <a href="D233.html">CalculateBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D233.html">CalculateBufferAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf59"></span>BF59</td>
+<td class="instruction">LD C,L</td>
+<td class="comment-1" rowspan="2">Keep the buffer address in <span class="register">BC</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf5a"></span>BF5A</td>
+<td class="instruction">LD B,H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf5b"></span>BF5B</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the shift table from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf5c"></span>
+<div class="comments">
+<div class="paragraph">
+Save the stack pointer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf5c"></span>BF5C</td>
+<td class="instruction">LD ($A21D),SP</td>
+<td class="comment-1" rowspan="1">Set <a href="A21D.html">SavedStackPointer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf60"></span>BF60</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="3">Point the stack pointer at the sprite data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf61"></span>BF61</td>
+<td class="instruction">LD SP,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf62"></span>BF62</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf63"></span>BF63</td>
+<td class="instruction">SET 1,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Set the flag which shows that a sprite has been drawn.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf67"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the number of rows to draw.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf67"></span>BF67</td>
+<td class="instruction">LD A,($A223)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A223.html">SpriteRowsLeft</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf6a"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the first row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf6a"></span>BF6A</td>
+<td class="instruction">JR <a href="BFD6.html">DrawFlippedRow</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BFD6.html">DrawFlippedRow</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf6c"></span>
+<div class="comments">
+<div class="paragraph">
+The sprite starts below the bottom of the buffer, so skip those rows.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite_BelowBottom</td>
+<td class="address-2"><span id="bf6c"></span>BF6C</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the number of rows below the bottom positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf6e"></span>BF6E</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the rows below the bottom of the sprite in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf6f"></span>BF6F</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows in the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf70"></span>BF70</td>
+<td class="instruction">SUB C</td>
+<td class="comment-1" rowspan="1">Subtract the number below the bottom.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf71"></span>BF71</td>
+<td class="instruction">RET M</td>
+<td class="comment-1" rowspan="1">Return if the sprite is all below the bottom.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf72"></span>BF72</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if there is nothing left.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf73"></span>
+<div class="comments">
+<div class="paragraph">
+Store the number of rows to draw.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf73"></span>BF73</td>
+<td class="instruction">LD ($A223),A</td>
+<td class="comment-1" rowspan="1">Set <a href="A223.html">SpriteRowsLeft</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf76"></span>BF76</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf78"></span>BF78</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Move back to the first byte of the sprite data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf79"></span>BF79</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf7a"></span>BF7A</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Keep only the number of columns.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf7c"></span>BF7C</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move on to the data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf7d"></span>BF7D</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf7e"></span>BF7E</td>
+<td class="instruction">SLA C</td>
+<td class="comment-1" rowspan="2">Double the number of rows to skip.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf80"></span>BF80</td>
+<td class="instruction">RL B</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite_SkipRows</td>
+<td class="address-2"><span id="bf82"></span>BF82</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="3">Skip two bytes for each row below the bottom in each column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf83"></span>BF83</td>
+<td class="instruction">DEC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf84"></span>BF84</td>
+<td class="instruction">JR NZ,<a href="BEF8.html#bf82">DrawFlippedSprite_SkipRows</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf86"></span>
+<div class="comments">
+<div class="paragraph">
+Start drawing at the bottom of the buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf86"></span>BF86</td>
+<td class="instruction">LD A,$48</td>
+<td class="comment-1" rowspan="2">Set <a href="A221.html">SpriteVerticalPosition</a> to the bottom of the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf88"></span>BF88</td>
+<td class="instruction">LD ($A221),A</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf8b"></span>
+<div class="comments">
+<div class="paragraph">
+Start the rows.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf8b"></span>BF8B</td>
+<td class="instruction">JR <a href="BEF8.html#bf48">DrawFlippedSprite_StartRows</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BEF8.html#bf48">DrawFlippedSprite_StartRows</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawFlippedSprite_Aligned</td>
+<td class="address-2"><span id="bf8d"></span>BF8D</td>
+<td class="instruction">LD H,$F9</td>
+<td class="comment-1" rowspan="1">Point <span class="register">H</span> at the table which only turns the bits round.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf8f"></span>BF8F</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the number of columns of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf90"></span>BF90</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf91"></span>BF91</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the low four bits.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf93"></span>
+<div class="comments">
+<div class="paragraph">
+Store the number of bytes in a row of the sprite.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf93"></span>BF93</td>
+<td class="instruction">LD ($A222),A</td>
+<td class="comment-1" rowspan="1">Set <a href="A222.html">SpriteRowBytes</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf96"></span>BF96</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the bytes in a row in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf97"></span>BF97</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Multiply it by eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf98"></span>BF98</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf99"></span>BF99</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf9a"></span>BF9A</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="2">Add it twice more to make ten times the number of columns.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf9b"></span>BF9B</td>
+<td class="instruction">ADD A,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf9c"></span>BF9C</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make it negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf9e"></span>BF9E</td>
+<td class="instruction">SUB $03</td>
+<td class="comment-1" rowspan="1">Subtract three, which gives the distance from <a href="BFD6.html#bfd8">DrawFlipped_SpriteJump</a> to the code for the number of columns. Each column has ten bytes of code.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bfa0"></span>
+<div class="comments">
+<div class="paragraph">
+Set the address of the jump.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfa0"></span>BFA0</td>
+<td class="instruction">JP <a href="BEF8.html#bf19">DrawFlippedSprite_SetJump</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BEF8.html#bf19">DrawFlippedSprite_SetJump</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BEE5.html">BEE5</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bef8">Map</a></td>
+<td class="next">
+Next: <a href="BFA3.html">BFA3</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/48888.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at D7E4</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D7B3.html">D7B3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d7e4">Map</a></td>
+<td class="next">
+Next: <a href="D8E4.html">D8E4</a>
+</td>
+</tr>
+</table>
+<div class="description">D7E4: Test Entity Cells</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="D037.html">MoveEntity</a>.
+</div>
+<div class="paragraph">
+Tests each cell of the level that the entity's box covers, by calling <a href="D8E4.html">TestGroupObjects</a>, and retests a cell when a collision moves the entity. When bit 6 of the flags is set, a z within one page of FF is stored in field 1F after a zero top byte has been snapped up by one unit. A hit planted by <a href="DC6A.html">HandleOverlap</a> then turns the heading away from it. Purpose of bit 6 is not yet known.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The entity</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d7e4"></span>
+<div class="comments">
+<div class="paragraph">
+The cell is the high byte of x and the high byte of y. A collision can move those bytes, and the extent can make the entity cover the next cell.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells</td>
+<td class="address-2"><span id="d7e4"></span>D7E4</td>
+<td class="instruction">LD L,(IX+$02)</td>
+<td class="comment-1" rowspan="2">Take the cell from the high bytes of x and y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7e7"></span>D7E7</td>
+<td class="instruction">LD H,(IX+$05)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7ea"></span>D7EA</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Test that cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7eb"></span>D7EB</td>
+<td class="instruction">CALL <a href="D8E4.html">TestGroupObjects</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7ee"></span>D7EE</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7ef"></span>D7EF</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="3">Retest the previous column when the high byte of x moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7f2"></span>D7F2</td>
+<td class="instruction">CP L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7f3"></span>D7F3</td>
+<td class="instruction">JR Z,<a href="D7E4.html#d7f9">TestEntityCells_SpanX</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7f5"></span>D7F5</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="3">Use the column below the new x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7f6"></span>D7F6</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7f7"></span>D7F7</td>
+<td class="instruction">JR <a href="D7E4.html#d801">TestEntityCells_Second</a></td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_SpanX</td>
+<td class="address-2"><span id="d7f9"></span>D7F9</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="3">The entity covers the next column when the x extent carries.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7fc"></span>D7FC</td>
+<td class="instruction">ADD A,(IX+$0B)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d7ff"></span>D7FF</td>
+<td class="instruction">JR NC,<a href="D7E4.html#d827">TestEntityCells_Moved</a></td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Second</td>
+<td class="address-2"><span id="d801"></span>D801</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="3">Test the next column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d802"></span>D802</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d803"></span>D803</td>
+<td class="instruction">CALL <a href="D8E4.html">TestGroupObjects</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d806"></span>D806</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d807"></span>D807</td>
+<td class="instruction">LD A,(IX+$05)</td>
+<td class="comment-1" rowspan="3">Retest this row when the high byte of y moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d80a"></span>D80A</td>
+<td class="instruction">CP H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d80b"></span>D80B</td>
+<td class="instruction">JR Z,<a href="D7E4.html#d816">TestEntityCells_SpanY</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d80d"></span>D80D</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="6">Test the entity's row, then the row above.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d80e"></span>D80E</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d80f"></span>D80F</td>
+<td class="instruction">CALL <a href="D8E4.html">TestGroupObjects</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d812"></span>D812</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d813"></span>D813</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d814"></span>D814</td>
+<td class="instruction">JR <a href="D7E4.html#d824">TestEntityCells_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_SpanY</td>
+<td class="address-2"><span id="d816"></span>D816</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">The entity covers the next row when the y extent carries.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d819"></span>D819</td>
+<td class="instruction">ADD A,(IX+$0C)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d81c"></span>D81C</td>
+<td class="instruction">JR NC,<a href="D7E4.html#d83c">TestEntityCells_Snap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d81e"></span>D81E</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="4">Test the next row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d81f"></span>D81F</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d820"></span>D820</td>
+<td class="instruction">CALL <a href="D8E4.html">TestGroupObjects</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d823"></span>D823</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Next</td>
+<td class="address-2"><span id="d824"></span>D824</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="2">Test the diagonal cell too.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d825"></span>D825</td>
+<td class="instruction">JR <a href="D7E4.html#d839">TestEntityCells_Cell</a></td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Moved</td>
+<td class="address-2"><span id="d827"></span>D827</td>
+<td class="instruction">LD A,(IX+$05)</td>
+<td class="comment-1" rowspan="3">Use the entity's row when y has moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d82a"></span>D82A</td>
+<td class="instruction">CP H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d82b"></span>D82B</td>
+<td class="instruction">JR Z,<a href="D7E4.html#d830">TestEntityCells_SpanRow</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d82d"></span>D82D</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="2">Use that row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d82e"></span>D82E</td>
+<td class="instruction">JR <a href="D7E4.html#d839">TestEntityCells_Cell</a></td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_SpanRow</td>
+<td class="address-2"><span id="d830"></span>D830</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Cover the next row when the y extent carries.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d833"></span>D833</td>
+<td class="instruction">ADD A,(IX+$0C)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d836"></span>D836</td>
+<td class="instruction">JR NC,<a href="D7E4.html#d83c">TestEntityCells_Snap</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d838"></span>D838</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">Use the next row.</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Cell</td>
+<td class="address-2"><span id="d839"></span>D839</td>
+<td class="instruction">CALL <a href="D8E4.html">TestGroupObjects</a></td>
+<td class="comment-1" rowspan="1">Test this cell.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d83c"></span>
+<div class="comments">
+<div class="paragraph">
+Bit 6 of the flags stores a z that is within one page of FF into field 1F. A zero top byte is snapped up by one unit first. A pickup stores zero instead.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Snap</td>
+<td class="address-2"><span id="d83c"></span>D83C</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Start with no hit. <a href="DC6A.html">HandleOverlap</a> plants one in this byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d83e"></span>D83E</td>
+<td class="instruction">BIT 6,(IX+$1E)</td>
+<td class="comment-1" rowspan="2">Snap z when bit 6 of the flags is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d842"></span>D842</td>
+<td class="instruction">JR Z,<a href="D7E4.html#d86b">TestEntityCells_Hit</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d844"></span>D844</td>
+<td class="instruction">LD L,(IX+$09)</td>
+<td class="comment-1" rowspan="4">A zero top byte of z is snapped up by one unit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d847"></span>D847</td>
+<td class="instruction">LD A,(IX+$08)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d84a"></span>D84A</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d84b"></span>D84B</td>
+<td class="instruction">JR NZ,<a href="D7E4.html#d85e">TestEntityCells_Distance</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d84d"></span>D84D</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="4">Write that snap back into z.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d84e"></span>D84E</td>
+<td class="instruction">LD (IX+$09),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d851"></span>D851</td>
+<td class="instruction">INC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d852"></span>D852</td>
+<td class="instruction">LD (IX+$08),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d855"></span>D855</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="3">A pickup stores zero in field 1F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d858"></span>D858</td>
+<td class="instruction">CP $0F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d85a"></span>D85A</td>
+<td class="instruction">JR Z,<a href="D7E4.html#d868">TestEntityCells_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d85c"></span>D85C</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="2">Otherwise measure from one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d85d"></span>D85D</td>
+<td class="instruction">INC A</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Distance</td>
+<td class="address-2"><span id="d85e"></span>D85E</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="6">Store the distance when z is within one page of FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d85f"></span>D85F</td>
+<td class="instruction">XOR A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d860"></span>D860</td>
+<td class="instruction">LD DE,$00FF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d863"></span>D863</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d865"></span>D865</td>
+<td class="instruction">OR H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d866"></span>D866</td>
+<td class="instruction">JR NZ,<a href="D7E4.html#d86b">TestEntityCells_Hit</a></td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Store</td>
+<td class="address-2"><span id="d868"></span>D868</td>
+<td class="instruction">LD (IX+$1F),L</td>
+<td class="comment-1" rowspan="1">Remember that distance in field 1F.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d86b"></span>
+<div class="comments">
+<div class="paragraph">
+A hit turns the heading. Fields 18 and 19 supply the two components, and the low bits of the hit choose which axis is turned.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Hit</td>
+<td class="address-2"><span id="d86b"></span>D86B</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="3">Return when nothing was hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d86c"></span>D86C</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d86d"></span>D86D</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d86e"></span>D86E</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="3">Remember the hit and clear it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d86f"></span>D86F</td>
+<td class="instruction">XOR A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d870"></span>D870</td>
+<td class="instruction">LD ($D83D),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d873"></span>D873</td>
+<td class="instruction">BIT 5,(IX+$01)</td>
+<td class="comment-1" rowspan="2">Return when bit 5 of the frame is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d877"></span>D877</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d878"></span>D878</td>
+<td class="instruction">LD A,(IX+$18)</td>
+<td class="comment-1" rowspan="3">Return when fields 18 and 19 are both zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d87b"></span>D87B</td>
+<td class="instruction">OR (IX+$19)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d87e"></span>D87E</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d87f"></span>D87F</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Return when the hit was FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d880"></span>D880</td>
+<td class="instruction">CP $FF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d882"></span>D882</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d883"></span>D883</td>
+<td class="instruction">LD A,(IX+$18)</td>
+<td class="comment-1" rowspan="3">Use field 18 as one component.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d886"></span>D886</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d887"></span>D887</td>
+<td class="instruction">JR NZ,<a href="D7E4.html#d896">TestEntityCells_Component</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d889"></span>D889</td>
+<td class="instruction">LD A,(IX+$11)</td>
+<td class="comment-1" rowspan="1">Read the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d88c"></span>D88C</td>
+<td class="instruction">ADD A,$10</td>
+<td class="comment-1" rowspan="1">Add 10 to the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d88e"></span>D88E</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Use the low six bits of the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d890"></span>D890</td>
+<td class="instruction">CP $20</td>
+<td class="comment-1" rowspan="2">Use FE when those bits are 20 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d892"></span>D892</td>
+<td class="instruction">JR C,<a href="D7E4.html#d896">TestEntityCells_Component</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d894"></span>D894</td>
+<td class="instruction">LD A,$FE</td>
+<td class="comment-1" rowspan="1">Use FE for that component.</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Component</td>
+<td class="address-2"><span id="d896"></span>D896</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the first component.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d897"></span>D897</td>
+<td class="instruction">LD A,(IX+$19)</td>
+<td class="comment-1" rowspan="3">Use field 19 as the other component.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d89a"></span>D89A</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d89b"></span>D89B</td>
+<td class="instruction">JR NZ,<a href="D7E4.html#d8a8">TestEntityCells_Other</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d89d"></span>D89D</td>
+<td class="instruction">LD A,(IX+$11)</td>
+<td class="comment-1" rowspan="1">Read the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a0"></span>D8A0</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Use the low six bits of the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a2"></span>D8A2</td>
+<td class="instruction">CP $20</td>
+<td class="comment-1" rowspan="2">Use FE when those bits are 20 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a4"></span>D8A4</td>
+<td class="instruction">JR C,<a href="D7E4.html#d8a8">TestEntityCells_Other</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a6"></span>D8A6</td>
+<td class="instruction">LD A,$FE</td>
+<td class="comment-1" rowspan="1">Use FE for that component.</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Other</td>
+<td class="address-2"><span id="d8a8"></span>D8A8</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Keep the second component.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8a9"></span>D8A9</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="2">Use the low two bits of the hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8aa"></span>D8AA</td>
+<td class="instruction">AND $03</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ac"></span>D8AC</td>
+<td class="instruction">JR Z,<a href="D7E4.html#d8b2">TestEntityCells_Swap</a></td>
+<td class="comment-1" rowspan="4">Swap the components when the hit was on x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ae"></span>D8AE</td>
+<td class="instruction">LD B,H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8af"></span>D8AF</td>
+<td class="instruction">LD C,L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b0"></span>D8B0</td>
+<td class="instruction">JR <a href="D7E4.html#d8bb">TestEntityCells_Heading</a></td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Swap</td>
+<td class="address-2"><span id="d8b2"></span>D8B2</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="7">Turn the second component to face the other way.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b3"></span>D8B3</td>
+<td class="instruction">NEG</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b5"></span>D8B5</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b6"></span>D8B6</td>
+<td class="instruction">LD A,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b7"></span>D8B7</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b8"></span>D8B8</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8b9"></span>D8B9</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ba"></span>D8BA</td>
+<td class="instruction">LD B,L</td>
+<td class="comment-1" rowspan="1">Keep the first component.</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Heading</td>
+<td class="address-2"><span id="d8bb"></span>D8BB</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="6">Face the patched step away from the first component.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8bc"></span>D8BC</td>
+<td class="instruction">LD E,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8bd"></span>D8BD</td>
+<td class="instruction">XOR B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8be"></span>D8BE</td>
+<td class="instruction">RLA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8bf"></span>D8BF</td>
+<td class="instruction">LD B,$FE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c1"></span>D8C1</td>
+<td class="instruction">JR C,<a href="D7E4.html#d8c7">TestEntityCells_Signs</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c3"></span>D8C3</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Face the other way when the signs differ.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c4"></span>D8C4</td>
+<td class="instruction">NEG</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c6"></span>D8C6</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Signs</td>
+<td class="address-2"><span id="d8c7"></span>D8C7</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="3">Compare the signs of the two components.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c8"></span>D8C8</td>
+<td class="instruction">XOR C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8c9"></span>D8C9</td>
+<td class="instruction">RLA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ca"></span>D8CA</td>
+<td class="instruction">JR NC,<a href="D7E4.html#d8d4">TestEntityCells_Apply</a></td>
+<td class="comment-1" rowspan="1">Keep the turn when the signs agree.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8cc"></span>D8CC</td>
+<td class="instruction">BIT 7,B</td>
+<td class="comment-1" rowspan="3">A positive turn is 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8ce"></span>D8CE</td>
+<td class="instruction">LD B,$01</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d0"></span>D8D0</td>
+<td class="instruction">JR Z,<a href="D7E4.html#d8d4">TestEntityCells_Apply</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d2"></span>D8D2</td>
+<td class="instruction">LD B,$FF</td>
+<td class="comment-1" rowspan="1">A negative turn is FF.</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityCells_Apply</td>
+<td class="address-2"><span id="d8d4"></span>D8D4</td>
+<td class="instruction">LD A,(IX+$11)</td>
+<td class="comment-1" rowspan="1">Read the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d7"></span>D8D7</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the old heading aside.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d8"></span>D8D8</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="1">Add the turn to the heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8d9"></span>D8D9</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Use the low six bits of the new heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8db"></span>D8DB</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the new heading aside.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8dc"></span>D8DC</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="2">Use bits 6-7 of the old heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8dd"></span>D8DD</td>
+<td class="instruction">AND $C0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8df"></span>D8DF</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="2">Combine them with the new heading.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8e0"></span>D8E0</td>
+<td class="instruction">LD (IX+$11),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d8e3"></span>D8E3</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D7B3.html">D7B3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d7e4">Map</a></td>
+<td class="next">
+Next: <a href="D8E4.html">D8E4</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/55268.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

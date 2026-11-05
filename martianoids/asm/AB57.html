@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at AB57</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AB03.html">AB03</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ab57">Map</a></td>
+<td class="next">
+Next: <a href="AC30.html">AC30</a>
+</td>
+</tr>
+</table>
+<div class="description">AB57: Move Robot</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="AB03.html">MoveRobotHorizontally</a>.
+</div>
+<div class="paragraph">
+Moves the robot in the direction that it is heading, by the number of steps that is in <span class="register">B</span>. The robot can only turn when it is at the start of a cell: if a turn key is being pressed then the robot turns and carries on in the new direction. When the robot is blocked by something in the map then <a href="AC30.html">HandleObstacle</a> deals with it.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Number of steps to take</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Robot</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot</td>
+<td class="address-2"><span id="ab57"></span>AB57</td>
+<td class="instruction">CALL <a href="AED3.html">GetPosition</a></td>
+<td class="comment-1" rowspan="1">Fetch the position of the robot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab5a"></span>AB5A</td>
+<td class="instruction">LD ($9653),DE</td>
+<td class="comment-1" rowspan="1">Keep the X position...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab5e"></span>AB5E</td>
+<td class="instruction">LD ($9655),HL</td>
+<td class="comment-1" rowspan="1">...and the Y position, so that the move can be undone.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab61"></span>AB61</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the robot...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab64"></span>AB64</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="2">...and turn it into the direction that it is heading in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab65"></span>AB65</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab66"></span>AB66</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="2">Jump to move in direction zero (X decreasing)...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab68"></span>AB68</td>
+<td class="instruction">JP Z,<a href="AB57.html#ac01">MoveRobot_Left</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab6b"></span>AB6B</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">...or direction one (Y increasing)...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab6c"></span>AB6C</td>
+<td class="instruction">JP Z,<a href="AB57.html#abd3">MoveRobot_Up</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab6f"></span>AB6F</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">...or direction two (X increasing)...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab70"></span>AB70</td>
+<td class="instruction">JP Z,<a href="AB57.html#aba1">MoveRobot_Right</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ab73"></span>
+<div class="comments">
+<div class="paragraph">
+Direction three (Y decreasing). The four sections that follow all work in the same way. When the robot is at the start of a cell, and a key to turn is being pressed, the robot is turned and the routine carries on with the section for the new direction. Otherwise the robot moves, and if it was blocked then <a href="AC30.html">HandleObstacle</a> is called to deal with the obstacle. This is repeated until there are no more steps.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Down</td>
+<td class="address-2"><span id="ab73"></span>AB73</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Jump if the robot is not at the start of a cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab74"></span>AB74</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab75"></span>AB75</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ab82">MoveRobot_DownStep</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab77"></span>AB77</td>
+<td class="instruction">LD A,($9625)</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab7a"></span>AB7A</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab7c"></span>AB7C</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ab8f">MoveRobot_Down_TurnLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab7e"></span>AB7E</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn right is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab80"></span>AB80</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ab98">MoveRobot_Down_TurnRight</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_DownStep</td>
+<td class="address-2"><span id="ab82"></span>AB82</td>
+<td class="instruction">CALL <a href="AA97.html">MoveDown</a></td>
+<td class="comment-1" rowspan="1">Move the robot down using <a href="AA97.html">MoveDown</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab85"></span>AB85</td>
+<td class="instruction">CALL NZ,<a href="AC30.html">HandleObstacle</a></td>
+<td class="comment-1" rowspan="1">Deal with the obstacle using <a href="AC30.html">HandleObstacle</a> if it was blocked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab88"></span>AB88</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Loop back if there are steps left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab89"></span>AB89</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab8a"></span>AB8A</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ab73">MoveRobot_Down</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab8c"></span>AB8C</td>
+<td class="instruction">JP <a href="AB57.html#ac1a">MoveRobot_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AB57.html#ac1a">MoveRobot_Store</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Down_TurnLeft</td>
+<td class="address-2"><span id="ab8f"></span>AB8F</td>
+<td class="instruction">CALL <a href="AAD3.html">TurnRobotLeft</a></td>
+<td class="comment-1" rowspan="1">Turn the robot left using <a href="AAD3.html">TurnRobotLeft</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab92"></span>AB92</td>
+<td class="instruction">RES 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite without flipping it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab96"></span>AB96</td>
+<td class="instruction">JR <a href="AB57.html#aba1">MoveRobot_Right</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading right.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Down_TurnRight</td>
+<td class="address-2"><span id="ab98"></span>AB98</td>
+<td class="instruction">CALL <a href="AAED.html">TurnRobotRight</a></td>
+<td class="comment-1" rowspan="1">Turn the robot right using <a href="AAED.html">TurnRobotRight</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab9b"></span>AB9B</td>
+<td class="instruction">SET 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite flipped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ab9f"></span>AB9F</td>
+<td class="instruction">JR <a href="AB57.html#ac01">MoveRobot_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading left.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Right</td>
+<td class="address-2"><span id="aba1"></span>ABA1</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="3">Jump if the robot is not at the start of a cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aba2"></span>ABA2</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aba3"></span>ABA3</td>
+<td class="instruction">JR NZ,<a href="AB57.html#abb0">MoveRobot_RightStep</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aba5"></span>ABA5</td>
+<td class="instruction">LD A,($9625)</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aba8"></span>ABA8</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abaa"></span>ABAA</td>
+<td class="instruction">JR NZ,<a href="AB57.html#abc1">MoveRobot_Right_TurnLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abac"></span>ABAC</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn right is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abae"></span>ABAE</td>
+<td class="instruction">JR NZ,<a href="AB57.html#abca">MoveRobot_Right_TurnRight</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_RightStep</td>
+<td class="address-2"><span id="abb0"></span>ABB0</td>
+<td class="instruction">CALL <a href="AA58.html">MoveRight</a></td>
+<td class="comment-1" rowspan="1">Move the robot right using <a href="AA58.html">MoveRight</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abb3"></span>ABB3</td>
+<td class="instruction">CALL NZ,<a href="AC30.html">HandleObstacle</a></td>
+<td class="comment-1" rowspan="1">Deal with the obstacle using <a href="AC30.html">HandleObstacle</a> if it was blocked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abb6"></span>ABB6</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Loop back if there are steps left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abb7"></span>ABB7</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abb8"></span>ABB8</td>
+<td class="instruction">JR NZ,<a href="AB57.html#aba1">MoveRobot_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abba"></span>ABBA</td>
+<td class="instruction">SET 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Show the sprite flipped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abbe"></span>ABBE</td>
+<td class="instruction">JP <a href="AB57.html#ac1a">MoveRobot_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AB57.html#ac1a">MoveRobot_Store</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Right_TurnLeft</td>
+<td class="address-2"><span id="abc1"></span>ABC1</td>
+<td class="instruction">CALL <a href="AAD3.html">TurnRobotLeft</a></td>
+<td class="comment-1" rowspan="1">Turn the robot left using <a href="AAD3.html">TurnRobotLeft</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abc4"></span>ABC4</td>
+<td class="instruction">SET 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite flipped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abc8"></span>ABC8</td>
+<td class="instruction">JR <a href="AB57.html#abd3">MoveRobot_Up</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading up.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Right_TurnRight</td>
+<td class="address-2"><span id="abca"></span>ABCA</td>
+<td class="instruction">CALL <a href="AAED.html">TurnRobotRight</a></td>
+<td class="comment-1" rowspan="1">Turn the robot right using <a href="AAED.html">TurnRobotRight</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abcd"></span>ABCD</td>
+<td class="instruction">SET 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite flipped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abd1"></span>ABD1</td>
+<td class="instruction">JR <a href="AB57.html#ab73">MoveRobot_Down</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading down.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Up</td>
+<td class="address-2"><span id="abd3"></span>ABD3</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Jump if the robot is not at the start of a cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abd4"></span>ABD4</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abd5"></span>ABD5</td>
+<td class="instruction">JR NZ,<a href="AB57.html#abe2">MoveRobot_UpStep</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abd7"></span>ABD7</td>
+<td class="instruction">LD A,($9625)</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abda"></span>ABDA</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abdc"></span>ABDC</td>
+<td class="instruction">JR NZ,<a href="AB57.html#abef">MoveRobot_Up_TurnLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abde"></span>ABDE</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn right is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abe0"></span>ABE0</td>
+<td class="instruction">JR NZ,<a href="AB57.html#abf8">MoveRobot_Up_TurnRight</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_UpStep</td>
+<td class="address-2"><span id="abe2"></span>ABE2</td>
+<td class="instruction">CALL <a href="AA1A.html">MoveUp</a></td>
+<td class="comment-1" rowspan="1">Move the robot up using <a href="AA1A.html">MoveUp</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abe5"></span>ABE5</td>
+<td class="instruction">CALL NZ,<a href="AC30.html">HandleObstacle</a></td>
+<td class="comment-1" rowspan="1">Deal with the obstacle using <a href="AC30.html">HandleObstacle</a> if it was blocked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abe8"></span>ABE8</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Loop back if there are steps left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abe9"></span>ABE9</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abea"></span>ABEA</td>
+<td class="instruction">JR NZ,<a href="AB57.html#abd3">MoveRobot_Up</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abec"></span>ABEC</td>
+<td class="instruction">JP <a href="AB57.html#ac1a">MoveRobot_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AB57.html#ac1a">MoveRobot_Store</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Up_TurnLeft</td>
+<td class="address-2"><span id="abef"></span>ABEF</td>
+<td class="instruction">CALL <a href="AAD3.html">TurnRobotLeft</a></td>
+<td class="comment-1" rowspan="1">Turn the robot left using <a href="AAD3.html">TurnRobotLeft</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abf2"></span>ABF2</td>
+<td class="instruction">RES 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite without flipping it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abf6"></span>ABF6</td>
+<td class="instruction">JR <a href="AB57.html#ac01">MoveRobot_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading left.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Up_TurnRight</td>
+<td class="address-2"><span id="abf8"></span>ABF8</td>
+<td class="instruction">CALL <a href="AAED.html">TurnRobotRight</a></td>
+<td class="comment-1" rowspan="1">Turn the robot right using <a href="AAED.html">TurnRobotRight</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abfb"></span>ABFB</td>
+<td class="instruction">SET 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite flipped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="abff"></span>ABFF</td>
+<td class="instruction">JR <a href="AB57.html#aba1">MoveRobot_Right</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading right.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Left</td>
+<td class="address-2"><span id="ac01"></span>AC01</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="3">Jump if the robot is not at the start of a cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac02"></span>AC02</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac03"></span>AC03</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ac10">MoveRobot_LeftStep</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac05"></span>AC05</td>
+<td class="instruction">LD A,($9625)</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac08"></span>AC08</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac0a"></span>AC0A</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ac1d">MoveRobot_Left_TurnLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac0c"></span>AC0C</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="2">Jump if the key to turn right is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac0e"></span>AC0E</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ac27">MoveRobot_Left_TurnRight</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_LeftStep</td>
+<td class="address-2"><span id="ac10"></span>AC10</td>
+<td class="instruction">CALL <a href="A9DD.html">MoveLeft</a></td>
+<td class="comment-1" rowspan="1">Move the robot left using <a href="A9DD.html">MoveLeft</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac13"></span>AC13</td>
+<td class="instruction">CALL NZ,<a href="AC30.html">HandleObstacle</a></td>
+<td class="comment-1" rowspan="1">Deal with the obstacle using <a href="AC30.html">HandleObstacle</a> if it was blocked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac16"></span>AC16</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Loop back if there are steps left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac17"></span>AC17</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac18"></span>AC18</td>
+<td class="instruction">JR NZ,<a href="AB57.html#ac01">MoveRobot_Left</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Store</td>
+<td class="address-2"><span id="ac1a"></span>AC1A</td>
+<td class="instruction">JP <a href="AEE0.html">SetPosition</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AEE0.html">SetPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Left_TurnLeft</td>
+<td class="address-2"><span id="ac1d"></span>AC1D</td>
+<td class="instruction">CALL <a href="AAD3.html">TurnRobotLeft</a></td>
+<td class="comment-1" rowspan="1">Turn the robot left using <a href="AAD3.html">TurnRobotLeft</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac20"></span>AC20</td>
+<td class="instruction">RES 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite without flipping it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac24"></span>AC24</td>
+<td class="instruction">JP <a href="AB57.html#ab73">MoveRobot_Down</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading down.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveRobot_Left_TurnRight</td>
+<td class="address-2"><span id="ac27"></span>AC27</td>
+<td class="instruction">CALL <a href="AAED.html">TurnRobotRight</a></td>
+<td class="comment-1" rowspan="1">Turn the robot right using <a href="AAED.html">TurnRobotRight</a>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac2a"></span>AC2A</td>
+<td class="instruction">RES 7,(IX+$00)</td>
+<td class="comment-1" rowspan="1">...and show the sprite without flipping it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ac2e"></span>AC2E</td>
+<td class="instruction">JR <a href="AB57.html#abd3">MoveRobot_Up</a></td>
+<td class="comment-1" rowspan="1">Jump to carry on heading up.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AB03.html">AB03</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ab57">Map</a></td>
+<td class="next">
+Next: <a href="AC30.html">AC30</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../dec/asm/43863.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

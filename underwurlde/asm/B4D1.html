@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Underwurlde: Routine at B4D1</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../underwurlde.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B4CD.html">B4CD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#46289">Map</a></td>
+<td class="next">
+Next: <a href="B57A.html">B57A</a>
+</td>
+</tr>
+</table>
+<div class="description">B4D1: Throw Weapon</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="A316.html">Handle_Sabreman_On_Rope</a>, <a href="A433.html">Handle_Sabreman_Walking</a>, <a href="A6A6.html">Handle_Sabreman_Falling</a> and <a href="E570.html">Handle_Carried_Sabreman</a>.
+</div>
+<div class="paragraph">
+Throws a weapon that Sabreman is carrying. Nothing happens if bit 0 of the redraw flags of Sabreman is set or if he is not carrying a weapon (one of the types 68 to 6B in the three slots from <a href="8EEB.html">Weapon_Slots</a>).
+</div>
+<div class="paragraph">
+One weapon at a time is thrown unless the counter in <a href="AAAB.html">Fire_Key_Flag</a> allows another: the counter is reset while both weapon records are empty, and while a weapon is in flight it goes up each time this routine is called, so a weapon is thrown only when its low three bits are zero.
+</div>
+<div class="paragraph">
+The weapon record is a free one of the two records at <a href="8EFA.html">Object_Records</a> and <a href="8EFA.html#36618">Second_Weapon_Record</a>. The type, the position and the attribute are copied from Sabreman. The type of the weapon is then changed to the type of the projectile for the weapon that was carried (from the table at <a href="B753.html">Weapon_Projectile_Types</a>), plus one if it is thrown to the left. The weapon starts 08 pixels to the side of Sabreman and 08 pixels higher, with an x velocity between 40 and 7F and an upward y velocity that comes from the frame counter. Bit 2 of the type of Sabreman, less one (or less two if his type is 15 or more), tells which way he is facing (set for the right). The weapon is not thrown if there is no room to its left.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record of Sabreman</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon</td>
+<td class="address-2"><span id="46289"></span>B4D1</td>
+<td class="instruction">LD A,($8F29)</td>
+<td class="comment-1" rowspan="1">Fetch the redraw flags of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46292"></span>B4D4</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep only bit 0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46294"></span>B4D6</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if Sabreman has only just appeared in the room (bit 0 is set).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46295"></span>B4D7</td>
+<td class="instruction">LD HL,$8EEB</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the first of the three slots that hold the items that Sabreman carries.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46298"></span>B4DA</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> for the three slots.</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Find_Weapon</td>
+<td class="address-2"><span id="46300"></span>B4DC</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46301"></span>B4DD</td>
+<td class="instruction">AND %11111100</td>
+<td class="comment-1" rowspan="1">Reset the two low bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46303"></span>B4DF</td>
+<td class="instruction">CP $68</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B4D1.html#46311">Throw_Weapon_Found</a> if the item is a weapon.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46305"></span>B4E1</td>
+<td class="instruction">JR Z,<a href="B4D1.html#46311">Throw_Weapon_Found</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46307"></span>B4E3</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46308"></span>B4E4</td>
+<td class="instruction">DJNZ <a href="B4D1.html#46300">Throw_Weapon_Find_Weapon</a></td>
+<td class="comment-1" rowspan="1">Decrease the slot counter and loop back for the next slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46310"></span>B4E6</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return, as Sabreman has no weapon.</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Found</td>
+<td class="address-2"><span id="46311"></span>B4E7</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the weapon into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46312"></span>B4E8</td>
+<td class="instruction">LD A,($8EFA)</td>
+<td class="comment-1" rowspan="2">Fetch the type of the first weapon record into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46315"></span>B4EB</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46316"></span>B4EC</td>
+<td class="instruction">LD A,($8F0A)</td>
+<td class="comment-1" rowspan="3">Combine it with the type of the second weapon record, and jump to <a href="B4D1.html#46326">Throw_Weapon_Store_Counter</a> if both of the records are empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46319"></span>B4EF</td>
+<td class="instruction">OR B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46320"></span>B4F0</td>
+<td class="instruction">JR Z,<a href="B4D1.html#46326">Throw_Weapon_Store_Counter</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46322"></span>B4F2</td>
+<td class="instruction">LD A,($AAAB)</td>
+<td class="comment-1" rowspan="1">Fetch the fire key flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46325"></span>B4F5</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Increase it.</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Store_Counter</td>
+<td class="address-2"><span id="46326"></span>B4F6</td>
+<td class="instruction">LD ($AAAB),A</td>
+<td class="comment-1" rowspan="1">Store the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46329"></span>B4F9</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only the low three bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46331"></span>B4FB</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return unless they are zero (a weapon can only be thrown on one pass in eight).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46332"></span>B4FC</td>
+<td class="instruction">LD DE,$8EFA</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="8EFA.html">Object_Records</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46335"></span>B4FF</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch its type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46336"></span>B500</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B4D1.html#46345">Throw_Weapon_Copy_Position</a> if the record is empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46337"></span>B501</td>
+<td class="instruction">JR Z,<a href="B4D1.html#46345">Throw_Weapon_Copy_Position</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46339"></span>B503</td>
+<td class="instruction">LD DE,$8F0A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="8EFA.html#36618">Second_Weapon_Record</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46342"></span>B506</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch its type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46343"></span>B507</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if the record is in use too.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46344"></span>B508</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Copy_Position</td>
+<td class="address-2"><span id="46345"></span>B509</td>
+<td class="instruction">LD HL,$8F1A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the record of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46348"></span>B50C</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the type of the weapon.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46349"></span>B50D</td>
+<td class="instruction">LD BC,$0006</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to copy to 06.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46352"></span>B510</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the address of the weapon record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46353"></span>B511</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy the type, the position and the attribute of Sabreman to the weapon record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46355"></span>B513</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the address of the weapon record to <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46356"></span>B514</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the type of the weapon to <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46357"></span>B515</td>
+<td class="instruction">LD A,($5C78)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46360"></span>B518</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Store it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46361"></span>B519</td>
+<td class="instruction">LD A,($8ED6)</td>
+<td class="comment-1" rowspan="1">Fetch the tick counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46364"></span>B51C</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="1">Add the low byte of the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46365"></span>B51D</td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">Keep only the low seven bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46367"></span>B51F</td>
+<td class="instruction">OR %01000000</td>
+<td class="comment-1" rowspan="1">Set bit 6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46369"></span>B521</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Store the result in <span class="register">B</span>, to use as the x velocity of the weapon.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46370"></span>B522</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the type of the weapon.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46371"></span>B523</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only the two low bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46373"></span>B525</td>
+<td class="instruction">LD DE,$B753</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="B753.html">Weapon_Projectile_Types</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46376"></span>B528</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="5">Add the weapon number to the address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46377"></span>B529</td>
+<td class="instruction">LD E,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46378"></span>B52A</td>
+<td class="instruction">LD A,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46379"></span>B52B</td>
+<td class="instruction">ADC A,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46381"></span>B52D</td>
+<td class="instruction">LD D,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46382"></span>B52E</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the type of the projectile into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46383"></span>B52F</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46384"></span>B530</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46387"></span>B533</td>
+<td class="instruction">CP $15</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B4CD.html">Adjust_Throw_Facing</a> if the type is 15 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46389"></span>B535</td>
+<td class="instruction">JR NC,<a href="B4CD.html">Adjust_Throw_Facing</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46391"></span>B537</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Subtract one from the type.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46392"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="B4CD.html">Adjust_Throw_Facing</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Test_Facing</td>
+<td class="address-2"><span id="46392"></span>B538</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move to the x position in the weapon record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46393"></span>B539</td>
+<td class="instruction">LD DE,$0003</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE</span> to 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46396"></span>B53C</td>
+<td class="instruction">AND %00000100</td>
+<td class="comment-1" rowspan="1">Test which way Sabreman is facing (bit 2 of the type that was worked out).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46398"></span>B53E</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46399"></span>B53F</td>
+<td class="instruction">JR Z,<a href="B4D1.html#46405">Throw_Weapon_Face_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B4D1.html#46405">Throw_Weapon_Face_Left</a> if Sabreman is facing left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46401"></span>B541</td>
+<td class="instruction">ADD A,$08</td>
+<td class="comment-1" rowspan="1">Add 08 to start the weapon on his right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46403"></span>B543</td>
+<td class="instruction">JR <a href="B4D1.html#46415">Throw_Weapon_Store_Position</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B4D1.html#46415">Throw_Weapon_Store_Position</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Face_Left</td>
+<td class="address-2"><span id="46405"></span>B545</td>
+<td class="instruction">SUB $08</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B4D1.html#46454">Throw_Weapon_Cancel</a> if the x position would be below zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46407"></span>B547</td>
+<td class="instruction">JR C,<a href="B4D1.html#46454">Throw_Weapon_Cancel</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46409"></span>B549</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="5">Invert the x velocity in <span class="register">B</span>, so that it is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46410"></span>B54A</td>
+<td class="instruction">LD A,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46411"></span>B54B</td>
+<td class="instruction">CPL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46412"></span>B54C</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46413"></span>B54D</td>
+<td class="instruction">POP AF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46414"></span>B54E</td>
+<td class="instruction">INC C</td>
+<td class="comment-1" rowspan="1">Use the next projectile type, for a weapon that travels to the left.</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Store_Position</td>
+<td class="address-2"><span id="46415"></span>B54F</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46416"></span>B550</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Move back to the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46417"></span>B551</td>
+<td class="instruction">LD (HL),C</td>
+<td class="comment-1" rowspan="1">Store the type of the projectile.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46418"></span>B552</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="3">Move to the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46419"></span>B553</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46420"></span>B554</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46421"></span>B555</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46422"></span>B556</td>
+<td class="instruction">SUB $08</td>
+<td class="comment-1" rowspan="1">Subtract 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46424"></span>B558</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46425"></span>B559</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move to byte 06 of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46426"></span>B55A</td>
+<td class="instruction">LD (HL),$00</td>
+<td class="comment-1" rowspan="1">Clear byte 06 of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46428"></span>B55C</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move to the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46429"></span>B55D</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46430"></span>B55E</td>
+<td class="instruction">LD (HL),B</td>
+<td class="comment-1" rowspan="1">Store the x velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46431"></span>B55F</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move to the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46432"></span>B560</td>
+<td class="instruction">LD A,($5C78)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46435"></span>B563</td>
+<td class="instruction">RLA</td>
+<td class="comment-1" rowspan="2">Multiply it by four.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46436"></span>B564</td>
+<td class="instruction">RLA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46437"></span>B565</td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">Keep only the low seven bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46439"></span>B567</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate it, to make an upward velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46441"></span>B569</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46442"></span>B56A</td>
+<td class="instruction">LD A,($8F25)</td>
+<td class="comment-1" rowspan="1">Fetch the contact flags of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46445"></span>B56D</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move to the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46446"></span>B56E</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46447"></span>B56F</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46448"></span>B570</td>
+<td class="instruction">LD E,$04</td>
+<td class="comment-1" rowspan="1">Set <span class="register">E</span> to 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46450"></span>B572</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move to the redraw flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46451"></span>B573</td>
+<td class="instruction">LD (HL),$01</td>
+<td class="comment-1" rowspan="1">Set bit 0 of the redraw flags, so that the weapon is drawn without being erased first.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46453"></span>B575</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">Throw_Weapon_Cancel</td>
+<td class="address-2"><span id="46454"></span>B576</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Move back to the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46455"></span>B577</td>
+<td class="instruction">LD (HL),$00</td>
+<td class="comment-1" rowspan="1">Empty the weapon record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46457"></span>B579</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B4CD.html">B4CD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#46289">Map</a></td>
+<td class="next">
+Next: <a href="B57A.html">B57A</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/underwurlde/">Source code</a>.</div>
+<div><a href="../dec/asm/46289.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

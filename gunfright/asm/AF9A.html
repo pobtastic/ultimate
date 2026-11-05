@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at AF9A</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF8F.html">AF8F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#af9a">Map</a></td>
+<td class="next">
+Next: <a href="AFDC.html">AFDC</a>
+</td>
+</tr>
+</table>
+<div class="description">AF9A: Play Note</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="AF76.html">PlayMusicOnce</a> and <a href="AF8F.html">PlayMusic</a>.
+</div>
+<div class="paragraph">
+Plays a note of a tune, or a rest. Bits 0 to 5 of the byte are the number of the note (00 is a rest), and bits 6 and 7 are one less than the length of the note in beats. The pitch of each note comes from the table at <a href="AFF2.html">NoteTable</a>, in which a note has three bytes: the low and high bytes of the length of each half of a pulse, and the number of pulses in a beat.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The address of the note</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The address of the next note</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayNote</td>
+<td class="address-2"><span id="af9a"></span>AF9A</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Keep the number of the note.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af9c"></span>AF9C</td>
+<td class="instruction">JR Z,<a href="AFDC.html">PlayRest</a></td>
+<td class="comment-1" rowspan="1">Play a rest if there is no note.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="af9e"></span>
+<div class="comments">
+<div class="paragraph">
+Look up the delays and the number of cycles in the table at <a href="AFF2.html">NoteTable</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af9e"></span>AF9E</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="2">Copy the number into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af9f"></span>AF9F</td>
+<td class="instruction">LD H,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afa1"></span>AFA1</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double the number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afa2"></span>AFA2</td>
+<td class="instruction">CALL <a href="D275.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Add the number again to treble it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afa5"></span>AFA5</td>
+<td class="instruction">LD BC,$AFF2</td>
+<td class="comment-1" rowspan="2">Point <span class="register">HL</span> at the entry for the note.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afa8"></span>AFA8</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afa9"></span>AFA9</td>
+<td class="instruction">LD B,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the half-period.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afaa"></span>AFAA</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afab"></span>AFAB</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the half-period.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afac"></span>AFAC</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the number of pulses in a beat.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afad"></span>AFAD</td>
+<td class="instruction">LD L,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the number of pulses in a beat.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afae"></span>AFAE</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afb0"></span>
+<div class="comments">
+<div class="paragraph">
+Bits 6 and 7 of the note are the length, less one.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb0"></span>AFB0</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the note again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb1"></span>AFB1</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="2">Rotate the length bits into the bottom of the byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb2"></span>AFB2</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb3"></span>AFB3</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb5"></span>AFB5</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one to get the length in beats.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb6"></span>AFB6</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the address of the note on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb7"></span>AFB7</td>
+<td class="instruction">LD E,L</td>
+<td class="comment-1" rowspan="2">Copy the number of pulses into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb8"></span>AFB8</td>
+<td class="instruction">LD D,H</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afb9"></span>
+<div class="comments">
+<div class="paragraph">
+Multiply the number of cycles by the length of the note.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayNote_Multiply</td>
+<td class="address-2"><span id="afb9"></span>AFB9</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Count down the beats.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afba"></span>AFBA</td>
+<td class="instruction">JR Z,<a href="AF9A.html#afbf">PlayNote_MultiplyDone</a></td>
+<td class="comment-1" rowspan="1">Finish multiplying when the beats are used up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afbc"></span>AFBC</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the number of pulses for another beat.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afbd"></span>AFBD</td>
+<td class="instruction">JR <a href="AF9A.html#afb9">PlayNote_Multiply</a></td>
+<td class="comment-1" rowspan="1">Go back to count the next beat.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afbf"></span>
+<div class="comments">
+<div class="paragraph">
+The number of cycles now matches the length of the note.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayNote_MultiplyDone</td>
+<td class="address-2"><span id="afbf"></span>AFBF</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Retrieve the address of the note.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afc0"></span>
+<div class="comments">
+<div class="paragraph">
+Each pass of this loop makes one cycle of the note, so the length of the note is the number of cycles.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayNote_Cycle</td>
+<td class="address-2"><span id="afc0"></span>AFC0</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the half-period on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc1"></span>AFC1</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear the speaker bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc2"></span>AFC2</td>
+<td class="instruction">OUT ($FE),A</td>
+<td class="comment-1" rowspan="1">Turn the speaker off.</td>
+</tr>
+<tr>
+<td class="asm-label">PlayNote_OffDelay</td>
+<td class="address-2"><span id="afc4"></span>AFC4</td>
+<td class="instruction">DJNZ <a href="AF9A.html#afc4">PlayNote_OffDelay</a></td>
+<td class="comment-1" rowspan="1">Wait for the low half of the pulse.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc6"></span>AFC6</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="1">Count down the high byte of the half-period.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc7"></span>AFC7</td>
+<td class="instruction">JR NZ,<a href="AF9A.html#afc4">PlayNote_OffDelay</a></td>
+<td class="comment-1" rowspan="1">Loop back until the low half is over.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc9"></span>AFC9</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Retrieve the half-period.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afca"></span>AFCA</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the half-period on the stack again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afcb"></span>AFCB</td>
+<td class="instruction">LD A,$10</td>
+<td class="comment-1" rowspan="1">Set the speaker bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afcd"></span>AFCD</td>
+<td class="instruction">OUT ($FE),A</td>
+<td class="comment-1" rowspan="1">Turn the speaker on.</td>
+</tr>
+<tr>
+<td class="asm-label">PlayNote_OnDelay</td>
+<td class="address-2"><span id="afcf"></span>AFCF</td>
+<td class="instruction">DJNZ <a href="AF9A.html#afcf">PlayNote_OnDelay</a></td>
+<td class="comment-1" rowspan="1">Wait for the high half of the pulse.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd1"></span>AFD1</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="1">Count down the high byte of the half-period.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd2"></span>AFD2</td>
+<td class="instruction">JR NZ,<a href="AF9A.html#afcf">PlayNote_OnDelay</a></td>
+<td class="comment-1" rowspan="1">Loop back until the high half is over.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd4"></span>AFD4</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Retrieve the half-period.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd5"></span>AFD5</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Count down the pulses.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd6"></span>AFD6</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Jump to <a href="AF9A.html#afc0">PlayNote_Cycle</a> if any pulses are left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd7"></span>AFD7</td>
+<td class="instruction">OR L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd8"></span>AFD8</td>
+<td class="instruction">JR NZ,<a href="AF9A.html#afc0">PlayNote_Cycle</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afda"></span>AFDA</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the next note.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afdb"></span>AFDB</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/alien8/asm/B4C5.html">Alien 8</a></li>
+<li><a href="/ultimate/bubbler/asm/A1CC.html">Bubbler</a></li>
+<li><a href="/ultimate/cyberun/asm/9AB4.html">Cyberun</a></li>
+<li><a href="/ultimate/knightlore/asm/B2DA.html">Knight Lore</a></li>
+<li><a href="/ultimate/martianoids/asm/C0DA.html">Martianoids</a></li>
+<li><a href="/ultimate/nightshade/asm/C661.html">Nightshade</a></li>
+<li><a href="/ultimate/pentagram/asm/D6C0.html">Pentagram</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF8F.html">AF8F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#af9a">Map</a></td>
+<td class="next">
+Next: <a href="AFDC.html">AFDC</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/44954.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

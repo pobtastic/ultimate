@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at 5B80</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="4000.html">4000</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#5b80">Map</a></td>
+<td class="next">
+Next: <a href="5BA4.html">5BA4</a>
+</td>
+</tr>
+</table>
+<div class="description">5B80: Decrypt Game</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The stub which the tape loader runs once the game has been loaded at 6000. It decrypts the whole game, 8000 bytes, two bytes at a time, and then moves the game down by 0200 bytes to its real home at 5E00 before starting it.
+</div>
+<div class="paragraph">
+The tape loader sets up this stub, and the game checks for the loader's signature in the frame counter (see <a href="A36D.html">InitialiseGame</a>).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="5b80"></span>
+<div class="comments">
+<div class="paragraph">
+Set up the first pair and the number of pairs to decrypt.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DecryptGame</td>
+<td class="address-2"><span id="5b80"></span>5B80</td>
+<td class="instruction">LD DE,$6000</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE</span> to 6000 the address of the first byte of the pair to decrypt.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b83"></span>5B83</td>
+<td class="instruction">LD HL,$6001</td>
+<td class="comment-1" rowspan="1">Set <span class="register">HL</span> to 6001 the address of the second byte of the pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b86"></span>5B86</td>
+<td class="instruction">LD BC,$4000</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 4000 the number of byte pairs to decrypt.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="5b89"></span>
+<div class="comments">
+<div class="paragraph">
+Start rotating each byte through <span class="register">A</span> to decrypt it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DecryptGame_Loop</td>
+<td class="address-2"><span id="5b89"></span>5B89</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b8a"></span>5B8A</td>
+<td class="instruction">RLD</td>
+<td class="comment-1" rowspan="1">Rotate the nibbles of the two bytes through <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b8c"></span>5B8C</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Write the decrypted byte back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b8d"></span>5B8D</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="2">Move on to the first byte of the next pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b8e"></span>5B8E</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b8f"></span>5B8F</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move <span class="register">HL</span> onto the second byte of the next pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b90"></span>5B90</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b91"></span>5B91</td>
+<td class="instruction">DEC BC</td>
+<td class="comment-1" rowspan="1">Decrease the pair counter by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b92"></span>5B92</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Loop back to <a href="5B80.html#5b89">DecryptGame_Loop</a> until every pair has been decrypted.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b93"></span>5B93</td>
+<td class="instruction">OR C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b94"></span>5B94</td>
+<td class="instruction">JR NZ,<a href="5B80.html#5b89">DecryptGame_Loop</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="5b96"></span>
+<div class="comments">
+<div class="paragraph">
+Move the decrypted game down to its real address and start it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b96"></span>5B96</td>
+<td class="instruction">LD HL,$6000</td>
+<td class="comment-1" rowspan="4">Copy 8000 bytes of the game from 6000 to 5E00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b99"></span>5B99</td>
+<td class="instruction">LD DE,$5E00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b9c"></span>5B9C</td>
+<td class="instruction">LD BC,$8000</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5b9f"></span>5B9F</td>
+<td class="instruction">LDIR</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="5ba1"></span>5BA1</td>
+<td class="instruction">JP <a href="5E00.html">GameStart</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="5E00.html">GameStart</a> to start the game.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/aticatac/asm/5B80.html">Atic Atac</a></li>
+<li><a href="/ultimate/cookie/asm/5B80.html">Cookie</a></li>
+<li><a href="/ultimate/jetpac/asm/5B80.html">Jetpac</a></li>
+<li><a href="/ultimate/lunarjetman/asm/5B80.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/nightshade/asm/5B80.html">Nightshade</a></li>
+<li><a href="/ultimate/pssst/asm/5B80.html">Pssst</a></li>
+<li><a href="/ultimate/tranzam/asm/5B80.html">Tranz Am</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="4000.html">4000</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#5b80">Map</a></td>
+<td class="next">
+Next: <a href="5BA4.html">5BA4</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/23424.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

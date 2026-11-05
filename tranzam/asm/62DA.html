@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,35 @@ Next: <a href="6318.html">6318</a>
 </td>
 </tr>
 </table>
-<div class="description">62DA: Collision: Cups</div>
+<div class="description">62DA: Locate Radar Cup</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="625C.html">625C</a>.
+Used by the routine at <a href="625C.html">UpdateRadar</a>.
+</div>
+<div class="paragraph">
+Finds a cup to show on the radar. Each of the 08 cups in <a href="721F.html">CupTable</a> is checked in turn: if the map entry still has the cup sprite ID (20) and the cup is less than 0C cells (of 20 map units) from the player horizontally, then it is placed on the radar by <a href="6212.html">LocateRadarBlip</a>. Only the first such cup is used. If there is no cup then the blip is hidden.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Radar blip record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="62da"></span>
+<div class="comments">
+<div class="paragraph">
+Find the player's horizontal position in cells.
 </div>
 </div>
 </td>
@@ -48,43 +73,42 @@ Used by the routine at <a href="625C.html">625C</a>.
 <td class="asm-label">CollisionCup</td>
 <td class="address-2"><span id="62da"></span>62DA</td>
 <td class="instruction">LD HL,($5E05)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E05.html">PlayerMapPosition</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the player's X position on the map from <a href="5E04.html#5e05">PlayerMapPosition</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62dd"></span>62DD</td>
 <td class="instruction">SLA L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Double the value so it matches the scale used by the radar.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62df"></span>62DF</td>
 <td class="instruction">RL H</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62e1"></span>62E1</td>
-<td class="instruction">CALL <a href="6212.html#6253">$6253</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6212.html#6253">6253</a>.</td>
+<td class="instruction">CALL <a href="6253.html">MultiplyHLByFour</a></td>
+<td class="comment-1" rowspan="1">Call <a href="6253.html">MultiplyHLByFour</a> to multiply the position by 04 which leaves the position in cells in <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62e4"></span>62E4</td>
 <td class="instruction">LD C,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Keep the player's X position in cells in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62e5"></span>62E5</td>
 <td class="instruction">LD HL,$721F</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=pointer to <a href="721F.html">CupTable</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the table of cup map addresses (<a href="721F.html">CupTable</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62e8"></span>62E8</td>
 <td class="instruction">LD B,$08</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=08 (set a counter for the 08 cups).</td>
+<td class="comment-1" rowspan="1">Set the cup counter to 08 one for each cup.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -100,25 +124,25 @@ Fetch the address of the cup from <a href="721F.html">CupTable</a>.
 <td class="asm-label">CollisionCup_Loop</td>
 <td class="address-2"><span id="62ea"></span>62EA</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">E</span>=LSB of the cup map address.</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the map address of this cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62eb"></span>62EB</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Move on to the high byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62ec"></span>62EC</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">D</span>=MSB of the cup map address.</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the map address of this cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62ed"></span>62ED</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one, ready to process the next cup.</td>
+<td class="comment-1" rowspan="1">Move on to the next cup in the table.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -134,7 +158,7 @@ Check this is still a valid cup (that it hasn't been collected already).
 <td class="asm-label"></td>
 <td class="address-1"><span id="62ee"></span>62EE</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="2">Increment <span class="register">DE</span> by two (point to the sprite ID).</td>
+<td class="comment-1" rowspan="2">Point <span class="register">DE</span> at the sprite ID of the map entry.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -145,7 +169,7 @@ Check this is still a valid cup (that it hasn't been collected already).
 <td class="asm-label"></td>
 <td class="address-1"><span id="62f0"></span>62F0</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="3">If this is not a cup (the sprite ID is not 20), then jump to <a href="62DA.html#6301">CollisionCup_Next</a>.</td>
+<td class="comment-1" rowspan="3">If this is not a cup (the sprite ID is not 20) then jump to <a href="62DA.html#6301">CollisionCup_Next</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -171,7 +195,7 @@ This is still a valid cup, so process it.
 <td class="asm-label"></td>
 <td class="address-1"><span id="62f5"></span>62F5</td>
 <td class="instruction">DEC DE</td>
-<td class="comment-1" rowspan="2">Decrease <span class="register">DE</span> by two (go back to the start of the map record).</td>
+<td class="comment-1" rowspan="2">Point <span class="register">DE</span> back at the start of the map entry.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -182,19 +206,19 @@ This is still a valid cup, so process it.
 <td class="asm-label"></td>
 <td class="address-1"><span id="62f7"></span>62F7</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the cup X position.</td>
+<td class="comment-1" rowspan="1">Fetch the X position of the cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62f8"></span>62F8</td>
 <td class="instruction">SUB C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the player's X position to give the horizontal distance.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="62f9"></span>62F9</td>
 <td class="instruction">JR NC,<a href="62DA.html#62fd">CollisionCup_Test_X</a></td>
-<td class="comment-1" rowspan="2">Make sure we have a positive byte.</td>
+<td class="comment-1" rowspan="2">Make the distance positive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -205,7 +229,7 @@ This is still a valid cup, so process it.
 <td class="asm-label">CollisionCup_Test_X</td>
 <td class="address-2"><span id="62fd"></span>62FD</td>
 <td class="instruction">CP $0C</td>
-<td class="comment-1" rowspan="2">If 0C is jump to <a href="62DA.html#6306">CollisionCup_Test_Y</a>.</td>
+<td class="comment-1" rowspan="2">If the cup is less than 0C cells away then jump to <a href="62DA.html#6306">CollisionCup_Test_Y</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -216,49 +240,59 @@ This is still a valid cup, so process it.
 <td class="asm-label">CollisionCup_Next</td>
 <td class="address-2"><span id="6301"></span>6301</td>
 <td class="instruction">DJNZ <a href="62DA.html#62ea">CollisionCup_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="62DA.html#62ea">CollisionCup_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the cup counter by one and loop back to <a href="62DA.html#62ea">CollisionCup_Loop</a> until all of the cups have been checked.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6303"></span>6303</td>
-<td class="instruction">JP <a href="6212.html#624d">$624D</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="6212.html#624d">624D</a>.</td>
+<td class="instruction">JP <a href="624D.html">HideRadarBlip</a></td>
+<td class="comment-1" rowspan="1">There is no cup in range so jump to <a href="624D.html">HideRadarBlip</a> to hide the blip.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6306"></span>
+<div class="comments">
+<div class="paragraph">
+Convert the position of the cup to the same scale used by <a href="6212.html">LocateRadarBlip</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">CollisionCup_Test_Y</td>
 <td class="address-2"><span id="6306"></span>6306</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the cup X position.</td>
+<td class="comment-1" rowspan="1">Fetch the X position of the cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6307"></span>6307</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">DE</span> by one.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the Y position of the cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6308"></span>6308</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1"><span class="register">H</span>=cup X position.</td>
+<td class="comment-1" rowspan="1">Keep the X position of the cup in <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6309"></span>6309</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the cup Y position.</td>
+<td class="comment-1" rowspan="1">Fetch the Y position of the cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="630a"></span>630A</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1"><span class="register">D</span>=cup Y position.</td>
+<td class="comment-1" rowspan="1">Keep the Y position of the cup in <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="630b"></span>630B</td>
-<td class="instruction">CALL <a href="6B2B.html#6b30">$6B30</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6B2B.html#6b30">6B30</a>.</td>
+<td class="instruction">CALL <a href="6B2B.html#6b30">ScaleValue_DivideByEight</a></td>
+<td class="comment-1" rowspan="1">Call <a href="6B2B.html#6b30">ScaleValue_DivideByEight</a> to set <span class="register">DE</span> to the cup Y position multiplied by 20.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -269,8 +303,8 @@ This is still a valid cup, so process it.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="630f"></span>630F</td>
-<td class="instruction">CALL <a href="6B2B.html">$6B2B</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6B2B.html">6B2B</a>.</td>
+<td class="instruction">CALL <a href="6B2B.html">ScaleValue</a></td>
+<td class="comment-1" rowspan="1">Call <a href="6B2B.html">ScaleValue</a> to set <span class="register">DE</span> to the cup X position multiplied by 40.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -282,19 +316,19 @@ This is still a valid cup, so process it.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6313"></span>6313</td>
 <td class="instruction">LD B,H</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">H</span>.</td>
+<td class="comment-1" rowspan="1">Move the high byte of the doubled X position into <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6314"></span>6314</td>
 <td class="instruction">LD C,L</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">L</span>.</td>
+<td class="comment-1" rowspan="1">Move the low byte of the doubled X position into <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6315"></span>6315</td>
-<td class="instruction">JP <a href="6212.html">$6212</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="6212.html">6212</a>.</td>
+<td class="instruction">JP <a href="6212.html">LocateRadarBlip</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6212.html">LocateRadarBlip</a> to place the blip (<span class="register">BC</span> is the cup X position and <span class="register">DE</span> is the cup Y position, both doubled).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

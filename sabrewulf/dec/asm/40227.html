@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,29 @@ Next: <a href="40257.html">40257</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="45359.html">45359</a> and <a href="45524.html">45524</a>.
+Used by the routines at <a href="45359.html">EnterRoomBelow</a> and <a href="45524.html">InitialiseGame</a>.
+</div>
+<div class="paragraph">
+Marks the room that an actor is in as having been visited, by setting its bit in the bitmap at <a href="38591.html">VisitedRooms</a> (the bitmap holds one bit for each of the 0256 rooms). This uses self-modifying code: the second byte of the "SET n,(HL)" instruction at <a href="40227.html#40254">40254</a> is overwritten to select the bit.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40227"></span>
+<div class="comments">
+<div class="paragraph">
+Work out which byte of the bitmap holds the bit for the room.
 </div>
 </div>
 </td>
@@ -48,30 +73,29 @@ Used by the routines at <a href="45359.html">45359</a> and <a href="45524.html">
 <td class="asm-label">VisitRoom</td>
 <td class="address-2"><span id="40227"></span>40227</td>
 <td class="instruction">LD A,(IX+1)</td>
-<td class="comment-1" rowspan="2"><span class="register">C</span>=<span class="register">IX</span>+1 (current location).</td>
+<td class="comment-1" rowspan="1">Fetch the room of the actor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40230"></span>40230</td>
 <td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Stash the room in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40231"></span>40231</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Divide the room by 8 (each byte of the bitmap holds the bits for 8 rooms).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40232"></span>40232</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40233"></span>40233</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -83,7 +107,7 @@ Used by the routines at <a href="45359.html">45359</a> and <a href="45524.html">
 <td class="asm-label"></td>
 <td class="address-1"><span id="40236"></span>40236</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="2">Create an offset in <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Use it as the offset into the visited rooms bitmap.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -91,52 +115,70 @@ Used by the routines at <a href="45359.html">45359</a> and <a href="45524.html">
 <td class="instruction">LD H,0</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40239"></span>
+<div class="comments">
+<div class="paragraph">
+Work out which bit of that byte is needed and modify the instruction.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40239"></span>40239</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+1 (current location).</td>
+<td class="comment-1" rowspan="1">Fetch the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40240"></span>40240</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Multiply by 8 so that the low three bits of the room are in bits 3-5.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40241"></span>40241</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40242"></span>40242</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40243"></span>40243</td>
 <td class="instruction">AND %00111000</td>
-<td class="comment-1" rowspan="1">Keep only bits 3-5.</td>
+<td class="comment-1" rowspan="1">Keep only the bit number (bits 3-5).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40245"></span>40245</td>
 <td class="instruction">OR %11000110</td>
-<td class="comment-1" rowspan="1">Set bits 1-2, 6-7.</td>
+<td class="comment-1" rowspan="1">Set bits 1-2, 6-7 (to make the second byte of "SET n,(HL)").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40247"></span>40247</td>
 <td class="instruction">LD (40255),A</td>
-<td class="comment-1" rowspan="1">Write this value to <a href="40227.html#40254">40255</a> which updates the bit to set.</td>
+<td class="comment-1" rowspan="1">Write this into the second byte of the instruction at <a href="40227.html#40254">40254</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40250"></span>
+<div class="comments">
+<div class="paragraph">
+Set the bit.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="40250"></span>40250</td>
 <td class="instruction">LD BC,38591</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span>=<a href="38591.html">VisitedRooms</a>+<span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="2">Add the start of the visited rooms bitmap at <a href="38591.html">VisitedRooms</a> to the offset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -147,7 +189,7 @@ Used by the routines at <a href="45359.html">45359</a> and <a href="45524.html">
 <td class="asm-label"></td>
 <td class="address-1"><span id="40254"></span>40254</td>
 <td class="instruction">SET 0,(HL)</td>
-<td class="comment-1" rowspan="1">With above, set the bit to mark the room as having been visited.</td>
+<td class="comment-1" rowspan="1">Set the bit for the room in the bitmap.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -161,6 +203,7 @@ Used by the routines at <a href="45359.html">45359</a> and <a href="45524.html">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/aticatac/dec/asm/38575.html">Atic Atac</a></li>
+<li><a href="/ultimate/knightlore/dec/asm/53785.html">Knight Lore</a></li>
 </ul>
 </div>
 </div>

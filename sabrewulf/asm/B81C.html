@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,240 +36,354 @@ Next: <a href="B873.html">B873</a>
 </td>
 </tr>
 </table>
-<div class="description">B81C: Routine at B81C</div>
+<div class="description">B81C: Slide Actor Past Objects</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="9B0D.html">9B0D</a>, <a href="9D91.html">9D91</a>, <a href="9E72.html">9E72</a>, <a href="A4D7.html">A4D7</a>, <a href="A54F.html">A54F</a>, <a href="A858.html">A858</a>, <a href="A9BE.html">A9BE</a>, <a href="AAED.html">AAED</a>, <a href="AD07.html">AD07</a>, <a href="ADD0.html">PlayerMovement</a> and <a href="AEEF.html">GamePlay_Start</a>.
+Used by the routines at <a href="9B0D.html">ChoosePosition</a>, <a href="9D91.html">HandlerFlame</a>, <a href="9E72.html">HandlerHippoWarthog</a>, <a href="A4D7.html">HandlerChasingNastie</a>, <a href="A54F.html">HandlerWanderingNastie</a>, <a href="A858.html">HandlerWulf</a>, <a href="A9BE.html">HandlerFlyingSabreman</a>, <a href="AB74.html">HandlerTribesman</a>, <a href="AD07.html">HandlerRhino</a>, <a href="ADD0.html">PlayerMovement</a> and <a href="AEEF.html">GamePlay_Start</a>.
+</div>
+<div class="paragraph">
+Stops an actor moving through the objects of the room. The new position of the actor is tested with <a href="B873.html">TestObjectOverlap</a> against each of the objects in the layout of the room (the pointers to the layouts are in <a href="6166.html">RoomTable</a>, found from the room with <a href="6066.html">Layout</a>). If it overlaps with an object then the movement is tried in the X direction only and the Y direction only so that the actor can slide along the object. If neither works then the actor is left where it was.
+</div>
+<div class="paragraph">
+The Y position of an actor is the position of its feet, and the Y position of an object is the top of it.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Height of the actor</td>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">Width of the actor</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">New position of the actor, with Y in <span class="register">D</span> and X in <span class="register">E</span></td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The position that the actor can move to</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SlideActorPastObjects</td>
+<td class="address-2"><span id="b81c"></span>B81C</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Stash the actor record and the size of the actor on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b81e"></span>B81E</td>
+<td class="instruction">PUSH BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b81f"></span>B81F</td>
+<td class="instruction">LD L,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the X position of the actor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b822"></span>B822</td>
+<td class="instruction">LD H,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Fetch the Y position of the actor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b825"></span>B825</td>
+<td class="instruction">LD ($96AE),HL</td>
+<td class="comment-1" rowspan="1">Remember the old X position in <a href="96AE.html">Actor_Old_X_Position</a> and the old Y position in <a href="96AF.html">Actor_Old_Y_Position</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b828"></span>B828</td>
+<td class="instruction">LD L,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the room of the actor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b82b"></span>B82B</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b82d"></span>B82D</td>
+<td class="instruction">LD BC,$6066</td>
+<td class="comment-1" rowspan="2">Add the layout table at <a href="6066.html">Layout</a> to find the layout number of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b830"></span>B830</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b831"></span>B831</td>
+<td class="instruction">LD L,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the layout number of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b832"></span>B832</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b834"></span>B834</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double it, as each pointer is two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b835"></span>B835</td>
+<td class="instruction">LD BC,$6166</td>
+<td class="comment-1" rowspan="2">Add the table of object lists at <a href="6166.html">RoomTable</a> to find the pointer to the list of objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b838"></span>B838</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b839"></span>B839</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the address of the list of objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b83a"></span>B83A</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move to the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b83b"></span>B83B</td>
+<td class="instruction">LD H,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the address of the list of objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b83c"></span>B83C</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Combine the low byte with the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b83d"></span>B83D</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Point <span class="register">IX</span> at the list of objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b83e"></span>B83E</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b840"></span>B840</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the size of the actor from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b841"></span>
+<div class="comments">
+<div class="paragraph">
+Test the new position.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="address-2"><span id="b81c"></span>B81C</td>
-<td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">IX</span> and <span class="register">BC</span> on the stack.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="b81e"></span>B81E</td>
-<td class="instruction">PUSH BC</td>
-</tr>
-<tr>
-<td class="address-1"><span id="b81f"></span>B81F</td>
-<td class="instruction">LD L,(IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b822"></span>B822</td>
-<td class="instruction">LD H,(IX+$04)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b825"></span>B825</td>
-<td class="instruction">LD ($96AE),HL</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b828"></span>B828</td>
-<td class="instruction">LD L,(IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b82b"></span>B82B</td>
-<td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b82d"></span>B82D</td>
-<td class="instruction">LD BC,$6066</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span>=<a href="6066.html">Layout</a>.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="b830"></span>B830</td>
-<td class="instruction">ADD HL,BC</td>
-</tr>
-<tr>
-<td class="address-1"><span id="b831"></span>B831</td>
-<td class="instruction">LD L,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b832"></span>B832</td>
-<td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b834"></span>B834</td>
-<td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b835"></span>B835</td>
-<td class="instruction">LD BC,$6166</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span>=<a href="6166.html">RoomTable</a>.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="b838"></span>B838</td>
-<td class="instruction">ADD HL,BC</td>
-</tr>
-<tr>
-<td class="address-1"><span id="b839"></span>B839</td>
-<td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b83a"></span>B83A</td>
-<td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b83b"></span>B83B</td>
-<td class="instruction">LD H,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b83c"></span>B83C</td>
-<td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b83d"></span>B83D</td>
-<td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b83e"></span>B83E</td>
-<td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="b840"></span>B840</td>
-<td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b841"></span>B841</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the pointer to the list of objects on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b843"></span>B843</td>
-<td class="instruction">CALL <a href="B873.html">$B873</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B873.html">B873</a>.</td>
+<td class="instruction">CALL <a href="B873.html">TestObjectOverlap</a></td>
+<td class="comment-1" rowspan="1">Test whether the new position overlaps with an object.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b846"></span>B846</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the pointer to the list of objects from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b848"></span>B848</td>
-<td class="instruction">JR NC,<a href="B81C.html#b870">$B870</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="B81C.html#b870">SlideActorPastObjects_Return</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B81C.html#b870">SlideActorPastObjects_Return</a> if the new position does not overlap with an object.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b84a"></span>
+<div class="comments">
+<div class="paragraph">
+Try moving in the X direction only.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b84a"></span>B84A</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the new position on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b84b"></span>B84B</td>
 <td class="instruction">LD A,($96AF)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the old Y position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b84e"></span>B84E</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Use the old Y position instead.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b84f"></span>B84F</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the pointer to the list of objects on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b851"></span>B851</td>
-<td class="instruction">CALL <a href="B873.html">$B873</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B873.html">B873</a>.</td>
+<td class="instruction">CALL <a href="B873.html">TestObjectOverlap</a></td>
+<td class="comment-1" rowspan="1">Test whether moving in the X direction only overlaps with an object.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b854"></span>B854</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="2">Restore <span class="register">IX</span> and <span class="register">DE</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the pointer to the list of objects from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b856"></span>B856</td>
 <td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the new position from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b857"></span>B857</td>
-<td class="instruction">JR NC,<a href="B81C.html#b85d">$B85D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="B81C.html#b85d">SlideActorPastObjects_Vertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B81C.html#b85d">SlideActorPastObjects_Vertical</a> if the actor can move in the X direction.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b859"></span>B859</td>
 <td class="instruction">LD A,($96AE)</td>
-<td class="comment-1" rowspan="2"><span class="register">E</span>=<a href="96A9.html#96ae">96AE</a>.</td>
+<td class="comment-1" rowspan="2">Keep the old X position, as the actor cannot move in the X direction.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b85c"></span>B85C</td>
 <td class="instruction">LD E,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b85d"></span>
+<div class="comments">
+<div class="paragraph">
+Try moving in the Y direction only.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SlideActorPastObjects_Vertical</td>
 <td class="address-2"><span id="b85d"></span>B85D</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">DE</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the new position on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b85e"></span>B85E</td>
 <td class="instruction">LD A,($96AE)</td>
-<td class="comment-1" rowspan="2"><span class="register">E</span>=<a href="96A9.html#96ae">96AE</a>.</td>
+<td class="comment-1" rowspan="2">Use the old X position instead.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b861"></span>B861</td>
 <td class="instruction">LD E,A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b862"></span>B862</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the pointer to the list of objects on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b864"></span>B864</td>
-<td class="instruction">CALL <a href="B873.html">$B873</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B873.html">B873</a>.</td>
+<td class="instruction">CALL <a href="B873.html">TestObjectOverlap</a></td>
+<td class="comment-1" rowspan="1">Test whether moving in the Y direction only overlaps with an object.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b867"></span>B867</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="2">Restore <span class="register">IX</span> and <span class="register">DE</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the pointer to the list of objects from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b869"></span>B869</td>
 <td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the new position from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b86a"></span>B86A</td>
-<td class="instruction">JR NC,<a href="B81C.html#b870">$B870</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="B81C.html#b870">SlideActorPastObjects_Return</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B81C.html#b870">SlideActorPastObjects_Return</a> if the actor can move in the Y direction.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b86c"></span>B86C</td>
 <td class="instruction">LD A,($96AF)</td>
-<td class="comment-1" rowspan="2"><span class="register">D</span>=<a href="96A9.html#96af">96AF</a>.</td>
+<td class="comment-1" rowspan="2">Keep the old Y position, as the actor cannot move in the Y direction.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b86f"></span>B86F</td>
 <td class="instruction">LD D,A</td>
 </tr>
 <tr>
+<td class="asm-label">SlideActorPastObjects_Return</td>
 <td class="address-2"><span id="b870"></span>B870</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">IX</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the actor record from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b872"></span>B872</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>

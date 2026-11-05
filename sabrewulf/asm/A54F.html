@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,187 +36,303 @@ Next: <a href="A5A9.html">A5A9</a>
 </td>
 </tr>
 </table>
-<div class="description">A54F: Routine at A54F</div>
+<div class="description">A54F: Handler: Wandering Nastie</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Handles the nastie types which wander about: the spider (sprite IDs 60 to 63), scorpion (64 to 67), parrot (6C to 6F), monkey (70 to 73) and all of the nastie types which are only possible later in the game (98 to 9F and B0 to C3).
+</div>
+<div class="paragraph">
+The nastie moves with a velocity chosen by <a href="A5CD.html">ChooseVelocity</a>, which also makes it pause for a while. It chooses a new velocity when the timer in <span class="register">IX</span>+02 runs out or when it is blocked. It bounces off the edges of the screen, is stopped by objects in the room, and is blown up (by <a href="A4A6.html">BlowUpActor</a>) if it touches the player or if the player is not alive.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Nastie record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a54f"></span>
+<div class="comments">
+<div class="paragraph">
+Count off the nastie if it is not in the same room as the player.
+</div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerWanderingNastie</td>
 <td class="address-2"><span id="a54f"></span>A54F</td>
 <td class="instruction">LD A,($9703)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="9702.html#9703">9703</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="9702.html#9703">9703</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a552"></span>A552</td>
 <td class="instruction">CP (IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A493.html">ExpireActor</a> if the nastie is in a different room to the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a555"></span>A555</td>
-<td class="instruction">JP NZ,<a href="A493.html">$A493</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="A493.html">ExpireActor</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a558"></span>A558</td>
 <td class="instruction">LD A,$17</td>
-<td class="comment-1" rowspan="2">Write 17 to <a href="96A9.html#96ad">96AD</a>.</td>
+<td class="comment-1" rowspan="2">Set the width of the nastie in <a href="96AD.html">Actor_Width</a> to 17.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a55a"></span>A55A</td>
 <td class="instruction">LD ($96AD),A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a55d"></span>A55D</td>
 <td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB0B.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Remember the previous position of the nastie.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a560"></span>
+<div class="comments">
+<div class="paragraph">
+Blow up the nastie if the player is not alive.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a560"></span>A560</td>
 <td class="instruction">LD A,($9702)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="9702.html">ImmortalData</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player from <a href="9702.html">ImmortalData</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a563"></span>A563</td>
 <td class="instruction">SUB $10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract 10 (the first Sabreman sprite ID).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a565"></span>A565</td>
 <td class="instruction">CP $20</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A4A6.html">BlowUpActor</a> to blow up the nastie if the player is not alive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a567"></span>A567</td>
-<td class="instruction">JP NC,<a href="A4A1.html#a4a6">$A4A6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NC,<a href="A4A6.html">BlowUpActor</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a56a"></span>
+<div class="comments">
+<div class="paragraph">
+Choose a new velocity when the timer has run out.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a56a"></span>A56A</td>
 <td class="instruction">DEC (IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the velocity timer by one and choose a new velocity if it has run out.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a56d"></span>A56D</td>
-<td class="instruction">CALL Z,<a href="A5CD.html">$A5CD</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL Z,<a href="A5CD.html">ChooseVelocity</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a570"></span>
+<div class="comments">
+<div class="paragraph">
+Skip the move if the nastie is not moving.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a570"></span>A570</td>
 <td class="instruction">LD A,(IX+$06)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+06.</td>
+<td class="comment-1" rowspan="1">Fetch the X velocity of the nastie.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a573"></span>A573</td>
 <td class="instruction">OR (IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Combine it with the Y velocity.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a576"></span>A576</td>
-<td class="instruction">JR Z,<a href="A54F.html#a59d">$A59D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="A54F.html#a59d">HandlerWanderingNastie_Touch</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A54F.html#a59d">HandlerWanderingNastie_Touch</a> if the nastie is not moving.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a578"></span>
+<div class="comments">
+<div class="paragraph">
+Move the nastie, bouncing it off the edges of the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a578"></span>A578</td>
-<td class="instruction">CALL <a href="A44B.html">$A44B</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A44B.html">A44B</a>.</td>
+<td class="instruction">CALL <a href="A44B.html">CalculateNewPosition</a></td>
+<td class="comment-1" rowspan="1">Work out the new position of the nastie.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a57b"></span>A57B</td>
 <td class="instruction">BIT 0,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A5C3.html">BounceWanderingNastieHorizontally</a> if the nastie has hit the left or right edge of the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a57d"></span>A57D</td>
-<td class="instruction">JR NZ,<a href="A5C3.html">$A5C3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A5C3.html">BounceWanderingNastieHorizontally</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a57f"></span>A57F</td>
 <td class="instruction">BIT 1,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A5C8.html">BounceWanderingNastieVertically</a> if the nastie has hit the top or bottom edge of the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a581"></span>A581</td>
-<td class="instruction">JR NZ,<a href="A5C8.html">$A5C8</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A5C8.html">BounceWanderingNastieVertically</a></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="a583"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="A5C3.html">A5C3</a> and <a href="A5C8.html">A5C8</a>.
+This entry point is used by the routines at <a href="A5C3.html">BounceWanderingNastieHorizontally</a> and <a href="A5C8.html">BounceWanderingNastieVertically</a>.
+</div>
+<div class="paragraph">
+Stop the nastie moving through objects in the room. If it did not manage to move then choose a new velocity.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerWanderingNastie_Move</td>
 <td class="address-2"><span id="a583"></span>A583</td>
 <td class="instruction">LD BC,$1717</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=1717.</td>
+<td class="comment-1" rowspan="1">Set the height and width of the nastie in <span class="register">B</span> and <span class="register">C</span> to 17.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a586"></span>A586</td>
-<td class="instruction">CALL <a href="B81C.html">$B81C</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B81C.html">B81C</a>.</td>
+<td class="instruction">CALL <a href="B81C.html">SlideActorPastObjects</a></td>
+<td class="comment-1" rowspan="1">Stop the nastie passing through objects in the room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a589"></span>A589</td>
-<td class="instruction">CALL <a href="AAED.html">$AAED</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AAED.html">AAED</a>.</td>
+<td class="instruction">CALL <a href="AAED.html">TestPositionUnchanged</a></td>
+<td class="comment-1" rowspan="1">Test whether the nastie has stayed where it was.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a58c"></span>A58C</td>
-<td class="instruction">CALL Z,<a href="A5CD.html">$A5CD</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL Z,<a href="A5CD.html">ChooseVelocity</a></td>
+<td class="comment-1" rowspan="1">Choose a new velocity if the nastie has stayed where it was.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a58f"></span>
+<div class="comments">
+<div class="paragraph">
+Flip the animation frame and store the new position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a58f"></span>A58F</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+00 (sprite reference).</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the nastie.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a592"></span>A592</td>
 <td class="instruction">XOR %00000001</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flip bit 0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a594"></span>A594</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the new sprite ID of the nastie.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a597"></span>A597</td>
 <td class="instruction">LD (IX+$03),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the X position of the nastie.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a59a"></span>A59A</td>
 <td class="instruction">LD (IX+$04),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the Y position of the nastie.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a59d"></span>
+<div class="comments">
+<div class="paragraph">
+Blow up the nastie if it touches the player, otherwise draw it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerWanderingNastie_Touch</td>
 <td class="address-2"><span id="a59d"></span>A59D</td>
 <td class="instruction">LD BC,$1313</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=1313.</td>
+<td class="comment-1" rowspan="1">Set the reach used to test whether the nastie is touching the player in <span class="register">BC</span> to 1313.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a5a0"></span>A5A0</td>
-<td class="instruction">CALL <a href="AAED.html#ab36">$AB36</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AAED.html#ab36">AB36</a>.</td>
+<td class="instruction">CALL <a href="AB36.html">TestActorHurtingPlayer</a></td>
+<td class="comment-1" rowspan="1">Test whether the nastie is touching the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a5a3"></span>A5A3</td>
-<td class="instruction">JP NC,<a href="AD57.html#ad5d">$AD5D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NC,<a href="AD5D.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD5D.html">DisplayActor</a> to display the nastie if it is not touching the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a5a6"></span>A5A6</td>
-<td class="instruction">JP <a href="A4A1.html#a4a6">$A4A6</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="A4A1.html#a4a6">A4A6</a>.</td>
+<td class="instruction">JP <a href="A4A6.html">BlowUpActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A4A6.html">BlowUpActor</a> to blow up the nastie.</td>
 </tr>
 </table>
 <table class="asm-navigation">

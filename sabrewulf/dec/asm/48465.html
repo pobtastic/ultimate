@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="48494.html">48494</a>
 </td>
 </tr>
 </table>
-<div class="description">48465: Play Music (break on keypress)</div>
+<div class="description">48465: Play Music Until Key Pressed</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,32 +44,59 @@ Next: <a href="48494.html">48494</a>
 <div class="paragraph">
 Used by the routine at <a href="46037.html">HandlerGameMenu</a>.
 </div>
+<div class="paragraph">
+Plays a tune in the same way as <a href="48494.html">PlayMusic</a>, but stops as soon as any key is pressed. The key press is then handled by the game selection menu (see <a href="46037.html">HandlerGameMenu</a>), as if it had been read there.
 </div>
+<div class="paragraph">
+<audio controls="" src="../../audio/main-tune.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/main-tune.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Music data terminated by 255</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_WaitKey</td>
+<td class="asm-label">PlayMusic_WaitKey</td>
 <td class="address-2"><span id="48465"></span>48465</td>
 <td class="instruction">DI</td>
 <td class="comment-1" rowspan="1">Disable interrupts.</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_WaitKey_Loop</td>
+<td class="routine-comment" colspan="5">
+<span id="48466"></span>
+<div class="comments">
+<div class="paragraph">
+Check for any key being pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_WaitKey_Loop</td>
 <td class="address-2"><span id="48466"></span>48466</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Select every row of the keyboard.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48467"></span>48467</td>
 <td class="instruction">OUT (253),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to port 253 (this has no effect).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48469"></span>48469</td>
 <td class="instruction">IN A,(254)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Read every half-row of the keyboard at once (the high byte of the port number is zero).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -83,20 +113,30 @@ Used by the routine at <a href="46037.html">HandlerGameMenu</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48474"></span>48474</td>
-<td class="instruction">JR Z,<a href="48465.html#48484">PlayAudio_WaitKey_Process</a></td>
-<td class="comment-1" rowspan="1">If no keys were pressed, jump to <a href="48465.html#48484">PlayAudio_WaitKey_Process</a>.</td>
+<td class="instruction">JR Z,<a href="48465.html#48484">PlayMusic_WaitKey_Process</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48465.html#48484">PlayMusic_WaitKey_Process</a> if no keys were pressed.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48476"></span>
+<div class="comments">
+<div class="paragraph">
+A key was pressed, so stop playing and hand over to the game menu.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48476"></span>48476</td>
 <td class="instruction">LD A,(38546)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38546.html">GameOptions</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the game options from <a href="38546.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48479"></span>48479</td>
 <td class="instruction">INC SP</td>
-<td class="comment-1" rowspan="2">Increments the stack pointer by two.</td>
+<td class="comment-1" rowspan="2">Discard the return address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -106,47 +146,47 @@ Used by the routine at <a href="46037.html">HandlerGameMenu</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48481"></span>48481</td>
-<td class="instruction">JP <a href="46037.html#46114">HandlerGameMenu_1</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="46037.html#46114">HandlerGameMenu_1</a>.</td>
+<td class="instruction">JP <a href="46037.html#46114">GameSelect_ReadSecondKeyRow</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="46037.html#46114">GameSelect_ReadSecondKeyRow</a> to handle the key press in the game selection menu.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="48484"></span>
 <div class="comments">
 <div class="paragraph">
-This is identical to <a href="48494.html">PlayAudio</a> except it also handles exiting on a keypress.
+This is identical to <a href="48494.html">PlayMusic</a> except it also handles exiting on a keypress.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_WaitKey_Process</td>
+<td class="asm-label">PlayMusic_WaitKey_Process</td>
 <td class="address-2"><span id="48484"></span>48484</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the next byte of music data.</td>
+<td class="comment-1" rowspan="1">Fetch the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48485"></span>48485</td>
 <td class="instruction">CP 255</td>
-<td class="comment-1" rowspan="2">If this is 255 (the terminator) then jump to <a href="48505.html">PlayAudio_Return</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="48505.html">PlayMusic_Return</a> if the end of the tune has been reached (255).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48487"></span>48487</td>
-<td class="instruction">JR Z,<a href="48505.html">PlayAudio_Return</a></td>
+<td class="instruction">JR Z,<a href="48505.html">PlayMusic_Return</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48489"></span>48489</td>
-<td class="instruction">CALL <a href="48507.html">PlayAudio_Process</a></td>
-<td class="comment-1" rowspan="1">Call <a href="48507.html">PlayAudio_Process</a>.</td>
+<td class="instruction">CALL <a href="48507.html">PlayNote</a></td>
+<td class="comment-1" rowspan="1">Play the note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48492"></span>48492</td>
-<td class="instruction">JR <a href="48465.html#48466">PlayAudio_WaitKey_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="48465.html#48466">PlayAudio_WaitKey_Loop</a>.</td>
+<td class="instruction">JR <a href="48465.html#48466">PlayMusic_WaitKey_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48465.html#48466">PlayMusic_WaitKey_Loop</a> to check for a key press.</td>
 </tr>
 </table>
 <table class="asm-navigation">

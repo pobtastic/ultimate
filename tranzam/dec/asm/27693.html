@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="27778.html">27778</a>
 </td>
 </tr>
 </table>
-<div class="description">27693: Routine at 6C2D</div>
+<div class="description">27693: Update Current Object</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,222 +44,288 @@ Next: <a href="27778.html">27778</a>
 <div class="paragraph">
 Used by the routine at <a href="28019.html">HandlerAccelerate</a>.
 </div>
+<div class="paragraph">
+Moves the pointer at <a href="24089.html">CurrentObject</a> so that it still points to the first map point which is within 96 map units of the player's X position.
+</div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">UpdateCurrentObject</td>
 <td class="address-2"><span id="27693"></span>27693</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 0 to <a href="24091.html">24091</a>.</td>
+<td class="comment-1" rowspan="2">Write 0 to <a href="24091.html">Flag_PointerMovedBack</a> (it is set to 1 if the pointer moves back).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27694"></span>27694</td>
 <td class="instruction">LD (24091),A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27697"></span>27697</td>
 <td class="instruction">LD BC,(24089)</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="24089.html">CurrentObject</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the pointer to the first map point in view (<a href="24089.html">CurrentObject</a>).</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="27701"></span>
+<div class="comments">
+<div class="paragraph">
+Look at the earlier map points to see if the pointer has to move back.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateCurrentObject_Back</td>
 <td class="address-2"><span id="27701"></span>27701</td>
 <td class="instruction">DEC BC</td>
-<td class="comment-1" rowspan="3">Decrease <span class="register">BC</span> by three.</td>
+<td class="comment-1" rowspan="3">Decrease <span class="register">BC</span> by three (to the previous map point).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27702"></span>27702</td>
 <td class="instruction">DEC BC</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27703"></span>27703</td>
 <td class="instruction">DEC BC</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27704"></span>27704</td>
 <td class="instruction">LD A,(BC)</td>
-<td class="comment-1" rowspan="2"><span class="register">D</span>=<span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the X position of the map point.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27705"></span>27705</td>
 <td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep the X position in <span class="register">D</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27706"></span>27706</td>
-<td class="instruction">CALL <a href="27435.html#27440">27440</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27435.html#27440">27440</a>.</td>
+<td class="instruction">CALL <a href="27435.html#27440">ScaleValue_DivideByEight</a></td>
+<td class="comment-1" rowspan="1">Call <a href="27435.html#27440">ScaleValue_DivideByEight</a> to convert it to map units in <span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27709"></span>27709</td>
-<td class="instruction">CALL <a href="27778.html">27778</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27778.html">27778</a>.</td>
+<td class="instruction">CALL <a href="27778.html">GetMapDistance</a></td>
+<td class="comment-1" rowspan="1">Find how far the map point is from the player using <a href="27778.html">GetMapDistance</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27712"></span>27712</td>
-<td class="instruction">JR NC,<a href="27693.html#27721">27721</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="27693.html#27721">UpdateCurrentObject_Moved</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="27693.html#27721">UpdateCurrentObject_Moved</a> if the map point is not close enough.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27714"></span>27714</td>
 <td class="instruction">LD A,1</td>
-<td class="comment-1" rowspan="2">Write 1 to <a href="24091.html">24091</a>.</td>
+<td class="comment-1" rowspan="2">Write 1 to <a href="24091.html">Flag_PointerMovedBack</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27716"></span>27716</td>
 <td class="instruction">LD (24091),A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27719"></span>27719</td>
-<td class="instruction">JR <a href="27693.html#27701">27701</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="27693.html#27701">27701</a>.</td>
+<td class="instruction">JR <a href="27693.html#27701">UpdateCurrentObject_Back</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="27693.html#27701">UpdateCurrentObject_Back</a>.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateCurrentObject_Moved</td>
 <td class="address-2"><span id="27721"></span>27721</td>
 <td class="instruction">LD A,(24091)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="27693.html#27735">27735</a> if <a href="24091.html">24091</a> is zero.</td>
+<td class="comment-1" rowspan="1">Fetch the flag which says whether the pointer moved back (<a href="24091.html">Flag_PointerMovedBack</a>).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27724"></span>27724</td>
 <td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="27693.html#27735">UpdateCurrentObject_Forward</a> if the pointer did not move back.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27725"></span>27725</td>
-<td class="instruction">JR Z,<a href="27693.html#27735">27735</a></td>
+<td class="instruction">JR Z,<a href="27693.html#27735">UpdateCurrentObject_Forward</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27727"></span>27727</td>
 <td class="instruction">INC BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Increment <span class="register">BC</span> by three (to the first map point which is close enough).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27728"></span>27728</td>
 <td class="instruction">INC BC</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27729"></span>27729</td>
 <td class="instruction">INC BC</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label">UpdateCurrentObject_Store</td>
 <td class="address-2"><span id="27730"></span>27730</td>
 <td class="instruction">LD (24089),BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write <span class="register">BC</span> to <a href="24089.html">CurrentObject</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27734"></span>27734</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="27735"></span>
+<div class="comments">
+<div class="paragraph">
+Check whether the pointer has to move forward.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateCurrentObject_Forward</td>
 <td class="address-2"><span id="27735"></span>27735</td>
 <td class="instruction">LD BC,(24089)</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="24089.html">CurrentObject</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the pointer to the first map point in view (<a href="24089.html">CurrentObject</a>).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27739"></span>27739</td>
 <td class="instruction">LD A,(BC)</td>
-<td class="comment-1" rowspan="2"><span class="register">D</span>=<span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the X position of the map point.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27740"></span>27740</td>
 <td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep the X position in <span class="register">D</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27741"></span>27741</td>
-<td class="instruction">CALL <a href="27435.html#27440">27440</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27435.html#27440">27440</a>.</td>
+<td class="instruction">CALL <a href="27435.html#27440">ScaleValue_DivideByEight</a></td>
+<td class="comment-1" rowspan="1">Call <a href="27435.html#27440">ScaleValue_DivideByEight</a> to convert it to map units in <span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27744"></span>27744</td>
-<td class="instruction">CALL <a href="27778.html">27778</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27778.html">27778</a>.</td>
+<td class="instruction">CALL <a href="27778.html">GetMapDistance</a></td>
+<td class="comment-1" rowspan="1">Find how far the map point is from the player using <a href="27778.html">GetMapDistance</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27747"></span>27747</td>
 <td class="instruction">RET C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if the map point is close enough.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateCurrentObject_Closer</td>
 <td class="address-2"><span id="27748"></span>27748</td>
 <td class="instruction">LD (24092),HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the distance to <a href="24092.html">PreviousDistance</a>.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateCurrentObject_NextPoint</td>
 <td class="address-2"><span id="27751"></span>27751</td>
 <td class="instruction">INC BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Increment <span class="register">BC</span> by three (to the next map point).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27752"></span>27752</td>
 <td class="instruction">INC BC</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27753"></span>27753</td>
 <td class="instruction">INC BC</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27754"></span>27754</td>
 <td class="instruction">LD A,(BC)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X position of the map point.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27755"></span>27755</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Keep the X position in <span class="register">D</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27756"></span>27756</td>
-<td class="instruction">CALL <a href="27435.html#27440">27440</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27435.html#27440">27440</a>.</td>
+<td class="instruction">CALL <a href="27435.html#27440">ScaleValue_DivideByEight</a></td>
+<td class="comment-1" rowspan="1">Call <a href="27435.html#27440">ScaleValue_DivideByEight</a> to convert it to map units in <span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27759"></span>27759</td>
-<td class="instruction">CALL <a href="27778.html">27778</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27778.html">27778</a>.</td>
+<td class="instruction">CALL <a href="27778.html">GetMapDistance</a></td>
+<td class="comment-1" rowspan="1">Find how far the map point is from the player using <a href="27778.html">GetMapDistance</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27762"></span>27762</td>
-<td class="instruction">JR C,<a href="27693.html#27730">27730</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="27693.html#27730">UpdateCurrentObject_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="27693.html#27730">UpdateCurrentObject_Store</a> if the map point is close enough.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27764"></span>27764</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the distance on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27765"></span>27765</td>
 <td class="instruction">LD DE,(24092)</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="24092.html">24092</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the previous distance from <a href="24092.html">PreviousDistance</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27769"></span>27769</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2"><span class="register">HL</span>=<span class="register">HL</span> - <span class="register">DE</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27770"></span>27770</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27772"></span>27772</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the distance (<span class="register">HL</span>) from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27773"></span>27773</td>
-<td class="instruction">JR Z,<a href="27693.html#27751">27751</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="27693.html#27751">UpdateCurrentObject_NextPoint</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="27693.html#27751">UpdateCurrentObject_NextPoint</a> if the distance is the same as before.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27775"></span>27775</td>
-<td class="instruction">JR C,<a href="27693.html#27748">27748</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="27693.html#27748">UpdateCurrentObject_Closer</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="27693.html#27748">UpdateCurrentObject_Closer</a> if the map point is nearer than the previous one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="27777"></span>27777</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>

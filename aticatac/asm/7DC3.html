@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,16 @@ Next: <a href="7E23.html">7E23</a>
 </td>
 </tr>
 </table>
-<div class="description">7DC3: Main Loop</div>
+<div class="description">7DC3: Run Main Loop</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
 Used by the routines at <a href="7E23.html">DrawRoom</a> and <a href="9147.html">EnterRoom</a>.
+</div>
+<div class="paragraph">
+Runs the game one entity at a time. Whenever FRAMES has changed since the last time, <a href="7EB2.html">UpdateFixedEntities</a> runs the handlers of the three fixed entities starting at <a href="EA90.html">Player</a>. Each entity from <a href="EAA8.html">ItemEntities</a> onwards that is in the same room as the player is then given to <a href="7E7E.html">ProcessAction</a>, and every 16-byte record from <a href="EE60.html">CreatureRecords</a> onwards after that. Finally the room items are processed by <a href="7E23.html">DrawRoom</a>. If the room has not been drawn yet (bit 0 of <a href="5E14.html">GameFlags</a> is clear) the entities are skipped and <a href="7E23.html">DrawRoom</a> is run immediately.
 </div>
 </div>
 </td>
@@ -60,7 +66,7 @@ Used by the routines at <a href="7E23.html">DrawRoom</a> and <a href="9147.html"
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dc7"></span>7DC7</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 00 to <a href="5E25.html">NumCreatures</a>.</td>
+<td class="comment-1" rowspan="2">Reset the number of creatures in <a href="5E25.html">NumCreatures</a> to zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -71,13 +77,13 @@ Used by the routines at <a href="7E23.html">DrawRoom</a> and <a href="9147.html"
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dcb"></span>7DCB</td>
 <td class="instruction">LD IX,$EAA8</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="EAA8.html">EAA8</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the first entity after the three fixed entities at <a href="EAA8.html">ItemEntities</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dcf"></span>7DCF</td>
 <td class="instruction">LD A,($5E14)</td>
-<td class="comment-1" rowspan="3">Checking bit 0 of <a href="5E14.html">GameFlags</a>; jump to <a href="7DC3.html#7ddc">MainLoop_0</a> if the room content is already drawn.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="7DC3.html#7ddc">MainLoop_Entities</a> if the entities in the room have already been drawn (bit 0 of <a href="5E14.html">GameFlags</a> is set).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -87,25 +93,35 @@ Used by the routines at <a href="7E23.html">DrawRoom</a> and <a href="9147.html"
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dd4"></span>7DD4</td>
-<td class="instruction">JR NZ,<a href="7DC3.html#7ddc">MainLoop_0</a></td>
+<td class="instruction">JR NZ,<a href="7DC3.html#7ddc">MainLoop_Entities</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dd6"></span>7DD6</td>
 <td class="instruction">LD IX,$EEE0</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="EEE0.html">EEE0</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the end of the entity table, so that no entities are processed at <a href="EEE0.html">RoomItemEntities</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dda"></span>7DDA</td>
 <td class="instruction">JR <a href="7E23.html">DrawRoom</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="7E23.html">DrawRoom</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="7E23.html">DrawRoom</a> to draw the room.</td>
 </tr>
 <tr>
-<td class="asm-label">MainLoop_0</td>
+<td class="routine-comment" colspan="5">
+<span id="7ddc"></span>
+<div class="comments">
+<div class="paragraph">
+Each pass of this loop considers one of the 8-byte entities.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Entities</td>
 <td class="address-2"><span id="7ddc"></span>7DDC</td>
 <td class="instruction">LD A,($5C78)</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a>.</td>
+<td class="comment-1" rowspan="2">Fetch the low byte of FRAMES into <span class="register">C</span> (using <span class="register">A</span>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -116,97 +132,113 @@ Used by the routines at <a href="7E23.html">DrawRoom</a> and <a href="9147.html"
 <td class="asm-label"></td>
 <td class="address-1"><span id="7de0"></span>7DE0</td>
 <td class="instruction">LD A,($5E03)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E03.html">5E03</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the FRAMES value from the previous pass.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7de3"></span>7DE3</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Call <a href="7EB2.html">UpdateFixedEntities</a> if FRAMES has changed since it was last stored in <a href="5E03.html">LastFrame</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7de4"></span>7DE4</td>
-<td class="instruction">CALL NZ,<a href="7E7E.html#7eb2">ProcessAction_5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL NZ,<a href="7EB2.html">UpdateFixedEntities</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7de7"></span>7DE7</td>
 <td class="instruction">LD A,($EA91)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="EA91.html">PlayerRoom</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dea"></span>7DEA</td>
 <td class="instruction">CP (IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare it with the room of this entity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7ded"></span>7DED</td>
 <td class="instruction">LD HL,$7DF3</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="7DC3.html#7df3">7DF3</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the address for the handler to return to at <a href="7DC3.html#7df3">MainLoop_NextEntity</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7df0"></span>7DF0</td>
 <td class="instruction">JP Z,<a href="7E7E.html">ProcessAction</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Process the entity with <a href="7E7E.html">ProcessAction</a> if it is in the same room as the player.</td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="routine-comment" colspan="5">
+<span id="7df3"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next 8-byte entity.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_NextEntity</td>
 <td class="address-1"><span id="7df3"></span>7DF3</td>
 <td class="instruction">LD DE,$0008</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0008.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=0008 (the size of an entity).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7df6"></span>7DF6</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">IX</span> on to the next entity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7df8"></span>7DF8</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IX</span> to <span class="register">HL</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dfa"></span>7DFA</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dfb"></span>7DFB</td>
 <td class="instruction">LD DE,$EE60</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="EE60.html">EE60</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the end of the 8-byte entities at <a href="EE60.html">CreatureRecords</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dfe"></span>7DFE</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump back to <a href="7DC3.html#7ddc">MainLoop_Entities</a> until <span class="register">IX</span> reaches <a href="EE60.html">CreatureRecords</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7dff"></span>7DFF</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e01"></span>7E01</td>
-<td class="instruction">JR C,<a href="7DC3.html#7ddc">MainLoop_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="7DC3.html#7ddc">MainLoop_Entities</a></td>
 </tr>
 <tr>
-<td class="asm-label">MainLoop_1</td>
+<td class="routine-comment" colspan="5">
+<span id="7e03"></span>
+<div class="comments">
+<div class="paragraph">
+Now work through the 16-byte records. These are processed no matter which room the player is in.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Records</td>
 <td class="address-2"><span id="7e03"></span>7E03</td>
 <td class="instruction">LD A,($5C78)</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a>.</td>
+<td class="comment-1" rowspan="2">Fetch the low byte of FRAMES into <span class="register">C</span> (using <span class="register">A</span>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -217,79 +249,75 @@ Used by the routines at <a href="7E23.html">DrawRoom</a> and <a href="9147.html"
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e07"></span>7E07</td>
 <td class="instruction">LD A,($5E03)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E03.html">5E03</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the FRAMES value from the previous pass.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e0a"></span>7E0A</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Call <a href="7EB2.html">UpdateFixedEntities</a> if FRAMES has changed since it was last stored in <a href="5E03.html">LastFrame</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e0b"></span>7E0B</td>
-<td class="instruction">CALL NZ,<a href="7E7E.html#7eb2">ProcessAction_5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL NZ,<a href="7EB2.html">UpdateFixedEntities</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e0e"></span>7E0E</td>
 <td class="instruction">LD HL,$7E13</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="7DC3.html#7e13">7E13</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the address for the handler to return to at <a href="7DC3.html#7e13">MainLoop_NextRecord</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e11"></span>7E11</td>
 <td class="instruction">JR <a href="7E7E.html">ProcessAction</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="7E7E.html">ProcessAction</a> to process the record.</td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="asm-label">MainLoop_NextRecord</td>
 <td class="address-1"><span id="7e13"></span>7E13</td>
 <td class="instruction">LD DE,$0010</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0010.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=0010 (the size of a record).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e16"></span>7E16</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">IX</span> on to the next record.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e18"></span>7E18</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IX</span> to <span class="register">HL</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e1a"></span>7E1A</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e1b"></span>7E1B</td>
 <td class="instruction">LD DE,$EEE0</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="EEE0.html">EEE0</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the end of the entity table at <a href="EEE0.html">RoomItemEntities</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e1e"></span>7E1E</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Jump back to <a href="7DC3.html#7e03">MainLoop_Records</a> until <span class="register">IX</span> reaches <a href="EEE0.html">RoomItemEntities</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e1f"></span>7E1F</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7e21"></span>7E21</td>
-<td class="instruction">JR C,<a href="7DC3.html#7e03">MainLoop_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="7DC3.html#7e03">MainLoop_Records</a></td>
 </tr>
 </table>
 <table class="asm-navigation">

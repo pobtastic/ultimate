@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,201 +36,322 @@ Next: <a href="42131.html">42131</a>
 </td>
 </tr>
 </table>
-<div class="description">42059: Routine at A44B</div>
+<div class="description">42059: Calculate New Position</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="40337.html">40337</a>, <a href="42199.html">42199</a> and <a href="42319.html">42319</a>.
+Used by the routines at <a href="40337.html">HandlerFlame</a>, <a href="42199.html">HandlerChasingNastie</a> and <a href="42319.html">HandlerWanderingNastie</a>.
+</div>
+<div class="paragraph">
+Works out where an actor will be after it has moved by its velocities (see <span class="register">IX</span>+6 and <span class="register">IX</span>+7), keeping it on the screen. The velocities are in sixteenths of a pixel.
+</div>
+<div class="paragraph">
+The X position is kept between 0 and 0256 minus the width (held in <a href="38573.html">Actor_Width</a>) and the Y position between 39 and 191.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Bit 0 is set if the actor hit the left or right of the screen, bit</td>
+</tr>
+<tr>
+<td class="register">1</td>
+<td class="register-desc">is set if it hit the top or bottom</td>
+</tr>
+<tr>
+<td class="register">D</td>
+<td class="register-desc">The new Y position</td>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">The new X position</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CalculateNewPosition</td>
+<td class="address-2"><span id="42059"></span>42059</td>
+<td class="instruction">LD B,0</td>
+<td class="comment-1" rowspan="1">Clear the edge flags in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42061"></span>42061</td>
+<td class="instruction">LD A,(38573)</td>
+<td class="comment-1" rowspan="1">Fetch the width of the actor from <a href="38573.html">Actor_Width</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42064"></span>42064</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Stash the width in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42065"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the new X position.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="address-2"><span id="42059"></span>42059</td>
-<td class="instruction">LD B,0</td>
-<td class="comment-0" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="42061"></span>42061</td>
-<td class="instruction">LD A,(38573)</td>
-<td class="comment-0" rowspan="1"></td>
-</tr>
-<tr>
-<td class="address-1"><span id="42064"></span>42064</td>
-<td class="instruction">LD C,A</td>
-<td class="comment-0" rowspan="1"></td>
-</tr>
-<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42065"></span>42065</td>
 <td class="instruction">LD A,(IX+6)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X velocity of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42068"></span>42068</td>
-<td class="instruction">CALL <a href="45105.html">45105</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="45105.html">GetWholePixels</a></td>
+<td class="comment-1" rowspan="1">Convert the X velocity to pixels.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42071"></span>42071</td>
-<td class="instruction">JP M,<a href="42059.html#42109">42109</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP M,<a href="42059.html#42109">CalculateNewPosition_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="42059.html#42109">CalculateNewPosition_Left</a> if the actor is moving left.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42074"></span>42074</td>
 <td class="instruction">ADD A,(IX+3)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the X position of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42077"></span>42077</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the new X position in <span class="register">E</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42078"></span>42078</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the width of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42079"></span>42079</td>
-<td class="instruction">JR C,<a href="42059.html#42102">42102</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR C,<a href="42059.html#42102">CalculateNewPosition_HitRight</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="42059.html#42102">CalculateNewPosition_HitRight</a> if the actor would go off the right edge of the screen.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="42081"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the new Y position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CalculateNewPosition_Y</td>
 <td class="address-2"><span id="42081"></span>42081</td>
 <td class="instruction">LD A,(IX+7)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the Y velocity of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42084"></span>42084</td>
-<td class="instruction">CALL <a href="45105.html">45105</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="45105.html">GetWholePixels</a></td>
+<td class="comment-1" rowspan="1">Convert the Y velocity to pixels.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42087"></span>42087</td>
-<td class="instruction">JP M,<a href="42059.html#42120">42120</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP M,<a href="42059.html#42120">CalculateNewPosition_Up</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="42059.html#42120">CalculateNewPosition_Up</a> if the actor is moving up.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42090"></span>42090</td>
 <td class="instruction">ADD A,(IX+4)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the Y position of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42093"></span>42093</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the new Y position in <span class="register">D</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42094"></span>42094</td>
 <td class="instruction">CP 191</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Return if the actor is not off the bottom of the screen (191).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42096"></span>42096</td>
 <td class="instruction">RET C</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42097"></span>42097</td>
 <td class="instruction">LD D,191</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Limit the Y position to the bottom of the screen (191).</td>
 </tr>
 <tr>
+<td class="asm-label">CalculateNewPosition_HitY</td>
 <td class="address-2"><span id="42099"></span>42099</td>
 <td class="instruction">SET 1,B</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the top or bottom edge flag (bit 1).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42101"></span>42101</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="42102"></span>
+<div class="comments">
+<div class="paragraph">
+The actor hit the right of the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CalculateNewPosition_HitRight</td>
 <td class="address-2"><span id="42102"></span>42102</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the width of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42103"></span>42103</td>
 <td class="instruction">NEG</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Negate it to give the X position which puts the actor against the right of the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42105"></span>42105</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">E</span> as the new X position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42106"></span>42106</td>
 <td class="instruction">SET 0,B</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the left or right edge flag (bit 0).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42108"></span>42108</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="42109"></span>
+<div class="comments">
+<div class="paragraph">
+The actor is moving left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CalculateNewPosition_Left</td>
 <td class="address-2"><span id="42109"></span>42109</td>
 <td class="instruction">ADD A,(IX+3)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the X position of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42112"></span>42112</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the new X position in <span class="register">E</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42113"></span>42113</td>
-<td class="instruction">JR C,<a href="42059.html#42081">42081</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR C,<a href="42059.html#42081">CalculateNewPosition_Y</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="42059.html#42081">CalculateNewPosition_Y</a> if the actor is still on the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42115"></span>42115</td>
 <td class="instruction">LD E,0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Limit the X position to the left edge of the screen (0).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42117"></span>42117</td>
 <td class="instruction">SET 0,B</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the left or right edge flag (bit 0).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42119"></span>42119</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="42120"></span>
+<div class="comments">
+<div class="paragraph">
+The actor is moving up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CalculateNewPosition_Up</td>
 <td class="address-2"><span id="42120"></span>42120</td>
 <td class="instruction">ADD A,(IX+4)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the Y position of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42123"></span>42123</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the new Y position in <span class="register">D</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42124"></span>42124</td>
 <td class="instruction">CP 39</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Return if the actor is not off the top of the screen (the Y position is 39 or more).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42126"></span>42126</td>
 <td class="instruction">RET NC</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42127"></span>42127</td>
 <td class="instruction">LD D,39</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Limit the Y position to the top of the screen (39).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="42129"></span>42129</td>
-<td class="instruction">JR <a href="42059.html#42099">42099</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="42059.html#42099">CalculateNewPosition_HitY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="42059.html#42099">CalculateNewPosition_HitY</a> to set the top or bottom edge flag.</td>
 </tr>
 </table>
 <table class="asm-navigation">

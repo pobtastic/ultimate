@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at 45596</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="45591.html">45591</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#45596">Map</a></td>
+<td class="next">
+Next: <a href="45716.html">45716</a>
+</td>
+</tr>
+</table>
+<div class="description">45596: Draw Play Window</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="39228.html">MainLoop</a>.
+</div>
+<div class="paragraph">
+Copies the off-screen play window buffer to the display, and at the same time resets the buffer to the dithered grey background of the play window (alternate lines of 85 and 170). The buffer occupies 62848 to 65535: 112 lines of 24 bytes. Only the middle 20 bytes of each line are shown on screen, as the 2 bytes at each end are margins that let sprites overhang the edges of the window. The lines are copied from the bottom of the window to the top, working backwards through the buffer. The stack pointer is pointed at the display and each pair of bytes taken from the buffer is written using a PUSH instruction, which is much faster than storing the bytes one at a time.  <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="draw-play-window-before" src="../../images/scr/draw-play-window-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="draw-play-window-after" src="../../images/scr/draw-play-window-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawPlayWindow</td>
+<td class="address-2"><span id="45596"></span>45596</td>
+<td class="instruction">LD DE,20470</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the screen address just after the bottom right byte of the play window.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45599"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="39120.html">InitialiseGame</a>.
+</div>
+<div class="paragraph">
+Entered from <a href="39120.html#39139">39139</a> with <span class="register">DE</span> pointing at the ROM, to fill the buffer with the dithered background without drawing anything. <span class="register">DE</span> holds the screen address just after the bottom right byte of the window.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawPlayWindow_Entry</td>
+<td class="address-2"><span id="45599"></span>45599</td>
+<td class="instruction">LD (38435),SP</td>
+<td class="comment-1" rowspan="1">Save the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45603"></span>45603</td>
+<td class="instruction">LD HL,65533</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the last visible byte of the buffer, which is the bottom right of the window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45606"></span>45606</td>
+<td class="instruction">LD BC,28757</td>
+<td class="comment-1" rowspan="1">Set the line counter to 112 (the height of the play window in pixels) and the background pattern for the bottom line to 85.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45609"></span>45609</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the screen address in <span class="register">HL</span>, so that it can be used as the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawPlayWindow_Screen</td>
+<td class="address-2"><span id="45610"></span>45610</td>
+<td class="instruction">LD SP,HL</td>
+<td class="comment-1" rowspan="2">Point the stack pointer at the screen address, and swap the buffer pointer back into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45611"></span>45611</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45612"></span>
+<div class="comments">
+<div class="paragraph">
+Copy a line of the buffer, two bytes at a time, and replace each byte with the background pattern.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawPlayWindow_Line</td>
+<td class="address-1"><span id="45612"></span>45612</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy two bytes from the buffer to the screen and replace them with the pattern.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45613"></span>45613</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45614"></span>45614</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45615"></span>45615</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45616"></span>45616</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45617"></span>45617</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45618"></span>45618</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45619"></span>45619</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45620"></span>45620</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45621"></span>45621</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45622"></span>45622</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45623"></span>45623</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45624"></span>45624</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45625"></span>45625</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45626"></span>45626</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45627"></span>45627</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45628"></span>45628</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45629"></span>45629</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45630"></span>45630</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45631"></span>45631</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45632"></span>45632</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45633"></span>45633</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45634"></span>45634</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45635"></span>45635</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45636"></span>45636</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45637"></span>45637</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45638"></span>45638</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45639"></span>45639</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45640"></span>45640</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45641"></span>45641</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45642"></span>45642</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45643"></span>45643</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45644"></span>45644</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45645"></span>45645</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45646"></span>45646</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45647"></span>45647</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45648"></span>45648</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45649"></span>45649</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45650"></span>45650</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45651"></span>45651</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45652"></span>45652</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45653"></span>45653</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45654"></span>45654</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45655"></span>45655</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45656"></span>45656</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45657"></span>45657</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45658"></span>45658</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45659"></span>45659</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45660"></span>45660</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45661"></span>45661</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45662"></span>45662</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45663"></span>45663</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45664"></span>45664</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45665"></span>45665</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45666"></span>45666</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45667"></span>45667</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45668"></span>45668</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the next two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45669"></span>45669</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45670"></span>45670</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45671"></span>45671</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45672"></span>45672</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45673"></span>45673</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45674"></span>45674</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45675"></span>45675</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="7">Copy the last two bytes of the line (20 bytes have now been copied).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45676"></span>45676</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45677"></span>45677</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45678"></span>45678</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45679"></span>45679</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45680"></span>45680</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45681"></span>45681</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45682"></span>45682</td>
+<td class="instruction">DEC L</td>
+<td class="comment-1" rowspan="4">Skip the margin bytes: the two on the left of this line and the two on the right of the line above.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45683"></span>45683</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45684"></span>45684</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45685"></span>45685</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45686"></span>45686</td>
+<td class="instruction">RRC C</td>
+<td class="comment-1" rowspan="1">Swap the background pattern between 85 and 170 for the next line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45688"></span>45688</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep the buffer pointer.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45689"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the screen address of the end of the pixel line above.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45689"></span>45689</td>
+<td class="instruction">LD HL,65300</td>
+<td class="comment-1" rowspan="2">Add 65300 (-236) to the stack pointer, which has moved back 20 bytes along the line, to give the address one pixel line up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45692"></span>45692</td>
+<td class="instruction">ADD HL,SP</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45693"></span>45693</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Test whether the new address is the bottom pixel line of the character row above.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45694"></span>45694</td>
+<td class="instruction">CPL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45695"></span>45695</td>
+<td class="instruction">AND 7</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45697"></span>45697</td>
+<td class="instruction">JR NZ,<a href="45596.html#45709">DrawPlayWindow_NextLine</a></td>
+<td class="comment-1" rowspan="1">Jump if it is not, as the address is correct.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45699"></span>45699</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Move up a character row by subtracting 32 from the low byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45700"></span>45700</td>
+<td class="instruction">SUB 32</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45702"></span>45702</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45703"></span>45703</td>
+<td class="instruction">JR C,<a href="45596.html#45709">DrawPlayWindow_NextLine</a></td>
+<td class="comment-1" rowspan="1">Jump if that crossed a third of the display.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45705"></span>45705</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Otherwise move to the bottom pixel line of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45706"></span>45706</td>
+<td class="instruction">ADD A,8</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45708"></span>45708</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label">DrawPlayWindow_NextLine</td>
+<td class="address-2"><span id="45709"></span>45709</td>
+<td class="instruction">DJNZ <a href="45596.html#45610">DrawPlayWindow_Screen</a></td>
+<td class="comment-1" rowspan="1">Loop back until all 112 lines have been copied.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45711"></span>45711</td>
+<td class="instruction">LD SP,(38435)</td>
+<td class="comment-1" rowspan="1">Restore the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45715"></span>45715</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+Continue on to <a href="45596.html#45599">DrawPlayWindow_Entry</a>.
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="45591.html">45591</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#45596">Map</a></td>
+<td class="next">
+Next: <a href="45716.html">45716</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../../asm/B21C.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

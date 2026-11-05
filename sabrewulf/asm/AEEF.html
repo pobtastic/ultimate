@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -29,7 +32,7 @@ Prev: <a href="AECF.html">AECF</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#aeef">Map</a></td>
 <td class="next">
-Next: <a href="AFC1.html">AFC1</a>
+Next: <a href="AFAC.html">AFAC</a>
 </td>
 </tr>
 </table>
@@ -41,20 +44,45 @@ Next: <a href="AFC1.html">AFC1</a>
 <div class="paragraph">
 Used by the routine at <a href="AECF.html">GamePlayEntry</a>.
 </div>
+<div class="paragraph">
+Handles Sabreman while walking (sprite IDs 10 to 1F). The controls are read, with the effects of the orchids applied, and turned into an acceleration of 07 in each direction. The player is then moved, tested against the objects in the room and the walking animation is updated. If "fire" is pressed then the player starts to attack (see <a href="ADBF.html">StartAttack</a>). The velocities are then reduced by one so the player slides to a halt. Finally the player is displayed.
 </div>
+<div class="paragraph">
+The effect of an orchid depends on the colour of the player: yellow (INK:YELLOW, PAPER:BLACK (BRIGHT)) makes the player sit down, magenta (INK:MAGENTA, PAPER:BLACK (BRIGHT)) reverses the controls, red (INK:RED, PAPER:BLACK (BRIGHT)) lowers the top speed and cyan (INK:CYAN, PAPER:BLACK (BRIGHT)) increases the top speed. The colour white (INK:WHITE, PAPER:BLACK (BRIGHT)) is normal.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the player</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">GamePlay_Start</td>
 <td class="address-2"><span id="aeef"></span>AEEF</td>
 <td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB0B.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Remember the previous position of the player.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="aef2"></span>
+<div class="comments">
+<div class="paragraph">
+See <a href="../reference/pokes.html#less_animals">Less Animals</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aef2"></span>AEF2</td>
-<td class="instruction">CALL <a href="A18C.html">$A18C</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A18C.html">A18C</a>.</td>
+<td class="instruction">CALL <a href="A18C.html">TestPlayerProgress</a></td>
+<td class="comment-1" rowspan="1">Check the progress of the player.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -70,13 +98,13 @@ Is Sabreman yellow?
 <td class="asm-label"></td>
 <td class="address-1"><span id="aef5"></span>AEF5</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+05 (entity colour).</td>
+<td class="comment-1" rowspan="1">Fetch the colour of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aef8"></span>AEF8</td>
 <td class="instruction">CP $46</td>
-<td class="comment-1" rowspan="2">If the colour is 46 jump to <a href="AE8F.html">HandlerYellowOrchid</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AE8F.html">HandlerYellowOrchid</a> if the player is yellow (INK:YELLOW, PAPER:BLACK (BRIGHT)).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -87,13 +115,13 @@ Is Sabreman yellow?
 <td class="asm-label"></td>
 <td class="address-1"><span id="aefc"></span>AEFC</td>
 <td class="instruction">CALL <a href="AE7A.html">HandlerOrchidTimer</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AE7A.html">HandlerOrchidTimer</a>.</td>
+<td class="comment-1" rowspan="1">Count down the orchid effect.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aeff"></span>AEFF</td>
 <td class="instruction">LD A,$10</td>
-<td class="comment-1" rowspan="2">Write 10 to <a href="96A9.html#96ad">96AD</a>.</td>
+<td class="comment-1" rowspan="2">Set the width of the player in <a href="96AD.html">Actor_Width</a> to 10.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -101,34 +129,43 @@ Is Sabreman yellow?
 <td class="instruction">LD ($96AD),A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="af04"></span>
+<div class="comments">
+<div class="paragraph">
+Check whether the player has been hit.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af04"></span>AF04</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the hit direction of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af07"></span>AF07</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A985.html">KnockPlayerBack</a> if the player has been hit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af08"></span>AF08</td>
-<td class="instruction">JP NZ,<a href="A985.html">$A985</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="A985.html">KnockPlayerBack</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af0b"></span>AF0B</td>
 <td class="instruction">LD DE,$0000</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0000.</td>
+<td class="comment-1" rowspan="1">Clear the movement of the player in <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af0e"></span>AF0E</td>
 <td class="instruction">CALL <a href="B0A3.html">HandlerControls</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B0A3.html">HandlerControls</a>.</td>
+<td class="comment-1" rowspan="1">Read the controls.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -144,13 +181,13 @@ Is Sabreman magenta?
 <td class="asm-label"></td>
 <td class="address-1"><span id="af11"></span>AF11</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+05 (entity colour).</td>
+<td class="comment-1" rowspan="1">Fetch the colour of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af14"></span>AF14</td>
 <td class="instruction">CP $43</td>
-<td class="comment-1" rowspan="2">If the colour is not 43 jump to <a href="AEEF.html#af1c">GamePlay_Controls</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#af1c">GamePlay_Controls</a> if the player is not magenta (INK:MAGENTA, PAPER:BLACK (BRIGHT)).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -171,26 +208,26 @@ Handles reversing the controls as a result of the magenta orchid.
 <td class="asm-label"></td>
 <td class="address-1"><span id="af18"></span>AF18</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af19"></span>AF19</td>
 <td class="instruction">XOR %00001111</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flip bits 0-3 (swapping left with right and up with down).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af1b"></span>AF1B</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Store the reversed controls in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="af1c"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="AE34.html">AE34</a>.
+This entry point is used by the routine at <a href="AE34.html">StopAttack</a>.
 </div>
 </div>
 </td>
@@ -199,169 +236,175 @@ This entry point is used by the routine at <a href="AE34.html">AE34</a>.
 <td class="asm-label">GamePlay_Controls</td>
 <td class="address-2"><span id="af1c"></span>AF1C</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af1d"></span>AF1D</td>
 <td class="instruction">LD ($96AC),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <a href="96A9.html#96ac">96AC</a>.</td>
+<td class="comment-1" rowspan="1">Store the controls in <a href="96AC.html">Player_Controls</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="af20"></span>
+<div class="comments">
+<div class="paragraph">
+Turn the controls into an acceleration in <span class="register">E</span> (X) and <span class="register">D</span> (Y).
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af20"></span>AF20</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the X acceleration.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af21"></span>AF21</td>
 <td class="instruction">LD B,$07</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=07.</td>
+<td class="comment-1" rowspan="1">Set the amount to accelerate by in <span class="register">B</span> to 07.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af23"></span>AF23</td>
 <td class="instruction">BIT 1,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#af28">GamePlay_Left</a> if "right" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af25"></span>AF25</td>
-<td class="instruction">JR Z,<a href="AEEF.html#af28">GamePlay_Start_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="AEEF.html#af28">GamePlay_Left</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af27"></span>AF27</td>
 <td class="instruction">ADD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the acceleration for "right".</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_0</td>
+<td class="asm-label">GamePlay_Left</td>
 <td class="address-2"><span id="af28"></span>AF28</td>
 <td class="instruction">BIT 0,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#af2d">GamePlay_AccelerationX</a> if "left" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af2a"></span>AF2A</td>
-<td class="instruction">JR Z,<a href="AEEF.html#af2d">GamePlay_Start_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="AEEF.html#af2d">GamePlay_AccelerationX</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af2c"></span>AF2C</td>
 <td class="instruction">SUB B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the acceleration for "left".</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_1</td>
+<td class="asm-label">GamePlay_AccelerationX</td>
 <td class="address-2"><span id="af2d"></span>AF2D</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the X acceleration in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af2e"></span>AF2E</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the Y acceleration.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af2f"></span>AF2F</td>
 <td class="instruction">BIT 3,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#af34">GamePlay_Up</a> if "down" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af31"></span>AF31</td>
-<td class="instruction">JR Z,<a href="AEEF.html#af34">GamePlay_Start_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="AEEF.html#af34">GamePlay_Up</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af33"></span>AF33</td>
 <td class="instruction">ADD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the acceleration for "down".</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_2</td>
+<td class="asm-label">GamePlay_Up</td>
 <td class="address-2"><span id="af34"></span>AF34</td>
 <td class="instruction">BIT 2,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#af39">GamePlay_AccelerationY</a> if "up" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af36"></span>AF36</td>
-<td class="instruction">JR Z,<a href="AEEF.html#af39">GamePlay_Start_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="AEEF.html#af39">GamePlay_AccelerationY</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af38"></span>AF38</td>
 <td class="instruction">SUB B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the acceleration for "up".</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_3</td>
+<td class="asm-label">GamePlay_AccelerationY</td>
 <td class="address-2"><span id="af39"></span>AF39</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the Y acceleration in <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af3a"></span>AF3A</td>
-<td class="instruction">CALL <a href="AEEF.html#afac">GamePlay_Start_7</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AEEF.html#afac">GamePlay_Start_7</a>.</td>
+<td class="instruction">CALL <a href="AFAC.html">AcceleratePlayer</a></td>
+<td class="comment-1" rowspan="1">Accelerate the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af3d"></span>AF3D</td>
-<td class="instruction">CALL <a href="AFE8.html">$AFE8</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AFE8.html">AFE8</a>.</td>
+<td class="instruction">CALL <a href="AFE8.html">MoveActor</a></td>
+<td class="comment-1" rowspan="1">Work out the new position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af40"></span>AF40</td>
 <td class="instruction">LD BC,$160E</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=160E.</td>
+<td class="comment-1" rowspan="1">Set the height of the player in <span class="register">B</span> to 16 and the width in <span class="register">C</span> to 0E.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af43"></span>AF43</td>
-<td class="instruction">CALL <a href="B81C.html">$B81C</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B81C.html">B81C</a>.</td>
+<td class="instruction">CALL <a href="B81C.html">SlideActorPastObjects</a></td>
+<td class="comment-1" rowspan="1">Stop the player passing through objects in the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af46"></span>AF46</td>
-<td class="instruction">CALL <a href="B053.html">$B053</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B053.html">B053</a>.</td>
+<td class="instruction">CALL <a href="B053.html">UpdatePlayerDirection</a></td>
+<td class="comment-1" rowspan="1">Update the direction the player is facing.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af49"></span>AF49</td>
-<td class="instruction">CALL <a href="AAED.html">$AAED</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AAED.html">AAED</a>.</td>
+<td class="instruction">CALL <a href="AAED.html">TestPositionUnchanged</a></td>
+<td class="comment-1" rowspan="1">Test whether the player has stayed where it was.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af4c"></span>AF4C</td>
 <td class="instruction">LD (IX+$03),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the X position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af4f"></span>AF4F</td>
 <td class="instruction">LD (IX+$04),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the Y position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af52"></span>AF52</td>
-<td class="instruction">CALL NZ,<a href="BF4B.html">$BF4B</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL NZ,<a href="BF4B.html">PlayFootstepSound</a></td>
+<td class="comment-1" rowspan="1">Play the footstep sound if the player has moved.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -377,84 +420,93 @@ Is Sabreman white?
 <td class="asm-label"></td>
 <td class="address-1"><span id="af55"></span>AF55</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+05 (entity colour).</td>
+<td class="comment-1" rowspan="1">Fetch the colour of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af58"></span>AF58</td>
 <td class="instruction">CP $47</td>
-<td class="comment-1" rowspan="2">If the colour is not 47 jump to <a href="AEEF.html#af66">GamePlay_Start_4</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#af66">GamePlay_Friction</a> if the player is not white (INK:WHITE, PAPER:BLACK (BRIGHT)).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af5a"></span>AF5A</td>
-<td class="instruction">JR NZ,<a href="AEEF.html#af66">GamePlay_Start_4</a></td>
+<td class="instruction">JR NZ,<a href="AEEF.html#af66">GamePlay_Friction</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af5c"></span>AF5C</td>
 <td class="instruction">LD A,($96AC)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the controls from <a href="96AC.html">Player_Controls</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af5f"></span>AF5F</td>
 <td class="instruction">BIT 4,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#af66">GamePlay_Friction</a> if "fire" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af61"></span>AF61</td>
-<td class="instruction">JR Z,<a href="AEEF.html#af66">GamePlay_Start_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="AEEF.html#af66">GamePlay_Friction</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af63"></span>AF63</td>
-<td class="instruction">CALL <a href="ADBF.html">$ADBF</a></td>
-<td class="comment-1" rowspan="1">Call <a href="ADBF.html">ADBF</a>.</td>
+<td class="instruction">CALL <a href="ADBF.html">StartAttack</a></td>
+<td class="comment-1" rowspan="1">Start an attack.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_4</td>
+<td class="routine-comment" colspan="5">
+<span id="af66"></span>
+<div class="comments">
+<div class="paragraph">
+Reduce the velocities by one.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GamePlay_Friction</td>
 <td class="address-2"><span id="af66"></span>AF66</td>
 <td class="instruction">LD A,(IX+$06)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X velocity of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af69"></span>AF69</td>
 <td class="instruction">LD B,$01</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=01.</td>
+<td class="comment-1" rowspan="1">Set the amount to reduce the velocity by in <span class="register">B</span> to 01.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af6b"></span>AF6B</td>
-<td class="instruction">CALL <a href="B047.html">$B047</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B047.html">B047</a>.</td>
+<td class="instruction">CALL <a href="B047.html">ReduceVelocity</a></td>
+<td class="comment-1" rowspan="1">Reduce the X velocity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af6e"></span>AF6E</td>
 <td class="instruction">LD (IX+$06),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the new X velocity of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af71"></span>AF71</td>
 <td class="instruction">LD A,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the Y velocity of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af74"></span>AF74</td>
-<td class="instruction">CALL <a href="B047.html">$B047</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B047.html">B047</a>.</td>
+<td class="instruction">CALL <a href="B047.html">ReduceVelocity</a></td>
+<td class="comment-1" rowspan="1">Reduce the Y velocity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af77"></span>AF77</td>
 <td class="instruction">LD (IX+$07),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the new Y velocity of the player.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -463,43 +515,45 @@ Is Sabreman white?
 <div class="paragraph">
 This entry point is used by the routine at <a href="A61B.html">HandlerYellowOrchid_StandUp</a>.
 </div>
+<div class="paragraph">
+Display the player. While an orchid effect is about to wear off (the timer in <a href="96B0.html">OrchidEffectTimer</a> is below 2F) the player flashes between the colour of the orchid and white, with a sound at the start of each phase.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_5</td>
+<td class="asm-label">GamePlay_Display</td>
 <td class="address-2"><span id="af7a"></span>AF7A</td>
 <td class="instruction">CALL <a href="B9A9.html">DisplayEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B9A9.html">DisplayEntity</a>.</td>
+<td class="comment-1" rowspan="1">Move the player on the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af7d"></span>AF7D</td>
 <td class="instruction">LD A,($96B0)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="96B0.html">OrchidEffectTimer</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the orchid effect timer from <a href="96B0.html">OrchidEffectTimer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af80"></span>AF80</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">If <span class="register">A</span> is zero, jump to <a href="BB24.html">BB24</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BB24.html">ColourEntity</a> to colour the player if there is no orchid effect.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af81"></span>AF81</td>
-<td class="instruction">JP Z,<a href="BB24.html">$BB24</a></td>
+<td class="instruction">JP Z,<a href="BB24.html">ColourEntity</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af84"></span>AF84</td>
 <td class="instruction">CP $2F</td>
-<td class="comment-1" rowspan="1">Is <span class="register">A</span> 2F?</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BB24.html">ColourEntity</a> to colour the player if the orchid effect timer is 2F or more.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af86"></span>AF86</td>
-<td class="instruction">JP NC,<a href="BB24.html">$BB24</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NC,<a href="BB24.html">ColourEntity</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -511,13 +565,12 @@ This entry point is used by the routine at <a href="A61B.html">HandlerYellowOrch
 <td class="asm-label"></td>
 <td class="address-1"><span id="af8b"></span>AF8B</td>
 <td class="instruction">CP $08</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEEF.html#afa4">GamePlay_OrchidPhase</a> if bit 3 of the orchid effect timer is set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af8d"></span>AF8D</td>
-<td class="instruction">JR NC,<a href="AEEF.html#afa4">GamePlay_Start_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="AEEF.html#afa4">GamePlay_OrchidPhase</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -528,44 +581,44 @@ This entry point is used by the routine at <a href="A61B.html">HandlerYellowOrch
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af91"></span>AF91</td>
-<td class="instruction">CALL Z,$BEC6</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL Z,<a href="BEC6.html">PlayOrchidFlashBeep</a></td>
+<td class="comment-1" rowspan="1">Play the orchid flash beep if the timer is at the start of the white phase.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af94"></span>AF94</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the colour of the player (the colour of the orchid).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af97"></span>AF97</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the colour of the orchid on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af98"></span>AF98</td>
 <td class="instruction">LD (IX+$05),$47</td>
-<td class="comment-1" rowspan="1">Set <span class="register">IX</span>+05 (entity colour) to INK:WHITE, PAPER:BLACK (BRIGHT).</td>
+<td class="comment-1" rowspan="1">Set the colour of the player to INK:WHITE, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af9c"></span>AF9C</td>
-<td class="instruction">CALL <a href="BB24.html">$BB24</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB24.html">BB24</a>.</td>
+<td class="instruction">CALL <a href="BB24.html">ColourEntity</a></td>
+<td class="comment-1" rowspan="1">Colour the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="af9f"></span>AF9F</td>
 <td class="instruction">POP AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the colour of the orchid from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="afa0"></span>AFA0</td>
 <td class="instruction">LD (IX+$05),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the colour of the player back to the colour of the orchid.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -574,7 +627,17 @@ This entry point is used by the routine at <a href="A61B.html">HandlerYellowOrch
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_6</td>
+<td class="routine-comment" colspan="5">
+<span id="afa4"></span>
+<div class="comments">
+<div class="paragraph">
+The player is drawn in the colour of the orchid.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GamePlay_OrchidPhase</td>
 <td class="address-2"><span id="afa4"></span>AFA4</td>
 <td class="instruction">AND %00000111</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
@@ -582,68 +645,14 @@ This entry point is used by the routine at <a href="A61B.html">HandlerYellowOrch
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="afa6"></span>AFA6</td>
-<td class="instruction">CALL Z,$BEC6</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL Z,<a href="BEC6.html">PlayOrchidFlashBeep</a></td>
+<td class="comment-1" rowspan="1">Play the orchid flash beep if the timer is at the start of the orchid phase.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="afa9"></span>AFA9</td>
-<td class="instruction">JP <a href="BB24.html">$BB24</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="BB24.html">BB24</a>.</td>
-</tr>
-<tr>
-<td class="asm-label">GamePlay_Start_7</td>
-<td class="address-2"><span id="afac"></span>AFAC</td>
-<td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afad"></span>AFAD</td>
-<td class="instruction">ADD A,(IX+$06)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afb0"></span>AFB0</td>
-<td class="instruction">CALL <a href="AFC1.html">$AFC1</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AFC1.html">AFC1</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afb3"></span>AFB3</td>
-<td class="instruction">LD (IX+$06),A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afb6"></span>AFB6</td>
-<td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afb7"></span>AFB7</td>
-<td class="instruction">ADD A,(IX+$07)</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afba"></span>AFBA</td>
-<td class="instruction">CALL <a href="AFC1.html">$AFC1</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AFC1.html">AFC1</a>.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afbd"></span>AFBD</td>
-<td class="instruction">LD (IX+$07),A</td>
-<td class="comment-1" rowspan="1"></td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="afc0"></span>AFC0</td>
-<td class="instruction">RET</td>
-<td class="comment-1" rowspan="1">Return.</td>
+<td class="instruction">JP <a href="BB24.html">ColourEntity</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BB24.html">ColourEntity</a> to colour the player.</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -653,7 +662,7 @@ Prev: <a href="AECF.html">AECF</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#aeef">Map</a></td>
 <td class="next">
-Next: <a href="AFC1.html">AFC1</a>
+Next: <a href="AFAC.html">AFAC</a>
 </td>
 </tr>
 </table>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sabre Wulf: Routine at 9F16</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="9F06.html">9F06</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#9f16">Map</a></td>
+<td class="next">
+Next: <a href="9F6A.html">9F6A</a>
+</td>
+</tr>
+</table>
+<div class="description">9F16: Handler: Guardian</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Handles the guardian (sprite IDs 94-95). Nothing happens unless the guardian is in the same room as the player.
+</div>
+<div class="paragraph">
+Until all four pieces of the amulet have been collected (see <a href="9702.html#970d">970D</a>) the guardian is animated, and if it touches the player (see <a href="AB36.html#ab3d">TestActorHurtingPlayer_Room</a>) then the player is hit with a hit direction of 80 which makes the player fall straight down.
+</div>
+<div class="paragraph">
+Once all four pieces have been collected the guardian steps aside to let the player past. It walks to the left if the X position of the player is 80 or more, but it does not move further left than 40. Otherwise it walks to the right, but it does not move further right than BF.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerGuardian</td>
+<td class="address-2"><span id="9f16"></span>9F16</td>
+<td class="instruction">LD A,($9703)</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="9702.html#9703">9703</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f19"></span>9F19</td>
+<td class="instruction">CP (IX+$01)</td>
+<td class="comment-1" rowspan="1">Compare with the room of the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f1c"></span>9F1C</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if the guardian is in a different room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f1d"></span>9F1D</td>
+<td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
+<td class="comment-1" rowspan="1">Remember the previous position of the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f20"></span>9F20</td>
+<td class="instruction">LD A,($970D)</td>
+<td class="comment-1" rowspan="1">Fetch the amulet pieces collected from <a href="9702.html#970d">970D</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f23"></span>9F23</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f25"></span>9F25</td>
+<td class="instruction">CP $0F</td>
+<td class="comment-1" rowspan="2">Jump to <a href="9F16.html#9f40">HandlerGuardian_StepAside</a> if all four amulet pieces have been collected.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f27"></span>9F27</td>
+<td class="instruction">JR Z,<a href="9F16.html#9f40">HandlerGuardian_StepAside</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f29"></span>9F29</td>
+<td class="instruction">CALL <a href="AD93.html">AnimateRhino</a></td>
+<td class="comment-1" rowspan="1">Animate the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f2c"></span>9F2C</td>
+<td class="instruction">LD BC,$170F</td>
+<td class="comment-1" rowspan="1">Set how far above and to the right of the guardian the player can be in <span class="register">BC</span> to 170F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f2f"></span>9F2F</td>
+<td class="instruction">CALL <a href="AB36.html#ab3d">TestActorHurtingPlayer_Room</a></td>
+<td class="comment-1" rowspan="1">Test whether the guardian is touching the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f32"></span>9F32</td>
+<td class="instruction">JP NC,<a href="AD5D.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD5D.html">DisplayActor</a> to display the guardian if the player is not touching it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f35"></span>9F35</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="2">Set the hit direction of the player in <a href="9702.html#9704">9704</a> to 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f37"></span>9F37</td>
+<td class="instruction">LD ($9704),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f3a"></span>9F3A</td>
+<td class="instruction">CALL <a href="BF17.html">PlayWarbleSound</a></td>
+<td class="comment-1" rowspan="1">Play the warble sound.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f3d"></span>9F3D</td>
+<td class="instruction">JP <a href="AD5D.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD5D.html">DisplayActor</a> to display the guardian.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9f40"></span>
+<div class="comments">
+<div class="paragraph">
+All four pieces have been collected. Walk to the left if the player is in the right half of the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerGuardian_StepAside</td>
+<td class="address-2"><span id="9f40"></span>9F40</td>
+<td class="instruction">LD A,($9705)</td>
+<td class="comment-1" rowspan="1">Fetch the X position of the player from <a href="9702.html#9705">9705</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f43"></span>9F43</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="9F16.html#9f5d">HandlerGuardian_Right</a> if the player is in the left half of the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f45"></span>9F45</td>
+<td class="instruction">JR Z,<a href="9F16.html#9f5d">HandlerGuardian_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f47"></span>9F47</td>
+<td class="instruction">LD (IX+$06),$E0</td>
+<td class="comment-1" rowspan="1">Set the X velocity of the guardian to E0 (walking to the left).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f4b"></span>9F4B</td>
+<td class="instruction">CALL <a href="AFE8.html">MoveActor</a></td>
+<td class="comment-1" rowspan="1">Work out the new position of the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f4e"></span>9F4E</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Fetch the new X position of the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f4f"></span>9F4F</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="1">Compare with 40.</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerGuardian_Limit</td>
+<td class="address-2"><span id="9f51"></span>9F51</td>
+<td class="instruction">JP C,<a href="AD5D.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD5D.html">DisplayActor</a> to display the guardian if it has reached the limit of its walk.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f54"></span>9F54</td>
+<td class="instruction">LD (IX+$03),E</td>
+<td class="comment-1" rowspan="1">Set the new X position of the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f57"></span>9F57</td>
+<td class="instruction">CALL <a href="AD93.html">AnimateRhino</a></td>
+<td class="comment-1" rowspan="1">Animate the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f5a"></span>9F5A</td>
+<td class="instruction">JP <a href="AD5D.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD5D.html">DisplayActor</a> to display the guardian.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9f5d"></span>
+<div class="comments">
+<div class="paragraph">
+Walk to the right.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerGuardian_Right</td>
+<td class="address-2"><span id="9f5d"></span>9F5D</td>
+<td class="instruction">LD (IX+$06),$20</td>
+<td class="comment-1" rowspan="1">Set the X velocity of the guardian to 20 (walking to the right).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f61"></span>9F61</td>
+<td class="instruction">CALL <a href="AFE8.html">MoveActor</a></td>
+<td class="comment-1" rowspan="1">Work out the new position of the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f64"></span>9F64</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Fetch the new X position of the guardian.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f65"></span>9F65</td>
+<td class="instruction">CP $C0</td>
+<td class="comment-1" rowspan="1">Compare with C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f67"></span>9F67</td>
+<td class="instruction">CCF</td>
+<td class="comment-1" rowspan="1">Invert the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9f68"></span>9F68</td>
+<td class="instruction">JR <a href="9F16.html#9f51">HandlerGuardian_Limit</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9F16.html#9f51">HandlerGuardian_Limit</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="9F06.html">9F06</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#9f16">Map</a></td>
+<td class="next">
+Next: <a href="9F6A.html">9F6A</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/sabrewulf/">Source code</a>.</div>
+<div><a href="../dec/asm/40726.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

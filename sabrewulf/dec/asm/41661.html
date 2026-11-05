@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -25,7 +28,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="41557.html">41557</a>
+Prev: <a href="41629.html">41629</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41661">Map</a></td>
 <td class="next">
@@ -33,201 +36,262 @@ Next: <a href="41720.html">41720</a>
 </td>
 </tr>
 </table>
-<div class="description">41661: Routine at A2BD</div>
+<div class="description">41661: Generate Room Objects</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="45598.html">45598</a>.
+Used by the routine at <a href="45598.html">InitialisePlayer</a>.
+</div>
+<div class="paragraph">
+Fills a table of 512 bytes at <a href="56812.html">RoomObjectTable</a> with the objects (see <a href="41787.html">SetUpRoomObjects</a>) which are to be found in the rooms. There are two bytes for each of the 256 rooms, so each room can hold up to two objects.
+</div>
+<div class="paragraph">
+A byte is taken from the ROM (starting at an address made from <a href="38547.html">GameTimer</a> and the frame counter, so it is effectively random) for each byte of the table. If the ROM byte is 128 or more then the table byte is zero, which means there is no object. Otherwise the table byte is made up from: <ul class="">
+<li>Bits 6-7: which of the room's four positions to use (taken from the byte count)</li>
+<li>Bits 0-3: the type of object (taken from the random seed at <a href="38549.html">RandomNumber</a>)</li>
+</ul> This is used when a new game is started.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">GenerateRoomObjects</td>
 <td class="address-2"><span id="41661"></span>41661</td>
 <td class="instruction">LD HL,56812</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="56436.html#56812">56812</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the table of room objects at <a href="56812.html">RoomObjectTable</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41664"></span>41664</td>
 <td class="instruction">LD A,(23672)</td>
-<td class="comment-1" rowspan="2"><span class="register">E</span>=<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23672.html">FRAMES</a>.</td>
+<td class="comment-1" rowspan="2">Fetch the low byte of <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23672.html">FRAMES</a> into <span class="register">E</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41667"></span>41667</td>
 <td class="instruction">LD E,A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41668"></span>41668</td>
 <td class="instruction">LD A,(38547)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38547.html">CounterLow</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the game timer from <a href="38547.html">GameTimer</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41671"></span>41671</td>
 <td class="instruction">AND %00011111</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-4.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41673"></span>41673</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Store the result in <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Use it as the high byte of the ROM address in <span class="register">D</span>, so <span class="register">DE</span> points into the ROM.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41674"></span>41674</td>
 <td class="instruction">LD BC,512</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=0512.</td>
+<td class="comment-1" rowspan="1">Set the number of bytes in the table in <span class="register">BC</span> to 512.</td>
 </tr>
 <tr>
+<td class="asm-label">GenerateRoomObjects_Loop</td>
 <td class="address-2"><span id="41677"></span>41677</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch a (random) byte from the ROM.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41678"></span>41678</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next ROM byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41679"></span>41679</td>
 <td class="instruction">CP 128</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="41661.html#41692">GenerateRoomObjects_Object</a> if the ROM byte is less than 128.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41681"></span>41681</td>
-<td class="instruction">JR C,<a href="41661.html#41692">41692</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="41661.html#41692">GenerateRoomObjects_Object</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41683"></span>41683</td>
 <td class="instruction">LD (HL),0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 0 to the table, so there is no object here.</td>
 </tr>
 <tr>
+<td class="asm-label">GenerateRoomObjects_Next</td>
 <td class="address-1"><span id="41685"></span>41685</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next table byte.</td>
 </tr>
 <tr>
+<td class="asm-label">GenerateRoomObjects_Count</td>
 <td class="address-2"><span id="41686"></span>41686</td>
 <td class="instruction">DEC BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the byte counter by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41687"></span>41687</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Loop back to <a href="41661.html#41677">GenerateRoomObjects_Loop</a> until all 512 bytes of the table have been done.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41688"></span>41688</td>
 <td class="instruction">OR C</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41689"></span>41689</td>
-<td class="instruction">JR NZ,<a href="41661.html#41677">41677</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="41661.html#41677">GenerateRoomObjects_Loop</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41691"></span>41691</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="41692"></span>
+<div class="comments">
+<div class="paragraph">
+Make the table byte for an object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GenerateRoomObjects_Object</td>
 <td class="address-2"><span id="41692"></span>41692</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the byte counter on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41693"></span>41693</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the byte counter.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41694"></span>41694</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Rotate the low byte of the byte counter right twice.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41695"></span>41695</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41696"></span>41696</td>
 <td class="instruction">AND %11000000</td>
 <td class="comment-1" rowspan="1">Keep only bits 6-7.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41698"></span>41698</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the position bits in <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41699"></span>41699</td>
 <td class="instruction">LD A,(38549)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the random seed from <a href="38549.html">RandomNumber</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41702"></span>41702</td>
 <td class="instruction">AND %00001111</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41704"></span>41704</td>
 <td class="instruction">OR C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Combine the position and the object type.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41705"></span>41705</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the table byte for the object.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41706"></span>41706</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next table byte.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="41707"></span>
+<div class="comments">
+<div class="paragraph">
+Update the random seed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41707"></span>41707</td>
 <td class="instruction">LD A,R</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the Z80 refresh register.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41709"></span>41709</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41710"></span>41710</td>
 <td class="instruction">LD A,(38549)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=38549.</td>
+<td class="comment-1" rowspan="1">Fetch the random seed from <a href="38549.html">RandomNumber</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41713"></span>41713</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the refresh register value to the seed.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41714"></span>41714</td>
 <td class="instruction">LD (38549),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the new random seed in <a href="38549.html">RandomNumber</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41717"></span>41717</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the byte counter from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="41718"></span>41718</td>
-<td class="instruction">JR <a href="41661.html#41686">41686</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="41661.html#41686">41686</a>.</td>
+<td class="instruction">JR <a href="41661.html#41686">GenerateRoomObjects_Count</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="41661.html#41686">GenerateRoomObjects_Count</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="41557.html">41557</a>
+Prev: <a href="41629.html">41629</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41661">Map</a></td>
 <td class="next">

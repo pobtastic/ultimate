@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -25,7 +28,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="41849.html">41849</a>
+Prev: <a href="41886.html">41886</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41896">Map</a></td>
 <td class="next">
@@ -39,23 +42,47 @@ Next: <a href="41917.html">41917</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="38636.html">GameComplete</a>, <a href="42011.html">SoundsAxeThrow</a>, <a href="42023.html">SoundsSword</a>, <a href="42040.html">SoundsFireball</a> and <a href="42053.html">SoundsWeaponPop</a>.
+Used by the routines at <a href="38705.html">FallThroughTrapdoor</a>, <a href="42011.html">SoundsAxeThrow</a>, <a href="42023.html">SoundsSword</a>, <a href="42040.html">SoundsFireball</a> and <a href="42053.html">SoundsWeaponPop</a>.
+</div>
+<div class="paragraph">
+Plays a tone on the speaker by switching it on and off. Each cycle is a wait of the half period with the speaker on and the same wait with the speaker off.
+</div>
+<div class="paragraph">
+This entry plays one cycle (a click). The entry at <a href="41896.html#41898">SoundsBeep</a> plays the number of cycles that is in <span class="register">C</span>, and the routines which follow play other tones by loading <span class="register">BC</span> and jumping to it.
+</div>
+<div class="paragraph">
+Writing 16 to port 254 sets the speaker bit and leaves the border black.
+</div>
+<div class="paragraph">
+A single click is too short to be heard on its own, so there is no sample for it here. It is heard in the run of clicks played by <a href="42053.html">SoundsWeaponPop</a> (which has a sample), and in those played by <a href="42011.html">SoundsAxeThrow</a>, <a href="42023.html">SoundsSword</a> and <a href="42040.html">SoundsFireball</a>, and when the player falls through a trapdoor in <a href="38705.html">FallThroughTrapdoor</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">The half period of the tone (0 is 256)</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">SoundsClick</td>
 <td class="address-2"><span id="41896"></span>41896</td>
 <td class="instruction">LD C,1</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">C</span>=1 (one cycle).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="41898"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="41917.html">SoundsInventory</a>, <a href="41922.html">SoundsDrop</a>, <a href="41927.html">SoundsWalking</a>, <a href="41944.html">SoundsWalkLow</a>, <a href="41952.html">SoundsStart</a>, <a href="41967.html">SoundEffect</a>, <a href="41992.html">SoundEffectNext</a>, <a href="42079.html">SoundsAppear</a>, <a href="42117.html">SoundsEating</a> and <a href="42160.html">SoundsBounce</a>.
+This entry point is used by the routines at <a href="41917.html">SoundsInventory</a>, <a href="41922.html">SoundsDropItem</a>, <a href="41927.html">SoundsWalking</a>, <a href="41944.html">SoundsWalkLow</a>, <a href="41952.html">SoundsStart</a>, <a href="41967.html">SoundEffect</a>, <a href="41992.html">SoundEffectNext</a>, <a href="42079.html">SoundsAppear</a>, <a href="42123.html">SoundEffectEating</a> and <a href="42160.html">SoundsBounce</a>.
+</div>
+<div class="paragraph">
+Play <span class="register">C</span> cycles of the tone.
 </div>
 </div>
 </td>
@@ -64,85 +91,96 @@ This entry point is used by the routines at <a href="41917.html">SoundsInventory
 <td class="asm-label">SoundsBeep</td>
 <td class="address-2"><span id="41898"></span>41898</td>
 <td class="instruction">LD A,16</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=16 (the speaker bit).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41900"></span>41900</td>
 <td class="instruction">OUT (254),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch the speaker on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41902"></span>41902</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the cycle counter and the half period on the stack, as the wait counts <span class="register">B</span> down to zero.</td>
 </tr>
 <tr>
-<td class="asm-label">SoundsClick_0</td>
+<td class="asm-label">SoundsClick_OnDelay</td>
 <td class="address-2"><span id="41903"></span>41903</td>
-<td class="instruction">DJNZ <a href="41896.html#41903">SoundsClick_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="41896.html#41903">SoundsClick_OnDelay</a></td>
+<td class="comment-1" rowspan="1">Wait for the half period.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41905"></span>41905</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the cycle counter and the half period from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41906"></span>41906</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash them on the stack again.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41907"></span>41907</td>
 <td class="instruction">XOR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=0 (clear the speaker bit).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41908"></span>41908</td>
 <td class="instruction">OUT (254),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch the speaker off.</td>
 </tr>
 <tr>
-<td class="asm-label">SoundsClick_1</td>
+<td class="asm-label">SoundsClick_OffDelay</td>
 <td class="address-2"><span id="41910"></span>41910</td>
-<td class="instruction">DJNZ <a href="41896.html#41910">SoundsClick_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="41896.html#41910">SoundsClick_OffDelay</a></td>
+<td class="comment-1" rowspan="1">Wait for the half period.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41912"></span>41912</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the cycle counter and the half period from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41913"></span>41913</td>
 <td class="instruction">DEC C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the cycle counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41914"></span>41914</td>
 <td class="instruction">JR NZ,<a href="41896.html#41898">SoundsBeep</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="41896.html#41898">SoundsBeep</a> until all of the cycles have been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="41916"></span>41916</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/underwurlde/dec/asm/41064.html">Underwurlde</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="41849.html">41849</a>
+Prev: <a href="41886.html">41886</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#41896">Map</a></td>
 <td class="next">

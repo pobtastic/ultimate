@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="B078.html">B078</a>
 </td>
 </tr>
 </table>
-<div class="description">B053: Routine at B053</div>
+<div class="description">B053: Update Player Direction</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,110 +44,145 @@ Next: <a href="B078.html">B078</a>
 <div class="paragraph">
 Used by the routine at <a href="AEEF.html">GamePlay_Start</a>.
 </div>
+<div class="paragraph">
+Sets the direction the player faces to match the way the player has moved. Bits 2-3 of the sprite ID hold the direction: 00 is left, 04 is right, 08 is up and 0C is down. The vertical movement is tested first, so if the player has moved both horizontally and vertically then the horizontal direction is used. The walking animation is also advanced (see <a href="B078.html">AnimateWalk</a>).
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">D</td>
+<td class="register-desc">New Y position</td>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">New X position</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the player</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
+<td class="asm-label">UpdatePlayerDirection</td>
 <td class="address-2"><span id="b053"></span>B053</td>
-<td class="instruction">CALL <a href="B078.html">$B078</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B078.html">B078</a>.</td>
+<td class="instruction">CALL <a href="B078.html">AnimateWalk</a></td>
+<td class="comment-1" rowspan="1">Animate the walking player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b056"></span>B056</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the new Y position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b057"></span>B057</td>
 <td class="instruction">CP (IX+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="B053.html#b066">UpdatePlayerDirection_Horizontal</a> if the player has not moved up or down.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b05a"></span>B05A</td>
-<td class="instruction">JR Z,<a href="B053.html#b066">$B066</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="B053.html#b066">UpdatePlayerDirection_Horizontal</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b05c"></span>B05C</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b05f"></span>B05F</td>
-<td class="instruction">JR C,<a href="B099.html">$B099</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="B099.html">FaceUp</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B099.html">FaceUp</a> if the player has moved up.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b061"></span>B061</td>
 <td class="instruction">OR %00001100</td>
-<td class="comment-1" rowspan="1">Set bits 2-3.</td>
+<td class="comment-1" rowspan="1">Set bits 2-3, so the player faces down.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="b063"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="B099.html">B099</a>.
+This entry point is used by the routine at <a href="B099.html">FaceUp</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">UpdatePlayerDirection_Store</td>
 <td class="address-2"><span id="b063"></span>B063</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the new sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdatePlayerDirection_Horizontal</td>
 <td class="address-2"><span id="b066"></span>B066</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the new X position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b067"></span>B067</td>
 <td class="instruction">CP (IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Return if the player has not moved left or right.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b06a"></span>B06A</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b06b"></span>B06B</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b06e"></span>B06E</td>
-<td class="instruction">JR C,<a href="B09F.html">$B09F</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="B09F.html">FaceLeft</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B09F.html">FaceLeft</a> if the player has moved left.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b070"></span>B070</td>
 <td class="instruction">AND %11110011</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-1, 4-7.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b072"></span>B072</td>
 <td class="instruction">OR %00000100</td>
-<td class="comment-1" rowspan="1">Set bit 2.</td>
+<td class="comment-1" rowspan="1">Set bit 2, so the player faces right.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="b074"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="B09F.html">B09F</a>.
+This entry point is used by the routine at <a href="B09F.html">FaceLeft</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">UpdatePlayerDirection_Write</td>
 <td class="address-2"><span id="b074"></span>B074</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the new sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="b077"></span>B077</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>

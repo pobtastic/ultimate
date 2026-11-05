@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Underwurlde: Routine at DF98</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../underwurlde.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="DF58.html">DF58</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#57240">Map</a></td>
+<td class="next">
+Next: <a href="E027.html">E027</a>
+</td>
+</tr>
+</table>
+<div class="description">DF98: Handle Falling Stalactite</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Handler for the object type 50 a stalactite that falls from the ceiling towards Sabreman (see <a href="DF58.html">Spawn_Falling_Stalactite</a>).
+</div>
+<div class="paragraph">
+The y velocity (byte 09) goes up by two on every call, to a limit of 6D and the y position and its fraction (byte 0D) change by sixteen times the velocity. The stalactite lands on a decoration if it touches the top of one near the middle of it. It lands on the floor if the room has one, and if the room has no floor it falls into the room below. When it lands it becomes the type 51 (see <a href="E027.html">Handle_Rock_Fragments</a>) and is not a stalactite any more.
+</div>
+<div class="paragraph">
+If Sabreman is not in the room the stalactite carries on falling but is not drawn. The countdown in byte 0A which is reset to 50 while Sabreman is in the room, removes it when he has been away for long enough.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite</td>
+<td class="address-2"><span id="57240"></span>DF98</td>
+<td class="instruction">CALL <a href="989F.html">StoreEntity</a></td>
+<td class="comment-1" rowspan="1">Save the state of the stalactite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57243"></span>DF9B</td>
+<td class="instruction">LD A,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57246"></span>DF9E</td>
+<td class="instruction">ADD A,$02</td>
+<td class="comment-1" rowspan="1">Add two to the y velocity, as gravity pulls the stalactite down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57248"></span>DFA0</td>
+<td class="instruction">CP $6E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DF98.html#57255">Handle_Falling_Stalactite_Move</a> if the stalactite is falling at full speed (the y velocity has reached 6E).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57250"></span>DFA2</td>
+<td class="instruction">JR NC,<a href="DF98.html#57255">Handle_Falling_Stalactite_Move</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57252"></span>DFA4</td>
+<td class="instruction">LD (IX+$09),A</td>
+<td class="comment-1" rowspan="1">Store the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_Move</td>
+<td class="address-2"><span id="57255"></span>DFA7</td>
+<td class="instruction">LD L,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the y velocity into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57258"></span>DFAA</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the y velocity (as a word).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57260"></span>DFAC</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="4">Multiply the y velocity by sixteen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57261"></span>DFAD</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57262"></span>DFAE</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57263"></span>DFAF</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57264"></span>DFB0</td>
+<td class="instruction">LD C,(IX+$0D)</td>
+<td class="comment-1" rowspan="1">Fetch the fraction of the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57267"></span>DFB3</td>
+<td class="instruction">LD B,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57270"></span>DFB6</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57271"></span>DFB7</td>
+<td class="instruction">LD (IX+$0D),L</td>
+<td class="comment-1" rowspan="1">Store the new fraction of the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57274"></span>DFBA</td>
+<td class="instruction">LD (IX+$03),H</td>
+<td class="comment-1" rowspan="1">Store the new y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57277"></span>DFBD</td>
+<td class="instruction">CALL <a href="98CC.html">Read_World_Map</a></td>
+<td class="comment-1" rowspan="1">Read the world map entry of the room that the stalactite is in. The flags of the room are returned in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57280"></span>DFC0</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Copy the flags of the room to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57281"></span>DFC1</td>
+<td class="instruction">AND %00010000</td>
+<td class="comment-1" rowspan="1">Keep only bit 4 (the floor).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57283"></span>DFC3</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Fetch the new y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57284"></span>DFC4</td>
+<td class="instruction">JR Z,<a href="DF98.html#57292">Handle_Falling_Stalactite_No_Floor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="DF98.html#57292">Handle_Falling_Stalactite_No_Floor</a> if the room has no floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57286"></span>DFC6</td>
+<td class="instruction">CP $9F</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DF98.html#57315">Handle_Falling_Stalactite_Land_On_Floor</a> if the stalactite has reached the floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57288"></span>DFC8</td>
+<td class="instruction">JR NC,<a href="DF98.html#57315">Handle_Falling_Stalactite_Land_On_Floor</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57290"></span>DFCA</td>
+<td class="instruction">JR <a href="DF98.html#57297">Handle_Falling_Stalactite_Check_Decorations</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="DF98.html#57297">Handle_Falling_Stalactite_Check_Decorations</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_No_Floor</td>
+<td class="address-2"><span id="57292"></span>DFCC</td>
+<td class="instruction">CP $BF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DF98.html#57357">Handle_Falling_Stalactite_Next_Room</a> if the stalactite has fallen out of the bottom of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57294"></span>DFCE</td>
+<td class="instruction">JP NC,<a href="DF98.html#57357">Handle_Falling_Stalactite_Next_Room</a></td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_Check_Decorations</td>
+<td class="address-2"><span id="57297"></span>DFD1</td>
+<td class="instruction">CALL <a href="B43E.html">Check_Decoration_Contact</a></td>
+<td class="comment-1" rowspan="1">Check for contact with the decorations.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57300"></span>DFD4</td>
+<td class="instruction">BIT 1,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DF98.html#57332">Handle_Falling_Stalactite_Check_Room</a> if the stalactite is not on top of a decoration.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57302"></span>DFD6</td>
+<td class="instruction">JR Z,<a href="DF98.html#57332">Handle_Falling_Stalactite_Check_Room</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57304"></span>DFD8</td>
+<td class="instruction">BIT 0,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DF98.html#57332">Handle_Falling_Stalactite_Check_Room</a> if the stalactite is not near the middle of the decoration.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57306"></span>DFDA</td>
+<td class="instruction">JR NZ,<a href="DF98.html#57332">Handle_Falling_Stalactite_Check_Room</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57308"></span>DFDC</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Copy A0 less the y position of the top of the decoration to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57309"></span>DFDD</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57311"></span>DFDF</td>
+<td class="instruction">ADD A,$A1</td>
+<td class="comment-1" rowspan="1">Add A1 to get the y position just below the top of the decoration.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57313"></span>DFE1</td>
+<td class="instruction">JR <a href="DF98.html#57321">Handle_Falling_Stalactite_Shatter</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="DF98.html#57321">Handle_Falling_Stalactite_Shatter</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_Land_On_Floor</td>
+<td class="address-2"><span id="57315"></span>DFE3</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57318"></span>DFE6</td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Round it down to a multiple of eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57320"></span>DFE8</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Subtract one.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_Shatter</td>
+<td class="address-2"><span id="57321"></span>DFE9</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Store the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57324"></span>DFEC</td>
+<td class="instruction">LD (IX+$00),$51</td>
+<td class="comment-1" rowspan="1">Change the stalactite into the first piece of rock.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57328"></span>DFF0</td>
+<td class="instruction">LD (IX+$06),$00</td>
+<td class="comment-1" rowspan="1">Reset the counter in byte 06.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_Check_Room</td>
+<td class="address-2"><span id="57332"></span>DFF4</td>
+<td class="instruction">LD A,($8F1C)</td>
+<td class="comment-1" rowspan="1">Fetch the room x of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57335"></span>DFF7</td>
+<td class="instruction">CP (IX+$02)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DF98.html#57372">Handle_Falling_Stalactite_Count_Down</a> if the stalactite is in a different room x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57338"></span>DFFA</td>
+<td class="instruction">JP NZ,<a href="DF98.html#57372">Handle_Falling_Stalactite_Count_Down</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57341"></span>DFFD</td>
+<td class="instruction">LD A,($8F1E)</td>
+<td class="comment-1" rowspan="1">Fetch the room y of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57344"></span>E000</td>
+<td class="instruction">CP (IX+$04)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DF98.html#57372">Handle_Falling_Stalactite_Count_Down</a> if the stalactite is in a different room y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57347"></span>E003</td>
+<td class="instruction">JP NZ,<a href="DF98.html#57372">Handle_Falling_Stalactite_Count_Down</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57350"></span>E006</td>
+<td class="instruction">LD (IX+$0A),$50</td>
+<td class="comment-1" rowspan="1">Reset the countdown to 50.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57354"></span>E00A</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_Next_Room</td>
+<td class="address-2"><span id="57357"></span>E00D</td>
+<td class="instruction">LD (IX+$03),$40</td>
+<td class="comment-1" rowspan="1">Set the y position to 40.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57361"></span>E011</td>
+<td class="instruction">INC (IX+$04)</td>
+<td class="comment-1" rowspan="1">Move the stalactite to the room below.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57364"></span>E014</td>
+<td class="instruction">BIT 0,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">Return if the stalactite has not been drawn yet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57368"></span>E018</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57369"></span>E019</td>
+<td class="instruction">JP <a href="9636.html">RemoveEntity</a></td>
+<td class="comment-1" rowspan="1">Erase the sprite of the stalactite.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Falling_Stalactite_Count_Down</td>
+<td class="address-2"><span id="57372"></span>E01C</td>
+<td class="instruction">DEC (IX+$0A)</td>
+<td class="comment-1" rowspan="2">Decrease the countdown and jump to <a href="B6E3.html">Remove_Unseen_Weapon</a> to remove the stalactite when it reaches zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57375"></span>E01F</td>
+<td class="instruction">JP Z,<a href="B6E3.html">Remove_Unseen_Weapon</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57378"></span>E022</td>
+<td class="instruction">SET 0,(IX+$0F)</td>
+<td class="comment-1" rowspan="1">Set bit 0 of the redraw flags, as the stalactite is not on the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="57382"></span>E026</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="DF58.html">DF58</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#57240">Map</a></td>
+<td class="next">
+Next: <a href="E027.html">E027</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/underwurlde/">Source code</a>.</div>
+<div><a href="../dec/asm/57240.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

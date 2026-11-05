@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at A739</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A727.html">A727</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#a739">Map</a></td>
+<td class="next">
+Next: <a href="A81E.html">A81E</a>
+</td>
+</tr>
+</table>
+<div class="description">A739: Spawn Enemies</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="993C.html">MainLoop</a>.
+</div>
+<div class="paragraph">
+Called every frame while the robot is alive. It tries to start a new enemy at a random position in the sector that the robot is in, and tries to start a new destroyer in the sector that is under attack. A new enemy starts as the sprites that show it materialising. The enemy is only started if there is a free entity, and if the cell that is chosen at random is empty.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies</td>
+<td class="address-2"><span id="a739"></span>A739</td>
+<td class="instruction">LD A,($9690)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the robot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a73c"></span>A73C</td>
+<td class="instruction">CP $10</td>
+<td class="comment-1" rowspan="2">Return if it is below 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a73e"></span>A73E</td>
+<td class="instruction">RET C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a73f"></span>A73F</td>
+<td class="instruction">CP $30</td>
+<td class="comment-1" rowspan="2">Return if it is 30 or above, as the robot is not in a walking state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a741"></span>A741</td>
+<td class="instruction">RET NC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a742"></span>A742</td>
+<td class="instruction">LD HL,$96D0</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the first of the six entities that are used for enemies.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a745"></span>A745</td>
+<td class="instruction">LD DE,$0010</td>
+<td class="comment-1" rowspan="1">Each entity is 10 bytes long.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a748"></span>A748</td>
+<td class="instruction">LD B,$06</td>
+<td class="comment-1" rowspan="1">There are six entities to check.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_Find</td>
+<td class="address-2"><span id="a74a"></span>A74A</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a74b"></span>A74B</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump if it is not in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a74c"></span>A74C</td>
+<td class="instruction">JR Z,<a href="A739.html#a753">SpawnEnemies_UseFirstEntity</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a74e"></span>A74E</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move on to the next entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a74f"></span>A74F</td>
+<td class="instruction">DJNZ <a href="A739.html#a74a">SpawnEnemies_Find</a></td>
+<td class="comment-1" rowspan="1">Loop back until all of them have been tried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a751"></span>A751</td>
+<td class="instruction">JR <a href="A739.html#a7b9">SpawnEnemies_Destroyer</a></td>
+<td class="comment-1" rowspan="1">Jump to try to start a destroyer.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_UseFirstEntity</td>
+<td class="address-2"><span id="a753"></span>A753</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Copy the address of the entity into <span class="register">IX</span>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a754"></span>A754</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Pop it into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a756"></span>A756</td>
+<td class="instruction">LD B,$10</td>
+<td class="comment-1" rowspan="1">There are 10 bytes to clear.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_Clear</td>
+<td class="address-2"><span id="a758"></span>A758</td>
+<td class="instruction">LD (HL),$00</td>
+<td class="comment-1" rowspan="1">Clear a byte of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a75a"></span>A75A</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a75b"></span>A75B</td>
+<td class="instruction">DJNZ <a href="A739.html#a758">SpawnEnemies_Clear</a></td>
+<td class="comment-1" rowspan="1">Loop back until the entity has been cleared.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a75d"></span>A75D</td>
+<td class="instruction">LD A,($9692)</td>
+<td class="comment-1" rowspan="1">Fetch the X cell of the camera...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a760"></span>A760</td>
+<td class="instruction">AND $30</td>
+<td class="comment-1" rowspan="1">...and keep the sector (a multiple of 10).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a762"></span>A762</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep the sector column of the camera.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a763"></span>A763</td>
+<td class="instruction">LD A,($9617)</td>
+<td class="comment-1" rowspan="1">Fetch the random number...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a766"></span>A766</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">...limited to 00-0F...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a768"></span>A768</td>
+<td class="instruction">OR E</td>
+<td class="comment-1" rowspan="1">...and combine it with the sector to choose the X cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a769"></span>A769</td>
+<td class="instruction">CP $2F</td>
+<td class="comment-1" rowspan="2">Jump if it is outside the map, which is 30 cells wide.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a76b"></span>A76B</td>
+<td class="instruction">JR NC,<a href="A739.html#a7b9">SpawnEnemies_Destroyer</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a76d"></span>A76D</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep the X cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a76e"></span>A76E</td>
+<td class="instruction">LD E,$00</td>
+<td class="comment-1" rowspan="1">...and use zero for the fraction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a770"></span>A770</td>
+<td class="instruction">LD A,($9694)</td>
+<td class="comment-1" rowspan="1">Fetch the Y cell of the camera...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a773"></span>A773</td>
+<td class="instruction">AND $30</td>
+<td class="comment-1" rowspan="1">...and keep the sector.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a775"></span>A775</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the sector row of the camera.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a776"></span>A776</td>
+<td class="instruction">LD A,($9615)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a779"></span>A779</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">...limited to 00-0F...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a77b"></span>A77B</td>
+<td class="instruction">OR L</td>
+<td class="comment-1" rowspan="1">...and combine it with the sector to choose the Y cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a77c"></span>A77C</td>
+<td class="instruction">CP $2F</td>
+<td class="comment-1" rowspan="2">Jump if it is outside the map, which is 30 cells high.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a77e"></span>A77E</td>
+<td class="instruction">JR NC,<a href="A739.html#a7b9">SpawnEnemies_Destroyer</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a780"></span>A780</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Keep the Y cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a781"></span>A781</td>
+<td class="instruction">LD L,$00</td>
+<td class="comment-1" rowspan="1">...and use zero for the fraction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a783"></span>A783</td>
+<td class="instruction">CALL <a href="BF97.html">FindMapCell</a></td>
+<td class="comment-1" rowspan="1">Find the cell using <a href="BF97.html">FindMapCell</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a786"></span>A786</td>
+<td class="instruction">JR NZ,<a href="A739.html#a7b9">SpawnEnemies_Destroyer</a></td>
+<td class="comment-1" rowspan="1">Jump if it is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a788"></span>A788</td>
+<td class="instruction">LD (IX+$00),$40</td>
+<td class="comment-1" rowspan="1">Start the enemy with the first sprite of the sequence that shows it materialising.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a78c"></span>A78C</td>
+<td class="instruction">CALL <a href="AEE0.html">SetPosition</a></td>
+<td class="comment-1" rowspan="1">Store its position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a78f"></span>A78F</td>
+<td class="instruction">CALL <a href="A576.html">CheckEnemyOverlap</a></td>
+<td class="comment-1" rowspan="1">Check whether another enemy is in the way using <a href="A576.html">CheckEnemyOverlap</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a792"></span>A792</td>
+<td class="instruction">JR NC,<a href="A739.html#a79a">SpawnEnemies_Random</a></td>
+<td class="comment-1" rowspan="1">Jump if there is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a794"></span>A794</td>
+<td class="instruction">LD (IX+$00),$00</td>
+<td class="comment-1" rowspan="1">Otherwise cancel the new enemy...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a798"></span>A798</td>
+<td class="instruction">JR <a href="A739.html#a7b9">SpawnEnemies_Destroyer</a></td>
+<td class="comment-1" rowspan="1">...and jump to try to start a destroyer.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_Random</td>
+<td class="address-2"><span id="a79a"></span>A79A</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Fetch a number from the memory refresh register...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a79c"></span>A79C</td>
+<td class="instruction">AND $F3</td>
+<td class="comment-1" rowspan="1">...limit it to a time and a direction...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a79e"></span>A79E</td>
+<td class="instruction">LD (IX+$07),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7a1"></span>A7A1</td>
+<td class="instruction">LD A,($9658)</td>
+<td class="comment-1" rowspan="1">Fetch the number of sectors that have been activated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7a4"></span>A7A4</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test whether there are any.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7a5"></span>A7A5</td>
+<td class="instruction">LD A,($9617)</td>
+<td class="comment-1" rowspan="1">Fetch the random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7a8"></span>A7A8</td>
+<td class="instruction">JR NZ,<a href="A739.html#a7ac">SpawnEnemies_AnyKind</a></td>
+<td class="comment-1" rowspan="1">Jump if some sectors have been activated, to use any of the kinds of enemy.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7aa"></span>A7AA</td>
+<td class="instruction">AND $05</td>
+<td class="comment-1" rowspan="1">Otherwise limit the choice to the first two kinds of enemy...</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_AnyKind</td>
+<td class="address-2"><span id="a7ac"></span>A7AC</td>
+<td class="instruction">AND $07</td>
+<td class="comment-1" rowspan="1">...and limit the choice to the eight entries of the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7ae"></span>A7AE</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="2">Use it as an index...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7af"></span>A7AF</td>
+<td class="instruction">LD H,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7b1"></span>A7B1</td>
+<td class="instruction">LD BC,$A81E</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="A81E.html">EnemyTypes</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7b4"></span>A7B4</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7b5"></span>A7B5</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type that the enemy is going to have...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7b6"></span>A7B6</td>
+<td class="instruction">LD (IX+$05),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a7b9"></span>
+<div class="comments">
+<div class="paragraph">
+Now try to start a destroyer. Destroyers are only started while a sector is under attack.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_Destroyer</td>
+<td class="address-2"><span id="a7b9"></span>A7B9</td>
+<td class="instruction">LD HL,$9730</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the first of the four entities that are used for destroyers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7bc"></span>A7BC</td>
+<td class="instruction">LD DE,$0010</td>
+<td class="comment-1" rowspan="1">Each entity is 10 bytes long.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7bf"></span>A7BF</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">There are four entities to check.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_FindDestroyer</td>
+<td class="address-2"><span id="a7c1"></span>A7C1</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7c2"></span>A7C2</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump if it is not in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7c3"></span>A7C3</td>
+<td class="instruction">JR Z,<a href="A739.html#a7c9">SpawnEnemies_UseSecondEntity</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7c5"></span>A7C5</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move on to the next entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7c6"></span>A7C6</td>
+<td class="instruction">DJNZ <a href="A739.html#a7c1">SpawnEnemies_FindDestroyer</a></td>
+<td class="comment-1" rowspan="1">Loop back until all of them have been tried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7c8"></span>A7C8</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_UseSecondEntity</td>
+<td class="address-2"><span id="a7c9"></span>A7C9</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Copy the address of the entity into <span class="register">IX</span>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7ca"></span>A7CA</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Pop it into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7cc"></span>A7CC</td>
+<td class="instruction">LD B,$10</td>
+<td class="comment-1" rowspan="1">There are 10 bytes to clear.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_ClearDestroyer</td>
+<td class="address-2"><span id="a7ce"></span>A7CE</td>
+<td class="instruction">LD (HL),$00</td>
+<td class="comment-1" rowspan="1">Clear a byte of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7d0"></span>A7D0</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7d1"></span>A7D1</td>
+<td class="instruction">DJNZ <a href="A739.html#a7ce">SpawnEnemies_ClearDestroyer</a></td>
+<td class="comment-1" rowspan="1">Loop back until the entity has been cleared.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7d3"></span>A7D3</td>
+<td class="instruction">LD A,($9647)</td>
+<td class="comment-1" rowspan="1">Fetch the code of the sector that is under attack...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7d6"></span>A7D6</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7d7"></span>A7D7</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Move the bits for the row into place...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7d8"></span>A7D8</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Shift the row one more place.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7d9"></span>A7D9</td>
+<td class="instruction">AND $30</td>
+<td class="comment-1" rowspan="1">...and keep them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7db"></span>A7DB</td>
+<td class="instruction">CP $30</td>
+<td class="comment-1" rowspan="2">Return if there is no sector under attack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7dd"></span>A7DD</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7de"></span>A7DE</td>
+<td class="instruction">XOR $30</td>
+<td class="comment-1" rowspan="1">Turn the row upside down...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7e0"></span>A7E0</td>
+<td class="instruction">SUB $10</td>
+<td class="comment-1" rowspan="1">...and use it to find the Y cell of the sector.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7e2"></span>A7E2</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Keep the Y cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7e3"></span>A7E3</td>
+<td class="instruction">LD A,($9617)</td>
+<td class="comment-1" rowspan="1">Fetch the random number...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7e6"></span>A7E6</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">...limited to 00-0F...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7e8"></span>A7E8</td>
+<td class="instruction">OR H</td>
+<td class="comment-1" rowspan="1">...and combine it with the sector to choose the Y cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7e9"></span>A7E9</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7ea"></span>A7EA</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the code of the sector again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7eb"></span>A7EB</td>
+<td class="instruction">RLA</td>
+<td class="comment-1" rowspan="3">Move the bits for the column into place...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7ec"></span>A7EC</td>
+<td class="instruction">RLA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7ed"></span>A7ED</td>
+<td class="instruction">RLA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7ee"></span>A7EE</td>
+<td class="instruction">AND $30</td>
+<td class="comment-1" rowspan="1">...and keep them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7f0"></span>A7F0</td>
+<td class="instruction">CP $30</td>
+<td class="comment-1" rowspan="2">Return if there is no sector under attack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7f2"></span>A7F2</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7f3"></span>A7F3</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep the sector.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7f4"></span>A7F4</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Fetch a number from the memory refresh register...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7f6"></span>A7F6</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="1">...limited to 00-0F...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7f8"></span>A7F8</td>
+<td class="instruction">OR D</td>
+<td class="comment-1" rowspan="1">...combine it with the sector to choose the X cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7f9"></span>A7F9</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7fa"></span>A7FA</td>
+<td class="instruction">LD L,$00</td>
+<td class="comment-1" rowspan="1">Use zero for the fraction of the Y position...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7fc"></span>A7FC</td>
+<td class="instruction">LD E,L</td>
+<td class="comment-1" rowspan="1">...and of the X position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a7fd"></span>A7FD</td>
+<td class="instruction">CALL <a href="BF97.html">FindMapCell</a></td>
+<td class="comment-1" rowspan="1">Find the cell using <a href="BF97.html">FindMapCell</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a800"></span>A800</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if it is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a801"></span>A801</td>
+<td class="instruction">LD (IX+$00),$40</td>
+<td class="comment-1" rowspan="1">Start the destroyer with the first sprite of the sequence that shows it materialising.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a805"></span>A805</td>
+<td class="instruction">CALL <a href="AEE0.html">SetPosition</a></td>
+<td class="comment-1" rowspan="1">Store its position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a808"></span>A808</td>
+<td class="instruction">CALL <a href="A576.html">CheckEnemyOverlap</a></td>
+<td class="comment-1" rowspan="1">Check whether another enemy is in the way using <a href="A576.html">CheckEnemyOverlap</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a80b"></span>A80B</td>
+<td class="instruction">JR NC,<a href="A739.html#a812">SpawnEnemies_SetType</a></td>
+<td class="comment-1" rowspan="1">Jump if there is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a80d"></span>A80D</td>
+<td class="instruction">LD (IX+$00),$00</td>
+<td class="comment-1" rowspan="1">Otherwise cancel the new destroyer...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a811"></span>A811</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">...and return.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnEnemies_SetType</td>
+<td class="address-2"><span id="a812"></span>A812</td>
+<td class="instruction">LD (IX+$05),$64</td>
+<td class="comment-1" rowspan="1">Set the type that the destroyer will have when it has materialised.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a816"></span>A816</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="2">Choose a random direction and time...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a818"></span>A818</td>
+<td class="instruction">AND $F3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a81a"></span>A81A</td>
+<td class="instruction">LD (IX+$07),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a81d"></span>A81D</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A727.html">A727</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#a739">Map</a></td>
+<td class="next">
+Next: <a href="A81E.html">A81E</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../dec/asm/42809.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

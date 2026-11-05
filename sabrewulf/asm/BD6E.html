@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,40 @@ Next: <a href="BD79.html">BD79</a>
 </td>
 </tr>
 </table>
-<div class="description">BD6E: Play Audio</div>
+<div class="description">BD6E: Play Music</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="9960.html">GameInitialisation</a>, <a href="9F6A.html">GameComplete</a>, <a href="A234.html">HandlerPoems</a> and <a href="AA6A.html">GameOver_1UP</a>.
+Used by the routines at <a href="9960.html">GameInitialisation</a>, <a href="9F6A.html">GameComplete</a>, <a href="A234.html">HandlerPoems</a> and <a href="AA6A.html">GameOver_1UP_Messaging</a>.
+</div>
+<div class="paragraph">
+Plays a tune, one note at a time with <a href="BD7B.html">PlayNote</a>, until the FF terminator is found. Interrupts are disabled while the tune plays.
+</div>
+<div class="paragraph">
+The tunes played by this routine are: <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Tune</th>
+<th colspan="1" rowspan="1">Sound</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">Start-up Tune</td>
+<td class="centre" colspan="1" rowspan="1"><audio controls="" src="../audio/start-up-tune.wav"> <p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/start-up-tune.wav">link to the audio</a> instead.</p> </audio></td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">Main Tune</td>
+<td class="centre" colspan="1" rowspan="1"><audio controls="" src="../audio/main-tune.wav"> <p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/main-tune.wav">link to the audio</a> instead.</p> </audio></td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">Poem Tune</td>
+<td class="centre" colspan="1" rowspan="1"><audio controls="" src="../audio/poem-tune.wav"> <p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/poem-tune.wav">link to the audio</a> instead.</p> </audio></td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">Game Over Tune</td>
+<td class="centre" colspan="1" rowspan="1"><audio controls="" src="../audio/game-over-tune.wav"> <p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/game-over-tune.wav">link to the audio</a> instead.</p> </audio></td>
+</tr>
+</table>
 </div>
 </div>
 <table class="input">
@@ -54,39 +84,52 @@ Used by the routines at <a href="9960.html">GameInitialisation</a>, <a href="9F6
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio</td>
+<td class="asm-label">PlayMusic</td>
 <td class="address-2"><span id="bd6e"></span>BD6E</td>
 <td class="instruction">DI</td>
 <td class="comment-1" rowspan="1">Disable interrupts.</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Loop</td>
+<td class="asm-label">PlayMusic_Loop</td>
 <td class="address-2"><span id="bd6f"></span>BD6F</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the next byte of music data.</td>
+<td class="comment-1" rowspan="1">Fetch the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bd70"></span>BD70</td>
 <td class="instruction">CP $FF</td>
-<td class="comment-1" rowspan="2">If this is FF (the terminator) then jump to <a href="BD79.html">PlayAudio_Return</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BD79.html">PlayMusic_Return</a> if the end of the tune has been reached (FF).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bd72"></span>BD72</td>
-<td class="instruction">JR Z,<a href="BD79.html">PlayAudio_Return</a></td>
+<td class="instruction">JR Z,<a href="BD79.html">PlayMusic_Return</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bd74"></span>BD74</td>
-<td class="instruction">CALL <a href="BD7B.html">PlayAudio_Process</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BD7B.html">PlayAudio_Process</a>.</td>
+<td class="instruction">CALL <a href="BD7B.html">PlayNote</a></td>
+<td class="comment-1" rowspan="1">Play the note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bd77"></span>BD77</td>
-<td class="instruction">JR <a href="BD6E.html#bd6f">PlayAudio_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="BD6E.html#bd6f">PlayAudio_Loop</a>.</td>
+<td class="instruction">JR <a href="BD6E.html#bd6f">PlayMusic_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BD6E.html#bd6f">PlayMusic_Loop</a> for the next note.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/cookie/asm/6568.html">Cookie</a></li>
+<li><a href="/ultimate/knightlore/asm/B2CF.html">Knight Lore</a></li>
+<li><a href="/ultimate/martianoids/asm/C0CF.html">Martianoids</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

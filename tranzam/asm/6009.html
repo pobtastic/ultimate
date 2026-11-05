@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tranz Am: Routine at 6009</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="5FEF.html">5FEF</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#6009">Map</a></td>
+<td class="next">
+Next: <a href="6028.html">6028</a>
+</td>
+</tr>
+</table>
+<div class="description">6009: Run Main Loop</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="63FF.html">HandlerCup</a> and <a href="6A87.html">Pause_Loop</a>.
+</div>
+<div class="paragraph">
+The game loop. Each pass runs the handler for each of the three entities held from <a href="5E80.html">Entity_Player</a> (the player's car and the two opponent cars), in turn. The handler is chosen by the entity state held in the first byte of the entity, using the table at <a href="6028.html">JumpTable_Main</a>. Once every entity has been handled <a href="6A73.html">NextEntity</a> plays the engine sound, checks for a pause and starts the loop again. <table class="default">
+<tr>
+<th colspan="1" rowspan="1">State</th>
+<th colspan="1" rowspan="1">Meaning</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">00</td>
+<td class="centre" colspan="1" rowspan="1">Inactive</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">01</td>
+<td class="centre" colspan="1" rowspan="1">Player car driving</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">02</td>
+<td class="centre" colspan="1" rowspan="1">Opponent car driving</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">03</td>
+<td class="centre" colspan="1" rowspan="1">Player car exploding</td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_NewPass</td>
+<td class="address-2"><span id="6009"></span>6009</td>
+<td class="instruction">LD IX,$5E80</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the first entity, the player's car (<a href="5E80.html">Entity_Player</a>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="600d"></span>600D</td>
+<td class="instruction">LD SP,$5E00</td>
+<td class="comment-1" rowspan="1">Set the stack pointer to 5E00.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6010"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="6A73.html">NextEntity</a>.
+</div>
+<div class="paragraph">
+Dispatch the handler for this entity.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop</td>
+<td class="address-2"><span id="6010"></span>6010</td>
+<td class="instruction">LD HL,$6A73</td>
+<td class="comment-1" rowspan="2">Stash <a href="6A73.html">NextEntity</a> on the stack as the return address for the handler.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6013"></span>6013</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6014"></span>6014</td>
+<td class="instruction">LD HL,$6028</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the table of handlers (<a href="6028.html">JumpTable_Main</a>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6017"></span>6017</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the entity state from *<span class="register">IX</span>+00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="601a"></span>601A</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Rotate the state left, ready to use it as an index into the table of words.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="601b"></span>601B</td>
+<td class="instruction">AND %01111110</td>
+<td class="comment-1" rowspan="1">Keep only bits 1-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="601d"></span>601D</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="2">Make the offset into the table of handlers in <span class="register">BC</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="601e"></span>601E</td>
+<td class="instruction">LD B,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6020"></span>6020</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the offset to the address of the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6021"></span>6021</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="4">Fetch the address of the handler from the table into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6022"></span>6022</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6023"></span>6023</td>
+<td class="instruction">LD H,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6024"></span>6024</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6025"></span>6025</td>
+<td class="instruction">JP <a href="5CB0.html">IndirectJump</a></td>
+<td class="comment-1" rowspan="1">Jump to the handler via <a href="5CB0.html">IndirectJump</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="5FEF.html">5FEF</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#6009">Map</a></td>
+<td class="next">
+Next: <a href="6028.html">6028</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/tranzam/">Source code</a>.</div>
+<div><a href="../dec/asm/24585.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

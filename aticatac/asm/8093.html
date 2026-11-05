@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,19 @@ Next: <a href="80AA.html">80AA</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="8C35.html">GameOver</a>, <a href="9147.html">EnterRoom</a> and <a href="96EC.html">GameComplete</a>.
+Used by the routines at <a href="8C35.html">GameOver</a>, <a href="9147.html">EnterRoom</a> and <a href="9731.html">FallThroughTrapdoor</a>.
+</div>
+<div class="paragraph">
+Clears the pixels of the play area, which is the left-hand 18 bytes of each of the C0 rows of the screen buffer. The attributes are left alone.    <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="clear-play-area-before" src="../images/scr/clear-play-area-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="clear-play-area-after" src="../images/scr/clear-play-area-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 </td>
@@ -48,19 +63,19 @@ Used by the routines at <a href="8C35.html">GameOver</a>, <a href="9147.html">En
 <td class="asm-label">ClearPlayArea</td>
 <td class="address-2"><span id="8093"></span>8093</td>
 <td class="instruction">LD HL,$4000</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=4000 (the start of the screen buffer).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8096"></span>8096</td>
 <td class="instruction">LD BC,$18C0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=18 (the number of bytes to clear in each row) and <span class="register">C</span>=C0 (the number of rows).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="8099"></span>8099</td>
 <td class="instruction">XOR A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=00 (the value to write).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -69,80 +84,82 @@ Used by the routines at <a href="8C35.html">GameOver</a>, <a href="9147.html">En
 <div class="paragraph">
 This entry point is used by the routines at <a href="9BEA.html">DrawRoomFrame</a> and <a href="A240.html">DrawSidePanelAttrs</a>.
 </div>
+<div class="paragraph">
+Each pass of this loop clears one row.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ClearPlayArea_0</td>
+<td class="asm-label">ClearPlayArea_Row</td>
 <td class="address-2"><span id="809a"></span>809A</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the counters on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="809b"></span>809B</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the row address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="809c"></span>809C</td>
 <td class="instruction">LD DE,$0020</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=0020 (the size of a row).</td>
 </tr>
 <tr>
-<td class="asm-label">ClearPlayArea_1</td>
+<td class="asm-label">ClearPlayArea_Byte</td>
 <td class="address-2"><span id="809f"></span>809F</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to *<span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a0"></span>80A0</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a1"></span>80A1</td>
-<td class="instruction">DJNZ <a href="8093.html#809f">ClearPlayArea_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="8093.html#809f">ClearPlayArea_Byte</a></td>
+<td class="comment-1" rowspan="1">Decrease the byte counter by one and loop back to <a href="8093.html#809f">ClearPlayArea_Byte</a> until the whole row has been cleared.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a3"></span>80A3</td>
 <td class="instruction">POP HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the row address from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a4"></span>80A4</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a5"></span>80A5</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the counters from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a6"></span>80A6</td>
 <td class="instruction">DEC C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the row counter by one and loop back to <a href="8093.html#809a">ClearPlayArea_Row</a> until all C0 rows have been cleared.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a7"></span>80A7</td>
-<td class="instruction">JR NZ,<a href="8093.html#809a">ClearPlayArea_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="8093.html#809a">ClearPlayArea_Row</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="80a9"></span>80A9</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 </table>
 <table class="asm-navigation">

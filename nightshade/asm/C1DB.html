@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at C1DB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C1B9.html">C1B9</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c1db">Map</a></td>
+<td class="next">
+Next: <a href="C1FD.html">C1FD</a>
+</td>
+</tr>
+</table>
+<div class="description">C1DB: Build Random Table</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BDFE.html">StartGame</a>.
+</div>
+<div class="paragraph">
+Fills the 22 bytes at <a href="BBCE.html#bbd0">ItemsLeft_Tiles</a> with random numbers from 10 to 1F taken from a random place in the ROM.
+</div>
+<div class="paragraph">
+The routine then makes the second part of the copy protection check: it returns if bit 7 of the memory refresh register is set (the loader sets it, see <a href="5B80.html">Decryption</a>), and resets the computer if not.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRandomTable</td>
+<td class="address-2"><span id="c1db"></span>C1DB</td>
+<td class="instruction">CALL <a href="C5B4.html">IncrementFrameCounter</a></td>
+<td class="comment-1" rowspan="1">Update the frame counter and the random number generator.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1de"></span>C1DE</td>
+<td class="instruction">LD HL,($BBAA)</td>
+<td class="comment-1" rowspan="1">Fetch the random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1e1"></span>C1E1</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Turn it into the address of a random place in the first 1000 bytes of the ROM.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1e2"></span>C1E2</td>
+<td class="instruction">AND $0F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1e4"></span>C1E4</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1e5"></span>C1E5</td>
+<td class="instruction">LD DE,$BBD0</td>
+<td class="comment-1" rowspan="1">Point at the table of random numbers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1e8"></span>C1E8</td>
+<td class="instruction">LD B,$22</td>
+<td class="comment-1" rowspan="1">Set the length of the table to 22 bytes.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRandomTable_Loop</td>
+<td class="address-2"><span id="c1ea"></span>C1EA</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="7">Copy a byte of the ROM into the table, after making it a number from 10 to 1F and loop back until the table is full.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1eb"></span>C1EB</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1ec"></span>C1EC</td>
+<td class="instruction">AND $0F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1ee"></span>C1EE</td>
+<td class="instruction">OR $10</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1f0"></span>C1F0</td>
+<td class="instruction">LD (DE),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1f1"></span>C1F1</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1f2"></span>C1F2</td>
+<td class="instruction">DJNZ <a href="C1DB.html#c1ea">BuildRandomTable_Loop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1f4"></span>C1F4</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="3">Return if the loader has set bit 7 of the memory refresh register.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1f6"></span>C1F6</td>
+<td class="instruction">BIT 7,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1f8"></span>C1F8</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c1f9"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="CBAC.html">CheckPlayerDead</a>.
+</div>
+<div class="paragraph">
+The memory refresh register has not been set up by the stub, so the game has been tampered with. Reset the computer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRandomTable_Reset</td>
+<td class="address-2"><span id="c1f9"></span>C1F9</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="4">The game has been tampered with, so reset the computer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1fa"></span>C1FA</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1fb"></span>C1FB</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c1fc"></span>C1FC</td>
+<td class="instruction">JP (HL)</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C1B9.html">C1B9</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c1db">Map</a></td>
+<td class="next">
+Next: <a href="C1FD.html">C1FD</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/49627.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

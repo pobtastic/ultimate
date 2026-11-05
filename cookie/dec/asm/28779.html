@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,618 +44,694 @@ Next: <a href="28989.html">28989</a>
 <div class="paragraph">
 Used by the routine at <a href="28744.html">GamePlayEntry</a>.
 </div>
+<div class="paragraph">
+Moves Charlie, using the controls which are read by <a href="28596.html">ReadControls</a>. Byte 4 of the actor is the horizontal speed and byte 5 is the vertical speed; each is 2 (or 254) while the control is pressed, and zero otherwise. Charlie can't move past the edges of the play area. While he is moving his ID changes between 1 and 2 every four frames, which animates him. The last direction in which he moved is kept in <a href="24363.html">CharlieLastMovement</a>.
 </div>
-</td>
+<div class="paragraph">
+While fire is being held down, a flour shot is fired every eight frames, if there is one of the two slots for the shots free. The shot goes in the last direction in which Charlie moved, at three times his speed.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
 </tr>
 <tr>
-<td class="routine-comment" colspan="5">
-<span id="28779"></span>
-<div class="comments">
-<div class="paragraph">
-Init.
-</div>
-</div>
+<td class="register">IX</td>
+<td class="register-desc">Actor</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">GamePlay_Start</td>
 <td class="address-2"><span id="28779"></span>28779</td>
-<td class="instruction">CALL <a href="30416.html">30416</a></td>
-<td class="comment-1" rowspan="1">Call <a href="30416.html">30416</a>.</td>
+<td class="instruction">CALL <a href="30416.html">StoreEntity</a></td>
+<td class="comment-1" rowspan="1">Record the position of the sprite using <a href="30416.html">StoreEntity</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28782"></span>28782</td>
-<td class="instruction">CALL <a href="28197.html#28596">28596</a></td>
-<td class="comment-1" rowspan="1">Call <a href="28197.html#28596">28596</a>.</td>
+<td class="instruction">CALL <a href="28596.html">ReadControls</a></td>
+<td class="comment-1" rowspan="1">Read the controls using <a href="28596.html">ReadControls</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28785"></span>28785</td>
 <td class="instruction">BIT 4,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28911">ControlCharlie_Fire</a> if fire is being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28787"></span>28787</td>
-<td class="instruction">JR Z,<a href="28779.html#28911">GamePlay_Start_12</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="28779.html#28911">ControlCharlie_Fire</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28789"></span>28789</td>
 <td class="instruction">LD (IX+6),0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 0 to byte 6 of the actor (the fire counter).</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_0</td>
+<td class="asm-label">ControlCharlie_Movement</td>
 <td class="address-2"><span id="28793"></span>28793</td>
 <td class="instruction">BIT 0,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test bit 0 (right).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28795"></span>28795</td>
 <td class="instruction">LD DE,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear Charlie's movement (<span class="register">DE</span>=0).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28798"></span>28798</td>
-<td class="instruction">JR Z,<a href="28779.html#28889">GamePlay_Start_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="28779.html#28889">ControlCharlie_Right</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28889">ControlCharlie_Right</a> if right is being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28800"></span>28800</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28896">ControlCharlie_Left</a> if left is being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28802"></span>28802</td>
-<td class="instruction">JR Z,<a href="28779.html#28896">GamePlay_Start_8</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="28779.html#28896">ControlCharlie_Left</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28804"></span>28804</td>
 <td class="instruction">LD (IX+4),0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 0 to the horizontal speed.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_1</td>
+<td class="asm-label">ControlCharlie_Vertical</td>
 <td class="address-2"><span id="28808"></span>28808</td>
 <td class="instruction">BIT 3,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28900">ControlCharlie_Up</a> if up is being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28810"></span>28810</td>
-<td class="instruction">JR Z,<a href="28779.html#28900">GamePlay_Start_9</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="28779.html#28900">ControlCharlie_Up</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28812"></span>28812</td>
 <td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28907">ControlCharlie_Down</a> if down is being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28814"></span>28814</td>
-<td class="instruction">JR Z,<a href="28779.html#28907">GamePlay_Start_11</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="28779.html#28907">ControlCharlie_Down</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28816"></span>28816</td>
 <td class="instruction">LD (IX+5),0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 0 to the vertical speed.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_2</td>
+<td class="routine-comment" colspan="5">
+<span id="28820"></span>
+<div class="comments">
+<div class="paragraph">
+Move Charlie horizontally. <span class="register">E</span> is the speed if he has moved, and zero if he has not.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_MoveHorizontal</td>
 <td class="address-2"><span id="28820"></span>28820</td>
 <td class="instruction">LD A,(IX+1)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the horizontal co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28823"></span>28823</td>
 <td class="instruction">ADD A,(IX+4)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the horizontal speed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28826"></span>28826</td>
 <td class="instruction">LD E,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Assume that Charlie has not moved horizontally (<span class="register">E</span>=0).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28828"></span>28828</td>
 <td class="instruction">CP 1</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28842">ControlCharlie_MoveVertical</a> if Charlie has reached the left edge.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28830"></span>28830</td>
-<td class="instruction">JR C,<a href="28779.html#28842">GamePlay_Start_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="28779.html#28842">ControlCharlie_MoveVertical</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28832"></span>28832</td>
 <td class="instruction">CP 196</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28842">ControlCharlie_MoveVertical</a> if Charlie has reached the right edge.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28834"></span>28834</td>
-<td class="instruction">JR NC,<a href="28779.html#28842">GamePlay_Start_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="28779.html#28842">ControlCharlie_MoveVertical</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28836"></span>28836</td>
 <td class="instruction">LD (IX+1),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the horizontal co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28839"></span>28839</td>
 <td class="instruction">LD E,(IX+4)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the horizontal movement to the horizontal speed.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_3</td>
+<td class="routine-comment" colspan="5">
+<span id="28842"></span>
+<div class="comments">
+<div class="paragraph">
+Move Charlie vertically. <span class="register">D</span> is the speed if he has moved, and zero if he has not.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_MoveVertical</td>
 <td class="address-2"><span id="28842"></span>28842</td>
 <td class="instruction">LD A,(IX+2)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the vertical co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28845"></span>28845</td>
 <td class="instruction">ADD A,(IX+5)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the vertical speed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28848"></span>28848</td>
 <td class="instruction">LD D,0</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Assume that Charlie has not moved vertically (<span class="register">D</span>=0).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28850"></span>28850</td>
 <td class="instruction">CP 40</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28864">ControlCharlie_Animate</a> if Charlie has reached the top.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28852"></span>28852</td>
-<td class="instruction">JR C,<a href="28779.html#28864">GamePlay_Start_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="28779.html#28864">ControlCharlie_Animate</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28854"></span>28854</td>
 <td class="instruction">CP 160</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="28779.html#28864">ControlCharlie_Animate</a> if Charlie has reached the bottom.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28856"></span>28856</td>
-<td class="instruction">JR NC,<a href="28779.html#28864">GamePlay_Start_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="28779.html#28864">ControlCharlie_Animate</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28858"></span>28858</td>
 <td class="instruction">LD (IX+2),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the vertical co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28861"></span>28861</td>
 <td class="instruction">LD D,(IX+5)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the vertical movement to the vertical speed.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_4</td>
+<td class="asm-label">ControlCharlie_Animate</td>
 <td class="address-2"><span id="28864"></span>28864</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the horizontal movement.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28865"></span>28865</td>
 <td class="instruction">OR D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Combine with the vertical movement.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28866"></span>28866</td>
-<td class="instruction">JR Z,<a href="28779.html#28883">GamePlay_Start_5</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="28779.html#28883">ControlCharlie_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28883">ControlCharlie_Draw</a> if Charlie has not moved.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28868"></span>28868</td>
 <td class="instruction">LD (24363),DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save the movement in <a href="24363.html">CharlieLastMovement</a>, which sets the direction of flour shots.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28872"></span>28872</td>
 <td class="instruction">LD A,(23672)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the first byte of <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23672.html">FRAMES</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28875"></span>28875</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Shift <span class="register">A</span> right twice.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28876"></span>28876</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28877"></span>28877</td>
-<td class="instruction">AND 1</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep only bit 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28879"></span>28879</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 1 to get Charlie's running frame (1 or 2).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28880"></span>28880</td>
 <td class="instruction">LD (IX+0),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the actor ID.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_5</td>
+<td class="asm-label">ControlCharlie_Draw</td>
 <td class="address-2"><span id="28883"></span>28883</td>
-<td class="instruction">CALL <a href="30156.html">30156</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="30156.html">DisplayEntity</a></td>
+<td class="comment-1" rowspan="1">Erase the sprite and draw it in its new position using <a href="30156.html">DisplayEntity</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28886"></span>28886</td>
-<td class="instruction">JP <a href="29934.html">29934</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP <a href="29934.html">ColourSprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="29934.html">ColourSprite</a> to colour the sprite.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_6</td>
+<td class="routine-comment" colspan="5">
+<span id="28889"></span>
+<div class="comments">
+<div class="paragraph">
+Right is being pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_Right</td>
 <td class="address-2"><span id="28889"></span>28889</td>
 <td class="instruction">LD E,2</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the speed to 2 (moving right).</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_7</td>
+<td class="asm-label">ControlCharlie_SetHorizontalSpeed</td>
 <td class="address-2"><span id="28891"></span>28891</td>
 <td class="instruction">LD (IX+4),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the horizontal speed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28894"></span>28894</td>
-<td class="instruction">JR <a href="28779.html#28808">GamePlay_Start_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="28779.html#28808">ControlCharlie_Vertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28808">ControlCharlie_Vertical</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_8</td>
+<td class="routine-comment" colspan="5">
+<span id="28896"></span>
+<div class="comments">
+<div class="paragraph">
+Left is being pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_Left</td>
 <td class="address-2"><span id="28896"></span>28896</td>
 <td class="instruction">LD E,254</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the speed to 254 (moving left).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28898"></span>28898</td>
-<td class="instruction">JR <a href="28779.html#28891">GamePlay_Start_7</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="28779.html#28891">ControlCharlie_SetHorizontalSpeed</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28891">ControlCharlie_SetHorizontalSpeed</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_9</td>
+<td class="routine-comment" colspan="5">
+<span id="28900"></span>
+<div class="comments">
+<div class="paragraph">
+Up is being pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_Up</td>
 <td class="address-2"><span id="28900"></span>28900</td>
 <td class="instruction">LD D,254</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the speed to 254 (moving up).</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_10</td>
+<td class="asm-label">ControlCharlie_SetVerticalSpeed</td>
 <td class="address-2"><span id="28902"></span>28902</td>
 <td class="instruction">LD (IX+5),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the vertical speed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28905"></span>28905</td>
-<td class="instruction">JR <a href="28779.html#28820">GamePlay_Start_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="28779.html#28820">ControlCharlie_MoveHorizontal</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28820">ControlCharlie_MoveHorizontal</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_11</td>
+<td class="routine-comment" colspan="5">
+<span id="28907"></span>
+<div class="comments">
+<div class="paragraph">
+Down is being pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_Down</td>
 <td class="address-2"><span id="28907"></span>28907</td>
 <td class="instruction">LD D,2</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the speed to 2 (moving down).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28909"></span>28909</td>
-<td class="instruction">JR <a href="28779.html#28902">GamePlay_Start_10</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="28779.html#28902">ControlCharlie_SetVerticalSpeed</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28902">ControlCharlie_SetVerticalSpeed</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_12</td>
+<td class="routine-comment" colspan="5">
+<span id="28911"></span>
+<div class="comments">
+<div class="paragraph">
+Fire is being pressed. A shot is fired when the fire counter in byte 6 of the actor is a multiple of 8 so the first one is fired at once.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_Fire</td>
 <td class="address-2"><span id="28911"></span>28911</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save the controls on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28912"></span>28912</td>
 <td class="instruction">LD A,(IX+6)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the fire counter (byte 6 of the actor).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28915"></span>28915</td>
 <td class="instruction">INC (IX+6)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Increase the fire counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28918"></span>28918</td>
-<td class="instruction">AND 7</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28920"></span>28920</td>
-<td class="instruction">JR NZ,<a href="28779.html#28937">GamePlay_Start_14</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="28779.html#28937">ControlCharlie_FireFinished</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28937">ControlCharlie_FireFinished</a> if the fire counter was not a multiple of 8.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28922"></span>28922</td>
 <td class="instruction">LD HL,24381</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="24381.html">ActorFlourShots</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28925"></span>28925</td>
 <td class="instruction">LD B,2</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the slot counter to 2 (the number of slots for flour shots).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28927"></span>28927</td>
 <td class="instruction">LD DE,8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the size of an actor to 8.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_13</td>
+<td class="asm-label">ControlCharlie_FindSlot</td>
 <td class="address-2"><span id="28930"></span>28930</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the actor ID.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28931"></span>28931</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Is the slot empty?</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28932"></span>28932</td>
-<td class="instruction">JR Z,<a href="28779.html#28941">GamePlay_Start_15</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="28779.html#28941">ControlCharlie_CreateShot</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28941">ControlCharlie_CreateShot</a> if it is.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28934"></span>28934</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the next slot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28935"></span>28935</td>
-<td class="instruction">DJNZ <a href="28779.html#28930">GamePlay_Start_13</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="28779.html#28930">ControlCharlie_FindSlot</a></td>
+<td class="comment-1" rowspan="1">Decrease the slot counter by one and loop back to <a href="28779.html#28930">ControlCharlie_FindSlot</a> until both slots have been tried.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_14</td>
+<td class="asm-label">ControlCharlie_FireFinished</td>
 <td class="address-2"><span id="28937"></span>28937</td>
 <td class="instruction">POP AF</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the controls from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28938"></span>28938</td>
-<td class="instruction">JP <a href="28779.html#28793">GamePlay_Start_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP <a href="28779.html#28793">ControlCharlie_Movement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28793">ControlCharlie_Movement</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">GamePlay_Start_15</td>
+<td class="routine-comment" colspan="5">
+<span id="28941"></span>
+<div class="comments">
+<div class="paragraph">
+Create the flour shot, which starts at Charlie's position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlCharlie_CreateShot</td>
 <td class="address-2"><span id="28941"></span>28941</td>
 <td class="instruction">LD (HL),3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the actor ID to 3 (a flour shot).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28943"></span>28943</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save the address of the flour shot on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28944"></span>28944</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the horizontal co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28945"></span>28945</td>
 <td class="instruction">LD A,(IX+1)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch Charlie's horizontal co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28948"></span>28948</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the horizontal co-ordinate of the flour shot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28949"></span>28949</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the vertical co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28950"></span>28950</td>
 <td class="instruction">LD A,(IX+2)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch Charlie's vertical co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28953"></span>28953</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the vertical co-ordinate of the flour shot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28954"></span>28954</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the colour.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28955"></span>28955</td>
 <td class="instruction">LD (HL),71</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the colour of the flour shot to 71 (white).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28957"></span>28957</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the horizontal speed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28958"></span>28958</td>
 <td class="instruction">LD DE,(24363)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch Charlie's last movement (<a href="24363.html">CharlieLastMovement</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28962"></span>28962</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the horizontal movement.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28963"></span>28963</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Multiply <span class="register">A</span> by two.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28965"></span>28965</td>
 <td class="instruction">ADD A,E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add <span class="register">E</span>, to multiply it by three.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28966"></span>28966</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the horizontal speed of the flour shot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28967"></span>28967</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the vertical speed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28968"></span>28968</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the vertical movement.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28969"></span>28969</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Multiply <span class="register">A</span> by two.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28971"></span>28971</td>
 <td class="instruction">ADD A,D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add <span class="register">D</span>, to multiply it by three.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28972"></span>28972</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the vertical speed of the flour shot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28973"></span>28973</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the address of the flour shot from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28974"></span>28974</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save the pointer to the current actor on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28976"></span>28976</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Save the address of the flour shot on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28977"></span>28977</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore <span class="register">IX</span> from the stack (this is now the flour shot).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28979"></span>28979</td>
-<td class="instruction">CALL <a href="30156.html#30231">30231</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="30231.html">DrawEntity</a></td>
+<td class="comment-1" rowspan="1">Draw the flour shot using <a href="30231.html">DrawEntity</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28982"></span>28982</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the pointer to the current actor from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28984"></span>28984</td>
-<td class="instruction">CALL <a href="26661.html">26661</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="26661.html">PlayChirp</a></td>
+<td class="comment-1" rowspan="1">Play the chirp using <a href="26661.html">PlayChirp</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="28987"></span>28987</td>
-<td class="instruction">JR <a href="28779.html#28937">GamePlay_Start_14</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="28779.html#28937">ControlCharlie_FireFinished</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="28779.html#28937">ControlCharlie_FireFinished</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">

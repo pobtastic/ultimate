@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="47385.html">47385</a>
 </td>
 </tr>
 </table>
-<div class="description">47362: Routine at B902</div>
+<div class="description">47362: Build Shift Table</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,83 +44,145 @@ Next: <a href="47385.html">47385</a>
 <div class="paragraph">
 Used by the routine at <a href="39264.html">GameInitialisation</a>.
 </div>
+<div class="paragraph">
+Builds a lookup table in the top 4096 bytes of memory (61440 to 65535) which the sprite drawing routines use to position a sprite at any pixel.
+</div>
+<div class="paragraph">
+For every byte value, and for each of the eight possible pixel offsets, the value shifted left by that many bits is stored as a 16-bit number. The low byte is written to the page at 255 - (2 * offset) and the high byte to the page below it, both at the position given by the byte value.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="address-2"><span id="47362"></span>47362</td>
-<td class="instruction">LD L,0</td>
-<td class="comment-1" rowspan="1"><span class="register">L</span>=0.</td>
+<td class="routine-comment" colspan="5">
+<span id="47362"></span>
+<div class="comments">
+<div class="paragraph">
+Work through each byte value in turn, starting with 0.
+</div>
+</div>
+</td>
 </tr>
 <tr>
+<td class="asm-label">BuildShiftTable</td>
+<td class="address-2"><span id="47362"></span>47362</td>
+<td class="instruction">LD L,0</td>
+<td class="comment-1" rowspan="1"><span class="register">L</span>=0 (the byte value).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="47364"></span>
+<div class="comments">
+<div class="paragraph">
+Start with no shift (<span class="register">E</span> holds the low byte and <span class="register">D</span> the high byte of the shifted value).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTable_Value</td>
 <td class="address-2"><span id="47364"></span>47364</td>
 <td class="instruction">LD D,0</td>
 <td class="comment-1" rowspan="1"><span class="register">D</span>=0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47366"></span>47366</td>
 <td class="instruction">LD E,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">L</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47367"></span>47367</td>
 <td class="instruction">LD H,255</td>
-<td class="comment-1" rowspan="1"><span class="register">H</span>=255.</td>
+<td class="comment-1" rowspan="1"><span class="register">H</span>=255 (the page for the first low byte).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47369"></span>47369</td>
 <td class="instruction">LD B,8</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=8.</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=8 (counter, one for each pixel offset).</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="47371"></span>
+<div class="comments">
+<div class="paragraph">
+Store the low and the high byte, then shift the 16-bit value left by one bit for the next offset.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTable_Offset</td>
 <td class="address-2"><span id="47371"></span>47371</td>
 <td class="instruction">LD (HL),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the low byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47372"></span>47372</td>
 <td class="instruction">DEC H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move down a page.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47373"></span>47373</td>
 <td class="instruction">LD (HL),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the high byte.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47374"></span>47374</td>
 <td class="instruction">DEC H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move down a page.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47375"></span>47375</td>
 <td class="instruction">SLA E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift <span class="register">E</span> left one bit (bit 7 goes into the carry flag).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47377"></span>47377</td>
 <td class="instruction">RL D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">D</span> left one bit, bringing in the carry flag.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47379"></span>47379</td>
-<td class="instruction">DJNZ <a href="47362.html#47371">47371</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="47362.html#47371">BuildShiftTable_Offset</a></td>
+<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="47362.html#47371">BuildShiftTable_Offset</a> until zero.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47381"></span>47381</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next byte value.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47382"></span>47382</td>
-<td class="instruction">JR NZ,<a href="47362.html#47364">47364</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="47362.html#47364">BuildShiftTable_Value</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="47362.html#47364">BuildShiftTable_Value</a> until every byte value has been done.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="47384"></span>47384</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/underwurlde/dec/asm/38419.html">Underwurlde</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,6 +44,11 @@ Next: <a href="42117.html">42117</a>
 <div class="paragraph">
 Used by the routines at <a href="37245.html">HandlerDoorClosed</a> and <a href="37317.html">HandlerTrapOpen</a>.
 </div>
+<div class="paragraph">
+Makes a burst of noise by sending the bits of the first 48 bytes of the ROM to the speaker. Bit 4 of the port is the speaker bit. <audio controls="" src="../../audio/door.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/door.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
 </div>
 </td>
 </tr>
@@ -48,85 +56,95 @@ Used by the routines at <a href="37245.html">HandlerDoorClosed</a> and <a href="
 <td class="asm-label">SoundsDoor</td>
 <td class="address-2"><span id="42094"></span>42094</td>
 <td class="instruction">LD BC,2096</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=8 (the number of bits in a byte) and <span class="register">C</span>=48 (the number of bytes).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42097"></span>42097</td>
 <td class="instruction">LD HL,0</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=0 (the start of the ROM).</td>
 </tr>
 <tr>
-<td class="asm-label">SoundsDoor_0</td>
+<td class="asm-label">SoundsDoor_Byte</td>
 <td class="address-2"><span id="42100"></span>42100</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the next byte of the ROM.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42101"></span>42101</td>
 <td class="instruction">INC HL</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42102"></span>42102</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the counters on the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">SoundsDoor_1</td>
+<td class="asm-label">SoundsDoor_Bit</td>
 <td class="address-2"><span id="42103"></span>42103</td>
 <td class="instruction">RRC E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">E</span> right by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42105"></span>42105</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42106"></span>42106</td>
-<td class="instruction">AND 16</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">AND %00010000</td>
+<td class="comment-1" rowspan="1">Keep only bit 4 (the speaker bit).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42108"></span>42108</td>
 <td class="instruction">OUT (254),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Send it to the speaker.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42110"></span>42110</td>
-<td class="instruction">DJNZ <a href="42094.html#42103">SoundsDoor_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="42094.html#42103">SoundsDoor_Bit</a></td>
+<td class="comment-1" rowspan="1">Decrease the bit counter by one and loop back to <a href="42094.html#42103">SoundsDoor_Bit</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42112"></span>42112</td>
 <td class="instruction">POP BC</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the counters from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42113"></span>42113</td>
 <td class="instruction">DEC C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the byte counter by one and loop back to <a href="42094.html#42100">SoundsDoor_Byte</a> until all of the bytes have been sent.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42114"></span>42114</td>
-<td class="instruction">JR NZ,<a href="42094.html#42100">SoundsDoor_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="42094.html#42100">SoundsDoor_Byte</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="42116"></span>42116</td>
 <td class="instruction">RET</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/underwurlde/dec/asm/41265.html">Underwurlde</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

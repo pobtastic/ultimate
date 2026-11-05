@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,14 @@ Next: <a href="24907.html">24907</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="27291.html">27291</a>.
+Used by the routine at <a href="27291.html">HandlerPlayer</a>.
+</div>
+<div class="paragraph">
+Plays the next step of the sound made when a cup is collected or the car is refuelled. This is called every frame but only makes a sound on every other frame. The step counter is held at <a href="24134.html">SoundCounter</a>. For the refuel sound it counts down from 7 and bit 7 is clear; each step has a higher pitch than the one before. For the cup sound it starts at 135 (bit 7 set) and each step has a lower pitch than the one before. Each step plays 32 square waves using <a href="24907.html">PlaySquareWave</a>, and there are six of them. The cup sound: <audio controls="" src="../../audio/cup-collected.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/cup-collected.wav">link to the audio</a> instead.</p>
+</audio> The refuel sound: <audio controls="" src="../../audio/refuel.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/refuel.wav">link to the audio</a> instead.</p>
+</audio>
 </div>
 </div>
 </td>
@@ -48,7 +58,7 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="asm-label">SoundsCupRefuel</td>
 <td class="address-2"><span id="24859"></span>24859</td>
 <td class="instruction">LD A,(24105)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="24105.html">GameTimer</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the game timer from <a href="24105.html">GameTimer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -60,25 +70,25 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24864"></span>24864</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1">Return every other frame.</td>
+<td class="comment-1" rowspan="1">Return on every other frame.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24865"></span>24865</td>
 <td class="instruction">LD HL,24134</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24134.html">SoundCounter</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the step counter (<a href="24134.html">SoundCounter</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24868"></span>24868</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=item ID.</td>
+<td class="comment-1" rowspan="1">Fetch the step counter.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24869"></span>24869</td>
 <td class="instruction">BIT 7,A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="24859.html#24894">SoundsCup</a> if bit 7 is not set.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="24859.html#24894">SoundsCup</a> if bit 7 is set, as that is the cup sound.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -89,7 +99,7 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24873"></span>24873</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">Return if item ID is zero.</td>
+<td class="comment-1" rowspan="2">Return if the step counter is zero, as there is no sound to play.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -100,25 +110,35 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24875"></span>24875</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">A</span>/ item ID by one.</td>
+<td class="comment-1" rowspan="1">Decrease the step counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24876"></span>24876</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Store <span class="register">A</span> at <a href="24134.html">SoundCounter</a>.</td>
+<td class="comment-1" rowspan="1">Write the new step counter back to <a href="24134.html">SoundCounter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24877"></span>24877</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1">Return if the new item ID is zero.</td>
+<td class="comment-1" rowspan="1">Return if the step counter has reached zero, as the sound is over.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="24878"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the period of the waves from the step counter.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">SoundsRefuel</td>
 <td class="address-2"><span id="24878"></span>24878</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=<span class="register">A</span> * 4.</td>
+<td class="comment-1" rowspan="2">Multiply the step counter by 4 by rotating it left twice.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -141,31 +161,30 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24884"></span>24884</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Store the result in <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Set the period of the waves.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24885"></span>24885</td>
 <td class="instruction">LD C,32</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=32.</td>
+<td class="comment-1" rowspan="1">Set the wave counter to 32.</td>
 </tr>
 <tr>
 <td class="asm-label">SoundsCupRefuel_Loop</td>
 <td class="address-2"><span id="24887"></span>24887</td>
 <td class="instruction">CALL <a href="24907.html">PlaySquareWave</a></td>
-<td class="comment-1" rowspan="1">Call <a href="24907.html">PlaySquareWave</a>.</td>
+<td class="comment-1" rowspan="1">Play a square wave using <a href="24907.html">PlaySquareWave</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24890"></span>24890</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">C</span> by one.</td>
+<td class="comment-1" rowspan="2">Decrease the wave counter by one and loop back to <a href="24859.html#24887">SoundsCupRefuel_Loop</a> until all 32 waves have been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24891"></span>24891</td>
 <td class="instruction">JR NZ,<a href="24859.html#24887">SoundsCupRefuel_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="24859.html#24887">SoundsCupRefuel_Loop</a> until <span class="register">C</span> is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -174,52 +193,62 @@ Used by the routine at <a href="27291.html">27291</a>.
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="24894"></span>
+<div class="comments">
+<div class="paragraph">
+The cup sound keeps bit 7 set in the step counter, and inverts the step so that the pitch falls rather than rises.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">SoundsCup</td>
 <td class="address-2"><span id="24894"></span>24894</td>
 <td class="instruction">AND %01111111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-6.</td>
+<td class="comment-1" rowspan="1">Keep only the step counter (bits 0-6).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24896"></span>24896</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1">Return if <span class="register">A</span> is now zero.</td>
+<td class="comment-1" rowspan="1">Return if the step counter is zero, as the sound is over.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24897"></span>24897</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">A</span> by one.</td>
+<td class="comment-1" rowspan="1">Decrease the step counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24898"></span>24898</td>
 <td class="instruction">OR %10000000</td>
-<td class="comment-1" rowspan="1">Set bit 7.</td>
+<td class="comment-1" rowspan="1">Set bit 7 so that the sound stays the cup sound.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24900"></span>24900</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Store <span class="register">A</span> at <a href="24134.html">SoundCounter</a>.</td>
+<td class="comment-1" rowspan="1">Write the new step counter back to <a href="24134.html">SoundCounter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24901"></span>24901</td>
 <td class="instruction">AND %01111111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-6.</td>
+<td class="comment-1" rowspan="1">Keep only the step counter (bits 0-6).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24903"></span>24903</td>
 <td class="instruction">RET Z</td>
-<td class="comment-1" rowspan="1">Return if <span class="register">A</span> is now zero.</td>
+<td class="comment-1" rowspan="1">Return if the step counter has reached zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24904"></span>24904</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="1">Flip the bits.</td>
+<td class="comment-1" rowspan="1">Flip the bits, so that the pitch falls with each step.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

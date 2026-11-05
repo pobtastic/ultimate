@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at B8E7</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B8C3.html">B8C3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b8e7">Map</a></td>
+<td class="next">
+Next: <a href="B95E.html">B95E</a>
+</td>
+</tr>
+</table>
+<div class="description">B8E7: Handle Outlaw Gun</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Type 0E: the gun of the outlaw in the duel, which is in the slot after the outlaw. It stays with the outlaw. When the outlaw is waiting it is not drawn, and when he has drawn it goes through its six frames, which raise the gun, and then it fires: it makes a muzzle flash (type 0F) in the next slot, and counts the shot in <a href="A212.html">ShotsFiredCount</a>. The duel ends when the outlaw has fired six shots. The gun is removed when the outlaw is dying.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleOutlawGun</td>
+<td class="address-2"><span id="b8e7"></span>B8E7</td>
+<td class="instruction">LD A,(IX-$10)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8ea"></span>B8EA</td>
+<td class="instruction">CP $12</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C7B7.html#c7bb">HandleBody_Remove</a> to remove the gun if the outlaw is dying.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8ec"></span>B8EC</td>
+<td class="instruction">JP Z,<a href="C7B7.html#c7bb">HandleBody_Remove</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8ef"></span>B8EF</td>
+<td class="instruction">CP $11</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B8E7.html#b910">HandleOutlawGun_Place</a> if the outlaw has been shot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8f1"></span>B8F1</td>
+<td class="instruction">JR Z,<a href="B8E7.html#b910">HandleOutlawGun_Place</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8f3"></span>B8F3</td>
+<td class="instruction">CP $0C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B8E7.html#b910">HandleOutlawGun_Place</a> if the outlaw is waiting.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8f5"></span>B8F5</td>
+<td class="instruction">JR Z,<a href="B8E7.html#b910">HandleOutlawGun_Place</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8f7"></span>B8F7</td>
+<td class="instruction">LD A,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Fetch the frame of the gun.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8fa"></span>B8FA</td>
+<td class="instruction">CP $05</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B8E7.html#b92a">HandleOutlawGun_Fire</a> if the gun is fully raised.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8fc"></span>B8FC</td>
+<td class="instruction">JR Z,<a href="B8E7.html#b92a">HandleOutlawGun_Fire</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b8fe"></span>B8FE</td>
+<td class="instruction">CALL <a href="B9DD.html">AdvanceGunFrame</a></td>
+<td class="comment-1" rowspan="1">Advance the frame when it is time.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b901"></span>B901</td>
+<td class="instruction">LD A,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Fetch the frame of the gun.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b904"></span>B904</td>
+<td class="instruction">LD BC,$B8C3</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="B8C3.html">GunSpriteLists</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b907"></span>B907</td>
+<td class="instruction">CALL <a href="C75C.html">GetTableEntry</a></td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the sprite list for the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b90a"></span>B90A</td>
+<td class="instruction">LD (IX+$0E),L</td>
+<td class="comment-1" rowspan="1">Store the low byte of the address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b90d"></span>B90D</td>
+<td class="instruction">LD (IX+$0F),H</td>
+<td class="comment-1" rowspan="1">Store the high byte of the address.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b910"></span>
+<div class="comments">
+<div class="paragraph">
+Put the gun next to the outlaw and draw it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleOutlawGun_Place</td>
+<td class="address-2"><span id="b910"></span>B910</td>
+<td class="instruction">LD A,(IX-$0E)</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal position of the outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b913"></span>B913</td>
+<td class="instruction">SUB $08</td>
+<td class="comment-1" rowspan="1">Move eight pixels to the left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b915"></span>B915</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Set the horizontal position of the gun.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b918"></span>B918</td>
+<td class="instruction">LD A,(IX-$10)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b91b"></span>B91B</td>
+<td class="instruction">CP $11</td>
+<td class="comment-1" rowspan="1">Compare it with the type of a shot outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b91d"></span>B91D</td>
+<td class="instruction">LD A,(IX-$0C)</td>
+<td class="comment-1" rowspan="1">Fetch the vertical position of the outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b920"></span>B920</td>
+<td class="instruction">JR Z,<a href="B8E7.html#b924">HandleOutlawGun_SetPosition</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B8E7.html#b924">HandleOutlawGun_SetPosition</a> if he has been shot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b922"></span>B922</td>
+<td class="instruction">ADD A,$0C</td>
+<td class="comment-1" rowspan="1">Move the gun down twelve pixels.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleOutlawGun_SetPosition</td>
+<td class="address-2"><span id="b924"></span>B924</td>
+<td class="instruction">LD (IX+$04),A</td>
+<td class="comment-1" rowspan="1">Set the vertical position of the gun.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b927"></span>B927</td>
+<td class="instruction">JP <a href="BD52.html">DrawObject</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BD52.html">DrawObject</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b92a"></span>
+<div class="comments">
+<div class="paragraph">
+The gun is fully raised, so fire it unless it has already fired.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleOutlawGun_Fire</td>
+<td class="address-2"><span id="b92a"></span>B92A</td>
+<td class="instruction">LD A,(IX+$10)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the object in the next slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b92d"></span>B92D</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test whether the slot is in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b92e"></span>B92E</td>
+<td class="instruction">JR NZ,<a href="B8E7.html#b910">HandleOutlawGun_Place</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B8E7.html#b910">HandleOutlawGun_Place</a> if it is.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b930"></span>B930</td>
+<td class="instruction">LD HL,$A212</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A212.html">ShotsFiredCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b933"></span>B933</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b934"></span>B934</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if the outlaw has been hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b935"></span>B935</td>
+<td class="instruction">RET M</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b936"></span>B936</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one to the count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b937"></span>B937</td>
+<td class="instruction">CP $07</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B985.html">EndDuel</a> to end the duel if the outlaw has fired six shots.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b939"></span>B939</td>
+<td class="instruction">JR Z,<a href="B985.html">EndDuel</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b93b"></span>B93B</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b93c"></span>B93C</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IX</span> to <span class="register">HL</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b93e"></span>B93E</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b93f"></span>B93F</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1">Set the size of an object slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b942"></span>B942</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the next slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b943"></span>B943</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">HL</span> to <span class="register">IY</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b944"></span>B944</td>
+<td class="instruction">POP IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b946"></span>B946</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap the address of the slot into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b947"></span>B947</td>
+<td class="instruction">LD HL,$B95E</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="B95E.html">MuzzleFlashTemplate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b94a"></span>B94A</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy the template into the slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b94c"></span>B94C</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal position of the gun.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b94f"></span>B94F</td>
+<td class="instruction">ADD A,$08</td>
+<td class="comment-1" rowspan="1">Move eight pixels to the right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b951"></span>B951</td>
+<td class="instruction">LD (IY+$02),A</td>
+<td class="comment-1" rowspan="1">Set the horizontal position of the flash.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b954"></span>B954</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Fetch the vertical position of the gun.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b957"></span>B957</td>
+<td class="instruction">ADD A,$06</td>
+<td class="comment-1" rowspan="1">Move six pixels down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b959"></span>B959</td>
+<td class="instruction">LD (IY+$04),A</td>
+<td class="comment-1" rowspan="1">Set the vertical position of the flash.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b95c"></span>
+<div class="comments">
+<div class="paragraph">
+Place and draw the gun.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b95c"></span>B95C</td>
+<td class="instruction">JR <a href="B8E7.html#b910">HandleOutlawGun_Place</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B8E7.html#b910">HandleOutlawGun_Place</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B8C3.html">B8C3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b8e7">Map</a></td>
+<td class="next">
+Next: <a href="B95E.html">B95E</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/47335.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

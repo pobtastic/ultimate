@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Atic Atac: Routine at 83EA</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="83CA.html">83CA</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#83ea">Map</a></td>
+<td class="next">
+Next: <a href="845F.html">845F</a>
+</td>
+</tr>
+</table>
+<div class="description">83EA: Spawn Creature</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="8E26.html">HandlerKnight</a>.
+</div>
+<div class="paragraph">
+Called by the handlers of the characters. When the player enters a new room a delay of 20 is started (see <a href="5E27.html">CreatureDelay</a>). Once the delay has run out, and then at random about one time in sixteen, a creature is created in a free one of the first three 16-byte records at <a href="EE60.html">CreatureRecords</a>. The new record is a copy of <a href="8B6A.html">CreatureDefaults</a>, in the current room and with a random position. It starts as a sparkle (see <a href="85F7.html">HandlerSparkle</a>) that turns into the creature chosen by FRAMES from <a href="8B7A.html">Creatures</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="83ea"></span>
+<div class="comments">
+<div class="paragraph">
+See if the player is in a different room to the last one a creature was made in.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnCreature</td>
+<td class="address-2"><span id="83ea"></span>83EA</td>
+<td class="instruction">LD A,($5E26)</td>
+<td class="comment-1" rowspan="2">Fetch the room of the last creature from <a href="5E26.html">LastCreatureRoom</a> and keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83ed"></span>83ED</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83ee"></span>83EE</td>
+<td class="instruction">LD A,($EA91)</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="EA90.html#ea91">PlayerRoom</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83f1"></span>83F1</td>
+<td class="instruction">CP C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="83EA.html#844f">SpawnCreature_NewRoom</a> if the player is in a different room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83f2"></span>83F2</td>
+<td class="instruction">JR NZ,<a href="83EA.html#844f">SpawnCreature_NewRoom</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83f4"></span>83F4</td>
+<td class="instruction">LD HL,$5E27</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the creature delay at <a href="5E27.html">CreatureDelay</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83f7"></span>83F7</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the creature delay.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83f8"></span>83F8</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="83EA.html#8458">SpawnCreature_Random</a> if the delay is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83f9"></span>83F9</td>
+<td class="instruction">JR Z,<a href="83EA.html#8458">SpawnCreature_Random</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83fb"></span>83FB</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">Decrease the delay by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="83fc"></span>83FC</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if the delay is not zero yet.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="83fd"></span>
+<div class="comments">
+<div class="paragraph">
+Look for a free record for the creature, in the first three of the 16-byte records.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnCreature_Find</td>
+<td class="address-2"><span id="83fd"></span>83FD</td>
+<td class="instruction">LD HL,$EE60</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the creatures at <a href="EE60.html">CreatureRecords</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8400"></span>8400</td>
+<td class="instruction">LD DE,$0010</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=0010 (the size of a record).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8403"></span>8403</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (the number of records to look at).</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnCreature_FindLoop</td>
+<td class="address-2"><span id="8405"></span>8405</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8406"></span>8406</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="83EA.html#840d">SpawnCreature_Copy</a> if the record is free.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8407"></span>8407</td>
+<td class="instruction">JR Z,<a href="83EA.html#840d">SpawnCreature_Copy</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8409"></span>8409</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="840a"></span>840A</td>
+<td class="instruction">DJNZ <a href="83EA.html#8405">SpawnCreature_FindLoop</a></td>
+<td class="comment-1" rowspan="1">Decrease the record counter by one and loop back to <a href="83EA.html#8405">SpawnCreature_FindLoop</a> until all three records have been checked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="840c"></span>840C</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="840d"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the default creature into the free record.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnCreature_Copy</td>
+<td class="address-2"><span id="840d"></span>840D</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap <span class="register">DE</span> and <span class="register">HL</span>, so that <span class="register">DE</span> is the free record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="840e"></span>840E</td>
+<td class="instruction">LD HL,$8B6A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the creature defaults at <a href="8B6A.html">CreatureDefaults</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8411"></span>8411</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span>=0010 (the size of a record).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8414"></span>8414</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the record on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8415"></span>8415</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy the default creature into the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8417"></span>8417</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the record from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8418"></span>8418</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the record on the stack again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8419"></span>8419</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the room of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="841a"></span>841A</td>
+<td class="instruction">LD A,($EA91)</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="EA90.html#ea91">PlayerRoom</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="841d"></span>841D</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Update the room of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="841e"></span>841E</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to offset 02 of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="841f"></span>841F</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash it on the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="8420"></span>
+<div class="comments">
+<div class="paragraph">
+The creature that it turns into is chosen from the table using the bottom four bits of FRAMES.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8420"></span>8420</td>
+<td class="instruction">LD HL,$8B7A</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the creatures at <a href="8B7A.html">Creatures</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8423"></span>8423</td>
+<td class="instruction">LD A,($5C78)</td>
+<td class="comment-1" rowspan="1">Fetch FRAMES.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8426"></span>8426</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8428"></span>8428</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Set the offset in <span class="register">E</span> to the bottom four bits of FRAMES.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8429"></span>8429</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the offset in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="842b"></span>842B</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Find the entry in the table of creatures.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="842c"></span>842C</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the creature to make.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="842d"></span>842D</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the address of offset 02 from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="842e"></span>842E</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Set the type of the creature at offset 02.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="842f"></span>
+<div class="comments">
+<div class="paragraph">
+Choose a random X and Y position inside the room.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="842f"></span>842F</td>
+<td class="instruction">LD DE,($5E1D)</td>
+<td class="comment-1" rowspan="1">Fetch the size of the room from <a href="5E1D.html">CurrentRoom_Width</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8433"></span>8433</td>
+<td class="instruction">LD B,E</td>
+<td class="comment-1" rowspan="1">Set the limit for the X position in <span class="register">B</span> to the width of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8434"></span>8434</td>
+<td class="instruction">CALL <a href="8598.html">GetRandomCoordinate</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8598.html">GetRandomCoordinate</a> to pick a random coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8437"></span>8437</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Update the X position of the creature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8438"></span>8438</td>
+<td class="instruction">LD B,D</td>
+<td class="comment-1" rowspan="1">Set the limit for the Y position in <span class="register">B</span> to the height of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8439"></span>8439</td>
+<td class="instruction">CALL <a href="8598.html">GetRandomCoordinate</a></td>
+<td class="comment-1" rowspan="1">Call <a href="8598.html">GetRandomCoordinate</a> to pick a random coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="843c"></span>843C</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Update the Y position of the creature.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="843d"></span>
+<div class="comments">
+<div class="paragraph">
+Give the creature a random velocity and draw it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="843d"></span>843D</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the address of the record from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="843e"></span>843E</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1">Stash the current entity on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8440"></span>8440</td>
+<td class="instruction">LD IX,$0000</td>
+<td class="comment-1" rowspan="2">Make <span class="register">IX</span> point at the new creature (copy <span class="register">DE</span> to <span class="register">IX</span>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8444"></span>8444</td>
+<td class="instruction">ADD IX,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8446"></span>8446</td>
+<td class="instruction">CALL <a href="86F2.html">RandomiseVelocity</a></td>
+<td class="comment-1" rowspan="1">Call <a href="86F2.html">RandomiseVelocity</a> to give the creature a new random velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8449"></span>8449</td>
+<td class="instruction">CALL <a href="9F4A.html">DrawEntity</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9F4A.html">DrawEntity</a> to draw the sparkle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="844c"></span>844C</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Restore the current entity from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="844e"></span>844E</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="844f"></span>
+<div class="comments">
+<div class="paragraph">
+The player is in a new room, so remember the room and start the delay.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnCreature_NewRoom</td>
+<td class="address-2"><span id="844f"></span>844F</td>
+<td class="instruction">LD ($5E26),A</td>
+<td class="comment-1" rowspan="1">Update the room of the last creature in <a href="5E26.html">LastCreatureRoom</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8452"></span>8452</td>
+<td class="instruction">LD A,$20</td>
+<td class="comment-1" rowspan="2">Write 20 to <a href="5E27.html">CreatureDelay</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8454"></span>8454</td>
+<td class="instruction">LD ($5E27),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8457"></span>8457</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="8458"></span>
+<div class="comments">
+<div class="paragraph">
+There is no delay, so only make a creature one time in sixteen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnCreature_Random</td>
+<td class="address-2"><span id="8458"></span>8458</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Fetch a random number (from the refresh register).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="845a"></span>845A</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="845c"></span>845C</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if the result is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="845d"></span>845D</td>
+<td class="instruction">JR <a href="83EA.html#83fd">SpawnCreature_Find</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="83EA.html#83fd">SpawnCreature_Find</a> to look at the next record.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="83CA.html">83CA</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#83ea">Map</a></td>
+<td class="next">
+Next: <a href="845F.html">845F</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/aticatac/">Source code</a>.</div>
+<div><a href="../dec/asm/33770.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

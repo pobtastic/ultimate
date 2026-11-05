@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,22 +36,35 @@ Next: <a href="39528.html">39528</a>
 </td>
 </tr>
 </table>
-<div class="description">39484: Handler: Destructable Enemies</div>
+<div class="description">39484: Spawn Nastie</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="39453.html">39453</a>.
+Used by the routine at <a href="39453.html">UpdateCounters</a>.
+</div>
+<div class="paragraph">
+Called once every time all of the actors have been processed. If the start-of-turn delay is over, the nastie spawn delay has run out and the player is alive, this looks for an empty record in the nastie table at <a href="38802.html">NastieData</a> and, if one is found, tries to start a new nastie in it with <a href="39528.html">StartNastie</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">HandlerDestructableEnemies</td>
+<td class="routine-comment" colspan="5">
+<span id="39484"></span>
+<div class="comments">
+<div class="paragraph">
+Return if the start-of-turn delay is still running.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnNastie</td>
 <td class="address-2"><span id="39484"></span>39484</td>
 <td class="instruction">LD A,(38581)</td>
-<td class="comment-1" rowspan="3">If <a href="38581.html">GameDelayTimer</a> is not zero, return.</td>
+<td class="comment-1" rowspan="3">Return if the start-of-turn delay in <a href="38581.html">GameDelayTimer</a> is not zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -61,10 +77,20 @@ Used by the routine at <a href="39453.html">39453</a>.
 <td class="instruction">RET NZ</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="39489"></span>
+<div class="comments">
+<div class="paragraph">
+Count down the delay between nasties appearing.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39489"></span>39489</td>
 <td class="instruction">LD A,(38577)</td>
-<td class="comment-1" rowspan="3">If <a href="38577.html">38577</a> is zero, jump to <a href="39484.html#39500">HandlerDestructableEnemies_0</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="39484.html#39500">SpawnNastie_Ready</a> if the nastie spawn delay in <a href="38577.html">NastieSpawnDelay</a> is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -74,19 +100,19 @@ Used by the routine at <a href="39453.html">39453</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39493"></span>39493</td>
-<td class="instruction">JR Z,<a href="39484.html#39500">HandlerDestructableEnemies_0</a></td>
+<td class="instruction">JR Z,<a href="39484.html#39500">SpawnNastie_Ready</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39495"></span>39495</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">A</span> by one.</td>
+<td class="comment-1" rowspan="1">Decrease the nastie spawn delay by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39496"></span>39496</td>
 <td class="instruction">LD (38577),A</td>
-<td class="comment-1" rowspan="1">Write the value back to <a href="38577.html">38577</a>.</td>
+<td class="comment-1" rowspan="1">Store the nastie spawn delay in <a href="38577.html">NastieSpawnDelay</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -95,75 +121,94 @@ Used by the routine at <a href="39453.html">39453</a>.
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
-<td class="asm-label">HandlerDestructableEnemies_0</td>
+<td class="routine-comment" colspan="5">
+<span id="39500"></span>
+<div class="comments">
+<div class="paragraph">
+Return unless the player is alive (the sprite ID of the player's actor is in the range 16-47).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnNastie_Ready</td>
 <td class="address-2"><span id="39500"></span>39500</td>
 <td class="instruction">LD A,(38658)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38658.html">ImmortalData</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player's actor from <a href="38658.html">ImmortalData</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39503"></span>39503</td>
 <td class="instruction">SUB 16</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract 16 (the first Sabreman sprite ID).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39505"></span>39505</td>
 <td class="instruction">CP 32</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Return if the player is not alive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39507"></span>39507</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1"></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="39508"></span>
+<div class="comments">
+<div class="paragraph">
+Look for an empty record in the nastie table.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39508"></span>39508</td>
 <td class="instruction">LD IX,38802</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="38802.html">NastieData</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the first nastie record at <a href="38802.html">NastieData</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39512"></span>39512</td>
 <td class="instruction">LD DE,12</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0012.</td>
+<td class="comment-1" rowspan="1">Set the size of an actor record in <span class="register">DE</span> to 12.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39515"></span>39515</td>
 <td class="instruction">LD B,6</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=6 (counter).</td>
+<td class="comment-1" rowspan="1">Set the nastie record counter in <span class="register">B</span> to 6.</td>
 </tr>
 <tr>
-<td class="asm-label">HandlerDestructableEnemies_1</td>
+<td class="asm-label">SpawnNastie_Loop</td>
 <td class="address-2"><span id="39517"></span>39517</td>
 <td class="instruction">LD A,(IX+0)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+0 (sprite reference).</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the nastie.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39520"></span>39520</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">If <span class="register">A</span> is zero, jump to <a href="39528.html">39528</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="39528.html">StartNastie</a> if the record is empty.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39521"></span>39521</td>
-<td class="instruction">JR Z,<a href="39528.html">39528</a></td>
+<td class="instruction">JR Z,<a href="39528.html">StartNastie</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39523"></span>39523</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<span class="register">IX</span>+<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Move onto the next nastie record.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="39525"></span>39525</td>
-<td class="instruction">DJNZ <a href="39484.html#39517">HandlerDestructableEnemies_1</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="39484.html#39517">HandlerDestructableEnemies_1</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="39484.html#39517">SpawnNastie_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the nastie record counter by one and loop back to <a href="39484.html#39517">SpawnNastie_Loop</a> until all six records have been checked.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

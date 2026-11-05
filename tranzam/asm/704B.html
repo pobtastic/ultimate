@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,15 +36,27 @@ Next: <a href="7097.html">7097</a>
 </td>
 </tr>
 </table>
-<div class="description">704B: Colourise sprite</div>
+<div class="description">704B: Colourise Sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="6633.html">6633</a>.
+Used by the routine at <a href="6633.html">HandlerCar</a>.
+</div>
+<div class="paragraph">
+Sets the attributes under a sprite to the attribute of the actor. The sprite is coloured from the bottom upwards and the attributes of the top row of the screen and of the border (76) are left alone. Entering at <a href="704B.html#7052">ColouriseSprite_Position</a> (<span class="register">D</span> is the attribute and <span class="register">HL</span> is the position of the bottom left of the sprite in pixels) or at <a href="704B.html#7064">ColouriseSprite_Block</a> (<span class="register">B</span> is the width and <span class="register">C</span> is the height in attribute cells, <span class="register">D</span> is the attribute and <span class="register">HL</span> is the attribute buffer address of the bottom left) uses the normal registers instead of the shadow registers.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor entity</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
@@ -54,52 +69,56 @@ Used by the routine at <a href="6633.html">6633</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="704c"></span>704C</td>
 <td class="instruction">LD HL,($5E27)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL'</span>=<a href="5E27.html">actor co-ordinates</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the position of the sprite (<a href="5E27.html">ActorScreenPosition</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="704f"></span>704F</td>
 <td class="instruction">LD D,(IX+$03)</td>
-<td class="comment-1" rowspan="1"><span class="register">D'</span>=object colour attribute.</td>
+<td class="comment-1" rowspan="1"><span class="register">D'</span>=the attribute of the actor.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="7052"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="6FAC.html">6FAC</a>.
+This entry point is used by the routine at <a href="6F3C.html">PlaceObject</a>.
+</div>
+<div class="paragraph">
+Work out the size of the sprite in attribute cells.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ColouriseSprite_0</td>
+<td class="asm-label">ColouriseSprite_Position</td>
 <td class="address-2"><span id="7052"></span>7052</td>
 <td class="instruction">CALL <a href="7097.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7097.html">AttributeAddress</a> - <span class="register">HL'</span> now holds the co-ordinates to an attribute file address.</td>
+<td class="comment-1" rowspan="1">Call <a href="7097.html">AttributeAddress</a> to convert the pixel co-ordinates into an attribute buffer address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7055"></span>7055</td>
 <td class="instruction">LD A,($5E24)</td>
-<td class="comment-1" rowspan="2"><span class="register">B'</span>=<a href="5E20.html#5e24">width loop counter (in pixels)</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e24">WidthBytes</a> (the width of the sprite in bytes).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7058"></span>7058</td>
 <td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the width in <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7059"></span>7059</td>
 <td class="instruction">LD A,($5E23)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e23">HeightPixels</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e23">HeightPixels</a> (the height of the sprite in pixels).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="705c"></span>705C</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="4"><span class="register">A</span>=((<span class="register">A</span> / 04) + 01) / 02.</td>
+<td class="comment-1" rowspan="2"><span class="register">A</span>=<span class="register">A</span> / 04.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -110,11 +129,13 @@ This entry point is used by the routine at <a href="6FAC.html">6FAC</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="705e"></span>705E</td>
 <td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">A</span> by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="705f"></span>705F</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> / 02.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -132,46 +153,49 @@ This entry point is used by the routine at <a href="6FAC.html">6FAC</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="7063"></span>7063</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"><span class="register">C'</span>=height loop counter (in pixels).</td>
+<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">A</span> (the number of rows).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="7064"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="6A9B.html">6A9B</a>.
+This entry point is used by the routine at <a href="6A9B.html">HandlerPlayer</a>.
+</div>
+<div class="paragraph">
+Colour each of the rows, going upwards.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ColouriseSprite_1</td>
+<td class="asm-label">ColouriseSprite_Block</td>
 <td class="address-2"><span id="7064"></span>7064</td>
 <td class="instruction">LD E,B</td>
-<td class="comment-1" rowspan="1"><span class="register">E'</span>=width loop counter (in pixels).</td>
+<td class="comment-1" rowspan="1">Keep the width in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">ColouriseSprite_Loop1</td>
 <td class="address-2"><span id="7065"></span>7065</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the start of the row on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label">ColouriseSprite_Loop2</td>
 <td class="address-2"><span id="7066"></span>7066</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=actor Y position.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7067"></span>7067</td>
 <td class="instruction">CP $5B</td>
-<td class="comment-1" rowspan="2">Decrement position if address is outside of attribute file address range.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="704B.html#7089">ColouriseSprite_NextRow</a> if the address is beyond the end of the attribute buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7069"></span>7069</td>
-<td class="instruction">JR NC,<a href="704B.html#7089">ColouriseSprite_4</a></td>
+<td class="instruction">JR NC,<a href="704B.html#7089">ColouriseSprite_NextRow</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -188,19 +212,18 @@ This entry point is used by the routine at <a href="6A9B.html">6A9B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="706d"></span>706D</td>
 <td class="instruction">LD BC,$5820</td>
-<td class="comment-1" rowspan="1"><span class="register">BC'</span>=5820.</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span>=5820 (the start of the second row of attributes).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7070"></span>7070</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1">Clear the carry flag.</td>
+<td class="comment-1" rowspan="2"><span class="register">HL</span>=<span class="register">HL</span> - <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7071"></span>7071</td>
 <td class="instruction">SBC HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -216,44 +239,43 @@ This entry point is used by the routine at <a href="6A9B.html">6A9B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7075"></span>7075</td>
-<td class="instruction">JR C,<a href="704B.html#7089">ColouriseSprite_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="704B.html#7089">ColouriseSprite_NextRow</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="704B.html#7089">ColouriseSprite_NextRow</a> if the address is in the top row of attributes.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7077"></span>7077</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the current attribute of the cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7078"></span>7078</td>
 <td class="instruction">CP $76</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="704B.html#707d">ColouriseSprite_NextColumn</a> if this is a border attribute (76).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="707a"></span>707A</td>
-<td class="instruction">JR Z,<a href="704B.html#707d">ColouriseSprite_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="704B.html#707d">ColouriseSprite_NextColumn</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="707c"></span>707C</td>
 <td class="instruction">LD (HL),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the attribute of the actor.</td>
 </tr>
 <tr>
-<td class="asm-label">ColouriseSprite_2</td>
+<td class="asm-label">ColouriseSprite_NextColumn</td>
 <td class="address-2"><span id="707d"></span>707D</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="707e"></span>707E</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -264,38 +286,36 @@ This entry point is used by the routine at <a href="6A9B.html">6A9B</a>.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7081"></span>7081</td>
-<td class="instruction">JR NZ,<a href="704B.html#7087">ColouriseSprite_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="704B.html#7087">ColouriseSprite_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="704B.html#7087">ColouriseSprite_Next</a> if the address is still in the same row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7083"></span>7083</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move back to the start of the row (this is for when the actor is partly off the right of the screen).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7084"></span>7084</td>
 <td class="instruction">SUB $20</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7086"></span>7086</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">ColouriseSprite_3</td>
+<td class="asm-label">ColouriseSprite_Next</td>
 <td class="address-2"><span id="7087"></span>7087</td>
 <td class="instruction">DJNZ <a href="704B.html#7066">ColouriseSprite_Loop2</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="704B.html#7066">ColouriseSprite_Loop2</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the column counter by one and loop back to <a href="704B.html#7066">ColouriseSprite_Loop2</a> until the whole row has been coloured.</td>
 </tr>
 <tr>
-<td class="asm-label">ColouriseSprite_4</td>
+<td class="asm-label">ColouriseSprite_NextRow</td>
 <td class="address-2"><span id="7089"></span>7089</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the address of the start of the row from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -313,12 +333,13 @@ This entry point is used by the routine at <a href="6A9B.html">6A9B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="708c"></span>708C</td>
 <td class="instruction">LD BC,$0020</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span> -= 32 tiles. Places address pointer previous line.</td>
+<td class="comment-1" rowspan="1">Set the size of a row, 0020.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="708f"></span>708F</td>
 <td class="instruction">SBC HL,BC</td>
+<td class="comment-1" rowspan="1">Move up a row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -330,25 +351,36 @@ This entry point is used by the routine at <a href="6A9B.html">6A9B</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="7092"></span>7092</td>
 <td class="instruction">LD B,E</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=reset to original width counter.</td>
+<td class="comment-1" rowspan="1">Reset the width counter.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7093"></span>7093</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrement height counter.</td>
+<td class="comment-1" rowspan="1">Decrease the row counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7094"></span>7094</td>
 <td class="instruction">JR NZ,<a href="704B.html#7065">ColouriseSprite_Loop1</a></td>
-<td class="comment-1" rowspan="1">Repeat until all tiles have been coloured.</td>
+<td class="comment-1" rowspan="1">Loop back to <a href="704B.html#7065">ColouriseSprite_Loop1</a> until all of the rows have been coloured.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7096"></span>7096</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/lunarjetman/asm/8733.html">Lunar Jetman</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

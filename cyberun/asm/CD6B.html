@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cyberun: Routine at CD6B</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cyberun.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CD08.html">CD08</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cd6b">Map</a></td>
+<td class="next">
+Next: <a href="CE04.html">CE04</a>
+</td>
+</tr>
+</table>
+<div class="description">CD6B: Read Segment Shapes</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="D0BD.html">DrawTerrain</a>.
+</div>
+<div class="paragraph">
+Reads the two bytes that give the shapes at the ends of a flat segment from the script and stores them in <a href="5C33.html">StartShape</a> and <a href="5C34.html">EndShape</a>. It changes them if the tile is drawn back to front or upside down. When the tile is back to front the horizontal position of the segment is mirrored and its type is changed with the table at <a href="CE04.html">MirrorTypeTable</a>. The routine finally stores the address of the rest of the script in <a href="CE4D.html">ScriptPointer</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Address of the shape bytes in the script</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Address of the next segment in the script</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ReadSegmentShapes</td>
+<td class="address-2"><span id="cd6b"></span>CD6B</td>
+<td class="instruction">LD A,($CE37)</td>
+<td class="comment-1" rowspan="1">The vertical step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd6e"></span>CD6E</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD6B.html#cdc3">ReadSegmentShapes_Store</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd6f"></span>CD6F</td>
+<td class="instruction">JR NZ,<a href="CD6B.html#cdc3">ReadSegmentShapes_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd71"></span>CD71</td>
+<td class="instruction">LD A,($5C26)</td>
+<td class="comment-1" rowspan="1">The upside down flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd74"></span>CD74</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD6B.html#cd7f">ReadSegmentShapes_BackToFront</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd75"></span>CD75</td>
+<td class="instruction">JR Z,<a href="CD6B.html#cd7f">ReadSegmentShapes_BackToFront</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd77"></span>CD77</td>
+<td class="instruction">LD A,($CE44)</td>
+<td class="comment-1" rowspan="1">The segment row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd7a"></span>CD7A</td>
+<td class="instruction">XOR %00001100</td>
+<td class="comment-1" rowspan="1">Flip the bits of <span class="register">A</span> that are set in 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd7c"></span>CD7C</td>
+<td class="instruction">LD ($CE44),A</td>
+<td class="comment-1" rowspan="1">Update the segment row.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadSegmentShapes_BackToFront</td>
+<td class="address-2"><span id="cd7f"></span>CD7F</td>
+<td class="instruction">LD A,($5C30)</td>
+<td class="comment-1" rowspan="1">The back to front flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd82"></span>CD82</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD6B.html#cd9f">ReadSegmentShapes_Normal</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd83"></span>CD83</td>
+<td class="instruction">JR Z,<a href="CD6B.html#cd9f">ReadSegmentShapes_Normal</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd85"></span>CD85</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd86"></span>CD86</td>
+<td class="instruction">XOR %00000010</td>
+<td class="comment-1" rowspan="1">Flip the bits of <span class="register">A</span> that are set in 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd88"></span>CD88</td>
+<td class="instruction">LD ($5C34),A</td>
+<td class="comment-1" rowspan="1">Update the segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd8b"></span>CD8B</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd8c"></span>CD8C</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd8d"></span>CD8D</td>
+<td class="instruction">CP $16</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD6B.html#cd99">ReadSegmentShapes_End</a> if <span class="register">A</span> is 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd8f"></span>CD8F</td>
+<td class="instruction">JR Z,<a href="CD6B.html#cd99">ReadSegmentShapes_End</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd91"></span>CD91</td>
+<td class="instruction">XOR %00000010</td>
+<td class="comment-1" rowspan="1">Flip the bits of <span class="register">A</span> that are set in 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd93"></span>CD93</td>
+<td class="instruction">LD ($5C33),A</td>
+<td class="comment-1" rowspan="1">Update the segment start shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd96"></span>CD96</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd97"></span>CD97</td>
+<td class="instruction">JR <a href="CD6B.html#cda9">ReadSegmentShapes_UpsideDown</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD6B.html#cda9">ReadSegmentShapes_UpsideDown</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadSegmentShapes_End</td>
+<td class="address-2"><span id="cd99"></span>CD99</td>
+<td class="instruction">LD ($5C34),A</td>
+<td class="comment-1" rowspan="1">Update the segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd9c"></span>CD9C</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cd9d"></span>CD9D</td>
+<td class="instruction">JR <a href="CD6B.html#cda9">ReadSegmentShapes_UpsideDown</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD6B.html#cda9">ReadSegmentShapes_UpsideDown</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadSegmentShapes_Normal</td>
+<td class="address-2"><span id="cd9f"></span>CD9F</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda0"></span>CDA0</td>
+<td class="instruction">LD ($5C33),A</td>
+<td class="comment-1" rowspan="1">Update the segment start shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda3"></span>CDA3</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda4"></span>CDA4</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda5"></span>CDA5</td>
+<td class="instruction">LD ($5C34),A</td>
+<td class="comment-1" rowspan="1">Update the segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cda8"></span>CDA8</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadSegmentShapes_UpsideDown</td>
+<td class="address-2"><span id="cda9"></span>CDA9</td>
+<td class="instruction">LD A,($5C26)</td>
+<td class="comment-1" rowspan="1">The upside down flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdac"></span>CDAC</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD6B.html#cdc3">ReadSegmentShapes_Store</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdad"></span>CDAD</td>
+<td class="instruction">JR Z,<a href="CD6B.html#cdc3">ReadSegmentShapes_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdaf"></span>CDAF</td>
+<td class="instruction">LD A,($5C33)</td>
+<td class="comment-1" rowspan="1">The segment start shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb2"></span>CDB2</td>
+<td class="instruction">XOR %00000001</td>
+<td class="comment-1" rowspan="1">Flip the bits of <span class="register">A</span> that are set in 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb4"></span>CDB4</td>
+<td class="instruction">LD ($5C33),A</td>
+<td class="comment-1" rowspan="1">Update the segment start shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdb7"></span>CDB7</td>
+<td class="instruction">LD A,($5C34)</td>
+<td class="comment-1" rowspan="1">The segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdba"></span>CDBA</td>
+<td class="instruction">CP $16</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD6B.html#cdc3">ReadSegmentShapes_Store</a> if <span class="register">A</span> is 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdbc"></span>CDBC</td>
+<td class="instruction">JR Z,<a href="CD6B.html#cdc3">ReadSegmentShapes_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdbe"></span>CDBE</td>
+<td class="instruction">XOR %00000001</td>
+<td class="comment-1" rowspan="1">Flip the bits of <span class="register">A</span> that are set in 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc0"></span>CDC0</td>
+<td class="instruction">LD ($5C34),A</td>
+<td class="comment-1" rowspan="1">Update the segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadSegmentShapes_Store</td>
+<td class="address-2"><span id="cdc3"></span>CDC3</td>
+<td class="instruction">LD ($CE4D),HL</td>
+<td class="comment-1" rowspan="1">Update the script pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc6"></span>CDC6</td>
+<td class="instruction">LD A,($5C30)</td>
+<td class="comment-1" rowspan="1">The back to front flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc9"></span>CDC9</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdca"></span>CDCA</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdcb"></span>CDCB</td>
+<td class="instruction">LD A,($5C34)</td>
+<td class="comment-1" rowspan="1">The segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdce"></span>CDCE</td>
+<td class="instruction">CP $16</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd0"></span>CDD0</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd1"></span>CDD1</td>
+<td class="instruction">LD A,($CE43)</td>
+<td class="comment-1" rowspan="1">The segment column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd4"></span>CDD4</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd5"></span>CDD5</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The horizontal step size.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd8"></span>CDD8</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span> gains <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd9"></span>CDD9</td>
+<td class="instruction">ADD A,$0F</td>
+<td class="comment-1" rowspan="1">Add 0F to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cddb"></span>CDDB</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Invert <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cddc"></span>CDDC</td>
+<td class="instruction">LD ($CE43),A</td>
+<td class="comment-1" rowspan="1">Update the segment column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cddf"></span>CDDF</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde0"></span>CDE0</td>
+<td class="instruction">LD E,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Read offset 03 of <span class="register">IX</span> into <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde3"></span>CDE3</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde5"></span>CDE5</td>
+<td class="instruction">LD HL,$CE04</td>
+<td class="comment-1" rowspan="1">The mirror type table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde8"></span>CDE8</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span> gains <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde9"></span>CDE9</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdea"></span>CDEA</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 03 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cded"></span>CDED</td>
+<td class="instruction">CALL <a href="E3D8.html">SetSlopeParameters</a></td>
+<td class="comment-1" rowspan="1">Call <a href="E3D8.html">SetSlopeParameters</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf0"></span>CDF0</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf1"></span>CDF1</td>
+<td class="instruction">LD A,($CE37)</td>
+<td class="comment-1" rowspan="1">The vertical step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf4"></span>CDF4</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf5"></span>CDF5</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf6"></span>CDF6</td>
+<td class="instruction">LD B,C</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf7"></span>CDF7</td>
+<td class="instruction">LD A,($CE43)</td>
+<td class="comment-1" rowspan="1">The segment column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdfa"></span>CDFA</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="1">Step <span class="register">B</span> back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdfb"></span>CDFB</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadSegmentShapes_Position</td>
+<td class="address-2"><span id="cdfc"></span>CDFC</td>
+<td class="instruction">SUB $18</td>
+<td class="comment-1" rowspan="1">Subtract 18 from <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdfe"></span>CDFE</td>
+<td class="instruction">DJNZ <a href="CD6B.html#cdfc">ReadSegmentShapes_Position</a></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">B</span> and jump to <a href="CD6B.html#cdfc">ReadSegmentShapes_Position</a> until none remain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce00"></span>CE00</td>
+<td class="instruction">LD ($CE43),A</td>
+<td class="comment-1" rowspan="1">Update the segment column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce03"></span>CE03</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CD08.html">CD08</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cd6b">Map</a></td>
+<td class="next">
+Next: <a href="CE04.html">CE04</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/">Source code</a>.</div>
+<div><a href="../dec/asm/52587.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

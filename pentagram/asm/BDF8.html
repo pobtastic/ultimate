@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at BDF8</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BDDE.html">BDDE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bdf8">Map</a></td>
+<td class="next">
+Next: <a href="BF0D.html">BF0D</a>
+</td>
+</tr>
+</table>
+<div class="description">BDF8: Read Controls</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="C440.html">HandlePlayerLegs</a>.
+</div>
+<div class="paragraph">
+Reads the keyboard or the joystick, according to the control method that was chosen in the menu, and writes what is wanted to <a href="A737.html">ControlsPressed</a> as a set of bits:
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Bit</th>
+<th colspan="1" rowspan="1">Meaning</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">00</td>
+<td class="centre" colspan="1" rowspan="1">Turn left</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">01</td>
+<td class="centre" colspan="1" rowspan="1">Turn right</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">02</td>
+<td class="centre" colspan="1" rowspan="1">Walk forward</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">03</td>
+<td class="centre" colspan="1" rowspan="1">Jump</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">04</td>
+<td class="centre" colspan="1" rowspan="1">Pick up or drop an object</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">06</td>
+<td class="centre" colspan="1" rowspan="1">Fire</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+With the keyboard, any of several keys do each action. With a joystick, up walks forward, down jumps and fire fires, and a long list of the keys of the keyboard picks up or drops an object.
+</div>
+<div class="paragraph">
+CAPS SHIFT and SPACE are left alone by this routine, as they pause the game (see <a href="B4E0.html">PauseGame</a>).
+</div>
+</div>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">The controls, also written to <a href="A737.html">ControlsPressed</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bdf8"></span>
+<div class="comments">
+<div class="paragraph">
+Find the control method: 00 is the keyboard, 01 is a Kempston joystick, 02 is a cursor joystick and 03 is an Interface II joystick.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls</td>
+<td class="address-2"><span id="bdf8"></span>BDF8</td>
+<td class="instruction">LD A,($A709)</td>
+<td class="comment-1" rowspan="1">Fetch the control method.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdfb"></span>BDFB</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Shift the method down to bits 0 and 1...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdfc"></span>BDFC</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">...and keep only those bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdfe"></span>BDFE</td>
+<td class="instruction">JP Z,<a href="BDF8.html#be91">ReadControls_Keyboard</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#be91">ReadControls_Keyboard</a> to read the keyboard if the method is 00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be01"></span>BE01</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BDF8.html#be40">ReadControls_Kempston</a> to read a Kempston joystick if the method is 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be02"></span>BE02</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be40">ReadControls_Kempston</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be04"></span>BE04</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BDF8.html#be65">ReadControls_Cursor</a> to read a cursor joystick if the method is 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be05"></span>BE05</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be65">ReadControls_Cursor</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be07"></span>
+<div class="comments">
+<div class="paragraph">
+Read an Interface II joystick, which can be either of the two ports of the interface: they are the keys 1 to 5 (left, right, down, up, fire) and the keys 6, 7, 8, 9 and 0 (left, right, down, up, fire).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be07"></span>BE07</td>
+<td class="instruction">LD A,$F7</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">F7</td>
+<td class="centre" colspan="1" rowspan="1">1</td>
+<td class="centre" colspan="1" rowspan="1">2</td>
+<td class="centre" colspan="1" rowspan="1">3</td>
+<td class="centre" colspan="1" rowspan="1">4</td>
+<td class="centre" colspan="1" rowspan="1">5</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be09"></span>BE09</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be0c"></span>BE0C</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be0d"></span>BE0D</td>
+<td class="instruction">LD B,$05</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of five keys.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Reverse</td>
+<td class="address-2"><span id="be0f"></span>BE0F</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="3">Reverse the order of the five bits, so that they line up with the keys of the second port.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be10"></span>BE10</td>
+<td class="instruction">RL C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be12"></span>BE12</td>
+<td class="instruction">DJNZ <a href="BDF8.html#be0f">ReadControls_Reverse</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be14"></span>BE14</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Move the reversed keys to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be15"></span>BE15</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be16"></span>BE16</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Move the reversed keys to <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be17"></span>BE17</td>
+<td class="instruction">LD A,$EF</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">EF</td>
+<td class="centre" colspan="1" rowspan="1">0</td>
+<td class="centre" colspan="1" rowspan="1">9</td>
+<td class="centre" colspan="1" rowspan="1">8</td>
+<td class="centre" colspan="1" rowspan="1">7</td>
+<td class="centre" colspan="1" rowspan="1">6</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be19"></span>BE19</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1c"></span>BE1C</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="1">Add the keys from the first port to those of the second.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1d"></span>BE1D</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Start with no controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be1f"></span>BE1F</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="3">Set the bit for fire if fire is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be21"></span>BE21</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be25">ReadControls_Interface2Up</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be23"></span>BE23</td>
+<td class="instruction">SET 6,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Interface2Up</td>
+<td class="address-2"><span id="be25"></span>BE25</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="3">Set the bit for walking forward if up is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be27"></span>BE27</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be2b">ReadControls_Interface2Down</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be29"></span>BE29</td>
+<td class="instruction">SET 2,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Interface2Down</td>
+<td class="address-2"><span id="be2b"></span>BE2B</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="3">Set the bit for jumping if down is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2d"></span>BE2D</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be31">ReadControls_Interface2Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be2f"></span>BE2F</td>
+<td class="instruction">SET 3,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Interface2Right</td>
+<td class="address-2"><span id="be31"></span>BE31</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning right if right is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be33"></span>BE33</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be37">ReadControls_Interface2Left</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be35"></span>BE35</td>
+<td class="instruction">SET 1,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Interface2Left</td>
+<td class="address-2"><span id="be37"></span>BE37</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning left if left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be39"></span>BE39</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be3d">ReadControls_Interface2Keys</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be3b"></span>BE3B</td>
+<td class="instruction">SET 0,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Interface2Keys</td>
+<td class="address-2"><span id="be3d"></span>BE3D</td>
+<td class="instruction">JP <a href="BDF8.html#befd">ReadControls_Keys</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#befd">ReadControls_Keys</a> to check the keys for picking up and dropping.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be40"></span>
+<div class="comments">
+<div class="paragraph">
+Read a Kempston joystick, whose bits are right, left, down, up and fire.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Kempston</td>
+<td class="address-2"><span id="be40"></span>BE40</td>
+<td class="instruction">IN A,($1F)</td>
+<td class="comment-1" rowspan="1">Read the joystick.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be42"></span>BE42</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Start with no controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be44"></span>BE44</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning right if right is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be46"></span>BE46</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be4a">ReadControls_KempstonLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be48"></span>BE48</td>
+<td class="instruction">SET 1,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KempstonLeft</td>
+<td class="address-2"><span id="be4a"></span>BE4A</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning left if left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be4c"></span>BE4C</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be50">ReadControls_KempstonDown</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be4e"></span>BE4E</td>
+<td class="instruction">SET 0,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KempstonDown</td>
+<td class="address-2"><span id="be50"></span>BE50</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="3">Set the bit for jumping if down is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be52"></span>BE52</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be56">ReadControls_KempstonUp</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be54"></span>BE54</td>
+<td class="instruction">SET 3,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KempstonUp</td>
+<td class="address-2"><span id="be56"></span>BE56</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="3">Set the bit for walking forward if up is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be58"></span>BE58</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be5c">ReadControls_KempstonFire</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be5a"></span>BE5A</td>
+<td class="instruction">SET 2,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KempstonFire</td>
+<td class="address-2"><span id="be5c"></span>BE5C</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="3">Set the bit for fire if fire is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be5e"></span>BE5E</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be62">ReadControls_KempstonKeys</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be60"></span>BE60</td>
+<td class="instruction">SET 6,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KempstonKeys</td>
+<td class="address-2"><span id="be62"></span>BE62</td>
+<td class="instruction">JP <a href="BDF8.html#befd">ReadControls_Keys</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#befd">ReadControls_Keys</a> to check the keys for picking up and dropping.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be65"></span>
+<div class="comments">
+<div class="paragraph">
+Read a cursor joystick, which is the keys 5 (left), 6 (down), 7 (up), 8 (right) and 0 (fire).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Cursor</td>
+<td class="address-2"><span id="be65"></span>BE65</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Start with no controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be67"></span>BE67</td>
+<td class="instruction">LD A,$F7</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">F7</td>
+<td class="centre" colspan="1" rowspan="1">1</td>
+<td class="centre" colspan="1" rowspan="1">2</td>
+<td class="centre" colspan="1" rowspan="1">3</td>
+<td class="centre" colspan="1" rowspan="1">4</td>
+<td class="centre" colspan="1" rowspan="1">5</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be69"></span>BE69</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be6c"></span>BE6C</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning left if the key 5 is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be6e"></span>BE6E</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be72">ReadControls_CursorFire</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be70"></span>BE70</td>
+<td class="instruction">SET 0,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_CursorFire</td>
+<td class="address-2"><span id="be72"></span>BE72</td>
+<td class="instruction">LD A,$EF</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">EF</td>
+<td class="centre" colspan="1" rowspan="1">0</td>
+<td class="centre" colspan="1" rowspan="1">9</td>
+<td class="centre" colspan="1" rowspan="1">8</td>
+<td class="centre" colspan="1" rowspan="1">7</td>
+<td class="centre" colspan="1" rowspan="1">6</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be74"></span>BE74</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be77"></span>BE77</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="3">Set the bit for fire if the key 0 is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be79"></span>BE79</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be7d">ReadControls_CursorUp</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be7b"></span>BE7B</td>
+<td class="instruction">SET 6,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_CursorUp</td>
+<td class="address-2"><span id="be7d"></span>BE7D</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="3">Set the bit for walking forward if the key 7 is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be7f"></span>BE7F</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be83">ReadControls_CursorRight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be81"></span>BE81</td>
+<td class="instruction">SET 2,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_CursorRight</td>
+<td class="address-2"><span id="be83"></span>BE83</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning right if the key 8 is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be85"></span>BE85</td>
+<td class="instruction">JR Z,<a href="BDF8.html#be89">ReadControls_CursorDown</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be87"></span>BE87</td>
+<td class="instruction">SET 1,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_CursorDown</td>
+<td class="address-2"><span id="be89"></span>BE89</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="3">Set the bit for jumping if the key 6 is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8b"></span>BE8B</td>
+<td class="instruction">JR Z,<a href="BDF8.html#befd">ReadControls_Keys</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8d"></span>BE8D</td>
+<td class="instruction">SET 3,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be8f"></span>BE8F</td>
+<td class="instruction">JR <a href="BDF8.html#befd">ReadControls_Keys</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#befd">ReadControls_Keys</a> to check the keys for picking up and dropping.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="be91"></span>
+<div class="comments">
+<div class="paragraph">
+Read the keyboard. The keys that turn left are Z, C, M and B and those that turn right are X, V, SYMBOL SHIFT and N.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Keyboard</td>
+<td class="address-2"><span id="be91"></span>BE91</td>
+<td class="instruction">LD A,$FE</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">FE</td>
+<td class="centre" colspan="1" rowspan="1">CAPS SHIFT</td>
+<td class="centre" colspan="1" rowspan="1">Z</td>
+<td class="centre" colspan="1" rowspan="1">X</td>
+<td class="centre" colspan="1" rowspan="1">C</td>
+<td class="centre" colspan="1" rowspan="1">V</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be93"></span>BE93</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be96"></span>BE96</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Shift the keys down by one, which drops CAPS SHIFT and leaves Z and C for turning left, and X and V for turning right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be97"></span>BE97</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Stash them in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be98"></span>BE98</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep the keys Z and X.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be9a"></span>BE9A</td>
+<td class="instruction">SRL C</td>
+<td class="comment-1" rowspan="2">Shift the keys C and V down to the same place.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be9c"></span>BE9C</td>
+<td class="instruction">SRL C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be9e"></span>BE9E</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="1">Combine them with the keys Z and X.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="be9f"></span>BE9F</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep the two bits for turning left and turning right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea1"></span>BEA1</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Set the turning bits of the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea2"></span>BEA2</td>
+<td class="instruction">LD A,$7F</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">7F</td>
+<td class="centre" colspan="1" rowspan="1">SPACE</td>
+<td class="centre" colspan="1" rowspan="1">SYMBOL SHIFT</td>
+<td class="centre" colspan="1" rowspan="1">M</td>
+<td class="centre" colspan="1" rowspan="1">N</td>
+<td class="centre" colspan="1" rowspan="1">B</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea4"></span>BEA4</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea7"></span>BEA7</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning right if SYMBOL SHIFT is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bea9"></span>BEA9</td>
+<td class="instruction">JR Z,<a href="BDF8.html#bead">ReadControls_KeyboardM</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beab"></span>BEAB</td>
+<td class="instruction">SET 1,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardM</td>
+<td class="address-2"><span id="bead"></span>BEAD</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning left if M is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beaf"></span>BEAF</td>
+<td class="instruction">JR Z,<a href="BDF8.html#beb3">ReadControls_KeyboardN</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb1"></span>BEB1</td>
+<td class="instruction">SET 0,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardN</td>
+<td class="address-2"><span id="beb3"></span>BEB3</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning right if N is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb5"></span>BEB5</td>
+<td class="instruction">JR Z,<a href="BDF8.html#beb9">ReadControls_KeyboardB</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beb7"></span>BEB7</td>
+<td class="instruction">SET 1,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardB</td>
+<td class="address-2"><span id="beb9"></span>BEB9</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="3">Set the bit for turning left if B is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bebb"></span>BEBB</td>
+<td class="instruction">JR Z,<a href="BDF8.html#bebf">ReadControls_KeyboardWalk</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bebd"></span>BEBD</td>
+<td class="instruction">SET 0,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardWalk</td>
+<td class="address-2"><span id="bebf"></span>BEBF</td>
+<td class="instruction">LD A,$BD</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">BD</td>
+<td class="centre" colspan="1" rowspan="1">A or ENTER</td>
+<td class="centre" colspan="1" rowspan="1">S or L</td>
+<td class="centre" colspan="1" rowspan="1">D or K</td>
+<td class="centre" colspan="1" rowspan="1">F or J</td>
+<td class="centre" colspan="1" rowspan="1">G or H</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec1"></span>BEC1</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec4"></span>BEC4</td>
+<td class="instruction">JR Z,<a href="BDF8.html#bec8">ReadControls_KeyboardJumpKeys</a></td>
+<td class="comment-1" rowspan="2">Set the bit for walking forward if any of those keys is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bec6"></span>BEC6</td>
+<td class="instruction">SET 2,C</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardJumpKeys</td>
+<td class="address-2"><span id="bec8"></span>BEC8</td>
+<td class="instruction">LD A,$DF</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">DF</td>
+<td class="centre" colspan="1" rowspan="1">P</td>
+<td class="centre" colspan="1" rowspan="1">O</td>
+<td class="centre" colspan="1" rowspan="1">I</td>
+<td class="centre" colspan="1" rowspan="1">U</td>
+<td class="centre" colspan="1" rowspan="1">Y</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beca"></span>BECA</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="becd"></span>BECD</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Stash the keys in <span class="register">B</span>, which is not used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bece"></span>BECE</td>
+<td class="instruction">AND %00001010</td>
+<td class="comment-1" rowspan="1">Keep the keys O and U.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed0"></span>BED0</td>
+<td class="instruction">JR NZ,<a href="BDF8.html#bedc">ReadControls_KeyboardJump</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#bedc">ReadControls_KeyboardJump</a> if either of them is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed2"></span>BED2</td>
+<td class="instruction">LD A,$FB</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">FB</td>
+<td class="centre" colspan="1" rowspan="1">Q</td>
+<td class="centre" colspan="1" rowspan="1">W</td>
+<td class="centre" colspan="1" rowspan="1">E</td>
+<td class="centre" colspan="1" rowspan="1">R</td>
+<td class="centre" colspan="1" rowspan="1">T</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed4"></span>BED4</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed7"></span>BED7</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Stash the keys in <span class="register">E</span>, which is not used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bed8"></span>BED8</td>
+<td class="instruction">AND %00010101</td>
+<td class="comment-1" rowspan="1">Keep the keys Q, E and T.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beda"></span>BEDA</td>
+<td class="instruction">JR Z,<a href="BDF8.html#bede">ReadControls_KeyboardAction</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#bede">ReadControls_KeyboardAction</a> if none of them is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardJump</td>
+<td class="address-2"><span id="bedc"></span>BEDC</td>
+<td class="instruction">SET 3,C</td>
+<td class="comment-1" rowspan="1">Set the bit for jumping, as one of the keys Q, E, T, O and U is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardAction</td>
+<td class="address-2"><span id="bede"></span>BEDE</td>
+<td class="instruction">LD A,$E7</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">E7</td>
+<td class="centre" colspan="1" rowspan="1">1 or 0</td>
+<td class="centre" colspan="1" rowspan="1">2 or 9</td>
+<td class="centre" colspan="1" rowspan="1">3 or 8</td>
+<td class="centre" colspan="1" rowspan="1">4 or 7</td>
+<td class="centre" colspan="1" rowspan="1">5 or 6</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee0"></span>BEE0</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee3"></span>BEE3</td>
+<td class="instruction">JR Z,<a href="BDF8.html#bee7">ReadControls_KeyboardFire</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#bee7">ReadControls_KeyboardFire</a> if none of the number keys is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee5"></span>BEE5</td>
+<td class="instruction">SET 4,C</td>
+<td class="comment-1" rowspan="1">Set the bit for picking up and dropping, as a number key is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardFire</td>
+<td class="address-2"><span id="bee7"></span>BEE7</td>
+<td class="instruction">LD A,$DF</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">DF</td>
+<td class="centre" colspan="1" rowspan="1">P</td>
+<td class="centre" colspan="1" rowspan="1">O</td>
+<td class="centre" colspan="1" rowspan="1">I</td>
+<td class="centre" colspan="1" rowspan="1">U</td>
+<td class="centre" colspan="1" rowspan="1">Y</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bee9"></span>BEE9</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beec"></span>BEEC</td>
+<td class="instruction">AND %00010101</td>
+<td class="comment-1" rowspan="1">Keep the keys P, I and Y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beee"></span>BEEE</td>
+<td class="instruction">JR NZ,<a href="BDF8.html#bef9">ReadControls_KeyboardSetFire</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#bef9">ReadControls_KeyboardSetFire</a> if one of them is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bef0"></span>BEF0</td>
+<td class="instruction">LD A,$FB</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">FB</td>
+<td class="centre" colspan="1" rowspan="1">Q</td>
+<td class="centre" colspan="1" rowspan="1">W</td>
+<td class="centre" colspan="1" rowspan="1">E</td>
+<td class="centre" colspan="1" rowspan="1">R</td>
+<td class="centre" colspan="1" rowspan="1">T</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bef2"></span>BEF2</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bef5"></span>BEF5</td>
+<td class="instruction">AND %00001010</td>
+<td class="comment-1" rowspan="1">Keep the keys W and R.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bef7"></span>BEF7</td>
+<td class="instruction">JR Z,<a href="BDF8.html#bf08">ReadControls_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#bf08">ReadControls_Done</a> if neither is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_KeyboardSetFire</td>
+<td class="address-2"><span id="bef9"></span>BEF9</td>
+<td class="instruction">SET 6,C</td>
+<td class="comment-1" rowspan="1">Set the bit for fire, as one of the keys P, I, Y, W and R is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="befb"></span>BEFB</td>
+<td class="instruction">JR <a href="BDF8.html#bf08">ReadControls_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#bf08">ReadControls_Done</a> to finish.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="befd"></span>
+<div class="comments">
+<div class="paragraph">
+With a joystick, the keys of the keyboard other than CAPS SHIFT and SPACE are used to pick up and drop an object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Keys</td>
+<td class="address-2"><span id="befd"></span>BEFD</td>
+<td class="instruction">LD A,$7E</td>
+<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="B952.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">7E</td>
+<td class="centre" colspan="1" rowspan="1">CAPS SHIFT or SPACE</td>
+<td class="centre" colspan="1" rowspan="1">Z or SYMBOL SHIFT</td>
+<td class="centre" colspan="1" rowspan="1">X or M</td>
+<td class="centre" colspan="1" rowspan="1">C or N</td>
+<td class="centre" colspan="1" rowspan="1">V or B</td>
+</tr>
+</table></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="beff"></span>BEFF</td>
+<td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf02"></span>BF02</td>
+<td class="instruction">AND %00011110</td>
+<td class="comment-1" rowspan="1">Keep the keys other than CAPS SHIFT and SPACE.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf04"></span>BF04</td>
+<td class="instruction">JR Z,<a href="BDF8.html#bf08">ReadControls_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BDF8.html#bf08">ReadControls_Done</a> if none of them is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf06"></span>BF06</td>
+<td class="instruction">SET 4,C</td>
+<td class="comment-1" rowspan="1">Set the bit for picking up and dropping.</td>
+</tr>
+<tr>
+<td class="asm-label">ReadControls_Done</td>
+<td class="address-2"><span id="bf08"></span>BF08</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Copy the controls to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf09"></span>BF09</td>
+<td class="instruction">LD ($A737),A</td>
+<td class="comment-1" rowspan="1">Write them to <a href="A737.html">ControlsPressed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf0c"></span>BF0C</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/alien8/asm/C8FF.html">Alien 8</a></li>
+<li><a href="/ultimate/gunfright/asm/D0E3.html">Gunfright</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BDDE.html">BDDE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bdf8">Map</a></td>
+<td class="next">
+Next: <a href="BF0D.html">BF0D</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/48632.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

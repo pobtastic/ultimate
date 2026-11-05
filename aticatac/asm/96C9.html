@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,128 +44,129 @@ Next: <a href="96EC.html">96EC</a>
 <div class="paragraph">
 Used by the routine at <a href="9641.html">GameStats</a>.
 </div>
+<div class="paragraph">
+Works out the percentage of the rooms that have been visited, from the bits that are set in the table at <a href="5E40.html">VisitedRooms</a>, and writes it to <a href="5E54.html">VisitedPercentage</a> as BCD. Every third room that has been visited adds 02 to the percentage, and then 01 is added at the end.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">CalcRoomsVisited</td>
+<td class="asm-label">CalculateRoomsVisited</td>
 <td class="address-2"><span id="96c9"></span>96C9</td>
 <td class="instruction">LD HL,$5E40</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E40.html">VisitedRooms</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the table of visited rooms at <a href="5E40.html">VisitedRooms</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96cc"></span>96CC</td>
 <td class="instruction">LD BC,$0813</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=0813.</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=08 (the number of bits in each byte) and <span class="register">C</span>=13 (the number of bytes).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96cf"></span>96CF</td>
 <td class="instruction">LD D,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">D</span>=03.</td>
+<td class="comment-1" rowspan="1"><span class="register">D</span>=03 (the number of rooms that are left before the next increase).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96d1"></span>96D1</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=00 (the percentage so far).</td>
 </tr>
 <tr>
-<td class="asm-label">CalcRoomsVisited_0</td>
+<td class="asm-label">CalculateRoomsVisited_Byte</td>
 <td class="address-2"><span id="96d2"></span>96D2</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the counters on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96d3"></span>96D3</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the next byte of the table.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96d4"></span>96D4</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
-<td class="asm-label">CalcRoomsVisited_1</td>
+<td class="asm-label">CalculateRoomsVisited_Bit</td>
 <td class="address-2"><span id="96d5"></span>96D5</td>
 <td class="instruction">RR E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate the next bit into the carry flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96d7"></span>96D7</td>
-<td class="instruction">JR NC,<a href="96C9.html#96e1">CalcRoomsVisited_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="96C9.html#96e1">CalculateRoomsVisited_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96C9.html#96e1">CalculateRoomsVisited_Next</a> if the room has not been visited.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96d9"></span>96D9</td>
 <td class="instruction">DEC D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="96C9.html#96e1">CalculateRoomsVisited_Next</a> if there are more rooms before the next increase.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96da"></span>96DA</td>
-<td class="instruction">JR NZ,<a href="96C9.html#96e1">CalcRoomsVisited_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="96C9.html#96e1">CalculateRoomsVisited_Next</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96dc"></span>96DC</td>
 <td class="instruction">LD D,$03</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">D</span>=03.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96de"></span>96DE</td>
 <td class="instruction">ADD A,$02</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add 02 to the percentage.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96e0"></span>96E0</td>
 <td class="instruction">DAA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Convert the result to BCD.</td>
 </tr>
 <tr>
-<td class="asm-label">CalcRoomsVisited_2</td>
+<td class="asm-label">CalculateRoomsVisited_Next</td>
 <td class="address-2"><span id="96e1"></span>96E1</td>
-<td class="instruction">DJNZ <a href="96C9.html#96d5">CalcRoomsVisited_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="96C9.html#96d5">CalculateRoomsVisited_Bit</a></td>
+<td class="comment-1" rowspan="1">Decrease the bit counter by one and loop back to <a href="96C9.html#96d5">CalculateRoomsVisited_Bit</a> until the byte is done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96e3"></span>96E3</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the counters from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96e4"></span>96E4</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the byte counter by one and loop back to <a href="96C9.html#96d2">CalculateRoomsVisited_Byte</a> until all of the bytes are done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96e5"></span>96E5</td>
-<td class="instruction">JR NZ,<a href="96C9.html#96d2">CalcRoomsVisited_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="96C9.html#96d2">CalculateRoomsVisited_Byte</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96e7"></span>96E7</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add one to the percentage.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="96e8"></span>96E8</td>
 <td class="instruction">LD ($5E54),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the percentage to <a href="5E54.html">VisitedPercentage</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

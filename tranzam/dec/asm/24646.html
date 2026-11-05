@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,10 @@ Next: <a href="24667.html">24667</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="25599.html">HandlerCup</a>, <a href="27922.html">27922</a> and <a href="28588.html">28588</a>.
+Used by the routines at <a href="25599.html">HandlerCup</a>, <a href="27922.html">UpdatePlayerCar</a> and <a href="28476.html">PlaceObject</a>.
+</div>
+<div class="paragraph">
+Adds a number of points to the score, using BCD arithmetic, and then prints the new score. The score is held as three BCD bytes from <a href="24140.html">Score_1</a>, the least significant byte being the last.
 </div>
 </div>
 <table class="input">
@@ -47,8 +53,12 @@ Used by the routines at <a href="25599.html">HandlerCup</a>, <a href="27922.html
 <th colspan="2">Input</th>
 </tr>
 <tr>
-<td class="register">BC</td>
-<td class="register-desc">Points to add to score</td>
+<td class="register">B</td>
+<td class="register-desc">Points to add (hundreds and thousands, as BCD)</td>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">Points to add (units and tens, as BCD)</td>
 </tr>
 </table>
 </td>
@@ -57,19 +67,19 @@ Used by the routines at <a href="25599.html">HandlerCup</a>, <a href="27922.html
 <td class="asm-label">AddPointsToScore</td>
 <td class="address-2"><span id="24646"></span>24646</td>
 <td class="instruction">LD HL,24142</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24140.html#24142">Score_3</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the units and tens of the score (<a href="24140.html#24142">Score_3</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24649"></span>24649</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=score byte #3.</td>
+<td class="comment-1" rowspan="1">Fetch the units and tens of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24650"></span>24650</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-1" rowspan="2">Add <span class="register">C</span> to score byte #3 with BCD conversion.</td>
+<td class="comment-1" rowspan="2">Add the units and tens of the points to it, using BCD.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -80,25 +90,25 @@ Used by the routines at <a href="25599.html">HandlerCup</a>, <a href="27922.html
 <td class="asm-label"></td>
 <td class="address-1"><span id="24652"></span>24652</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Update score byte #3.</td>
+<td class="comment-1" rowspan="1">Write the new units and tens back to the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24653"></span>24653</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Move onto the next score byte.</td>
+<td class="comment-1" rowspan="1">Move on to the hundreds and thousands of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24654"></span>24654</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=score byte #2.</td>
+<td class="comment-1" rowspan="1">Fetch the hundreds and thousands of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24655"></span>24655</td>
 <td class="instruction">ADC A,B</td>
-<td class="comment-1" rowspan="2">Add (with carry) <span class="register">B</span> to score byte #2 with BCD conversion.</td>
+<td class="comment-1" rowspan="2">Add the hundreds and thousands of the points, plus any carry, using BCD.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -109,52 +119,56 @@ Used by the routines at <a href="25599.html">HandlerCup</a>, <a href="27922.html
 <td class="asm-label"></td>
 <td class="address-1"><span id="24657"></span>24657</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Update score byte #2.</td>
+<td class="comment-1" rowspan="1">Write the new hundreds and thousands back to the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24658"></span>24658</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Move onto the next score byte.</td>
+<td class="comment-1" rowspan="1">Move on to the ten thousands and hundred thousands of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24659"></span>24659</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=score byte #1.</td>
+<td class="comment-1" rowspan="1">Fetch the ten thousands and hundred thousands of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24660"></span>24660</td>
 <td class="instruction">ADC A,0</td>
-<td class="comment-1" rowspan="1">Add 0 (i.e. just the carry flag) to score byte #1 with BCD conversion.</td>
+<td class="comment-1" rowspan="2">Add any carry from the hundreds and thousands to it, using BCD.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24662"></span>24662</td>
 <td class="instruction">DAA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24663"></span>24663</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Update score byte #1.</td>
+<td class="comment-1" rowspan="1">Write the new ten thousands and hundred thousands back to the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24664"></span>24664</td>
-<td class="instruction">JP <a href="27830.html">Score_Player</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="27830.html">Score_Player</a>.</td>
+<td class="instruction">JP <a href="27830.html">Score_1UP</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="27830.html">Score_1UP</a> to print the new score.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="comments">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
+<li><a href="/ultimate/aticatac/dec/asm/41372.html">Atic Atac</a></li>
 <li><a href="/ultimate/cookie/dec/asm/29717.html">Cookie</a></li>
 <li><a href="/ultimate/jetpac/dec/asm/28921.html">Jetpac</a></li>
+<li><a href="/ultimate/lunarjetman/dec/asm/35228.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/martianoids/dec/asm/46451.html">Martianoids</a></li>
 <li><a href="/ultimate/pssst/dec/asm/29562.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/dec/asm/46505.html">Sabre Wulf</a></li>
+<li><a href="/ultimate/underwurlde/dec/asm/41029.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,10 @@ Next: <a href="9BEA.html">9BEA</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="7D8A.html">MenuWriteText</a>, <a href="8C63.html">HandlerFoodItem</a>, <a href="98D2.html">SetKeyPositions</a>, <a href="A00E.html">SetEntityAttributes</a>, <a href="A1F3.html">PrintStringColour</a> and <a href="A240.html">DrawSidePanelAttrs</a>.
+Used by the routines at <a href="7D8A.html">MenuWriteText</a>, <a href="8C8C.html">FlashScore</a>, <a href="99AF.html">GetGraphicAttributeDetails</a>, <a href="A00E.html">SetEntityAttributes</a>, <a href="A1F3.html">PrintStringColour</a> and <a href="A240.html">DrawSidePanelAttrs</a>.
+</div>
+<div class="paragraph">
+Converts the pixel position of a point into the address in the attribute buffer of the character cell that holds it.
 </div>
 </div>
 <table class="input">
@@ -47,8 +53,12 @@ Used by the routines at <a href="7D8A.html">MenuWriteText</a>, <a href="8C63.htm
 <th colspan="2">Input</th>
 </tr>
 <tr>
-<td class="register">HL</td>
-<td class="register-desc">Pixel address co-ordinates</td>
+<td class="register">H</td>
+<td class="register-desc">The Y position (the pixel line down from the top)</td>
+</tr>
+<tr>
+<td class="register">L</td>
+<td class="register-desc">The X position (the pixel across from the left)</td>
 </tr>
 </table>
 <table class="output">
@@ -57,19 +67,9 @@ Used by the routines at <a href="7D8A.html">MenuWriteText</a>, <a href="8C63.htm
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Attribute buffer address</td>
+<td class="register-desc">The attribute buffer address</td>
 </tr>
 </table>
-</td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="9bd2"></span>
-<div class="comments">
-<div class="paragraph">
-Converts a given pixel address to the associated attribute buffer address.
-</div>
-</div>
 </td>
 </tr>
 <tr>
@@ -82,13 +82,13 @@ Converts a given pixel address to the associated attribute buffer address.
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bd3"></span>9BD3</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="1">Horizontal co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the X position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bd4"></span>9BD4</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="3">Divide by 08.</td>
+<td class="comment-1" rowspan="3">Rotate right three times, which divides the X position by 08.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -104,25 +104,25 @@ Converts a given pixel address to the associated attribute buffer address.
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bd7"></span>9BD7</td>
 <td class="instruction">AND %00011111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-4 (00-1F / minimum-maximum horizontal screen values).</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-4 (the column).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bd9"></span>9BD9</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Store this back in <span class="register">L</span>.</td>
+<td class="comment-1" rowspan="1">Keep the column in <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bda"></span>9BDA</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1">Vertical co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the Y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bdb"></span>9BDB</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2">Multiply by 04.</td>
+<td class="comment-1" rowspan="2">Rotate left twice.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -133,49 +133,49 @@ Converts a given pixel address to the associated attribute buffer address.
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bdd"></span>9BDD</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Store this in <span class="register">C</span> temporarily.</td>
+<td class="comment-1" rowspan="1">Keep the Y position, rotated, in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9bde"></span>9BDE</td>
 <td class="instruction">AND %11100000</td>
-<td class="comment-1" rowspan="1">Keep only bits 5-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 5-7 (the character row within the third of the screen).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9be0"></span>9BE0</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1">Set the bits from <span class="register">L</span>.</td>
+<td class="comment-1" rowspan="1">Combine it with the column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9be1"></span>9BE1</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"><span class="register">L</span>=<span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Keep the low byte of the attribute buffer address in <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9be2"></span>9BE2</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1">Fetch the stored value from <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the Y position, rotated.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9be3"></span>9BE3</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-1 (the third of the screen).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9be5"></span>9BE5</td>
 <td class="instruction">OR %01011000</td>
-<td class="comment-1" rowspan="1">Set MSB of the attribute buffer 58. This ensures our value is &gt;= <a href="4000.html#5800">5800</a>.</td>
+<td class="comment-1" rowspan="1">Set bits 3-4 and 6, so the address is in the attribute buffer (58).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9be7"></span>9BE7</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1">Store this back in <span class="register">H</span>.</td>
+<td class="comment-1" rowspan="1">Keep the high byte of the attribute buffer address in <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -197,8 +197,11 @@ View the equivalent code in; <ul class="">
 <li><a href="/ultimate/cookie/asm/7534.html">Cookie</a></li>
 <li><a href="/ultimate/jetpac/asm/720E.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/asm/8506.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/martianoids/asm/BD6A.html">Martianoids</a></li>
 <li><a href="/ultimate/pssst/asm/748F.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/asm/B8DD.html">Sabre Wulf</a></li>
 <li><a href="/ultimate/tranzam/asm/7097.html">Tranz Am</a></li>
+<li><a href="/ultimate/underwurlde/asm/ADE0.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

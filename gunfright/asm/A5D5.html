@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at A5D5</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A5D2.html">A5D2</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#a5d5">Map</a></td>
+<td class="next">
+Next: <a href="A64F.html">A64F</a>
+</td>
+</tr>
+</table>
+<div class="description">A5D5: Update Prices</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="B3BD.html">CreateTownObjects</a>.
+</div>
+<div class="paragraph">
+Called every frame, but only does anything when the low byte of the frame counter is BD so once every 256 frames. It picks one of the three amounts on the telegram at random: the fine, the price of a horse or the price of a bullet. If the telegram has finished typing it chooses a new price from a table and retypes that line. The higher the level, the more prices the table offers, so prices tend to rise as the game goes on.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices</td>
+<td class="address-2"><span id="a5d5"></span>A5D5</td>
+<td class="instruction">LD HL,($A216)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5d8"></span>A5D8</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Copy its low byte into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5d9"></span>A5D9</td>
+<td class="instruction">ADD A,$43</td>
+<td class="comment-1" rowspan="1">Add 43 which gives zero only when the low byte is BD.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5db"></span>A5DB</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return unless it is.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5dc"></span>A5DC</td>
+<td class="instruction">LD A,($A218)</td>
+<td class="comment-1" rowspan="1">Fetch a random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5df"></span>A5DF</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5e1"></span>A5E1</td>
+<td class="instruction">JR Z,<a href="A5D5.html#a627">UpdatePrices_Fine</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A5D5.html#a627">UpdatePrices_Fine</a> to change the fine if the number is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5e3"></span>A5E3</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A5D5.html#a63b">UpdatePrices_HorsePrice</a> to change the price of a horse if the number is one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5e4"></span>A5E4</td>
+<td class="instruction">JR Z,<a href="A5D5.html#a63b">UpdatePrices_HorsePrice</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a5e6"></span>
+<div class="comments">
+<div class="paragraph">
+Change the price of a bullet.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5e6"></span>A5E6</td>
+<td class="instruction">CALL <a href="A64F.html">CheckTelegramComplete</a></td>
+<td class="comment-1" rowspan="1">Check whether the telegram has finished typing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5e9"></span>A5E9</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if it has not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5ea"></span>A5EA</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="A830.html">TelegramLines</a> to start typing the bullet line again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5eb"></span>A5EB</td>
+<td class="instruction">LD ($A830),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5ee"></span>A5EE</td>
+<td class="instruction">LD HL,$A25F</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A25E.html#a25f">BulletPrice_HighByte</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5f1"></span>A5F1</td>
+<td class="instruction">LD DE,$A83D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A830.html#a83d">TelegramLines_BulletDigits</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5f4"></span>A5F4</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Keep both in the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5f5"></span>A5F5</td>
+<td class="instruction">LD HL,$A65F</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A65F.html">BulletPrices</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a5f8"></span>
+<div class="comments">
+<div class="paragraph">
+Choose a new price from the table at <span class="register">HL</span>, using more of the table as the level goes up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_ChooseNewPrice</td>
+<td class="address-2"><span id="a5f8"></span>A5F8</td>
+<td class="instruction">LD A,($A260)</td>
+<td class="comment-1" rowspan="1">Fetch the level.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5fb"></span>A5FB</td>
+<td class="instruction">CP $06</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A5D5.html#a603">UpdatePrices_TestLevelThirteen</a> if the level is six or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5fd"></span>A5FD</td>
+<td class="instruction">JR NC,<a href="A5D5.html#a603">UpdatePrices_TestLevelThirteen</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a5ff"></span>A5FF</td>
+<td class="instruction">LD A,$02</td>
+<td class="comment-1" rowspan="1">Allow the first two prices.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a601"></span>A601</td>
+<td class="instruction">JR <a href="A5D5.html#a60d">UpdatePrices_StoreAllowed</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A5D5.html#a60d">UpdatePrices_StoreAllowed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_TestLevelThirteen</td>
+<td class="address-2"><span id="a603"></span>A603</td>
+<td class="instruction">CP $0D</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A5D5.html#a60b">UpdatePrices_AllowEight</a> if the level is thirteen or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a605"></span>A605</td>
+<td class="instruction">JR NC,<a href="A5D5.html#a60b">UpdatePrices_AllowEight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a607"></span>A607</td>
+<td class="instruction">LD A,$04</td>
+<td class="comment-1" rowspan="1">Allow the first four prices.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a609"></span>A609</td>
+<td class="instruction">JR <a href="A5D5.html#a60d">UpdatePrices_StoreAllowed</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A5D5.html#a60d">UpdatePrices_StoreAllowed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_AllowEight</td>
+<td class="address-2"><span id="a60b"></span>A60B</td>
+<td class="instruction">LD A,$08</td>
+<td class="comment-1" rowspan="1">Allow all eight prices.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_StoreAllowed</td>
+<td class="address-2"><span id="a60d"></span>A60D</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Copy the number of prices that are allowed into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a60e"></span>A60E</td>
+<td class="instruction">LD A,($A219)</td>
+<td class="comment-1" rowspan="1">Fetch a random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a611"></span>A611</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep a number between 00 and 0F.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_ChooseNewPriceLoop</td>
+<td class="address-2"><span id="a613"></span>A613</td>
+<td class="instruction">CP C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A5D5.html#a619">UpdatePrices_ReadPrice</a> once the number is less than the number of prices allowed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a614"></span>A614</td>
+<td class="instruction">JR C,<a href="A5D5.html#a619">UpdatePrices_ReadPrice</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a616"></span>A616</td>
+<td class="instruction">SUB C</td>
+<td class="comment-1" rowspan="1">Otherwise subtract the number of prices allowed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a617"></span>A617</td>
+<td class="instruction">JR <a href="A5D5.html#a613">UpdatePrices_ChooseNewPriceLoop</a></td>
+<td class="comment-1" rowspan="1">Loop back to <a href="A5D5.html#a613">UpdatePrices_ChooseNewPriceLoop</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_ReadPrice</td>
+<td class="address-2"><span id="a619"></span>A619</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double the number to get an offset into the table of words.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a61a"></span>A61A</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Copy the offset into <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a61b"></span>A61B</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a61d"></span>A61D</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the chosen price.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a61e"></span>A61E</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the price.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a61f"></span>A61F</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a620"></span>A620</td>
+<td class="instruction">LD B,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the price.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a621"></span>A621</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the price on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a622"></span>A622</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Bring back the address of the price and the digits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a623"></span>A623</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Fetch the new price into <span class="register">BC</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a624"></span>A624</td>
+<td class="instruction">JP <a href="A770.html#a77d">ResetBulletPrice_SetPrice</a></td>
+<td class="comment-1" rowspan="1">Store the new price, convert it to text and start typing the line again.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a627"></span>
+<div class="comments">
+<div class="paragraph">
+Change the fine.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_Fine</td>
+<td class="address-2"><span id="a627"></span>A627</td>
+<td class="instruction">CALL <a href="A64F.html">CheckTelegramComplete</a></td>
+<td class="comment-1" rowspan="1">Check whether the telegram has finished typing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a62a"></span>A62A</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if it has not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a62b"></span>A62B</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="A830.html#a854">A854</a> to start typing the fine line again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a62c"></span>A62C</td>
+<td class="instruction">LD ($A854),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a62f"></span>A62F</td>
+<td class="instruction">LD HL,$A25B</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A25A.html#a25b">Fine_HighByte</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a632"></span>A632</td>
+<td class="instruction">LD DE,$A861</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A830.html#a861">TelegramLines_FineDigits</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a635"></span>A635</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Keep both in the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a636"></span>A636</td>
+<td class="instruction">LD HL,$A67F</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A67F.html">FineAmounts</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a639"></span>A639</td>
+<td class="instruction">JR <a href="A5D5.html#a5f8">UpdatePrices_ChooseNewPrice</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A5D5.html#a5f8">UpdatePrices_ChooseNewPrice</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a63b"></span>
+<div class="comments">
+<div class="paragraph">
+Change the price of a horse.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdatePrices_HorsePrice</td>
+<td class="address-2"><span id="a63b"></span>A63B</td>
+<td class="instruction">CALL <a href="A64F.html">CheckTelegramComplete</a></td>
+<td class="comment-1" rowspan="1">Check whether the telegram has finished typing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a63e"></span>A63E</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if it has not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a63f"></span>A63F</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="A830.html#a842">A842</a> to start typing the horse line again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a640"></span>A640</td>
+<td class="instruction">LD ($A842),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a643"></span>A643</td>
+<td class="instruction">LD HL,$A25D</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A25C.html#a25d">HorsePrice_HighByte</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a646"></span>A646</td>
+<td class="instruction">LD DE,$A84F</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="A830.html#a84f">TelegramLines_HorseDigits</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a649"></span>A649</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Keep both in the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a64a"></span>A64A</td>
+<td class="instruction">LD HL,$A66F</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="A66F.html">HorsePrices</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="a64d"></span>A64D</td>
+<td class="instruction">JR <a href="A5D5.html#a5f8">UpdatePrices_ChooseNewPrice</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A5D5.html#a5f8">UpdatePrices_ChooseNewPrice</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A5D2.html">A5D2</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#a5d5">Map</a></td>
+<td class="next">
+Next: <a href="A64F.html">A64F</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/42453.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at E4CC</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="E4C6.html">E4C6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#e4cc">Map</a></td>
+<td class="next">
+Next: <a href="E57F.html">E57F</a>
+</td>
+</tr>
+</table>
+<div class="description">E4CC: Update Screen</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="CD11.html">RunFrame</a>.
+</div>
+<div class="paragraph">
+Called every frame. Every eighth frame the restart position is updated if the player has been standing on a place where it can restart. The frame counter is increased and the screen buffer is copied to the screen, starting with the rows that are chosen by <a href="5CE9.html">ScrollValue</a>. The copy of the buffer to the screen is done by using the stack pointer.
+</div>
+<div class="paragraph">
+<table class="">
+<tr>
+<td class="" colspan="1" rowspan="1"><img alt="update-screen-before" src="../images/scr/update-screen-before.png" /></td>
+<td class="" colspan="1" rowspan="1"><img alt="update-screen-after" src="../images/scr/update-screen-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e4cc"></span>
+<div class="comments">
+<div class="paragraph">
+Every eighth frame, remember where the player is standing so that a new life can start from there.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateScreen</td>
+<td class="address-2"><span id="e4cc"></span>E4CC</td>
+<td class="instruction">LD A,($A2DD)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4cf"></span>E4CF</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Use bits 0-2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4d1"></span>E4D1</td>
+<td class="instruction">JR NZ,<a href="E4CC.html#e50d">UpdateScreen_Count</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E4CC.html#e50d">UpdateScreen_Count</a> unless this is an eighth frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4d3"></span>E4D3</td>
+<td class="instruction">LD A,($B55E)</td>
+<td class="comment-1" rowspan="1">Read field 1E of the player entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4d6"></span>E4D6</td>
+<td class="instruction">AND %10000000</td>
+<td class="comment-1" rowspan="1">Keep bit 7, which is set if the player is on the ground.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4d8"></span>E4D8</td>
+<td class="instruction">JR Z,<a href="E4CC.html#e50a">UpdateScreen_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E4CC.html#e50a">UpdateScreen_Store</a> if the player is not on the ground, to forget the place that was found.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4da"></span>E4DA</td>
+<td class="instruction">LD A,($E4C7)</td>
+<td class="comment-1" rowspan="1">Read the byte at <a href="E4C6.html">E4C7</a>, which is not zero if a place to restart from has been found.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4dd"></span>E4DD</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4de"></span>E4DE</td>
+<td class="instruction">JR Z,<a href="E4CC.html#e50d">UpdateScreen_Count</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E4CC.html#e50d">UpdateScreen_Count</a> if no place has been found.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4e0"></span>E4E0</td>
+<td class="instruction">LD A,($B540)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the player entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4e3"></span>E4E3</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrease it by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4e4"></span>E4E4</td>
+<td class="instruction">LD A,$00</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span> is 00 ready to forget the place.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4e6"></span>E4E6</td>
+<td class="instruction">JR NZ,<a href="E4CC.html#e50a">UpdateScreen_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E4CC.html#e50a">UpdateScreen_Store</a> if the player is not of type 01 to forget the place that was found.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e4e8"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the place that was found to the restart position of the level.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4e8"></span>E4E8</td>
+<td class="instruction">LD A,($E4C6)</td>
+<td class="comment-1" rowspan="1">Read the byte at <a href="E4C6.html">RestartCandidate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4eb"></span>E4EB</td>
+<td class="instruction">LD ($DEF6),A</td>
+<td class="comment-1" rowspan="1">Store it at <a href="DEF5.html">DEF6</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4ee"></span>E4EE</td>
+<td class="instruction">LD A,($E4C7)</td>
+<td class="comment-1" rowspan="2">Read the byte at <a href="E4C6.html">E4C7</a> and take away 20.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4f1"></span>E4F1</td>
+<td class="instruction">SUB $20</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4f3"></span>E4F3</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4f4"></span>E4F4</td>
+<td class="instruction">LD A,($E4CB)</td>
+<td class="comment-1" rowspan="1">Read the byte at <a href="E4C6.html">E4CB</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4f7"></span>E4F7</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Use bits 4-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4f9"></span>E4F9</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">Combine them with the byte in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4fa"></span>E4FA</td>
+<td class="instruction">LD ($DEF5),A</td>
+<td class="comment-1" rowspan="1">Store them at <a href="DEF5.html">RestartPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e4fd"></span>E4FD</td>
+<td class="instruction">LD A,($E4C9)</td>
+<td class="comment-1" rowspan="1">Read the byte at <a href="E4C6.html">E4C9</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e500"></span>E500</td>
+<td class="instruction">LD ($DEF7),A</td>
+<td class="comment-1" rowspan="1">Store it at <a href="DEF5.html">DEF7</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e503"></span>E503</td>
+<td class="instruction">LD A,($E4C8)</td>
+<td class="comment-1" rowspan="1">Read the byte at <a href="E4C6.html">E4C8</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e506"></span>E506</td>
+<td class="instruction">LD ($DEF8),A</td>
+<td class="comment-1" rowspan="1">Store it at <a href="DEF5.html">DEF8</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e509"></span>E509</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span> is 00.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateScreen_Store</td>
+<td class="address-2"><span id="e50a"></span>E50A</td>
+<td class="instruction">LD ($E4C7),A</td>
+<td class="comment-1" rowspan="1">Forget the place that was found.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e50d"></span>
+<div class="comments">
+<div class="paragraph">
+Count the frame, and make the random numbers move on.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateScreen_Count</td>
+<td class="address-2"><span id="e50d"></span>E50D</td>
+<td class="instruction">LD HL,($A2DD)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e510"></span>E510</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Add one to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e511"></span>E511</td>
+<td class="instruction">LD ($A2DD),HL</td>
+<td class="comment-1" rowspan="1">Store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e514"></span>E514</td>
+<td class="instruction">CALL <a href="5F9E.html">GetRandomNumber</a></td>
+<td class="comment-1" rowspan="1">Update the random number.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e517"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the screen buffer to the game window, one pixel line at a time, starting from the line that is chosen by <a href="5CE9.html">ScrollValue</a>. The stack pointer is used to read the buffer, which saves time.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e517"></span>E517</td>
+<td class="instruction">LD ($5CDA),SP</td>
+<td class="comment-1" rowspan="1">Store the stack pointer, which is restored at the end.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e51b"></span>E51B</td>
+<td class="instruction">LD A,($5CE9)</td>
+<td class="comment-1" rowspan="1">Fetch the number that selects the first line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e51e"></span>E51E</td>
+<td class="instruction">LD HL,$E4A6</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the table of line addresses at <a href="E4A6.html">BufferRowTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e521"></span>E521</td>
+<td class="instruction">CALL <a href="AA3C.html">AddToAddress</a></td>
+<td class="comment-1" rowspan="1">Find the entry in the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e524"></span>E524</td>
+<td class="instruction">LD E,(HL)</td>
+<td class="comment-1" rowspan="3">Fetch the address of the first line of the buffer into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e525"></span>E525</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e526"></span>E526</td>
+<td class="instruction">LD D,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e527"></span>E527</td>
+<td class="instruction">LD B,$70</td>
+<td class="comment-1" rowspan="1">Set the number of pixel lines to copy to 70.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e529"></span>E529</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="2">Point the stack pointer at the first line of the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e52a"></span>E52A</td>
+<td class="instruction">LD SP,HL</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e52b"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="E487.html">DrawWipeStep</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateScreen_Copy</td>
+<td class="address-2"><span id="e52b"></span>E52B</td>
+<td class="instruction">LD HL,$4026</td>
+<td class="comment-1" rowspan="1">Set <span class="register">HL</span> to the screen address of the first pixel line of the game window, 4026.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e52e"></span>E52E</td>
+<td class="instruction">JP <a href="E4CC.html#e544">UpdateScreen_Bytes</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E4CC.html#e544">UpdateScreen_Bytes</a> to copy the first line.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e531"></span>
+<div class="comments">
+<div class="paragraph">
+Move down by one pixel line on the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateScreen_Row</td>
+<td class="address-2"><span id="e531"></span>E531</td>
+<td class="instruction">LD L,C</td>
+<td class="comment-1" rowspan="1">Go back to the first column of the window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e532"></span>E532</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">Move down a pixel line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e533"></span>E533</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Fetch the screen address into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e534"></span>E534</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Use bits 0-2, which are zero at the start of a character row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e536"></span>E536</td>
+<td class="instruction">JP NZ,<a href="E4CC.html#e544">UpdateScreen_Bytes</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E4CC.html#e544">UpdateScreen_Bytes</a> if the line is in the same character row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e539"></span>E539</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="2">Move on to the next character row...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e53a"></span>E53A</td>
+<td class="instruction">ADD A,$20</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e53c"></span>E53C</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">...by adding 20.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e53d"></span>E53D</td>
+<td class="instruction">JP C,<a href="E4CC.html#e544">UpdateScreen_Bytes</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E4CC.html#e544">UpdateScreen_Bytes</a> if that stays in the same third of the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e540"></span>E540</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Move on to the next third of the screen.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e541"></span>E541</td>
+<td class="instruction">SUB $08</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e543"></span>E543</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e544"></span>
+<div class="comments">
+<div class="paragraph">
+Copy twenty bytes of the buffer to the screen, and skip the last four bytes of the line in the buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateScreen_Bytes</td>
+<td class="address-2"><span id="e544"></span>E544</td>
+<td class="instruction">LD C,L</td>
+<td class="comment-1" rowspan="1">Keep the first column of the line in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e545"></span>E545</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the first two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e546"></span>E546</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e547"></span>E547</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e548"></span>E548</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e549"></span>E549</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e54a"></span>E54A</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e54b"></span>E54B</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e54c"></span>E54C</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e54d"></span>E54D</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e54e"></span>E54E</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e54f"></span>E54F</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e550"></span>E550</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e551"></span>E551</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e552"></span>E552</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e553"></span>E553</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e554"></span>E554</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e555"></span>E555</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e556"></span>E556</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e557"></span>E557</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e558"></span>E558</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e559"></span>E559</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e55a"></span>E55A</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e55b"></span>E55B</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e55c"></span>E55C</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e55d"></span>E55D</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e55e"></span>E55E</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e55f"></span>E55F</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e560"></span>E560</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e561"></span>E561</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e562"></span>E562</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e563"></span>E563</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e564"></span>E564</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e565"></span>E565</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e566"></span>E566</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e567"></span>E567</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e568"></span>E568</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e569"></span>E569</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e56a"></span>E56A</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e56b"></span>E56B</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e56c"></span>E56C</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e56d"></span>E56D</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Copy the next two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e56e"></span>E56E</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e56f"></span>E56F</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e570"></span>E570</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e571"></span>E571</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e572"></span>E572</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="4">Copy the last two bytes of the line.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e573"></span>E573</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e574"></span>E574</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e575"></span>E575</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e576"></span>E576</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="2">Skip the four bytes at the end of the line in the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e577"></span>E577</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e578"></span>E578</td>
+<td class="instruction">DJNZ <a href="E4CC.html#e531">UpdateScreen_Row</a></td>
+<td class="comment-1" rowspan="1">Decrease the line counter and loop back to <a href="E4CC.html#e531">UpdateScreen_Row</a> until all 70 lines have been copied.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateScreen_Return</td>
+<td class="address-1"><span id="e57a"></span>E57A</td>
+<td class="instruction">LD SP,($5CDA)</td>
+<td class="comment-1" rowspan="1">Restore the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e57e"></span>E57E</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="E4C6.html">E4C6</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#e4cc">Map</a></td>
+<td class="next">
+Next: <a href="E57F.html">E57F</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/58572.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

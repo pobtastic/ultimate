@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="6B42.html">6B42</a>
 </td>
 </tr>
 </table>
-<div class="description">6B2B: Routine at 6B2B</div>
+<div class="description">6B2B: Scale Value</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,70 +44,105 @@ Next: <a href="6B42.html">6B42</a>
 <div class="paragraph">
 Used by the routine at <a href="62DA.html">CollisionCup</a>.
 </div>
+<div class="paragraph">
+Converts a map position held in a single byte into map units, by shifting <span class="register">D</span> right through <span class="register">E</span> so that <span class="register">DE</span> is <span class="register">D</span> * 0100 shifted right by a fixed number of bits. <a href="6B2B.html">ScaleValue</a> multiplies by 40 <a href="6B2B.html#6b30">ScaleValue_DivideByEight</a> multiplies by 20 (used for the X position of a map point) and <a href="6B2B.html#6b3d">ScaleValue_DivideBySixteen</a> multiplies by 10 (used for the Y position of a map point).
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">D</td>
+<td class="register-desc">Value to scale</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Scaled value</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
+<td class="asm-label">ScaleValue</td>
 <td class="address-2"><span id="6b2b"></span>6B2B</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b2c"></span>6B2C</td>
 <td class="instruction">LD B,$02</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=02.</td>
+<td class="comment-1" rowspan="1">Set the shift counter to 02.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b2e"></span>6B2E</td>
-<td class="instruction">JR <a href="6B2B.html#6b33">$6B33</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="6B2B.html#6b33">6B33</a>.</td>
+<td class="instruction">JR <a href="6B2B.html#6b33">ScaleValue_Shift</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6B2B.html#6b33">ScaleValue_Shift</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="6b30"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="62DA.html">CollisionCup</a>, <a href="6B47.html">DrawObjects</a>, <a href="6BFE.html">6BFE</a> and <a href="6C2D.html">6C2D</a>.
+This entry point is used by the routines at <a href="62DA.html">CollisionCup</a>, <a href="6B47.html">DrawObjects</a>, <a href="6BFE.html">FindFirstObject</a> and <a href="6C2D.html">UpdateCurrentObject</a>.
+</div>
+<div class="paragraph">
+Multiply by 20.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">ScaleValue_DivideByEight</td>
 <td class="address-2"><span id="6b30"></span>6B30</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b31"></span>6B31</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03.</td>
+<td class="comment-1" rowspan="1">Set the shift counter to 03.</td>
 </tr>
 <tr>
+<td class="asm-label">ScaleValue_Shift</td>
 <td class="address-2"><span id="6b33"></span>6B33</td>
 <td class="instruction">LD E,$00</td>
-<td class="comment-1" rowspan="1"><span class="register">E</span>=00.</td>
+<td class="comment-1" rowspan="1">Clear the low byte of the scaled value.</td>
 </tr>
 <tr>
+<td class="asm-label">ScaleValue_Loop</td>
 <td class="address-2"><span id="6b35"></span>6B35</td>
 <td class="instruction">SRL D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Shift <span class="register">D</span> right, moving bit 0 into the carry flag.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b37"></span>6B37</td>
 <td class="instruction">RR E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate the carry flag into <span class="register">E</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b39"></span>6B39</td>
-<td class="instruction">DJNZ <a href="6B2B.html#6b35">$6B35</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="6B2B.html#6b35">6B35</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="6B2B.html#6b35">ScaleValue_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the shift counter by one and loop back to <a href="6B2B.html#6b35">ScaleValue_Loop</a> until all of the shifts have been done.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b3b"></span>6B3B</td>
 <td class="instruction">POP BC</td>
 <td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b3c"></span>6B3C</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
@@ -116,23 +154,29 @@ This entry point is used by the routines at <a href="62DA.html">CollisionCup</a>
 <div class="paragraph">
 This entry point is used by the routine at <a href="6B47.html">DrawObjects</a>.
 </div>
+<div class="paragraph">
+Multiply by 10.
+</div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">ScaleValue_DivideBySixteen</td>
 <td class="address-2"><span id="6b3d"></span>6B3D</td>
 <td class="instruction">PUSH BC</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b3e"></span>6B3E</td>
 <td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=04.</td>
+<td class="comment-1" rowspan="1">Set the shift counter to 04.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6b40"></span>6B40</td>
-<td class="instruction">JR <a href="6B2B.html#6b33">$6B33</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="6B2B.html#6b33">6B33</a>.</td>
+<td class="instruction">JR <a href="6B2B.html#6b33">ScaleValue_Shift</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6B2B.html#6b33">ScaleValue_Shift</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">

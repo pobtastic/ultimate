@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at B097</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF87.html">AF87</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b097">Map</a></td>
+<td class="next">
+Next: <a href="B115.html">B115</a>
+</td>
+</tr>
+</table>
+<div class="description">B097: Load Room Objects</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="AF87.html">RunGame</a>.
+</div>
+<div class="paragraph">
+Looks through the object store for objects that belong in the current room, and makes an object record in the object table for each one it finds. The pentagram arcs are only made once the pentagram has been revealed. An object that lands inside another one is lifted up until it is clear.
+</div>
+<div class="paragraph">
+The store is a table of 12 entries of 10 bytes each, which starts at <a href="D432.html">ObjectStore</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b097"></span>
+<div class="comments">
+<div class="paragraph">
+Search the object store for the objects of this room.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects</td>
+<td class="address-2"><span id="b097"></span>B097</td>
+<td class="instruction">LD IY,$D422</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at the entry before the first one in the object store.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b09b"></span>B09B</td>
+<td class="instruction">LD B,$12</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of 12 store entries.</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_Loop</td>
+<td class="address-2"><span id="b09d"></span>B09D</td>
+<td class="instruction">LD DE,$0010</td>
+<td class="comment-1" rowspan="1">Set the size of a store entry in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a0"></span>B0A0</td>
+<td class="instruction">LD A,($A777)</td>
+<td class="comment-1" rowspan="1">Fetch the room that the player is in from offset 08 of the first record of <a href="A76F.html">ObjectsTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a3"></span>B0A3</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Stash the room in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_NextEntry</td>
+<td class="address-2"><span id="b0a4"></span>B0A4</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Move <span class="register">IY</span> to the next store entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a6"></span>B0A6</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B097.html#b0b2">LoadRoomObjects_SkipEntry</a> if the entry is empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a9"></span>B0A9</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0aa"></span>B0AA</td>
+<td class="instruction">JR Z,<a href="B097.html#b0b2">LoadRoomObjects_SkipEntry</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ac"></span>B0AC</td>
+<td class="instruction">LD A,(IY+$08)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B097.html#b0b5">LoadRoomObjects_FindRecord</a> if the object belongs to this room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0af"></span>B0AF</td>
+<td class="instruction">CP C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b0"></span>B0B0</td>
+<td class="instruction">JR Z,<a href="B097.html#b0b5">LoadRoomObjects_FindRecord</a></td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_SkipEntry</td>
+<td class="address-2"><span id="b0b2"></span>B0B2</td>
+<td class="instruction">DJNZ <a href="B097.html#b0a4">LoadRoomObjects_NextEntry</a></td>
+<td class="comment-1" rowspan="1">Decrease the entry counter and look at the next entry until there are none left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b4"></span>B0B4</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b0b5"></span>
+<div class="comments">
+<div class="paragraph">
+Find a free object record for the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_FindRecord</td>
+<td class="address-2"><span id="b0b5"></span>B0B5</td>
+<td class="instruction">LD HL,$A82F</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the seventh object record, which is the first that is not used for the player or the fixed objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b8"></span>B0B8</td>
+<td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="1">Set the size of an object record in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0bb"></span>B0BB</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the entry counter and the room number on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0bc"></span>B0BC</td>
+<td class="instruction">LD B,$30</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of 30 records.</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_TestRecord</td>
+<td class="address-2"><span id="b0be"></span>B0BE</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="B097.html#b0c7">LoadRoomObjects_FreeRecord</a> if the record is free.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0bf"></span>B0BF</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c0"></span>B0C0</td>
+<td class="instruction">JR Z,<a href="B097.html#b0c7">LoadRoomObjects_FreeRecord</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c2"></span>B0C2</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> to the next record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c3"></span>B0C3</td>
+<td class="instruction">DJNZ <a href="B097.html#b0be">LoadRoomObjects_TestRecord</a></td>
+<td class="comment-1" rowspan="1">Decrease the record counter and test the next record until none are left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c5"></span>B0C5</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="2">Restore the entry counter and the room number from the stack and return, as every record is in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c6"></span>B0C6</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b0c7"></span>
+<div class="comments">
+<div class="paragraph">
+The pentagram arcs are only made when the pentagram has been revealed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_FreeRecord</td>
+<td class="address-2"><span id="b0c7"></span>B0C7</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the free record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c8"></span>B0C8</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the stored object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0cb"></span>B0CB</td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Keep only the type group.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0cd"></span>B0CD</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B097.html#b0d7">LoadRoomObjects_Copy</a> if the object is not an arc.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0cf"></span>B0CF</td>
+<td class="instruction">JR NZ,<a href="B097.html#b0d7">LoadRoomObjects_Copy</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d1"></span>B0D1</td>
+<td class="instruction">LD A,($A70F)</td>
+<td class="comment-1" rowspan="3">Skip this object by jumping to <a href="B097.html#b111">LoadRoomObjects_Next</a> if the pentagram has not been revealed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d4"></span>B0D4</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d5"></span>B0D5</td>
+<td class="instruction">JR Z,<a href="B097.html#b111">LoadRoomObjects_Next</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b0d7"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the stored object into the free record.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_Copy</td>
+<td class="address-2"><span id="b0d7"></span>B0D7</td>
+<td class="instruction">SET 4,(IY+$07)</td>
+<td class="comment-1" rowspan="1">Flag the stored object as needing to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0db"></span>B0DB</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IY</span> to <span class="register">HL</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0dd"></span>B0DD</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0de"></span>B0DE</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">BC</span> of 10 bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e1"></span>B0E1</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy the stored entry into the record.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b0e3"></span>
+<div class="comments">
+<div class="paragraph">
+Remember which store entry the object came from, and clear the workspace of the record.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e3"></span>B0E3</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IY</span> to <span class="register">HL</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e5"></span>B0E5</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e6"></span>B0E6</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap so that <span class="register">HL</span> points to the record and <span class="register">DE</span> to the store entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e7"></span>B0E7</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="3">Write the address of the store entry to the record, in the fields at offsets 10 and 11.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e8"></span>B0E8</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e9"></span>B0E9</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ea"></span>B0EA</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> to the workspace of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0eb"></span>B0EB</td>
+<td class="instruction">LD B,$0E</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of 0E bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ed"></span>B0ED</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_ClearWorkspace</td>
+<td class="address-2"><span id="b0ee"></span>B0EE</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="3">Write 00 to the workspace and move on, until all the bytes are done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ef"></span>B0EF</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f0"></span>B0F0</td>
+<td class="instruction">DJNZ <a href="B097.html#b0ee">LoadRoomObjects_ClearWorkspace</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f2"></span>B0F2</td>
+<td class="instruction">LD DE,$FFE0</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE</span> to FFE0 which is minus the size of a record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f5"></span>B0F5</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> back to the start of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f6"></span>B0F6</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">HL</span> to <span class="register">IX</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f7"></span>B0F7</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b0f9"></span>
+<div class="comments">
+<div class="paragraph">
+Lift the object until it is not inside any other object, unless it is an arc.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f9"></span>B0F9</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0fc"></span>B0FC</td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Keep only the type group.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0fe"></span>B0FE</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B097.html#b111">LoadRoomObjects_Next</a> if the object is an arc.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b100"></span>B100</td>
+<td class="instruction">JR Z,<a href="B097.html#b111">LoadRoomObjects_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_TestClear</td>
+<td class="address-2"><span id="b102"></span>B102</td>
+<td class="instruction">CALL <a href="BF1B.html">TestObjectIntersections</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BF1B.html">TestObjectIntersections</a> to see if the object is inside another one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b105"></span>B105</td>
+<td class="instruction">JR NC,<a href="B097.html#b111">LoadRoomObjects_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B097.html#b111">LoadRoomObjects_Next</a> if it is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b107"></span>B107</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b10a"></span>B10A</td>
+<td class="instruction">ADD A,$0C</td>
+<td class="comment-1" rowspan="1">Add 0C to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b10c"></span>B10C</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Write it back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b10f"></span>B10F</td>
+<td class="instruction">JR <a href="B097.html#b102">LoadRoomObjects_TestClear</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="B097.html#b102">LoadRoomObjects_TestClear</a> to test the object again.</td>
+</tr>
+<tr>
+<td class="asm-label">LoadRoomObjects_Next</td>
+<td class="address-2"><span id="b111"></span>B111</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the entry counter and the room number from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b112"></span>B112</td>
+<td class="instruction">DJNZ <a href="B097.html#b09d">LoadRoomObjects_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the entry counter and look at the next store entry until there are none left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b114"></span>B114</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF87.html">AF87</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b097">Map</a></td>
+<td class="next">
+Next: <a href="B115.html">B115</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/45207.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

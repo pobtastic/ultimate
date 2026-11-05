@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at 993C</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="990A.html">990A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#993c">Map</a></td>
+<td class="next">
+Next: <a href="9A22.html">9A22</a>
+</td>
+</tr>
+</table>
+<div class="description">993C: Main Loop</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Runs once per frame. It checks whether the round is over, runs the handler of every entity, checks one cell of the map, draws the world and then updates the battery, the messages and the attacks on the sectors.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="993c"></span>
+<div class="comments">
+<div class="paragraph">
+Check whether the program packet is still on its way, and whether the round has ended.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop</td>
+<td class="address-2"><span id="993c"></span>993C</td>
+<td class="instruction">LD A,($9770)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the program packet (entity 0E).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="993f"></span>993F</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump if there is no program packet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9940"></span>9940</td>
+<td class="instruction">JR Z,<a href="993C.html#9949">MainLoop_CheckRoundEnd</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9942"></span>9942</td>
+<td class="instruction">LD A,($977E)</td>
+<td class="comment-1" rowspan="1">Fetch the state of the program packet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9945"></span>9945</td>
+<td class="instruction">AND $0F</td>
+<td class="comment-1" rowspan="2">Skip the end of round checks while the state is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9947"></span>9947</td>
+<td class="instruction">JR NZ,<a href="993C.html#9963">MainLoop_Entities</a></td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_CheckRoundEnd</td>
+<td class="address-2"><span id="9949"></span>9949</td>
+<td class="instruction">LD A,($9659)</td>
+<td class="comment-1" rowspan="1">Fetch the number of sectors that have been destroyed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="994c"></span>994C</td>
+<td class="instruction">CP $09</td>
+<td class="comment-1" rowspan="2">Jump if all nine sectors have been destroyed, as the game is lost.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="994e"></span>994E</td>
+<td class="instruction">JP Z,<a href="9A22.html">LoseGame</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9951"></span>9951</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the number of destroyed sectors.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9952"></span>9952</td>
+<td class="instruction">LD A,($9658)</td>
+<td class="comment-1" rowspan="1">Fetch the number of sectors that have been activated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9955"></span>9955</td>
+<td class="instruction">CP $09</td>
+<td class="comment-1" rowspan="2">Jump if all nine have been activated, as the round has been won.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9957"></span>9957</td>
+<td class="instruction">JP Z,<a href="9A4B.html">WinRound</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="995a"></span>995A</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add the number of destroyed sectors.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="995b"></span>995B</td>
+<td class="instruction">CP $09</td>
+<td class="comment-1" rowspan="2">Jump if all nine sectors have been dealt with, one way or the other, to see how well the player has done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="995d"></span>995D</td>
+<td class="instruction">JP Z,<a href="9AA5.html">EndRound</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9960"></span>9960</td>
+<td class="instruction">CALL <a href="AE2D.html">UpdatePacketMarker</a></td>
+<td class="comment-1" rowspan="1">Update the markers on the sector map using <a href="AE2D.html">UpdatePacketMarker</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9963"></span>
+<div class="comments">
+<div class="paragraph">
+Run the handler of each entity, starting with the robot.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Entities</td>
+<td class="address-2"><span id="9963"></span>9963</td>
+<td class="instruction">LD IX,$9690</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the first entity (the robot).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9967"></span>9967</td>
+<td class="instruction">LD HL,$D355</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="D355.html">DrawListEntries</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="996a"></span>996A</td>
+<td class="instruction">LD ($962A),HL</td>
+<td class="comment-1" rowspan="1">Save it as the current position in the draw list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="996d"></span>996D</td>
+<td class="instruction">CALL <a href="B075.html">ReadControls</a></td>
+<td class="comment-1" rowspan="1">Read the controls using <a href="B075.html">ReadControls</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9970"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="A8A4.html">FinishRobotTurn</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Dispatch</td>
+<td class="address-2"><span id="9970"></span>9970</td>
+<td class="instruction">LD HL,$9985</td>
+<td class="comment-1" rowspan="2">Push the address of <a href="993C.html#9985">MainLoop_NextEntity</a>, which is where the handler returns to.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9973"></span>9973</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9974"></span>9974</td>
+<td class="instruction">LD L,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9977"></span>9977</td>
+<td class="instruction">LD BC,$9F5B</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="9F5B.html">EntityHandlers</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="997a"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="AF25.html">MoveLights</a>.
+</div>
+<div class="paragraph">
+This entry point jumps to the routine in the table at <span class="register">BC</span> that is selected by <span class="register">L</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Dispatch_Table</td>
+<td class="address-2"><span id="997a"></span>997A</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="997c"></span>997C</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double the index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="997d"></span>997D</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte again, which discards the flip flag that was in bit 7 of the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="997f"></span>997F</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the address of the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9980"></span>9980</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the handler address...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9981"></span>9981</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">...and then the high byte...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9982"></span>9982</td>
+<td class="instruction">LD H,(HL)</td>
+<td class="comment-1" rowspan="1">...into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9983"></span>9983</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Assemble the low byte of the handler address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9984"></span>9984</td>
+<td class="instruction">JP (HL)</td>
+<td class="comment-1" rowspan="1">Run the handler.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9985"></span>
+<div class="comments">
+<div class="paragraph">
+Each handler returns here.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_NextEntity</td>
+<td class="address-1"><span id="9985"></span>9985</td>
+<td class="instruction">LD A,($9615)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9988"></span>9988</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9989"></span>9989</td>
+<td class="instruction">LD A,($9617)</td>
+<td class="comment-1" rowspan="1">Fetch the random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="998c"></span>998C</td>
+<td class="instruction">ADD A,C</td>
+<td class="comment-1" rowspan="1">Add the frame counter to it...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="998d"></span>998D</td>
+<td class="instruction">LD ($9617),A</td>
+<td class="comment-1" rowspan="1">...and store the result as the new random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9990"></span>9990</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="1">Each entity is 10 bytes long.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9993"></span>9993</td>
+<td class="instruction">ADD IX,BC</td>
+<td class="comment-1" rowspan="1">Move on to the next entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9995"></span>9995</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Copy the address of the entity into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9997"></span>9997</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9998"></span>9998</td>
+<td class="instruction">LD BC,$98D0</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at the end of the entity table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="999b"></span>999B</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract the address of the end of the entity table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="999c"></span>999C</td>
+<td class="instruction">SBC HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="999e"></span>999E</td>
+<td class="instruction">JR NC,<a href="993C.html#99a2">MainLoop_EndOfFrame</a></td>
+<td class="comment-1" rowspan="1">Jump if every entity has been handled.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99a0"></span>99A0</td>
+<td class="instruction">JR <a href="993C.html#9970">MainLoop_Dispatch</a></td>
+<td class="comment-1" rowspan="1">Otherwise run the handler of the next entity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="99a2"></span>
+<div class="comments">
+<div class="paragraph">
+Check one cell of the map, and then draw the frame.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_EndOfFrame</td>
+<td class="address-2"><span id="99a2"></span>99A2</td>
+<td class="instruction">LD HL,($9615)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99a5"></span>99A5</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Increment it...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99a6"></span>99A6</td>
+<td class="instruction">LD ($9615),HL</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99a9"></span>99A9</td>
+<td class="instruction">LD A,R</td>
+<td class="comment-1" rowspan="1">Fetch a number from the memory refresh register.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99ab"></span>99AB</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the refresh value.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99ac"></span>99AC</td>
+<td class="instruction">LD A,($9617)</td>
+<td class="comment-1" rowspan="1">Fetch the random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99af"></span>99AF</td>
+<td class="instruction">ADD A,H</td>
+<td class="comment-1" rowspan="1">Add the high byte of the frame counter to it...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99b0"></span>99B0</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">...and then the number from the memory refresh register...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99b1"></span>99B1</td>
+<td class="instruction">LD ($9617),A</td>
+<td class="comment-1" rowspan="1">...and store the result as the new random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99b4"></span>99B4</td>
+<td class="instruction">LD HL,($963D)</td>
+<td class="comment-1" rowspan="1">Fetch the position of the map cell that is checked next.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99b7"></span>99B7</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Move to the next column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99b8"></span>99B8</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Limit the column to 00-3F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99b9"></span>99B9</td>
+<td class="instruction">AND $3F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99bb"></span>99BB</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99bc"></span>99BC</td>
+<td class="instruction">CP $30</td>
+<td class="comment-1" rowspan="2">Jump if the column is inside the 30 columns of the map.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99be"></span>99BE</td>
+<td class="instruction">JR C,<a href="993C.html#99cd">MainLoop_StoreCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99c0"></span>99C0</td>
+<td class="instruction">LD L,$00</td>
+<td class="comment-1" rowspan="1">Otherwise go back to column 00...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99c2"></span>99C2</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">...and move on to the next row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99c3"></span>99C3</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Limit the row to 00-3F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99c4"></span>99C4</td>
+<td class="instruction">AND $3F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99c6"></span>99C6</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99c7"></span>99C7</td>
+<td class="instruction">CP $30</td>
+<td class="comment-1" rowspan="2">Jump if the row is inside the 30 rows of the map.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99c9"></span>99C9</td>
+<td class="instruction">JR C,<a href="993C.html#99cd">MainLoop_StoreCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99cb"></span>99CB</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Otherwise go back to row 00.</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_StoreCell</td>
+<td class="address-2"><span id="99cd"></span>99CD</td>
+<td class="instruction">LD ($963D),HL</td>
+<td class="comment-1" rowspan="1">Store the position of the cell to check.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99d0"></span>99D0</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the position in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99d1"></span>99D1</td>
+<td class="instruction">CALL <a href="BF97.html#bf9d">FindMapCell_ColumnRow</a></td>
+<td class="comment-1" rowspan="1">Find the address of the cell in the map using <a href="BF97.html#bf9d">FindMapCell_ColumnRow</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99d4"></span>99D4</td>
+<td class="instruction">LD HL,($962E)</td>
+<td class="comment-1" rowspan="1">Fetch the address of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99d7"></span>99D7</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the contents of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99d8"></span>99D8</td>
+<td class="instruction">CP $88</td>
+<td class="comment-1" rowspan="2">Is this a program transmitter (current and initial types both 08)? If so, send a program packet using <a href="9DFE.html">SendProgramPacket</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99da"></span>99DA</td>
+<td class="instruction">CALL Z,<a href="9DFE.html">SendProgramPacket</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99dd"></span>99DD</td>
+<td class="instruction">AND $F0</td>
+<td class="comment-1" rowspan="1">Keep the initial type of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99df"></span>99DF</td>
+<td class="instruction">CP $30</td>
+<td class="comment-1" rowspan="2">Compare it with 30 (the result is never used), and jump over the code that is never run.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99e1"></span>99E1</td>
+<td class="instruction">JR <a href="993C.html#99ef">MainLoop_Draw</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="99e3"></span>
+<div class="comments">
+<div class="paragraph">
+This code is never run.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Unused</td>
+<td class="address-1"><span id="99e3"></span>99E3</td>
+<td class="instruction">JR NZ,<a href="993C.html#99ef">MainLoop_Draw</a></td>
+<td class="comment-1" rowspan="1">Skip the rest if the initial type is not 30.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99e5"></span>99E5</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the contents of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99e6"></span>99E6</td>
+<td class="instruction">AND $F0</td>
+<td class="comment-1" rowspan="1">Keep the initial type...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99e8"></span>99E8</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">...in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99e9"></span>99E9</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="4">Move the initial type into the low nibble.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99ea"></span>99EA</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99eb"></span>99EB</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99ec"></span>99EC</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99ed"></span>99ED</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">Combine it with the initial type...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99ee"></span>99EE</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">...and write it back, so that the cell goes back to its initial type.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="99ef"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the world, then deal with the battery, the messages and the attacks on the sectors.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Draw</td>
+<td class="address-2"><span id="99ef"></span>99EF</td>
+<td class="instruction">CALL <a href="BF22.html">SortDrawList</a></td>
+<td class="comment-1" rowspan="1">Sort the draw list using <a href="BF22.html">SortDrawList</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99f2"></span>99F2</td>
+<td class="instruction">CALL <a href="BE5F.html">AddMapCells</a></td>
+<td class="comment-1" rowspan="1">Add the cells of the map to the draw list using <a href="BE5F.html">AddMapCells</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99f5"></span>99F5</td>
+<td class="instruction">CALL <a href="BF22.html">SortDrawList</a></td>
+<td class="comment-1" rowspan="1">Sort the draw list again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99f8"></span>99F8</td>
+<td class="instruction">CALL <a href="BF6A.html">DrawList</a></td>
+<td class="comment-1" rowspan="1">Draw everything in the draw list into the off-screen buffer using <a href="BF6A.html">DrawList</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99fb"></span>99FB</td>
+<td class="instruction">CALL <a href="B21C.html">DrawPlayWindow</a></td>
+<td class="comment-1" rowspan="1">Copy the off-screen buffer to the screen using <a href="B21C.html">DrawPlayWindow</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="99fe"></span>99FE</td>
+<td class="instruction">CALL <a href="A739.html">SpawnEnemies</a></td>
+<td class="comment-1" rowspan="1">Try to start a new enemy using <a href="A739.html">SpawnEnemies</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a01"></span>9A01</td>
+<td class="instruction">LD ($9635),SP</td>
+<td class="comment-1" rowspan="1">Save the stack pointer (this is never used).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a05"></span>9A05</td>
+<td class="instruction">CALL <a href="9F09.html">CheckPause</a></td>
+<td class="comment-1" rowspan="1">Check for the pause key using <a href="9F09.html">CheckPause</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a08"></span>9A08</td>
+<td class="instruction">LD HL,$0001</td>
+<td class="comment-1" rowspan="1">Set up a delay that is only one iteration long.</td>
+</tr>
+<tr>
+<td class="asm-label">MainLoop_Delay</td>
+<td class="address-2"><span id="9a0b"></span>9A0B</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Count down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a0c"></span>9A0C</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Loop back until the delay has finished.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a0d"></span>9A0D</td>
+<td class="instruction">OR H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a0e"></span>9A0E</td>
+<td class="instruction">JR NZ,<a href="993C.html#9a0b">MainLoop_Delay</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a10"></span>9A10</td>
+<td class="instruction">CALL <a href="BFDA.html">PlaySoundStep</a></td>
+<td class="comment-1" rowspan="1">Play the next part of the current sound effect using <a href="BFDA.html">PlaySoundStep</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a13"></span>9A13</td>
+<td class="instruction">CALL <a href="9E55.html#9e5c">UpdateBatteryBar</a></td>
+<td class="comment-1" rowspan="1">Update the battery bar using <a href="9E55.html#9e5c">UpdateBatteryBar</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a16"></span>9A16</td>
+<td class="instruction">CALL <a href="9EC6.html">CheckBatteryLow</a></td>
+<td class="comment-1" rowspan="1">Flash the battery if it is low using <a href="9EC6.html">CheckBatteryLow</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a19"></span>9A19</td>
+<td class="instruction">CALL <a href="9DA7.html">AttackSector</a></td>
+<td class="comment-1" rowspan="1">Count down to the next attack on a sector using <a href="9DA7.html">AttackSector</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a1c"></span>9A1C</td>
+<td class="instruction">CALL <a href="9C88.html">PrintMessage</a></td>
+<td class="comment-1" rowspan="1">Print the next character of the current message using <a href="9C88.html">PrintMessage</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9a1f"></span>9A1F</td>
+<td class="instruction">JP <a href="993C.html#993c">MainLoop</a></td>
+<td class="comment-1" rowspan="1">Go round again.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="990A.html">990A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#993c">Map</a></td>
+<td class="next">
+Next: <a href="9A22.html">9A22</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../dec/asm/39228.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

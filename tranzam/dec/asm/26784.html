@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,29 @@ Next: <a href="26880.html">26880</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25427.html">GameOver</a>, <a href="25489.html">GameInit</a> and <a href="25599.html">HandlerCup</a>.
+Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25427.html">GameOver</a>, <a href="25489.html">NewGame</a> and <a href="25599.html">HandlerCup</a>.
+</div>
+<div class="paragraph">
+Builds the game screen from scratch. The screen and attribute buffers are cleared, then the sidebar, the map, the cup count, the lives, the score headings and the border of the play area are drawn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="26784"></span>
+<div class="comments">
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="create-window-before" src="../../images/scr/create-window-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="create-window-after" src="../../images/scr/create-window-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 </td>
@@ -48,33 +73,37 @@ Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25
 <td class="asm-label">CreateWindow</td>
 <td class="address-2"><span id="26784"></span>26784</td>
 <td class="instruction">LD HL,24168</td>
-<td class="comment-1" rowspan="5">Write 0 to 12 bytes starting from <a href="24168.html">24168</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the radar blip records (<a href="24168.html">RadarBlips</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26787"></span>26787</td>
 <td class="instruction">LD BC,3072</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span>=3072 (<span class="register">B</span> is the counter for the 12 bytes and <span class="register">C</span> is 0).</td>
 </tr>
 <tr>
-<td class="asm-label">CreateWindow_0</td>
+<td class="asm-label">CreateWindow_ClearBlips</td>
 <td class="address-2"><span id="26790"></span>26790</td>
 <td class="instruction">LD (HL),C</td>
+<td class="comment-1" rowspan="1">Clear a byte of the radar blip records.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26791"></span>26791</td>
 <td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26792"></span>26792</td>
-<td class="instruction">DJNZ <a href="26784.html#26790">CreateWindow_0</a></td>
+<td class="instruction">DJNZ <a href="26784.html#26790">CreateWindow_ClearBlips</a></td>
+<td class="comment-1" rowspan="1">Decrease the byte counter by one and loop back to <a href="26784.html#26790">CreateWindow_ClearBlips</a> until all 12 bytes have been cleared.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26794"></span>26794</td>
 <td class="instruction">LD HL,65535</td>
-<td class="comment-1" rowspan="2">Write 65535 to <a href="24116.html">PlayerWorldPosition</a>.</td>
+<td class="comment-1" rowspan="2">Write 65535 to <a href="24116.html">PlayerWorldPosition</a> (so the terrain dots are drawn afresh).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -85,25 +114,25 @@ Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25
 <td class="asm-label"></td>
 <td class="address-1"><span id="26800"></span>26800</td>
 <td class="instruction">LD HL,26109</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="26109.html">TerrainDots</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the first terrain dot (<a href="26109.html">TerrainDots</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26803"></span>26803</td>
 <td class="instruction">LD B,16</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=16.</td>
+<td class="comment-1" rowspan="1">Set the dot counter to 16.</td>
 </tr>
 <tr>
 <td class="asm-label">CreateWindow_Terrain</td>
 <td class="address-2"><span id="26805"></span>26805</td>
 <td class="instruction">RES 0,(HL)</td>
-<td class="comment-1" rowspan="1">Reset bit 0 of the byte <span class="register">HL</span> is pointing to.</td>
+<td class="comment-1" rowspan="1">Reset bit 0 of the byte <span class="register">HL</span> is pointing to (the dot is not drawn).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26807"></span>26807</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2">Increment <span class="register">HL</span> by two.</td>
+<td class="comment-1" rowspan="2">Move on to the next terrain dot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -114,55 +143,65 @@ Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25
 <td class="asm-label"></td>
 <td class="address-1"><span id="26809"></span>26809</td>
 <td class="instruction">DJNZ <a href="26784.html#26805">CreateWindow_Terrain</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="26784.html#26805">CreateWindow_Terrain</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the dot counter by one and loop back to <a href="26784.html#26805">CreateWindow_Terrain</a> until all 16 dots are marked as not drawn.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26811"></span>26811</td>
 <td class="instruction">CALL <a href="29184.html">ResetAttributes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="29184.html">ResetAttributes</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="29184.html">ResetAttributes</a> to reset the attribute buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26814"></span>26814</td>
-<td class="instruction">CALL <a href="27068.html">DrawPlayArea</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27068.html">DrawPlayArea</a>.</td>
+<td class="instruction">CALL <a href="27068.html">DrawHUDPanel</a></td>
+<td class="comment-1" rowspan="1">Call <a href="27068.html">DrawHUDPanel</a> to draw the sidebar.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26817"></span>26817</td>
 <td class="instruction">CALL <a href="26953.html">PlotMapPoints</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26953.html">PlotMapPoints</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="26953.html">PlotMapPoints</a> to plot the map points.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26820"></span>26820</td>
 <td class="instruction">CALL <a href="25708.html">DisplayCupsCollected</a></td>
-<td class="comment-1" rowspan="1">Call <a href="25708.html">DisplayCupsCollected</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="25708.html">DisplayCupsCollected</a> to display the cups collected.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26823"></span>26823</td>
 <td class="instruction">CALL <a href="26747.html">DisplayPlayerLives</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26747.html">DisplayPlayerLives</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="26747.html">DisplayPlayerLives</a> to display the lives.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26826"></span>26826</td>
 <td class="instruction">CALL <a href="27870.html">DisplayMiles</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27870.html">DisplayMiles</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="27870.html">DisplayMiles</a> to display the miles and time.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="26829"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the border of the play area, by setting a row of attributes along the top and bottom and a column along each side.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26829"></span>26829</td>
 <td class="instruction">LD HL,22536</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=22536 (attribute buffer).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=22536 (the attribute address of the top left).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26832"></span>26832</td>
 <td class="instruction">LD BC,6145</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=6145.</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span>=6145 (24 across and 1 down).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -174,13 +213,13 @@ Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25
 <td class="asm-label"></td>
 <td class="address-1"><span id="26836"></span>26836</td>
 <td class="instruction">CALL <a href="26880.html">AttributesPlayArea</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26880.html">AttributesPlayArea</a>.</td>
+<td class="comment-1" rowspan="1">Set the attributes of the top row using <a href="26880.html">AttributesPlayArea</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26839"></span>26839</td>
 <td class="instruction">LD HL,23272</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=23272 (attribute buffer).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=23272 (the attribute address of the bottom left).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -192,19 +231,19 @@ Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25
 <td class="asm-label"></td>
 <td class="address-1"><span id="26843"></span>26843</td>
 <td class="instruction">CALL <a href="26880.html">AttributesPlayArea</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26880.html">AttributesPlayArea</a>.</td>
+<td class="comment-1" rowspan="1">Set the attributes of the bottom row using <a href="26880.html">AttributesPlayArea</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26846"></span>26846</td>
 <td class="instruction">LD HL,22568</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=22568 (attribute buffer).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=22568 (the attribute address of the left side).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26849"></span>26849</td>
 <td class="instruction">LD BC,278</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=0278.</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span>=0278 (1 across and 22 down).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -216,7 +255,7 @@ Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25
 <td class="asm-label"></td>
 <td class="address-1"><span id="26853"></span>26853</td>
 <td class="instruction">CALL <a href="26880.html">AttributesPlayArea</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26880.html">AttributesPlayArea</a>.</td>
+<td class="comment-1" rowspan="1">Stash the size of the side on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -228,49 +267,71 @@ Used by the routines at <a href="24327.html">GameInitialisation</a>, <a href="25
 <td class="asm-label"></td>
 <td class="address-1"><span id="26857"></span>26857</td>
 <td class="instruction">LD HL,22591</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=22591 (attribute buffer).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=22591 (the attribute address of the right side).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26860"></span>26860</td>
 <td class="instruction">CALL <a href="26880.html">AttributesPlayArea</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26880.html">AttributesPlayArea</a>.</td>
+<td class="comment-1" rowspan="1">Set the attributes of the right side using <a href="26880.html">AttributesPlayArea</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="26863"></span>
+<div class="comments">
+<div class="paragraph">
+Print the "SCORE" and "HI-SCORE" headings and the scores.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26863"></span>26863</td>
 <td class="instruction">LD HL,80</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=0080.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=0080 (pixel co-ordinates: <span class="register">H</span> is the Y position and <span class="register">L</span> is the X position).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26866"></span>26866</td>
 <td class="instruction">LD DE,24625</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="24625.html">Text_ScoreHi</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the "SCORE" and "HI-SCORE" headings (<a href="24625.html">Text_ScoreHi</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26869"></span>26869</td>
 <td class="instruction">CALL <a href="25880.html">PrintStringColour</a></td>
-<td class="comment-1" rowspan="1">Call <a href="25880.html">PrintStringColour</a>.</td>
+<td class="comment-1" rowspan="1">Print the headings using <a href="25880.html">PrintStringColour</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26872"></span>26872</td>
-<td class="instruction">CALL <a href="27830.html">Score_Player</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27830.html">Score_Player</a>.</td>
+<td class="instruction">CALL <a href="27830.html">Score_1UP</a></td>
+<td class="comment-1" rowspan="1">Call <a href="27830.html">Score_1UP</a> to print the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26875"></span>26875</td>
 <td class="instruction">CALL <a href="27830.html#27838">Score_HI</a></td>
-<td class="comment-1" rowspan="1">Call <a href="27830.html#27838">Score_HI</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="27830.html#27838">Score_HI</a> to print the high score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="26878"></span>26878</td>
 <td class="instruction">JR <a href="26905.html">DisplayNightDriver</a></td>
 <td class="comment-1" rowspan="1">Jump to <a href="26905.html">DisplayNightDriver</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/jetpac/dec/asm/24714.html">Jetpac</a></li>
+<li><a href="/ultimate/lunarjetman/dec/asm/34008.html">Lunar Jetman</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

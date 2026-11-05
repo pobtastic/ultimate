@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="AE7A.html">AE7A</a>
 </td>
 </tr>
 </table>
-<div class="description">AE4B: Routine at AE4B</div>
+<div class="description">AE4B: Animate Attack</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,118 +44,151 @@ Next: <a href="AE7A.html">AE7A</a>
 <div class="paragraph">
 Used by the routine at <a href="ADD0.html">PlayerMovement</a>.
 </div>
+<div class="paragraph">
+Sets the direction and animation of an attacking Sabreman. If the X velocity is positive then bit 3 of the sprite ID is set and the player attacks to the right, and if it is negative then bit 3 is reset. Every four frames the sprite is changed to one of the first eight frames at random.
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the player</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
+<td class="asm-label">AnimateAttack</td>
 <td class="address-2"><span id="ae4b"></span>AE4B</td>
 <td class="instruction">LD A,(IX+$06)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+06.</td>
+<td class="comment-1" rowspan="1">Fetch the X velocity of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae4e"></span>AE4E</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="AE4B.html#ae5c">AnimateAttack_Frame</a> if the player is not moving left or right.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae4f"></span>AE4F</td>
-<td class="instruction">JR Z,<a href="AE4B.html#ae5c">$AE5C</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="AE4B.html#ae5c">AnimateAttack_Frame</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae51"></span>AE51</td>
-<td class="instruction">JP M,<a href="AE4B.html#ae73">$AE73</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP M,<a href="AE4B.html#ae73">AnimateAttack_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AE4B.html#ae73">AnimateAttack_Left</a> if the player is moving left.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae54"></span>AE54</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+00 (sprite reference).</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae57"></span>AE57</td>
 <td class="instruction">OR %00001000</td>
-<td class="comment-1" rowspan="1">Set bit 3.</td>
+<td class="comment-1" rowspan="1">Set bit 3 (attacking to the right).</td>
 </tr>
 <tr>
+<td class="asm-label">AnimateAttack_Store</td>
 <td class="address-2"><span id="ae59"></span>AE59</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1">Write the result back to <span class="register">IX</span>+00 (sprite reference).</td>
+<td class="comment-1" rowspan="1">Set the new sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label">AnimateAttack_Frame</td>
 <td class="address-2"><span id="ae5c"></span>AE5C</td>
 <td class="instruction">LD A,($5C78)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae5f"></span>AE5F</td>
 <td class="instruction">AND %00000011</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae61"></span>AE61</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if this is not every fourth frame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae62"></span>AE62</td>
 <td class="instruction">LD C,(IX+$00)</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">IX</span>+00 (sprite reference).</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player into <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae65"></span>AE65</td>
 <td class="instruction">LD A,($9695)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="9695.html">9695</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the random seed from <a href="9695.html">RandomNumber</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae68"></span>AE68</td>
 <td class="instruction">AND %00000111</td>
 <td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae6a"></span>AE6A</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the random animation frame in <span class="register">B</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae6b"></span>AE6B</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae6c"></span>AE6C</td>
 <td class="instruction">AND %11111000</td>
 <td class="comment-1" rowspan="1">Keep only bits 3-7.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae6e"></span>AE6E</td>
 <td class="instruction">OR B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Merge in the animation frame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae6f"></span>AE6F</td>
 <td class="instruction">LD (IX+$00),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the new sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae72"></span>AE72</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="asm-label">AnimateAttack_Left</td>
 <td class="address-2"><span id="ae73"></span>AE73</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae76"></span>AE76</td>
 <td class="instruction">AND %11110111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2, 4-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2 and 4-7, which resets bit 3 (attacking to the left).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="ae78"></span>AE78</td>
-<td class="instruction">JR <a href="AE4B.html#ae59">$AE59</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="AE4B.html#ae59">AE59</a>.</td>
+<td class="instruction">JR <a href="AE4B.html#ae59">AnimateAttack_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AE4B.html#ae59">AnimateAttack_Store</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">

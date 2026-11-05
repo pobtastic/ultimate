@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,6 +44,18 @@ Next: <a href="6CDE.html">6CDE</a>
 <div class="paragraph">
 Used by the routines at <a href="6046.html">AddPointsToScore</a> and <a href="68A0.html">CreateWindow</a>.
 </div>
+<div class="paragraph">
+Prints the score or the high score at the top of the screen, as six BCD digits. The same code (from <a href="6CB6.html#6cc4">PrintScore</a>) also prints other BCD numbers, such as the miles and the time.  <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="print-scores-before" src="../images/scr/print-scores-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="print-scores-after" src="../images/scr/print-scores-after.png" /></td>
+</tr>
+</table>
+</div>
 </div>
 </td>
 </tr>
@@ -55,16 +70,16 @@ Sets up the player score.
 </td>
 </tr>
 <tr>
-<td class="asm-label">Score_Player</td>
+<td class="asm-label">Score_1UP</td>
 <td class="address-2"><span id="6cb6"></span>6CB6</td>
 <td class="instruction">LD HL,$400D</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=400D.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=400D (screen location of the score).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6cb9"></span>6CB9</td>
 <td class="instruction">LD DE,$5E4C</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E4C.html">Score_1</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the score (<a href="5E4C.html">Score_1</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -77,6 +92,9 @@ Sets up the player score.
 <span id="6cbe"></span>
 <div class="comments">
 <div class="paragraph">
+This entry point is used by the routine at <a href="68A0.html">CreateWindow</a>.
+</div>
+<div class="paragraph">
 Sets up the HI score.
 </div>
 </div>
@@ -86,20 +104,20 @@ Sets up the HI score.
 <td class="asm-label">Score_HI</td>
 <td class="address-2"><span id="6cbe"></span>6CBE</td>
 <td class="instruction">LD HL,$4018</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=4018.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=4018 (screen location of the high score).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6cc1"></span>6CC1</td>
 <td class="instruction">LD DE,$5E49</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E49.html">HighScore_1</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the high score (<a href="5E49.html">High_Score</a>).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="6cc4"></span>
 <div class="comments">
 <div class="paragraph">
-Prints the score.
+Prints the score. Entering at <a href="6CB6.html#6cc6">PrintScore_Loop</a> prints <span class="register">B</span> bytes (two digits each) of the BCD number at <span class="register">DE</span> to the screen location in <span class="register">HL</span>.
 </div>
 </div>
 </td>
@@ -108,7 +126,7 @@ Prints the score.
 <td class="asm-label">PrintScore</td>
 <td class="address-2"><span id="6cc4"></span>6CC4</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03.</td>
+<td class="comment-1" rowspan="1">Set the byte counter to 03 (a score is 03 bytes, so 06 digits).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -124,13 +142,13 @@ This entry point is used by the routine at <a href="6CDE.html">DisplayMiles</a>.
 <td class="asm-label">PrintScore_Loop</td>
 <td class="address-2"><span id="6cc6"></span>6CC6</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the next byte of the number, which holds two digits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6cc7"></span>6CC7</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="4"><span class="register">A</span>=<span class="register">A</span> / 10.</td>
+<td class="comment-1" rowspan="4"><span class="register">A</span>=<span class="register">A</span> / 10 (the first digit).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -157,13 +175,13 @@ This entry point is used by the routine at <a href="6CDE.html">DisplayMiles</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6ccd"></span>6CCD</td>
 <td class="instruction">ADD A,$30</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> + 30 (convert to ASCII).</td>
+<td class="comment-1" rowspan="1">Add 30 to convert the digit to ASCII.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6ccf"></span>6CCF</td>
 <td class="instruction">CALL <a href="6C96.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6C96.html">PrintScreen</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="6C96.html">PrintScreen</a> to print the digit.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -172,14 +190,17 @@ This entry point is used by the routine at <a href="6CDE.html">DisplayMiles</a>.
 <div class="paragraph">
 This entry point is used by the routines at <a href="646C.html">DisplayCupsCollected</a>, <a href="6CDE.html">DisplayMiles</a> and <a href="6CFD.html">PrintBestTime</a>.
 </div>
+<div class="paragraph">
+Prints the second digit of the byte; entering here skips the first digit.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">Score_Player_0</td>
+<td class="asm-label">PrintScore_SecondDigit</td>
 <td class="address-2"><span id="6cd2"></span>6CD2</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the byte again, for the second digit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -191,25 +212,25 @@ This entry point is used by the routines at <a href="646C.html">DisplayCupsColle
 <td class="asm-label"></td>
 <td class="address-1"><span id="6cd5"></span>6CD5</td>
 <td class="instruction">ADD A,$30</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> + 30 (convert to ASCII).</td>
+<td class="comment-1" rowspan="1">Add 30 to convert the digit to ASCII.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6cd7"></span>6CD7</td>
 <td class="instruction">CALL <a href="6C96.html">PrintScreen</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6C96.html">PrintScreen</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="6C96.html">PrintScreen</a> to print the digit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6cda"></span>6CDA</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">DE</span> by one.</td>
+<td class="comment-1" rowspan="1">Move on to the next byte of the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6cdb"></span>6CDB</td>
 <td class="instruction">DJNZ <a href="6CB6.html#6cc6">PrintScore_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="6CB6.html#6cc6">PrintScore_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the byte counter by one and loop back to <a href="6CB6.html#6cc6">PrintScore_Loop</a> until all of the bytes have been printed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -222,10 +243,12 @@ This entry point is used by the routines at <a href="646C.html">DisplayCupsColle
 <div class="comments">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
+<li><a href="/ultimate/aticatac/asm/A1AE.html">Atic Atac</a></li>
 <li><a href="/ultimate/cookie/asm/7438.html">Cookie</a></li>
 <li><a href="/ultimate/jetpac/asm/711C.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/asm/89BF.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/asm/739D.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/asm/B5CC.html">Sabre Wulf</a></li>
 </ul>
 </div>
 </div>

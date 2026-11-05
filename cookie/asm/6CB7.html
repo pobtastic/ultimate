@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cookie: Routine at 6CB7</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="6CA7.html">6CA7</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#6cb7">Map</a></td>
+<td class="next">
+Next: <a href="6D38.html">6D38</a>
+</td>
+</tr>
+</table>
+<div class="description">6CB7: Handle Sugar</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The handler for the sugar (IDs 08 and 09), which drifts about the screen. Byte 04 of the actor is the horizontal speed, and byte 05 is the vertical speed. Every 20 frames new random speeds are chosen (see <a href="6EAC.html">SetRandomSpeeds</a>); they are both either 02 or FE (-2). The sugar bounces off the sides and the top and bottom of the play area, and as it goes it also moves up and down in a wave, which is made from the frame counter in byte 07 of the actor.
+</div>
+<div class="paragraph">
+While the sugar is still entering from the right of the screen (a horizontal co-ordinate of C4 or more) it can't hit Charlie or be hit.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar</td>
+<td class="address-2"><span id="6cb7"></span>6CB7</td>
+<td class="instruction">CALL <a href="76D0.html">StoreEntity</a></td>
+<td class="comment-1" rowspan="1">Record the position of the sprite using <a href="76D0.html">StoreEntity</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cba"></span>6CBA</td>
+<td class="instruction">LD HL,$5F1B</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="5F1B.html">ActorsInPlay</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cbd"></span>6CBD</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">Increase the number of actors in play by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cbe"></span>6CBE</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal co-ordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cc1"></span>6CC1</td>
+<td class="instruction">CP $C4</td>
+<td class="comment-1" rowspan="2">Jump to <a href="6CB7.html#6cd6">HandleSugar_Move</a> if the sugar is still entering from the right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cc3"></span>6CC3</td>
+<td class="instruction">JR NC,<a href="6CB7.html#6cd6">HandleSugar_Move</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cc5"></span>6CC5</td>
+<td class="instruction">CALL <a href="6A46.html">TestCharlieCollision</a></td>
+<td class="comment-1" rowspan="1">Test whether the sugar has hit Charlie using <a href="6A46.html">TestCharlieCollision</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cc8"></span>6CC8</td>
+<td class="instruction">DEC E</td>
+<td class="comment-1" rowspan="1">Has Charlie been hit (is <span class="register">E</span> now zero)?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cc9"></span>6CC9</td>
+<td class="instruction">JP Z,<a href="6A73.html">LoseHat</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6A73.html">LoseHat</a> if Charlie has been hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6ccc"></span>6CCC</td>
+<td class="instruction">CALL <a href="7317.html">TestFlourCollision</a></td>
+<td class="comment-1" rowspan="1">Test whether a flour shot has hit the sugar using <a href="7317.html">TestFlourCollision</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6ccf"></span>6CCF</td>
+<td class="instruction">BIT 7,(IX+$00)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="730D.html">HandleHitActor</a> if the sugar has been hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cd3"></span>6CD3</td>
+<td class="instruction">JP NZ,<a href="730D.html">HandleHitActor</a></td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_Move</td>
+<td class="address-2"><span id="6cd6"></span>6CD6</td>
+<td class="instruction">INC (IX+$07)</td>
+<td class="comment-1" rowspan="1">Increase the frame counter in byte 07 of the actor by one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cd9"></span>6CD9</td>
+<td class="instruction">LD (IX+$03),$44</td>
+<td class="comment-1" rowspan="1">Set the actor colour to 44 (green).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cdd"></span>6CDD</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6ce0"></span>6CE0</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6ce2"></span>6CE2</td>
+<td class="instruction">JR Z,<a href="6CB7.html#6d33">HandleSugar_NewSpeeds</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6CB7.html#6d33">HandleSugar_NewSpeeds</a> if the counter is a multiple of 20 to change speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6ce4"></span>6CE4</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal co-ordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6ce7"></span>6CE7</td>
+<td class="instruction">ADD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Add the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cea"></span>6CEA</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Update the horizontal co-ordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6ced"></span>6CED</td>
+<td class="instruction">CP $C0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="6CB7.html#6d1b">HandleSugar_RightEdge</a> if the sugar has reached the right edge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cef"></span>6CEF</td>
+<td class="instruction">JR NC,<a href="6CB7.html#6d1b">HandleSugar_RightEdge</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cf1"></span>6CF1</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="2">Jump to <a href="6CB7.html#6d21">HandleSugar_LeftEdge</a> if the sugar has reached the left edge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cf3"></span>6CF3</td>
+<td class="instruction">JR C,<a href="6CB7.html#6d21">HandleSugar_LeftEdge</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6cf5"></span>
+<div class="comments">
+<div class="paragraph">
+Make the offset for the wave from the frame counter. For each of the eight values of bits 0-2 of the counter it is 03 FC FD FE 00 01 02 and 03.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_Wave</td>
+<td class="address-2"><span id="6cf5"></span>6CF5</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Fetch the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cf8"></span>6CF8</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cfa"></span>6CFA</td>
+<td class="instruction">BIT 2,(IX+$07)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="6CB7.html#6d04">HandleSugar_Vertical</a> if bit 2 of the frame counter is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6cfe"></span>6CFE</td>
+<td class="instruction">JR NZ,<a href="6CB7.html#6d04">HandleSugar_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d00"></span>6D00</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d02"></span>6D02</td>
+<td class="instruction">XOR %00000011</td>
+<td class="comment-1" rowspan="1">Flip bits 0-1.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_Vertical</td>
+<td class="address-2"><span id="6d04"></span>6D04</td>
+<td class="instruction">ADD A,(IX+$05)</td>
+<td class="comment-1" rowspan="1">Add the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d07"></span>6D07</td>
+<td class="instruction">ADD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Add the vertical co-ordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d0a"></span>6D0A</td>
+<td class="instruction">CP $20</td>
+<td class="comment-1" rowspan="2">Jump to <a href="6CB7.html#6d27">HandleSugar_Top</a> if the sugar has reached the top.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d0c"></span>6D0C</td>
+<td class="instruction">JR C,<a href="6CB7.html#6d27">HandleSugar_Top</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d0e"></span>6D0E</td>
+<td class="instruction">CP $A0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="6CB7.html#6d2d">HandleSugar_Bottom</a> if the sugar has reached the bottom.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d10"></span>6D10</td>
+<td class="instruction">JR NC,<a href="6CB7.html#6d2d">HandleSugar_Bottom</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d12"></span>6D12</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Update the vertical co-ordinate.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_Draw</td>
+<td class="address-2"><span id="6d15"></span>6D15</td>
+<td class="instruction">CALL <a href="75CC.html">DisplayEntity</a></td>
+<td class="comment-1" rowspan="1">Erase the sprite and draw it in its new position using <a href="75CC.html">DisplayEntity</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d18"></span>6D18</td>
+<td class="instruction">JP <a href="74EE.html">ColourSprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="74EE.html">ColourSprite</a> to colour the sprite.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6d1b"></span>
+<div class="comments">
+<div class="paragraph">
+The sugar has reached the right edge, so move it left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_RightEdge</td>
+<td class="address-2"><span id="6d1b"></span>6D1B</td>
+<td class="instruction">LD (IX+$04),$FE</td>
+<td class="comment-1" rowspan="1">Set the horizontal speed to FE (-2, moving left).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d1f"></span>6D1F</td>
+<td class="instruction">JR <a href="6CB7.html#6cf5">HandleSugar_Wave</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6CB7.html#6cf5">HandleSugar_Wave</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6d21"></span>
+<div class="comments">
+<div class="paragraph">
+The sugar has reached the left edge, so move it right.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_LeftEdge</td>
+<td class="address-2"><span id="6d21"></span>6D21</td>
+<td class="instruction">LD (IX+$04),$02</td>
+<td class="comment-1" rowspan="1">Write 02 to the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d25"></span>6D25</td>
+<td class="instruction">JR <a href="6CB7.html#6cf5">HandleSugar_Wave</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6CB7.html#6cf5">HandleSugar_Wave</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6d27"></span>
+<div class="comments">
+<div class="paragraph">
+The sugar has reached the top, so move it down.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_Top</td>
+<td class="address-2"><span id="6d27"></span>6D27</td>
+<td class="instruction">LD (IX+$05),$02</td>
+<td class="comment-1" rowspan="1">Write 02 to the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d2b"></span>6D2B</td>
+<td class="instruction">JR <a href="6CB7.html#6d15">HandleSugar_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6CB7.html#6d15">HandleSugar_Draw</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6d2d"></span>
+<div class="comments">
+<div class="paragraph">
+The sugar has reached the bottom, so move it up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_Bottom</td>
+<td class="address-2"><span id="6d2d"></span>6D2D</td>
+<td class="instruction">LD (IX+$05),$FE</td>
+<td class="comment-1" rowspan="1">Write FE to the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d31"></span>6D31</td>
+<td class="instruction">JR <a href="6CB7.html#6d15">HandleSugar_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6CB7.html#6d15">HandleSugar_Draw</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6d33"></span>
+<div class="comments">
+<div class="paragraph">
+Choose new speeds. <span class="register">A</span> is the new vertical speed, so it is added to the vertical co-ordinate twice.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleSugar_NewSpeeds</td>
+<td class="address-2"><span id="6d33"></span>6D33</td>
+<td class="instruction">CALL <a href="6EAC.html">SetRandomSpeeds</a></td>
+<td class="comment-1" rowspan="1">Set random horizontal and vertical speeds using <a href="6EAC.html">SetRandomSpeeds</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="6d36"></span>6D36</td>
+<td class="instruction">JR <a href="6CB7.html#6d04">HandleSugar_Vertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6CB7.html#6d04">HandleSugar_Vertical</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="6CA7.html">6CA7</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#6cb7">Map</a></td>
+<td class="next">
+Next: <a href="6D38.html">6D38</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cookie/">Source code</a>.</div>
+<div><a href="../dec/asm/27831.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at 45756</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="45716.html">45716</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#45756">Map</a></td>
+<td class="next">
+Next: <a href="46163.html">46163</a>
+</td>
+</tr>
+</table>
+<div class="description">45756: Draw Sprite</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="49002.html">DrawList</a>.
+</div>
+<div class="paragraph">
+Draws one sprite into the off-screen play window buffer. The sprite is found using the type in the draw list entry, as an index into the table of sprite pointers at <a href="24739.html">SpritePointers</a>. A sprite has a two byte header (the width in bytes plus flags, then the height in pixel rows) followed by its pixel rows, each made of pairs of bytes, one pair for each byte of width. The first byte of each pair is ORed onto the buffer and the second is then XORed onto the result. The rows are stored from the bottom of the sprite to the top. A sprite whose width and height are both zero is blank and is not drawn. Bit 7 of the type in the draw list entry means the sprite is drawn facing the other way. The flag in bit 7 of the sprite's own header records which way its data is currently stored, and if the two differ then the sprite's data is flipped in place first, using <a href="46163.html">FlipSprite</a>. The x position is a pixel position in the buffer, where 16 is the left edge of the play window. The y position is the height of the bottom of the sprite above the bottom of the buffer, so it increases up the screen: 48 is the bottom of the play window and 160 is the top. Sprites that overlap the top or bottom are clipped, and 16 pixels either side are available for sprites that overhang the left or right edge. If the sprite is not on a byte boundary then each pair of bytes is shifted right by the number of pixels using the tables built by <a href="45716.html">BuildShiftTables</a>, and an extra byte is written for each row. The drawing is done by unrolled loops at <a href="45756.html#45931">DrawSprite_Shifted</a> (shifted) and <a href="45756.html#46126">DrawSprite_Unrolled</a> (byte aligned), which are entered part way along according to the width of the sprite so that exactly the right number of bytes are drawn on each row. The sprite data is read by pointing the stack pointer at it and using POP.  <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="draw-sprite-before" src="../../images/scr/draw-sprite-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="draw-sprite-after" src="../../images/scr/draw-sprite-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Draw list entry: type, x position, y position</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45756"></span>
+<div class="comments">
+<div class="paragraph">
+Find the sprite for this entry.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite</td>
+<td class="address-2"><span id="45756"></span>45756</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45759"></span>45759</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double it, discarding the "face the other way" bit, to give the offset into the table of pointers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45760"></span>45760</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="4">Add the offset to the address of the table of sprite pointers at <a href="24739.html">SpritePointers</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45761"></span>45761</td>
+<td class="instruction">LD H,0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45763"></span>45763</td>
+<td class="instruction">LD BC,24739</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45766"></span>45766</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45767"></span>45767</td>
+<td class="instruction">LD E,(HL)</td>
+<td class="comment-1" rowspan="3">Fetch the address of the sprite into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45768"></span>45768</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45769"></span>45769</td>
+<td class="instruction">LD D,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45770"></span>45770</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the width byte of the header into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45771"></span>45771</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45772"></span>45772</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="2">Fetch the height from the header.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45773"></span>45773</td>
+<td class="instruction">LD A,(DE)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45774"></span>45774</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="2">Combine them and keep bits 0-5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45775"></span>45775</td>
+<td class="instruction">AND 63</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45777"></span>45777</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if both the width and the height are zero, as the sprite is blank.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45778"></span>45778</td>
+<td class="instruction">DEC DE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the start of the header again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45779"></span>45779</td>
+<td class="instruction">CALL <a href="46163.html">FlipSprite</a></td>
+<td class="comment-1" rowspan="1">Flip the sprite data if it is stored facing the wrong way, using <a href="46163.html">FlipSprite</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45782"></span>
+<div class="comments">
+<div class="paragraph">
+Find which page of the shift tables to use, which depends on the x position within a byte.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45782"></span>45782</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45785"></span>45785</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="3">Take one off, shift the result left by one (multiplying by two) and keep only the three bits of the shift, so that this is the shift amount multiplied by two.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45786"></span>45786</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45787"></span>45787</td>
+<td class="instruction">AND 14</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45789"></span>45789</td>
+<td class="instruction">OR 224</td>
+<td class="comment-1" rowspan="2">Add the base of the shift tables to give the page number, in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45791"></span>45791</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45792"></span>45792</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the x position again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45795"></span>45795</td>
+<td class="instruction">AND 7</td>
+<td class="comment-1" rowspan="1">Test whether it is a multiple of 8.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45797"></span>45797</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the width byte of the header.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45798"></span>45798</td>
+<td class="instruction">JP Z,<a href="45756.html#46003">DrawSprite_Aligned</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45756.html#46003">DrawSprite_Aligned</a> to draw the sprite without shifting if the x position is exactly on a byte boundary.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45801"></span>
+<div class="comments">
+<div class="paragraph">
+The sprite needs shifting, so it will cover one more byte on each row than its width.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45801"></span>45801</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="2">Add one to the width in bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45802"></span>45802</td>
+<td class="instruction">AND 15</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45804"></span>45804</td>
+<td class="instruction">LD (38433),A</td>
+<td class="comment-1" rowspan="1">Store it as the number of bytes written to the buffer for each row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45807"></span>45807</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Take a copy of it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45808"></span>45808</td>
+<td class="instruction">ADD A,23</td>
+<td class="comment-1" rowspan="1">Add 23 to give the amount to subtract to get from the end of one row of the buffer to the start of the row above, since each row is 24 bytes long.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45810"></span>45810</td>
+<td class="instruction">LD (45989),A</td>
+<td class="comment-1" rowspan="1">Write that as the number to subtract in the SUB instruction at <a href="45756.html#45988">45988</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45813"></span>45813</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the width back, plus one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45814"></span>45814</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Take one off to get the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45815"></span>45815</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45816"></span>45816</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="2">Negate the width and keep the bottom two bits, so that this is the number of unused copies of the unrolled loop out of the four available.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45818"></span>45818</td>
+<td class="instruction">AND 3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45820"></span>45820</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="6">Multiply by 14, the length of one copy of the unrolled loop.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45821"></span>45821</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45822"></span>45822</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45823"></span>45823</td>
+<td class="instruction">ADD A,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45824"></span>45824</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45825"></span>45825</td>
+<td class="instruction">ADD A,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45826"></span>45826</td>
+<td class="instruction">LD B,H</td>
+<td class="comment-1" rowspan="1">Hold the shift table page in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45827"></span>45827</td>
+<td class="instruction">LD HL,45931</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="45756.html#45931">DrawSprite_Shifted</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45830"></span>45830</td>
+<td class="instruction">CALL <a href="49042.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Add the offset using <a href="49042.html">AddAToHL</a>, to skip the copies that are not needed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45833"></span>45833</td>
+<td class="instruction">LD (45929),HL</td>
+<td class="comment-1" rowspan="1">Write the address into the jump at <a href="45756.html#45928">DrawSprite_Shifted_Jump</a>, so that it enters the loop at the right place.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45836"></span>45836</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45837"></span>45837</td>
+<td class="instruction">LD (38434),A</td>
+<td class="comment-1" rowspan="1">Store it as the number of rows still to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45840"></span>45840</td>
+<td class="instruction">LD H,B</td>
+<td class="comment-1" rowspan="1">Put the page number back into <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45841"></span>45841</td>
+<td class="instruction">LD C,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the x position into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45844"></span>45844</td>
+<td class="instruction">LD B,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the y position into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45847"></span>
+<div class="comments">
+<div class="paragraph">
+Clip the bottom of the sprite, if it is below the bottom of the play window.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45847"></span>45847</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="2">Is the bottom of the sprite on or above the bottom of the play window (48)?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45848"></span>45848</td>
+<td class="instruction">CP 48</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45850"></span>45850</td>
+<td class="instruction">JR NC,<a href="45756.html#45886">DrawSprite_Shifted_Address</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45756.html#45886">DrawSprite_Shifted_Address</a> if so.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45852"></span>45852</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45853"></span>45853</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45854"></span>45854</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add the y position to get the top of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45855"></span>45855</td>
+<td class="instruction">CP 48</td>
+<td class="comment-1" rowspan="1">Is the top of the sprite below the bottom of the play window?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45857"></span>45857</td>
+<td class="instruction">RET C</td>
+<td class="comment-1" rowspan="1">Return if it is, as the sprite is not visible at all.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45858"></span>45858</td>
+<td class="instruction">LD A,48</td>
+<td class="comment-1" rowspan="1">Work out how many rows of the sprite are below the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45860"></span>45860</td>
+<td class="instruction">SUB L</td>
+<td class="comment-1" rowspan="1">Subtract the y position from the bottom of the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45861"></span>45861</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep that number of rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45862"></span>45862</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45863"></span>45863</td>
+<td class="instruction">SUB L</td>
+<td class="comment-1" rowspan="1">Take away the number of rows that are cut off.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45864"></span>45864</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if nothing is left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45865"></span>45865</td>
+<td class="instruction">LD (38434),A</td>
+<td class="comment-1" rowspan="1">Store the number of rows that are left to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45868"></span>45868</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the number of rows that are cut off.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45869"></span>45869</td>
+<td class="instruction">LD A,(38433)</td>
+<td class="comment-1" rowspan="1">Fetch the number of bytes written for each row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45872"></span>45872</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Take one off to get the width in bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45873"></span>45873</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Use it as a counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45874"></span>45874</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Start the total at zero, and clear the high byte of <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45875"></span>45875</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Shifted_Multiply</td>
+<td class="address-2"><span id="45876"></span>45876</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="2">Add the number of rows that were cut off to the total, once for each byte of the width, to multiply them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45877"></span>45877</td>
+<td class="instruction">DJNZ <a href="45756.html#45876">DrawSprite_Shifted_Multiply</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45879"></span>45879</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the size of the hidden rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45880"></span>45880</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double it, as each byte of the width has a pair of bytes of data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45881"></span>45881</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the address of the sprite to give the address of the first visible row of data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45882"></span>45882</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep the address of the first visible row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45883"></span>45883</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45884"></span>45884</td>
+<td class="instruction">LD B,48</td>
+<td class="comment-1" rowspan="1">Start drawing from the bottom of the play window.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45886"></span>
+<div class="comments">
+<div class="paragraph">
+Find the address in the buffer and point the stack pointer at the sprite data.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Shifted_Address</td>
+<td class="address-2"><span id="45886"></span>45886</td>
+<td class="instruction">CALL <a href="46222.html">GetBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Find the address in the buffer of the first byte to draw, using <a href="46222.html">GetBufferAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45889"></span>45889</td>
+<td class="instruction">LD (38435),SP</td>
+<td class="comment-1" rowspan="1">Save the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45893"></span>45893</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="3">Point the stack pointer at the sprite, so that POP fetches the data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45894"></span>45894</td>
+<td class="instruction">LD SP,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45895"></span>45895</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45896"></span>45896</td>
+<td class="instruction">INC SP</td>
+<td class="comment-1" rowspan="1">Take it past the height byte, to the first pair of data bytes.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45897"></span>
+<div class="comments">
+<div class="paragraph">
+Clip the top of the sprite, if it is above the top of the play window.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45897"></span>45897</td>
+<td class="instruction">LD A,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45900"></span>45900</td>
+<td class="instruction">CP 160</td>
+<td class="comment-1" rowspan="2">Jump to <a href="45756.html#45998">DrawSprite_Done</a> to finish if it is, as the sprite is not visible.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45902"></span>45902</td>
+<td class="instruction">JP NC,<a href="45756.html#45998">DrawSprite_Done</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45905"></span>45905</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45906"></span>45906</td>
+<td class="instruction">LD A,(38434)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45909"></span>45909</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add the y position to get the top of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45910"></span>45910</td>
+<td class="instruction">SUB 160</td>
+<td class="comment-1" rowspan="1">Subtract the top of the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45912"></span>45912</td>
+<td class="instruction">JR C,<a href="45756.html#45920">DrawSprite_Shifted_Rows</a></td>
+<td class="comment-1" rowspan="1">Jump if the sprite does not reach above the top of the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45914"></span>45914</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the number of rows that are cut off.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45915"></span>45915</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="3">Take the cut off rows away from the number of rows to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45916"></span>45916</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45917"></span>45917</td>
+<td class="instruction">LD (38434),A</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Shifted_Rows</td>
+<td class="address-2"><span id="45920"></span>45920</td>
+<td class="instruction">LD A,(38434)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45923"></span>45923</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="2">Switch to the shadow registers, and keep the number of rows to draw in <span class="register">B'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45924"></span>45924</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Shifted_Row</td>
+<td class="address-2"><span id="45925"></span>45925</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back to the main registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45926"></span>45926</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Fetch the first pair of data bytes into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45927"></span>45927</td>
+<td class="instruction">LD A,(BC)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the buffer to be changed.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Shifted_Jump</td>
+<td class="address-2"><span id="45928"></span>45928</td>
+<td class="instruction">JP <a href="45756.html#45928">DrawSprite_Shifted_Jump</a></td>
+<td class="comment-1" rowspan="1">Jump into the unrolled loop.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45931"></span>
+<div class="comments">
+<div class="paragraph">
+The unrolled loop that draws one row of a sprite that is not on a byte boundary. <span class="register">BC</span> points at the buffer, <span class="register">DE</span> holds the current pair of data bytes (OR byte in <span class="register">E</span> and XOR byte in <span class="register">D</span>) and <span class="register">H</span> holds the shift table page. Each pair of bytes is split by the shift table into a left part that is merged into the buffer byte already in <span class="register">A</span> and a right part that is merged into the next buffer byte.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Shifted</td>
+<td class="address-1"><span id="45931"></span>45931</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="7">Merge the left part of the shifted pair into the buffer byte already in <span class="register">A</span>: OR on the shifted OR byte and XOR on the shifted XOR byte. Store the result and move on to the next buffer byte, and the right half of the shift table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45932"></span>45932</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45933"></span>45933</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45934"></span>45934</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45935"></span>45935</td>
+<td class="instruction">LD (BC),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45936"></span>45936</td>
+<td class="instruction">INC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45937"></span>45937</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45938"></span>45938</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="7">Merge the right part of the shifted pair into the next buffer byte and leave it in <span class="register">A</span>, as the next pair also overlaps it. Go back to the left half of the table and fetch the next pair of data bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45939"></span>45939</td>
+<td class="instruction">LD A,(BC)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45940"></span>45940</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45941"></span>45941</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45942"></span>45942</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45943"></span>45943</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45944"></span>45944</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45945"></span>45945</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="7">Merge the left part of the second pair and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45946"></span>45946</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45947"></span>45947</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45948"></span>45948</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45949"></span>45949</td>
+<td class="instruction">LD (BC),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45950"></span>45950</td>
+<td class="instruction">INC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45951"></span>45951</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45952"></span>45952</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="7">Merge the right part of the second pair and fetch the third.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45953"></span>45953</td>
+<td class="instruction">LD A,(BC)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45954"></span>45954</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45955"></span>45955</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45956"></span>45956</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45957"></span>45957</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45958"></span>45958</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45959"></span>45959</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="7">Merge the left part of the third pair and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45960"></span>45960</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45961"></span>45961</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45962"></span>45962</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45963"></span>45963</td>
+<td class="instruction">LD (BC),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45964"></span>45964</td>
+<td class="instruction">INC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45965"></span>45965</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45966"></span>45966</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="7">Merge the right part of the third pair and fetch the fourth.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45967"></span>45967</td>
+<td class="instruction">LD A,(BC)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45968"></span>45968</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45969"></span>45969</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45970"></span>45970</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45971"></span>45971</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45972"></span>45972</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45973"></span>45973</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="7">Merge the left part of the fourth pair and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45974"></span>45974</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45975"></span>45975</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45976"></span>45976</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45977"></span>45977</td>
+<td class="instruction">LD (BC),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45978"></span>45978</td>
+<td class="instruction">INC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45979"></span>45979</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45980"></span>45980</td>
+<td class="instruction">LD L,E</td>
+<td class="comment-1" rowspan="6">Merge the right part of the fourth pair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45981"></span>45981</td>
+<td class="instruction">LD A,(BC)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45982"></span>45982</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45983"></span>45983</td>
+<td class="instruction">LD L,D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45984"></span>45984</td>
+<td class="instruction">XOR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45985"></span>45985</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45986"></span>45986</td>
+<td class="instruction">LD (BC),A</td>
+<td class="comment-1" rowspan="1">Store the last buffer byte of the row.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45987"></span>
+<div class="comments">
+<div class="paragraph">
+Move up to the start of the previous row of the buffer. The number to subtract is written by <a href="45756.html#45810">45810</a> for each sprite.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45987"></span>45987</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="3">Subtract the number of bytes to step back (the operand of this instruction is modified) from the low byte of the buffer address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45988"></span>45988</td>
+<td class="instruction">SUB 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45990"></span>45990</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45991"></span>45991</td>
+<td class="instruction">JP NC,<a href="45756.html#45995">DrawSprite_Shifted_Next</a></td>
+<td class="comment-1" rowspan="2">Take a carry from the high byte if there was a borrow.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45994"></span>45994</td>
+<td class="instruction">DEC B</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Shifted_Next</td>
+<td class="address-2"><span id="45995"></span>45995</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers, where <span class="register">B'</span> holds the number of rows left to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="45996"></span>45996</td>
+<td class="instruction">DJNZ <a href="45756.html#45925">DrawSprite_Shifted_Row</a></td>
+<td class="comment-1" rowspan="1">Loop back until every row of the sprite has been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Done</td>
+<td class="address-2"><span id="45998"></span>45998</td>
+<td class="instruction">LD SP,(38435)</td>
+<td class="comment-1" rowspan="1">Restore the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46002"></span>46002</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46003"></span>
+<div class="comments">
+<div class="paragraph">
+The sprite is on a byte boundary, so no shifting is needed and each pair of bytes is combined with just one byte of the buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Aligned</td>
+<td class="address-2"><span id="46003"></span>46003</td>
+<td class="instruction">AND 15</td>
+<td class="comment-1" rowspan="1">Keep the width of the sprite in bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46005"></span>46005</td>
+<td class="instruction">LD (38433),A</td>
+<td class="comment-1" rowspan="1">Store it as the number of bytes written to the buffer for each row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46008"></span>46008</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Take a copy of it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46009"></span>46009</td>
+<td class="instruction">ADD A,23</td>
+<td class="comment-1" rowspan="1">Add 23 to give the amount to subtract to get back to the start of the row above, once the last byte of a row has been written.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46011"></span>46011</td>
+<td class="instruction">LD (46151),A</td>
+<td class="comment-1" rowspan="1">Write that as the number to subtract in the SUB instruction at <a href="45756.html#46150">46150</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46014"></span>46014</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the width back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46015"></span>46015</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46016"></span>46016</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="2">Negate the width and keep the bottom two bits, so that this is the number of unused copies of the unrolled loop out of the four available.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46018"></span>46018</td>
+<td class="instruction">AND 3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46020"></span>46020</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the number of unused copies of the loop.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46021"></span>46021</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Multiply by 6, the length of one copy of the unrolled loop.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46022"></span>46022</td>
+<td class="instruction">ADD A,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46023"></span>46023</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46024"></span>46024</td>
+<td class="instruction">LD HL,46126</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="45756.html#46126">DrawSprite_Unrolled</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46027"></span>46027</td>
+<td class="instruction">CALL <a href="49042.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Add the offset using <a href="49042.html">AddAToHL</a>, to skip the copies that are not needed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46030"></span>46030</td>
+<td class="instruction">LD (46124),HL</td>
+<td class="comment-1" rowspan="1">Write the address into the jump at <a href="45756.html#46123">DrawSprite_Aligned_Jump</a>, so that it enters the loop at the right place.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46033"></span>46033</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46034"></span>46034</td>
+<td class="instruction">LD (38434),A</td>
+<td class="comment-1" rowspan="1">Store it as the number of rows still to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46037"></span>46037</td>
+<td class="instruction">LD C,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the x position into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46040"></span>46040</td>
+<td class="instruction">LD B,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the y position into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46043"></span>
+<div class="comments">
+<div class="paragraph">
+Clip the bottom of the sprite, as in <a href="45756.html#45847">45847</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46043"></span>46043</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="2">Is the bottom of the sprite on or above the bottom of the play window (48)?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46044"></span>46044</td>
+<td class="instruction">CP 48</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46046"></span>46046</td>
+<td class="instruction">JR NC,<a href="45756.html#46081">DrawSprite_Aligned_Clip</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45756.html#46081">DrawSprite_Aligned_Clip</a> if so.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46048"></span>46048</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46049"></span>46049</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46050"></span>46050</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add the y position to get the top of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46051"></span>46051</td>
+<td class="instruction">CP 48</td>
+<td class="comment-1" rowspan="1">Is the top of the sprite below the bottom of the play window?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46053"></span>46053</td>
+<td class="instruction">RET C</td>
+<td class="comment-1" rowspan="1">Return if it is, as the sprite is not visible at all.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46054"></span>46054</td>
+<td class="instruction">LD A,48</td>
+<td class="comment-1" rowspan="1">Work out how many rows of the sprite are below the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46056"></span>46056</td>
+<td class="instruction">SUB L</td>
+<td class="comment-1" rowspan="1">Subtract the y position from the bottom of the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46057"></span>46057</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep that number of rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46058"></span>46058</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46059"></span>46059</td>
+<td class="instruction">SUB L</td>
+<td class="comment-1" rowspan="1">Take away the number of rows that are cut off.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46060"></span>46060</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if nothing is left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46061"></span>46061</td>
+<td class="instruction">LD (38434),A</td>
+<td class="comment-1" rowspan="1">Store the number of rows that are left to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46064"></span>46064</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the number of rows that are cut off.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46065"></span>46065</td>
+<td class="instruction">LD A,(38433)</td>
+<td class="comment-1" rowspan="1">Fetch the width of the sprite in bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46068"></span>46068</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Use it as a counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46069"></span>46069</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Start the total at zero, and clear the high byte of <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46070"></span>46070</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Aligned_Multiply</td>
+<td class="address-2"><span id="46071"></span>46071</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="2">Add the number of rows that were cut off to the total, once for each byte of the width, to multiply them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46072"></span>46072</td>
+<td class="instruction">DJNZ <a href="45756.html#46071">DrawSprite_Aligned_Multiply</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46074"></span>46074</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the size of the hidden rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46075"></span>46075</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double it, as each byte of the width has a pair of bytes of data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46076"></span>46076</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the address of the sprite to give the address of the first visible row of data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46077"></span>46077</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep the address of the first visible row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46078"></span>46078</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46079"></span>46079</td>
+<td class="instruction">LD B,48</td>
+<td class="comment-1" rowspan="1">Start drawing from the bottom of the play window.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Aligned_Clip</td>
+<td class="address-2"><span id="46081"></span>46081</td>
+<td class="instruction">CALL <a href="46222.html">GetBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Find the address in the buffer of the first byte to draw, using <a href="46222.html">GetBufferAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46084"></span>46084</td>
+<td class="instruction">LD (38435),SP</td>
+<td class="comment-1" rowspan="1">Save the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46088"></span>46088</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="3">Point the stack pointer at the sprite, so that POP fetches the data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46089"></span>46089</td>
+<td class="instruction">LD SP,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46090"></span>46090</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46091"></span>46091</td>
+<td class="instruction">INC SP</td>
+<td class="comment-1" rowspan="1">Take it past the height byte, to the first pair of data bytes.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46092"></span>
+<div class="comments">
+<div class="paragraph">
+Clip the top of the sprite, as in <a href="45756.html#45897">45897</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46092"></span>46092</td>
+<td class="instruction">LD A,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46095"></span>46095</td>
+<td class="instruction">CP 160</td>
+<td class="comment-1" rowspan="2">Jump to <a href="45756.html#45998">DrawSprite_Done</a> to finish if it is, as the sprite is not visible.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46097"></span>46097</td>
+<td class="instruction">JP NC,<a href="45756.html#45998">DrawSprite_Done</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46100"></span>46100</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46101"></span>46101</td>
+<td class="instruction">LD A,(38434)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46104"></span>46104</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add the y position to get the top of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46105"></span>46105</td>
+<td class="instruction">SUB 160</td>
+<td class="comment-1" rowspan="1">Subtract the top of the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46107"></span>46107</td>
+<td class="instruction">JR C,<a href="45756.html#46115">DrawSprite_Aligned_Rows</a></td>
+<td class="comment-1" rowspan="1">Jump if the sprite does not reach above the top of the play window.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46109"></span>46109</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the number of rows that are cut off.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46110"></span>46110</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46111"></span>46111</td>
+<td class="instruction">SUB L</td>
+<td class="comment-1" rowspan="1">Take the cut off rows away from the number of rows to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46112"></span>46112</td>
+<td class="instruction">LD (38434),A</td>
+<td class="comment-1" rowspan="1">Store the number of rows to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Aligned_Rows</td>
+<td class="address-2"><span id="46115"></span>46115</td>
+<td class="instruction">LD A,(38434)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows to be drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46118"></span>46118</td>
+<td class="instruction">LD H,B</td>
+<td class="comment-1" rowspan="2">Move the buffer address into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46119"></span>46119</td>
+<td class="instruction">LD L,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46120"></span>46120</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="2">Switch to the shadow registers, and keep the number of rows to draw in <span class="register">B'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46121"></span>46121</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Aligned_Row</td>
+<td class="address-2"><span id="46122"></span>46122</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back to the main registers.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Aligned_Jump</td>
+<td class="address-2"><span id="46123"></span>46123</td>
+<td class="instruction">JP <a href="45756.html#46123">DrawSprite_Aligned_Jump</a></td>
+<td class="comment-1" rowspan="1">Jump into the unrolled loop.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46126"></span>
+<div class="comments">
+<div class="paragraph">
+The unrolled loop that draws one row of a sprite on a byte boundary. <span class="register">HL</span> points at the buffer and each pair of data bytes is fetched into <span class="register">DE</span>: the OR byte (<span class="register">E</span>) is ORed onto the buffer byte and the XOR byte (<span class="register">D</span>) is XORed onto the result.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Unrolled</td>
+<td class="address-1"><span id="46126"></span>46126</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="6">Merge the first pair of data bytes with the buffer byte and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46127"></span>46127</td>
+<td class="instruction">LD A,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46128"></span>46128</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46129"></span>46129</td>
+<td class="instruction">XOR D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46130"></span>46130</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46131"></span>46131</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46132"></span>46132</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="6">Merge the second pair of data bytes with the buffer byte and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46133"></span>46133</td>
+<td class="instruction">LD A,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46134"></span>46134</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46135"></span>46135</td>
+<td class="instruction">XOR D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46136"></span>46136</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46137"></span>46137</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46138"></span>46138</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="6">Merge the third pair of data bytes with the buffer byte and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46139"></span>46139</td>
+<td class="instruction">LD A,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46140"></span>46140</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46141"></span>46141</td>
+<td class="instruction">XOR D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46142"></span>46142</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46143"></span>46143</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46144"></span>46144</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="5">Merge the fourth pair of data bytes with the buffer byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46145"></span>46145</td>
+<td class="instruction">LD A,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46146"></span>46146</td>
+<td class="instruction">OR (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46147"></span>46147</td>
+<td class="instruction">XOR D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46148"></span>46148</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="46149"></span>
+<div class="comments">
+<div class="paragraph">
+Move up to the start of the previous row of the buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46149"></span>46149</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="2">Subtract the number of bytes to step back (the operand of this instruction is modified) from the low byte of the buffer address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46150"></span>46150</td>
+<td class="instruction">SUB 0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46152"></span>46152</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Keep the result.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46153"></span>46153</td>
+<td class="instruction">JP NC,<a href="45756.html#46157">DrawSprite_Aligned_Next</a></td>
+<td class="comment-1" rowspan="2">Take a carry from the high byte if there was a borrow.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46156"></span>46156</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Aligned_Next</td>
+<td class="address-2"><span id="46157"></span>46157</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers, where <span class="register">B'</span> holds the number of rows left to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46158"></span>46158</td>
+<td class="instruction">DJNZ <a href="45756.html#46122">DrawSprite_Aligned_Row</a></td>
+<td class="comment-1" rowspan="1">Loop back until every row of the sprite has been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="46160"></span>46160</td>
+<td class="instruction">JP <a href="45756.html#45998">DrawSprite_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45756.html#45998">DrawSprite_Done</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="45716.html">45716</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#45756">Map</a></td>
+<td class="next">
+Next: <a href="46163.html">46163</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../../asm/B2BC.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

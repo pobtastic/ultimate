@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pssst.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -25,7 +28,7 @@ gtag('config', 'G-75RERFCHBG');
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="6CF1.html">6CF1</a>
+Prev: <a href="6D07.html">6D07</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#6d0c">Map</a></td>
 <td class="next">
@@ -33,370 +36,485 @@ Next: <a href="6D9C.html">6D9C</a>
 </td>
 </tr>
 </table>
-<div class="description">6D0C: Routine at 6D0C</div>
+<div class="description">6D0C: Update Flower</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Updates the flower. Nothing happens until Robbie is active and the "get ready" delay has finished. The number of bugs which were eating the flower in the last pass of the main loop is in <a href="5E3B.html">BugsEating_Flower</a> (which is reset here once it has been read), and the flower then does one of three things each time the timer in <span class="register">IX</span>+05 runs out: <ul class="">
+<li>grows by one pixel if no bugs are eating it, and the time until the next step is 20 minus four times the number of leaves (see <a href="6D0C.html#6d3e">UpdateFlower_Grow</a>);</li>
+<li>stays where it is if one bug is eating it;</li>
+<li>sinks by one pixel if more than one bug is eating it (see <a href="6CF1.html">SinkFlower</a>).</li>
+</ul> Every time the flower reaches a multiple of sixteen pixels in height, a new leaf is grown using <a href="6C0E.html">GrowLeaf</a>. If the flower reaches the top it blooms using <a href="668E.html">StartFlowerBloom</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Flower object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6d0c"></span>
+<div class="comments">
+<div class="paragraph">
+The object fields used are: <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Field</th>
+<th colspan="1" rowspan="1">Use</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">+4</td>
+<td class="" colspan="1" rowspan="1">The number of leaves on the flower</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">+5</td>
+<td class="" colspan="1" rowspan="1">The timer until the flower next moves</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">+6</td>
+<td class="" colspan="1" rowspan="1">The number of bugs that were eating the flower last time</td>
+</tr>
+</table>
+</div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower</td>
 <td class="address-2"><span id="6d0c"></span>6D0C</td>
 <td class="instruction">CALL <a href="75B9.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="75B9.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Remember the position and state using <a href="75B9.html">StoreEntity</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d0f"></span>6D0F</td>
 <td class="instruction">LD DE,$769A</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="769A.html">769A</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="769A.html">Sprite_Flower_1</a> (the flower sprite).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d12"></span>6D12</td>
 <td class="instruction">LD A,($5E6C)</td>
-<td class="comment-1" rowspan="3">If <a href="5E6C.html">State_Robbie_Active</a> is not active, jump to <a href="6CF1.html#6d07">6D07</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="6D07.html">DrawFlower</a> to draw the flower if Robbie is inactive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d15"></span>6D15</td>
 <td class="instruction">AND A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d16"></span>6D16</td>
-<td class="instruction">JR Z,<a href="6CF1.html#6d07">$6D07</a></td>
+<td class="instruction">JR Z,<a href="6D07.html">DrawFlower</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d18"></span>6D18</td>
 <td class="instruction">LD A,($5E22)</td>
-<td class="comment-1" rowspan="3"><a href="5E22.html">PlayDelay_Counter</a></td>
+<td class="comment-1" rowspan="3">Jump to <a href="6D07.html">DrawFlower</a> to draw the flower if the "get ready" delay in <a href="5E22.html">PlayDelay_Counter</a> is not finished.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d1b"></span>6D1B</td>
 <td class="instruction">AND A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d1c"></span>6D1C</td>
-<td class="instruction">JR NZ,<a href="6CF1.html#6d07">$6D07</a></td>
+<td class="instruction">JR NZ,<a href="6D07.html">DrawFlower</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d1e"></span>6D1E</td>
 <td class="instruction">LD A,($5E3B)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E3B.html">5E3B</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the number of bugs eating the flower from <a href="5E3B.html">BugsEating_Flower</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d21"></span>6D21</td>
 <td class="instruction">CP (IX+$06)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Compare it with the number in <span class="register">IX</span>+06.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d24"></span>6D24</td>
-<td class="instruction">JR Z,<a href="6D0C.html#6d2d">$6D2D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="6D0C.html#6d2d">UpdateFlower_Timer</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6D0C.html#6d2d">UpdateFlower_Timer</a> if it has not changed.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d26"></span>6D26</td>
 <td class="instruction">LD (IX+$06),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Remember the new number in <span class="register">IX</span>+06.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d29"></span>6D29</td>
 <td class="instruction">LD (IX+$05),$01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 01 to <span class="register">IX</span>+05 so that the timer runs out straight away.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower_Timer</td>
 <td class="address-2"><span id="6d2d"></span>6D2D</td>
 <td class="instruction">DEC (IX+$05)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the timer in <span class="register">IX</span>+05 by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d30"></span>6D30</td>
-<td class="instruction">JR NZ,<a href="6CF1.html#6d07">$6D07</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="6D07.html">DrawFlower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6D07.html">DrawFlower</a> to draw the flower if the timer has not run out.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d32"></span>6D32</td>
 <td class="instruction">LD A,($5E3B)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the number of bugs eating the flower from <a href="5E3B.html">BugsEating_Flower</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d35"></span>6D35</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test the number.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d36"></span>6D36</td>
-<td class="instruction">JR Z,<a href="6D0C.html#6d3e">$6D3E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="6D0C.html#6d3e">UpdateFlower_Grow</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6D0C.html#6d3e">UpdateFlower_Grow</a> if no bugs are eating the flower.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d38"></span>6D38</td>
 <td class="instruction">CP $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="6D07.html">DrawFlower</a> to draw the flower if only one bug is eating it.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d3a"></span>6D3A</td>
-<td class="instruction">JR Z,<a href="6CF1.html#6d07">$6D07</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="6D07.html">DrawFlower</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d3c"></span>6D3C</td>
-<td class="instruction">JR <a href="6CF1.html">$6CF1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="6CF1.html">SinkFlower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6CF1.html">SinkFlower</a> to sink the flower.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower_Grow</td>
 <td class="address-2"><span id="6d3e"></span>6D3E</td>
 <td class="instruction">DEC (IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the Y position of the flower by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d41"></span>6D41</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the number of leaves from <span class="register">IX</span>+04.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d44"></span>6D44</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Multiply it by four.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d45"></span>6D45</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d46"></span>6D46</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=four times the number of leaves.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d47"></span>6D47</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the Y position of the flower.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d4a"></span>6D4A</td>
 <td class="instruction">CP $70</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="668E.html">StartFlowerBloom</a> if the flower has reached the top.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d4c"></span>6D4C</td>
-<td class="instruction">JP C,<a href="668E.html">$668E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP C,<a href="668E.html">StartFlowerBloom</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d4f"></span>6D4F</td>
 <td class="instruction">LD A,$20</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=20.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d51"></span>6D51</td>
 <td class="instruction">SUB B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract four times the number of leaves.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="6d52"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="6CF1.html">6CF1</a>.
+This entry point is used by the routine at <a href="6CF1.html">SinkFlower</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower_SetTimer</td>
 <td class="address-2"><span id="6d52"></span>6D52</td>
 <td class="instruction">LD (IX+$05),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the time until the next move to <span class="register">IX</span>+05.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d55"></span>6D55</td>
 <td class="instruction">LD A,($5E15)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E15.html">LeafGrowth_Flags</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d58"></span>6D58</td>
-<td class="instruction">AND $40</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %01000000</td>
+<td class="comment-1" rowspan="1">Keep only bit 6.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d5a"></span>6D5A</td>
 <td class="instruction">LD ($5E15),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it back to <a href="5E15.html">LeafGrowth_Flags</a> (so bit 0 is reset and a leaf can be added).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d5d"></span>6D5D</td>
-<td class="instruction">CALL <a href="74A5.html#74df">$74DF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL <a href="74A5.html#74df">ReplaceSprite</a></td>
+<td class="comment-1" rowspan="1">Move the flower sprite using <a href="74A5.html#74df">ReplaceSprite</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="6d60"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="6CF1.html">6CF1</a>.
+This entry point is used by the routine at <a href="6D07.html">DrawFlower</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower_Colour</td>
 <td class="address-2"><span id="6d60"></span>6D60</td>
 <td class="instruction">CALL <a href="7450.html">ColouriseSprite</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Colour the sprite using <a href="7450.html">ColouriseSprite</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="6d63"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the stem of the flower from the flower down to the ground.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d63"></span>6D63</td>
 <td class="instruction">LD L,(IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">L</span>=the X position of the flower.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d66"></span>6D66</td>
 <td class="instruction">LD H,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">H</span>=the Y position of the flower.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower_Stem_Loop</td>
 <td class="address-2"><span id="6d69"></span>6D69</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the Y position.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d6a"></span>6D6A</td>
 <td class="instruction">CP $B8</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="6D0C.html#6d84">UpdateFlower_Finish</a> if the bottom of the stem has been reached.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d6c"></span>6D6C</td>
-<td class="instruction">JR NC,<a href="6D0C.html#6d84">$6D84</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="6D0C.html#6d84">UpdateFlower_Finish</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d6e"></span>6D6E</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Invert all of the bits in <span class="register">A</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d6f"></span>6D6F</td>
-<td class="instruction">AND $07</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d71"></span>6D71</td>
-<td class="instruction">JR NZ,<a href="6D0C.html#6d7a">$6D7A</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="6D0C.html#6d7a">UpdateFlower_Stem_Pixels</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6D0C.html#6d7a">UpdateFlower_Stem_Pixels</a> unless this is the last pixel row in a cell.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d73"></span>6D73</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the position on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d74"></span>6D74</td>
 <td class="instruction">CALL <a href="748F.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Convert the position to an attribute buffer address using <a href="748F.html">AttributeAddress</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d77"></span>6D77</td>
 <td class="instruction">LD (HL),$7C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write 7C (bright green on white) to the attribute buffer.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d79"></span>6D79</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the position from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower_Stem_Pixels</td>
 <td class="address-2"><span id="6d7a"></span>6D7A</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the position on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d7b"></span>6D7B</td>
 <td class="instruction">CALL <a href="759A.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Convert the position to a screen address using <a href="759A.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d7e"></span>6D7E</td>
 <td class="instruction">LD (HL),$B9</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write B9 to the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d80"></span>6D80</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the position from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d81"></span>6D81</td>
 <td class="instruction">INC H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move down one pixel row.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d82"></span>6D82</td>
-<td class="instruction">JR <a href="6D0C.html#6d69">$6D69</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="6D0C.html#6d69">UpdateFlower_Stem_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6D0C.html#6d69">UpdateFlower_Stem_Loop</a>.</td>
 </tr>
 <tr>
+<td class="asm-label">UpdateFlower_Finish</td>
 <td class="address-2"><span id="6d84"></span>6D84</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="5E3B.html">BugsEating_Flower</a> (the number of bugs eating the flower).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d85"></span>6D85</td>
 <td class="instruction">LD ($5E3B),A</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d88"></span>6D88</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the number of leaves from <span class="register">IX</span>+04.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d8b"></span>6D8B</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test the number.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d8c"></span>6D8C</td>
 <td class="instruction">RET M</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if it is negative.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d8d"></span>6D8D</td>
 <td class="instruction">LD A,($5E15)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E15.html">LeafGrowth_Flags</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d90"></span>6D90</td>
-<td class="instruction">AND $01</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep only bit 0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d92"></span>6D92</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if a leaf has already been added.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d93"></span>6D93</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the Y position of the flower.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d96"></span>6D96</td>
-<td class="instruction">AND $0F</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d98"></span>6D98</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return unless the Y position is a multiple of sixteen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="6d99"></span>6D99</td>
-<td class="instruction">JP <a href="6BD0.html#6c0e">$6C0E</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP <a href="6C0E.html">GrowLeaf</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6C0E.html">GrowLeaf</a> to grow a leaf.</td>
 </tr>
 </table>
 <table class="asm-navigation">
 <tr>
 <td class="prev">
-Prev: <a href="6CF1.html">6CF1</a>
+Prev: <a href="6D07.html">6D07</a>
 </td>
 <td class="up">Up: <a href="../maps/all.html#6d0c">Map</a></td>
 <td class="next">

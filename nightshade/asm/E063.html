@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at E063</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="E051.html">E051</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#e063">Map</a></td>
+<td class="next">
+Next: <a href="E087.html">E087</a>
+</td>
+</tr>
+</table>
+<div class="description">E063: Check Walls Vertical First</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="E013.html">TestCellMovingRight</a> and <a href="E020.html">TestCellMovingLeft</a>.
+</div>
+<div class="paragraph">
+Tests an object against the walls in a cell, by testing it against each rectangle of the tile of the cell in turn, with the position along the Y axis first. The rectangles are four bytes each (the X and Y positions of the centre, then the half width and half depth), and a zero X position ends the list.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">X position to test</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Y position to test</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">The depth that the object has gone into the wall along the X axis</td>
+</tr>
+<tr>
+<td class="register">negative</td>
+<td class="register-desc"></td>
+</tr>
+<tr>
+<td class="register">F</td>
+<td class="register-desc">The carry flag is set if there was a collision</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckWallsVerticalFirst</td>
+<td class="address-2"><span id="e063"></span>E063</td>
+<td class="instruction">CALL <a href="E028.html">FindPositionInCell</a></td>
+<td class="comment-1" rowspan="1">Find the position in the cell and the tile.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e066"></span>E066</td>
+<td class="instruction">LD BC,$6334</td>
+<td class="comment-1" rowspan="2">Find the list of rectangles for the tile.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e069"></span>E069</td>
+<td class="instruction">CALL <a href="D589.html">GetTableEntry</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e06c"></span>E06C</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Use the list of rectangles.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e06d"></span>E06D</td>
+<td class="instruction">POP IY</td>
+</tr>
+<tr>
+<td class="asm-label">CheckWallsVerticalFirst_Loop</td>
+<td class="address-2"><span id="e06f"></span>E06F</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="3">Return if there are no more rectangles.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e072"></span>E072</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e073"></span>E073</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e074"></span>E074</td>
+<td class="instruction">CALL <a href="E0C4.html">CheckOverlapAlongY</a></td>
+<td class="comment-1" rowspan="2">Jump to <a href="E063.html#e07d">CheckWallsVerticalFirst_Next</a> to try the next rectangle if the object is not touching this one along the Y axis.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e077"></span>E077</td>
+<td class="instruction">JR NC,<a href="E063.html#e07d">CheckWallsVerticalFirst_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e079"></span>E079</td>
+<td class="instruction">CALL <a href="E087.html">CheckOverlapAlongX</a></td>
+<td class="comment-1" rowspan="2">Return if it is touching along the X axis as well.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e07c"></span>E07C</td>
+<td class="instruction">RET C</td>
+</tr>
+<tr>
+<td class="asm-label">CheckWallsVerticalFirst_Next</td>
+<td class="address-2"><span id="e07d"></span>E07D</td>
+<td class="instruction">INC IY</td>
+<td class="comment-1" rowspan="4">Move on to the next rectangle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e07f"></span>E07F</td>
+<td class="instruction">INC IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e081"></span>E081</td>
+<td class="instruction">INC IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e083"></span>E083</td>
+<td class="instruction">INC IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e085"></span>E085</td>
+<td class="instruction">JR <a href="E063.html#e06f">CheckWallsVerticalFirst_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump back to check it.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/gunfright/asm/CFA1.html">Gunfright</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="E051.html">E051</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#e063">Map</a></td>
+<td class="next">
+Next: <a href="E087.html">E087</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/57443.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

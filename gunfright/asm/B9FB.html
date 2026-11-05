@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at B9FB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B9DD.html">B9DD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b9fb">Map</a></td>
+<td class="next">
+Next: <a href="BA47.html">BA47</a>
+</td>
+</tr>
+</table>
+<div class="description">B9FB: Handle Waiting Outlaw</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Type 0C: the outlaw in the duel before he draws. He wanders about the screen, changing direction a random number of times (the count in <span class="register">IX</span>+0A), and at the end of the last move he draws his gun. If the player moves or fires before then he draws at once. He is hit if the crosshair is on him when the player fires.  <table class="">
+<tr>
+<td class="" colspan="1" rowspan="1"><img alt="waiting-outlaw" src="../images/scr/waiting-outlaw.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleWaitingOutlaw</td>
+<td class="address-2"><span id="b9fb"></span>B9FB</td>
+<td class="instruction">CALL <a href="BA8B.html">CheckForEarlyDraw</a></td>
+<td class="comment-1" rowspan="1">Check whether the player has provoked the outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b9fe"></span>B9FE</td>
+<td class="instruction">DEC (IX+$0B)</td>
+<td class="comment-1" rowspan="1">Count down the timer for the current move.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba01"></span>BA01</td>
+<td class="instruction">LD A,(IX+$0B)</td>
+<td class="comment-1" rowspan="1">Fetch the timer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba04"></span>BA04</td>
+<td class="instruction">JR NZ,<a href="B9FB.html#ba0f">HandleWaitingOutlaw_Move</a></td>
+<td class="comment-1" rowspan="1">Jump if the move is not over.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba06"></span>BA06</td>
+<td class="instruction">OR (IX+$0A)</td>
+<td class="comment-1" rowspan="1">Combine the timer, which is zero, with the number of moves left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba09"></span>BA09</td>
+<td class="instruction">JP Z,<a href="BAB1.html">StartOutlawDrawing</a></td>
+<td class="comment-1" rowspan="1">Jump to make the outlaw draw if he has made all his moves.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba0c"></span>BA0C</td>
+<td class="instruction">CALL <a href="BC37.html">ChooseOutlawMove</a></td>
+<td class="comment-1" rowspan="1">Choose a new move.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleWaitingOutlaw_Move</td>
+<td class="address-2"><span id="ba0f"></span>BA0F</td>
+<td class="instruction">CALL <a href="BBDD.html">KeepOutlawOnScreen</a></td>
+<td class="comment-1" rowspan="1">Keep the outlaw on the screen, which reverses his speed at an edge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba12"></span>BA12</td>
+<td class="instruction">LD A,(IX+$05)</td>
+<td class="comment-1" rowspan="1">Fetch the flags which show whether he has reached an edge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba15"></span>BA15</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the four bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba17"></span>BA17</td>
+<td class="instruction">JR Z,<a href="B9FB.html#ba1d">HandleWaitingOutlaw_Update</a></td>
+<td class="comment-1" rowspan="1">Jump if he has not reached an edge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba19"></span>BA19</td>
+<td class="instruction">LD (IX+$0B),$01</td>
+<td class="comment-1" rowspan="1">Make the move end on the next frame.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleWaitingOutlaw_Update</td>
+<td class="address-2"><span id="ba1d"></span>BA1D</td>
+<td class="instruction">CALL <a href="BBCA.html">MoveDuelOutlaw</a></td>
+<td class="comment-1" rowspan="1">Move the outlaw.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ba20"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routines at <a href="BAB1.html">StartOutlawDrawing</a> and <a href="BADA.html">HandleDrawingOutlaw</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleWaitingOutlaw_CheckHit</td>
+<td class="address-2"><span id="ba20"></span>BA20</td>
+<td class="instruction">CALL <a href="BA63.html">CheckCrosshairOnOutlaw</a></td>
+<td class="comment-1" rowspan="1">Check whether the crosshair is on the outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba23"></span>BA23</td>
+<td class="instruction">JR NC,<a href="B9FB.html#ba32">HandleWaitingOutlaw_DrawBody</a></td>
+<td class="comment-1" rowspan="1">Jump if the outlaw has not been hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba25"></span>BA25</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="1">Set the flag which shows that the outlaw has been hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba27"></span>BA27</td>
+<td class="instruction">LD ($A212),A</td>
+<td class="comment-1" rowspan="1">Store the flag which shows the outlaw has been hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba2a"></span>BA2A</td>
+<td class="instruction">LD (IX+$00),$11</td>
+<td class="comment-1" rowspan="1">Turn the outlaw into a shot outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba2e"></span>BA2E</td>
+<td class="instruction">LD (IX+$0C),$00</td>
+<td class="comment-1" rowspan="1">Start at the first frame of falling.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleWaitingOutlaw_DrawBody</td>
+<td class="address-2"><span id="ba32"></span>BA32</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="2">Fetch the horizontal position of the outlaw and keep it in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba35"></span>BA35</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba36"></span>BA36</td>
+<td class="instruction">LD ($A220),A</td>
+<td class="comment-1" rowspan="1">Store it as the horizontal pixel position for the sprites.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba39"></span>BA39</td>
+<td class="instruction">LD H,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Fetch the vertical position of the outlaw into <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba3c"></span>BA3C</td>
+<td class="instruction">CALL <a href="D233.html">CalculateBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Find the address in the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba3f"></span>BA3F</td>
+<td class="instruction">CALL <a href="BC6C.html">ChooseOutlawBody</a></td>
+<td class="comment-1" rowspan="1">Choose the sprites of the body of the outlaw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba42"></span>BA42</td>
+<td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Set the number of sprites to three.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba44"></span>BA44</td>
+<td class="instruction">CALL <a href="B280.html">DrawWideSprites</a></td>
+<td class="comment-1" rowspan="1">Draw the body of the outlaw into the buffer.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+Continue on to <a href="BA47.html">DrawOutlawFace</a>.
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B9DD.html">B9DD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b9fb">Map</a></td>
+<td class="next">
+Next: <a href="BA47.html">BA47</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/47611.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

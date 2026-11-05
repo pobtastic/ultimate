@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,15 +36,43 @@ Next: <a href="9D91.html">9D91</a>
 </td>
 </tr>
 </table>
-<div class="description">9D41: Routine at 9D41</div>
+<div class="description">9D41: Test Amulet Proximity</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="AAED.html">AAED</a>.
+Used by the routine at <a href="AB74.html">HandlerTribesman</a>.
+</div>
+<div class="paragraph">
+Tests whether an actor is close to any of the four amulet pieces which have not been collected yet (those with a non-zero sprite ID in the records at <a href="97FE.html">AmuletData</a>). A piece counts as close if either of these is true: <ul class="">
+<li>the column of the room (bits 0-3 of the room number) matches the column of the room of the piece and the X positions are less than 10 apart</li>
+<li>the row of the room (bits 4-7 of the room number) matches the row of the room of the piece and the Y positions are less than 10 apart</li>
+</ul> The room is only compared in part so the test does not require the actor and the piece to be in exactly the same room.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">The distance to the piece which is close</td>
+</tr>
+<tr>
+<td class="register">F</td>
+<td class="register-desc">Carry flag set if an amulet piece is close</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
@@ -49,263 +80,343 @@ Used by the routine at <a href="AAED.html">AAED</a>.
 <span id="9d41"></span>
 <div class="comments">
 <div class="paragraph">
-Each block of amulet data is 0B bytes long.
+Check each of the four amulet piece records in turn.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">TestAmuletProximity</td>
 <td class="address-2"><span id="9d41"></span>9D41</td>
 <td class="instruction">LD DE,$000B</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=000B.</td>
+<td class="comment-1" rowspan="1">Set the offset to the next amulet piece in <span class="register">DE</span> to 0B.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d44"></span>9D44</td>
 <td class="instruction">LD HL,$97FE</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="97FE.html">AmuletData</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the first amulet piece record at <a href="97FE.html">AmuletData</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9d47"></span>9D47</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">Set the amulet piece counter in <span class="register">B</span> to 04.</td>
+</tr>
+<tr>
+<td class="asm-label">TestAmuletProximity_Loop</td>
+<td class="address-2"><span id="9d49"></span>9D49</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the amulet piece.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9d4a"></span>9D4A</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move onto the room of the amulet piece.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9d4b"></span>9D4B</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="9D41.html#9d66">TestAmuletProximity_Next</a> if the amulet piece is not present.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="9d4c"></span>9D4C</td>
+<td class="instruction">JR Z,<a href="9D41.html#9d66">TestAmuletProximity_Next</a></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
-<span id="9d47"></span>
+<span id="9d4e"></span>
 <div class="comments">
 <div class="paragraph">
-There are four pieces of the amulet.
+Compare the columns of the rooms.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="address-1"><span id="9d47"></span>9D47</td>
-<td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=04.</td>
-</tr>
-<tr>
-<td class="address-2"><span id="9d49"></span>9D49</td>
-<td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">HL</span> (a byte of amulet data).</td>
-</tr>
-<tr>
-<td class="address-1"><span id="9d4a"></span>9D4A</td>
-<td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="9d4b"></span>9D4B</td>
-<td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">If <span class="register">A</span> is zero, jump to <a href="9D41.html#9d66">9D66</a>.</td>
-</tr>
-<tr>
-<td class="address-1"><span id="9d4c"></span>9D4C</td>
-<td class="instruction">JR Z,<a href="9D41.html#9d66">$9D66</a></td>
-</tr>
-<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d4e"></span>9D4E</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">HL</span> (a byte of amulet data).</td>
+<td class="comment-1" rowspan="1">Fetch the room of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d4f"></span>9D4F</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
+<td class="comment-1" rowspan="1">Keep only the column of the room (bits 0-3).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d51"></span>9D51</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Store the result in <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Stash the column of the amulet piece in <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d52"></span>9D52</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+01 (current location).</td>
+<td class="comment-1" rowspan="1">Fetch the room of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d55"></span>9D55</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
+<td class="comment-1" rowspan="1">Keep only the column of the room (bits 0-3).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d57"></span>9D57</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9D41.html#9d6b">TestAmuletProximity_Columns</a> if the actor is in the same column as the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d58"></span>9D58</td>
-<td class="instruction">JR Z,<a href="9D41.html#9d6b">$9D6B</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="9D41.html#9d6b">TestAmuletProximity_Columns</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9d5a"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the rows of the rooms.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestAmuletProximity_Rows</td>
 <td class="address-2"><span id="9d5a"></span>9D5A</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the room of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d5b"></span>9D5B</td>
 <td class="instruction">AND %11110000</td>
-<td class="comment-1" rowspan="1">Keep only bits 4-7.</td>
+<td class="comment-1" rowspan="1">Keep only the row of the room (bits 4-7).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d5d"></span>9D5D</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the row of the amulet piece in <span class="register">C</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d5e"></span>9D5E</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">IX</span>+01 (current location).</td>
+<td class="comment-1" rowspan="1">Fetch the room of the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d61"></span>9D61</td>
 <td class="instruction">AND %11110000</td>
-<td class="comment-1" rowspan="1">Keep only bits 4-7.</td>
+<td class="comment-1" rowspan="1">Keep only the row of the room (bits 4-7).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d63"></span>9D63</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9D41.html#9d7d">TestAmuletProximity_Rows_Same</a> if the actor is in the same row as the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d64"></span>9D64</td>
-<td class="instruction">JR Z,<a href="9D41.html#9d7d">$9D7D</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="9D41.html#9d7d">TestAmuletProximity_Rows_Same</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9d66"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next piece.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestAmuletProximity_Next</td>
 <td class="address-2"><span id="9d66"></span>9D66</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d67"></span>9D67</td>
-<td class="instruction">DJNZ <a href="9D41.html#9d49">$9D49</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="9D41.html#9d49">TestAmuletProximity_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the amulet piece counter by one and loop back to <a href="9D41.html#9d49">TestAmuletProximity_Loop</a> until all four pieces have been checked.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d69"></span>9D69</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Clear the carry flag (no amulet piece is close).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d6a"></span>9D6A</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
-<td class="address-2"><span id="9d6b"></span>9D6B</td>
-<td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2">Increment <span class="register">HL</span> by two.</td>
+<td class="routine-comment" colspan="5">
+<span id="9d6b"></span>
+<div class="comments">
+<div class="paragraph">
+The columns are the same so compare the X positions.
+</div>
+</div>
+</td>
 </tr>
 <tr>
+<td class="asm-label">TestAmuletProximity_Columns</td>
+<td class="address-2"><span id="9d6b"></span>9D6B</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move onto the X position of the amulet piece.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d6c"></span>9D6C</td>
 <td class="instruction">INC HL</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d6d"></span>9D6D</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X position of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d6e"></span>9D6E</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Move back onto the room of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d6f"></span>9D6F</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d70"></span>9D70</td>
 <td class="instruction">SUB (IX+$03)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the X position of the actor to get the horizontal distance.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d73"></span>9D73</td>
-<td class="instruction">JP P,<a href="9D41.html#9d78">$9D78</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP P,<a href="9D41.html#9d78">TestAmuletProximity_Columns_Positive</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9D41.html#9d78">TestAmuletProximity_Columns_Positive</a> if the distance is positive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d76"></span>9D76</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Make the distance positive.</td>
 </tr>
 <tr>
+<td class="asm-label">TestAmuletProximity_Columns_Positive</td>
 <td class="address-2"><span id="9d78"></span>9D78</td>
 <td class="instruction">CP $10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9D41.html#9d5a">TestAmuletProximity_Rows</a> if the horizontal distance is 10 or more.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d7a"></span>9D7A</td>
-<td class="instruction">JR NC,<a href="9D41.html#9d5a">$9D5A</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="9D41.html#9d5a">TestAmuletProximity_Rows</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d7c"></span>9D7C</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1">Return.</td>
+<td class="comment-1" rowspan="1">Return with the carry flag set (the amulet piece is close).</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9d7d"></span>
+<div class="comments">
+<div class="paragraph">
+The rows are the same so compare the Y positions.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestAmuletProximity_Rows_Same</td>
 <td class="address-2"><span id="9d7d"></span>9D7D</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move onto the Y position of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d7e"></span>9D7E</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d7f"></span>9D7F</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d80"></span>9D80</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the Y position of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d81"></span>9D81</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Move back onto the room of the amulet piece.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d82"></span>9D82</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d83"></span>9D83</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d84"></span>9D84</td>
 <td class="instruction">SUB (IX+$04)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the Y position of the actor to get the vertical distance.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d87"></span>9D87</td>
-<td class="instruction">JP P,<a href="9D41.html#9d8c">$9D8C</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP P,<a href="9D41.html#9d8c">TestAmuletProximity_Rows_Same_Positive</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9D41.html#9d8c">TestAmuletProximity_Rows_Same_Positive</a> if the distance is positive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d8a"></span>9D8A</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Make the distance positive.</td>
 </tr>
 <tr>
+<td class="asm-label">TestAmuletProximity_Rows_Same_Positive</td>
 <td class="address-2"><span id="9d8c"></span>9D8C</td>
 <td class="instruction">CP $10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9D41.html#9d66">TestAmuletProximity_Next</a> if the vertical distance is 10 or more.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d8e"></span>9D8E</td>
-<td class="instruction">JR NC,<a href="9D41.html#9d66">$9D66</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="9D41.html#9d66">TestAmuletProximity_Next</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9d90"></span>9D90</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1">Return.</td>
+<td class="comment-1" rowspan="1">Return with the carry flag set (the amulet piece is close).</td>
 </tr>
 </table>
 <table class="asm-navigation">

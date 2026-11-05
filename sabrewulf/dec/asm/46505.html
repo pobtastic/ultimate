@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,26 @@ Next: <a href="46540.html">46540</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="41356.html">41356</a>, <a href="41763.html">41763</a> and <a href="42163.html">42163</a>.
+Used by the routines at <a href="41387.html">HandlerAmuletPiece</a>, <a href="41763.html">CollectPickup</a> and <a href="42163.html">AwardActorPoints</a>.
+</div>
+<div class="paragraph">
+Adds points to the score of the active player. The scores are held as three bytes, each with two BCD digits. The new score is then printed by <a href="46540.html">Score_1UP</a>.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="add-points-before" src="../../images/scr/add-points-before.png" /></td>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">After <a href="46505.html">AddPointsToScore</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="add-points-after" src="../../images/scr/add-points-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 <table class="input">
@@ -67,7 +89,7 @@ Check the active player.
 <td class="asm-label">AddPointsToScore</td>
 <td class="address-2"><span id="46505"></span>46505</td>
 <td class="instruction">LD A,(38558)</td>
-<td class="comment-1" rowspan="3">If <a href="38558.html">Flag_ActivePlayer</a> is not zero, jump to <a href="46505.html#46516">AddPointsToScore_2UP</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="46505.html#46516">AddPointsToScore_2UP</a> if the active player is 2UP.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -93,7 +115,7 @@ Set the score address for 1UP.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46511"></span>46511</td>
 <td class="instruction">LD HL,38554</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="38552.html#38554">1UP_Score_3</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the score of 1UP at <a href="38552.html#38554">1UP_Score_3</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -115,7 +137,7 @@ Set the score address for 2UP.
 <td class="asm-label">AddPointsToScore_2UP</td>
 <td class="address-2"><span id="46516"></span>46516</td>
 <td class="instruction">LD HL,38557</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="38555.html#38557">2UP_Score_3</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the score of 2UP at <a href="38555.html#38557">2UP_Score_3</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -131,13 +153,13 @@ Process adding the points to the appropriate score.
 <td class="asm-label">AddPointsToScore_Start</td>
 <td class="address-2"><span id="46519"></span>46519</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=score byte #3.</td>
+<td class="comment-1" rowspan="1">Fetch the lowest pair of digits of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46520"></span>46520</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-1" rowspan="2">Add <span class="register">C</span> to score byte #3 with BCD conversion.</td>
+<td class="comment-1" rowspan="2">Add the low byte of the points to the digits (in BCD).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -148,25 +170,25 @@ Process adding the points to the appropriate score.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46522"></span>46522</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Update score byte #3.</td>
+<td class="comment-1" rowspan="1">Store the new lowest pair of digits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46523"></span>46523</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Move onto the next score byte.</td>
+<td class="comment-1" rowspan="1">Move onto the middle pair of digits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46524"></span>46524</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=score byte #2.</td>
+<td class="comment-1" rowspan="1">Fetch the middle pair of digits of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46525"></span>46525</td>
 <td class="instruction">ADC A,B</td>
-<td class="comment-1" rowspan="2">Add (with carry) <span class="register">B</span> to score byte #2 with BCD conversion.</td>
+<td class="comment-1" rowspan="2">Add the high byte of the points to the digits, plus the carry (in BCD).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -177,25 +199,25 @@ Process adding the points to the appropriate score.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46527"></span>46527</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Update score byte #2.</td>
+<td class="comment-1" rowspan="1">Store the new middle pair of digits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46528"></span>46528</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Move onto the next score byte.</td>
+<td class="comment-1" rowspan="1">Move onto the highest pair of digits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46529"></span>46529</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=score byte #1.</td>
+<td class="comment-1" rowspan="1">Fetch the highest pair of digits of the score.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46530"></span>46530</td>
 <td class="instruction">ADC A,0</td>
-<td class="comment-1" rowspan="2">Add 0 (i.e. just the carry flag) to score byte #1 with BCD conversion.</td>
+<td class="comment-1" rowspan="2">Add the carry to the digits (in BCD).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -206,7 +228,7 @@ Process adding the points to the appropriate score.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46533"></span>46533</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Update score byte #1.</td>
+<td class="comment-1" rowspan="1">Store the new highest pair of digits.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -222,7 +244,7 @@ Check the active player.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46534"></span>46534</td>
 <td class="instruction">LD A,(38558)</td>
-<td class="comment-1" rowspan="3">If <a href="38558.html">Flag_ActivePlayer</a> is not zero, jump to <a href="46540.html#46548">Score_2UP</a>.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="46540.html#46548">Score_2UP</a> if the active player is 2UP.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -241,8 +263,10 @@ Check the active player.
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/cookie/dec/asm/29717.html">Cookie</a></li>
 <li><a href="/ultimate/jetpac/dec/asm/28921.html">Jetpac</a></li>
+<li><a href="/ultimate/lunarjetman/dec/asm/35228.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/dec/asm/29562.html">Pssst</a></li>
 <li><a href="/ultimate/tranzam/dec/asm/24646.html">Tranz Am</a></li>
+<li><a href="/ultimate/underwurlde/dec/asm/41029.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

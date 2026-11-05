@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at B294</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B21C.html">B21C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b294">Map</a></td>
+<td class="next">
+Next: <a href="B2BC.html">B2BC</a>
+</td>
+</tr>
+</table>
+<div class="description">B294: Build Shift Tables</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="98D0.html">InitialiseGame</a>.
+</div>
+<div class="paragraph">
+Builds the lookup tables used to shift sprite bytes right by any number of pixels, and the table used to reverse the bits of a byte. The shift tables occupy E000 to EFFF. For each byte value 00 to FF and each shift of 00 to 07 bits to the left, the byte is stored as a 10 bit number. The low byte of the number is stored in page EF for a shift of 00, page ED for a shift of 01, and so on in steps of two pages. The high byte is stored in the page below it. Both are stored at the offset given by the original value. The table at F000 gives the value of each byte with its bits reversed, and is used to flip sprites.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables</td>
+<td class="address-2"><span id="b294"></span>B294</td>
+<td class="instruction">LD L,$00</td>
+<td class="comment-1" rowspan="1">Start with the byte value 00.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_NextValue</td>
+<td class="address-2"><span id="b296"></span>B296</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the shifted value.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b298"></span>B298</td>
+<td class="instruction">LD E,L</td>
+<td class="comment-1" rowspan="1">Copy the byte value into the low byte of the shifted value.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b299"></span>B299</td>
+<td class="instruction">LD H,$EF</td>
+<td class="comment-1" rowspan="1">Point <span class="register">H</span> at the first table page, EF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b29b"></span>B29B</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">There are 08 shifts to tabulate.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_Shift</td>
+<td class="address-2"><span id="b29d"></span>B29D</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="2">Store the low byte of the shifted value.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b29e"></span>B29E</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b29f"></span>B29F</td>
+<td class="instruction">DEC H</td>
+<td class="comment-1" rowspan="1">Move to the page below.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a0"></span>B2A0</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="2">Store the high byte of the shifted value.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a1"></span>B2A1</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a2"></span>B2A2</td>
+<td class="instruction">DEC H</td>
+<td class="comment-1" rowspan="1">Move to the next page below.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a3"></span>B2A3</td>
+<td class="instruction">SLA E</td>
+<td class="comment-1" rowspan="2">Shift the 10 bit value left by one bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a5"></span>B2A5</td>
+<td class="instruction">RL D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a7"></span>B2A7</td>
+<td class="instruction">DJNZ <a href="B294.html#b29d">BuildShiftTables_Shift</a></td>
+<td class="comment-1" rowspan="1">Loop back until all shifts have been stored.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2a9"></span>B2A9</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="2">Move on to the next byte value, and loop back until all 0100 have been done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2aa"></span>B2AA</td>
+<td class="instruction">JR NZ,<a href="B294.html#b296">BuildShiftTables_NextValue</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2ac"></span>B2AC</td>
+<td class="instruction">LD HL,$F000</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="F000.html">ReversedBytes</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_ReverseByte</td>
+<td class="address-2"><span id="b2af"></span>B2AF</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Take the byte value to reverse.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b0"></span>B2B0</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">There are 08 bits to move.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_ReverseBit</td>
+<td class="address-2"><span id="b2b2"></span>B2B2</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Move the lowest bit out into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b3"></span>B2B3</td>
+<td class="instruction">RL E</td>
+<td class="comment-1" rowspan="1">Move the carry flag in at the bottom of <span class="register">E</span>, so the bits end up reversed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b5"></span>B2B5</td>
+<td class="instruction">DJNZ <a href="B294.html#b2b2">BuildShiftTables_ReverseBit</a></td>
+<td class="comment-1" rowspan="1">Loop back until all 08 bits have been moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b7"></span>B2B7</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Store the reversed byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b8"></span>B2B8</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="2">Move on to the next byte value, and loop back until all 0100 have been done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2b9"></span>B2B9</td>
+<td class="instruction">JR NZ,<a href="B294.html#b2af">BuildShiftTables_ReverseByte</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b2bb"></span>B2BB</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B21C.html">B21C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b294">Map</a></td>
+<td class="next">
+Next: <a href="B2BC.html">B2BC</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../dec/asm/45716.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

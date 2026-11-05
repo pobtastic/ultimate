@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pssst.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,38 @@ Next: <a href="748F.html">748F</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="5FDE.html">5FDE</a>, <a href="65F7.html">AnimateExplosion</a>, <a href="69E8.html">69E8</a>, <a href="6C53.html">6C53</a>, <a href="6D0C.html">6D0C</a>, <a href="6ED2.html">6ED2</a>, <a href="6EF1.html">6EF1</a> and <a href="721A.html">721A</a>.
+Used by the routines at <a href="5FDE.html">DrawCubbyHoleItem</a>, <a href="65F7.html">AnimateExplosion</a>, <a href="69E8.html">UpdateStreamer</a>, <a href="6C53.html">UpdateLeaf</a>, <a href="6D0C.html">UpdateFlower</a>, <a href="6ED2.html">UpdateSprayCan</a>, <a href="6F31.html">DrawObject</a> and <a href="721A.html">UpdateBonusItem</a>.
+</div>
+<div class="paragraph">
+Writes the colour of an actor into the attribute buffer, covering the character cells that its sprite has just been drawn over. The pixels are drawn first (see <a href="74A5.html#74eb">DisplayEntity</a>), so until this routine runs the sprite is drawn in the attribute that was already there.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="7450"></span>
+<div class="comments">
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="colourise-before" src="../images/scr/colourise-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="colourise-after" src="../images/scr/colourise-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 </td>
@@ -54,19 +88,19 @@ Used by the routines at <a href="5FDE.html">5FDE</a>, <a href="65F7.html">Animat
 <td class="asm-label"></td>
 <td class="address-1"><span id="7451"></span>7451</td>
 <td class="instruction">LD HL,($5E1A)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL'</span>=actor co-ordinates.</td>
+<td class="comment-1" rowspan="1">Fetch the screen position of the sprite from <a href="5E1A.html">SpritePosition</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7454"></span>7454</td>
 <td class="instruction">CALL <a href="748F.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="748F.html">AttributeAddress</a> - <span class="register">HL'</span> now holds the co-ordinates to an attribute file address.</td>
+<td class="comment-1" rowspan="1">Convert it to an attribute buffer address using <a href="748F.html">AttributeAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7457"></span>7457</td>
 <td class="instruction">LD A,($5E0F)</td>
-<td class="comment-1" rowspan="2"><span class="register">B'</span>=width loop counter (in pixels).</td>
+<td class="comment-1" rowspan="2">Set the column counter in <span class="register">B'</span> to the sprite width, from <a href="5E0B.html#5e0f">NewSprite_Width</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -77,13 +111,13 @@ Used by the routines at <a href="5FDE.html">5FDE</a>, <a href="65F7.html">Animat
 <td class="asm-label"></td>
 <td class="address-1"><span id="745b"></span>745B</td>
 <td class="instruction">LD A,($5E0E)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E0B.html#5e0e">5E0E</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the sprite height in pixels from <a href="5E0B.html#5e0e">5E0E</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="745e"></span>745E</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="4"><span class="register">A</span>=((<span class="register">A</span> / 04) + 01) / 02.</td>
+<td class="comment-1" rowspan="4">Divide the height by 04 add 01 then divide by 02.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -116,86 +150,99 @@ Used by the routines at <a href="5FDE.html">5FDE</a>, <a href="65F7.html">Animat
 <td class="asm-label"></td>
 <td class="address-1"><span id="7465"></span>7465</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=height loop counter (in pixels).</td>
+<td class="comment-1" rowspan="1">Set the row counter in <span class="register">C'</span> to the result.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7466"></span>7466</td>
 <td class="instruction">LD D,(IX+$03)</td>
-<td class="comment-1" rowspan="1"><span class="register">D</span>=object colour attribute.</td>
+<td class="comment-1" rowspan="1">Fetch the colour attribute from *<span class="register">IX</span>+03.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7469"></span>7469</td>
 <td class="instruction">LD E,B</td>
-<td class="comment-1" rowspan="1"><span class="register">E</span>=width loop counter (in pixels).</td>
+<td class="comment-1" rowspan="1">Remember the sprite width in <span class="register">E'</span> so that the column counter can be reset for each row.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="746a"></span>
+<div class="comments">
+<div class="paragraph">
+Colour one row of attribute cells.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">ColouriseSprite_Loop1</td>
 <td class="address-2"><span id="746a"></span>746A</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the start of the row on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label">ColouriseSprite_Loop2</td>
 <td class="address-2"><span id="746b"></span>746B</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=actor Y position.</td>
+<td class="comment-1" rowspan="1">Fetch the MSB of the attribute buffer address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="746c"></span>746C</td>
 <td class="instruction">CP $5B</td>
-<td class="comment-1" rowspan="4">Decrement position if address is outside of attribute file address range.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7450.html#7481">ColouriseSprite_NextRow</a> if the address is beyond the attribute buffer (<span class="register">H</span> is at least 5B).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="746e"></span>746E</td>
-<td class="instruction">JR NC,<a href="7450.html#7481">ColouriseSprite_1</a></td>
+<td class="instruction">JR NC,<a href="7450.html#7481">ColouriseSprite_NextRow</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7470"></span>7470</td>
 <td class="instruction">CP $58</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7450.html#7481">ColouriseSprite_NextRow</a> if the address is before the attribute buffer (<span class="register">H</span> is less than 58).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7472"></span>7472</td>
-<td class="instruction">JR C,<a href="7450.html#7481">ColouriseSprite_1</a></td>
+<td class="instruction">JR C,<a href="7450.html#7481">ColouriseSprite_NextRow</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7474"></span>7474</td>
 <td class="instruction">LD (HL),D</td>
-<td class="comment-1" rowspan="1">Otherwise, set the colour at this location.</td>
+<td class="comment-1" rowspan="1">Write the colour to the attribute buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7475"></span>7475</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1">Next tile column.</td>
+<td class="comment-1" rowspan="1">Move onto the next column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7476"></span>7476</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="3">Next tile if column &lt; screen width (32 chars).</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7477"></span>7477</td>
 <td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-4 (the column).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7479"></span>7479</td>
-<td class="instruction">JR NZ,<a href="7450.html#747f">ColouriseSprite_0</a></td>
+<td class="instruction">JR NZ,<a href="7450.html#747f">ColouriseSprite_NextColumn</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="7450.html#747f">ColouriseSprite_NextColumn</a> if the column has not wrapped onto the next row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="747b"></span>747B</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="2">else, wrap-around and continue applying colour.</td>
+<td class="comment-1" rowspan="3">Move back to the start of the same row of attribute cells.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -206,37 +253,44 @@ Used by the routines at <a href="5FDE.html">5FDE</a>, <a href="65F7.html">Animat
 <td class="asm-label"></td>
 <td class="address-1"><span id="747e"></span>747E</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"><span class="register">L</span>=start of current row.</td>
 </tr>
 <tr>
-<td class="asm-label">ColouriseSprite_0</td>
+<td class="asm-label">ColouriseSprite_NextColumn</td>
 <td class="address-2"><span id="747f"></span>747F</td>
 <td class="instruction">DJNZ <a href="7450.html#746b">ColouriseSprite_Loop2</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="7450.html#746b">ColouriseSprite_Loop2</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the column counter by one and loop back to <a href="7450.html#746b">ColouriseSprite_Loop2</a> until it is zero.</td>
 </tr>
 <tr>
-<td class="asm-label">ColouriseSprite_1</td>
+<td class="routine-comment" colspan="5">
+<span id="7481"></span>
+<div class="comments">
+<div class="paragraph">
+Move up one row of attribute cells.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ColouriseSprite_NextRow</td>
 <td class="address-2"><span id="7481"></span>7481</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the address of the start of the row from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7482"></span>7482</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
+<td class="comment-1" rowspan="5">Subtract 20 from <span class="register">HL</span>, preserving <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7483"></span>7483</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1">Clear the carry flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7484"></span>7484</td>
 <td class="instruction">LD BC,$0020</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span> -= 32 tiles. Places address pointer previous line.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -247,31 +301,40 @@ Used by the routines at <a href="5FDE.html">5FDE</a>, <a href="65F7.html">Animat
 <td class="asm-label"></td>
 <td class="address-1"><span id="7489"></span>7489</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="748a"></span>748A</td>
 <td class="instruction">LD B,E</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=reset to original width counter.</td>
+<td class="comment-1" rowspan="1">Reset the column counter from <span class="register">E'</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="748b"></span>748B</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrement height counter.</td>
+<td class="comment-1" rowspan="2">Decrease the row counter by one and loop back to <a href="7450.html#746a">ColouriseSprite_Loop1</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="748c"></span>748C</td>
 <td class="instruction">JR NZ,<a href="7450.html#746a">ColouriseSprite_Loop1</a></td>
-<td class="comment-1" rowspan="1">Repeat until all tiles have been coloured.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="748e"></span>748E</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/lunarjetman/asm/8733.html">Lunar Jetman</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

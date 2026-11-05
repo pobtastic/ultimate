@@ -1,0 +1,2467 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cyberun: Routine at BA21</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cyberun.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BA0B.html">BA0B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ba21">Map</a></td>
+<td class="next">
+Next: <a href="BDF1.html">BDF1</a>
+</td>
+</tr>
+</table>
+<div class="description">BA21: Check Terrain Collision</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="9056.html">NudgeObject</a> and <a href="C374.html">RunFrame</a>.
+</div>
+<div class="paragraph">
+Checks whether an object has run into the terrain and bounces it when it has. The tiles come from <a href="BE8F.html">StartTerrainCheck</a> and <a href="BE43.html">SelectNextTile</a>. A tile record starts with the number of boxes, and each box is five bytes: its position, its width, its height and its flags. Bits 2 to 5 clear means a slope (<a href="9E35.html">TestSlopeCollision</a>); otherwise the box is a rectangle (<a href="9DB1.html">TestBoxesOverlap</a>). A rectangle with bits 4 and 5 clear reverses, halves and limits the vertical speed. Any other rectangle does the same to the horizontal speed, and skips the halving when the collision mode is zero. The mode in <a href="5C25.html">HorizontalStepSize</a> is FF for the ship, 80 when the object should stop, and zero otherwise. The ship also plays the crash or bump sound and changes the scroll speed.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Height of the object</td>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">Width of the object</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Address of the object</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">$5C1C</td>
+<td class="register-desc">Non-zero if the object hit something</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision</td>
+<td class="address-2"><span id="ba21"></span>BA21</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear the hit flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba22"></span>BA22</td>
+<td class="instruction">LD ($5C1C),A</td>
+<td class="comment-1" rowspan="1">The hit flag at <a href="5C1C.html">ScratchValue</a> starts clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba25"></span>BA25</td>
+<td class="instruction">LD ($BA09),IX</td>
+<td class="comment-1" rowspan="1">Keep the address of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba29"></span>BA29</td>
+<td class="instruction">CALL <a href="BE8F.html">StartTerrainCheck</a></td>
+<td class="comment-1" rowspan="1">Find the tiles the object overlaps.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba2c"></span>BA2C</td>
+<td class="instruction">JR <a href="BA21.html#ba31">CheckTerrainCollision_Tile</a></td>
+<td class="comment-1" rowspan="1">Test the first of those tiles.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_NextTiles</td>
+<td class="address-2"><span id="ba2e"></span>BA2E</td>
+<td class="instruction">CALL <a href="BE43.html">SelectNextTile</a></td>
+<td class="comment-1" rowspan="1">The next overlapping tile.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Tile</td>
+<td class="address-2"><span id="ba31"></span>BA31</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">The number of boxes in this tile.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba34"></span>BA34</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">None: on to the next tile.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba35"></span>BA35</td>
+<td class="instruction">JR Z,<a href="BA21.html#ba5f">CheckTerrainCollision_Done</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba37"></span>BA37</td>
+<td class="instruction">INC IX</td>
+<td class="comment-1" rowspan="1">The first box of the tile.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Box</td>
+<td class="address-2"><span id="ba39"></span>BA39</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1">Keep the address of this box.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba3b"></span>BA3B</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">The box count is in the alternate accumulator.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba3c"></span>BA3C</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear the hit flag for this box.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba3d"></span>BA3D</td>
+<td class="instruction">LD ($5C1C),A</td>
+<td class="comment-1" rowspan="1">The hit flag starts clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba40"></span>BA40</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">The flags of this box.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba43"></span>BA43</td>
+<td class="instruction">LD ($5C20),A</td>
+<td class="comment-1" rowspan="1">Keep the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba46"></span>BA46</td>
+<td class="instruction">AND %00111100</td>
+<td class="comment-1" rowspan="1">Bits 2 to 5 mark a rectangle.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba48"></span>BA48</td>
+<td class="instruction">JR NZ,<a href="BA21.html#ba8f">CheckTerrainCollision_Rectangle</a></td>
+<td class="comment-1" rowspan="1">A rectangle is tested below.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba4a"></span>BA4A</td>
+<td class="instruction">JP <a href="BA21.html#bc13">CheckTerrainCollision_Slope</a></td>
+<td class="comment-1" rowspan="1">Otherwise the box is a slope.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Check</td>
+<td class="address-2"><span id="ba4d"></span>BA4D</td>
+<td class="instruction">LD A,($5C35)</td>
+<td class="comment-1" rowspan="1">The collision status.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba50"></span>BA50</td>
+<td class="instruction">BIT 6,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba76">CheckTerrainCollision_Stop</a> if bit 6 of <span class="register">A</span> is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba52"></span>BA52</td>
+<td class="instruction">JR NZ,<a href="BA21.html#ba76">CheckTerrainCollision_Stop</a></td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_NextBox</td>
+<td class="address-2"><span id="ba54"></span>BA54</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Back to this box.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba56"></span>BA56</td>
+<td class="instruction">LD DE,$0005</td>
+<td class="comment-1" rowspan="1">A box is five bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba59"></span>BA59</td>
+<td class="instruction">ADD IX,DE</td>
+<td class="comment-1" rowspan="1">The next box.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba5b"></span>BA5B</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Back to the box count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba5c"></span>BA5C</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">One box has been tested.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba5d"></span>BA5D</td>
+<td class="instruction">JR NZ,<a href="BA21.html#ba39">CheckTerrainCollision_Box</a></td>
+<td class="comment-1" rowspan="1">Repeat while boxes remain.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Done</td>
+<td class="address-2"><span id="ba5f"></span>BA5F</td>
+<td class="instruction">LD A,($5C1D)</td>
+<td class="comment-1" rowspan="1">The tiles still to test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba62"></span>BA62</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">One tile has been tested.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba63"></span>BA63</td>
+<td class="instruction">LD ($5C1D),A</td>
+<td class="comment-1" rowspan="1">Remember how many tiles remain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba66"></span>BA66</td>
+<td class="instruction">JP NZ,<a href="BA21.html#ba2e">CheckTerrainCollision_NextTiles</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#ba2e">CheckTerrainCollision_NextTiles</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba69"></span>BA69</td>
+<td class="instruction">LD IX,($BA09)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="B9EC.html#ba09">BA09</a> into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba6d"></span>BA6D</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba70"></span>BA70</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">The ship is mode FF which becomes zero here.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba71"></span>BA71</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba72"></span>BA72</td>
+<td class="instruction">LD ($BC12),A</td>
+<td class="comment-1" rowspan="1">The ship has finished this check.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba75"></span>BA75</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Stop</td>
+<td class="address-2"><span id="ba76"></span>BA76</td>
+<td class="instruction">LD A,($8F53)</td>
+<td class="comment-1" rowspan="1">The ship state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba79"></span>BA79</td>
+<td class="instruction">CP $0A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba86">CheckTerrainCollision_Return</a> if <span class="register">A</span> is less than 0A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba7b"></span>BA7B</td>
+<td class="instruction">JR C,<a href="BA21.html#ba86">CheckTerrainCollision_Return</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba7d"></span>BA7D</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba80"></span>BA80</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba86">CheckTerrainCollision_Return</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba81"></span>BA81</td>
+<td class="instruction">JR NZ,<a href="BA21.html#ba86">CheckTerrainCollision_Return</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba83"></span>BA83</td>
+<td class="instruction">JP <a href="BA21.html#ba54">CheckTerrainCollision_NextBox</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#ba54">CheckTerrainCollision_NextBox</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Return</td>
+<td class="address-2"><span id="ba86"></span>BA86</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Discard the box address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba88"></span>BA88</td>
+<td class="instruction">LD IX,($BA09)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="B9EC.html#ba09">BA09</a> into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba8c"></span>BA8C</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba8d"></span>BA8D</td>
+<td class="instruction">NOP</td>
+<td class="comment-1" rowspan="1">Do nothing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba8e"></span>BA8E</td>
+<td class="instruction">NOP</td>
+<td class="comment-1" rowspan="1">Do nothing.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Rectangle</td>
+<td class="address-2"><span id="ba8f"></span>BA8F</td>
+<td class="instruction">LD A,($5C35)</td>
+<td class="comment-1" rowspan="1">The collision status.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba92"></span>BA92</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if bit 7 of <span class="register">A</span> is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba94"></span>BA94</td>
+<td class="instruction">JP NZ,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba97"></span>BA97</td>
+<td class="instruction">LD HL,($CE3A)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="CE3A.html">ScratchValues</a> into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba9a"></span>BA9A</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba9d"></span>BA9D</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bb0d">CheckTerrainCollision_Test</a> if <span class="register">A</span> is 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ba9f"></span>BA9F</td>
+<td class="instruction">JR Z,<a href="BA21.html#bb0d">CheckTerrainCollision_Test</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baa1"></span>BAA1</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baa4"></span>BAA4</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">The ship is the only object tested here.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baa5"></span>BAA5</td>
+<td class="instruction">JP NZ,<a href="BA21.html#bade">CheckTerrainCollision_Flags</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bade">CheckTerrainCollision_Flags</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baa8"></span>BAA8</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">The low byte of the position in the tile.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baa9"></span>BAA9</td>
+<td class="instruction">ADD A,$04</td>
+<td class="comment-1" rowspan="1">Add 04 to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baab"></span>BAAB</td>
+<td class="instruction">CP $E8</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bab1">CheckTerrainCollision_Limit</a> if <span class="register">A</span> is less than E8.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baad"></span>BAAD</td>
+<td class="instruction">JR C,<a href="BA21.html#bab1">CheckTerrainCollision_Limit</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baaf"></span>BAAF</td>
+<td class="instruction">LD A,$E8</td>
+<td class="comment-1" rowspan="1">Do not test past column E8.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Limit</td>
+<td class="address-2"><span id="bab1"></span>BAB1</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">The near edge of the test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bab2"></span>BAB2</td>
+<td class="instruction">ADD A,$24</td>
+<td class="comment-1" rowspan="1">Add 24 to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bab4"></span>BAB4</td>
+<td class="instruction">JR NC,<a href="BA21.html#bab8">CheckTerrainCollision_Lower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bab8">CheckTerrainCollision_Lower</a> if the carry flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bab6"></span>BAB6</td>
+<td class="instruction">LD A,$F8</td>
+<td class="comment-1" rowspan="1">Do not test past column F8.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Lower</td>
+<td class="address-2"><span id="bab8"></span>BAB8</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">The far edge of the test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bab9"></span>BAB9</td>
+<td class="instruction">BIT 2,(IX+$04)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bade">CheckTerrainCollision_Flags</a> if bit 2 of offset 04 of <span class="register">IX</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="babd"></span>BABD</td>
+<td class="instruction">JR Z,<a href="BA21.html#bade">CheckTerrainCollision_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="babf"></span>BABF</td>
+<td class="instruction">LD A,($F5EF)</td>
+<td class="comment-1" rowspan="1">The second part flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bac2"></span>BAC2</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bade">CheckTerrainCollision_Flags</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bac3"></span>BAC3</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bade">CheckTerrainCollision_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bac5"></span>BAC5</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">The box's other coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bac8"></span>BAC8</td>
+<td class="instruction">SUB H</td>
+<td class="comment-1" rowspan="1">Subtract <span class="register">H</span> from <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bac9"></span>BAC9</td>
+<td class="instruction">JR C,<a href="BA21.html#bade">CheckTerrainCollision_Flags</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bade">CheckTerrainCollision_Flags</a> if the carry flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bacb"></span>BACB</td>
+<td class="instruction">CP $29</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bade">CheckTerrainCollision_Flags</a> if <span class="register">A</span> is 29 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bacd"></span>BACD</td>
+<td class="instruction">JR NC,<a href="BA21.html#bade">CheckTerrainCollision_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bacf"></span>BACF</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">The box's first coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bad2"></span>BAD2</td>
+<td class="instruction">CP E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bade">CheckTerrainCollision_Flags</a> if <span class="register">A</span> is <span class="register">E</span> or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bad3"></span>BAD3</td>
+<td class="instruction">JR NC,<a href="BA21.html#bade">CheckTerrainCollision_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bad5"></span>BAD5</td>
+<td class="instruction">ADD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Add the byte at offset 02 of <span class="register">IX</span> to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bad8"></span>BAD8</td>
+<td class="instruction">CP D</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bade">CheckTerrainCollision_Flags</a> if <span class="register">A</span> is less than <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bad9"></span>BAD9</td>
+<td class="instruction">JR C,<a href="BA21.html#bade">CheckTerrainCollision_Flags</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="badb"></span>BADB</td>
+<td class="instruction">LD ($C6D0),A</td>
+<td class="comment-1" rowspan="1">The ship has landed on this box.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Flags</td>
+<td class="address-2"><span id="bade"></span>BADE</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">The box flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bae1"></span>BAE1</td>
+<td class="instruction">AND %00110000</td>
+<td class="comment-1" rowspan="1">Bits 4 and 5 select a sideways face.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bae3"></span>BAE3</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bafa">CheckTerrainCollision_Test2</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bafa">CheckTerrainCollision_Test2</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bae5"></span>BAE5</td>
+<td class="instruction">LD A,($BE8E)</td>
+<td class="comment-1" rowspan="1">The saved vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bae8"></span>BAE8</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bb0d">CheckTerrainCollision_Test</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bae9"></span>BAE9</td>
+<td class="instruction">JR Z,<a href="BA21.html#bb0d">CheckTerrainCollision_Test</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baeb"></span>BAEB</td>
+<td class="instruction">BIT 2,(IX+$04)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#baf3">CheckTerrainCollision_Skip</a> if bit 2 of offset 04 of <span class="register">IX</span> is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baef"></span>BAEF</td>
+<td class="instruction">JR NZ,<a href="BA21.html#baf3">CheckTerrainCollision_Skip</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baf1"></span>BAF1</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Skip</td>
+<td class="address-2"><span id="baf3"></span>BAF3</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if bit 7 of <span class="register">A</span> is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baf5"></span>BAF5</td>
+<td class="instruction">JP NZ,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baf8"></span>BAF8</td>
+<td class="instruction">JR <a href="BA21.html#bb0d">CheckTerrainCollision_Test</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bb0d">CheckTerrainCollision_Test</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Test2</td>
+<td class="address-2"><span id="bafa"></span>BAFA</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="1">Test bit 4 of <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bafc"></span>BAFC</td>
+<td class="instruction">LD A,($BE8D)</td>
+<td class="comment-1" rowspan="1">The saved horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="baff"></span>BAFF</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bb03">CheckTerrainCollision_Check2</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bb03">CheckTerrainCollision_Check2</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb01"></span>BB01</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Check2</td>
+<td class="address-2"><span id="bb03"></span>BB03</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bb0d">CheckTerrainCollision_Test</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb04"></span>BB04</td>
+<td class="instruction">JR Z,<a href="BA21.html#bb0d">CheckTerrainCollision_Test</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb06"></span>BB06</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if bit 7 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb08"></span>BB08</td>
+<td class="instruction">JP Z,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb0b"></span>BB0B</td>
+<td class="instruction">JR <a href="BA21.html#bb0d">CheckTerrainCollision_Test</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bb0d">CheckTerrainCollision_Test</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Test</td>
+<td class="address-2"><span id="bb0d"></span>BB0D</td>
+<td class="instruction">LD DE,($CE3C)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="CE3A.html#ce3c">CE3C</a> into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb11"></span>BB11</td>
+<td class="instruction">CALL <a href="9DB1.html">TestBoxesOverlap</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9DB1.html">TestBoxesOverlap</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb14"></span>BB14</td>
+<td class="instruction">LD A,($5C1C)</td>
+<td class="comment-1" rowspan="1">The hit flag from the rectangle test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb17"></span>BB17</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb18"></span>BB18</td>
+<td class="instruction">JP Z,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb1b"></span>BB1B</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb1e"></span>BB1E</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba76">CheckTerrainCollision_Stop</a> if <span class="register">A</span> is 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb20"></span>BB20</td>
+<td class="instruction">JP Z,<a href="BA21.html#ba76">CheckTerrainCollision_Stop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb23"></span>BB23</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="1">A rectangle hit is marked with 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb25"></span>BB25</td>
+<td class="instruction">LD ($5C35),A</td>
+<td class="comment-1" rowspan="1">Remember that hit in the collision status.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb28"></span>BB28</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">The box's second coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb2b"></span>BB2B</td>
+<td class="instruction">SUB $14</td>
+<td class="comment-1" rowspan="1">Subtract 14 from <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb2d"></span>BB2D</td>
+<td class="instruction">LD ($DEDC),A</td>
+<td class="comment-1" rowspan="1">Keep that coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb30"></span>BB30</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">The box flags again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb33"></span>BB33</td>
+<td class="instruction">LD ($DEDD),A</td>
+<td class="comment-1" rowspan="1">Keep the box flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb36"></span>BB36</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">The flags, kept for the bounce.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb37"></span>BB37</td>
+<td class="instruction">AND %00110000</td>
+<td class="comment-1" rowspan="1">Bits 4 and 5 mean the face is sideways.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb39"></span>BB39</td>
+<td class="instruction">LD IX,($BA09)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="B9EC.html#ba09">BA09</a> into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb3d"></span>BB3D</td>
+<td class="instruction">JP NZ,<a href="BA21.html#bbcd">CheckTerrainCollision_Wall</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bbcd">CheckTerrainCollision_Wall</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb40"></span>BB40</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb43"></span>BB43</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bb57">CheckTerrainCollision_Free</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb44"></span>BB44</td>
+<td class="instruction">JR Z,<a href="BA21.html#bb57">CheckTerrainCollision_Free</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb46"></span>BB46</td>
+<td class="instruction">BIT 3,B</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a> if bit 3 of <span class="register">B</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb48"></span>BB48</td>
+<td class="instruction">JR Z,<a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb4a"></span>BB4A</td>
+<td class="instruction">LD A,($F5F6)</td>
+<td class="comment-1" rowspan="1">The ninth part flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb4d"></span>BB4D</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb4e"></span>BB4E</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb50"></span>BB50</td>
+<td class="instruction">LD A,$04</td>
+<td class="comment-1" rowspan="1">Four frames of the hit flash.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb52"></span>BB52</td>
+<td class="instruction">LD ($C7C1),A</td>
+<td class="comment-1" rowspan="1">Start the hit flash.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb55"></span>BB55</td>
+<td class="instruction">JR <a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Free</td>
+<td class="address-2"><span id="bb57"></span>BB57</td>
+<td class="instruction">CALL <a href="B8FC.html">ClearShot</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B8FC.html">ClearShot</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb5a"></span>BB5A</td>
+<td class="instruction">BIT 3,B</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a> if bit 3 of <span class="register">B</span> is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb5c"></span>BB5C</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bb64">CheckTerrainCollision_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb5e"></span>BB5E</td>
+<td class="instruction">LD A,($DEDC)</td>
+<td class="comment-1" rowspan="1">The coordinate the object should stand on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb61"></span>BB61</td>
+<td class="instruction">LD (IX+$05),A</td>
+<td class="comment-1" rowspan="1">Put the object on that row.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Vertical</td>
+<td class="address-2"><span id="bb64"></span>BB64</td>
+<td class="instruction">LD H,(IX+$09)</td>
+<td class="comment-1" rowspan="1">The high byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb67"></span>BB67</td>
+<td class="instruction">LD L,(IX+$0A)</td>
+<td class="comment-1" rowspan="1">The low byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb6a"></span>BB6A</td>
+<td class="instruction">CALL <a href="BE08.html">NegateNumber</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BE08.html">NegateNumber</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb6d"></span>BB6D</td>
+<td class="instruction">CALL <a href="BE03.html">HalveNumber</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BE03.html">HalveNumber</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb70"></span>BB70</td>
+<td class="instruction">CALL <a href="C880.html">LimitSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C880.html">LimitSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb73"></span>BB73</td>
+<td class="instruction">CALL <a href="BA0B.html">ZeroSmallSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA0B.html">ZeroSmallSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_StoreVertical</td>
+<td class="address-1"><span id="bb76"></span>BB76</td>
+<td class="instruction">LD (IX+$09),H</td>
+<td class="comment-1" rowspan="1">The bounced vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb79"></span>BB79</td>
+<td class="instruction">LD (IX+$0A),L</td>
+<td class="comment-1" rowspan="1">The low byte of the bounced vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb7c"></span>BB7C</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">The high byte of that speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb7d"></span>BB7D</td>
+<td class="instruction">LD ($BE8E),A</td>
+<td class="comment-1" rowspan="1">Keep it for the next box.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb80"></span>BB80</td>
+<td class="instruction">OR L</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb81"></span>BB81</td>
+<td class="instruction">JR Z,<a href="BA21.html#bb8d">CheckTerrainCollision_Still</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bb8d">CheckTerrainCollision_Still</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb83"></span>BB83</td>
+<td class="instruction">LD A,($5C35)</td>
+<td class="comment-1" rowspan="1">The collision status.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb86"></span>BB86</td>
+<td class="instruction">OR %01000000</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in 40.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb88"></span>BB88</td>
+<td class="instruction">LD ($5C35),A</td>
+<td class="comment-1" rowspan="1">Note that the object is still moving vertically.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb8b"></span>BB8B</td>
+<td class="instruction">JR <a href="BA21.html#bb9c">CheckTerrainCollision_Ship</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bb9c">CheckTerrainCollision_Ship</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Still</td>
+<td class="address-2"><span id="bb8d"></span>BB8D</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb90"></span>BB90</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">See whether this is the ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb91"></span>BB91</td>
+<td class="instruction">JR Z,<a href="BA21.html#bb9c">CheckTerrainCollision_Ship</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bb9c">CheckTerrainCollision_Ship</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb93"></span>BB93</td>
+<td class="instruction">BIT 3,B</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if bit 3 of <span class="register">B</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb95"></span>BB95</td>
+<td class="instruction">JP Z,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb98"></span>BB98</td>
+<td class="instruction">LD (IX+$09),$FE</td>
+<td class="comment-1" rowspan="1">Store FE at offset 09 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Ship</td>
+<td class="address-2"><span id="bb9c"></span>BB9C</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bb9f"></span>BB9F</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">The ship is mode FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bba0"></span>BBA0</td>
+<td class="instruction">JP NZ,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bba3"></span>BBA3</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">The low byte of the bounced speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bba4"></span>BBA4</td>
+<td class="instruction">OR H</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bba5"></span>BBA5</td>
+<td class="instruction">CALL NZ,<a href="7293.html">PlayCrashSound</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7293.html">PlayCrashSound</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bba8"></span>BBA8</td>
+<td class="instruction">LD DE,$0000</td>
+<td class="comment-1" rowspan="1">No fractional vertical scroll.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbab"></span>BBAB</td>
+<td class="instruction">LD ($B320),DE</td>
+<td class="comment-1" rowspan="1">Clear the vertical scroll fraction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbaf"></span>BBAF</td>
+<td class="instruction">CALL <a href="B2D5.html">UpdateVerticalScrollSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B2D5.html">UpdateVerticalScrollSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbb2"></span>BBB2</td>
+<td class="instruction">LD A,($DEDD)</td>
+<td class="comment-1" rowspan="1">The box flags that were hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbb5"></span>BBB5</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if <span class="register">A</span> is not 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbb7"></span>BBB7</td>
+<td class="instruction">JP NZ,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbba"></span>BBBA</td>
+<td class="instruction">LD A,($C8EA)</td>
+<td class="comment-1" rowspan="1">The ship's map zone.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbbd"></span>BBBD</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the map zone.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbbe"></span>BBBE</td>
+<td class="instruction">LD A,($DEDC)</td>
+<td class="comment-1" rowspan="1">The box coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbc1"></span>BBC1</td>
+<td class="instruction">CP B</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if <span class="register">A</span> is <span class="register">B</span> or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbc2"></span>BBC2</td>
+<td class="instruction">JP NC,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbc5"></span>BBC5</td>
+<td class="instruction">LD A,$02</td>
+<td class="comment-1" rowspan="1">A small downward scroll.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbc7"></span>BBC7</td>
+<td class="instruction">LD ($CCBA),A</td>
+<td class="comment-1" rowspan="1">Scroll the world down by two.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbca"></span>BBCA</td>
+<td class="instruction">JP <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Wall</td>
+<td class="address-2"><span id="bbcd"></span>BBCD</td>
+<td class="instruction">LD H,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbd0"></span>BBD0</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="1">The low byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbd3"></span>BBD3</td>
+<td class="instruction">CALL <a href="BE08.html">NegateNumber</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BE08.html">NegateNumber</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbd6"></span>BBD6</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbd9"></span>BBD9</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bbe1">CheckTerrainCollision_Update</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbda"></span>BBDA</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bbe1">CheckTerrainCollision_Update</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbdc"></span>BBDC</td>
+<td class="instruction">CALL <a href="B8FC.html">ClearShot</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B8FC.html">ClearShot</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbdf"></span>BBDF</td>
+<td class="instruction">JR <a href="BA21.html#bbea">CheckTerrainCollision_StoreHorizontal</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bbea">CheckTerrainCollision_StoreHorizontal</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Update</td>
+<td class="address-2"><span id="bbe1"></span>BBE1</td>
+<td class="instruction">CALL <a href="BE03.html">HalveNumber</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BE03.html">HalveNumber</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbe4"></span>BBE4</td>
+<td class="instruction">CALL <a href="C880.html">LimitSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C880.html">LimitSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbe7"></span>BBE7</td>
+<td class="instruction">CALL <a href="BA0B.html">ZeroSmallSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA0B.html">ZeroSmallSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_StoreHorizontal</td>
+<td class="address-2"><span id="bbea"></span>BBEA</td>
+<td class="instruction">LD (IX+$07),H</td>
+<td class="comment-1" rowspan="1">The bounced horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbed"></span>BBED</td>
+<td class="instruction">LD (IX+$08),L</td>
+<td class="comment-1" rowspan="1">The low byte of the bounced horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbf0"></span>BBF0</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">The high byte of that speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbf1"></span>BBF1</td>
+<td class="instruction">LD ($BE8D),A</td>
+<td class="comment-1" rowspan="1">Keep it for the next box.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbf4"></span>BBF4</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbf7"></span>BBF7</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">The ship is mode FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbf8"></span>BBF8</td>
+<td class="instruction">JP NZ,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbfb"></span>BBFB</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">The low byte of the bounced speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbfc"></span>BBFC</td>
+<td class="instruction">OR H</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bbfd"></span>BBFD</td>
+<td class="instruction">CALL NZ,<a href="7263.html">PlayBumpSound</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7263.html">PlayBumpSound</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc00"></span>BC00</td>
+<td class="instruction">LD DE,$0000</td>
+<td class="comment-1" rowspan="1">No fractional horizontal scroll.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc03"></span>BC03</td>
+<td class="instruction">LD ($C7FA),DE</td>
+<td class="comment-1" rowspan="1">Clear the horizontal scroll fraction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc07"></span>BC07</td>
+<td class="instruction">CALL <a href="C81F.html">UpdateHorizontalScrollSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C81F.html">UpdateHorizontalScrollSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc0a"></span>BC0A</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">The ship has hit a wall.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc0c"></span>BC0C</td>
+<td class="instruction">LD ($D0BC),A</td>
+<td class="comment-1" rowspan="1">The collision kind is the terrain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc0f"></span>BC0F</td>
+<td class="instruction">JP <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc12"></span>BC12</td>
+<td class="instruction">NOP</td>
+<td class="comment-1" rowspan="1">Do nothing.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Slope</td>
+<td class="address-2"><span id="bc13"></span>BC13</td>
+<td class="instruction">LD A,($5C35)</td>
+<td class="comment-1" rowspan="1">The collision status.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc16"></span>BC16</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if bit 4 of <span class="register">A</span> is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc18"></span>BC18</td>
+<td class="instruction">JP NZ,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc1b"></span>BC1B</td>
+<td class="instruction">CALL <a href="9E35.html">TestSlopeCollision</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9E35.html">TestSlopeCollision</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc1e"></span>BC1E</td>
+<td class="instruction">LD A,($5C1C)</td>
+<td class="comment-1" rowspan="1">The hit flag from the slope test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc21"></span>BC21</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba4d">CheckTerrainCollision_Check</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc22"></span>BC22</td>
+<td class="instruction">JP Z,<a href="BA21.html#ba4d">CheckTerrainCollision_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc25"></span>BC25</td>
+<td class="instruction">LD A,($5C35)</td>
+<td class="comment-1" rowspan="1">The collision status.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc28"></span>BC28</td>
+<td class="instruction">OR %00010000</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc2a"></span>BC2A</td>
+<td class="instruction">LD ($5C35),A</td>
+<td class="comment-1" rowspan="1">Note that a slope has been hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc2d"></span>BC2D</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc30"></span>BC30</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba76">CheckTerrainCollision_Stop</a> if <span class="register">A</span> is 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc32"></span>BC32</td>
+<td class="instruction">JP Z,<a href="BA21.html#ba76">CheckTerrainCollision_Stop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc35"></span>BC35</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bc3c">CheckTerrainCollision_Kind</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc36"></span>BC36</td>
+<td class="instruction">JR Z,<a href="BA21.html#bc3c">CheckTerrainCollision_Kind</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc38"></span>BC38</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">One less than the mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc39"></span>BC39</td>
+<td class="instruction">LD ($D0BC),A</td>
+<td class="comment-1" rowspan="1">The collision kind follows the mode.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Kind</td>
+<td class="address-2"><span id="bc3c"></span>BC3C</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">The slope flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc3f"></span>BC3F</td>
+<td class="instruction">LD ($5C20),A</td>
+<td class="comment-1" rowspan="1">Keep the slope flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc42"></span>BC42</td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">The steepness and the facing, without bit 7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc44"></span>BC44</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bd04">CheckTerrainCollision_Reflect</a> if <span class="register">A</span> is 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc46"></span>BC46</td>
+<td class="instruction">JP Z,<a href="BA21.html#bd04">CheckTerrainCollision_Reflect</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc49"></span>BC49</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">The steepness.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc4b"></span>BC4B</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bd3b">CheckTerrainCollision_Three</a> if <span class="register">A</span> is 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc4d"></span>BC4D</td>
+<td class="instruction">JP Z,<a href="BA21.html#bd3b">CheckTerrainCollision_Three</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc50"></span>BC50</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">The slope flags again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc53"></span>BC53</td>
+<td class="instruction">BIT 6,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bd44">CheckTerrainCollision_Rebound</a> if bit 6 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc55"></span>BC55</td>
+<td class="instruction">JP Z,<a href="BA21.html#bd44">CheckTerrainCollision_Rebound</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc58"></span>BC58</td>
+<td class="instruction">JP <a href="BA21.html#bdbd">CheckTerrainCollision_ReboundBoth</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bdbd">CheckTerrainCollision_ReboundBoth</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Bounce</td>
+<td class="address-2"><span id="bc5b"></span>BC5B</td>
+<td class="instruction">LD IX,($BA09)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="B9EC.html#ba09">BA09</a> into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc5f"></span>BC5F</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc62"></span>BC62</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">See whether this is the ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc63"></span>BC63</td>
+<td class="instruction">JR Z,<a href="BA21.html#bc9a">CheckTerrainCollision_Clear</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bc9a">CheckTerrainCollision_Clear</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc65"></span>BC65</td>
+<td class="instruction">LD L,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed, kept in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc68"></span>BC68</td>
+<td class="instruction">LD H,(IX+$08)</td>
+<td class="comment-1" rowspan="1">The low byte of the horizontal speed, kept in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc6b"></span>BC6B</td>
+<td class="instruction">LD ($BA8D),HL</td>
+<td class="comment-1" rowspan="1">Keep the old horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc6e"></span>BC6E</td>
+<td class="instruction">LD A,($5C1A)</td>
+<td class="comment-1" rowspan="1">How far the object went into the slope.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc71"></span>BC71</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc73"></span>BC73</td>
+<td class="instruction">LD (IX+$07),A</td>
+<td class="comment-1" rowspan="1">The horizontal speed becomes that depth, reversed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc76"></span>BC76</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bc7c">CheckTerrainCollision_Speed</a> if bit 7 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc78"></span>BC78</td>
+<td class="instruction">JR Z,<a href="BA21.html#bc7c">CheckTerrainCollision_Speed</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc7a"></span>BC7A</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Speed</td>
+<td class="address-2"><span id="bc7c"></span>BC7C</td>
+<td class="instruction">CP $10</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bc84">CheckTerrainCollision_Position</a> if <span class="register">A</span> is less than 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc7e"></span>BC7E</td>
+<td class="instruction">JR C,<a href="BA21.html#bc84">CheckTerrainCollision_Position</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc80"></span>BC80</td>
+<td class="instruction">SET 3,(IX+$10)</td>
+<td class="comment-1" rowspan="1">Set bit 3 of offset 10 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Position</td>
+<td class="address-2"><span id="bc84"></span>BC84</td>
+<td class="instruction">LD (IX+$08),$00</td>
+<td class="comment-1" rowspan="1">Store 00 at offset 08 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc88"></span>BC88</td>
+<td class="instruction">CALL <a href="B980.html">FindHorizontalMove</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B980.html">FindHorizontalMove</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc8b"></span>BC8B</td>
+<td class="instruction">LD (IX+$01),H</td>
+<td class="comment-1" rowspan="1">The map column after the bounce.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc8e"></span>BC8E</td>
+<td class="instruction">LD (IX+$02),L</td>
+<td class="comment-1" rowspan="1">The horizontal position after the bounce.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc91"></span>BC91</td>
+<td class="instruction">LD HL,($BA8D)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="BA21.html#ba8d">BA8D</a> into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc94"></span>BC94</td>
+<td class="instruction">LD (IX+$07),L</td>
+<td class="comment-1" rowspan="1">Restore the high byte of the old horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc97"></span>BC97</td>
+<td class="instruction">LD (IX+$08),H</td>
+<td class="comment-1" rowspan="1">Restore the low byte of the old horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Clear</td>
+<td class="address-2"><span id="bc9a"></span>BC9A</td>
+<td class="instruction">CALL <a href="B8FC.html">ClearShot</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B8FC.html">ClearShot</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc9d"></span>BC9D</td>
+<td class="instruction">LD H,(IX+$09)</td>
+<td class="comment-1" rowspan="1">The high byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bca0"></span>BCA0</td>
+<td class="instruction">LD L,(IX+$0A)</td>
+<td class="comment-1" rowspan="1">The low byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bca3"></span>BCA3</td>
+<td class="instruction">CALL <a href="BA0B.html">ZeroSmallSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA0B.html">ZeroSmallSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bca6"></span>BCA6</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">The low byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bca7"></span>BCA7</td>
+<td class="instruction">OR H</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bca8"></span>BCA8</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bcd1">CheckTerrainCollision_Finish</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bcd1">CheckTerrainCollision_Finish</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcaa"></span>BCAA</td>
+<td class="instruction">LD H,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcad"></span>BCAD</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="1">The low byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcb0"></span>BCB0</td>
+<td class="instruction">CALL <a href="BA0B.html">ZeroSmallSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA0B.html">ZeroSmallSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcb3"></span>BCB3</td>
+<td class="instruction">LD (IX+$08),L</td>
+<td class="comment-1" rowspan="1">The low byte, once a tiny speed has been dropped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcb6"></span>BCB6</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcb7"></span>BCB7</td>
+<td class="instruction">OR L</td>
+<td class="comment-1" rowspan="1">Set the bits of <span class="register">A</span> that are set in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcb8"></span>BCB8</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bcd1">CheckTerrainCollision_Finish</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bcd1">CheckTerrainCollision_Finish</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcba"></span>BCBA</td>
+<td class="instruction">CALL <a href="BA21.html#bcbf">CheckTerrainCollision_Flags2</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA21.html#bcbf">CheckTerrainCollision_Flags2</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcbd"></span>BCBD</td>
+<td class="instruction">JR <a href="BA21.html#bcd1">CheckTerrainCollision_Finish</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bcd1">CheckTerrainCollision_Finish</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Flags2</td>
+<td class="address-2"><span id="bcbf"></span>BCBF</td>
+<td class="instruction">LD A,($5C20)</td>
+<td class="comment-1" rowspan="1">The slope flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcc2"></span>BCC2</td>
+<td class="instruction">LD (IX+$07),$01</td>
+<td class="comment-1" rowspan="1">Store 01 at offset 07 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcc6"></span>BCC6</td>
+<td class="instruction">AND %11000000</td>
+<td class="comment-1" rowspan="1">The two facing bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcc8"></span>BCC8</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcc9"></span>BCC9</td>
+<td class="instruction">XOR %11000000</td>
+<td class="comment-1" rowspan="1">Flip the bits of <span class="register">A</span> that are set in C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bccb"></span>BCCB</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bccc"></span>BCCC</td>
+<td class="instruction">LD (IX+$07),$FF</td>
+<td class="comment-1" rowspan="1">Store FF at offset 07 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd0"></span>BCD0</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Finish</td>
+<td class="address-2"><span id="bcd1"></span>BCD1</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The collision mode.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd4"></span>BCD4</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#ba76">CheckTerrainCollision_Stop</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd5"></span>BCD5</td>
+<td class="instruction">JP Z,<a href="BA21.html#ba76">CheckTerrainCollision_Stop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd8"></span>BCD8</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd9"></span>BCD9</td>
+<td class="instruction">LD ($CCBB),A</td>
+<td class="comment-1" rowspan="1">Stop the horizontal scroll.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcdc"></span>BCDC</td>
+<td class="instruction">LD ($CCBA),A</td>
+<td class="comment-1" rowspan="1">Stop the vertical scroll.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcdf"></span>BCDF</td>
+<td class="instruction">LD A,($5C40)</td>
+<td class="comment-1" rowspan="1">The ship was just hit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce2"></span>BCE2</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bcec">CheckTerrainCollision_Pending</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce3"></span>BCE3</td>
+<td class="instruction">JR NZ,<a href="BA21.html#bcec">CheckTerrainCollision_Pending</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce5"></span>BCE5</td>
+<td class="instruction">LD A,($BC12)</td>
+<td class="comment-1" rowspan="1">The terrain-check flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce8"></span>BCE8</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Call <a href="7263.html">PlayBumpSound</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce9"></span>BCE9</td>
+<td class="instruction">CALL Z,<a href="7263.html">PlayBumpSound</a></td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Pending</td>
+<td class="address-2"><span id="bcec"></span>BCEC</td>
+<td class="instruction">LD A,($BC12)</td>
+<td class="comment-1" rowspan="1">The terrain-check flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcef"></span>BCEF</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BA21.html#bcfc">CheckTerrainCollision_Set</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf0"></span>BCF0</td>
+<td class="instruction">JR Z,<a href="BA21.html#bcfc">CheckTerrainCollision_Set</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf2"></span>BCF2</td>
+<td class="instruction">CALL <a href="BA21.html#bcbf">CheckTerrainCollision_Flags2</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA21.html#bcbf">CheckTerrainCollision_Flags2</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf5"></span>BCF5</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf8"></span>BCF8</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Twice that speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf9"></span>BCF9</td>
+<td class="instruction">LD ($CCBB),A</td>
+<td class="comment-1" rowspan="1">The scroll follows the bounce.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Set</td>
+<td class="address-2"><span id="bcfc"></span>BCFC</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="1">The check is finished.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcfe"></span>BCFE</td>
+<td class="instruction">LD ($BC12),A</td>
+<td class="comment-1" rowspan="1">Mark the check as finished.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd01"></span>BD01</td>
+<td class="instruction">JP <a href="BA21.html#ba76">CheckTerrainCollision_Stop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#ba76">CheckTerrainCollision_Stop</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Reflect</td>
+<td class="address-2"><span id="bd04"></span>BD04</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Patch</td>
+<td class="address-2"><span id="bd05"></span>BD05</td>
+<td class="instruction">LD ($BD16),A</td>
+<td class="comment-1" rowspan="1">Choose whether the first speed is reversed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd08"></span>BD08</td>
+<td class="instruction">LD ($BD2B),A</td>
+<td class="comment-1" rowspan="1">Choose whether the second speed is reversed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd0b"></span>BD0B</td>
+<td class="instruction">LD IX,($BA09)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="B9EC.html#ba09">BA09</a> into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd0f"></span>BD0F</td>
+<td class="instruction">LD H,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd12"></span>BD12</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="1">The low byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_PatchFirst</td>
+<td class="address-2"><span id="bd15"></span>BD15</td>
+<td class="instruction">JR <a href="BA21.html#bd15">CheckTerrainCollision_PatchFirst</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bd15">CheckTerrainCollision_PatchFirst</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd17"></span>BD17</td>
+<td class="instruction">CALL <a href="BA21.html#bd3f">CheckTerrainCollision_Negate</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA21.html#bd3f">CheckTerrainCollision_Negate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd1a"></span>BD1A</td>
+<td class="instruction">CALL <a href="C880.html">LimitSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C880.html">LimitSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd1d"></span>BD1D</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap <span class="register">DE</span> and <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd1e"></span>BD1E</td>
+<td class="instruction">LD H,(IX+$09)</td>
+<td class="comment-1" rowspan="1">The high byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd21"></span>BD21</td>
+<td class="instruction">LD L,(IX+$0A)</td>
+<td class="comment-1" rowspan="1">The low byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd24"></span>BD24</td>
+<td class="instruction">LD (IX+$09),D</td>
+<td class="comment-1" rowspan="1">The vertical speed takes the adjusted horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd27"></span>BD27</td>
+<td class="instruction">LD (IX+$0A),E</td>
+<td class="comment-1" rowspan="1">The low byte of that new vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_PatchSecond</td>
+<td class="address-2"><span id="bd2a"></span>BD2A</td>
+<td class="instruction">JR <a href="BA21.html#bd2a">CheckTerrainCollision_PatchSecond</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bd2a">CheckTerrainCollision_PatchSecond</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd2c"></span>BD2C</td>
+<td class="instruction">CALL <a href="BA21.html#bd3f">CheckTerrainCollision_Negate</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA21.html#bd3f">CheckTerrainCollision_Negate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Horizontal</td>
+<td class="address-1"><span id="bd2f"></span>BD2F</td>
+<td class="instruction">CALL <a href="C880.html">LimitSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C880.html">LimitSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd32"></span>BD32</td>
+<td class="instruction">LD (IX+$07),H</td>
+<td class="comment-1" rowspan="1">The horizontal speed takes the adjusted vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd35"></span>BD35</td>
+<td class="instruction">LD (IX+$08),L</td>
+<td class="comment-1" rowspan="1">The low byte of that new horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd38"></span>BD38</td>
+<td class="instruction">JP <a href="BA21.html#bc5b">CheckTerrainCollision_Bounce</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bc5b">CheckTerrainCollision_Bounce</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Three</td>
+<td class="address-2"><span id="bd3b"></span>BD3B</td>
+<td class="instruction">LD A,$03</td>
+<td class="comment-1" rowspan="1">Steepness two does not reverse the speeds.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd3d"></span>BD3D</td>
+<td class="instruction">JR <a href="BA21.html#bd05">CheckTerrainCollision_Patch</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bd05">CheckTerrainCollision_Patch</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Negate</td>
+<td class="address-2"><span id="bd3f"></span>BD3F</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">The high byte of the speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd40"></span>BD40</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd42"></span>BD42</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">The speed is reversed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd43"></span>BD43</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_Rebound</td>
+<td class="address-2"><span id="bd44"></span>BD44</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd45"></span>BD45</td>
+<td class="instruction">LD ($BD85),A</td>
+<td class="comment-1" rowspan="1">Choose whether this speed is reversed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd48"></span>BD48</td>
+<td class="instruction">LD ($BD74),A</td>
+<td class="comment-1" rowspan="1">Choose whether the other speed is reversed.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_ReboundStart</td>
+<td class="address-2"><span id="bd4b"></span>BD4B</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">The slope flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd4e"></span>BD4E</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the slope flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd4f"></span>BD4F</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">The steepness.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd51"></span>BD51</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1">Keep the steepness.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd52"></span>BD52</td>
+<td class="instruction">LD IX,($BA09)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="B9EC.html#ba09">BA09</a> into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd56"></span>BD56</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Call <a href="BA21.html#bdd8">SwapSpeeds</a> if <span class="register">A</span> is 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd58"></span>BD58</td>
+<td class="instruction">CALL Z,<a href="BA21.html#bdd8">SwapSpeeds</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd5b"></span>BD5B</td>
+<td class="instruction">LD H,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd5e"></span>BD5E</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="1">The low byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd61"></span>BD61</td>
+<td class="instruction">CALL <a href="BDF1.html">TakeThreeEighths</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BDF1.html">TakeThreeEighths</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd64"></span>BD64</td>
+<td class="instruction">LD ($5C15),HL</td>
+<td class="comment-1" rowspan="1">Three eighths of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd67"></span>BD67</td>
+<td class="instruction">LD H,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The horizontal speed again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd6a"></span>BD6A</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="1">The low byte again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd6d"></span>BD6D</td>
+<td class="instruction">CALL <a href="BDFE.html">DoubleNumber</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BDFE.html">DoubleNumber</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd70"></span>BD70</td>
+<td class="instruction">CALL <a href="BDF1.html">TakeThreeEighths</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BDF1.html">TakeThreeEighths</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_PatchThird</td>
+<td class="address-2"><span id="bd73"></span>BD73</td>
+<td class="instruction">JR <a href="BA21.html#bd73">CheckTerrainCollision_PatchThird</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bd73">CheckTerrainCollision_PatchThird</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd75"></span>BD75</td>
+<td class="instruction">CALL <a href="BA21.html#bdc8">CheckTerrainCollision_ReboundNegate</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA21.html#bdc8">CheckTerrainCollision_ReboundNegate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd78"></span>BD78</td>
+<td class="instruction">LD ($5C17),HL</td>
+<td class="comment-1" rowspan="1">The adjusted fraction of the doubled horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd7b"></span>BD7B</td>
+<td class="instruction">LD H,(IX+$09)</td>
+<td class="comment-1" rowspan="1">The high byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd7e"></span>BD7E</td>
+<td class="instruction">LD L,(IX+$0A)</td>
+<td class="comment-1" rowspan="1">The low byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd81"></span>BD81</td>
+<td class="instruction">CALL <a href="BDF1.html">TakeThreeEighths</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BDF1.html">TakeThreeEighths</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_PatchFourth</td>
+<td class="address-2"><span id="bd84"></span>BD84</td>
+<td class="instruction">JR <a href="BA21.html#bd84">CheckTerrainCollision_PatchFourth</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bd84">CheckTerrainCollision_PatchFourth</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd86"></span>BD86</td>
+<td class="instruction">CALL <a href="BA21.html#bdc8">CheckTerrainCollision_ReboundNegate</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA21.html#bdc8">CheckTerrainCollision_ReboundNegate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd89"></span>BD89</td>
+<td class="instruction">LD DE,($5C15)</td>
+<td class="comment-1" rowspan="1">Fetch the word at 5C15 into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd8d"></span>BD8D</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the saved fraction of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd8e"></span>BD8E</td>
+<td class="instruction">CALL <a href="C880.html">LimitSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C880.html">LimitSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd91"></span>BD91</td>
+<td class="instruction">LD (IX+$07),H</td>
+<td class="comment-1" rowspan="1">The new horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd94"></span>BD94</td>
+<td class="instruction">LD (IX+$08),L</td>
+<td class="comment-1" rowspan="1">The low byte of the new horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd97"></span>BD97</td>
+<td class="instruction">LD H,(IX+$09)</td>
+<td class="comment-1" rowspan="1">The vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd9a"></span>BD9A</td>
+<td class="instruction">LD L,(IX+$0A)</td>
+<td class="comment-1" rowspan="1">The low byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd9d"></span>BD9D</td>
+<td class="instruction">CALL <a href="BDFE.html">DoubleNumber</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BDFE.html">DoubleNumber</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bda0"></span>BDA0</td>
+<td class="instruction">CALL <a href="BDF1.html">TakeThreeEighths</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BDF1.html">TakeThreeEighths</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bda3"></span>BDA3</td>
+<td class="instruction">CALL <a href="BA21.html#bdc8">CheckTerrainCollision_ReboundNegate</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BA21.html#bdc8">CheckTerrainCollision_ReboundNegate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bda6"></span>BDA6</td>
+<td class="instruction">LD DE,($5C17)</td>
+<td class="comment-1" rowspan="1">Fetch the word at 5C17 into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdaa"></span>BDAA</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the saved fraction of the doubled horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdab"></span>BDAB</td>
+<td class="instruction">CALL <a href="C880.html">LimitSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C880.html">LimitSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdae"></span>BDAE</td>
+<td class="instruction">LD (IX+$09),H</td>
+<td class="comment-1" rowspan="1">The new vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdb1"></span>BDB1</td>
+<td class="instruction">LD (IX+$0A),L</td>
+<td class="comment-1" rowspan="1">The low byte of the new vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdb4"></span>BDB4</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1">Back to the steepness.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdb5"></span>BDB5</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Call <a href="BA21.html#bdd8">SwapSpeeds</a> if <span class="register">A</span> is 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdb7"></span>BDB7</td>
+<td class="instruction">CALL Z,<a href="BA21.html#bdd8">SwapSpeeds</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdba"></span>BDBA</td>
+<td class="instruction">JP <a href="BA21.html#bc5b">CheckTerrainCollision_Bounce</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bc5b">CheckTerrainCollision_Bounce</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_ReboundBoth</td>
+<td class="address-2"><span id="bdbd"></span>BDBD</td>
+<td class="instruction">LD A,$03</td>
+<td class="comment-1" rowspan="1">This facing does not reverse the speeds.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdbf"></span>BDBF</td>
+<td class="instruction">LD ($BD85),A</td>
+<td class="comment-1" rowspan="1">This facing skips the first reverse.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdc2"></span>BDC2</td>
+<td class="instruction">LD ($BD74),A</td>
+<td class="comment-1" rowspan="1">This facing skips the second reverse.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdc5"></span>BDC5</td>
+<td class="instruction">JP <a href="BA21.html#bd4b">CheckTerrainCollision_ReboundStart</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bd4b">CheckTerrainCollision_ReboundStart</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">CheckTerrainCollision_ReboundNegate</td>
+<td class="address-2"><span id="bdc8"></span>BDC8</td>
+<td class="instruction">BIT 7,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE08.html">NegateNumber</a> if bit 7 of <span class="register">C</span> is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdca"></span>BDCA</td>
+<td class="instruction">JP NZ,<a href="BE08.html">NegateNumber</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdcd"></span>BDCD</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">The slope flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdce"></span>BDCE</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">The steepness.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdd0"></span>BDD0</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BE08.html">NegateNumber</a> if <span class="register">A</span> is 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdd2"></span>BDD2</td>
+<td class="instruction">JP Z,<a href="BE08.html">NegateNumber</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdd5"></span>BDD5</td>
+<td class="instruction">JP <a href="BA21.html#bd3f">CheckTerrainCollision_Negate</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BA21.html#bd3f">CheckTerrainCollision_Negate</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">SwapSpeeds</td>
+<td class="address-2"><span id="bdd8"></span>BDD8</td>
+<td class="instruction">LD H,(IX+$07)</td>
+<td class="comment-1" rowspan="1">The high byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bddb"></span>BDDB</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="1">The low byte of the horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdde"></span>BDDE</td>
+<td class="instruction">LD D,(IX+$09)</td>
+<td class="comment-1" rowspan="1">The high byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bde1"></span>BDE1</td>
+<td class="instruction">LD E,(IX+$0A)</td>
+<td class="comment-1" rowspan="1">The low byte of the vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bde4"></span>BDE4</td>
+<td class="instruction">LD (IX+$07),D</td>
+<td class="comment-1" rowspan="1">Swap the speeds: horizontal takes the vertical.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bde7"></span>BDE7</td>
+<td class="instruction">LD (IX+$08),E</td>
+<td class="comment-1" rowspan="1">The low byte of the new horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdea"></span>BDEA</td>
+<td class="instruction">LD (IX+$09),H</td>
+<td class="comment-1" rowspan="1">Vertical takes the old horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bded"></span>BDED</td>
+<td class="instruction">LD (IX+$0A),L</td>
+<td class="comment-1" rowspan="1">The low byte of the new vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bdf0"></span>BDF0</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BA0B.html">BA0B</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ba21">Map</a></td>
+<td class="next">
+Next: <a href="BDF1.html">BDF1</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/">Source code</a>.</div>
+<div><a href="../dec/asm/47649.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

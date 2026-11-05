@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,28 +36,48 @@ Next: <a href="70CE.html">70CE</a>
 </td>
 </tr>
 </table>
-<div class="description">70B2: Get Actor Position/ Direction</div>
+<div class="description">70B2: Prepare Old Sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="7101.html">ActorEraseMovedSprite</a> and <a href="7139.html">ActorEraseDestroyed</a>.
+Used by the routines at <a href="7101.html">DisplayEntity</a> and <a href="7139.html">RemoveEntity</a>.
+</div>
+<div class="paragraph">
+Prepares to erase the sprite of an actor from where it was last drawn, using the old state held in the actor buffer at <a href="5E20.html">Actor_Position_X</a>. Points <span class="register">DE</span> to the sprite data, <span class="register">HL</span> to the screen address, stores the pixel shift in <a href="5E40.html">OldSpriteShift</a> and the number of lines to erase in <a href="5E20.html#5e25">CurrentSpriteHeight</a>.
 </div>
 </div>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Sprite data (after the height)</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Screen address of the bottom left of the sprite</td>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">00</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ActorFindPosDir</td>
+<td class="asm-label">PrepareOldSprite</td>
 <td class="address-2"><span id="70b2"></span>70B2</td>
-<td class="instruction">CALL <a href="7155.html">GetDefaultSprite</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7155.html">GetDefaultSprite</a>.</td>
+<td class="instruction">CALL <a href="7155.html">FetchSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7155.html">FetchSprite</a> to fetch the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70b5"></span>70B5</td>
 <td class="instruction">LD HL,($5E20)</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E20.html">Actor_Position_X</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the old position of the sprite (<a href="5E20.html">Actor_Position_X</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -66,7 +89,7 @@ Used by the routines at <a href="7101.html">ActorEraseMovedSprite</a> and <a hre
 <td class="asm-label"></td>
 <td class="address-1"><span id="70b9"></span>70B9</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Make <span class="register">A</span> negative.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -78,53 +101,58 @@ Used by the routines at <a href="7101.html">ActorEraseMovedSprite</a> and <a hre
 <td class="asm-label"></td>
 <td class="address-1"><span id="70bd"></span>70BD</td>
 <td class="instruction">LD ($5E40),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <a href="5E40.html">5E40</a>.</td>
+<td class="comment-1" rowspan="1">Write the pixel shift to <a href="5E40.html">OldSpriteShift</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70c0"></span>70C0</td>
-<td class="instruction">CALL <a href="70AD.html">$70AD</a></td>
-<td class="comment-1" rowspan="1">Call <a href="70AD.html">70AD</a>.</td>
+<td class="instruction">CALL <a href="70AD.html">GetVisibleHeight</a></td>
+<td class="comment-1" rowspan="1">Work out how many lines can be drawn using <a href="70AD.html">GetVisibleHeight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70c3"></span>70C3</td>
 <td class="instruction">CALL <a href="6F10.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6F10.html">ScreenAddress</a>.</td>
+<td class="comment-1" rowspan="1">Convert the position into a screen address using <a href="6F10.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70c6"></span>70C6</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70c7"></span>70C7</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="70B2.html#70cb">PrepareOldSprite_Rows</a> if the height is no more than the number of lines that can be drawn.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70c8"></span>70C8</td>
-<td class="instruction">JR C,<a href="70B2.html#70cb">ActorFindPosDir_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="70B2.html#70cb">PrepareOldSprite_Rows</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70ca"></span>70CA</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Use the number of lines that can be drawn, as the sprite is too tall.</td>
 </tr>
 <tr>
-<td class="asm-label">ActorFindPosDir_0</td>
+<td class="asm-label">PrepareOldSprite_Rows</td>
 <td class="address-2"><span id="70cb"></span>70CB</td>
 <td class="instruction">LD ($5E25),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <a href="5E20.html#5e25">CurrentSpriteHeight</a>.</td>
+<td class="comment-1" rowspan="1">Write the number of lines to <a href="5E20.html#5e25">CurrentSpriteHeight</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/cookie/asm/7557.html">Cookie</a></li>
+<li><a href="/ultimate/pssst/asm/7542.html">Pssst</a></li>
+</ul>
+</div>
 <div class="paragraph">
 Continue on to <a href="70CE.html">NextSprite</a>.
 </div>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,10 @@ Next: <a href="6428.html">6428</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="63F0.html">PlayersInit</a> and <a href="68C4.html">68C4</a>.
+Used by the routines at <a href="63F0.html">NewGame</a> and <a href="6BAF.html">HandleEndOfLife</a>.
+</div>
+<div class="paragraph">
+Swaps the data for the active player (<a href="5F2D.html">ActivePlayer_Level</a>) with the data for the other player (<a href="5F31.html">InactivePlayer_Level</a>).
 </div>
 </div>
 </td>
@@ -58,19 +64,19 @@ This routine "swaps" the data between <span class="register">DE</span> and <span
 <td class="asm-label">ChangePlayer</td>
 <td class="address-2"><span id="6416"></span>6416</td>
 <td class="instruction">LD HL,$5F2D</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5F2D.html">1UP_Level</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the data for the active player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6419"></span>6419</td>
 <td class="instruction">LD DE,$5F31</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5F31.html">2UP_Level</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="5F31.html">InactivePlayer_Level</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="641c"></span>641C</td>
 <td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=04 (counter).</td>
+<td class="comment-1" rowspan="1">Set the counter to 04 (the level, lives, ingredients needed and level number).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -83,28 +89,28 @@ This looks complicated but it's just grabbing the data from <span class="registe
 </td>
 </tr>
 <tr>
-<td class="asm-label">ChangePlayer_Loop</td>
+<td class="asm-label">ChangePlayer_States</td>
 <td class="address-2"><span id="641e"></span>641E</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the data for the inactive player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="641f"></span>641F</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the matching byte of the data for the active player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6420"></span>6420</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Store <span class="register">A</span> at <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Give the active player the byte from the inactive player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6421"></span>6421</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="2">Store <span class="register">C</span> at <span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="2">Give the inactive player the byte from the active player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -115,7 +121,7 @@ This looks complicated but it's just grabbing the data from <span class="registe
 <td class="asm-label"></td>
 <td class="address-1"><span id="6423"></span>6423</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2">Increase both <span class="register">HL</span> and <span class="register">DE</span> by one.</td>
+<td class="comment-1" rowspan="2">Move onto the next byte of data for both players.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -125,8 +131,8 @@ This looks complicated but it's just grabbing the data from <span class="registe
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6425"></span>6425</td>
-<td class="instruction">DJNZ <a href="6416.html#641e">ChangePlayer_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="6416.html#641e">ChangePlayer_Loop</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="6416.html#641e">ChangePlayer_States</a></td>
+<td class="comment-1" rowspan="1">Decrease the counter by one and loop back to <a href="6416.html#641e">ChangePlayer_States</a> until all four bytes have been swapped.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -139,10 +145,10 @@ This looks complicated but it's just grabbing the data from <span class="registe
 <div class="comments">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
-<li><a href="/ultimate/jetpac/asm/0000.html">Jetpac</a></li>
-<li><a href="/ultimate/lunarjetman/asm/0000.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/jetpac/asm/616A.html">Jetpac</a></li>
+<li><a href="/ultimate/lunarjetman/asm/A880.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/asm/613B.html">Pssst</a></li>
-<li><a href="/ultimate/tranzam/asm/0000.html">Tranz Am</a></li>
+<li><a href="/ultimate/sabrewulf/asm/B235.html">Sabre Wulf</a></li>
 </ul>
 </div>
 </div>

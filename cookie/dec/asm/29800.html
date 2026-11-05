@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,10 @@ Next: <a href="29832.html">29832</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="24545.html">24545</a>, <a href="29560.html">29560</a>, <a href="29752.html">Score_1UP</a> and <a href="29832.html">PrintString</a>.
+Used by the routines at <a href="24599.html">DrawPantry</a>, <a href="24802.html">PrintTileBlock</a>, <a href="29560.html">DisplayPlayerLives</a>, <a href="29752.html">Score_1UP</a> and <a href="29832.html">PrintStringColour</a>.
+</div>
+<div class="paragraph">
+Prints a character on the screen, using the character set at 23606 (CHARS), as eight rows of pixels. The screen address is then moved on by one column, ready to print the next character.
 </div>
 </div>
 <table class="input">
@@ -55,13 +61,22 @@ Used by the routines at <a href="24545.html">24545</a>, <a href="29560.html">295
 <td class="register-desc">Screen address</td>
 </tr>
 </table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Screen address of the next character</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrintScreen</td>
 <td class="address-2"><span id="29800"></span>29800</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="3">Stash <span class="register">BC</span>, <span class="register">DE</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="3">Save the registers on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -88,7 +103,7 @@ Used by the routines at <a href="24545.html">24545</a>, <a href="29560.html">295
 <td class="asm-label"></td>
 <td class="address-1"><span id="29806"></span>29806</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="3"><span class="register">HL</span>=<span class="register">HL</span> * 8.</td>
+<td class="comment-1" rowspan="3">Multiply by 8 as there are eight bytes for each character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -104,7 +119,7 @@ Used by the routines at <a href="24545.html">24545</a>, <a href="29560.html">295
 <td class="asm-label"></td>
 <td class="address-1"><span id="29809"></span>29809</td>
 <td class="instruction">LD DE,(23606)</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23606.html">CHARS</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the address of the font (<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23606.html">CHARS</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -193,16 +208,16 @@ Print the character to the screen.
 <span id="29816"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="29560.html">29560</a>.
+This entry point is used by the routine at <a href="29560.html">DisplayPlayerLives</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">PrintScreen_0</td>
+<td class="asm-label">PrintCharacter_Draw</td>
 <td class="address-2"><span id="29816"></span>29816</td>
 <td class="instruction">LD B,8</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=8 (8 rows of pixels).</td>
+<td class="comment-1" rowspan="1">Set the pixel row counter to 8 (8 rows of pixels).</td>
 </tr>
 <tr>
 <td class="asm-label">PrintScreen_Loop</td>
@@ -219,7 +234,7 @@ This entry point is used by the routine at <a href="29560.html">29560</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="29820"></span>29820</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Increment the font data by one.</td>
+<td class="comment-1" rowspan="1">Move on to the next byte of the font data.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -231,13 +246,13 @@ This entry point is used by the routine at <a href="29560.html">29560</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="29822"></span>29822</td>
 <td class="instruction">DJNZ <a href="29800.html#29818">PrintScreen_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="29800.html#29818">PrintScreen_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the pixel row counter by one and loop back to <a href="29800.html#29818">PrintScreen_Loop</a> until all eight rows have been copied.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="29824"></span>29824</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="2">Restore <span class="register">DE</span> and <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="2">Restore the registers from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -258,7 +273,7 @@ Reset <span class="register">HL</span> and move to the next column, ready to pri
 <td class="asm-label"></td>
 <td class="address-1"><span id="29826"></span>29826</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="3"><span class="register">H</span>=<span class="register">H</span> - 8 (reset the display line).</td>
+<td class="comment-1" rowspan="3">Move back to the top pixel row of the character cell (subtract 8 from <span class="register">H</span>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -290,8 +305,12 @@ View the equivalent code in; <ul class="">
 <li><a href="/ultimate/aticatac/dec/asm/41427.html">Atic Atac</a></li>
 <li><a href="/ultimate/jetpac/dec/asm/29004.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/dec/asm/35311.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/martianoids/dec/asm/46539.html">Martianoids</a></li>
+<li><a href="/ultimate/nightshade/dec/asm/51993.html">Nightshade</a></li>
 <li><a href="/ultimate/pssst/dec/asm/29645.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/dec/asm/46473.html">Sabre Wulf</a></li>
 <li><a href="/ultimate/tranzam/dec/asm/27798.html">Tranz Am</a></li>
+<li><a href="/ultimate/underwurlde/dec/asm/39135.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

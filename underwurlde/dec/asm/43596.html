@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Underwurlde: Routine at 43596</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../underwurlde.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43580.html">43580</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43596">Map</a></td>
+<td class="next">
+Next: <a href="43667.html">43667</a>
+</td>
+</tr>
+</table>
+<div class="description">43596: Handle Rope</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Handler for the object type 23 which is the rope that hangs from the ceiling of a room (see <a href="44673.html">Set_Up_Rope</a>). It is the handler of record 3 while Sabreman is not holding the rope; when he grabs it the record is cleared and <a href="41750.html">Handle_Sabreman_On_Rope</a> takes over.
+</div>
+<div class="paragraph">
+Each call lengthens the rope by one (the length is the word at <a href="43685.html">Rope_Length</a>) until its low seven bits reach 56 and sets bit 0 of the redraw flags so that the rope gets drawn.
+</div>
+<div class="paragraph">
+If the rope is swinging (the displacement in <a href="43683.html#43684">Rope_Displacement_Pixels</a> is not zero) the displacement moves back towards zero by 2 on each call and the counter in byte 6 of the record is set to 3. When the rope hangs straight down, the counter counts down to zero and the redraw flag is set for each count. Finally the position of the end of the rope is worked out (<a href="43896.html">Position_Rope_End</a>) and the rope is drawn (<a href="43860.html">Draw_Rope</a>).
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record of the rope (<a href="36602.html#36650">Rope_Record</a>)</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="43596"></span>
+<div class="comments">
+<div class="paragraph">
+Make the rope longer, up to a length of 56.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Rope</td>
+<td class="address-2"><span id="43596"></span>43596</td>
+<td class="instruction">LD HL,(43685)</td>
+<td class="comment-1" rowspan="1">Fetch the length of the rope from <a href="43685.html">Rope_Length</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43599"></span>43599</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Copy the low byte to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43600"></span>43600</td>
+<td class="instruction">AND 127</td>
+<td class="comment-1" rowspan="1">Keep only the low seven bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43602"></span>43602</td>
+<td class="instruction">CP 56</td>
+<td class="comment-1" rowspan="2">Jump to <a href="43596.html#43614">Handle_Rope_Fetch_Displacement</a> if the rope is already full length (the length is 56 or more).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43604"></span>43604</td>
+<td class="instruction">JR NC,<a href="43596.html#43614">Handle_Rope_Fetch_Displacement</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43606"></span>43606</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Add one to the length, so that the rope grows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43607"></span>43607</td>
+<td class="instruction">LD (43685),HL</td>
+<td class="comment-1" rowspan="1">Store the new length of the rope.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43610"></span>43610</td>
+<td class="instruction">SET 0,(IX+15)</td>
+<td class="comment-1" rowspan="1">Set bit 0 of the redraw flags, so that the rope is drawn.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="43614"></span>
+<div class="comments">
+<div class="paragraph">
+Make the swing die down.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Rope_Fetch_Displacement</td>
+<td class="address-2"><span id="43614"></span>43614</td>
+<td class="instruction">LD A,(43684)</td>
+<td class="comment-1" rowspan="1">Fetch the displacement of the end of the rope.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43617"></span>43617</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="43596.html#43632">Handle_Rope_Store_Displacement</a> if the rope hangs straight down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43618"></span>43618</td>
+<td class="instruction">JR Z,<a href="43596.html#43632">Handle_Rope_Store_Displacement</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43620"></span>43620</td>
+<td class="instruction">LD (IX+6),3</td>
+<td class="comment-1" rowspan="1">Set the swing counter to 3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43624"></span>43624</td>
+<td class="instruction">JP P,<a href="43596.html#43660">Handle_Rope_Reduce_Positive</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="43596.html#43660">Handle_Rope_Reduce_Positive</a> if the end of the rope is displaced to the right (the displacement is positive).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43627"></span>43627</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="2">Add two to the displacement, which moves it back towards zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43628"></span>43628</td>
+<td class="instruction">INC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43629"></span>43629</td>
+<td class="instruction">JP P,<a href="43596.html#43654">Handle_Rope_Zero_Displacement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="43596.html#43654">Handle_Rope_Zero_Displacement</a> if the displacement has become zero or positive.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Rope_Store_Displacement</td>
+<td class="address-2"><span id="43632"></span>43632</td>
+<td class="instruction">LD (43684),A</td>
+<td class="comment-1" rowspan="1">Store the displacement of the end of the rope.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43635"></span>43635</td>
+<td class="instruction">LD A,(IX+6)</td>
+<td class="comment-1" rowspan="1">Fetch the swing counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43638"></span>43638</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="43596.html#43648">Handle_Rope_Position_End</a> if the swing counter is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43639"></span>43639</td>
+<td class="instruction">JR Z,<a href="43596.html#43648">Handle_Rope_Position_End</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43641"></span>43641</td>
+<td class="instruction">DEC (IX+6)</td>
+<td class="comment-1" rowspan="1">Decrease the swing counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43644"></span>43644</td>
+<td class="instruction">SET 0,(IX+15)</td>
+<td class="comment-1" rowspan="1">Set bit 0 of the redraw flags, so that the rope is drawn.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Rope_Position_End</td>
+<td class="address-2"><span id="43648"></span>43648</td>
+<td class="instruction">CALL <a href="43896.html">Position_Rope_End</a></td>
+<td class="comment-1" rowspan="1">Work out the position of the end of the rope.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43651"></span>43651</td>
+<td class="instruction">JP <a href="43860.html">Draw_Rope</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="43860.html">Draw_Rope</a> to draw the rope.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Rope_Zero_Displacement</td>
+<td class="address-2"><span id="43654"></span>43654</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Set the displacement to zero, so that the rope hangs straight down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43655"></span>43655</td>
+<td class="instruction">LD (43684),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43658"></span>43658</td>
+<td class="instruction">JR <a href="43596.html#43632">Handle_Rope_Store_Displacement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="43596.html#43632">Handle_Rope_Store_Displacement</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Rope_Reduce_Positive</td>
+<td class="address-2"><span id="43660"></span>43660</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Subtract two from the displacement, which moves it back towards zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43661"></span>43661</td>
+<td class="instruction">DEC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43662"></span>43662</td>
+<td class="instruction">JP M,<a href="43596.html#43654">Handle_Rope_Zero_Displacement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="43596.html#43654">Handle_Rope_Zero_Displacement</a> if the displacement has become negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="43665"></span>43665</td>
+<td class="instruction">JR <a href="43596.html#43632">Handle_Rope_Store_Displacement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="43596.html#43632">Handle_Rope_Store_Displacement</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="43580.html">43580</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#43596">Map</a></td>
+<td class="next">
+Next: <a href="43667.html">43667</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/underwurlde/">Source code</a>.</div>
+<div><a href="../../asm/AA4C.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Atic Atac: Routine at 36591</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="36567.html">36567</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#36591">Map</a></td>
+<td class="next">
+Next: <a href="36710.html">36710</a>
+</td>
+</tr>
+</table>
+<div class="description">36591: Update Velocity</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="36215.html">ControlPlayer</a>.
+</div>
+<div class="paragraph">
+Changes the velocities of an entity that is controlled by <a href="36215.html">ControlPlayer</a>, and works out how many whole pixels it will move this frame. Each velocity (at offsets 6 and 7) has the change added, and is then limited to the fastest speed in either direction. The top four bits of the velocity are the pixels to move, which is <a href="36736.html">GetWholePixels</a>. While the steps of an automatic walk are being counted down by <a href="36205.html">AutoWalkStep</a> (the bottom four bits of offset 2) the pixels moved are 0 or 2 instead, depending on whether the velocity is below 16 with the sign of the velocity.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The change in each velocity (X in <span class="register">E</span> and Y in <span class="register">D</span>)</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">The fastest velocity (X in <span class="register">L</span> and Y in <span class="register">H</span>)</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The entity</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">The pixels to move (X in <span class="register">E</span> and Y in <span class="register">D</span>)</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity</td>
+<td class="address-2"><span id="36591"></span>36591</td>
+<td class="instruction">LD A,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch offset 2 of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36594"></span>36594</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36596"></span>36596</td>
+<td class="instruction">JR NZ,<a href="36591.html#36661">UpdateVelocity_Walk</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36661">UpdateVelocity_Walk</a> if an automatic walk is under way.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36598"></span>
+<div class="comments">
+<div class="paragraph">
+Change the X velocity, and keep it within the fastest speed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36598"></span>36598</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Fetch the change in the X velocity from <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36599"></span>36599</td>
+<td class="instruction">ADD A,(IX+6)</td>
+<td class="comment-1" rowspan="1">Add the X velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36602"></span>36602</td>
+<td class="instruction">JP M,<a href="36591.html#36641">UpdateVelocity_NegativeX</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36641">UpdateVelocity_NegativeX</a> if the result is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36605"></span>36605</td>
+<td class="instruction">CP L</td>
+<td class="comment-1" rowspan="2">Jump to <a href="36591.html#36609">UpdateVelocity_SetX</a> if the X velocity is slower than the fastest X velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36606"></span>36606</td>
+<td class="instruction">JR C,<a href="36591.html#36609">UpdateVelocity_SetX</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36608"></span>36608</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Use the fastest X velocity.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_SetX</td>
+<td class="address-2"><span id="36609"></span>36609</td>
+<td class="instruction">LD (IX+6),A</td>
+<td class="comment-1" rowspan="1">Update the X velocity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36612"></span>
+<div class="comments">
+<div class="paragraph">
+Change the Y velocity, and keep it within the fastest speed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36612"></span>36612</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="1">Fetch the change in the Y velocity from <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36613"></span>36613</td>
+<td class="instruction">ADD A,(IX+7)</td>
+<td class="comment-1" rowspan="1">Add the Y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36616"></span>36616</td>
+<td class="instruction">JP M,<a href="36591.html#36651">UpdateVelocity_NegativeY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36651">UpdateVelocity_NegativeY</a> if the result is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36619"></span>36619</td>
+<td class="instruction">CP H</td>
+<td class="comment-1" rowspan="2">Jump to <a href="36591.html#36623">UpdateVelocity_SetY</a> if the Y velocity is slower than the fastest Y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36620"></span>36620</td>
+<td class="instruction">JR C,<a href="36591.html#36623">UpdateVelocity_SetY</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36622"></span>36622</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Use the fastest Y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_SetY</td>
+<td class="address-2"><span id="36623"></span>36623</td>
+<td class="instruction">LD (IX+7),A</td>
+<td class="comment-1" rowspan="1">Update the Y velocity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36626"></span>
+<div class="comments">
+<div class="paragraph">
+Get the whole pixels from the velocities.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36626"></span>36626</td>
+<td class="instruction">LD A,(IX+6)</td>
+<td class="comment-1" rowspan="1">Fetch the X velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36629"></span>36629</td>
+<td class="instruction">CALL <a href="36736.html">GetWholePixels</a></td>
+<td class="comment-1" rowspan="1">Call <a href="36736.html">GetWholePixels</a> to convert the velocity to whole pixels.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36632"></span>36632</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep the whole pixels of the X velocity in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36633"></span>36633</td>
+<td class="instruction">LD A,(IX+7)</td>
+<td class="comment-1" rowspan="1">Fetch the Y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36636"></span>36636</td>
+<td class="instruction">CALL <a href="36736.html">GetWholePixels</a></td>
+<td class="comment-1" rowspan="1">Call <a href="36736.html">GetWholePixels</a> to convert the velocity to whole pixels.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36639"></span>36639</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep the whole pixels of the Y velocity in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36640"></span>36640</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36641"></span>
+<div class="comments">
+<div class="paragraph">
+The X velocity is negative, so limit it using its size.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_NegativeX</td>
+<td class="address-2"><span id="36641"></span>36641</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the X velocity positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36643"></span>36643</td>
+<td class="instruction">CP L</td>
+<td class="comment-1" rowspan="2">Jump to <a href="36591.html#36647">UpdateVelocity_NegateX</a> if the X velocity is slower than the fastest X velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36644"></span>36644</td>
+<td class="instruction">JR C,<a href="36591.html#36647">UpdateVelocity_NegateX</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36646"></span>36646</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Use the fastest X velocity.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_NegateX</td>
+<td class="address-2"><span id="36647"></span>36647</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the X velocity negative again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36649"></span>36649</td>
+<td class="instruction">JR <a href="36591.html#36609">UpdateVelocity_SetX</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36609">UpdateVelocity_SetX</a> to set the X velocity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36651"></span>
+<div class="comments">
+<div class="paragraph">
+The Y velocity is negative, so limit it using its size.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_NegativeY</td>
+<td class="address-2"><span id="36651"></span>36651</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the Y velocity positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36653"></span>36653</td>
+<td class="instruction">CP H</td>
+<td class="comment-1" rowspan="2">Jump to <a href="36591.html#36657">UpdateVelocity_NegateY</a> if the Y velocity is slower than the fastest Y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36654"></span>36654</td>
+<td class="instruction">JR C,<a href="36591.html#36657">UpdateVelocity_NegateY</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36656"></span>36656</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Use the fastest Y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_NegateY</td>
+<td class="address-2"><span id="36657"></span>36657</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the Y velocity negative again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36659"></span>36659</td>
+<td class="instruction">JR <a href="36591.html#36623">UpdateVelocity_SetY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36623">UpdateVelocity_SetY</a> to set the Y velocity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36661"></span>
+<div class="comments">
+<div class="paragraph">
+An automatic walk is under way, so move by two pixels on an axis if its velocity is 16 or more, or else not at all.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_Walk</td>
+<td class="address-2"><span id="36661"></span>36661</td>
+<td class="instruction">LD A,(IX+6)</td>
+<td class="comment-1" rowspan="1">Fetch the X velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36664"></span>36664</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="36591.html#36690">UpdateVelocity_WalkNegativeX</a> if the X velocity is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36665"></span>36665</td>
+<td class="instruction">JP M,<a href="36591.html#36690">UpdateVelocity_WalkNegativeX</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36668"></span>36668</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep only bits 4-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36670"></span>36670</td>
+<td class="instruction">JR Z,<a href="36591.html#36674">UpdateVelocity_WalkY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36674">UpdateVelocity_WalkY</a> if the result is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36672"></span>36672</td>
+<td class="instruction">LD A,2</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=2 (move two pixels right).</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_WalkY</td>
+<td class="address-2"><span id="36674"></span>36674</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep the X move in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36675"></span>36675</td>
+<td class="instruction">LD A,(IX+7)</td>
+<td class="comment-1" rowspan="1">Fetch the Y velocity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36678"></span>36678</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="36591.html#36700">UpdateVelocity_WalkNegativeY</a> if the Y velocity is negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36679"></span>36679</td>
+<td class="instruction">JP M,<a href="36591.html#36700">UpdateVelocity_WalkNegativeY</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36682"></span>36682</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep only bits 4-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36684"></span>36684</td>
+<td class="instruction">JR Z,<a href="36591.html#36688">UpdateVelocity_WalkEnd</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36688">UpdateVelocity_WalkEnd</a> if the result is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36686"></span>36686</td>
+<td class="instruction">LD A,2</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=2 (move two pixels down).</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_WalkEnd</td>
+<td class="address-2"><span id="36688"></span>36688</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep the Y move in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36689"></span>36689</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_WalkNegativeX</td>
+<td class="address-2"><span id="36690"></span>36690</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the X velocity positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36692"></span>36692</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep only bits 4-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36694"></span>36694</td>
+<td class="instruction">JR Z,<a href="36591.html#36674">UpdateVelocity_WalkY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36674">UpdateVelocity_WalkY</a> if the result is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36696"></span>36696</td>
+<td class="instruction">LD A,254</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=-2 (move two pixels left).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36698"></span>36698</td>
+<td class="instruction">JR <a href="36591.html#36674">UpdateVelocity_WalkY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36674">UpdateVelocity_WalkY</a> to do the walk on the Y axis.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateVelocity_WalkNegativeY</td>
+<td class="address-2"><span id="36700"></span>36700</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the Y velocity positive.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36702"></span>36702</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep only bits 4-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36704"></span>36704</td>
+<td class="instruction">JR Z,<a href="36591.html#36688">UpdateVelocity_WalkEnd</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36688">UpdateVelocity_WalkEnd</a> if the result is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36706"></span>36706</td>
+<td class="instruction">LD A,254</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=-2 (move two pixels up).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="36708"></span>36708</td>
+<td class="instruction">JR <a href="36591.html#36688">UpdateVelocity_WalkEnd</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="36591.html#36688">UpdateVelocity_WalkEnd</a> to finish the walk.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="36567.html">36567</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#36591">Map</a></td>
+<td class="next">
+Next: <a href="36710.html">36710</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/aticatac/">Source code</a>.</div>
+<div><a href="../../asm/8EEF.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,136 +36,207 @@ Next: <a href="9AE9.html">9AE9</a>
 </td>
 </tr>
 </table>
-<div class="description">9ABC: Routine at 9ABC</div>
+<div class="description">9ABC: Spawn Flame</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="9A1D.html">9A1D</a>.
+Used by the routine at <a href="9A1D.html">UpdateCounters</a>.
+</div>
+<div class="paragraph">
+Called once every time all of the actors have been processed, after <a href="9A3C.html">SpawnNastie</a>. If the start-of-turn delay is over, the player is alive and the actor record at <a href="9702.html#9762">ImmortalData_SpareFlame</a> is empty then a counter (<a href="96B4.html">FlameSpawnDelay</a>) is counted down; when it reaches zero a flame (sprite ID 34) is started at a position chosen by <a href="9AE9.html">PlaceFlame</a>, unless that position is unsuitable.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9abc"></span>
+<div class="comments">
+<div class="paragraph">
+Return unless the player is alive (the sprite ID of the player's actor is in the range 10-2F).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnFlame</td>
 <td class="address-2"><span id="9abc"></span>9ABC</td>
 <td class="instruction">LD A,($9702)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player's actor from <a href="9702.html">ImmortalData</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9abf"></span>9ABF</td>
 <td class="instruction">SUB $10</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract 10 (the first Sabreman sprite ID).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ac1"></span>9AC1</td>
 <td class="instruction">CP $20</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Return if the player is not alive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ac3"></span>9AC3</td>
 <td class="instruction">RET NC</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9ac4"></span>
+<div class="comments">
+<div class="paragraph">
+Return if the start-of-turn delay is still running.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ac4"></span>9AC4</td>
 <td class="instruction">LD A,($96B5)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Return if the start-of-turn delay in <a href="96B5.html">GameDelayTimer</a> is not zero.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ac7"></span>9AC7</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ac8"></span>9AC8</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9ac9"></span>
+<div class="comments">
+<div class="paragraph">
+Return if the record is already in use.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ac9"></span>9AC9</td>
 <td class="instruction">LD DE,$9762</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the flame's actor record at <a href="9702.html#9762">ImmortalData_SpareFlame</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9acc"></span>9ACC</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the flame's actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9acd"></span>9ACD</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Return if the flame is already in use.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ace"></span>9ACE</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9acf"></span>
+<div class="comments">
+<div class="paragraph">
+Count down the delay before the next flame appears.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9acf"></span>9ACF</td>
 <td class="instruction">LD HL,$96B4</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the flame spawn delay at <a href="96B4.html">FlameSpawnDelay</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ad2"></span>9AD2</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the flame spawn delay.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ad3"></span>9AD3</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9ABC.html#9ad8">SpawnFlame_Start</a> if the flame spawn delay has run out.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ad4"></span>9AD4</td>
-<td class="instruction">JR Z,<a href="9ABC.html#9ad8">$9AD8</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="9ABC.html#9ad8">SpawnFlame_Start</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ad6"></span>9AD6</td>
 <td class="instruction">DEC (HL)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the flame spawn delay by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ad7"></span>9AD7</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if the flame spawn delay is not zero yet.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9ad8"></span>
+<div class="comments">
+<div class="paragraph">
+The delay has run out so try to start a flame.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnFlame_Start</td>
 <td class="address-2"><span id="9ad8"></span>9AD8</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Point <span class="register">IX</span> at the flame's actor record (using the stack).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ad9"></span>9AD9</td>
 <td class="instruction">POP IX</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9adb"></span>9ADB</td>
-<td class="instruction">CALL <a href="9AE9.html">$9AE9</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="9AE9.html">PlaceFlame</a></td>
+<td class="comment-1" rowspan="1">Choose a position for the flame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ade"></span>9ADE</td>
 <td class="instruction">RET C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Return if the position is unsuitable.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9adf"></span>9ADF</td>
 <td class="instruction">LD (IX+$00),$34</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the sprite ID of the actor to 34 (flame).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ae3"></span>9AE3</td>
 <td class="instruction">LD (IX+$05),$46</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the colour of the flame to INK:YELLOW, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="9ae7"></span>9AE7</td>
-<td class="instruction">JR <a href="9A68.html#9aa2">$9AA2</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JR <a href="9A68.html#9aa2">StartActor_Reset</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9A68.html#9aa2">StartActor_Reset</a> to start the flame.</td>
 </tr>
 </table>
 <table class="asm-navigation">

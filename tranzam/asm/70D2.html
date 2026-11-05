@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,33 +36,63 @@ Next: <a href="7101.html">7101</a>
 </td>
 </tr>
 </table>
-<div class="description">70D2: Routine at 70D2</div>
+<div class="description">70D2: Prepare Actor Sprite</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="7101.html">ActorEraseMovedSprite</a> and <a href="7149.html">7149</a>.
+Used by the routines at <a href="7101.html">DisplayEntity</a> and <a href="7149.html">DrawEntity</a>.
+</div>
+<div class="paragraph">
+Prepares to draw the sprite of an actor at its new position. Points <span class="register">DE</span> to the sprite data and <span class="register">HL</span> to the screen address, stores the pixel shift in <a href="5E41.html">NewSpriteShift</a>, the width in bytes in <a href="5E20.html#5e24">WidthBytes</a> and the number of lines to draw in <a href="5E20.html#5e26">HeightLines</a> and <a href="5E20.html#5e23">HeightPixels</a>.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor entity</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Sprite data (after the height)</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Screen address of the bottom left of the sprite</td>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">00</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">FindActorSpriteAndUpdate</td>
+<td class="asm-label">PrepareActorSprite</td>
 <td class="address-2"><span id="70d2"></span>70D2</td>
-<td class="instruction">CALL <a href="7155.html#7168">ActorGetSprite</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7155.html#7168">ActorGetSprite</a>.</td>
+<td class="instruction">CALL <a href="7168.html">FetchActorSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7168.html">FetchActorSprite</a> to fetch the sprite.</td>
 </tr>
 <tr>
-<td class="asm-label">ActorUpdate</td>
+<td class="asm-label">PrepareActorSprite_Position</td>
 <td class="address-1"><span id="70d5"></span>70D5</td>
 <td class="instruction">LD L,(IX+$01)</td>
-<td class="comment-1" rowspan="2">Fetch actor co-ordinates.</td>
+<td class="comment-1" rowspan="1"><span class="register">L</span>=X position of the actor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70d8"></span>70D8</td>
 <td class="instruction">LD H,(IX+$02)</td>
+<td class="comment-1" rowspan="1"><span class="register">H</span>=Y position of the actor.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -72,16 +105,16 @@ This entry point is used by the routines at <a href="646C.html">DisplayCupsColle
 </td>
 </tr>
 <tr>
-<td class="asm-label">FindActorSpriteAndUpdate_0</td>
+<td class="asm-label">PrepareActorSprite_Shift</td>
 <td class="address-2"><span id="70db"></span>70DB</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70dc"></span>70DC</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Make <span class="register">A</span> negative.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -93,91 +126,101 @@ This entry point is used by the routines at <a href="646C.html">DisplayCupsColle
 <td class="asm-label"></td>
 <td class="address-1"><span id="70e0"></span>70E0</td>
 <td class="instruction">LD ($5E41),A</td>
-<td class="comment-1" rowspan="1">Write this to <a href="5E41.html">5E41</a>.</td>
+<td class="comment-1" rowspan="1">Write the pixel shift to <a href="5E41.html">NewSpriteShift</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70e3"></span>70E3</td>
 <td class="instruction">LD A,$02</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=02.</td>
+<td class="comment-1" rowspan="1">Set the width of the sprite in bytes, 02.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70e5"></span>70E5</td>
-<td class="instruction">JR Z,<a href="70D2.html#70e8">FindActorSpriteAndUpdate_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="70D2.html#70e8">PrepareActorSprite_Width</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="70D2.html#70e8">PrepareActorSprite_Width</a> if the sprite is not shifted.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70e7"></span>70E7</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">A</span> by one.</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">A</span> by one (a shifted sprite is one byte wider).</td>
 </tr>
 <tr>
-<td class="asm-label">FindActorSpriteAndUpdate_1</td>
+<td class="asm-label">PrepareActorSprite_Width</td>
 <td class="address-2"><span id="70e8"></span>70E8</td>
 <td class="instruction">LD ($5E24),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <a href="5E20.html#5e24">WidthBytes</a>.</td>
+<td class="comment-1" rowspan="1">Write the width to <a href="5E20.html#5e24">WidthBytes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70eb"></span>70EB</td>
 <td class="instruction">LD ($5E27),HL</td>
-<td class="comment-1" rowspan="1">Write <span class="register">HL</span> to <a href="5E27.html">ActorScreenPosition</a>.</td>
+<td class="comment-1" rowspan="1">Write the position to <a href="5E27.html">ActorScreenPosition</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70ee"></span>70EE</td>
-<td class="instruction">CALL <a href="70AD.html">$70AD</a></td>
-<td class="comment-1" rowspan="1">Call <a href="70AD.html">70AD</a>.</td>
+<td class="instruction">CALL <a href="70AD.html">GetVisibleHeight</a></td>
+<td class="comment-1" rowspan="1">Work out how many lines can be drawn using <a href="70AD.html">GetVisibleHeight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70f1"></span>70F1</td>
 <td class="instruction">CALL <a href="6F10.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6F10.html">ScreenAddress</a>.</td>
+<td class="comment-1" rowspan="1">Convert the position into a screen address using <a href="6F10.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70f4"></span>70F4</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70f5"></span>70F5</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="70D2.html#70f9">PrepareActorSprite_Rows</a> if the height is no more than the number of lines that can be drawn.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70f6"></span>70F6</td>
-<td class="instruction">JR C,<a href="70D2.html#70f9">FindActorSpriteAndUpdate_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="70D2.html#70f9">PrepareActorSprite_Rows</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70f8"></span>70F8</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Use the number of lines that can be drawn, as the sprite is too tall.</td>
 </tr>
 <tr>
-<td class="asm-label">FindActorSpriteAndUpdate_2</td>
+<td class="asm-label">PrepareActorSprite_Rows</td>
 <td class="address-2"><span id="70f9"></span>70F9</td>
 <td class="instruction">LD ($5E26),A</td>
-<td class="comment-1" rowspan="1">Set <a href="5E20.html#5e26">HeightLines</a>.</td>
+<td class="comment-1" rowspan="1">Write the number of lines to <a href="5E20.html#5e26">HeightLines</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70fc"></span>70FC</td>
 <td class="instruction">LD ($5E23),A</td>
-<td class="comment-1" rowspan="1">Set <a href="5E20.html#5e23">HeightPixels</a>.</td>
+<td class="comment-1" rowspan="1">Write the number of lines to <a href="5E20.html#5e23">HeightPixels</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="70ff"></span>70FF</td>
 <td class="instruction">JR <a href="70CE.html">NextSprite</a></td>
 <td class="comment-1" rowspan="1">Jump to <a href="70CE.html">NextSprite</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/cookie/asm/7584.html">Cookie</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at BCCA</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BCC0.html">BCC0</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bcca">Map</a></td>
+<td class="next">
+Next: <a href="BD52.html">BD52</a>
+</td>
+</tr>
+</table>
+<div class="description">BCCA: Handle Crosshair</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Type 03: the crosshair, which the player moves about the screen in the duel to aim at the outlaw. It is moved by the controls, and stays between limits. When the fire control is pressed it fires the revolver.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcca"></span>
+<div class="comments">
+<div class="paragraph">
+Reload the revolver if it needs it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair</td>
+<td class="address-2"><span id="bcca"></span>BCCA</td>
+<td class="instruction">CALL <a href="C977.html">ReloadRevolver</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C977.html">ReloadRevolver</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bccd"></span>BCCD</td>
+<td class="instruction">LD L,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal position into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd0"></span>BCD0</td>
+<td class="instruction">LD H,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Fetch the vertical position into <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd3"></span>BCD3</td>
+<td class="instruction">LD E,(IX+$05)</td>
+<td class="comment-1" rowspan="1">Fetch the speed into <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcd6"></span>
+<div class="comments">
+<div class="paragraph">
+Read the controls.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd6"></span>BCD6</td>
+<td class="instruction">CALL <a href="D0E3.html">ReadControls</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D0E3.html">ReadControls</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcd9"></span>
+<div class="comments">
+<div class="paragraph">
+Move left or right, but not past the edges.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcd9"></span>BCD9</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the controls into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcda"></span>BCDA</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep the two bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcdc"></span>BCDC</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bcef">HandleCrosshair_Vertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BCCA.html#bcef">HandleCrosshair_Vertical</a> if neither or both are pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcde"></span>BCDE</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bcef">HandleCrosshair_Vertical</a> if both are pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce0"></span>BCE0</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bcef">HandleCrosshair_Vertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce2"></span>BCE2</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCB6.html">MoveCrosshairLeft</a> to move left if left is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce4"></span>BCE4</td>
+<td class="instruction">JR Z,<a href="BCB6.html">MoveCrosshairLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce6"></span>BCE6</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce7"></span>BCE7</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bce8"></span>BCE8</td>
+<td class="instruction">CP $C5</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bcee">HandleCrosshair_SetHorizontal</a> if the crosshair is not past it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcea"></span>BCEA</td>
+<td class="instruction">JR C,<a href="BCCA.html#bcee">HandleCrosshair_SetHorizontal</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcec"></span>BCEC</td>
+<td class="instruction">LD A,$C4</td>
+<td class="comment-1" rowspan="1">Stop at the right limit.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcee"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="BCB6.html">MoveCrosshairLeft</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_SetHorizontal</td>
+<td class="address-2"><span id="bcee"></span>BCEE</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Set the horizontal position.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcef"></span>
+<div class="comments">
+<div class="paragraph">
+See whether the controls are the keyboard.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_Vertical</td>
+<td class="address-2"><span id="bcef"></span>BCEF</td>
+<td class="instruction">LD A,($A21C)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A21C.html">Options</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf2"></span>BCF2</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Move the bits for the controls into the low bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf3"></span>BCF3</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep the two bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf5"></span>BCF5</td>
+<td class="instruction">JP Z,<a href="BCCA.html#bd3a">HandleCrosshair_Keyboard</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BCCA.html#bd3a">HandleCrosshair_Keyboard</a> if the controls are the keyboard.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcf8"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the joystick bits for up, down and fire into <span class="register">B</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf8"></span>BCF8</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the controls into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcf9"></span>BCF9</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcfb"></span>BCFB</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd01">HandleCrosshair_TestDown</a> if up is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcfd"></span>BCFD</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd01">HandleCrosshair_TestDown</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bcff"></span>BCFF</td>
+<td class="instruction">SET 1,B</td>
+<td class="comment-1" rowspan="1">Set the bit for up.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_TestDown</td>
+<td class="address-2"><span id="bd01"></span>BD01</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd07">HandleCrosshair_TestFire</a> if down is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd03"></span>BD03</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd07">HandleCrosshair_TestFire</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd05"></span>BD05</td>
+<td class="instruction">SET 0,B</td>
+<td class="comment-1" rowspan="1">Set the bit for down.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_TestFire</td>
+<td class="address-2"><span id="bd07"></span>BD07</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd0d">HandleCrosshair_MoveVertical</a> if the fire control is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd09"></span>BD09</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd0d">HandleCrosshair_MoveVertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd0b"></span>BD0B</td>
+<td class="instruction">SET 3,B</td>
+<td class="comment-1" rowspan="1">Set the bit for fire.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bd0d"></span>
+<div class="comments">
+<div class="paragraph">
+Move up or down, but not past the edges.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_MoveVertical</td>
+<td class="address-2"><span id="bd0d"></span>BD0D</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd0e"></span>BD0E</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep the up and down bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd10"></span>BD10</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd23">HandleCrosshair_SetPosition</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BCCA.html#bd23">HandleCrosshair_SetPosition</a> if neither or both are pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd12"></span>BD12</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd23">HandleCrosshair_SetPosition</a> if both are pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd14"></span>BD14</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd23">HandleCrosshair_SetPosition</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd16"></span>BD16</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCC0.html">MoveCrosshairDown</a> to move down if down is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd18"></span>BD18</td>
+<td class="instruction">JR Z,<a href="BCC0.html">MoveCrosshairDown</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd1a"></span>BD1A</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Fetch the vertical position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd1b"></span>BD1B</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd1c"></span>BD1C</td>
+<td class="instruction">CP $AD</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd22">HandleCrosshair_SetVertical</a> if the crosshair is not past it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd1e"></span>BD1E</td>
+<td class="instruction">JR C,<a href="BCCA.html#bd22">HandleCrosshair_SetVertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd20"></span>BD20</td>
+<td class="instruction">LD A,$AC</td>
+<td class="comment-1" rowspan="1">Stop at the upper limit.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bd22"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="BCC0.html">MoveCrosshairDown</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_SetVertical</td>
+<td class="address-2"><span id="bd22"></span>BD22</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Set the vertical position.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bd23"></span>
+<div class="comments">
+<div class="paragraph">
+Store the new position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_SetPosition</td>
+<td class="address-2"><span id="bd23"></span>BD23</td>
+<td class="instruction">LD (IX+$02),L</td>
+<td class="comment-1" rowspan="1">Set the horizontal position of the crosshair.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd26"></span>BD26</td>
+<td class="instruction">LD (IX+$04),H</td>
+<td class="comment-1" rowspan="1">Set the vertical position of the crosshair.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bd29"></span>
+<div class="comments">
+<div class="paragraph">
+Set the position for drawing.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd29"></span>BD29</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="2">Fetch the vertical position and clear <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd2a"></span>BD2A</td>
+<td class="instruction">LD H,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd2c"></span>BD2C</td>
+<td class="instruction">LD ($A24E),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="A24E.html">ScreenHorizontalPosition</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd2f"></span>BD2F</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Copy the vertical position into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd30"></span>BD30</td>
+<td class="instruction">LD ($A250),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="A250.html">ScreenVerticalPosition</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bd33"></span>
+<div class="comments">
+<div class="paragraph">
+Fire the revolver if the fire control is pressed, then draw the crosshair.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd33"></span>BD33</td>
+<td class="instruction">LD E,B</td>
+<td class="comment-1" rowspan="1">Pass the controls to the routine which fires the revolver.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd34"></span>BD34</td>
+<td class="instruction">CALL <a href="C9EC.html">FireRevolver</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C9EC.html">FireRevolver</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd37"></span>BD37</td>
+<td class="instruction">JP <a href="BD69.html">DrawSpriteList</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BD69.html">DrawSpriteList</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bd3a"></span>
+<div class="comments">
+<div class="paragraph">
+The controls are the keyboard, which sets the bits for down and up the other way round to the joysticks.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_Keyboard</td>
+<td class="address-2"><span id="bd3a"></span>BD3A</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd3b"></span>BD3B</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd3d"></span>BD3D</td>
+<td class="instruction">BIT 2,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd43">HandleCrosshair_KeyboardTestUp</a> if down is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd3f"></span>BD3F</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd43">HandleCrosshair_KeyboardTestUp</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd41"></span>BD41</td>
+<td class="instruction">SET 0,B</td>
+<td class="comment-1" rowspan="1">Set the bit for down.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_KeyboardTestUp</td>
+<td class="address-2"><span id="bd43"></span>BD43</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd49">HandleCrosshair_KeyboardTestFire</a> if up is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd45"></span>BD45</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd49">HandleCrosshair_KeyboardTestFire</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd47"></span>BD47</td>
+<td class="instruction">SET 1,B</td>
+<td class="comment-1" rowspan="1">Set the bit for up.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_KeyboardTestFire</td>
+<td class="address-2"><span id="bd49"></span>BD49</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="BCCA.html#bd4f">HandleCrosshair_KeyboardMove</a> if the fire control is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd4b"></span>BD4B</td>
+<td class="instruction">JR Z,<a href="BCCA.html#bd4f">HandleCrosshair_KeyboardMove</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bd4d"></span>BD4D</td>
+<td class="instruction">SET 3,B</td>
+<td class="comment-1" rowspan="1">Set the bit for fire.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bd4f"></span>
+<div class="comments">
+<div class="paragraph">
+Move the crosshair up or down.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleCrosshair_KeyboardMove</td>
+<td class="address-2"><span id="bd4f"></span>BD4F</td>
+<td class="instruction">JP <a href="BCCA.html#bd0d">HandleCrosshair_MoveVertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BCCA.html#bd0d">HandleCrosshair_MoveVertical</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BCC0.html">BCC0</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bcca">Map</a></td>
+<td class="next">
+Next: <a href="BD52.html">BD52</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/48330.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

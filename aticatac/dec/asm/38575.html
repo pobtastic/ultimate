@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,6 +44,9 @@ Next: <a href="38601.html">38601</a>
 <div class="paragraph">
 Used by the routine at <a href="37191.html">EnterRoom</a>.
 </div>
+<div class="paragraph">
+Marks a room as having been visited, by setting its bit in the table of visited rooms at <a href="24128.html">VisitedRooms</a>. The table has one bit for each room, 8 rooms to a byte. The bit to set is worked out from the room ID and written into the SET instruction at <a href="38575.html#38598">38598</a> (self modifying code), which then sets it.
+</div>
 </div>
 <table class="input">
 <tr class="asm-input-header">
@@ -67,7 +73,7 @@ Create an offset in <span class="register">BC</span>.
 <td class="asm-label">VisitRoom</td>
 <td class="address-2"><span id="38575"></span>38575</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Keep the room ID in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -103,6 +109,16 @@ Create an offset in <span class="register">BC</span>.
 <td class="instruction">ADD HL,BC</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="38588"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the bit to set, which is the bottom three bits of the room ID.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38588"></span>38588</td>
 <td class="instruction">RLCA</td>
@@ -128,19 +144,19 @@ Create an offset in <span class="register">BC</span>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="38593"></span>38593</td>
 <td class="instruction">OR %11000110</td>
-<td class="comment-1" rowspan="1">Set bits 1-2, 6-7.</td>
+<td class="comment-1" rowspan="1">Set bits 1-2, 6-7. This makes the second byte of the instruction SET n,(HL) for the bit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38595"></span>38595</td>
 <td class="instruction">LD (38599),A</td>
-<td class="comment-1" rowspan="1">Write this value to <a href="38575.html#38598">38599</a> which updates the bit to set.</td>
+<td class="comment-1" rowspan="1">Write this value to <a href="38575.html#38598">38599</a>, which updates the bit to set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="38598"></span>38598</td>
 <td class="instruction">SET 0,(HL)</td>
-<td class="comment-1" rowspan="1">With above, set the bit to mark the room as having been visited.</td>
+<td class="comment-1" rowspan="1">Set the bit to mark the room as having been visited.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,19 @@ Next: <a href="48594.html">48594</a>
 </td>
 </tr>
 </table>
-<div class="description">48507: Play Audio: Process Music Data</div>
+<div class="description">48507: Play Note</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="48494.html">PlayAudio</a>.
+Used by the routines at <a href="48465.html">PlayMusic_WaitKey</a> and <a href="48494.html">PlayMusic</a>.
+</div>
+<div class="paragraph">
+Plays a single note, or a rest if the note is zero. A note is looked up in the table at <a href="48594.html">MusicNotes</a>, which has four bytes per note: two bytes which set the length of the delays between speaker changes (the pitch), followed by a 16-bit count of the number of cycles to play. The count is multiplied by the length held in bits 6-7 of the music data byte plus one.
+</div>
+<div class="paragraph">
+Each cycle sets the border (and speaker) to black for a delay and then turns the speaker on for the same delay.
 </div>
 </div>
 <table class="input">
@@ -58,22 +67,22 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process</td>
+<td class="asm-label">PlayNote</td>
 <td class="address-2"><span id="48507"></span>48507</td>
 <td class="instruction">AND %00111111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-5.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-5 (the note).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48509"></span>48509</td>
-<td class="instruction">JR Z,<a href="48507.html#48572">PlayAudio_Process_5</a></td>
-<td class="comment-1" rowspan="1">If we're left with zero, jump to <a href="48507.html#48572">PlayAudio_Process_5</a>.</td>
+<td class="instruction">JR Z,<a href="48507.html#48572">PlayMusic_Rest</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48507.html#48572">PlayMusic_Rest</a> if the note is a rest (zero).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48511"></span>48511</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="2">Creates an offset using <span class="register">H</span>=0 and <span class="register">L</span>=<span class="register">A</span>.</td>
+<td class="comment-1" rowspan="2">Use the note as the offset into the table of notes.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -84,7 +93,7 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 <td class="asm-label"></td>
 <td class="address-1"><span id="48514"></span>48514</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="4"><span class="register">HL</span>=<a href="48594.html">MusicData</a> + (offset * 4).</td>
+<td class="comment-1" rowspan="4">Multiply the offset by four (the size of an entry) and add the table of notes at <a href="48594.html">MusicNotes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -102,10 +111,20 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 <td class="instruction">ADD HL,BC</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="48520"></span>
+<div class="comments">
+<div class="paragraph">
+Read the table entry for the note: two bytes of pitch delay and then the 16-bit number of cycles.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48520"></span>48520</td>
 <td class="instruction">LD B,(HL)</td>
-<td class="comment-1" rowspan="4"><span class="register">BC</span>=the address held at <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="4">Fetch the pitch delay of the note into <span class="register">B</span> and <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -126,7 +145,7 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 <td class="asm-label"></td>
 <td class="address-1"><span id="48524"></span>48524</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="4"><span class="register">A</span>=.</td>
+<td class="comment-1" rowspan="4">Fetch the number of cycles of the note into <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -144,22 +163,31 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 <td class="instruction">LD L,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="48528"></span>
+<div class="comments">
+<div class="paragraph">
+Multiply the number of cycles by the length of the note.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48528"></span>48528</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=.</td>
+<td class="comment-1" rowspan="1">Fetch the music data byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48529"></span>48529</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Rotate bits 6-7 (the length of the note) into bits 0-1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48530"></span>48530</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -171,167 +199,173 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 <td class="asm-label"></td>
 <td class="address-1"><span id="48533"></span>48533</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add one, so <span class="register">A</span> holds the length of the note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48534"></span>48534</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">DE</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the music data pointer on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48535"></span>48535</td>
 <td class="instruction">LD E,L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Copy the number of cycles into <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48536"></span>48536</td>
 <td class="instruction">LD D,H</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_0</td>
+<td class="asm-label">PlayMusic_Multiply</td>
 <td class="address-2"><span id="48537"></span>48537</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the length counter by one and jump to <a href="48507.html#48543">PlayMusic_MultiplyDone</a> once the length has been multiplied in.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48538"></span>48538</td>
-<td class="instruction">JR Z,<a href="48507.html#48543">PlayAudio_Process_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR Z,<a href="48507.html#48543">PlayMusic_MultiplyDone</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48540"></span>48540</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add the number of cycles to the total.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48541"></span>48541</td>
-<td class="instruction">JR <a href="48507.html#48537">PlayAudio_Process_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR <a href="48507.html#48537">PlayMusic_Multiply</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="48507.html#48537">PlayMusic_Multiply</a>.</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_1</td>
+<td class="asm-label">PlayMusic_MultiplyDone</td>
 <td class="address-2"><span id="48543"></span>48543</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the music data pointer from the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_2</td>
+<td class="routine-comment" colspan="5">
+<span id="48544"></span>
+<div class="comments">
+<div class="paragraph">
+Play one cycle: the speaker is off for the delay and then on for the same delay.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_Cycle</td>
 <td class="address-2"><span id="48544"></span>48544</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the pitch delay on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48545"></span>48545</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Set the border to BLACK.</td>
+<td class="comment-1" rowspan="1">Set the speaker to off.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48546"></span>48546</td>
 <td class="instruction">OUT (254),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to port 254 (border black, speaker off).</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_3</td>
+<td class="asm-label">PlayMusic_OffDelay</td>
 <td class="address-2"><span id="48548"></span>48548</td>
-<td class="instruction">DJNZ <a href="48507.html#48548">PlayAudio_Process_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="48507.html#48548">PlayMusic_OffDelay</a></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">B</span> by one and loop back to <a href="48507.html#48548">PlayMusic_OffDelay</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48550"></span>48550</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease <span class="register">C</span> by one and jump back to <a href="48507.html#48548">PlayMusic_OffDelay</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48551"></span>48551</td>
-<td class="instruction">JR NZ,<a href="48507.html#48548">PlayAudio_Process_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="48507.html#48548">PlayMusic_OffDelay</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48553"></span>48553</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the pitch delay from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48554"></span>48554</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the pitch delay on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48555"></span>48555</td>
-<td class="instruction">LD A,%00010000</td>
-<td class="comment-1" rowspan="2">Flip speaker on (set bit 4).</td>
+<td class="instruction">LD A,16</td>
+<td class="comment-1" rowspan="1">Set the speaker to on (bit 4).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48557"></span>48557</td>
 <td class="instruction">OUT (254),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to port 254 (border black, speaker on).</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_4</td>
+<td class="asm-label">PlayMusic_OnDelay</td>
 <td class="address-2"><span id="48559"></span>48559</td>
-<td class="instruction">DJNZ <a href="48507.html#48559">PlayAudio_Process_4</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="48507.html#48559">PlayAudio_Process_4</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="48507.html#48559">PlayMusic_OnDelay</a></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">B</span> by one and loop back to <a href="48507.html#48559">PlayMusic_OnDelay</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48561"></span>48561</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease <span class="register">C</span> by one and jump back to <a href="48507.html#48559">PlayMusic_OnDelay</a> until it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48562"></span>48562</td>
-<td class="instruction">JR NZ,<a href="48507.html#48559">PlayAudio_Process_4</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="48507.html#48559">PlayMusic_OnDelay</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48564"></span>48564</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the pitch delay from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48565"></span>48565</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the cycle counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48566"></span>48566</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Loop back to <a href="48507.html#48544">PlayMusic_Cycle</a> until all of the cycles of the note have been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48567"></span>48567</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48568"></span>48568</td>
-<td class="instruction">JR NZ,<a href="48507.html#48544">PlayAudio_Process_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="48507.html#48544">PlayMusic_Cycle</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48570"></span>48570</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -340,28 +374,37 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_5</td>
+<td class="routine-comment" colspan="5">
+<span id="48572"></span>
+<div class="comments">
+<div class="paragraph">
+A rest is a silent delay, which lasts for as many units as the length of the note.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PlayMusic_Rest</td>
 <td class="address-2"><span id="48572"></span>48572</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the music data byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48573"></span>48573</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48574"></span>48574</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Rotate left twice, so bits 6-7 become bits 0-1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48575"></span>48575</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -373,73 +416,82 @@ Used by the routines at <a href="48465.html">PlayAudio_WaitKey</a> and <a href="
 <td class="asm-label"></td>
 <td class="address-1"><span id="48578"></span>48578</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add one, so <span class="register">A</span> holds the length of the rest.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48579"></span>48579</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the length of the rest in <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48580"></span>48580</td>
 <td class="instruction">LD BC,17163</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=17163.</td>
+<td class="comment-1" rowspan="1">Set the length of one unit of the rest in <span class="register">BC</span> to 17163.</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_6</td>
+<td class="asm-label">PlayMusic_RestUnit</td>
 <td class="address-2"><span id="48583"></span>48583</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the length of the unit on the stack.</td>
 </tr>
 <tr>
-<td class="asm-label">PlayAudio_Process_7</td>
+<td class="asm-label">PlayMusic_RestDelay</td>
 <td class="address-2"><span id="48584"></span>48584</td>
 <td class="instruction">DEC BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the unit counter by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48585"></span>48585</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="3">Loop back to <a href="48507.html#48584">PlayMusic_RestDelay</a> until the unit has passed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48586"></span>48586</td>
 <td class="instruction">OR C</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48587"></span>48587</td>
-<td class="instruction">JR NZ,<a href="48507.html#48584">PlayAudio_Process_7</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="48507.html#48584">PlayMusic_RestDelay</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48589"></span>48589</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the length of the unit from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48590"></span>48590</td>
 <td class="instruction">DEC L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the length of the rest by one and loop back to <a href="48507.html#48583">PlayMusic_RestUnit</a> until the rest is over.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48591"></span>48591</td>
-<td class="instruction">JR NZ,<a href="48507.html#48583">PlayAudio_Process_6</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="48507.html#48583">PlayMusic_RestUnit</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48593"></span>48593</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/dec/asm/45786.html">Knight Lore</a></li>
+<li><a href="/ultimate/martianoids/dec/asm/49370.html">Martianoids</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

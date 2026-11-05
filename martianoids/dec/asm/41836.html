@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Martianoids: Routine at 41836</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../martianoids.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41825.html">41825</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41836">Map</a></td>
+<td class="next">
+Next: <a href="42136.html">42136</a>
+</td>
+</tr>
+</table>
+<div class="description">41836: Move Program Packet</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The handler for entity types 110 and 111, which is the program packet that is sent from a transmitter to a sector. It follows the open cells of the map. If it reaches a receiving terminal (a cell of type 9) in a sector that has some energy then the sector is activated, and if it runs into a hazard (a cell of type 1 or 7) then the program is destroyed.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Entity</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket</td>
+<td class="address-2"><span id="41836"></span>41836</td>
+<td class="instruction">CALL <a href="44755.html">GetPosition</a></td>
+<td class="comment-1" rowspan="1">Fetch the position of the packet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41839"></span>41839</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the packet...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41842"></span>41842</td>
+<td class="instruction">XOR 1</td>
+<td class="comment-1" rowspan="2">...and switch to the other sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41844"></span>41844</td>
+<td class="instruction">LD (IX+0),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41847"></span>41847</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="3">Jump if the packet is not at the start of a cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41848"></span>41848</td>
+<td class="instruction">OR L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41849"></span>41849</td>
+<td class="instruction">JR NZ,<a href="41836.html#41944">MoveProgramPacket_UpdateState</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41851"></span>41851</td>
+<td class="instruction">LD A,(IX+7)</td>
+<td class="comment-1" rowspan="1">Fetch the direction that the packet is heading in...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41854"></span>41854</td>
+<td class="instruction">AND 3</td>
+<td class="comment-1" rowspan="1">...limited to 0-3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41856"></span>41856</td>
+<td class="instruction">CALL <a href="42179.html">ChooseDirection</a></td>
+<td class="comment-1" rowspan="1">Choose a direction that is not blocked using <a href="42179.html">ChooseDirection</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41859"></span>41859</td>
+<td class="instruction">JR Z,<a href="41836.html#41868">MoveProgramPacket_CheckCell</a></td>
+<td class="comment-1" rowspan="1">Jump if there is one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41861"></span>41861</td>
+<td class="instruction">LD (IX+0),56</td>
+<td class="comment-1" rowspan="1">Otherwise turn the packet into smoke...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41865"></span>41865</td>
+<td class="instruction">JP <a href="48589.html">AddEntity</a></td>
+<td class="comment-1" rowspan="1">...and draw it.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_CheckCell</td>
+<td class="address-2"><span id="41868"></span>41868</td>
+<td class="instruction">CP 9</td>
+<td class="comment-1" rowspan="2">Jump if the packet has reached a receiving terminal (a cell of type 9).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41870"></span>41870</td>
+<td class="instruction">JR Z,<a href="41836.html#41903">MoveProgramPacket_Terminal</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41872"></span>41872</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to carry on if the cell is open (type 0).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41873"></span>41873</td>
+<td class="instruction">JR Z,<a href="41836.html#41935">MoveProgramPacket_Continue</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41875"></span>41875</td>
+<td class="instruction">LD B,132</td>
+<td class="comment-1" rowspan="1">Use the state that says that the packet has been destroyed...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41877"></span>41877</td>
+<td class="instruction">CP 1</td>
+<td class="comment-1" rowspan="2">...and jump to set it if the cell is a hazard of type 1...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41879"></span>41879</td>
+<td class="instruction">JR Z,<a href="41836.html#41932">MoveProgramPacket_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41881"></span>41881</td>
+<td class="instruction">CP 7</td>
+<td class="comment-1" rowspan="2">...or of type 7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41883"></span>41883</td>
+<td class="instruction">JR Z,<a href="41836.html#41932">MoveProgramPacket_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41885"></span>41885</td>
+<td class="instruction">CP 15</td>
+<td class="comment-1" rowspan="2">Jump to carry on if the cell is type 15.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41887"></span>41887</td>
+<td class="instruction">JR Z,<a href="41836.html#41935">MoveProgramPacket_Continue</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41889"></span>
+<div class="comments">
+<div class="paragraph">
+The packet has been destroyed or has arrived, and is removed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_Remove</td>
+<td class="address-2"><span id="41889"></span>41889</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Remove the packet by setting its type to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41890"></span>41890</td>
+<td class="instruction">LD (IX+0),A</td>
+<td class="comment-1" rowspan="1">Store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41893"></span>41893</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41894"></span>
+<div class="comments">
+<div class="paragraph">
+The terminal has no energy, so the packet turns round.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_TurnRound</td>
+<td class="address-2"><span id="41894"></span>41894</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the Y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41895"></span>41895</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the direction that the packet is heading in...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41896"></span>41896</td>
+<td class="instruction">ADD A,2</td>
+<td class="comment-1" rowspan="2">...and reverse it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41898"></span>41898</td>
+<td class="instruction">AND 3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41900"></span>41900</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the reversed direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41901"></span>41901</td>
+<td class="instruction">JR <a href="41836.html#41935">MoveProgramPacket_Continue</a></td>
+<td class="comment-1" rowspan="1">Carry on.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_Terminal</td>
+<td class="address-2"><span id="41903"></span>41903</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the Y position...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41904"></span>41904</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">...and the X position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41905"></span>41905</td>
+<td class="instruction">CALL <a href="40030.html">FindSector</a></td>
+<td class="comment-1" rowspan="1">Find the sector that the terminal is in using <a href="40030.html">FindSector</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41908"></span>41908</td>
+<td class="instruction">LD E,D</td>
+<td class="comment-1" rowspan="2">Use the sector number as an index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41909"></span>41909</td>
+<td class="instruction">LD D,0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41911"></span>41911</td>
+<td class="instruction">LD HL,41825</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="41825.html">SectorEnergy</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41914"></span>41914</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41915"></span>41915</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the X position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41916"></span>41916</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the energy of the sector.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41917"></span>41917</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to turn the packet round if the sector has no energy.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41918"></span>41918</td>
+<td class="instruction">JR Z,<a href="41836.html#41894">MoveProgramPacket_TurnRound</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41920"></span>41920</td>
+<td class="instruction">LD HL,(38446)</td>
+<td class="comment-1" rowspan="1">Fetch the address of the terminal.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41923"></span>41923</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch its contents.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41924"></span>41924</td>
+<td class="instruction">AND 240</td>
+<td class="comment-1" rowspan="1">Keep the initial type...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41926"></span>41926</td>
+<td class="instruction">OR 14</td>
+<td class="comment-1" rowspan="1">...change the current type to 14, the activated terminal...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41928"></span>41928</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">...and store the new contents.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41929"></span>41929</td>
+<td class="instruction">LD B,4</td>
+<td class="comment-1" rowspan="1">Set the state of the packet to four...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41931"></span>41931</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">...after restoring the Y position.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_State</td>
+<td class="address-2"><span id="41932"></span>41932</td>
+<td class="instruction">LD (IX+14),B</td>
+<td class="comment-1" rowspan="1">Store the state of the packet.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_Continue</td>
+<td class="address-2"><span id="41935"></span>41935</td>
+<td class="instruction">LD A,(IX+7)</td>
+<td class="comment-1" rowspan="1">Fetch the direction of the packet...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41938"></span>41938</td>
+<td class="instruction">AND 252</td>
+<td class="comment-1" rowspan="1">...clear the old direction...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41940"></span>41940</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="1">...add the new direction...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41941"></span>41941</td>
+<td class="instruction">LD (IX+7),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_UpdateState</td>
+<td class="address-2"><span id="41944"></span>41944</td>
+<td class="instruction">LD A,(IX+14)</td>
+<td class="comment-1" rowspan="1">Fetch the state of the packet...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41947"></span>41947</td>
+<td class="instruction">AND 15</td>
+<td class="comment-1" rowspan="2">...limited to the low four bits, and jump to carry on if it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41949"></span>41949</td>
+<td class="instruction">JR Z,<a href="41836.html#42067">MoveProgramPacket_Move</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41951"></span>41951</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Count down the state, and jump to store it if it has not reached zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41952"></span>41952</td>
+<td class="instruction">JR NZ,<a href="41836.html#42057">MoveProgramPacket_StoreCount</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41954"></span>41954</td>
+<td class="instruction">BIT 7,(IX+14)</td>
+<td class="comment-1" rowspan="2">Test the flag that says that the packet has been destroyed, and jump if it is not set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41958"></span>41958</td>
+<td class="instruction">JR Z,<a href="41836.html#41980">MoveProgramPacket_Arrived</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41960"></span>41960</td>
+<td class="instruction">LD DE,3</td>
+<td class="comment-1" rowspan="1">Queue message 3, "PROGRAM HAS BEEN"...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41963"></span>41963</td>
+<td class="instruction">CALL <a href="40054.html">QueueMessage</a></td>
+<td class="comment-1" rowspan="1">...using <a href="40054.html">QueueMessage</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41966"></span>41966</td>
+<td class="instruction">LD DE,4</td>
+<td class="comment-1" rowspan="1">Queue message 4, "DESTROYED"...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41969"></span>41969</td>
+<td class="instruction">CALL <a href="40054.html">QueueMessage</a></td>
+<td class="comment-1" rowspan="1">...using <a href="40054.html">QueueMessage</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41972"></span>41972</td>
+<td class="instruction">LD HL,772</td>
+<td class="comment-1" rowspan="1">Start effect 3 (four tones)...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41975"></span>41975</td>
+<td class="instruction">LD (38536),HL</td>
+<td class="comment-1" rowspan="1">...by storing the length and the effect number for <a href="49114.html">PlaySoundStep</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41978"></span>41978</td>
+<td class="instruction">JR <a href="41836.html#41889">MoveProgramPacket_Remove</a></td>
+<td class="comment-1" rowspan="1">Remove the packet.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="41980"></span>
+<div class="comments">
+<div class="paragraph">
+The packet has arrived at a terminal in a sector that has energy.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_Arrived</td>
+<td class="address-2"><span id="41980"></span>41980</td>
+<td class="instruction">LD DE,8</td>
+<td class="comment-1" rowspan="1">Queue message 8, "PROGRAM RECIEVED"...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41983"></span>41983</td>
+<td class="instruction">CALL <a href="40054.html">QueueMessage</a></td>
+<td class="comment-1" rowspan="1">...using <a href="40054.html">QueueMessage</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41986"></span>41986</td>
+<td class="instruction">CALL <a href="40030.html">FindSector</a></td>
+<td class="comment-1" rowspan="1">Find the sector that the packet is in using <a href="40030.html">FindSector</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41989"></span>41989</td>
+<td class="instruction">LD E,1</td>
+<td class="comment-1" rowspan="1">Queue message 1, "SECTOR n"...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41991"></span>41991</td>
+<td class="instruction">CALL <a href="40054.html">QueueMessage</a></td>
+<td class="comment-1" rowspan="1">...using <a href="40054.html">QueueMessage</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41994"></span>41994</td>
+<td class="instruction">LD HL,38491</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="38491.html">SectorFlags</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41997"></span>41997</td>
+<td class="instruction">LD E,D</td>
+<td class="comment-1" rowspan="2">Use the sector number as an index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="41998"></span>41998</td>
+<td class="instruction">LD D,0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42000"></span>42000</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42001"></span>42001</td>
+<td class="instruction">LD (HL),255</td>
+<td class="comment-1" rowspan="1">Set the flag that says that the sector has been activated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42003"></span>42003</td>
+<td class="instruction">LD HL,38488</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the number of sectors that have been activated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42006"></span>42006</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">Add one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42007"></span>42007</td>
+<td class="instruction">LD HL,38526</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="38526.html">SectorStates</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42010"></span>42010</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the sector number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42011"></span>42011</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the state of the sector.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42012"></span>42012</td>
+<td class="instruction">AND 252</td>
+<td class="comment-1" rowspan="2">Change it to activated (bit 1 set and bit 0 clear), clearing the flag that says it is under attack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42014"></span>42014</td>
+<td class="instruction">OR 2</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42016"></span>42016</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the new state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42017"></span>42017</td>
+<td class="instruction">LD HL,41825</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="41825.html">SectorEnergy</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42020"></span>42020</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the sector number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42021"></span>42021</td>
+<td class="instruction">LD B,(HL)</td>
+<td class="comment-1" rowspan="1">Use the energy of the sector as a counter...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42022"></span>42022</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">...to count up in decimal.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_CountEnergy</td>
+<td class="address-2"><span id="42023"></span>42023</td>
+<td class="instruction">ADD A,1</td>
+<td class="comment-1" rowspan="1">Add one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42025"></span>42025</td>
+<td class="instruction">DAA</td>
+<td class="comment-1" rowspan="1">Convert it to decimal.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42026"></span>42026</td>
+<td class="instruction">DJNZ <a href="41836.html#42023">MoveProgramPacket_CountEnergy</a></td>
+<td class="comment-1" rowspan="1">Loop back until the count is the energy.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42028"></span>42028</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="4">Swap the digits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42029"></span>42029</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42030"></span>42030</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42031"></span>42031</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42032"></span>42032</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the result.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42033"></span>42033</td>
+<td class="instruction">AND 15</td>
+<td class="comment-1" rowspan="2">Keep the digit that was the first.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42035"></span>42035</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42036"></span>42036</td>
+<td class="instruction">CALL <a href="46451.html">AddPointsToScore</a></td>
+<td class="comment-1" rowspan="1">Add the bonus to the score using <a href="46451.html">AddPointsToScore</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42039"></span>42039</td>
+<td class="instruction">CALL <a href="44522.html">DrawSectorMap</a></td>
+<td class="comment-1" rowspan="1">Colour the sector map using <a href="44522.html">DrawSectorMap</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42042"></span>42042</td>
+<td class="instruction">LD BC,20480</td>
+<td class="comment-1" rowspan="1">Add 20480 points...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42045"></span>42045</td>
+<td class="instruction">CALL <a href="46451.html">AddPointsToScore</a></td>
+<td class="comment-1" rowspan="1">...to the score using <a href="46451.html">AddPointsToScore</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42048"></span>42048</td>
+<td class="instruction">LD HL,519</td>
+<td class="comment-1" rowspan="1">Start effect 2 (seven tones)...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42051"></span>42051</td>
+<td class="instruction">LD (38536),HL</td>
+<td class="comment-1" rowspan="1">...by storing the length and the effect number for <a href="49114.html">PlaySoundStep</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42054"></span>42054</td>
+<td class="instruction">JP <a href="41836.html#41889">MoveProgramPacket_Remove</a></td>
+<td class="comment-1" rowspan="1">Remove the packet.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_StoreCount</td>
+<td class="address-2"><span id="42057"></span>42057</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the new count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42058"></span>42058</td>
+<td class="instruction">LD A,(IX+14)</td>
+<td class="comment-1" rowspan="1">Fetch the state of the packet...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42061"></span>42061</td>
+<td class="instruction">AND 240</td>
+<td class="comment-1" rowspan="1">...keep the bits that are not the count...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42063"></span>42063</td>
+<td class="instruction">OR B</td>
+<td class="comment-1" rowspan="1">...and combine them with the new count...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42064"></span>42064</td>
+<td class="instruction">LD (IX+14),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42067"></span>
+<div class="comments">
+<div class="paragraph">
+The packet moves on.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_Move</td>
+<td class="address-2"><span id="42067"></span>42067</td>
+<td class="instruction">LD B,48</td>
+<td class="comment-1" rowspan="1">The packet can take up to 48 steps in this frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42069"></span>42069</td>
+<td class="instruction">CALL <a href="41261.html">TryMove</a></td>
+<td class="comment-1" rowspan="1">Take a step using <a href="41261.html">TryMove</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42072"></span>42072</td>
+<td class="instruction">JR Z,<a href="41836.html#42093">MoveProgramPacket_CheckEntities</a></td>
+<td class="comment-1" rowspan="1">Jump if the packet could carry on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42074"></span>42074</td>
+<td class="instruction">CP 1</td>
+<td class="comment-1" rowspan="2">Jump to carry on if the cell that blocked the packet is type 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42076"></span>42076</td>
+<td class="instruction">JR Z,<a href="41836.html#42086">MoveProgramPacket_Restore</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42078"></span>42078</td>
+<td class="instruction">CP 7</td>
+<td class="comment-1" rowspan="2">Jump to carry on if the cell that blocked the packet is type 7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42080"></span>42080</td>
+<td class="instruction">JR Z,<a href="41836.html#42086">MoveProgramPacket_Restore</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42082"></span>42082</td>
+<td class="instruction">CP 14</td>
+<td class="comment-1" rowspan="2">Jump if the cell that blocked the packet is not type 14.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42084"></span>42084</td>
+<td class="instruction">JR NZ,<a href="41836.html#42093">MoveProgramPacket_CheckEntities</a></td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_Restore</td>
+<td class="address-2"><span id="42086"></span>42086</td>
+<td class="instruction">LD DE,(38483)</td>
+<td class="comment-1" rowspan="1">Restore the position that the packet had before the step...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42090"></span>42090</td>
+<td class="instruction">LD HL,(38485)</td>
+<td class="comment-1" rowspan="1">...and the other coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_CheckEntities</td>
+<td class="address-2"><span id="42093"></span>42093</td>
+<td class="instruction">CALL <a href="42349.html">CheckEntityOverlap</a></td>
+<td class="comment-1" rowspan="1">Check whether any entity is in the way using <a href="42349.html">CheckEntityOverlap</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42096"></span>42096</td>
+<td class="instruction">JR NC,<a href="41836.html#42115">MoveProgramPacket_Store</a></td>
+<td class="comment-1" rowspan="1">Jump if there is none.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42098"></span>42098</td>
+<td class="instruction">LD A,(IX+7)</td>
+<td class="comment-1" rowspan="1">Fetch the direction of the packet...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42101"></span>42101</td>
+<td class="instruction">ADD A,2</td>
+<td class="comment-1" rowspan="2">...and reverse it...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42103"></span>42103</td>
+<td class="instruction">AND 3</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42105"></span>42105</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42106"></span>42106</td>
+<td class="instruction">LD A,(IX+7)</td>
+<td class="comment-1" rowspan="1">Fetch the byte again...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42109"></span>42109</td>
+<td class="instruction">AND 252</td>
+<td class="comment-1" rowspan="2">...and combine the other bits of the byte with the new direction...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42111"></span>42111</td>
+<td class="instruction">OR C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42112"></span>42112</td>
+<td class="instruction">LD (IX+7),A</td>
+<td class="comment-1" rowspan="1">...and store it.</td>
+</tr>
+<tr>
+<td class="asm-label">MoveProgramPacket_Store</td>
+<td class="address-2"><span id="42115"></span>42115</td>
+<td class="instruction">CALL <a href="44768.html">SetPosition</a></td>
+<td class="comment-1" rowspan="1">Store the position of the packet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42118"></span>42118</td>
+<td class="instruction">RES 7,(IX+0)</td>
+<td class="comment-1" rowspan="1">Do not flip the sprite of the packet...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42122"></span>42122</td>
+<td class="instruction">BIT 0,(IX+7)</td>
+<td class="comment-1" rowspan="1">...if the lowest bit of the direction is clear...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42126"></span>42126</td>
+<td class="instruction">JP Z,<a href="48589.html">AddEntity</a></td>
+<td class="comment-1" rowspan="1">...and draw the packet using <a href="48589.html">AddEntity</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42129"></span>42129</td>
+<td class="instruction">SET 7,(IX+0)</td>
+<td class="comment-1" rowspan="1">Otherwise flip the sprite...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42133"></span>42133</td>
+<td class="instruction">JP <a href="48589.html">AddEntity</a></td>
+<td class="comment-1" rowspan="1">...and draw the packet using <a href="48589.html">AddEntity</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="41825.html">41825</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#41836">Map</a></td>
+<td class="next">
+Next: <a href="42136.html">42136</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/">Source code</a>.</div>
+<div><a href="../../asm/A36C.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

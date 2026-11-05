@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,10 @@ Next: <a href="645A.html">645A</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="702A.html">702A</a>.
+Used by the routine at <a href="702A.html">CollectCup</a>.
+</div>
+<div class="paragraph">
+Awards the points for a cup, which are 0200 for the first cup up to 1600 for the eighth (the number of cups already collected plus one, doubled, in hundreds). If this was the last of the eight cups then the "congratulations" messaging is shown along with the time taken, "Best Time Today" is updated if it has been beaten, and a new round starts (without resetting the lives). Otherwise the number of cups collected is displayed.
 </div>
 </div>
 </td>
@@ -58,13 +64,13 @@ Calculate number of points to award.
 <td class="asm-label">HandlerCup</td>
 <td class="address-2"><span id="63ff"></span>63FF</td>
 <td class="instruction">LD A,($5E3C)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E3C.html">Cups_Collected</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the number of cups collected so far (<a href="5E3C.html">Cups_Collected</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6402"></span>6402</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="3"><span class="register">A</span>=(<span class="register">A</span> + 01) * 02 with BCD conversion.</td>
+<td class="comment-1" rowspan="3">Work out the points as (cups collected + 01) * 02 in BCD.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -90,18 +96,19 @@ Adds points to score.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6405"></span>6405</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="2"><span class="register">BC</span>=number of points to award.</td>
+<td class="comment-1" rowspan="1">Set the points to award, in hundreds (as BCD).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6406"></span>6406</td>
 <td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Set the units and tens of the points to 00.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6408"></span>6408</td>
 <td class="instruction">CALL <a href="6046.html">AddPointsToScore</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6046.html">AddPointsToScore</a>.</td>
+<td class="comment-1" rowspan="1">Add the points to the score using <a href="6046.html">AddPointsToScore</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -138,13 +145,13 @@ Have all the cups been collected?
 <td class="asm-label"></td>
 <td class="address-1"><span id="640f"></span>640F</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E3C.html">Cups_Collected</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the number of cups collected.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6410"></span>6410</td>
 <td class="instruction">CP $08</td>
-<td class="comment-1" rowspan="2">If <span class="register">A</span> is less than 08 jump to <a href="646C.html">DisplayCupsCollected</a>.</td>
+<td class="comment-1" rowspan="2">If fewer than 08 cups have been collected then jump to <a href="646C.html">DisplayCupsCollected</a> to display the count.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -165,19 +172,19 @@ All cups have been collected, display the "congratulations" messaging.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6414"></span>6414</td>
 <td class="instruction">CALL <a href="6175.html">SetDayAttributes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6175.html">SetDayAttributes</a>.</td>
+<td class="comment-1" rowspan="1">Switch to day time using <a href="6175.html">SetDayAttributes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6417"></span>6417</td>
 <td class="instruction">CALL <a href="68A0.html">CreateWindow</a></td>
-<td class="comment-1" rowspan="1">Call <a href="68A0.html">CreateWindow</a>.</td>
+<td class="comment-1" rowspan="1">Create the game window using <a href="68A0.html">CreateWindow</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="641a"></span>641A</td>
 <td class="instruction">CALL <a href="607D.html">DisplayCongratsMessaging</a></td>
-<td class="comment-1" rowspan="1">Call <a href="607D.html">DisplayCongratsMessaging</a>.</td>
+<td class="comment-1" rowspan="1">Display the congratulations message using <a href="607D.html">DisplayCongratsMessaging</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -193,19 +200,19 @@ Writes the line "YOUR TIME WAS".
 <td class="asm-label"></td>
 <td class="address-1"><span id="641d"></span>641D</td>
 <td class="instruction">LD HL,$5868</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=5868 (screen location).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=5868 (pixel co-ordinates: <span class="register">H</span> is the Y position and <span class="register">L</span> is the X position).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6420"></span>6420</td>
 <td class="instruction">LD DE,$63E3</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="63DA.html#63e3">Message_YourTime</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the "YOUR TIME WAS" text (<a href="63DA.html#63e3">Message_YourTime</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6423"></span>6423</td>
 <td class="instruction">CALL <a href="5F97.html">MenuWriteText</a></td>
-<td class="comment-1" rowspan="1">Call <a href="5F97.html">MenuWriteText</a>.</td>
+<td class="comment-1" rowspan="1">Print the text using <a href="5F97.html">MenuWriteText</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -221,26 +228,26 @@ Set <span class="register">HL</span> to where the time itself will display.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6426"></span>6426</td>
 <td class="instruction">LD HL,$6880</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=6880 (screen location).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=6880 (pixel co-ordinates: <span class="register">H</span> is the Y position and <span class="register">L</span> is the X position).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6429"></span>6429</td>
 <td class="instruction">CALL <a href="6F10.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6F10.html">ScreenAddress</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="6F10.html">ScreenAddress</a> to convert this into a screen address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="642c"></span>642C</td>
 <td class="instruction">CALL <a href="6CDE.html#6cec">DisplayTime_Minutes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6CDE.html#6cec">DisplayTime_Minutes</a>.</td>
+<td class="comment-1" rowspan="1">Display the time taken using <a href="6CDE.html#6cec">DisplayTime_Minutes</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="642f"></span>
 <div class="comments">
 <div class="paragraph">
-Has a new "Best Time" been made?
+Has a "Best Time Today" been set yet?
 </div>
 </div>
 </td>
@@ -265,31 +272,41 @@ Has a new "Best Time" been made?
 <td class="asm-label"></td>
 <td class="address-1"><span id="6435"></span>6435</td>
 <td class="instruction">CALL <a href="6483.html">DisplayBestTime</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6483.html">DisplayBestTime</a>.</td>
+<td class="comment-1" rowspan="1">Display the best time so far using <a href="6483.html">DisplayBestTime</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="6438"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the time taken with the best time, one byte at a time starting with the most significant.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6438"></span>6438</td>
 <td class="instruction">LD HL,$5E00</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E00.html">BestTime_1</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the best time (<a href="5E00.html">BestTime_1</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="643b"></span>643B</td>
 <td class="instruction">LD DE,$5E31</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="5E31.html">Time_1</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the time taken (<a href="5E31.html">Time_1</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="643e"></span>643E</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (counter).</td>
+<td class="comment-1" rowspan="1">Set the byte counter to 03.</td>
 </tr>
 <tr>
 <td class="asm-label">BestTime_Compare</td>
 <td class="address-2"><span id="6440"></span>6440</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="2">Compare <span class="register">DE</span> against <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Compare the byte of the time at <span class="register">DE</span> against the byte of the best time at <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -300,44 +317,47 @@ Has a new "Best Time" been made?
 <td class="asm-label"></td>
 <td class="address-1"><span id="6442"></span>6442</td>
 <td class="instruction">JR C,<a href="645A.html#645e">BestTime_Update</a></td>
-<td class="comment-1" rowspan="1">If it's higher than <span class="register">A</span> then jump to <a href="645A.html#645e">BestTime_Update</a>.</td>
+<td class="comment-1" rowspan="1">If the time is less than the best time then jump to <a href="645A.html#645e">BestTime_Update</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6444"></span>6444</td>
 <td class="instruction">JR Z,<a href="63FF.html#6448">BestTime_Compare_Next</a></td>
-<td class="comment-1" rowspan="1">If zero then jump to <a href="63FF.html#6448">BestTime_Compare_Next</a>.</td>
+<td class="comment-1" rowspan="1">If the bytes are the same then jump to <a href="63FF.html#6448">BestTime_Compare_Next</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6446"></span>6446</td>
 <td class="instruction">JR <a href="63FF.html#644c">HandlerCup_Delay</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="63FF.html#644c">HandlerCup_Delay</a>.</td>
+<td class="comment-1" rowspan="1">The time is more than the best time, so jump to <a href="63FF.html#644c">HandlerCup_Delay</a>.</td>
 </tr>
 <tr>
 <td class="asm-label">BestTime_Compare_Next</td>
 <td class="address-2"><span id="6448"></span>6448</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Move onto the next <a href="5E00.html">BestTime</a> digit.</td>
+<td class="comment-1" rowspan="1">Move onto the next <a href="5E00.html">BestTime_1</a> byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6449"></span>6449</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Move onto the next <a href="5E31.html">Time</a> digit.</td>
+<td class="comment-1" rowspan="1">Move onto the next <a href="5E31.html">Time_1</a> byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="644a"></span>644A</td>
 <td class="instruction">DJNZ <a href="63FF.html#6440">BestTime_Compare</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="63FF.html#6440">BestTime_Compare</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the byte counter by one and loop back to <a href="63FF.html#6440">BestTime_Compare</a> until all of the bytes have been compared.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="644c"></span>
 <div class="comments">
 <div class="paragraph">
-Create a short pause.
+This entry point is used by the routine at <a href="645A.html">BestTime_Set</a>.
+</div>
+<div class="paragraph">
+Create a short pause, then start the next round.
 </div>
 </div>
 </td>
@@ -346,19 +366,19 @@ Create a short pause.
 <td class="asm-label">HandlerCup_Delay</td>
 <td class="address-2"><span id="644c"></span>644C</td>
 <td class="instruction">LD B,$0C</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=0C.</td>
+<td class="comment-1" rowspan="1">Set the delay count to 0C.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="644e"></span>644E</td>
 <td class="instruction">CALL <a href="6386.html">Delay</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6386.html">Delay</a>.</td>
+<td class="comment-1" rowspan="1">Pause using <a href="6386.html">Delay</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6451"></span>6451</td>
-<td class="instruction">CALL <a href="6391.html#6396">GameInit_0</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6391.html#6396">GameInit_0</a>.</td>
+<td class="instruction">CALL <a href="6391.html#6396">NewGame_ResetCups</a></td>
+<td class="comment-1" rowspan="1">Call <a href="6391.html#6396">NewGame_ResetCups</a> to reset the cups and set up a new car, which returns here.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -369,8 +389,8 @@ Create a short pause.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6457"></span>6457</td>
-<td class="instruction">JP <a href="5FEF.html#6009">StartGame_0</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="5FEF.html#6009">StartGame_0</a>.</td>
+<td class="instruction">JP <a href="6009.html">MainLoop_NewPass</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6009.html">MainLoop_NewPass</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at C92C</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C91A.html">C91A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c92c">Map</a></td>
+<td class="next">
+Next: <a href="CA7C.html">CA7C</a>
+</td>
+</tr>
+</table>
+<div class="description">C92C: Build Room Scenery</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="C6B6.html">BuildRoom</a>.
+</div>
+<div class="paragraph">
+Makes the scenery objects of a room, from the data of the room, which starts at <a href="5E10.html">Room_00</a> and has a record for each of the rooms. A record is the room number, then a length byte (which counts itself and the bytes after it), then a byte holding the ink colour of the room in bits 0-2 and the size of the room in bits 3-7, then the features of the room and then the groups of templates. The size is the index of one of the three 03-byte entries at <a href="5E07.html">RoomSizeTable</a>, which hold the distance from the centre of the room to the walls on the x axis and the y axis, and the height of the floor.
+</div>
+<div class="paragraph">
+The features are pairs of bytes: the number of a feature and a parameter, ended by FF (or by the end of the data of the room, as 2B of the rooms have no FF). The number is the index into the table of addresses at <a href="696D.html">FeatureTable</a>. A feature is a list of the eight bytes of one or more objects (the type, x, y, z, the sizes along each axis and the flags) that ends with a zero in place of the type of another object. These are the doors and their frames, and the objects that are fixed to the walls. The parameter is stored in the room field of each of the objects in the feature, which makes it the number of the room that a door leads to.
+</div>
+<div class="paragraph">
+Each group of templates that follows is a byte holding the number of a template in bits 3-7 and, in bits 0-2, one less than the number of cells that follow, and then a byte for each of the cells. A cell holds the x position in bits 0-2 and the y position in bits 3-5 (in steps of 10 from 48), and the height in bits 6-7 (in steps of 0C above the floor). A template is a list of the five bytes of one or more objects (the type, the sizes along each axis and the flags) that ends with a zero in place of the type of another object, and an object is made from it for each of the cells. The template numbers are the indexes into the table of addresses that starts at <a href="6CE5.html">TemplateTable</a>, which a group with the number 1F moves on by 20 templates, though no room has one. The last group of rooms 0D and 6C is cut short by the end of their data.
+</div>
+<div class="paragraph">
+The objects are made from the last of the object slots, which is at <a href="A76F.html#ae0f">ObjectsTable_Last</a>, and downwards. The first feature of a room is always a door, with its frame in the last slot and the door in the one before, so that the doors are found by <a href="CAEE.html">FindDoor</a> in the slots at the top. The player and the creatures have the slots at the start.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record of the player's legs</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery</td>
+<td class="address-2"><span id="c92c"></span>C92C</td>
+<td class="instruction">CALL <a href="CB54.html">ClearObjects</a></td>
+<td class="comment-1" rowspan="1">Call <a href="CB54.html">ClearObjects</a> to clear all of the objects except for the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c92f"></span>C92F</td>
+<td class="instruction">LD HL,$6CE5</td>
+<td class="comment-1" rowspan="2">Start with the first of the tables of templates, which is <a href="6CE5.html">TemplateTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c932"></span>C932</td>
+<td class="instruction">LD ($A73A),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c935"></span>C935</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Set the offset of the cells to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c936"></span>C936</td>
+<td class="instruction">LD ($A73C),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c939"></span>C939</td>
+<td class="instruction">LD DE,$AE0F</td>
+<td class="comment-1" rowspan="1">Take the last of the object slots.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c93c"></span>C93C</td>
+<td class="instruction">LD BC,$696D</td>
+<td class="comment-1" rowspan="1">Take the end of the room data, which is <a href="696D.html">FeatureTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c93f"></span>C93F</td>
+<td class="instruction">LD HL,$5E10</td>
+<td class="comment-1" rowspan="1">Start at the first room record, which is <a href="5E10.html">Room_00</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_FindRoomRecord</td>
+<td class="address-2"><span id="c942"></span>C942</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the number of the room, and move on to the length.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c943"></span>C943</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c944"></span>C944</td>
+<td class="instruction">CP (IX+$08)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C92C.html#c953">BuildRoomScenery_ReadRoomHeader</a> if it is the room that the player is in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c947"></span>C947</td>
+<td class="instruction">JR Z,<a href="C92C.html#c953">BuildRoomScenery_ReadRoomHeader</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c949"></span>C949</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the length of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c94a"></span>C94A</td>
+<td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B519.html">AddAToHL</a> to move on to the next record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c94d"></span>C94D</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="3">Compare <span class="register">HL</span> with the end of the room data, which sets the carry flag if it is before it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c94e"></span>C94E</td>
+<td class="instruction">SBC HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c950"></span>C950</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c951"></span>C951</td>
+<td class="instruction">JR <a href="C92C.html#c942">BuildRoomScenery_FindRoomRecord</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C92C.html#c942">BuildRoomScenery_FindRoomRecord</a> if there are more records.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_ReadRoomHeader</td>
+<td class="address-2"><span id="c953"></span>C953</td>
+<td class="instruction">LD B,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the length of the record into <span class="register">B</span>, and move on to the colour and size of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c954"></span>C954</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c955"></span>C955</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the colour and size of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c956"></span>C956</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the ink colour.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c958"></span>C958</td>
+<td class="instruction">OR %01000000</td>
+<td class="comment-1" rowspan="1">Set the bright bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c95a"></span>C95A</td>
+<td class="instruction">LD ($A738),A</td>
+<td class="comment-1" rowspan="1">Store it as the colour of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c95d"></span>C95D</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Save the address of the next free object slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c95e"></span>C95E</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the address of the room data in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c95f"></span>C95F</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="2">Fetch the colour and size again, and move on to the first feature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c960"></span>C960</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c961"></span>C961</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Move the size of the room to bits 0-4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c962"></span>C962</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c963"></span>C963</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c964"></span>C964</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c966"></span>C966</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Put the size in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c967"></span>C967</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="2">Multiply the size by three.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c968"></span>C968</td>
+<td class="instruction">ADD A,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c969"></span>C969</td>
+<td class="instruction">LD HL,$5E07</td>
+<td class="comment-1" rowspan="1">Take the sizes of the rooms, which is <a href="5E07.html">RoomSizeTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c96c"></span>C96C</td>
+<td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B519.html">AddAToHL</a> to find the entry for the size.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c96f"></span>C96F</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Fetch the distance to the walls along x, move on and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c970"></span>C970</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c971"></span>C971</td>
+<td class="instruction">LD ($A71D),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c974"></span>C974</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Fetch the distance to the walls along y, move on and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c975"></span>C975</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c976"></span>C976</td>
+<td class="instruction">LD ($A71E),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c979"></span>C979</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the height of the floor and store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c97a"></span>C97A</td>
+<td class="instruction">LD ($A71F),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c97d"></span>C97D</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="2">Count the length and the colour and size as read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c97e"></span>C97E</td>
+<td class="instruction">DEC B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c97f"></span>C97F</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the address of the room data back in <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c980"></span>C980</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Get the address of the next free object slot back.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_MakeFeature</td>
+<td class="address-2"><span id="c981"></span>C981</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the number of the feature, and move on to its parameter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c982"></span>C982</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c983"></span>C983</td>
+<td class="instruction">CP $FF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C92C.html#c9b6">BuildRoomScenery_MakeTemplates</a> if it is the end of the features.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c985"></span>C985</td>
+<td class="instruction">JR Z,<a href="C92C.html#c9b6">BuildRoomScenery_MakeTemplates</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c987"></span>C987</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="2">Save the number of bytes left to read and the address of the parameter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c988"></span>C988</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c989"></span>C989</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="2">Put the number of the feature in <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c98a"></span>C98A</td>
+<td class="instruction">LD H,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c98c"></span>C98C</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c98d"></span>C98D</td>
+<td class="instruction">LD BC,$696D</td>
+<td class="comment-1" rowspan="1">Take the table of addresses of the features, which is <a href="696D.html">FeatureTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c990"></span>C990</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the offset to find the entry for the feature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c991"></span>C991</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the low byte of the address of the feature, and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c992"></span>C992</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c993"></span>C993</td>
+<td class="instruction">LD H,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the high byte, and make the address of the feature in <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c994"></span>C994</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_MakeFeatureObject</td>
+<td class="address-2"><span id="c995"></span>C995</td>
+<td class="instruction">LD BC,$0008</td>
+<td class="comment-1" rowspan="1">Set the number of bytes that make an object in a feature, which is eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c998"></span>C998</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy the type, position, sizes and flags into the object slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c99a"></span>C99A</td>
+<td class="instruction">EX (SP),HL</td>
+<td class="comment-1" rowspan="3">Fetch the parameter, leaving the address in the feature on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c99b"></span>C99B</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c99c"></span>C99C</td>
+<td class="instruction">EX (SP),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c99d"></span>C99D</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="2">Store it in the room field of the object, and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c99e"></span>C99E</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c99f"></span>C99F</td>
+<td class="instruction">LD B,$17</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to clear, which is the rest of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9a1"></span>C9A1</td>
+<td class="instruction">CALL <a href="B513.html">ClearBytes</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B513.html">ClearBytes</a> to clear them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9a4"></span>C9A4</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the address in the feature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9a5"></span>C9A5</td>
+<td class="instruction">LD HL,$FFC0</td>
+<td class="comment-1" rowspan="2">Subtract 20 from <span class="register">DE</span>, by adding FFC0...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9a8"></span>C9A8</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9a9"></span>C9A9</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">...and put it back in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9aa"></span>C9AA</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Get the address in the feature back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ab"></span>C9AB</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="C92C.html#c995">BuildRoomScenery_MakeFeatureObject</a> to make another object if the next type in the feature is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ac"></span>C9AC</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ad"></span>C9AD</td>
+<td class="instruction">JR NZ,<a href="C92C.html#c995">BuildRoomScenery_MakeFeatureObject</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9af"></span>C9AF</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="2">Get the address of the parameter and the number of bytes left to read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9b0"></span>C9B0</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9b1"></span>C9B1</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next feature.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9b2"></span>C9B2</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="1">Count the parameter as read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9b3"></span>C9B3</td>
+<td class="instruction">DJNZ <a href="C92C.html#c981">BuildRoomScenery_MakeFeature</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C92C.html#c981">BuildRoomScenery_MakeFeature</a> for the next feature, counting the number as read, while any data is left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9b5"></span>C9B5</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_MakeTemplates</td>
+<td class="address-2"><span id="c9b6"></span>C9B6</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="1">Count the end of the features as read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9b7"></span>C9B7</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="1">Save <span class="register">IY</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9b9"></span>C9B9</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="2">Move on to the next free object slot.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ba"></span>C9BA</td>
+<td class="instruction">POP IY</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_MakeTemplateGroup</td>
+<td class="address-2"><span id="c9bc"></span>C9BC</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the byte that holds the template and the number of cells.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9bd"></span>C9BD</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the number of cells less one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9bf"></span>C9BF</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c0"></span>C9C0</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Put the number of cells in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c1"></span>C9C1</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the byte again, and move on to the first cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c2"></span>C9C2</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c3"></span>C9C3</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="1">Count it as read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c4"></span>C9C4</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the first cell into <span class="register">D</span>, and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c5"></span>C9C5</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c6"></span>C9C6</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the address of the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c7"></span>C9C7</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="2">Move the template number to bits 1-5, which doubles it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c8"></span>C9C8</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9c9"></span>C9C9</td>
+<td class="instruction">AND %00111110</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9cb"></span>C9CB</td>
+<td class="instruction">CP $3E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C92C.html#ca6c">BuildRoomScenery_SwitchTemplateTable</a> if it is the template number that moves on the table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9cd"></span>C9CD</td>
+<td class="instruction">JP Z,<a href="C92C.html#ca6c">BuildRoomScenery_SwitchTemplateTable</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9d0"></span>C9D0</td>
+<td class="instruction">LD HL,($A73A)</td>
+<td class="comment-1" rowspan="1">Fetch the address of the table of templates.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9d3"></span>C9D3</td>
+<td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B519.html">AddAToHL</a> to find the entry for the template.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9d6"></span>C9D6</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the low byte of the address of the template, and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9d7"></span>C9D7</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9d8"></span>C9D8</td>
+<td class="instruction">LD H,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the high byte, and make the address of the template in <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9d9"></span>C9D9</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_MakeTemplateCell</td>
+<td class="address-2"><span id="c9da"></span>C9DA</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the address of the template.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_MakeTemplateObject</td>
+<td class="address-2"><span id="c9db"></span>C9DB</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Copy the type from the template to the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9dc"></span>C9DC</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9dd"></span>C9DD</td>
+<td class="instruction">LD (IY+$00),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9e0"></span>C9E0</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Copy the half size along x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9e1"></span>C9E1</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9e2"></span>C9E2</td>
+<td class="instruction">LD (IY+$04),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9e5"></span>C9E5</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Copy the half size along y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9e6"></span>C9E6</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9e7"></span>C9E7</td>
+<td class="instruction">LD (IY+$05),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ea"></span>C9EA</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Copy the half size along z.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9eb"></span>C9EB</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ec"></span>C9EC</td>
+<td class="instruction">LD (IY+$06),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ef"></span>C9EF</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Copy the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9f0"></span>C9F0</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9f1"></span>C9F1</td>
+<td class="instruction">LD (IY+$07),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9f4"></span>C9F4</td>
+<td class="instruction">LD A,(IX+$08)</td>
+<td class="comment-1" rowspan="2">Copy the room that the player is in to the room field of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9f7"></span>C9F7</td>
+<td class="instruction">LD (IY+$08),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9fa"></span>C9FA</td>
+<td class="instruction">LD A,($A73C)</td>
+<td class="comment-1" rowspan="1">Fetch the cell offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9fd"></span>C9FD</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="3">Move bit 0 of the offset to bit 3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9fe"></span>C9FE</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c9ff"></span>C9FF</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca00"></span>CA00</td>
+<td class="instruction">AND %00001000</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca02"></span>CA02</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Put it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca03"></span>CA03</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="1">Fetch the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca04"></span>CA04</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="4">Move the x position of the cell to bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca05"></span>CA05</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca06"></span>CA06</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca07"></span>CA07</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca08"></span>CA08</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca0a"></span>CA0A</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add bit 3 of the offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca0b"></span>CA0B</td>
+<td class="instruction">ADD A,$48</td>
+<td class="comment-1" rowspan="1">Add the start of the cells.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca0d"></span>CA0D</td>
+<td class="instruction">LD (IY+$01),A</td>
+<td class="comment-1" rowspan="1">Store it as the x position of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca10"></span>CA10</td>
+<td class="instruction">LD A,($A73C)</td>
+<td class="comment-1" rowspan="1">Fetch the cell offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca13"></span>CA13</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="2">Move bit 1 of the offset to bit 3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca14"></span>CA14</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca15"></span>CA15</td>
+<td class="instruction">AND %00001000</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca17"></span>CA17</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Put it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca18"></span>CA18</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="1">Fetch the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca19"></span>CA19</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="1">Move the y position of the cell to bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca1a"></span>CA1A</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca1c"></span>CA1C</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add bit 3 of the offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca1d"></span>CA1D</td>
+<td class="instruction">ADD A,$48</td>
+<td class="comment-1" rowspan="1">Add the start of the cells.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca1f"></span>CA1F</td>
+<td class="instruction">LD (IY+$02),A</td>
+<td class="comment-1" rowspan="1">Store it as the y position of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca22"></span>CA22</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="1">Fetch the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca23"></span>CA23</td>
+<td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="2">Move the height of the cell to bits 0-1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca24"></span>CA24</td>
+<td class="instruction">RLCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca25"></span>CA25</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca27"></span>CA27</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="2">Multiply it by four.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca28"></span>CA28</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca29"></span>CA29</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Put it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca2a"></span>CA2A</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Multiply it by eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca2b"></span>CA2B</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the four times to make it twelve times the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca2c"></span>CA2C</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Put it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca2d"></span>CA2D</td>
+<td class="instruction">LD A,($A73C)</td>
+<td class="comment-1" rowspan="1">Fetch the cell offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca30"></span>CA30</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca31"></span>CA31</td>
+<td class="instruction">AND %11111100</td>
+<td class="comment-1" rowspan="1">Keep the multiple of four.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca33"></span>CA33</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Put it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca34"></span>CA34</td>
+<td class="instruction">LD A,($A71F)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca37"></span>CA37</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the height of the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca38"></span>CA38</td>
+<td class="instruction">LD (IY+$03),A</td>
+<td class="comment-1" rowspan="1">Store it as the z position of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca3b"></span>CA3B</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Save the number of bytes left to read and the number of cells.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca3c"></span>CA3C</td>
+<td class="instruction">LD BC,$0009</td>
+<td class="comment-1" rowspan="1">Set the offset from the type to the byte after the room field, which is 09.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca3f"></span>CA3F</td>
+<td class="instruction">ADD IY,BC</td>
+<td class="comment-1" rowspan="1">Add it to <span class="register">IY</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca41"></span>CA41</td>
+<td class="instruction">LD B,$17</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to clear, which is the rest of the object.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_ClearTemplateObject</td>
+<td class="address-2"><span id="ca43"></span>CA43</td>
+<td class="instruction">LD (IY+$00),$00</td>
+<td class="comment-1" rowspan="1">Clear a byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca47"></span>CA47</td>
+<td class="instruction">INC IY</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca49"></span>CA49</td>
+<td class="instruction">DJNZ <a href="C92C.html#ca43">BuildRoomScenery_ClearTemplateObject</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C92C.html#ca43">BuildRoomScenery_ClearTemplateObject</a> until the rest of the object is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca4b"></span>CA4B</td>
+<td class="instruction">LD BC,$FFC0</td>
+<td class="comment-1" rowspan="2">Subtract 40 from <span class="register">IY</span>, which moves it to the slot below the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca4e"></span>CA4E</td>
+<td class="instruction">ADD IY,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca50"></span>CA50</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Get the number of bytes left to read and the number of cells back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca51"></span>CA51</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="C92C.html#c9db">BuildRoomScenery_MakeTemplateObject</a> to make another object if the next type in the template is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca52"></span>CA52</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca53"></span>CA53</td>
+<td class="instruction">JR NZ,<a href="C92C.html#c9db">BuildRoomScenery_MakeTemplateObject</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca55"></span>CA55</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="2">Get the address of the template and the address of the next byte of the room data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca56"></span>CA56</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca57"></span>CA57</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="2">Count the cell as read, and jump to <a href="C92C.html#ca66">BuildRoomScenery_FinishRoomScenery</a> if there is no more room data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca58"></span>CA58</td>
+<td class="instruction">JR Z,<a href="C92C.html#ca66">BuildRoomScenery_FinishRoomScenery</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca5a"></span>CA5A</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="2">Count the object as made, and jump to <a href="C92C.html#c9bc">BuildRoomScenery_MakeTemplateGroup</a> for the next group if there is no cell left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca5b"></span>CA5B</td>
+<td class="instruction">JP Z,<a href="C92C.html#c9bc">BuildRoomScenery_MakeTemplateGroup</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca5e"></span>CA5E</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the next cell, and move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca5f"></span>CA5F</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca60"></span>CA60</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the address of the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca61"></span>CA61</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the address of the template in <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca62"></span>CA62</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Put the cell in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca63"></span>CA63</td>
+<td class="instruction">JP <a href="C92C.html#c9da">BuildRoomScenery_MakeTemplateCell</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C92C.html#c9da">BuildRoomScenery_MakeTemplateCell</a> to make the object for it.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_FinishRoomScenery</td>
+<td class="address-2"><span id="ca66"></span>CA66</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Put the address of the next free object slot in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca68"></span>CA68</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca69"></span>CA69</td>
+<td class="instruction">POP IY</td>
+<td class="comment-1" rowspan="1">Get the original <span class="register">IY</span> back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca6b"></span>CA6B</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_SwitchTemplateTable</td>
+<td class="address-2"><span id="ca6c"></span>CA6C</td>
+<td class="instruction">LD HL,($A73A)</td>
+<td class="comment-1" rowspan="1">Fetch the address of the table of templates.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca6f"></span>CA6F</td>
+<td class="instruction">LD A,$40</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to move on, which is 20 templates.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca71"></span>CA71</td>
+<td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B519.html">AddAToHL</a> to move on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca74"></span>CA74</td>
+<td class="instruction">LD ($A73A),HL</td>
+<td class="comment-1" rowspan="1">Store it as the table of templates.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ca77"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="CA7C.html">SetCellOffset</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildRoomScenery_NextTemplateGroup</td>
+<td class="address-2"><span id="ca77"></span>CA77</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="1">Count the unused cell as read.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca78"></span>CA78</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Get the address of the next group back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ca79"></span>CA79</td>
+<td class="instruction">JP <a href="C92C.html#c9bc">BuildRoomScenery_MakeTemplateGroup</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C92C.html#c9bc">BuildRoomScenery_MakeTemplateGroup</a> to make the objects for it.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/alien8/asm/CCA7.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C91A.html">C91A</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c92c">Map</a></td>
+<td class="next">
+Next: <a href="CA7C.html">CA7C</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/51500.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

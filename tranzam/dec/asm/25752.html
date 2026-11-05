@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,28 +36,31 @@ Next: <a href="25799.html">25799</a>
 </td>
 </tr>
 </table>
-<div class="description">25752: Routine at 6498</div>
+<div class="description">25752: Randomise Cup Positions</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="25489.html">GameInit</a>.
+Used by the routine at <a href="25489.html">NewGame</a>.
+</div>
+<div class="paragraph">
+Gives every cup on the map a new Y position from 32 to 159 putting back any cups which have been collected. The numbers come from the ROM, read from a random address in the first 16384 bytes (the low byte of the address is whatever is in <span class="register">E</span>).
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="asm-label">RandomiseCups</td>
 <td class="address-2"><span id="25752"></span>25752</td>
 <td class="instruction">LD BC,31958</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=<a href="31958.html">31958</a> (one byte past the end of <a href="30737.html">MapPoints</a>).</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at the end of the map (<a href="31958.html">Sprite_Car_1</a>, one byte past the end of <a href="30737.html">MapPoints</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25755"></span>25755</td>
 <td class="instruction">LD A,R</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=random number.</td>
+<td class="comment-1" rowspan="1">Fetch a random number (from the Z80 refresh register).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -76,7 +82,7 @@ Limit the number to 0-63.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25759"></span>25759</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Store the result in <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Use it as the high byte of a random ROM address, held in <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -88,7 +94,7 @@ Limit the number to 0-63.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25763"></span>25763</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="2"><span class="register">DE</span>=<span class="register">HL</span> + <span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="2">Add <span class="register">DE</span> to <span class="register">HL</span> then swap them over (this leaves <span class="register">DE</span> unchanged).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,19 +105,29 @@ Limit the number to 0-63.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25765"></span>25765</td>
 <td class="instruction">LD HL,30739</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="30737.html">30739</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="30737.html">30739</a> (the sprite ID of the first map entry).</td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="routine-comment" colspan="5">
+<span id="25768"></span>
+<div class="comments">
+<div class="paragraph">
+Check the sprite ID of each map entry.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RandomiseCups_Loop</td>
 <td class="address-2"><span id="25768"></span>25768</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the map entry.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25769"></span>25769</td>
 <td class="instruction">CP 32</td>
-<td class="comment-1" rowspan="2">If <span class="register">A</span> is 32 jump to <a href="25752.html#25779">HandlerSpriteCup</a>.</td>
+<td class="comment-1" rowspan="2">If this is a cup (<span class="register">A</span> is 32) then jump to <a href="25752.html#25779">HandlerSpriteCup</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -122,36 +138,46 @@ Limit the number to 0-63.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25773"></span>25773</td>
 <td class="instruction">CP 96</td>
-<td class="comment-1" rowspan="2">If <span class="register">A</span> is not 96 jump to <a href="25752.html#25788">25788</a>.</td>
+<td class="comment-1" rowspan="2">If this is not a collected cup (<span class="register">A</span> is not 96) then jump to <a href="25752.html#25788">RandomiseCups_Next</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25775"></span>25775</td>
-<td class="instruction">JR NZ,<a href="25752.html#25788">25788</a></td>
+<td class="instruction">JR NZ,<a href="25752.html#25788">RandomiseCups_Next</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25777"></span>25777</td>
 <td class="instruction">LD (HL),32</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Put the cup back by writing 32 as the sprite ID.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="25779"></span>
+<div class="comments">
+<div class="paragraph">
+Write a new random Y position.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">HandlerSpriteCup</td>
 <td class="address-2"><span id="25779"></span>25779</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the Y position of the cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25780"></span>25780</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Fetch a random byte from the ROM.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25781"></span>25781</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">DE</span> by one.</td>
+<td class="comment-1" rowspan="1">Move on to the next ROM address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -163,22 +189,32 @@ Limit the number to 0-63.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25784"></span>25784</td>
 <td class="instruction">ADD A,32</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> + 32.</td>
+<td class="comment-1" rowspan="1">Add 32 so that the Y position is between 32 and 159.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25786"></span>25786</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Store <span class="register">A</span> at <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Store the new Y position of the cup.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25787"></span>25787</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> back at the sprite ID of the map entry.</td>
 </tr>
 <tr>
-<td class="asm-label"></td>
+<td class="routine-comment" colspan="5">
+<span id="25788"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the sprite ID of the next map entry, and check if the end of the map has been reached.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RandomiseCups_Next</td>
 <td class="address-2"><span id="25788"></span>25788</td>
 <td class="instruction">INC HL</td>
 <td class="comment-1" rowspan="3">Increment <span class="register">HL</span> by three.</td>
@@ -197,31 +233,31 @@ Limit the number to 0-63.
 <td class="asm-label"></td>
 <td class="address-1"><span id="25791"></span>25791</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the map pointer on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25792"></span>25792</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset the carry flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25793"></span>25793</td>
 <td class="instruction">SBC HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Work out how far the map pointer is from the end of the map.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25795"></span>25795</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the map pointer from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="25796"></span>25796</td>
-<td class="instruction">JR C,<a href="25752.html#25768">25768</a></td>
-<td class="comment-1" rowspan="1">If ... jump to <a href="25752.html#25768">25768</a>.</td>
+<td class="instruction">JR C,<a href="25752.html#25768">RandomiseCups_Loop</a></td>
+<td class="comment-1" rowspan="1">If the map pointer is before the end of the map then jump to <a href="25752.html#25768">RandomiseCups_Loop</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,26 @@ Next: <a href="7C90.html">7C90</a>
 </td>
 </tr>
 </table>
-<div class="description">7C19: Game Entry Point</div>
+<div class="description">7C19: Game Initialisation</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
 Used by the routine at <a href="6000.html">SecurityCheck</a>.
+</div>
+<div class="paragraph">
+Clears the first 10 bytes of the game variables, selects the main font and then runs the game selection menu. The menu is drawn by <a href="7CAF.html">GameMenu</a> and the keyboard is scanned for the keys "1" to "6" and "0" until "0" is pressed. Each key changes the control method or the character stored in <a href="5E00.html">GameOptions</a> and moves the highlight on the menu, and "0" starts the game at <a href="7D9A.html">StartGame</a>. The entry point at <a href="7C19.html#7c29">Game_Restart</a> is also used to return to the menu when a game ends.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="7c19"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the first 10 bytes of the game variables.
 </div>
 </div>
 </td>
@@ -48,33 +64,37 @@ Used by the routine at <a href="6000.html">SecurityCheck</a>.
 <td class="asm-label">GameInitialisation</td>
 <td class="address-2"><span id="7c19"></span>7C19</td>
 <td class="instruction">LD HL,$5E00</td>
-<td class="comment-1" rowspan="5">Write 00 to 10 bytes, from <a href="5E00.html">GameOptions</a> to 5E10.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the game options at <a href="5E00.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c1c"></span>7C1C</td>
 <td class="instruction">LD B,$10</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=10 (the number of bytes to clear).</td>
 </tr>
 <tr>
 <td class="asm-label">GameInitialisation_Loop</td>
 <td class="address-2"><span id="7c1e"></span>7C1E</td>
 <td class="instruction">LD (HL),$00</td>
+<td class="comment-1" rowspan="1">Clear a byte of the game variables.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c20"></span>7C20</td>
 <td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next byte of the game variables.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c21"></span>7C21</td>
 <td class="instruction">DJNZ <a href="7C19.html#7c1e">GameInitialisation_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the byte counter by one and loop back to <a href="7C19.html#7c1e">GameInitialisation_Loop</a> until all 10 bytes have been cleared.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c23"></span>7C23</td>
 <td class="instruction">LD HL,$BE4C</td>
-<td class="comment-1" rowspan="2">Write <a href="BE4C.html">MainFont</a> to <a href="5E01.html">FontPointer</a>.</td>
+<td class="comment-1" rowspan="2">Write BE4C (the main font, see <a href="BF4C.html">MainFont</a>) to <a href="5E01.html">FontPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -88,6 +108,9 @@ Used by the routine at <a href="6000.html">SecurityCheck</a>.
 <div class="paragraph">
 This entry point is used by the routine at <a href="8C35.html">GameOver</a>.
 </div>
+<div class="paragraph">
+Clear the screen and draw the icons for the menu.
+</div>
 </div>
 </td>
 </tr>
@@ -95,19 +118,29 @@ This entry point is used by the routine at <a href="8C35.html">GameOver</a>.
 <td class="asm-label">Game_Restart</td>
 <td class="address-2"><span id="7c29"></span>7C29</td>
 <td class="instruction">CALL <a href="80AA.html">ClearScreen</a></td>
-<td class="comment-1" rowspan="1">Call <a href="80AA.html">ClearScreen</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="80AA.html">ClearScreen</a> to clear the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c2c"></span>7C2C</td>
 <td class="instruction">CALL <a href="A311.html">MenuIcons</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A311.html">MenuIcons</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="A311.html">MenuIcons</a> to draw the icons of the menu.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="7c2f"></span>
+<div class="comments">
+<div class="paragraph">
+Each pass of this loop draws the menu and handles one scan of the keyboard.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">GameSelect_Loop</td>
 <td class="address-2"><span id="7c2f"></span>7C2F</td>
 <td class="instruction">CALL <a href="7CAF.html">GameMenu</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7CAF.html">GameMenu</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="7CAF.html">GameMenu</a> to show the game selection menu.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -149,26 +182,26 @@ This entry point is used by the routine at <a href="8C35.html">GameOver</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c38"></span>7C38</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="1">Flip the bits.</td>
+<td class="comment-1" rowspan="1">Flip the bits, so that a set bit is a key which is pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c39"></span>7C39</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Keep the keys that are pressed in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c3a"></span>7C3A</td>
 <td class="instruction">LD A,($5E00)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E00.html">GameOptions</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the game options.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="7c3d"></span>
 <div class="comments">
 <div class="paragraph">
-Handle Keyboard selection.
+Handle "Keyboard" selection.
 </div>
 </div>
 </td>
@@ -177,26 +210,25 @@ Handle Keyboard selection.
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c3d"></span>7C3D</td>
 <td class="instruction">BIT 0,E</td>
-<td class="comment-1" rowspan="1">Has key "1" been pressed? ("KEYBOARD").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7C19.html#7c43">GameSelect_CheckKempston</a> if key "1" is not being pressed ("KEYBOARD").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c3f"></span>7C3F</td>
 <td class="instruction">JR Z,<a href="7C19.html#7c43">GameSelect_CheckKempston</a></td>
-<td class="comment-1" rowspan="1">If not jump to <a href="7C19.html#7c43">GameSelect_CheckKempston</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c41"></span>7C41</td>
 <td class="instruction">AND %11111001</td>
-<td class="comment-1" rowspan="1">Keep only bits 0, 3-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 and 3-7, so the control method is the keyboard (00).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="7c43"></span>
 <div class="comments">
 <div class="paragraph">
-Handle Kempston Joystick selection.
+Handle "Kempston Joystick" selection.
 </div>
 </div>
 </td>
@@ -205,32 +237,31 @@ Handle Kempston Joystick selection.
 <td class="asm-label">GameSelect_CheckKempston</td>
 <td class="address-2"><span id="7c43"></span>7C43</td>
 <td class="instruction">BIT 1,E</td>
-<td class="comment-1" rowspan="1">Has key "2" been pressed? ("KEMPSTON JOYSTICK").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7C19.html#7c4b">GameSelect_CheckCursor</a> if key "2" is not being pressed ("KEMPSTON JOYSTICK").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c45"></span>7C45</td>
 <td class="instruction">JR Z,<a href="7C19.html#7c4b">GameSelect_CheckCursor</a></td>
-<td class="comment-1" rowspan="1">If not jump to <a href="7C19.html#7c4b">GameSelect_CheckCursor</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c47"></span>7C47</td>
 <td class="instruction">AND %11111001</td>
-<td class="comment-1" rowspan="1">Keep only bits 0, 3-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 and 3-7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c49"></span>7C49</td>
 <td class="instruction">OR %00000010</td>
-<td class="comment-1" rowspan="1">Set control method = 02.</td>
+<td class="comment-1" rowspan="1">Set the control method to Kempston joystick (02).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="7c4b"></span>
 <div class="comments">
 <div class="paragraph">
-Handle Cursor Joystick selection.
+Handle "Cursor Joystick" selection.
 </div>
 </div>
 </td>
@@ -239,25 +270,24 @@ Handle Cursor Joystick selection.
 <td class="asm-label">GameSelect_CheckCursor</td>
 <td class="address-2"><span id="7c4b"></span>7C4B</td>
 <td class="instruction">BIT 2,E</td>
-<td class="comment-1" rowspan="1">Has key "3" been pressed? ("CURSOR JOYSTICK").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7C19.html#7c53">GameSelect_CheckKnight</a> if key "3" is not being pressed ("CURSOR JOYSTICK").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c4d"></span>7C4D</td>
 <td class="instruction">JR Z,<a href="7C19.html#7c53">GameSelect_CheckKnight</a></td>
-<td class="comment-1" rowspan="1">If not jump to <a href="7C19.html#7c53">GameSelect_CheckKnight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c4f"></span>7C4F</td>
 <td class="instruction">AND %11111001</td>
-<td class="comment-1" rowspan="1">Keep only bits 0, 3-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 and 3-7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c51"></span>7C51</td>
 <td class="instruction">OR %00000100</td>
-<td class="comment-1" rowspan="1">Set control method = 04.</td>
+<td class="comment-1" rowspan="1">Set the control method to cursor joystick (04).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -273,19 +303,18 @@ Handle "Knight" selection.
 <td class="asm-label">GameSelect_CheckKnight</td>
 <td class="address-2"><span id="7c53"></span>7C53</td>
 <td class="instruction">BIT 3,E</td>
-<td class="comment-1" rowspan="1">Has key "4" been pressed? ("KNIGHT").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7C19.html#7c59">GameSelect_CheckWizard</a> if key "4" is not being pressed ("KNIGHT").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c55"></span>7C55</td>
 <td class="instruction">JR Z,<a href="7C19.html#7c59">GameSelect_CheckWizard</a></td>
-<td class="comment-1" rowspan="1">If not jump to <a href="7C19.html#7c59">GameSelect_CheckWizard</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c57"></span>7C57</td>
 <td class="instruction">AND %11100111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2, 5-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2 and 5-7, so the character is the knight (00).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -301,31 +330,40 @@ Handle "Wizard" selection.
 <td class="asm-label">GameSelect_CheckWizard</td>
 <td class="address-2"><span id="7c59"></span>7C59</td>
 <td class="instruction">BIT 4,E</td>
-<td class="comment-1" rowspan="1">Has key "5" been pressed? ("WIZARD").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7C19.html#7c61">GameSelect_SecondRow</a> if key "5" is not being pressed ("WIZARD").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c5b"></span>7C5B</td>
-<td class="instruction">JR Z,<a href="7C19.html#7c61">GameInitialisation_0</a></td>
-<td class="comment-1" rowspan="1">If not jump to <a href="7C19.html#7c61">GameInitialisation_0</a>.</td>
+<td class="instruction">JR Z,<a href="7C19.html#7c61">GameSelect_SecondRow</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c5d"></span>7C5D</td>
 <td class="instruction">AND %11100111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2, 5-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2 and 5-7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c5f"></span>7C5F</td>
 <td class="instruction">OR %00001000</td>
-<td class="comment-1" rowspan="1">Set player = 08.</td>
+<td class="comment-1" rowspan="1">Set the character to the wizard (08).</td>
 </tr>
 <tr>
-<td class="asm-label">GameInitialisation_0</td>
+<td class="routine-comment" colspan="5">
+<span id="7c61"></span>
+<div class="comments">
+<div class="paragraph">
+Save the options so far and read the second row of keys.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GameSelect_SecondRow</td>
 <td class="address-2"><span id="7c61"></span>7C61</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Keep the options so far in <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -367,26 +405,26 @@ Handle "Wizard" selection.
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c68"></span>7C68</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="1">Flip the bits.</td>
+<td class="comment-1" rowspan="1">Flip the bits, so that a set bit is a key which is pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c69"></span>7C69</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Keep the keys that are pressed in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c6a"></span>7C6A</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the options so far.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="7c6b"></span>
 <div class="comments">
 <div class="paragraph">
-Handle choosing "Serf".
+Handle "Serf" selection.
 </div>
 </div>
 </td>
@@ -395,37 +433,46 @@ Handle choosing "Serf".
 <td class="asm-label">GameSelect_CheckSerf</td>
 <td class="address-1"><span id="7c6b"></span>7C6B</td>
 <td class="instruction">BIT 4,E</td>
-<td class="comment-1" rowspan="1">Has key "6" been pressed? ("SERF").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7C19.html#7c73">GameSelect_StoreOptions</a> if key "6" is not being pressed ("SERF").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c6d"></span>7C6D</td>
-<td class="instruction">JR Z,<a href="7C19.html#7c73">GameInitialisation_1</a></td>
-<td class="comment-1" rowspan="1">If not skip to <a href="7C19.html#7c73">GameInitialisation_1</a>.</td>
+<td class="instruction">JR Z,<a href="7C19.html#7c73">GameSelect_StoreOptions</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c6f"></span>7C6F</td>
 <td class="instruction">AND %11100111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2, 5-7.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2 and 5-7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c71"></span>7C71</td>
 <td class="instruction">OR %00010000</td>
-<td class="comment-1" rowspan="1">Set bit 4.</td>
+<td class="comment-1" rowspan="1">Set the character to the serf (10).</td>
 </tr>
 <tr>
-<td class="asm-label">GameInitialisation_1</td>
+<td class="routine-comment" colspan="5">
+<span id="7c73"></span>
+<div class="comments">
+<div class="paragraph">
+Write the options back and keep a copy in <span class="register">C</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">GameSelect_StoreOptions</td>
 <td class="address-2"><span id="7c73"></span>7C73</td>
 <td class="instruction">LD ($5E00),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the options back to <a href="5E00.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c76"></span>7C76</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Keep a copy of the options in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -441,54 +488,64 @@ Handle starting a new game.
 <td class="asm-label">GameSelect_Start</td>
 <td class="address-1"><span id="7c77"></span>7C77</td>
 <td class="instruction">BIT 0,E</td>
-<td class="comment-1" rowspan="1">Has key "0" been pressed? ("START GAME").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7D9A.html">StartGame</a> if key "0" is being pressed ("START GAME").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c79"></span>7C79</td>
 <td class="instruction">JP NZ,<a href="7D9A.html">StartGame</a></td>
-<td class="comment-1" rowspan="1">If so, jump to <a href="7D9A.html">StartGame</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="7c7c"></span>
+<div class="comments">
+<div class="paragraph">
+Highlight the selected control method, then the selected character.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c7c"></span>7C7C</td>
 <td class="instruction">LD HL,$7CEA</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="7CEA.html">GameSelection_Attributes</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the game select attribute table at <a href="7CEA.html">GameSelection_Attributes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c7f"></span>7C7F</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (counter).</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (the number of control method entries).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c81"></span>7C81</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the options.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c82"></span>7C82</td>
-<td class="instruction">CALL <a href="7C90.html">$7C90</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7C90.html">7C90</a>.</td>
+<td class="instruction">CALL <a href="7C90.html">FlashSelection</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7C90.html">FlashSelection</a> to highlight the selected menu entry.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c85"></span>7C85</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (counter).</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=03 (the number of character entries).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c87"></span>7C87</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="3"><span class="register">A</span>=<span class="register">C</span> / 04.</td>
+<td class="comment-1" rowspan="1">Fetch the options.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c88"></span>7C88</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="2">Rotate <span class="register">A</span> right twice, which brings the character bits into position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -498,14 +555,14 @@ Handle starting a new game.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c8a"></span>7C8A</td>
-<td class="instruction">CALL <a href="7C90.html">$7C90</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7C90.html">7C90</a>.</td>
+<td class="instruction">CALL <a href="7C90.html">FlashSelection</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7C90.html">FlashSelection</a> to highlight the selected menu entry.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7c8d"></span>7C8D</td>
 <td class="instruction">JP <a href="7C19.html#7c2f">GameSelect_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="7C19.html#7c2f">GameSelect_Loop</a>.</td>
+<td class="comment-1" rowspan="1">Jump back to <a href="7C19.html#7c2f">GameSelect_Loop</a> to run the menu again.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -513,8 +570,10 @@ Handle starting a new game.
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/cookie/asm/6298.html">Cookie</a></li>
+<li><a href="/ultimate/jetpac/asm/61EB.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/asm/800A.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/asm/61CD.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/asm/9960.html">Sabre Wulf</a></li>
 <li><a href="/ultimate/tranzam/asm/5F07.html">Tranz Am</a></li>
 </ul>
 </div>

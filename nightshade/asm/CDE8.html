@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at CDE8</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CDDF.html">CDDF</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cde8">Map</a></td>
+<td class="next">
+Next: <a href="CE79.html">CE79</a>
+</td>
+</tr>
+</table>
+<div class="description">CDE8: Spawn Ball</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BDFE.html">StartGame</a>.
+</div>
+<div class="paragraph">
+Starts a ball (a type 80 object, which turns into a creature - see <a href="C164.html">UpdateBall</a>) in one of the short-lived objects at <a href="BC8E.html#bd9e">ObjectTable_Transient</a>. It is done on every fourth frame, once the player has finished materialising, and the ball is placed in a cell that is next to the player or the same one as the player, as long as that cell is not solid.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall</td>
+<td class="address-2"><span id="cde8"></span>CDE8</td>
+<td class="instruction">LD A,($BC02)</td>
+<td class="comment-1" rowspan="3">Return unless the player has finished materialising.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdeb"></span>CDEB</td>
+<td class="instruction">CP $70</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cded"></span>CDED</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdee"></span>CDEE</td>
+<td class="instruction">LD A,($BBB2)</td>
+<td class="comment-1" rowspan="4">Return unless this is the fourth frame (the frame counter is 03 modulo four).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf1"></span>CDF1</td>
+<td class="instruction">CPL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf2"></span>CDF2</td>
+<td class="instruction">AND $03</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf4"></span>CDF4</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf5"></span>CDF5</td>
+<td class="instruction">LD IY,$BD9E</td>
+<td class="comment-1" rowspan="3">Point at the first short-lived object, set the distance from one object to the next (10 bytes) and set a counter for the six objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf9"></span>CDF9</td>
+<td class="instruction">LD DE,$0010</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdfc"></span>CDFC</td>
+<td class="instruction">LD B,$06</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_Loop</td>
+<td class="address-2"><span id="cdfe"></span>CDFE</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="CDE8.html#ce09">SpawnBall_Found</a> if the object is free.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce01"></span>CE01</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce02"></span>CE02</td>
+<td class="instruction">JR Z,<a href="CDE8.html#ce09">SpawnBall_Found</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce04"></span>CE04</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="2">Move on to the next object and loop back until all six have been checked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce06"></span>CE06</td>
+<td class="instruction">DJNZ <a href="CDE8.html#cdfe">SpawnBall_Loop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce08"></span>CE08</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return, as there is no free object.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_Found</td>
+<td class="address-2"><span id="ce09"></span>CE09</td>
+<td class="instruction">LD HL,$CE79</td>
+<td class="comment-1" rowspan="1">Point at the template for a ball.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce0c"></span>CE0C</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Point at the free object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce0e"></span>CE0E</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce0f"></span>CE0F</td>
+<td class="instruction">LD BC,$0010</td>
+<td class="comment-1" rowspan="2">Copy the template into the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce12"></span>CE12</td>
+<td class="instruction">LDIR</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ce14"></span>
+<div class="comments">
+<div class="paragraph">
+Choose the cell for the ball: the player's cell, with the column and row each moved by one cell, or not moved, using the random seeds.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce14"></span>CE14</td>
+<td class="instruction">LD A,($BC90)</td>
+<td class="comment-1" rowspan="4">Fetch the column and row of the player's cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce17"></span>CE17</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce18"></span>CE18</td>
+<td class="instruction">LD A,($BC92)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1b"></span>CE1B</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1c"></span>CE1C</td>
+<td class="instruction">LD A,($BBAA)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="CDE8.html#ce2a">SpawnBall_Row</a> to keep the column as it is if the first random number is less than 55.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1f"></span>CE1F</td>
+<td class="instruction">CP $55</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce21"></span>CE21</td>
+<td class="instruction">JR C,<a href="CDE8.html#ce2a">SpawnBall_Row</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce23"></span>CE23</td>
+<td class="instruction">CP $AA</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CDE8.html#ce29">SpawnBall_NextColumn</a> to move the ball on one column if the number is less than AA.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce25"></span>CE25</td>
+<td class="instruction">JR C,<a href="CDE8.html#ce29">SpawnBall_NextColumn</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce27"></span>CE27</td>
+<td class="instruction">DEC L</td>
+<td class="comment-1" rowspan="2">Move the ball back one column...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce28"></span>CE28</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_NextColumn</td>
+<td class="address-2"><span id="ce29"></span>CE29</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">... or on one column.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_Row</td>
+<td class="address-2"><span id="ce2a"></span>CE2A</td>
+<td class="instruction">LD A,($BBAB)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="CDE8.html#ce38">SpawnBall_Place</a> to keep the row as it is if the second random number is less than 55.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce2d"></span>CE2D</td>
+<td class="instruction">CP $55</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce2f"></span>CE2F</td>
+<td class="instruction">JR C,<a href="CDE8.html#ce38">SpawnBall_Place</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce31"></span>CE31</td>
+<td class="instruction">CP $AA</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CDE8.html#ce37">SpawnBall_NextRow</a> to move the ball on one row if the number is less than AA.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce33"></span>CE33</td>
+<td class="instruction">JR C,<a href="CDE8.html#ce37">SpawnBall_NextRow</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce35"></span>CE35</td>
+<td class="instruction">DEC H</td>
+<td class="comment-1" rowspan="2">Move the ball back one row...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce36"></span>CE36</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_NextRow</td>
+<td class="address-2"><span id="ce37"></span>CE37</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">... or on one row.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_Place</td>
+<td class="address-2"><span id="ce38"></span>CE38</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Wrap the column round, to stay within the village.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce39"></span>CE39</td>
+<td class="instruction">AND $1F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce3b"></span>CE3B</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce3c"></span>CE3C</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Wrap the row round, to stay within the village.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce3d"></span>CE3D</td>
+<td class="instruction">AND $1F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce3f"></span>CE3F</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce40"></span>CE40</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="3">Find out what kind of tile is in the cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce41"></span>CE41</td>
+<td class="instruction">CALL <a href="E051.html">FindMapTile</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce44"></span>CE44</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce45"></span>CE45</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="3">Return without making a ball if the tile is solid (01 or 02).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce46"></span>CE46</td>
+<td class="instruction">CP $02</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce48"></span>CE48</td>
+<td class="instruction">RET C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce49"></span>CE49</td>
+<td class="instruction">LD (IY+$02),L</td>
+<td class="comment-1" rowspan="2">Set the column and the row of the ball.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce4c"></span>CE4C</td>
+<td class="instruction">LD (IY+$04),H</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ce4f"></span>
+<div class="comments">
+<div class="paragraph">
+Choose the position of the ball within the cell using the random seeds.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce4f"></span>CE4F</td>
+<td class="instruction">CALL <a href="C5BB.html">RandomNumber</a></td>
+<td class="comment-1" rowspan="1">Update the random number generator.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce52"></span>CE52</td>
+<td class="instruction">LD A,($BBAA)</td>
+<td class="comment-1" rowspan="3">Fetch the first random number and jump to <a href="CDE8.html#ce5b">SpawnBall_X</a> if it is less than C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce55"></span>CE55</td>
+<td class="instruction">CP $C0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce57"></span>CE57</td>
+<td class="instruction">JR C,<a href="CDE8.html#ce5b">SpawnBall_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce59"></span>CE59</td>
+<td class="instruction">SUB $40</td>
+<td class="comment-1" rowspan="1">Bring the number into the range 80 to BF.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_X</td>
+<td class="address-2"><span id="ce5b"></span>CE5B</td>
+<td class="instruction">ADD A,$20</td>
+<td class="comment-1" rowspan="2">Add 20 to get a position within the cell from 20 to DF and set it as the X position of the ball.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce5d"></span>CE5D</td>
+<td class="instruction">LD (IY+$01),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce60"></span>CE60</td>
+<td class="instruction">LD A,($BBAB)</td>
+<td class="comment-1" rowspan="3">Fetch the second random number and jump to <a href="CDE8.html#ce69">SpawnBall_Y</a> if it is less than C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce63"></span>CE63</td>
+<td class="instruction">CP $C0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce65"></span>CE65</td>
+<td class="instruction">JR C,<a href="CDE8.html#ce69">SpawnBall_Y</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce67"></span>CE67</td>
+<td class="instruction">SUB $40</td>
+<td class="comment-1" rowspan="1">Bring the number into the range 80 to BF.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnBall_Y</td>
+<td class="address-2"><span id="ce69"></span>CE69</td>
+<td class="instruction">ADD A,$20</td>
+<td class="comment-1" rowspan="2">Add 20 to get a position within the cell from 20 to DF and set it as the Y position of the ball.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce6b"></span>CE6B</td>
+<td class="instruction">LD (IY+$03),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce6e"></span>CE6E</td>
+<td class="instruction">LD A,($BBB2)</td>
+<td class="comment-1" rowspan="3">Return if the frame counter is 80 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce71"></span>CE71</td>
+<td class="instruction">CP $80</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce73"></span>CE73</td>
+<td class="instruction">RET NC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce74"></span>CE74</td>
+<td class="instruction">SET 5,(IY+$07)</td>
+<td class="comment-1" rowspan="2">Set the flag that makes the ball chase the player, and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce78"></span>CE78</td>
+<td class="instruction">RET</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CDDF.html">CDDF</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cde8">Map</a></td>
+<td class="next">
+Next: <a href="CE79.html">CE79</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/52712.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

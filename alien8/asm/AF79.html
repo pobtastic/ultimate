@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Alien 8: Routine at AF79</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../alien8.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF3F.html">AF3F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#af79">Map</a></td>
+<td class="next">
+Next: <a href="B055.html">B055</a>
+</td>
+</tr>
+</table>
+<div class="description">AF79: Handle Valve</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The handler for a valve lying about in a room (objects 60 to 63). If the room has a socket of the same shape the valve moves towards it one step at a time along the x and y axes, and is pulled down by gravity. When it sits on the socket it is placed: the object number goes up by four (64 to 67), the screen colours cycle sixteen times with a sparkle, the chamber ink is set to white, and one is added to <a href="5B40.html">ChambersActivated</a>. If that makes 24 the game is completed.
+</div>
+<div class="paragraph">
+A valve which is not on its way to a socket is just moved with gravity, and stopped and redrawn if it has been dropped.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The address of the object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="af79"></span>
+<div class="comments">
+<div class="paragraph">
+Look for a matching socket.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve</td>
+<td class="address-2"><span id="af79"></span>AF79</td>
+<td class="instruction">CALL <a href="BF3D.html#bf60">SetPixelAdjustments_Valve</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BF3D.html#bf60">SetPixelAdjustments_Valve</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af7c"></span>AF7C</td>
+<td class="instruction">LD HL,$0470</td>
+<td class="comment-1" rowspan="1">Set <span class="register">HL</span> to 0470.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af7f"></span>AF7F</td>
+<td class="instruction">CALL <a href="AE03.html">FindObject</a></td>
+<td class="comment-1" rowspan="1">Call <a href="AE03.html">FindObject</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af82"></span>AF82</td>
+<td class="instruction">JR NC,<a href="AF79.html#afd0">HandleValve_Fall</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afd0">HandleValve_Fall</a> if there is no socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af84"></span>AF84</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite number of the socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af87"></span>AF87</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af89"></span>AF89</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af8a"></span>AF8A</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the object number of the valve.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af8d"></span>AF8D</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af8f"></span>AF8F</td>
+<td class="instruction">CP C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AF79.html#afd0">HandleValve_Fall</a> if the shapes are different.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af90"></span>AF90</td>
+<td class="instruction">JR NZ,<a href="AF79.html#afd0">HandleValve_Fall</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="af92"></span>
+<div class="comments">
+<div class="paragraph">
+Set the speed towards the socket.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af92"></span>AF92</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="2">Subtract the socket x from the valve x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af95"></span>AF95</td>
+<td class="instruction">SUB (IY+$01)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af98"></span>AF98</td>
+<td class="instruction">JR Z,<a href="AF79.html#afa1">HandleValve_SetSpeedX</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afa1">HandleValve_SetSpeedX</a> if they are the same.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af9a"></span>AF9A</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">Set the speed to 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af9c"></span>AF9C</td>
+<td class="instruction">JP M,<a href="AF79.html#afa1">HandleValve_SetSpeedX</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afa1">HandleValve_SetSpeedX</a> if the valve is west of the socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af9f"></span>AF9F</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the speed negative.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_SetSpeedX</td>
+<td class="address-2"><span id="afa1"></span>AFA1</td>
+<td class="instruction">LD (IX+$09),A</td>
+<td class="comment-1" rowspan="1">Set the speed along the x axis.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afa4"></span>AFA4</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="2">Subtract the socket y from the valve y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afa7"></span>AFA7</td>
+<td class="instruction">SUB (IY+$02)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afaa"></span>AFAA</td>
+<td class="instruction">JR Z,<a href="AF79.html#afb3">HandleValve_SetSpeedY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afb3">HandleValve_SetSpeedY</a> if they are the same.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afac"></span>AFAC</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">Set the speed to 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afae"></span>AFAE</td>
+<td class="instruction">JP M,<a href="AF79.html#afb3">HandleValve_SetSpeedY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afb3">HandleValve_SetSpeedY</a> if the valve is south of the socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb1"></span>AFB1</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Make the speed negative.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_SetSpeedY</td>
+<td class="address-2"><span id="afb3"></span>AFB3</td>
+<td class="instruction">LD (IX+$0A),A</td>
+<td class="comment-1" rowspan="1">Set the speed along the y axis.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afb6"></span>
+<div class="comments">
+<div class="paragraph">
+Place the valve if it is on the socket.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb6"></span>AFB6</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="2">Compare the x positions.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afb9"></span>AFB9</td>
+<td class="instruction">CP (IY+$01)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afbc"></span>AFBC</td>
+<td class="instruction">JR NZ,<a href="AF79.html#afd0">HandleValve_Fall</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afd0">HandleValve_Fall</a> if they differ.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afbe"></span>AFBE</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="2">Compare the y positions.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc1"></span>AFC1</td>
+<td class="instruction">CP (IY+$02)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc4"></span>AFC4</td>
+<td class="instruction">JR NZ,<a href="AF79.html#afd0">HandleValve_Fall</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afd0">HandleValve_Fall</a> if they differ.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc6"></span>AFC6</td>
+<td class="instruction">LD A,(IY+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afc9"></span>AFC9</td>
+<td class="instruction">ADD A,$0C</td>
+<td class="comment-1" rowspan="1">Add 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afcb"></span>AFCB</td>
+<td class="instruction">CP (IX+$03)</td>
+<td class="comment-1" rowspan="1">Compare it with the height of the valve.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afce"></span>AFCE</td>
+<td class="instruction">JR Z,<a href="AF79.html#afe7">HandleValve_Arrived</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#afe7">HandleValve_Arrived</a> if the valve is on the socket.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afd0"></span>
+<div class="comments">
+<div class="paragraph">
+Move the valve if it is not placed yet.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_Fall</td>
+<td class="address-2"><span id="afd0"></span>AFD0</td>
+<td class="instruction">CALL <a href="BFB6.html">ApplyGravityAndMove</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BFB6.html">ApplyGravityAndMove</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd3"></span>AFD3</td>
+<td class="instruction">BIT 0,(IX+$0D)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AF79.html#afdd">HandleValve_Dropped</a> if the valve has been dropped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd7"></span>AFD7</td>
+<td class="instruction">JR NZ,<a href="AF79.html#afdd">HandleValve_Dropped</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afd9"></span>AFD9</td>
+<td class="instruction">CALL <a href="BED6.html">TestObjectMoving</a></td>
+<td class="comment-1" rowspan="2">Return if the valve is not moving.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afdc"></span>AFDC</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_Dropped</td>
+<td class="address-2"><span id="afdd"></span>AFDD</td>
+<td class="instruction">RES 0,(IX+$0D)</td>
+<td class="comment-1" rowspan="1">Reset bit 0 of the state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe1"></span>AFE1</td>
+<td class="instruction">CALL <a href="C2EE.html">ClearSpeed</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C2EE.html">ClearSpeed</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afe4"></span>AFE4</td>
+<td class="instruction">JP <a href="B3BF.html">PlaySoundAndRedraw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B3BF.html">PlaySoundAndRedraw</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="afe7"></span>
+<div class="comments">
+<div class="paragraph">
+Place the valve on the socket.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_Arrived</td>
+<td class="address-2"><span id="afe7"></span>AFE7</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the object number of the valve.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afea"></span>AFEA</td>
+<td class="instruction">XOR (IY+$00)</td>
+<td class="comment-1" rowspan="1">Combine it with that of the socket.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afed"></span>AFED</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="afef"></span>AFEF</td>
+<td class="instruction">JR Z,<a href="AF79.html#aff8">HandleValve_PlaceValve</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AF79.html#aff8">HandleValve_PlaceValve</a> if the shapes are the same.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aff1"></span>AFF1</td>
+<td class="instruction">LD (IX+$00),$40</td>
+<td class="comment-1" rowspan="1">Write 40 as the sprite number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aff5"></span>AFF5</td>
+<td class="instruction">JP <a href="BFAB.html">SetWipeAndDrawFlags</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BFAB.html">SetWipeAndDrawFlags</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_PlaceValve</td>
+<td class="address-2"><span id="aff8"></span>AFF8</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the object number of the valve.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="affb"></span>AFFB</td>
+<td class="instruction">OR %00000100</td>
+<td class="comment-1" rowspan="1">Set bit 2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="affd"></span>AFFD</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Store the object number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b000"></span>B000</td>
+<td class="instruction">CALL <a href="B3BF.html">PlaySoundAndRedraw</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B3BF.html">PlaySoundAndRedraw</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b003"></span>B003</td>
+<td class="instruction">LD D,$10</td>
+<td class="comment-1" rowspan="1">Set a counter of 10.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b005"></span>
+<div class="comments">
+<div class="paragraph">
+Cycle the screen colours.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_CycleColours</td>
+<td class="address-2"><span id="b005"></span>B005</td>
+<td class="instruction">LD HL,$5800</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at 5800 (in the attribute buffer).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b008"></span>B008</td>
+<td class="instruction">LD BC,$0300</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 0300.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_CycleAttribute</td>
+<td class="address-2"><span id="b00b"></span>B00B</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch an attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b00c"></span>B00C</td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Keep bits 3 to 7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b00e"></span>B00E</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b00f"></span>B00F</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Fetch the attribute and add one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b010"></span>B010</td>
+<td class="instruction">INC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b011"></span>B011</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b013"></span>B013</td>
+<td class="instruction">OR E</td>
+<td class="comment-1" rowspan="1">Combine it with the rest of the attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b014"></span>B014</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the new attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b015"></span>B015</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next attribute.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b016"></span>B016</td>
+<td class="instruction">DEC BC</td>
+<td class="comment-1" rowspan="1">Count down the attributes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b017"></span>B017</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Jump to <a href="AF79.html#b00b">HandleValve_CycleAttribute</a> until all of them have been changed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b018"></span>B018</td>
+<td class="instruction">OR C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b019"></span>B019</td>
+<td class="instruction">JR NZ,<a href="AF79.html#b00b">HandleValve_CycleAttribute</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b01b"></span>B01B</td>
+<td class="instruction">CALL <a href="B5EE.html">PlaySparkleSound</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B5EE.html">PlaySparkleSound</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b01e"></span>B01E</td>
+<td class="instruction">LD BC,$0200</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 0200.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_Delay</td>
+<td class="address-2"><span id="b021"></span>B021</td>
+<td class="instruction">DEC BC</td>
+<td class="comment-1" rowspan="4">Jump to <a href="AF79.html#b021">HandleValve_Delay</a> until the delay is done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b022"></span>B022</td>
+<td class="instruction">LD A,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b023"></span>B023</td>
+<td class="instruction">OR C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b024"></span>B024</td>
+<td class="instruction">JR NZ,<a href="AF79.html#b021">HandleValve_Delay</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b026"></span>B026</td>
+<td class="instruction">DEC D</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AF79.html#b005">HandleValve_CycleColours</a> until all of the colours have been cycled.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b027"></span>B027</td>
+<td class="instruction">JR NZ,<a href="AF79.html#b005">HandleValve_CycleColours</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b029"></span>B029</td>
+<td class="instruction">LD HL,($5B34)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="5B34.html">ChamberAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b02c"></span>B02C</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the colour of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b02d"></span>B02D</td>
+<td class="instruction">OR %00000111</td>
+<td class="comment-1" rowspan="1">Set bits 0 to 2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b02f"></span>B02F</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store the colour of the chamber.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b030"></span>B030</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b032"></span>B032</td>
+<td class="instruction">LD ($5B0D),A</td>
+<td class="comment-1" rowspan="1">Set <a href="5B0D.html">RoomColour</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b035"></span>B035</td>
+<td class="instruction">CALL <a href="A749.html">UpdatePanel</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A749.html">UpdatePanel</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b038"></span>B038</td>
+<td class="instruction">LD HL,$5B40</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="5B40.html">ChambersActivated</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b03b"></span>B03B</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="4">Add one to <a href="5B40.html">ChambersActivated</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b03c"></span>B03C</td>
+<td class="instruction">ADD A,$01</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b03e"></span>B03E</td>
+<td class="instruction">DAA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b03f"></span>B03F</td>
+<td class="instruction">LD (HL),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b040"></span>B040</td>
+<td class="instruction">CP $24</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AF79.html#b04c">HandleValve_Finish</a> unless it is 24.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b042"></span>B042</td>
+<td class="instruction">JR NZ,<a href="AF79.html#b04c">HandleValve_Finish</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b044"></span>B044</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="2">Write 01 to <a href="5B23.html">GameCompletedFlag</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b046"></span>B046</td>
+<td class="instruction">LD ($5B23),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b049"></span>B049</td>
+<td class="instruction">JP <a href="B761.html">GameOver</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B761.html">GameOver</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleValve_Finish</td>
+<td class="address-2"><span id="b04c"></span>B04C</td>
+<td class="instruction">CALL <a href="A7A3.html">PrintActivatedChambers</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A7A3.html">PrintActivatedChambers</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b04f"></span>B04F</td>
+<td class="instruction">LD BC,$1820</td>
+<td class="comment-1" rowspan="1">Set the pixel position to 20, 18.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b052"></span>B052</td>
+<td class="instruction">JP <a href="BF2F.html">CopyAreaToScreen</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BF2F.html">CopyAreaToScreen</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AF3F.html">AF3F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#af79">Map</a></td>
+<td class="next">
+Next: <a href="B055.html">B055</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/alien8/">Source code</a>.</div>
+<div><a href="../dec/asm/44921.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

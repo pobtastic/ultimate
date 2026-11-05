@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Gunfright: Routine at B82A</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../gunfright.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B810.html">B810</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b82a">Map</a></td>
+<td class="next">
+Next: <a href="B85B.html">B85B</a>
+</td>
+</tr>
+</table>
+<div class="description">B82A: Update Direction</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="B3DA.html">HandleOutlaw</a> and <a href="B719.html">HandleBystander</a>.
+</div>
+<div class="paragraph">
+Makes a figure choose a new direction every so often. The bottom six bits of byte 06 count down the frames until the next change, and bits 6 and 7 are the direction. The direction is turned a quarter to the left or the right, and the counter is set to a new random number. A figure which has bumped into a wall (bit 0 of the flags) changes direction straight away, and a figure with bit 5 of the flags set never changes direction on its own.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The address of the object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateDirection</td>
+<td class="address-2"><span id="b82a"></span>B82A</td>
+<td class="instruction">BIT 0,(IX+$07)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B82A.html#b83f">UpdateDirection_Random</a> if the figure has bumped into a wall.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b82e"></span>B82E</td>
+<td class="instruction">JR NZ,<a href="B82A.html#b83f">UpdateDirection_Random</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b830"></span>B830</td>
+<td class="instruction">DEC (IX+$06)</td>
+<td class="comment-1" rowspan="1">Count down the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b833"></span>B833</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b836"></span>B836</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep the bottom five bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b838"></span>B838</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return unless the counter is at a multiple of thirty two.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b839"></span>B839</td>
+<td class="instruction">BIT 5,(IX+$07)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B82A.html#b85a">UpdateDirection_Finish</a> to return if the figure keeps its direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b83d"></span>B83D</td>
+<td class="instruction">JR NZ,<a href="B82A.html#b85a">UpdateDirection_Finish</a></td>
+</tr>
+<tr>
+<td class="asm-label">UpdateDirection_Random</td>
+<td class="address-2"><span id="b83f"></span>B83F</td>
+<td class="instruction">LD A,($A218)</td>
+<td class="comment-1" rowspan="1">Fetch a random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b842"></span>B842</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="1">Compare it with 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b844"></span>B844</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the direction and counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b847"></span>B847</td>
+<td class="instruction">JR NC,<a href="B82A.html#b856">UpdateDirection_TurnLeft</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B82A.html#b856">UpdateDirection_TurnLeft</a> to turn left if the random number is 80 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b849"></span>B849</td>
+<td class="instruction">ADD A,$40</td>
+<td class="comment-1" rowspan="1">Turn right.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateDirection_Timer</td>
+<td class="address-2"><span id="b84b"></span>B84B</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the new direction in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b84c"></span>B84C</td>
+<td class="instruction">LD A,($A219)</td>
+<td class="comment-1" rowspan="1">Fetch another random number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b84f"></span>B84F</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Keep the bottom six bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b851"></span>B851</td>
+<td class="instruction">OR C</td>
+<td class="comment-1" rowspan="1">Combine it with the direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b852"></span>B852</td>
+<td class="instruction">LD (IX+$06),A</td>
+<td class="comment-1" rowspan="1">Store the new direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b855"></span>B855</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateDirection_TurnLeft</td>
+<td class="address-2"><span id="b856"></span>B856</td>
+<td class="instruction">SUB $40</td>
+<td class="comment-1" rowspan="1">Turn left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b858"></span>B858</td>
+<td class="instruction">JR <a href="B82A.html#b84b">UpdateDirection_Timer</a></td>
+<td class="comment-1" rowspan="1">Go back to store the direction and counter.</td>
+</tr>
+<tr>
+<td class="asm-label">UpdateDirection_Finish</td>
+<td class="address-2"><span id="b85a"></span>B85A</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/nightshade/asm/DD28.html">Nightshade</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B810.html">B810</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b82a">Map</a></td>
+<td class="next">
+Next: <a href="B85B.html">B85B</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/">Source code</a>.</div>
+<div><a href="../dec/asm/47146.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

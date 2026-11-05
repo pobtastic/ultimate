@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at D202</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D037.html">D037</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d202">Map</a></td>
+<td class="next">
+Next: <a href="D389.html">D389</a>
+</td>
+</tr>
+</table>
+<div class="description">D202: Follow Path</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="D037.html">MoveEntity</a>.
+</div>
+<div class="paragraph">
+Moves an entity that is following a path from the level data, which is the case when fields 24 and 25 are not both zero. Bits 0-2 of field 25 choose a three-byte step from a table. Bits 6-7 of field 24 can replace that step: 40 lowers the entity and can play the long buzz, 80 moves it back along y, and C0 moves it on along x. The three bytes of a looked-up step are added to x, y and z. A step above 08 finishes the path. The player can be scored and shown the filled cup, and a path position is then copied into the entity before the falling sweep plays.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The entity</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath</td>
+<td class="address-2"><span id="d202"></span>D202</td>
+<td class="instruction">RES 7,(IX+$11)</td>
+<td class="comment-1" rowspan="1">Clear the moving flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d206"></span>D206</td>
+<td class="instruction">RES 7,(IX+$1E)</td>
+<td class="comment-1" rowspan="1">Clear the fast flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d20a"></span>D20A</td>
+<td class="instruction">CALL <a href="D389.html">FindPathEntry</a></td>
+<td class="comment-1" rowspan="1">Find the path entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d20d"></span>D20D</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Remember the entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d20e"></span>D20E</td>
+<td class="instruction">LD A,(IX+$25)</td>
+<td class="comment-1" rowspan="1">Read the low byte of the path.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d211"></span>D211</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the step number in bits 0-2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d213"></span>D213</td>
+<td class="instruction">JR NZ,<a href="D202.html#d219">FollowPath_Lookup</a></td>
+<td class="comment-1" rowspan="1">Look the step up when a number is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d215"></span>D215</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="2">Use the two bytes just before the entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d216"></span>D216</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d217"></span>D217</td>
+<td class="instruction">JR <a href="D202.html#d224">FollowPath_Step</a></td>
+<td class="comment-1" rowspan="1">Join the stored step.</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Lookup</td>
+<td class="address-2"><span id="d219"></span>D219</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="3">Turn the step number into a table offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d21a"></span>D21A</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d21b"></span>D21B</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d21c"></span>D21C</td>
+<td class="instruction">CALL <a href="AA3C.html">AddToAddress</a></td>
+<td class="comment-1" rowspan="1">Look the offset up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d21f"></span>D21F</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="5">Read the x step, the y step and the z step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d220"></span>D220</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d221"></span>D221</td>
+<td class="instruction">LD B,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d222"></span>D222</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d223"></span>D223</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Step</td>
+<td class="address-2"><span id="d224"></span>D224</td>
+<td class="instruction">LD ($D376),HL</td>
+<td class="comment-1" rowspan="1">Remember where the path continues.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d227"></span>D227</td>
+<td class="instruction">LD A,(IX+$24)</td>
+<td class="comment-1" rowspan="1">Read the high byte of the path.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d22a"></span>D22A</td>
+<td class="instruction">AND %11000000</td>
+<td class="comment-1" rowspan="1">Keep the nudge in bits 6-7.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d22c"></span>D22C</td>
+<td class="instruction">JR Z,<a href="D202.html#d24d">FollowPath_Z</a></td>
+<td class="comment-1" rowspan="1">Use the looked-up step when there is no nudge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d22e"></span>D22E</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="2">Lower the entity when the nudge is 40.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d230"></span>D230</td>
+<td class="instruction">JR NZ,<a href="D202.html#d241">FollowPath_Nudge</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d232"></span>D232</td>
+<td class="instruction">LD A,(IX+$25)</td>
+<td class="comment-1" rowspan="1">Read the low byte of the path again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d235"></span>D235</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="2">Play the long buzz when that byte is 40 as well.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d237"></span>D237</td>
+<td class="instruction">CALL Z,<a href="9F2A.html">PlayLongBuzz</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d23a"></span>D23A</td>
+<td class="instruction">LD BC,$0000</td>
+<td class="comment-1" rowspan="1">Clear the x step and the y step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d23d"></span>D23D</td>
+<td class="instruction">LD E,$FE</td>
+<td class="comment-1" rowspan="1">Lower the entity by two.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d23f"></span>D23F</td>
+<td class="instruction">JR <a href="D202.html#d24d">FollowPath_Z</a></td>
+<td class="comment-1" rowspan="1">Add the step.</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Nudge</td>
+<td class="address-2"><span id="d241"></span>D241</td>
+<td class="instruction">LD B,$FE</td>
+<td class="comment-1" rowspan="3">Move the entity back along y, and clear the other steps.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d243"></span>D243</td>
+<td class="instruction">LD C,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d245"></span>D245</td>
+<td class="instruction">LD E,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d246"></span>D246</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Keep that nudge when the bits are 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d248"></span>D248</td>
+<td class="instruction">JR Z,<a href="D202.html#d24d">FollowPath_Z</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d24a"></span>D24A</td>
+<td class="instruction">LD C,$02</td>
+<td class="comment-1" rowspan="2">Move the entity on along x instead.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d24c"></span>D24C</td>
+<td class="instruction">LD B,E</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Z</td>
+<td class="address-2"><span id="d24d"></span>D24D</td>
+<td class="instruction">LD H,(IX+$08)</td>
+<td class="comment-1" rowspan="2">Fetch the z coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d250"></span>D250</td>
+<td class="instruction">LD L,(IX+$09)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d253"></span>D253</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="4">Sign-extend the z step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d255"></span>D255</td>
+<td class="instruction">BIT 7,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d257"></span>D257</td>
+<td class="instruction">JR Z,<a href="D202.html#d25a">FollowPath_AddZ</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d259"></span>D259</td>
+<td class="instruction">DEC D</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_AddZ</td>
+<td class="address-2"><span id="d25a"></span>D25A</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="3">Add the z step to the z coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d25b"></span>D25B</td>
+<td class="instruction">LD (IX+$08),H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d25e"></span>D25E</td>
+<td class="instruction">LD (IX+$09),L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d261"></span>D261</td>
+<td class="instruction">LD E,C</td>
+<td class="comment-1" rowspan="5">Sign-extend the x step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d262"></span>D262</td>
+<td class="instruction">BIT 7,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d264"></span>D264</td>
+<td class="instruction">LD D,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d266"></span>D266</td>
+<td class="instruction">JR Z,<a href="D202.html#d269">FollowPath_X</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d268"></span>D268</td>
+<td class="instruction">DEC D</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_X</td>
+<td class="address-2"><span id="d269"></span>D269</td>
+<td class="instruction">LD H,(IX+$02)</td>
+<td class="comment-1" rowspan="2">Fetch the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d26c"></span>D26C</td>
+<td class="instruction">LD L,(IX+$03)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d26f"></span>D26F</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="3">Add the x step to the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d270"></span>D270</td>
+<td class="instruction">LD (IX+$02),H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d273"></span>D273</td>
+<td class="instruction">LD (IX+$03),L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d276"></span>D276</td>
+<td class="instruction">LD E,B</td>
+<td class="comment-1" rowspan="5">Sign-extend the y step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d277"></span>D277</td>
+<td class="instruction">BIT 7,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d279"></span>D279</td>
+<td class="instruction">LD D,$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d27b"></span>D27B</td>
+<td class="instruction">JR Z,<a href="D202.html#d27e">FollowPath_Y</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d27d"></span>D27D</td>
+<td class="instruction">DEC D</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Y</td>
+<td class="address-2"><span id="d27e"></span>D27E</td>
+<td class="instruction">LD H,(IX+$05)</td>
+<td class="comment-1" rowspan="2">Fetch the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d281"></span>D281</td>
+<td class="instruction">LD L,(IX+$06)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d284"></span>D284</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="3">Add the y step to the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d285"></span>D285</td>
+<td class="instruction">LD (IX+$05),H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d288"></span>D288</td>
+<td class="instruction">LD (IX+$06),L</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d28b"></span>
+<div class="comments">
+<div class="paragraph">
+A step above 08 finishes the path. A step of exactly 08 or a step number that no longer matches the entry, reads the next path byte.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d28b"></span>D28B</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the path entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d28c"></span>D28C</td>
+<td class="instruction">LD A,(IX+$25)</td>
+<td class="comment-1" rowspan="3">A step of 08 reads the next path byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d28f"></span>D28F</td>
+<td class="instruction">SUB $08</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d291"></span>D291</td>
+<td class="instruction">JP Z,<a href="D202.html#d375">FollowPath_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d294"></span>D294</td>
+<td class="instruction">JR NC,<a href="D202.html#d2c6">FollowPath_Finish</a></td>
+<td class="comment-1" rowspan="1">A larger step finishes the path.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d296"></span>D296</td>
+<td class="instruction">LD A,(IX+$25)</td>
+<td class="comment-1" rowspan="1">Read field 25 again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d299"></span>D299</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Use the step number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d29b"></span>D29B</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="2">Compare it with the byte before the entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d29c"></span>D29C</td>
+<td class="instruction">CP (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d29d"></span>D29D</td>
+<td class="instruction">JP NZ,<a href="D202.html#d375">FollowPath_Next</a></td>
+<td class="comment-1" rowspan="1">Read the next path byte when they differ.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2a0"></span>D2A0</td>
+<td class="instruction">LD A,(IX+$24)</td>
+<td class="comment-1" rowspan="1">Read field 24.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2a3"></span>D2A3</td>
+<td class="instruction">AND %11000000</td>
+<td class="comment-1" rowspan="1">Use bits 6-7 of the path.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2a5"></span>D2A5</td>
+<td class="instruction">JR Z,<a href="D202.html#d2ca">FollowPath_Reward</a></td>
+<td class="comment-1" rowspan="1">Copy the path position when those bits are clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2a7"></span>D2A7</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="3">Only the player finishes the path here.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2aa"></span>D2AA</td>
+<td class="instruction">DEC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2ab"></span>D2AB</td>
+<td class="instruction">JR NZ,<a href="D202.html#d2c2">FollowPath_Clear</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2ad"></span>D2AD</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="2">Set the player's vertical speed to 2200.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2b0"></span>D2B0</td>
+<td class="instruction">LD ($B552),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2b3"></span>D2B3</td>
+<td class="instruction">LD ($5D00),A</td>
+<td class="comment-1" rowspan="1">Clear the jump counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2b6"></span>D2B6</td>
+<td class="instruction">LD A,(IX+$10)</td>
+<td class="comment-1" rowspan="1">Read the width byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2b9"></span>D2B9</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Use the countdown nibble.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2bb"></span>D2BB</td>
+<td class="instruction">LD (IX+$10),A</td>
+<td class="comment-1" rowspan="1">Clear the sprite width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2be"></span>D2BE</td>
+<td class="instruction">LD (IX+$1A),$00</td>
+<td class="comment-1" rowspan="1">Clear the fraction of the speed.</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Clear</td>
+<td class="address-2"><span id="d2c2"></span>D2C2</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Clear field 24.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2c3"></span>D2C3</td>
+<td class="instruction">LD (IX+$24),A</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Finish</td>
+<td class="address-2"><span id="d2c6"></span>D2C6</td>
+<td class="instruction">LD (IX+$25),A</td>
+<td class="comment-1" rowspan="2">Clear field 25 and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2c9"></span>D2C9</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d2ca"></span>
+<div class="comments">
+<div class="paragraph">
+The byte stored by <a href="D389.html">FindPathEntry</a> chooses the player's reward. Zero scores 0500. Any other byte, the first time, scores 60 and draws the cup.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Reward</td>
+<td class="address-2"><span id="d2ca"></span>D2CA</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="3">Only the player is rewarded.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2cd"></span>D2CD</td>
+<td class="instruction">DEC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2ce"></span>D2CE</td>
+<td class="instruction">JR NZ,<a href="D202.html#d308">FollowPath_1</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2d0"></span>D2D0</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the reward byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2d1"></span>D2D1</td>
+<td class="instruction">LD A,$00</td>
+<td class="comment-1" rowspan="3">Score 0500 when the path byte is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2d3"></span>D2D3</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2d4"></span>D2D4</td>
+<td class="instruction">JR NZ,<a href="D202.html#d2de">FollowPath_Cup</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2d6"></span>D2D6</td>
+<td class="instruction">LD BC,$0500</td>
+<td class="comment-1" rowspan="2">Add a score of 0500.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2d9"></span>D2D9</td>
+<td class="instruction">CALL <a href="9662.html">AddScore</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2dc"></span>D2DC</td>
+<td class="instruction">JR <a href="D202.html#d307">FollowPath_0</a></td>
+<td class="comment-1" rowspan="1">Skip the cup.</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Cup</td>
+<td class="address-2"><span id="d2de"></span>D2DE</td>
+<td class="instruction">LD A,($DEFC)</td>
+<td class="comment-1" rowspan="3">The cup is shown only once.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2e1"></span>D2E1</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2e2"></span>D2E2</td>
+<td class="instruction">JR NZ,<a href="D202.html#d307">FollowPath_0</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2e4"></span>D2E4</td>
+<td class="instruction">LD A,($B55C)</td>
+<td class="comment-1" rowspan="1">Read the player's animation counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2e7"></span>D2E7</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Use the high nibble of the animation.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2e9"></span>D2E9</td>
+<td class="instruction">OR %00000101</td>
+<td class="comment-1" rowspan="1">Set the low nibble to 05.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2eb"></span>D2EB</td>
+<td class="instruction">LD ($B55C),A</td>
+<td class="comment-1" rowspan="1">Keep that animation.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2ee"></span>D2EE</td>
+<td class="instruction">LD A,$05</td>
+<td class="comment-1" rowspan="2">Set the control byte to 05.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2f0"></span>D2F0</td>
+<td class="instruction">LD ($AB7D),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2f3"></span>D2F3</td>
+<td class="instruction">LD BC,$0060</td>
+<td class="comment-1" rowspan="2">Add a score of 60.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2f6"></span>D2F6</td>
+<td class="instruction">CALL <a href="9662.html">AddScore</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2f9"></span>D2F9</td>
+<td class="instruction">LD HL,$6808</td>
+<td class="comment-1" rowspan="3">Draw the filled cup.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2fc"></span>D2FC</td>
+<td class="instruction">LD DE,$6498</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d2ff"></span>D2FF</td>
+<td class="instruction">CALL <a href="AAC4.html">DrawPicture</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d302"></span>D302</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="2">Remember that the cup has been shown.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d304"></span>D304</td>
+<td class="instruction">LD ($DEFC),A</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_0</td>
+<td class="address-2"><span id="d307"></span>D307</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back.</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_1</td>
+<td class="address-2"><span id="d308"></span>D308</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Step back to the path's position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d309"></span>D309</td>
+<td class="instruction">LD A,(IX+$24)</td>
+<td class="comment-1" rowspan="1">Read field 24.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d30c"></span>D30C</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Use bits 0-5 of the path.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d30e"></span>D30E</td>
+<td class="instruction">OR (HL)</td>
+<td class="comment-1" rowspan="3">Combine them with the path byte and keep them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d30f"></span>D30F</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d310"></span>D310</td>
+<td class="instruction">LD (IX+$24),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d313"></span>D313</td>
+<td class="instruction">LD A,(IX+$25)</td>
+<td class="comment-1" rowspan="1">Read field 25.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d316"></span>D316</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Use the step number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d318"></span>D318</td>
+<td class="instruction">OR %00100000</td>
+<td class="comment-1" rowspan="1">Mark the step with bit 5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d31a"></span>D31A</td>
+<td class="instruction">LD (IX+$25),A</td>
+<td class="comment-1" rowspan="1">Keep the marked step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d31d"></span>D31D</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="18">Copy the path's coordinates into the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d31e"></span>D31E</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d31f"></span>D31F</td>
+<td class="instruction">LD (IX+$09),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d322"></span>D322</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d323"></span>D323</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d324"></span>D324</td>
+<td class="instruction">LD (IX+$08),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d327"></span>D327</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d328"></span>D328</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d329"></span>D329</td>
+<td class="instruction">LD (IX+$06),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d32c"></span>D32C</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d32d"></span>D32D</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d32e"></span>D32E</td>
+<td class="instruction">LD (IX+$05),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d331"></span>D331</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d332"></span>D332</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d333"></span>D333</td>
+<td class="instruction">LD (IX+$03),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d336"></span>D336</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d337"></span>D337</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d338"></span>D338</td>
+<td class="instruction">LD (IX+$02),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d33b"></span>D33B</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Bring the new path flags back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d33c"></span>D33C</td>
+<td class="instruction">AND %11000000</td>
+<td class="comment-1" rowspan="1">Use bits 6-7 of those flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d33e"></span>D33E</td>
+<td class="instruction">CP $90</td>
+<td class="comment-1" rowspan="2">Place the entity on y unless the flags are C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d340"></span>D340</td>
+<td class="instruction">JR NC,<a href="D202.html#d35b">FollowPath_PlaceX</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d342"></span>D342</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Read the low byte of y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d345"></span>D345</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Use the high nibble of y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d347"></span>D347</td>
+<td class="instruction">OR %00001000</td>
+<td class="comment-1" rowspan="1">Force the low nibble to 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d349"></span>D349</td>
+<td class="instruction">LD (IX+$06),A</td>
+<td class="comment-1" rowspan="1">Keep that y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d34c"></span>D34C</td>
+<td class="instruction">LD A,$10</td>
+<td class="comment-1" rowspan="5">Shift x by half of 10 less the x extent.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d34e"></span>D34E</td>
+<td class="instruction">SUB (IX+$0B)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d351"></span>D351</td>
+<td class="instruction">SRL A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d353"></span>D353</td>
+<td class="instruction">ADD A,(IX+$03)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d356"></span>D356</td>
+<td class="instruction">LD (IX+$03),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d359"></span>D359</td>
+<td class="instruction">JR <a href="D202.html#d372">FollowPath_2</a></td>
+<td class="comment-1" rowspan="1">Join the falling sweep.</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_PlaceX</td>
+<td class="address-2"><span id="d35b"></span>D35B</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Read the low byte of x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d35e"></span>D35E</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Use the high nibble of x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d360"></span>D360</td>
+<td class="instruction">OR %00001000</td>
+<td class="comment-1" rowspan="1">Force the low nibble to 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d362"></span>D362</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Keep that x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d365"></span>D365</td>
+<td class="instruction">LD A,$10</td>
+<td class="comment-1" rowspan="5">Shift y by half of 10 less the y extent.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d367"></span>D367</td>
+<td class="instruction">SUB (IX+$0C)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d36a"></span>D36A</td>
+<td class="instruction">SRL A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d36c"></span>D36C</td>
+<td class="instruction">ADD A,(IX+$06)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d36f"></span>D36F</td>
+<td class="instruction">LD (IX+$06),A</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_2</td>
+<td class="address-2"><span id="d372"></span>D372</td>
+<td class="instruction">JP <a href="9F31.html">PlayFallingSweep</a></td>
+<td class="comment-1" rowspan="1">Play the falling sweep.</td>
+</tr>
+<tr>
+<td class="asm-label">FollowPath_Next</td>
+<td class="address-2"><span id="d375"></span>D375</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="3">Read the next byte of the path table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d378"></span>D378</td>
+<td class="instruction">LD DE,$0005</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d37b"></span>D37B</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d37c"></span>D37C</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Use it as field 25.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d37d"></span>D37D</td>
+<td class="instruction">LD (IX+$25),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d380"></span>D380</td>
+<td class="instruction">LD A,(IX+$24)</td>
+<td class="comment-1" rowspan="1">Read field 24.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d383"></span>D383</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Use bits 0-5 of the path.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d385"></span>D385</td>
+<td class="instruction">LD (IX+$24),A</td>
+<td class="comment-1" rowspan="1">Clear bits 6-7 of the path.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d388"></span>D388</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D037.html">D037</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d202">Map</a></td>
+<td class="next">
+Next: <a href="D389.html">D389</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/53762.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

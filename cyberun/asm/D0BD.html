@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cyberun: Routine at D0BD</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cyberun.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D0BC.html">D0BC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d0bd">Map</a></td>
+<td class="next">
+Next: <a href="D292.html">D292</a>
+</td>
+</tr>
+</table>
+<div class="description">D0BD: Draw Terrain</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="DDF8.html">ScrollWorld</a>.
+</div>
+<div class="paragraph">
+Draws the terrain of the four tiles that are in view, by running the script of each tile. The number of the tile is kept in <a href="5C1D.html">TileNumber</a>: bit 0 is set for a tile below the first and bit 1 for a tile to the right. The scripts of the tiles are found from the table at <a href="DC87.html">TileScriptPointer</a>. Each tile is a list of segments, and each segment is set up with <a href="CD08.html">SetUpSegment</a> and <a href="CD6B.html">ReadSegmentShapes</a> and then drawn step by step, each step of a segment being a piece of picture. <a href="5C3D.html">TilesChanged</a> is non-zero when the tiles have changed, and then the routine also makes a record of each segment in the area from <a href="5B80.html">GameEntry</a>: a count byte for the tile followed by five bytes for each segment (the position, the size and the code from <a href="D0AC.html">SegmentCodes</a>), which the routines that move objects use to test for collisions with the terrain. The segments that are not near the position at <a href="CE45.html">PositionAcross</a> and <a href="CE46.html">PositionDown</a> are not drawn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain</td>
+<td class="address-2"><span id="d0bd"></span>D0BD</td>
+<td class="instruction">LD A,($5C3C)</td>
+<td class="comment-1" rowspan="1">The scroll-in flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0c0"></span>D0C0</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d0c6">DrawTerrain_Tables</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0c1"></span>D0C1</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d0c6">DrawTerrain_Tables</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0c3"></span>D0C3</td>
+<td class="instruction">LD ($5C3D),A</td>
+<td class="comment-1" rowspan="1">Update the tiles changed.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d0c6"></span>
+<div class="comments">
+<div class="paragraph">
+Choose the table of shifted pictures for the horizontal offset, and the offsets table that goes with it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Tables</td>
+<td class="address-2"><span id="d0c6"></span>D0C6</td>
+<td class="instruction">LD A,($CE42)</td>
+<td class="comment-1" rowspan="1">The vertical offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0c9"></span>D0C9</td>
+<td class="instruction">ADD A,$60</td>
+<td class="comment-1" rowspan="1">Add 60 to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0cb"></span>D0CB</td>
+<td class="instruction">LD ($CE42),A</td>
+<td class="comment-1" rowspan="1">Update the vertical offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0ce"></span>D0CE</td>
+<td class="instruction">LD DE,$CCBF</td>
+<td class="comment-1" rowspan="1">The picture offsets.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0d1"></span>D0D1</td>
+<td class="instruction">LD ($CE4B),DE</td>
+<td class="comment-1" rowspan="1">Update the picture offsets pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0d5"></span>D0D5</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0d6"></span>D0D6</td>
+<td class="instruction">LD HL,$E37D</td>
+<td class="comment-1" rowspan="1">The shape table shift zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0d9"></span>D0D9</td>
+<td class="instruction">LD A,($CE41)</td>
+<td class="comment-1" rowspan="1">The horizontal offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0dc"></span>D0DC</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0de"></span>D0DE</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d0f8">DrawTerrain_Tile</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d0f8">DrawTerrain_Tile</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0e0"></span>D0E0</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0e1"></span>D0E1</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0e2"></span>D0E2</td>
+<td class="instruction">LD ($CE4B),DE</td>
+<td class="comment-1" rowspan="1">Update the picture offsets pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0e6"></span>D0E6</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0e7"></span>D0E7</td>
+<td class="instruction">LD HL,$E2BD</td>
+<td class="comment-1" rowspan="1">The shape table shift two.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0ea"></span>D0EA</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d0f8">DrawTerrain_Tile</a> if <span class="register">A</span> is 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0ec"></span>D0EC</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d0f8">DrawTerrain_Tile</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0ee"></span>D0EE</td>
+<td class="instruction">LD HL,$E2FD</td>
+<td class="comment-1" rowspan="1">The shape table shift four.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0f1"></span>D0F1</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d0f8">DrawTerrain_Tile</a> if <span class="register">A</span> is 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0f3"></span>D0F3</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d0f8">DrawTerrain_Tile</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0f5"></span>D0F5</td>
+<td class="instruction">LD HL,$E33D</td>
+<td class="comment-1" rowspan="1">The shape table shift six.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d0f8"></span>
+<div class="comments">
+<div class="paragraph">
+Run the script of each of the four tiles in turn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Tile</td>
+<td class="address-2"><span id="d0f8"></span>D0F8</td>
+<td class="instruction">LD ($CCBD),HL</td>
+<td class="comment-1" rowspan="1">Update the shape table pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0fb"></span>D0FB</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d0fc"></span>D0FC</td>
+<td class="instruction">LD ($5C1D),A</td>
+<td class="comment-1" rowspan="1">Update the tile number.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d0ff"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="D80A.html">NextSegment</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Record</td>
+<td class="address-2"><span id="d0ff"></span>D0FF</td>
+<td class="instruction">LD IX,$5B80</td>
+<td class="comment-1" rowspan="1">The decryption routine.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d103"></span>D103</td>
+<td class="instruction">LD A,($5C1D)</td>
+<td class="comment-1" rowspan="1">The tile number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d106"></span>D106</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d11d">DrawTerrain_Script</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d107"></span>D107</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d11d">DrawTerrain_Script</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d109"></span>D109</td>
+<td class="instruction">LD IX,$5BA5</td>
+<td class="comment-1" rowspan="1">Use 5BA5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d10d"></span>D10D</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d11d">DrawTerrain_Script</a> if <span class="register">A</span> is 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d10f"></span>D10F</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d11d">DrawTerrain_Script</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d111"></span>D111</td>
+<td class="instruction">LD IX,$5BCA</td>
+<td class="comment-1" rowspan="1">Use 5BCA.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d115"></span>D115</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d11d">DrawTerrain_Script</a> if <span class="register">A</span> is 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d117"></span>D117</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d11d">DrawTerrain_Script</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d119"></span>D119</td>
+<td class="instruction">LD IX,$5BEF</td>
+<td class="comment-1" rowspan="1">Use 5BEF.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d11d"></span>
+<div class="comments">
+<div class="paragraph">
+Read the address of the script of the tile and see if it starts with the prefix bytes that draw it upside down (99) and back to front (FF).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Script</td>
+<td class="address-2"><span id="d11d"></span>D11D</td>
+<td class="instruction">LD HL,($DC87)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="DC87.html">TileScriptPointer</a> into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d120"></span>D120</td>
+<td class="instruction">LD E,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span> into <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d121"></span>D121</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d122"></span>D122</td>
+<td class="instruction">LD D,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span> into <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d123"></span>D123</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d124"></span>D124</td>
+<td class="instruction">LD ($DC87),HL</td>
+<td class="comment-1" rowspan="1">Update the tile script pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d127"></span>D127</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Swap <span class="register">DE</span> and <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d128"></span>D128</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d129"></span>D129</td>
+<td class="instruction">LD ($5C30),A</td>
+<td class="comment-1" rowspan="1">Update the back to front flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d12c"></span>D12C</td>
+<td class="instruction">LD ($5C26),A</td>
+<td class="comment-1" rowspan="1">Update the upside down flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d12f"></span>D12F</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 00 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d132"></span>D132</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d133"></span>D133</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D80A.html#d81a">NextSegment_Tile</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d134"></span>D134</td>
+<td class="instruction">JP Z,<a href="D80A.html#d81a">NextSegment_Tile</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d137"></span>D137</td>
+<td class="instruction">CP $99</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d13f">DrawTerrain_BackToFront</a> if <span class="register">A</span> is not 99.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d139"></span>D139</td>
+<td class="instruction">JR NZ,<a href="D0BD.html#d13f">DrawTerrain_BackToFront</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d13b"></span>D13B</td>
+<td class="instruction">LD ($5C26),A</td>
+<td class="comment-1" rowspan="1">Update the upside down flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d13e"></span>D13E</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_BackToFront</td>
+<td class="address-2"><span id="d13f"></span>D13F</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d140"></span>D140</td>
+<td class="instruction">CP $FF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d148">DrawTerrain_Count</a> if <span class="register">A</span> is not FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d142"></span>D142</td>
+<td class="instruction">JR NZ,<a href="D0BD.html#d148">DrawTerrain_Count</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d144"></span>D144</td>
+<td class="instruction">LD ($5C30),A</td>
+<td class="comment-1" rowspan="1">Update the back to front flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d147"></span>D147</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Count</td>
+<td class="address-2"><span id="d148"></span>D148</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d149"></span>D149</td>
+<td class="instruction">CP $95</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d14f">DrawTerrain_Remember</a> if <span class="register">A</span> is less than 95.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d14b"></span>D14B</td>
+<td class="instruction">JR C,<a href="D0BD.html#d14f">DrawTerrain_Remember</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d14d"></span>D14D</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d14e"></span>D14E</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Remember</td>
+<td class="address-2"><span id="d14f"></span>D14F</td>
+<td class="instruction">LD ($5C20),A</td>
+<td class="comment-1" rowspan="1">Update the segments still to draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d152"></span>D152</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 00 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d155"></span>D155</td>
+<td class="instruction">INC IX</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d157"></span>D157</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d158"></span>D158</td>
+<td class="instruction">LD ($BA09),IX</td>
+<td class="comment-1" rowspan="1">The segment record.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d15c"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="D80A.html">NextSegment</a>.
+</div>
+<div class="paragraph">
+Start a segment: clear the variables, read its position and type from the script and set up its slope and shapes.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Segment</td>
+<td class="address-2"><span id="d15c"></span>D15C</td>
+<td class="instruction">LD IX,$DEDC</td>
+<td class="comment-1" rowspan="1">The segment record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d160"></span>D160</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d161"></span>D161</td>
+<td class="instruction">LD ($5C2F),A</td>
+<td class="comment-1" rowspan="1">Update the flagged steps.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d164"></span>D164</td>
+<td class="instruction">LD ($CE54),A</td>
+<td class="comment-1" rowspan="1">Update the steps already drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d167"></span>D167</td>
+<td class="instruction">LD ($5C32),A</td>
+<td class="comment-1" rowspan="1">Update the last contact flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d16a"></span>D16A</td>
+<td class="instruction">LD ($5C27),A</td>
+<td class="comment-1" rowspan="1">Update the shape flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d16d"></span>D16D</td>
+<td class="instruction">LD ($5C34),A</td>
+<td class="comment-1" rowspan="1">Update the segment end shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d170"></span>D170</td>
+<td class="instruction">LD ($5C33),A</td>
+<td class="comment-1" rowspan="1">Update the segment start shape.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d173"></span>D173</td>
+<td class="instruction">LD ($5C35),A</td>
+<td class="comment-1" rowspan="1">Update the upside-down segment flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d176"></span>D176</td>
+<td class="instruction">LD ($CE5A),A</td>
+<td class="comment-1" rowspan="1">Update the vertical step copy.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d179"></span>D179</td>
+<td class="instruction">LD ($D85D),A</td>
+<td class="comment-1" rowspan="1">Update the edge flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d17c"></span>D17C</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 01 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d17f"></span>D17F</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d180"></span>D180</td>
+<td class="instruction">LD ($CE43),A</td>
+<td class="comment-1" rowspan="1">Update the segment column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d183"></span>D183</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d184"></span>D184</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d185"></span>D185</td>
+<td class="instruction">LD ($CE44),A</td>
+<td class="comment-1" rowspan="1">Update the segment row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d188"></span>D188</td>
+<td class="instruction">LD ($CE3C),A</td>
+<td class="comment-1" rowspan="1">The segment row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d18b"></span>D18B</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d18c"></span>D18C</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d18d"></span>D18D</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d18e"></span>D18E</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d18f"></span>D18F</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d190"></span>D190</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">A</span> right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d191"></span>D191</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 0F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d193"></span>D193</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 03 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d196"></span>D196</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d197"></span>D197</td>
+<td class="instruction">CALL <a href="CD08.html">SetUpSegment</a></td>
+<td class="comment-1" rowspan="1">Call <a href="CD08.html">SetUpSegment</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d19a"></span>D19A</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d19b"></span>D19B</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d19c"></span>D19C</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the bits of <span class="register">A</span> that are set in 0F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d19e"></span>D19E</td>
+<td class="instruction">JR NZ,<a href="D0BD.html#d1a2">DrawTerrain_Length</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d1a2">DrawTerrain_Length</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1a0"></span>D1A0</td>
+<td class="instruction">LD A,$10</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=10.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Length</td>
+<td class="address-2"><span id="d1a2"></span>D1A2</td>
+<td class="instruction">LD ($5C22),A</td>
+<td class="comment-1" rowspan="1">Update the segment length.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1a5"></span>D1A5</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1"><span class="register">C</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1a6"></span>D1A6</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Advance <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1a7"></span>D1A7</td>
+<td class="instruction">CALL <a href="CD6B.html">ReadSegmentShapes</a></td>
+<td class="comment-1" rowspan="1">Call <a href="CD6B.html">ReadSegmentShapes</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1aa"></span>D1AA</td>
+<td class="instruction">LD HL,$CE24</td>
+<td class="comment-1" rowspan="1">The column phase table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1ad"></span>D1AD</td>
+<td class="instruction">LD B,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Read offset 03 of <span class="register">IX</span> into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1b0"></span>D1B0</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1b1"></span>D1B1</td>
+<td class="instruction">LD IX,($BA09)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="B9EC.html#ba09">BA09</a> into <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d1b5"></span>
+<div class="comments">
+<div class="paragraph">
+If the tiles have changed, make the record of the segment.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Changed</td>
+<td class="address-1"><span id="d1b5"></span>D1B5</td>
+<td class="instruction">LD A,($5C3D)</td>
+<td class="comment-1" rowspan="1">The tiles changed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1b8"></span>D1B8</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d25a">DrawTerrain_Test</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1b9"></span>D1B9</td>
+<td class="instruction">JP Z,<a href="D0BD.html#d25a">DrawTerrain_Test</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1bc"></span>D1BC</td>
+<td class="instruction">LD A,($DEDF)</td>
+<td class="comment-1" rowspan="1">The segment type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1bf"></span>D1BF</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1c0"></span>D1C0</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1c2"></span>D1C2</td>
+<td class="instruction">LD HL,$D0AC</td>
+<td class="comment-1" rowspan="1">The segment codes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1c5"></span>D1C5</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span> gains <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1c6"></span>D1C6</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1c7"></span>D1C7</td>
+<td class="instruction">LD (IX+$04),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 04 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1ca"></span>D1CA</td>
+<td class="instruction">LD A,($5C22)</td>
+<td class="comment-1" rowspan="1">The segment length.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1cd"></span>D1CD</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 02 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1d0"></span>D1D0</td>
+<td class="instruction">LD A,($CE43)</td>
+<td class="comment-1" rowspan="1">The segment column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1d3"></span>D1D3</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 00 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1d6"></span>D1D6</td>
+<td class="instruction">LD A,($CE44)</td>
+<td class="comment-1" rowspan="1">The segment row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1d9"></span>D1D9</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 01 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1dc"></span>D1DC</td>
+<td class="instruction">LD A,($CE37)</td>
+<td class="comment-1" rowspan="1">The vertical step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1df"></span>D1DF</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d204">DrawTerrain_Sloped</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1e0"></span>D1E0</td>
+<td class="instruction">JR NZ,<a href="D0BD.html#d204">DrawTerrain_Sloped</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1e2"></span>D1E2</td>
+<td class="instruction">LD B,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Read offset 02 of <span class="register">IX</span> into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1e5"></span>D1E5</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_FlatWidth</td>
+<td class="address-2"><span id="d1e6"></span>D1E6</td>
+<td class="instruction">ADD A,$18</td>
+<td class="comment-1" rowspan="1">Add 18 to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1e8"></span>D1E8</td>
+<td class="instruction">DJNZ <a href="D0BD.html#d1e6">DrawTerrain_FlatWidth</a></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">B</span> and jump to <a href="D0BD.html#d1e6">DrawTerrain_FlatWidth</a> until none remain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1ea"></span>D1EA</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 02 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1ed"></span>D1ED</td>
+<td class="instruction">LD A,($DEDF)</td>
+<td class="comment-1" rowspan="1">The segment type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1f0"></span>D1F0</td>
+<td class="instruction">CP $07</td>
+<td class="comment-1" rowspan="1">Compare <span class="register">A</span> with 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1f2"></span>D1F2</td>
+<td class="instruction">LD (IX+$03),$14</td>
+<td class="comment-1" rowspan="1">Store 14 at offset 03 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1f6"></span>D1F6</td>
+<td class="instruction">JP Z,<a href="D0BD.html#d25a">DrawTerrain_Test</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d25a">DrawTerrain_Test</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1f9"></span>D1F9</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Read offset 01 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1fc"></span>D1FC</td>
+<td class="instruction">ADD A,$10</td>
+<td class="comment-1" rowspan="1">Add 10 to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d1fe"></span>D1FE</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 01 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d201"></span>D201</td>
+<td class="instruction">JP <a href="D0BD.html#d25a">DrawTerrain_Test</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d25a">DrawTerrain_Test</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Sloped</td>
+<td class="address-2"><span id="d204"></span>D204</td>
+<td class="instruction">LD A,($CE59)</td>
+<td class="comment-1" rowspan="1">The horizontal step copy.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d207"></span>D207</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d22d">DrawTerrain_Extent</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d208"></span>D208</td>
+<td class="instruction">JR NZ,<a href="D0BD.html#d22d">DrawTerrain_Extent</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d20a"></span>D20A</td>
+<td class="instruction">LD B,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Read offset 02 of <span class="register">IX</span> into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d20d"></span>D20D</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_SlopeWidth</td>
+<td class="address-2"><span id="d20e"></span>D20E</td>
+<td class="instruction">ADD A,$10</td>
+<td class="comment-1" rowspan="1">Add 10 to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d210"></span>D210</td>
+<td class="instruction">DJNZ <a href="D0BD.html#d20e">DrawTerrain_SlopeWidth</a></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">B</span> and jump to <a href="D0BD.html#d20e">DrawTerrain_SlopeWidth</a> until none remain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d212"></span>D212</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d213"></span>D213</td>
+<td class="instruction">LD (IX+$02),$18</td>
+<td class="comment-1" rowspan="1">Store 18 at offset 02 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d217"></span>D217</td>
+<td class="instruction">LD A,($DEDF)</td>
+<td class="comment-1" rowspan="1">The segment type.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d21a"></span>D21A</td>
+<td class="instruction">LD (IX+$03),B</td>
+<td class="comment-1" rowspan="1">Write <span class="register">B</span> to offset 03 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d21d"></span>D21D</td>
+<td class="instruction">CP $0F</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d25a">DrawTerrain_Test</a> if <span class="register">A</span> is not 0F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d21f"></span>D21F</td>
+<td class="instruction">JP NZ,<a href="D0BD.html#d25a">DrawTerrain_Test</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d222"></span>D222</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Read offset 00 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d225"></span>D225</td>
+<td class="instruction">SUB $10</td>
+<td class="comment-1" rowspan="1">Subtract 10 from <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d227"></span>D227</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 00 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d22a"></span>D22A</td>
+<td class="instruction">JP <a href="D0BD.html#d25a">DrawTerrain_Test</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d25a">DrawTerrain_Test</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Extent</td>
+<td class="address-2"><span id="d22d"></span>D22D</td>
+<td class="instruction">LD A,($E41B)</td>
+<td class="comment-1" rowspan="1">The slope direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d230"></span>D230</td>
+<td class="instruction">CP $FF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d23d">DrawTerrain_End</a> if <span class="register">A</span> is FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d232"></span>D232</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d23d">DrawTerrain_End</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d234"></span>D234</td>
+<td class="instruction">LD A,($5C25)</td>
+<td class="comment-1" rowspan="1">The horizontal step size.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d237"></span>D237</td>
+<td class="instruction">ADD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Add the byte at offset 00 of <span class="register">IX</span> to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d23a"></span>D23A</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 00 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_End</td>
+<td class="address-2"><span id="d23d"></span>D23D</td>
+<td class="instruction">LD B,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Read offset 02 of <span class="register">IX</span> into <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d240"></span>D240</td>
+<td class="instruction">LD D,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Read offset 00 of <span class="register">IX</span> into <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d243"></span>D243</td>
+<td class="instruction">LD E,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Read offset 01 of <span class="register">IX</span> into <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_ExtentLoop</td>
+<td class="address-2"><span id="d246"></span>D246</td>
+<td class="instruction">LD A,($CE35)</td>
+<td class="comment-1" rowspan="1">The horizontal step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d249"></span>D249</td>
+<td class="instruction">ADD A,D</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span> gains <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d24a"></span>D24A</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1"><span class="register">D</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d24b"></span>D24B</td>
+<td class="instruction">LD A,($CE37)</td>
+<td class="comment-1" rowspan="1">The vertical step.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d24e"></span>D24E</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d250"></span>D250</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span> gains <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d251"></span>D251</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d252"></span>D252</td>
+<td class="instruction">DJNZ <a href="D0BD.html#d246">DrawTerrain_ExtentLoop</a></td>
+<td class="comment-1" rowspan="1">Decrease <span class="register">B</span> and jump to <a href="D0BD.html#d246">DrawTerrain_ExtentLoop</a> until none remain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d254"></span>D254</td>
+<td class="instruction">LD (IX+$03),E</td>
+<td class="comment-1" rowspan="1">Write <span class="register">E</span> to offset 03 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d257"></span>D257</td>
+<td class="instruction">LD (IX+$02),D</td>
+<td class="comment-1" rowspan="1">Write <span class="register">D</span> to offset 02 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d25a"></span>
+<div class="comments">
+<div class="paragraph">
+Test whether the segment is near the position at <a href="CE45.html">PositionAcross</a> and <a href="CE46.html">PositionDown</a>, and skip it if it is not.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Test</td>
+<td class="address-2"><span id="d25a"></span>D25A</td>
+<td class="instruction">LD A,($CE45)</td>
+<td class="comment-1" rowspan="1">The position across.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d25d"></span>D25D</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d25e"></span>D25E</td>
+<td class="instruction">LD A,($5C1D)</td>
+<td class="comment-1" rowspan="1">The tile number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d261"></span>D261</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d26a">DrawTerrain_TestVertical</a> if bit 1 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d263"></span>D263</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d26a">DrawTerrain_TestVertical</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d265"></span>D265</td>
+<td class="instruction">CALL <a href="D2C0.html">TestRightColumn</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D2C0.html">TestRightColumn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d268"></span>D268</td>
+<td class="instruction">JR <a href="D0BD.html#d26d">DrawTerrain_Vertical</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d26d">DrawTerrain_Vertical</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_TestVertical</td>
+<td class="address-2"><span id="d26a"></span>D26A</td>
+<td class="instruction">CALL <a href="D292.html">TestLeftColumn</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D292.html">TestLeftColumn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Vertical</td>
+<td class="address-2"><span id="d26d"></span>D26D</td>
+<td class="instruction">JP NZ,<a href="D0BD.html#d28c">DrawTerrain_Skip</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d28c">DrawTerrain_Skip</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d270"></span>D270</td>
+<td class="instruction">LD A,($CE46)</td>
+<td class="comment-1" rowspan="1">The position down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d273"></span>D273</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d274"></span>D274</td>
+<td class="instruction">LD A,($5C1D)</td>
+<td class="comment-1" rowspan="1">The tile number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d277"></span>D277</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D0BD.html#d280">DrawTerrain_Top</a> if bit 0 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d279"></span>D279</td>
+<td class="instruction">JR Z,<a href="D0BD.html#d280">DrawTerrain_Top</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d27b"></span>D27B</td>
+<td class="instruction">CALL <a href="D2E1.html">TestBottomRow</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D2E1.html">TestBottomRow</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d27e"></span>D27E</td>
+<td class="instruction">JR <a href="D0BD.html#d283">DrawTerrain_Near</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d283">DrawTerrain_Near</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Top</td>
+<td class="address-2"><span id="d280"></span>D280</td>
+<td class="instruction">CALL <a href="D2DA.html">TestTopRow</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D2DA.html">TestTopRow</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Near</td>
+<td class="address-2"><span id="d283"></span>D283</td>
+<td class="instruction">JP NZ,<a href="D0BD.html#d28c">DrawTerrain_Skip</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D0BD.html#d28c">DrawTerrain_Skip</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d286"></span>D286</td>
+<td class="instruction">CALL <a href="D303.html">NextRecord</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D303.html">NextRecord</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d289"></span>D289</td>
+<td class="instruction">JP <a href="D319.html#d33d">NextStep_Test</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D319.html#d33d">NextStep_Test</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawTerrain_Skip</td>
+<td class="address-2"><span id="d28c"></span>D28C</td>
+<td class="instruction">CALL <a href="D303.html">NextRecord</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D303.html">NextRecord</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d28f"></span>D28F</td>
+<td class="instruction">JP <a href="D80A.html">NextSegment</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D80A.html">NextSegment</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="D0BC.html">D0BC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#d0bd">Map</a></td>
+<td class="next">
+Next: <a href="D292.html">D292</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/">Source code</a>.</div>
+<div><a href="../dec/asm/53437.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

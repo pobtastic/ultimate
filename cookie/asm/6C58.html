@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,34 +36,37 @@ Next: <a href="6C7A.html">6C7A</a>
 </td>
 </tr>
 </table>
-<div class="description">6C58: Initialise New Game</div>
+<div class="description">6C58: Set Up Level</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="6428.html">StartGame</a>, <a href="64E8.html">64E8</a> and <a href="6C3C.html">NextLevel</a>.
+Used by the routines at <a href="6428.html">StartGame</a>, <a href="64F4.html">HandleCake</a> and <a href="6C3C.html">NextLevel</a>.
+</div>
+<div class="paragraph">
+Sets up the active player for the level in <a href="5F2D.html">ActivePlayer_Level</a>. The number of ingredients needed (in BCD) is 10 for the first set of five levels, 20 for the second set, and so on. An actor with ID 0A is created in the first of the six slots, with a horizontal co-ordinate of 20; it is the timer which is handled by <a href="6C31.html">HandleLevelTimer</a>. The level number which is shown on the screen (in BCD, up to a maximum of 99) is also increased.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">GameInit</td>
+<td class="asm-label">SetUpLevel</td>
 <td class="address-2"><span id="6c58"></span>6C58</td>
 <td class="instruction">LD A,($5F2D)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5F2D.html">1UP_Level</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the level.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c5b"></span>6C5B</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> * 2.</td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">A</span> left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c5c"></span>6C5C</td>
 <td class="instruction">AND %01110000</td>
-<td class="comment-1" rowspan="1">Keep only bits 4-6.</td>
+<td class="comment-1" rowspan="1">Keep only bits 4-6, which is the set (from bits 3-5 of the level) multiplied by 10.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -72,13 +78,13 @@ Used by the routines at <a href="6428.html">StartGame</a>, <a href="64E8.html">6
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c60"></span>6C60</td>
 <td class="instruction">LD ($5F2F),A</td>
-<td class="comment-1" rowspan="1">Write this to <a href="5F2D.html#5f2f">1UP_Nasties</a>.</td>
+<td class="comment-1" rowspan="1">Set the number of ingredients needed (<a href="5F2F.html">ActivePlayer_IngredientsNeeded</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c63"></span>6C63</td>
 <td class="instruction">LD HL,$5F55</td>
-<td class="comment-1" rowspan="2">Write 0A to <a href="5F55.html">BufferIngredients</a>.</td>
+<td class="comment-1" rowspan="2">Write 0A to the actor ID of <a href="5F55.html">ActorSpawnSlots</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -89,7 +95,7 @@ Used by the routines at <a href="6428.html">StartGame</a>, <a href="64E8.html">6
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c68"></span>6C68</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2">Write 20 to <a href="5F55.html#5f56">5F56</a>.</td>
+<td class="comment-1" rowspan="2">Write 20 to the horizontal co-ordinate of the actor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -101,7 +107,7 @@ Used by the routines at <a href="6428.html">StartGame</a>, <a href="64E8.html">6
 <span id="6c6b"></span>
 <div class="comments">
 <div class="paragraph">
-The number of Nasties to spawn maxes at 99.
+The level number (in BCD) maxes out at 99.
 </div>
 </div>
 </td>
@@ -110,46 +116,48 @@ The number of Nasties to spawn maxes at 99.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c6b"></span>6C6B</td>
 <td class="instruction">LD HL,$5F30</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=<a href="5F2D.html#5f30">1UP_Ingredients</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the level number (<a href="5F30.html">ActivePlayer_LevelNumber</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c6e"></span>6C6E</td>
 <td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the level number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c6f"></span>6C6F</td>
 <td class="instruction">ADD A,$01</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=<span class="register">A</span> + 01 (with "Decimal Adjust after Addition").</td>
+<td class="comment-1" rowspan="1">Add 01 to the level number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c71"></span>6C71</td>
 <td class="instruction">DAA</td>
+<td class="comment-1" rowspan="1">Adjust <span class="register">A</span> to BCD.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c72"></span>6C72</td>
 <td class="instruction">CP $99</td>
-<td class="comment-1" rowspan="2">If <span class="register">A</span> is already 99 jump to <a href="6C58.html#6c78">GameInit_Return</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="6C58.html#6c78">SetUpLevel_Return</a> if the level number is less than 99.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c74"></span>6C74</td>
-<td class="instruction">JR C,<a href="6C58.html#6c78">GameInit_Return</a></td>
+<td class="instruction">JR C,<a href="6C58.html#6c78">SetUpLevel_Return</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6c76"></span>6C76</td>
 <td class="instruction">LD A,$99</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=99.</td>
+<td class="comment-1" rowspan="1">Set the level number to the maximum, 99.</td>
 </tr>
 <tr>
-<td class="asm-label">GameInit_Return</td>
+<td class="asm-label">SetUpLevel_Return</td>
 <td class="address-2"><span id="6c78"></span>6C78</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Write <span class="register">A</span> to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Update the level number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

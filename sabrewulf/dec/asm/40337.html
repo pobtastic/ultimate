@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,242 +36,384 @@ Next: <a href="40452.html">40452</a>
 </td>
 </tr>
 </table>
-<div class="description">40337: Routine at 9D91</div>
+<div class="description">40337: Handler: Flame</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Handles a flame (sprite IDs 52-55) which has been started by <a href="39612.html">SpawnFlame</a>. A flame which is not in the player's room is counted off by <a href="42131.html">ExpireActor</a>. In the player's room it burns for a limited time, drifting around in a random direction (which is changed by <a href="40462.html">ChooseFlameDirection</a> whenever its timer runs out or it is blocked) and bouncing off the edges of the screen. It flickers by changing sprite and colour every time it is handled, and it plays a crackling sound. If it touches the player (while the player is coloured INK:WHITE, PAPER:BLACK (BRIGHT)) the player is hit. When its time is up, or the player is dead, the flame is blown up.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Flame record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="40337"></span>
+<div class="comments">
+<div class="paragraph">
+Count off the flame if it is not in the same room as the player.
+</div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerFlame</td>
 <td class="address-2"><span id="40337"></span>40337</td>
 <td class="instruction">LD A,(38659)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38658.html#38659">38659</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="38658.html#38659">38659</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40340"></span>40340</td>
 <td class="instruction">CP (IX+1)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="42131.html">ExpireActor</a> if the flame is in a different room to the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40343"></span>40343</td>
-<td class="instruction">JP NZ,<a href="42131.html">42131</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="42131.html">ExpireActor</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40346"></span>40346</td>
 <td class="instruction">LD A,23</td>
-<td class="comment-1" rowspan="2">Write 23 to <a href="40337.html#40346">40346</a>.</td>
+<td class="comment-1" rowspan="2">Write 23 to <a href="38573.html">Actor_Width</a> (the width of the flame).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40348"></span>40348</td>
 <td class="instruction">LD (38573),A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40351"></span>40351</td>
 <td class="instruction">CALL <a href="47883.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47883.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Remember the previous position of the flame.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40354"></span>
+<div class="comments">
+<div class="paragraph">
+Explode the flame if the player is not alive.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40354"></span>40354</td>
 <td class="instruction">LD A,(38658)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="38658.html">ImmortalData</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40357"></span>40357</td>
 <td class="instruction">SUB 16</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract 16 (the first Sabreman sprite ID).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40359"></span>40359</td>
 <td class="instruction">CP 32</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="42150.html">BlowUpActor</a> if the player is not alive.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40361"></span>40361</td>
-<td class="instruction">JP NC,<a href="42145.html#42150">42150</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NC,<a href="42150.html">BlowUpActor</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40364"></span>
+<div class="comments">
+<div class="paragraph">
+Explode the flame when its lifetime runs out.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40364"></span>40364</td>
 <td class="instruction">DEC (IX+8)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the lifetime of the flame by one and jump to <a href="42145.html">BlowUpFlame</a> if it has run out.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40367"></span>40367</td>
-<td class="instruction">JP Z,<a href="42145.html">42145</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="42145.html">BlowUpFlame</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40370"></span>
+<div class="comments">
+<div class="paragraph">
+Choose a new direction when the direction timer has run out.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40370"></span>40370</td>
 <td class="instruction">DEC (IX+2)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Decrease the direction timer by one and choose a new direction if it has run out.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40373"></span>40373</td>
-<td class="instruction">CALL Z,<a href="40462.html">40462</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL Z,<a href="40462.html">ChooseFlameDirection</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40376"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the new position of the flame and bounce off the edges of the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40376"></span>40376</td>
-<td class="instruction">CALL <a href="42059.html">42059</a></td>
-<td class="comment-1" rowspan="1">Call <a href="42059.html">42059</a>.</td>
+<td class="instruction">CALL <a href="42059.html">CalculateNewPosition</a></td>
+<td class="comment-1" rowspan="1">Work out the new position of the flame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40379"></span>40379</td>
 <td class="instruction">BIT 0,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="40452.html">BounceFlameHorizontally</a> if the flame has hit the left or right edge of the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40381"></span>40381</td>
-<td class="instruction">JR NZ,<a href="40452.html">40452</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="40452.html">BounceFlameHorizontally</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40383"></span>40383</td>
 <td class="instruction">BIT 1,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="40457.html">BounceFlameVertically</a> if the flame has hit the top or bottom edge of the screen.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40385"></span>40385</td>
-<td class="instruction">JR NZ,<a href="40457.html">40457</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="40457.html">BounceFlameVertically</a></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="40387"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="40452.html">40452</a> and <a href="40457.html">40457</a>.
+This entry point is used by the routines at <a href="40452.html">BounceFlameHorizontally</a> and <a href="40457.html">BounceFlameVertically</a>.
+</div>
+<div class="paragraph">
+Stop the flame moving through objects in the room. If it did not manage to move then choose a new direction.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerFlame_Move</td>
 <td class="address-2"><span id="40387"></span>40387</td>
 <td class="instruction">LD BC,5903</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=5903.</td>
+<td class="comment-1" rowspan="1">Set the height of the flame in <span class="register">B</span> to 23 and the width in <span class="register">C</span> to 15.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40390"></span>40390</td>
-<td class="instruction">CALL <a href="47132.html">47132</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47132.html">47132</a>.</td>
+<td class="instruction">CALL <a href="47132.html">SlideActorPastObjects</a></td>
+<td class="comment-1" rowspan="1">Stop the flame passing through objects in the room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40393"></span>40393</td>
-<td class="instruction">CALL <a href="43757.html">43757</a></td>
-<td class="comment-1" rowspan="1">Call <a href="43757.html">43757</a>.</td>
+<td class="instruction">CALL <a href="43757.html">TestPositionUnchanged</a></td>
+<td class="comment-1" rowspan="1">Test whether the flame has stayed where it was.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40396"></span>40396</td>
-<td class="instruction">CALL Z,<a href="40462.html">40462</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL Z,<a href="40462.html">ChooseFlameDirection</a></td>
+<td class="comment-1" rowspan="1">Choose a new direction if the flame has stayed where it was.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40399"></span>
+<div class="comments">
+<div class="paragraph">
+Flicker the flame by choosing one of the four flame sprites and a colour at random.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40399"></span>40399</td>
 <td class="instruction">LD A,(38549)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the random seed from <a href="38549.html">RandomNumber</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40402"></span>40402</td>
-<td class="instruction">AND 3</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40404"></span>40404</td>
-<td class="instruction">OR 52</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">OR %00110100</td>
+<td class="comment-1" rowspan="1">Set bits 2, 4-5.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40406"></span>40406</td>
 <td class="instruction">LD (IX+0),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the sprite ID of the flame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40409"></span>40409</td>
-<td class="instruction">CALL <a href="40548.html">40548</a></td>
-<td class="comment-1" rowspan="1">Call <a href="40548.html">40548</a>.</td>
+<td class="instruction">CALL <a href="40548.html">ChooseFlameColour</a></td>
+<td class="comment-1" rowspan="1">Choose a colour for the flame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40412"></span>40412</td>
 <td class="instruction">LD (IX+5),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the colour of the flame.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40415"></span>
+<div class="comments">
+<div class="paragraph">
+Store the new position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40415"></span>40415</td>
 <td class="instruction">LD (IX+3),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the X position of the flame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40418"></span>40418</td>
 <td class="instruction">LD (IX+4),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the Y position of the flame.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40421"></span>
+<div class="comments">
+<div class="paragraph">
+Hit the player if the flame touches the player, but only if the player is coloured INK:WHITE, PAPER:BLACK (BRIGHT).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40421"></span>40421</td>
 <td class="instruction">LD A,(38663)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the colour of the player from <a href="38658.html#38663">38663</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40424"></span>40424</td>
 <td class="instruction">CP 71</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="40337.html#40446">HandlerFlame_Draw</a> if the player is not coloured INK:WHITE, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40426"></span>40426</td>
-<td class="instruction">JR NZ,<a href="40337.html#40446">40446</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="40337.html#40446">HandlerFlame_Draw</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40428"></span>40428</td>
 <td class="instruction">LD BC,4879</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=4879.</td>
+<td class="comment-1" rowspan="1">Set the height of the flame in <span class="register">B</span> to 19 and the width in <span class="register">C</span> to 15.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40431"></span>40431</td>
-<td class="instruction">CALL <a href="43757.html#43777">43777</a></td>
-<td class="comment-1" rowspan="1">Call <a href="43757.html#43777">43777</a>.</td>
+<td class="instruction">CALL <a href="43777.html">TestPlayerTouchingActor</a></td>
+<td class="comment-1" rowspan="1">Test whether the flame is touching the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40434"></span>40434</td>
-<td class="instruction">JR NC,<a href="40337.html#40446">40446</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="40337.html#40446">HandlerFlame_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="40337.html#40446">HandlerFlame_Draw</a> if the flame is not touching the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40436"></span>40436</td>
 <td class="instruction">LD A,(38661)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the X position of the player from <a href="38658.html#38661">38661</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40439"></span>40439</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Rotate bit 7 (which half of the screen the player is in) into bit 0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40440"></span>40440</td>
 <td class="instruction">AND %00000001</td>
 <td class="comment-1" rowspan="1">Keep only bit 0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40442"></span>40442</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add one, so the hit direction is 1 or 2.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40443"></span>40443</td>
 <td class="instruction">LD (38660),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the hit direction in <a href="38658.html#38660">38660</a> (the player's state).</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="40446"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the flame and make the crackling sound.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerFlame_Draw</td>
 <td class="address-2"><span id="40446"></span>40446</td>
-<td class="instruction">CALL <a href="44375.html#44381">44381</a></td>
-<td class="comment-1" rowspan="1">Call <a href="44375.html#44381">44381</a>.</td>
+<td class="instruction">CALL <a href="44381.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Display the flame.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="40449"></span>40449</td>
-<td class="instruction">JP <a href="48844.html">48844</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="48844.html">48844</a>.</td>
+<td class="instruction">JP <a href="48844.html">PlayFlameSound</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48844.html">PlayFlameSound</a> to play the flame sound.</td>
 </tr>
 </table>
 <table class="asm-navigation">

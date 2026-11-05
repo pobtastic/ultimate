@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,19 @@ Next: <a href="6518.html">6518</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="6FAC.html">6FAC</a>.
+Used by the routine at <a href="6F3C.html">PlaceObject</a>.
+</div>
+<div class="paragraph">
+Prints the name of a place on the bottom line of the screen. Nothing happens unless bit 6 of the sprite ID of the map entry is set, which marks it as a place name. Bits 0-5 are then the number of the name in <a href="722F.html">PlaceNames</a>. The number plus one is written to <a href="5E39.html">CurrentPlaceID</a> so that <a href="6A9B.html">HandlerPlayer</a> knows a place name is being shown.  <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="place-name-before" src="../images/scr/place-name-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="place-name-after" src="../images/scr/place-name-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 <table class="input">
@@ -84,19 +99,19 @@ Strip out the bit which indicates the need to display the place name.
 <td class="asm-label"></td>
 <td class="address-1"><span id="64f5"></span>64F5</td>
 <td class="instruction">LD DE,$0005</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0005 (the minimum length of a place name without the "end-of-string" bit e.g. "TUCSO(N)").</td>
+<td class="comment-1" rowspan="1">Set the minimum length of a place name without the "end-of-string" bit (e.g. "TUCSO(N)"), 0005.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="64f8"></span>64F8</td>
 <td class="instruction">LD HL,$722F</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="722F.html">PlaceNames</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the table of place names (<a href="722F.html">PlaceNames</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="64fb"></span>64FB</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="2">Write <span class="register">A</span> + 01 to <a href="5E39.html">CurrentPlaceID</a>.</td>
+<td class="comment-1" rowspan="2">Write the number of the place name plus one to <a href="5E39.html">CurrentPlaceID</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -107,7 +122,7 @@ Strip out the bit which indicates the need to display the place name.
 <td class="asm-label"></td>
 <td class="address-1"><span id="64ff"></span>64FF</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="2"><span class="register">B</span>=original value of <span class="register">A</span> (used as a counter for finding the place name text).</td>
+<td class="comment-1" rowspan="2">Set the place name counter to the number of the place name.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -118,7 +133,7 @@ Strip out the bit which indicates the need to display the place name.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6501"></span>6501</td>
 <td class="instruction">JR Z,<a href="64F0.html#650b">DisplayPlaceName_Print</a></td>
-<td class="comment-1" rowspan="1">If <span class="register">A</span> is zero there's no need to search so jump immediately to <a href="64F0.html#650b">DisplayPlaceName_Print</a>.</td>
+<td class="comment-1" rowspan="1">If it is the first place name then there is no need to search, so jump to <a href="64F0.html#650b">DisplayPlaceName_Print</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -134,7 +149,7 @@ Speed up (slightly) searching through place names by adding <span class="registe
 <td class="asm-label">DisplayPlaceName_Search</td>
 <td class="address-2"><span id="6503"></span>6503</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1">Adds <span class="register">DE</span> (0005) to the place name pointer.</td>
+<td class="comment-1" rowspan="1">Add the minimum length of a place name to the pointer.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -178,7 +193,7 @@ Search for the end of the current place name.
 <td class="asm-label"></td>
 <td class="address-1"><span id="6509"></span>6509</td>
 <td class="instruction">DJNZ <a href="64F0.html#6503">DisplayPlaceName_Search</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="64F0.html#6503">DisplayPlaceName_Search</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the place name counter by one and loop back to <a href="64F0.html#6503">DisplayPlaceName_Search</a> until the right place name has been reached.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -194,43 +209,43 @@ Output the place name to the screen.
 <td class="asm-label">DisplayPlaceName_Print</td>
 <td class="address-2"><span id="650b"></span>650B</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1">Switch the <span class="register">DE</span> and <span class="register">HL</span> registers.</td>
+<td class="comment-1" rowspan="1">Swap the registers, so that <span class="register">DE</span> points at the place name.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="650c"></span>650C</td>
 <td class="instruction">LD HL,$B868</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=B868 (screen location).</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=B868 (pixel co-ordinates: <span class="register">H</span> is the Y position and <span class="register">L</span> is the X position).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="650f"></span>650F</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the pixel co-ordinates on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6510"></span>6510</td>
 <td class="instruction">CALL <a href="6F10.html">ScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="6F10.html">ScreenAddress</a>.</td>
+<td class="comment-1" rowspan="1">Convert them to a screen address using <a href="6F10.html">ScreenAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6513"></span>6513</td>
 <td class="instruction">LD A,$70</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=INK:BLACK, PAPER:YELLOW (BRIGHT) (attribute byte).</td>
+<td class="comment-1" rowspan="1">Set the attribute of the place name to INK:BLACK, PAPER:YELLOW (BRIGHT).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6515"></span>6515</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="1">Switch to the shadow <span class="register">AF</span> register.</td>
+<td class="comment-1" rowspan="1">Keep the attribute in the shadow <span class="register">AF</span> register.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6516"></span>6516</td>
-<td class="instruction">JR <a href="6518.html#651f">PrintStringColour_0</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="6518.html#651f">PrintStringColour_0</a>.</td>
+<td class="instruction">JR <a href="6518.html#651f">PrintStringColour_UseAttribute</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="6518.html#651f">PrintStringColour_UseAttribute</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">

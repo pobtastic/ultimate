@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -38,6 +41,9 @@ Next: <a href="24064.html">24064</a>
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Runs "RRD" on each of the 31744 bytes that start at 24575 which decrypts the game, and then jumps to <a href="24576.html">SecurityCheck</a>.
+</div>
 </div>
 </td>
 </tr>
@@ -46,7 +52,7 @@ Next: <a href="24064.html">24064</a>
 <span id="23424"></span>
 <div class="comments">
 <div class="paragraph">
-Runs "RRD" on every byte from 24575-56319.
+Set up the address of the first byte to decrypt and the counters.
 </div>
 </div>
 </td>
@@ -55,55 +61,64 @@ Runs "RRD" on every byte from 24575-56319.
 <td class="asm-label">GameEntry</td>
 <td class="address-2"><span id="23424"></span>23424</td>
 <td class="instruction">LD HL,24575</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=24575.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=24575 (the address of the first byte to decrypt).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="23427"></span>23427</td>
 <td class="instruction">LD BC,124</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=124.</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span>=0124 (<span class="register">B</span>=0 so the inner loop runs 256 times, and <span class="register">C</span> counts the 124 outer passes).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="23430"></span>23430</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1">Reset the flags.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=0 (and reset the flags).</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="23431"></span>
+<div class="comments">
+<div class="paragraph">
+Rotate the nibbles of each byte, chaining the low nibble of one byte into the high nibble of the next.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">Decryption_Loop</td>
 <td class="address-2"><span id="23431"></span>23431</td>
 <td class="instruction">RRD</td>
-<td class="comment-1" rowspan="1">RRD operation.</td>
+<td class="comment-1" rowspan="1">RRD operation on *<span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="23433"></span>23433</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span> by one.</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next byte to decrypt.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="23434"></span>23434</td>
 <td class="instruction">DJNZ <a href="23424.html#23431">Decryption_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="23424.html#23431">Decryption_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the byte counter (<span class="register">B</span>) by one and loop back to <a href="23424.html#23431">Decryption_Loop</a> until all 256 bytes have been done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="23436"></span>23436</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">C</span> by one.</td>
+<td class="comment-1" rowspan="2">Decrease the pass counter (<span class="register">C</span>) by one and loop back to <a href="23424.html#23431">Decryption_Loop</a> until all 124 passes have been done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="23437"></span>23437</td>
 <td class="instruction">JR NZ,<a href="23424.html#23431">Decryption_Loop</a></td>
-<td class="comment-1" rowspan="1">Loop back to <a href="23424.html#23431">Decryption_Loop</a> until <span class="register">C</span> is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="23439"></span>23439</td>
 <td class="instruction">JP <a href="24576.html">SecurityCheck</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="24576.html">SecurityCheck</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="24576.html">SecurityCheck</a> to run the security check.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

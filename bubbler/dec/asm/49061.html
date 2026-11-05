@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at 49061</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="48961.html">48961</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#49061">Map</a></td>
+<td class="next">
+Next: <a href="49377.html">49377</a>
+</td>
+</tr>
+</table>
+<div class="description">49061: Draw Object</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="47932.html">DrawGroupObjects</a>.
+</div>
+<div class="paragraph">
+Prepares an object of a group for drawing, and then passes it to the routine whose address is the operand of the JP at 49374 which is set by <a href="47728.html">DrawLevelObjects</a>. It works out the screen column and row of the object, and returns without doing anything if the object is not in view. Objects that can be entities are passed to <a href="48641.html">AddObjectEntity</a> first, and an object that has the flag for it in the row of flags of the group is also given an item record with <a href="45567.html">AddItemRecord</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The object, which is three bytes</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49061"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the screen column of the object. This is the depth of the cell plus the sum of the two halves of the first byte of the object, which are its offsets along the x and y axes, less the origin of the view.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject</td>
+<td class="address-2"><span id="49061"></span>49061</td>
+<td class="instruction">LD H,0</td>
+<td class="comment-1" rowspan="1">Set <span class="register">H</span> to the depth of the cell, which is patched in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49063"></span>49063</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49066"></span>49066</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="4">Multiply it by sixteen, to move the offset along the y axis to the top four bits...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49067"></span>49067</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49068"></span>49068</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49069"></span>49069</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49070"></span>49070</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49071"></span>49071</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the object again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49074"></span>49074</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep the offset along the x axis in the top four bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49076"></span>49076</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the two offsets to find the low byte of the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49077"></span>49077</td>
+<td class="instruction">JR NC,<a href="49061.html#49080">DrawObject_SetColumn</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="49061.html#49080">DrawObject_SetColumn</a> if there was no carry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49079"></span>49079</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">Increase the high byte of the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_SetColumn</td>
+<td class="address-2"><span id="49080"></span>49080</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Put the low byte of the screen column in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49081"></span>49081</td>
+<td class="instruction">LD BC,0</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to the origin of the view, which is patched in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49084"></span>49084</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the origin to the screen column.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49085"></span>
+<div class="comments">
+<div class="paragraph">
+Find out whether the object can be an entity. Objects of kind 129 and 143 are passed to <a href="48641.html">AddObjectEntity</a>, and any other kind is drawn straight away.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49085"></span>49085</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49088"></span>49088</td>
+<td class="instruction">AND %10001111</td>
+<td class="comment-1" rowspan="1">Keep bit 7 and the kind in bits 0-3.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49090"></span>49090</td>
+<td class="instruction">CP 129</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49105">DrawObject_Entity</a> if it is kind 129.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49092"></span>49092</td>
+<td class="instruction">JR Z,<a href="49061.html#49105">DrawObject_Entity</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49094"></span>49094</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49176">DrawObject_Position</a> if bit 7 is not set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49096"></span>49096</td>
+<td class="instruction">JP Z,<a href="49061.html#49176">DrawObject_Position</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49099"></span>49099</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Add one to the kind.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49100"></span>49100</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the kind.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49102"></span>49102</td>
+<td class="instruction">JP NZ,<a href="49061.html#49176">DrawObject_Position</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="49061.html#49176">DrawObject_Position</a> unless the kind was 143.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Entity</td>
+<td class="address-2"><span id="49105"></span>49105</td>
+<td class="instruction">LD B,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object into <span class="register">B</span>...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49108"></span>49108</td>
+<td class="instruction">LD C,(IX+1)</td>
+<td class="comment-1" rowspan="1">...and the second byte into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49111"></span>49111</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Save them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49112"></span>49112</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49113"></span>49113</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Copy the second byte into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49114"></span>49114</td>
+<td class="instruction">AND %10001111</td>
+<td class="comment-1" rowspan="1">Keep bit 7 and the kind.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49116"></span>49116</td>
+<td class="instruction">CP 143</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49151">DrawObject_Add</a> if it is kind 143, so that the bytes are used as they are.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49118"></span>49118</td>
+<td class="instruction">JR Z,<a href="49061.html#49151">DrawObject_Add</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49120"></span>
+<div class="comments">
+<div class="paragraph">
+Change an object of kind 129 into an object of kind 143 that has the size of the object in its third byte, so that it is recorded with that size.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49120"></span>49120</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49121"></span>49121</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="2">Shift the size in bits 4-5 to bits 2-3...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49122"></span>49122</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49123"></span>49123</td>
+<td class="instruction">AND %00110000</td>
+<td class="comment-1" rowspan="1">...and keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49125"></span>49125</td>
+<td class="instruction">ADD A,16</td>
+<td class="comment-1" rowspan="1">Add 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49127"></span>49127</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49128"></span>49128</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49129"></span>49129</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep the height in bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49131"></span>49131</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="1">Add the size to the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49132"></span>49132</td>
+<td class="instruction">LD (IX+2),1</td>
+<td class="comment-1" rowspan="1">Set the third byte of the object to 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49136"></span>49136</td>
+<td class="instruction">CP 128</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49146">DrawObject_SetKind</a> if it is below 128.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49138"></span>49138</td>
+<td class="instruction">JR C,<a href="49061.html#49146">DrawObject_SetKind</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49140"></span>49140</td>
+<td class="instruction">SUB 128</td>
+<td class="comment-1" rowspan="1">Take away 128.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49142"></span>49142</td>
+<td class="instruction">SET 6,(IX+2)</td>
+<td class="comment-1" rowspan="1">Set bit 6 of the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_SetKind</td>
+<td class="address-2"><span id="49146"></span>49146</td>
+<td class="instruction">OR %10001111</td>
+<td class="comment-1" rowspan="1">Set bits 0-3 and bit 7, to make it kind 143.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49148"></span>49148</td>
+<td class="instruction">LD (IX+1),A</td>
+<td class="comment-1" rowspan="1">Store it as the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Add</td>
+<td class="address-2"><span id="49151"></span>49151</td>
+<td class="instruction">CALL <a href="48641.html">AddObjectEntity</a></td>
+<td class="comment-1" rowspan="1">Add an entity for the object, if it has one, and record it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49154"></span>49154</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49155"></span>49155</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the second and third bytes of the object...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49156"></span>49156</td>
+<td class="instruction">LD (IX+1),C</td>
+<td class="comment-1" rowspan="1">...and put them back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49159"></span>49159</td>
+<td class="instruction">LD (IX+2),B</td>
+<td class="comment-1" rowspan="1">Put the third byte back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49162"></span>49162</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49163"></span>49163</td>
+<td class="instruction">AND %10001111</td>
+<td class="comment-1" rowspan="1">Keep bit 7 and the kind.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49165"></span>49165</td>
+<td class="instruction">CP 143</td>
+<td class="comment-1" rowspan="1">Compare it with 143.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49167"></span>49167</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if it is kind 143 as it is an entity and is not drawn as a block.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49168"></span>49168</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49171"></span>49171</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="4">Multiply it by sixteen, to move the offset along the y axis to the top four bits...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49172"></span>49172</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49173"></span>49173</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49174"></span>49174</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49175"></span>49175</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49176"></span>
+<div class="comments">
+<div class="paragraph">
+Check that the object is not off the left of the view, or off the right of it, using the width of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Position</td>
+<td class="address-2"><span id="49176"></span>49176</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49177"></span>49177</td>
+<td class="instruction">AND %11111000</td>
+<td class="comment-1" rowspan="1">Round it down to a multiple of eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49179"></span>49179</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Put it back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49180"></span>49180</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49181"></span>49181</td>
+<td class="instruction">BIT 7,H</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49214">DrawObject_Far</a> if bit 7 of the high byte of the screen column is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49183"></span>49183</td>
+<td class="instruction">JR NZ,<a href="49061.html#49214">DrawObject_Far</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49185"></span>49185</td>
+<td class="instruction">LD B,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49187"></span>49187</td>
+<td class="instruction">LD C,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object into <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49190"></span>49190</td>
+<td class="instruction">SLA C</td>
+<td class="comment-1" rowspan="1">Double it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49192"></span>49192</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Copy it into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49193"></span>49193</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep the width in bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49195"></span>49195</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49196"></span>49196</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the doubled byte again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49197"></span>49197</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Shift it left three times, to move the depth to bits 4-6...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49198"></span>49198</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49199"></span>49199</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49200"></span>49200</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">...and keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49202"></span>49202</td>
+<td class="instruction">ADD A,D</td>
+<td class="comment-1" rowspan="1">Add the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49203"></span>49203</td>
+<td class="instruction">ADD A,31</td>
+<td class="comment-1" rowspan="1">Add 31 to make the distance to the left of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49205"></span>49205</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Put it in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49206"></span>49206</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add it to the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49207"></span>49207</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on by one more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49208"></span>49208</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Rotate bit 7 of the high byte into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49210"></span>49210</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49211"></span>49211</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is off the left of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49212"></span>49212</td>
+<td class="instruction">JR <a href="49061.html#49221">DrawObject_Visible</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="49061.html#49221">DrawObject_Visible</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Far</td>
+<td class="address-2"><span id="49214"></span>49214</td>
+<td class="instruction">LD BC,32960</td>
+<td class="comment-1" rowspan="1"><span class="register">BC</span> is 32960 the right edge of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49217"></span>49217</td>
+<td class="instruction">SBC HL,BC</td>
+<td class="comment-1" rowspan="1">Subtract it from the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49219"></span>49219</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the screen column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49220"></span>49220</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is off the right of the view.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49221"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the screen row of the object. This is half of the difference between its x and y coordinates, plus the offset to the view, less the height of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Visible</td>
+<td class="address-2"><span id="49221"></span>49221</td>
+<td class="instruction">LD (48031),HL</td>
+<td class="comment-1" rowspan="1">Store the screen column, as the one to draw at.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49224"></span>49224</td>
+<td class="instruction">LD A,(23738)</td>
+<td class="comment-1" rowspan="1">Fetch the row of the cell into <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49227"></span>49227</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Keep the y coordinate of the cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49228"></span>49228</td>
+<td class="instruction">LD HL,(23736)</td>
+<td class="comment-1" rowspan="1">Fetch the column of the cell into <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49231"></span>49231</td>
+<td class="instruction">LD A,(IX+0)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49234"></span>49234</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep the offset along the x axis.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49236"></span>49236</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Make it the low byte of the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49237"></span>49237</td>
+<td class="instruction">SRL D</td>
+<td class="comment-1" rowspan="2">Halve the y coordinate...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49239"></span>49239</td>
+<td class="instruction">RR E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49241"></span>49241</td>
+<td class="instruction">SRL H</td>
+<td class="comment-1" rowspan="2">...and halve the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49243"></span>49243</td>
+<td class="instruction">RR L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49245"></span>49245</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract half of the y coordinate from half of the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49246"></span>49246</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49248"></span>49248</td>
+<td class="instruction">LD DE,0</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE</span> to the offset to the view, which is patched in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49251"></span>49251</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49252"></span>49252</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49255"></span>49255</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep the height in bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49257"></span>49257</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49258"></span>49258</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49261"></span>49261</td>
+<td class="instruction">AND %10001111</td>
+<td class="comment-1" rowspan="1">Keep bit 7 and the kind.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49263"></span>49263</td>
+<td class="instruction">CP 131</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49271">DrawObject_AddHeight</a> if it is kind 131.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49265"></span>49265</td>
+<td class="instruction">JR Z,<a href="49061.html#49271">DrawObject_AddHeight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49267"></span>49267</td>
+<td class="instruction">CP 133</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49275">DrawObject_SubtractHeight</a> unless it is kind 133.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49269"></span>49269</td>
+<td class="instruction">JR NZ,<a href="49061.html#49275">DrawObject_SubtractHeight</a></td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_AddHeight</td>
+<td class="address-2"><span id="49271"></span>49271</td>
+<td class="instruction">LD A,16</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span> is 16 which is added to the height of these kinds.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49273"></span>49273</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49274"></span>49274</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_SubtractHeight</td>
+<td class="address-2"><span id="49275"></span>49275</td>
+<td class="instruction">LD D,0</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49277"></span>49277</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract the height from the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49278"></span>49278</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49280"></span>49280</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the screen row.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49281"></span>
+<div class="comments">
+<div class="paragraph">
+Check that the object is not above the view.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49281"></span>49281</td>
+<td class="instruction">LD A,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49284"></span>49284</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Shift it left three times, to move the depth to bits 3-5...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49285"></span>49285</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49286"></span>49286</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49287"></span>49287</td>
+<td class="instruction">AND %00111000</td>
+<td class="comment-1" rowspan="1">...and keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49289"></span>49289</td>
+<td class="instruction">ADD A,8</td>
+<td class="comment-1" rowspan="1">Add 8.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49291"></span>49291</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49292"></span>49292</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add it to the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49293"></span>49293</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Rotate bit 7 of the high byte into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49295"></span>49295</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49296"></span>49296</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is above the view.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49297"></span>
+<div class="comments">
+<div class="paragraph">
+Check that the object is not below the view, and work out the height of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49297"></span>49297</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Save the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49298"></span>49298</td>
+<td class="instruction">LD A,(IX+2)</td>
+<td class="comment-1" rowspan="2">Fetch the third byte of the object and keep it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49301"></span>49301</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49302"></span>49302</td>
+<td class="instruction">AND %00111000</td>
+<td class="comment-1" rowspan="1">Keep the depth in bits 3-5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49304"></span>49304</td>
+<td class="instruction">ADD A,8</td>
+<td class="comment-1" rowspan="1">Add 8.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49306"></span>49306</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49307"></span>49307</td>
+<td class="instruction">LD A,(IX+1)</td>
+<td class="comment-1" rowspan="1">Fetch the second byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49310"></span>49310</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49061.html#49320">DrawObject_SizeFromByte</a> if bit 7 is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49312"></span>49312</td>
+<td class="instruction">JR NZ,<a href="49061.html#49320">DrawObject_SizeFromByte</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49314"></span>49314</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the kind.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49316"></span>49316</td>
+<td class="instruction">SUB 2</td>
+<td class="comment-1" rowspan="1">Take away 2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49318"></span>49318</td>
+<td class="instruction">JR Z,<a href="49061.html#49327">DrawObject_StoreHeight</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="49061.html#49327">DrawObject_StoreHeight</a> if it is kind 2 with zero as the size.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_SizeFromByte</td>
+<td class="address-2"><span id="49320"></span>49320</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49321"></span>49321</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="2">Shift the size in bits 4-5 to bits 2-3...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49322"></span>49322</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49323"></span>49323</td>
+<td class="instruction">AND %00110000</td>
+<td class="comment-1" rowspan="1">...and keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49325"></span>49325</td>
+<td class="instruction">ADD A,16</td>
+<td class="comment-1" rowspan="1">Add 16.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_StoreHeight</td>
+<td class="address-2"><span id="49327"></span>49327</td>
+<td class="instruction">LD (23797),A</td>
+<td class="comment-1" rowspan="1">Store it as the height of the object, in <a href="23795.html">23797</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49330"></span>49330</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the depth.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49331"></span>49331</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49332"></span>49332</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract it from the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49334"></span>49334</td>
+<td class="instruction">LD DE,32896</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span> is 32896 the bottom of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49337"></span>49337</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract it from the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49339"></span>49339</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49340"></span>49340</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the object is below the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49341"></span>49341</td>
+<td class="instruction">LD (48033),HL</td>
+<td class="comment-1" rowspan="1">Store the screen row, as the one to draw at.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49344"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the depth and the width of the object, and store them.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49344"></span>49344</td>
+<td class="instruction">LD A,(IX+2)</td>
+<td class="comment-1" rowspan="1">Fetch the third byte of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49347"></span>49347</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double it...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49348"></span>49348</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">...and keep it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49349"></span>49349</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">Keep the size in bits 4-6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49351"></span>49351</td>
+<td class="instruction">ADD A,16</td>
+<td class="comment-1" rowspan="1">Add 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49353"></span>49353</td>
+<td class="instruction">LD (23796),A</td>
+<td class="comment-1" rowspan="1">Store it as the depth of the object, in <a href="23795.html">23796</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49356"></span>49356</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch the doubled byte again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49357"></span>49357</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="3">Shift it left three times, to move the other size to bits 4-6...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49358"></span>49358</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49359"></span>49359</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49360"></span>49360</td>
+<td class="instruction">AND %01110000</td>
+<td class="comment-1" rowspan="1">...and keep it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49362"></span>49362</td>
+<td class="instruction">ADD A,16</td>
+<td class="comment-1" rowspan="1">Add 16.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49364"></span>49364</td>
+<td class="instruction">LD (23795),A</td>
+<td class="comment-1" rowspan="1">Store it as the width of the object, in <a href="23795.html">RecordDetails</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49367"></span>
+<div class="comments">
+<div class="paragraph">
+Give the object an item record if its flag in the row of flags of the group is set, and then pass it to the routine that handles it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49367"></span>49367</td>
+<td class="instruction">LD A,(48015)</td>
+<td class="comment-1" rowspan="1">Fetch the first byte of the row of flags of the group.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="49370"></span>49370</td>
+<td class="instruction">RLA</td>
+<td class="comment-1" rowspan="1">Rotate its top bit into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Record</td>
+<td class="address-1"><span id="49371"></span>49371</td>
+<td class="instruction">CALL C,<a href="45567.html">AddItemRecord</a></td>
+<td class="comment-1" rowspan="1">Add an item record for the object if the flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawObject_Handle</td>
+<td class="address-2"><span id="49374"></span>49374</td>
+<td class="instruction">JP <a href="49061.html#49374">DrawObject_Handle</a></td>
+<td class="comment-1" rowspan="1">Jump to the routine that handles the object, which is patched in.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="48961.html">48961</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#49061">Map</a></td>
+<td class="next">
+Next: <a href="49377.html">49377</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../../asm/BFA5.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

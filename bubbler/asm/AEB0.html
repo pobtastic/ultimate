@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at AEB0</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AE0D.html">AE0D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#aeb0">Map</a></td>
+<td class="next">
+Next: <a href="AF21.html">AF21</a>
+</td>
+</tr>
+</table>
+<div class="description">AEB0: Test Entity Visible</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="9B79.html">TestEntityRemoval</a>, <a href="9D8D.html">UpdateSpiderEntity</a>, <a href="9D9D.html">UpdateDiscEntity</a>, <a href="BE01.html">AddObjectEntity</a> and <a href="CEE2.html">UpdateEntities</a>.
+</div>
+<div class="paragraph">
+Tests whether the entity is within the view in both directions, allowing for a margin of <span class="register">BC</span>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The entity</td>
+</tr>
+<tr>
+<td class="register">BC</td>
+<td class="register-desc">The margin</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Zero if the entity is out of view, otherwise non-zero</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="aeb0"></span>
+<div class="comments">
+<div class="paragraph">
+Test the column, which is the x coordinate plus the y coordinate, less the horizontal origin of the view. The entity is out of view if the column is further left than the margin, or further right than C0 plus the margin.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityVisible</td>
+<td class="address-2"><span id="aeb0"></span>AEB0</td>
+<td class="instruction">LD H,(IX+$02)</td>
+<td class="comment-1" rowspan="2">Fetch the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeb3"></span>AEB3</td>
+<td class="instruction">LD L,(IX+$03)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeb6"></span>AEB6</td>
+<td class="instruction">LD D,(IX+$05)</td>
+<td class="comment-1" rowspan="2">Fetch the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeb9"></span>AEB9</td>
+<td class="instruction">LD E,(IX+$06)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aebc"></span>AEBC</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add them to get the column before the origin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aebd"></span>AEBD</td>
+<td class="instruction">LD DE,($5CE7)</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal origin of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aec1"></span>AEC1</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract the origin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aec3"></span>AEC3</td>
+<td class="instruction">BIT 7,H</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEB0.html#aece">TestEntityVisible_Second</a> if the column is not left of the origin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aec5"></span>AEC5</td>
+<td class="instruction">JR Z,<a href="AEB0.html#aece">TestEntityVisible_Second</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aec7"></span>AEC7</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the margin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aec8"></span>AEC8</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Test whether the column is still negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeca"></span>AECA</td>
+<td class="instruction">JR NC,<a href="AEB0.html#aedb">TestEntityVisible_Vertical</a></td>
+<td class="comment-1" rowspan="1">Go on to the row if the margin brings the column back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aecc"></span>AECC</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Report that the entity is out of view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aecd"></span>AECD</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityVisible_Second</td>
+<td class="address-2"><span id="aece"></span>AECE</td>
+<td class="instruction">LD DE,$00C0</td>
+<td class="comment-1" rowspan="1">Set the right edge of the test to C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aed1"></span>AED1</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract it from the column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aed3"></span>AED3</td>
+<td class="instruction">SBC HL,BC</td>
+<td class="comment-1" rowspan="1">Subtract the margin as well.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aed5"></span>AED5</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Test whether the column is now negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aed7"></span>AED7</td>
+<td class="instruction">JR C,<a href="AEB0.html#aedb">TestEntityVisible_Vertical</a></td>
+<td class="comment-1" rowspan="1">Go on to the row if the column is inside the right edge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aed9"></span>AED9</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Report that the entity is out of view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeda"></span>AEDA</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="aedb"></span>
+<div class="comments">
+<div class="paragraph">
+Test the row, using the same sum as <a href="AE0D.html">ProjectEntity</a>: half of the x coordinate less half of the y coordinate, less the z coordinate, plus 40 less the vertical origin of the view.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityVisible_Vertical</td>
+<td class="address-2"><span id="aedb"></span>AEDB</td>
+<td class="instruction">LD H,(IX+$02)</td>
+<td class="comment-1" rowspan="2">Fetch the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aede"></span>AEDE</td>
+<td class="instruction">LD L,(IX+$03)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aee1"></span>AEE1</td>
+<td class="instruction">SRL H</td>
+<td class="comment-1" rowspan="2">Halve the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aee3"></span>AEE3</td>
+<td class="instruction">RR L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aee5"></span>AEE5</td>
+<td class="instruction">LD D,(IX+$05)</td>
+<td class="comment-1" rowspan="2">Fetch the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aee8"></span>AEE8</td>
+<td class="instruction">LD E,(IX+$06)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeeb"></span>AEEB</td>
+<td class="instruction">SRL D</td>
+<td class="comment-1" rowspan="2">Halve the y coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeed"></span>AEED</td>
+<td class="instruction">RR E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeef"></span>AEEF</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract half of the y coordinate from half of the x coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aef0"></span>AEF0</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aef2"></span>AEF2</td>
+<td class="instruction">LD D,(IX+$08)</td>
+<td class="comment-1" rowspan="2">Fetch the high byte of the z coordinate, less one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aef5"></span>AEF5</td>
+<td class="instruction">DEC D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aef6"></span>AEF6</td>
+<td class="instruction">LD E,(IX+$09)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the z coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aef9"></span>AEF9</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Subtract the z coordinate.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aefa"></span>AEFA</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aefc"></span>AEFC</td>
+<td class="instruction">LD DE,$0040</td>
+<td class="comment-1" rowspan="1">Set the offset to 40.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="aeff"></span>AEFF</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the offset.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af00"></span>AF00</td>
+<td class="instruction">LD DE,($5CEE)</td>
+<td class="comment-1" rowspan="1">Fetch the vertical origin of the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af04"></span>AF04</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract the origin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af06"></span>AF06</td>
+<td class="instruction">BIT 7,H</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AEB0.html#af11">TestEntityVisible_Far</a> if the row is not above the origin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af08"></span>AF08</td>
+<td class="instruction">JR Z,<a href="AEB0.html#af11">TestEntityVisible_Far</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af0a"></span>AF0A</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the margin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af0b"></span>AF0B</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Test whether the row is still negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af0d"></span>AF0D</td>
+<td class="instruction">JR NC,<a href="AEB0.html#af1e">TestEntityVisible_Yes</a></td>
+<td class="comment-1" rowspan="1">Accept the entity if the margin brings the row back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af0f"></span>AF0F</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Report that the entity is out of view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af10"></span>AF10</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityVisible_Far</td>
+<td class="address-2"><span id="af11"></span>AF11</td>
+<td class="instruction">LD DE,$0080</td>
+<td class="comment-1" rowspan="1">Set the bottom of the test to 80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af14"></span>AF14</td>
+<td class="instruction">SBC HL,DE</td>
+<td class="comment-1" rowspan="1">Subtract it from the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af16"></span>AF16</td>
+<td class="instruction">SBC HL,BC</td>
+<td class="comment-1" rowspan="1">Subtract the margin as well.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af18"></span>AF18</td>
+<td class="instruction">RL H</td>
+<td class="comment-1" rowspan="1">Test whether the row is now negative.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af1a"></span>AF1A</td>
+<td class="instruction">JR C,<a href="AEB0.html#af1e">TestEntityVisible_Yes</a></td>
+<td class="comment-1" rowspan="1">Accept the entity if the row is inside the bottom edge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af1c"></span>AF1C</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Report that the entity is out of view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af1d"></span>AF1D</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="asm-label">TestEntityVisible_Yes</td>
+<td class="address-2"><span id="af1e"></span>AF1E</td>
+<td class="instruction">OR %00010000</td>
+<td class="comment-1" rowspan="1">Set a non-zero result.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="af20"></span>AF20</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="AE0D.html">AE0D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#aeb0">Map</a></td>
+<td class="next">
+Next: <a href="AF21.html">AF21</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/44720.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

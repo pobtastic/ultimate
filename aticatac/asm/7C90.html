@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="7CAF.html">7CAF</a>
 </td>
 </tr>
 </table>
-<div class="description">7C90: Routine at 7C90</div>
+<div class="description">7C90: Flash Menu Selection</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,100 +44,188 @@ Next: <a href="7CAF.html">7CAF</a>
 <div class="paragraph">
 Used by the routine at <a href="7C19.html">GameInitialisation</a>.
 </div>
+<div class="paragraph">
+Updates three consecutive entries of the menu attribute table so that only the selected entry has its flash (bit 7) set. After the first rotation, bits 0-1 of <span class="register">A</span> hold the number of the selected entry (00 to 02), which counts down as each entry is processed; the entry where it reaches zero is flashed.
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Options, with the selection in bits 1-2</td>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">Number of entries (always 03)</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">First attribute table entry</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Entry after the last one updated</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
+<td class="asm-label">FlashSelection</td>
 <td class="address-2"><span id="7c90"></span>7C90</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1">Divide by 2.</td>
+<td class="comment-1" rowspan="1">Rotate <span class="register">A</span> right, which brings the selection into bits 0-1.</td>
 </tr>
 <tr>
+<td class="asm-label">FlashSelection_Loop</td>
 <td class="address-2"><span id="7c91"></span>7C91</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7c93"></span>7C93</td>
-<td class="instruction">JR Z,<a href="7C90.html#7c9c">$7C9C</a></td>
-<td class="comment-1" rowspan="1">If zero then jump to <a href="7C90.html#7c9c">7C9C</a>.</td>
+<td class="instruction">JR Z,<a href="7C90.html#7c9c">FlashSelection_Selected</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="7C90.html#7c9c">FlashSelection_Selected</a> if this is the selected entry, which is when the selection number has counted down to zero.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7c95"></span>7C95</td>
-<td class="instruction">CALL <a href="7C90.html#7ca4">$7CA4</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7C90.html#7ca4">7CA4</a>.</td>
+<td class="instruction">CALL <a href="7C90.html#7ca4">FlashSelection_Clear</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7C90.html#7ca4">FlashSelection_Clear</a> to stop this entry flashing.</td>
 </tr>
 <tr>
+<td class="asm-label">FlashSelection_Next</td>
 <td class="address-2"><span id="7c98"></span>7C98</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the selection number by one.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7c99"></span>7C99</td>
-<td class="instruction">DJNZ <a href="7C90.html#7c91">$7C91</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="7C90.html#7c91">FlashSelection_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the entry counter by one and loop back to <a href="7C90.html#7c91">FlashSelection_Loop</a> until all three entries have been updated.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7c9b"></span>7C9B</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="asm-label">FlashSelection_Selected</td>
 <td class="address-2"><span id="7c9c"></span>7C9C</td>
-<td class="instruction">CALL <a href="7C90.html#7cab">$7CAB</a></td>
-<td class="comment-1" rowspan="1">Call <a href="7C90.html#7cab">7CAB</a>.</td>
+<td class="instruction">CALL <a href="7C90.html#7cab">FlashSelection_Set</a></td>
+<td class="comment-1" rowspan="1">Call <a href="7C90.html#7cab">FlashSelection_Set</a> to make this entry flash.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7c9f"></span>7C9F</td>
-<td class="instruction">JR <a href="7C90.html#7c98">$7C98</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="7C90.html#7c98">7C98</a>.</td>
+<td class="instruction">JR <a href="7C90.html#7c98">FlashSelection_Next</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="7C90.html#7c98">FlashSelection_Next</a> to move on to the next menu entry.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="7ca1"></span>
+<div class="comments">
+<div class="paragraph">
+These instructions are never used.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7ca1"></span>7CA1</td>
 <td class="instruction">SET 7,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set bit 7 of *<span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7ca3"></span>7CA3</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next menu entry.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="7ca4"></span>
+<div class="comments">
+<div class="paragraph">
+Stop one entry flashing and move on to the next.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">FlashSelection_Clear</td>
 <td class="address-2"><span id="7ca4"></span>7CA4</td>
 <td class="instruction">RES 7,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset bit 7 of *<span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7ca6"></span>7CA6</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next menu entry.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7ca7"></span>7CA7</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="7ca8"></span>
+<div class="comments">
+<div class="paragraph">
+These instructions are never used.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7ca8"></span>7CA8</td>
 <td class="instruction">RES 7,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset bit 7 of *<span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7caa"></span>7CAA</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next menu entry.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="7cab"></span>
+<div class="comments">
+<div class="paragraph">
+Make one entry flash and move on to the next.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">FlashSelection_Set</td>
 <td class="address-2"><span id="7cab"></span>7CAB</td>
 <td class="instruction">SET 7,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set bit 7 of *<span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7cad"></span>7CAD</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> on to the next menu entry.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="7cae"></span>7CAE</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>

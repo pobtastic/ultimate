@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at CDBB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CDA0.html">CDA0</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cdbb">Map</a></td>
+<td class="next">
+Next: <a href="CE31.html">CE31</a>
+</td>
+</tr>
+</table>
+<div class="description">CDBB: Run Lift</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The handler of the object type 54 which is a lift. When the player (or a block of type 5B) lands on it, it carries it up, to a height of B0. When there is nothing on it any longer, it comes down again to where it started.
+</div>
+<div class="paragraph">
+The state of the lift is in the handler flags: bit 0 is set while it is going up, bit 1 is set while it is coming down, and bit 7 is set by <a href="B890.html">MarkObjectBelow</a> when something lands on it. The collision flag for being stopped along z is used to find out if something is pushing down on it.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunLift</td>
+<td class="address-2"><span id="cdbb"></span>CDBB</td>
+<td class="instruction">LD (IX+$09),$00</td>
+<td class="comment-1" rowspan="2">Set the speeds along x and y to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdbf"></span>CDBF</td>
+<td class="instruction">LD (IX+$0A),$00</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc3"></span>CDC3</td>
+<td class="instruction">CALL <a href="C75F.html">SetSpriteOffset_Minus16_Minus8</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C75F.html">SetSpriteOffset_Minus16_Minus8</a> to set the offsets of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc6"></span>CDC6</td>
+<td class="instruction">CALL <a href="B979.html#b97c">ApplyGravityAndMove_Move</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B979.html#b97c">ApplyGravityAndMove_Move</a> to move the lift, without gravity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdc9"></span>CDC9</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="3">Set the speeds along x and y to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdca"></span>CDCA</td>
+<td class="instruction">LD (IX+$09),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdcd"></span>CDCD</td>
+<td class="instruction">LD (IX+$0A),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd0"></span>CDD0</td>
+<td class="instruction">BIT 0,(IX+$17)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CDBB.html#cdec">RunLift_Moving</a> if the lift is moving.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd4"></span>CDD4</td>
+<td class="instruction">JR NZ,<a href="CDBB.html#cdec">RunLift_Moving</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cdd6"></span>
+<div class="comments">
+<div class="paragraph">
+The lift is waiting. Start it when something that is pushing down on it has landed on it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdd6"></span>CDD6</td>
+<td class="instruction">BIT 2,(IX+$0C)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD87.html">FinishObjectMove</a> if nothing is pushing down on the lift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdda"></span>CDDA</td>
+<td class="instruction">JR Z,<a href="CD87.html">FinishObjectMove</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cddc"></span>CDDC</td>
+<td class="instruction">BIT 7,(IX+$17)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CD87.html">FinishObjectMove</a> if nothing has landed on it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde0"></span>CDE0</td>
+<td class="instruction">JR Z,<a href="CD87.html">FinishObjectMove</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde2"></span>CDE2</td>
+<td class="instruction">RES 7,(IX+$17)</td>
+<td class="comment-1" rowspan="1">Clear the flag for something having landed on it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cde6"></span>CDE6</td>
+<td class="instruction">SET 0,(IX+$17)</td>
+<td class="comment-1" rowspan="1">Set the flag for the lift going up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdea"></span>CDEA</td>
+<td class="instruction">JR <a href="CDBB.html#ce16">RunLift_Rise</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CDBB.html#ce16">RunLift_Rise</a> to start it going up.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cdec"></span>
+<div class="comments">
+<div class="paragraph">
+The lift is moving. If nothing is pushing down on it, it comes down.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunLift_Moving</td>
+<td class="address-2"><span id="cdec"></span>CDEC</td>
+<td class="instruction">BIT 2,(IX+$0C)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CDBB.html#cdfd">RunLift_Pushed</a> if it is being pushed down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf0"></span>CDF0</td>
+<td class="instruction">JR NZ,<a href="CDBB.html#cdfd">RunLift_Pushed</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf2"></span>CDF2</td>
+<td class="instruction">SET 1,(IX+$17)</td>
+<td class="comment-1" rowspan="1">Set the flag for the lift coming down.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdf6"></span>CDF6</td>
+<td class="instruction">LD (IX+$0B),$FF</td>
+<td class="comment-1" rowspan="1">Set the speed along z of the lift to FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cdfa"></span>CDFA</td>
+<td class="instruction">JP <a href="CCDE.html">SetWipeAndDrawFlags</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CCDE.html">SetWipeAndDrawFlags</a> to flag the lift as moved.</td>
+</tr>
+<tr>
+<td class="asm-label">RunLift_Pushed</td>
+<td class="address-2"><span id="cdfd"></span>CDFD</td>
+<td class="instruction">BIT 1,(IX+$17)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CDBB.html#ce2a">RunLift_Landed</a> if the lift is coming down, which means that it has landed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce01"></span>CE01</td>
+<td class="instruction">JR NZ,<a href="CDBB.html#ce2a">RunLift_Landed</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce03"></span>CE03</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="CDBB.html#ce16">RunLift_Rise</a> to keep going up if the lift is not at the top, which is B0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce06"></span>CE06</td>
+<td class="instruction">CP $B0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce08"></span>CE08</td>
+<td class="instruction">JR C,<a href="CDBB.html#ce16">RunLift_Rise</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce0a"></span>CE0A</td>
+<td class="instruction">LD (IX+$03),$B0</td>
+<td class="comment-1" rowspan="1">Put the lift at the top.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce0e"></span>CE0E</td>
+<td class="instruction">LD A,$FE</td>
+<td class="comment-1" rowspan="2">Set the speed along z of the player to FE to hold it down on the lift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce10"></span>CE10</td>
+<td class="instruction">LD ($A77A),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce13"></span>CE13</td>
+<td class="instruction">JP <a href="CCDE.html">SetWipeAndDrawFlags</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CCDE.html">SetWipeAndDrawFlags</a> to flag the lift as moved.</td>
+</tr>
+<tr>
+<td class="asm-label">RunLift_Rise</td>
+<td class="address-2"><span id="ce16"></span>CE16</td>
+<td class="instruction">LD (IX+$0B),$02</td>
+<td class="comment-1" rowspan="1">Set the speed along z of the lift to 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1a"></span>CE1A</td>
+<td class="instruction">LD A,$03</td>
+<td class="comment-1" rowspan="2">Set the speed along z of the player to 03 to take it up with the lift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1c"></span>CE1C</td>
+<td class="instruction">LD ($A77A),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce1f"></span>CE1F</td>
+<td class="instruction">LD A,($A77B)</td>
+<td class="comment-1" rowspan="1">Fetch the collision flags of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce22"></span>CE22</td>
+<td class="instruction">OR %00000100</td>
+<td class="comment-1" rowspan="1">Set the flag for being on the ground, so that the player can jump from the lift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce24"></span>CE24</td>
+<td class="instruction">LD ($A77B),A</td>
+<td class="comment-1" rowspan="1">Write the collision flags of the player back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce27"></span>CE27</td>
+<td class="instruction">JP <a href="CCDE.html">SetWipeAndDrawFlags</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CCDE.html">SetWipeAndDrawFlags</a> to flag the lift as moved.</td>
+</tr>
+<tr>
+<td class="asm-label">RunLift_Landed</td>
+<td class="address-2"><span id="ce2a"></span>CE2A</td>
+<td class="instruction">LD (IX+$17),$00</td>
+<td class="comment-1" rowspan="1">Set the state of the lift to waiting.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ce2e"></span>CE2E</td>
+<td class="instruction">JP <a href="CD87.html">FinishObjectMove</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CD87.html">FinishObjectMove</a> to finish.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CDA0.html">CDA0</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cdbb">Map</a></td>
+<td class="next">
+Next: <a href="CE31.html">CE31</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/52667.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

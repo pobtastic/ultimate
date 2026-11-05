@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,67 +36,89 @@ Next: <a href="91BC.html">91BC</a>
 </td>
 </tr>
 </table>
-<div class="description">917D: Handler: Door Closed</div>
+<div class="description">917D: Handle Door Closed</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+The handler for the doors that are closed (sprite IDs 20 and 22 in <a href="802A.html">HandlerTable2</a>) and that open after a time, as made by <a href="94F5.html">RandomiseDoors</a>. This is the same as <a href="915F.html">HandlerDoorOpen</a>, except that the door is shown (see <a href="91FE.html">HandlerRoomItem</a>) instead of being used as an exit, there is no check for the player being in a doorway, and <a href="917D.html#9193">HandlerDoor_Toggle</a> opens the door.
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The door entity</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">HandlerDoorClosed</td>
 <td class="address-2"><span id="917d"></span>917D</td>
 <td class="instruction">LD A,($5E12)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the counter from <a href="5E12.html">CounterLow</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9180"></span>9180</td>
-<td class="instruction">AND $01</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep only bit 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9182"></span>9182</td>
 <td class="instruction">JP NZ,<a href="91FE.html">HandlerRoomItem</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="91FE.html">HandlerRoomItem</a> on every other frame.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9185"></span>9185</td>
 <td class="instruction">LD A,($5E2E)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the door timer from <a href="5E2E.html">DoorTimer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9188"></span>9188</td>
 <td class="instruction">AND A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Test whether the door timer is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9189"></span>9189</td>
-<td class="instruction">JP Z,<a href="917D.html#9193">HandlerDoorClosed_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="917D.html#9193">HandlerDoor_Toggle</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="917D.html#9193">HandlerDoor_Toggle</a> if it is.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="918c"></span>
+<div class="comments">
+<div class="paragraph">
+See <a href="../reference/pokes.html#allow_doors_to_open_quickly">Allow Doors To Open Quickly</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="918c"></span>918C</td>
 <td class="instruction">DEC A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Decrease the door timer by one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="918d"></span>918D</td>
 <td class="instruction">LD ($5E2E),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the door timer in <a href="5E2E.html">DoorTimer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9190"></span>9190</td>
 <td class="instruction">JP <a href="91FE.html">HandlerRoomItem</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="91FE.html">HandlerRoomItem</a> to handle a room item that does nothing.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -102,104 +127,106 @@ Next: <a href="91BC.html">91BC</a>
 <div class="paragraph">
 This entry point is used by the routine at <a href="915F.html">HandlerDoorOpen</a>.
 </div>
+<div class="paragraph">
+Restart the door timer, and change both halves of the door from open to closed or the other way round. The door is erased and drawn again with a temporary attribute.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">HandlerDoorClosed_0</td>
+<td class="asm-label">HandlerDoor_Toggle</td>
 <td class="address-2"><span id="9193"></span>9193</td>
 <td class="instruction">LD A,$5E</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Restart the door timer by writing 5E to <a href="5E2E.html">DoorTimer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9195"></span>9195</td>
 <td class="instruction">LD ($5E2E),A</td>
-<td class="comment-0" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9198"></span>9198</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the attribute of the door.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="919b"></span>919B</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash it on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="919c"></span>919C</td>
-<td class="instruction">OR $03</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">OR %00000011</td>
+<td class="comment-1" rowspan="1">Set bits 0-1, which is temporary.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="919e"></span>919E</td>
 <td class="instruction">LD (IX+$05),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update the attribute of the door.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91a1"></span>91A1</td>
-<td class="instruction">CALL <a href="91FE.html#9213">HandlerRoomItem_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="9213.html">DrawItemGraphic</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9213.html">DrawItemGraphic</a> to erase the door.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91a4"></span>91A4</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the door.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91a7"></span>91A7</td>
-<td class="instruction">XOR $01</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">XOR %00000001</td>
+<td class="comment-1" rowspan="1">Flip bit 0, which changes the door from open to closed or the other way round.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91a9"></span>91A9</td>
-<td class="instruction">CALL <a href="9252.html#9260">HandlerCaveDoorLocked_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="9260.html">SetDoorSprites</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9260.html">SetDoorSprites</a> to write <span class="register">A</span> to both halves of the door.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91ac"></span>91AC</td>
-<td class="instruction">CALL <a href="91FE.html#9213">HandlerRoomItem_0</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="9213.html">DrawItemGraphic</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9213.html">DrawItemGraphic</a> to draw the door.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91af"></span>91AF</td>
 <td class="instruction">POP AF</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the attribute of the door from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91b0"></span>91B0</td>
 <td class="instruction">LD (IX+$05),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write it to the attribute of the door.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91b3"></span>91B3</td>
-<td class="instruction">CALL <a href="94F5.html#9546">RandomiseDoors_6</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">CALL <a href="9546.html">UpdateDoorway</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9546.html">UpdateDoorway</a> to set whether the doorway can be used.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91b6"></span>91B6</td>
 <td class="instruction">CALL <a href="91FE.html">HandlerRoomItem</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Call <a href="91FE.html">HandlerRoomItem</a> to handle a room item that does nothing.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="91b9"></span>91B9</td>
 <td class="instruction">JP <a href="A46E.html">SoundsDoor</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A46E.html">SoundsDoor</a> to make the sound of a door.</td>
 </tr>
 </table>
 <table class="asm-navigation">

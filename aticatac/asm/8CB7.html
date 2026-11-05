@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Atic Atac: Routine at 8CB7</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="8C8C.html">8C8C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#8cb7">Map</a></td>
+<td class="next">
+Next: <a href="8D45.html">8D45</a>
+</td>
+</tr>
+</table>
+<div class="description">8CB7: Handle Player Appearing</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+The handler for the player (sprite ID 66) while the player is appearing at the start of a life, which is set up by <a href="9443.html">PreparePlayer</a>. While the timer at <a href="5E3C.html">FlashTimer</a> is running <a href="8C8C.html">FlashScore</a> counts it down. After that the sprite of the player (the sprite ID at offset 07) is drawn one row more every fourth frame by <a href="8CB7.html#8cd4">HandlerPlayerAppearing_DrawRow</a>, while the sound of appearing is made and the colour of the cells changes. When all the rows have been drawn the sprite ID is put back and the handler is no longer used.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The player entity</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerPlayerAppearing</td>
+<td class="address-2"><span id="8cb7"></span>8CB7</td>
+<td class="instruction">LD A,($5E3C)</td>
+<td class="comment-1" rowspan="1">Fetch the timer from <a href="5E3C.html">FlashTimer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cba"></span>8CBA</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="8C8C.html">FlashScore</a> if the timer is running.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cbb"></span>8CBB</td>
+<td class="instruction">JR NZ,<a href="8C8C.html">FlashScore</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cbd"></span>8CBD</td>
+<td class="instruction">LD A,($5C78)</td>
+<td class="comment-1" rowspan="1">Fetch FRAMES.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cc0"></span>8CC0</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cc2"></span>8CC2</td>
+<td class="instruction">JP NZ,<a href="8CB7.html#8d12">HandlerPlayerAppearing_Colour</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="8CB7.html#8d12">HandlerPlayerAppearing_Colour</a> unless this is every fourth frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cc5"></span>8CC5</td>
+<td class="instruction">INC (IX+$06)</td>
+<td class="comment-1" rowspan="1">Increment the number of rows to draw at offset 06.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cc8"></span>8CC8</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player from offset 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ccb"></span>8CCB</td>
+<td class="instruction">CALL <a href="9E89.html">FetchSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9E89.html">FetchSprite</a> to get the address of the sprite data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cce"></span>8CCE</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ccf"></span>8CCF</td>
+<td class="instruction">CP (IX+$06)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="8CB7.html#8d32">HandlerPlayerAppearing_Finish</a> if all of the rows have been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cd2"></span>8CD2</td>
+<td class="instruction">JR Z,<a href="8CB7.html#8d32">HandlerPlayerAppearing_Finish</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="8cd4"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="8D45.html">HandlerPlayerVanishing</a>.
+</div>
+<div class="paragraph">
+Draw the row of the sprite that is given by the number of rows. This is done by pointing the entry for the sprite in the table of sprites at the row, and temporarily changing the byte before it to a height of one row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerPlayerAppearing_DrawRow</td>
+<td class="address-2"><span id="8cd4"></span>8CD4</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="1">Stash the address of the sprite data on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cd5"></span>8CD5</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the address of the entry in the table of sprites on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cd6"></span>8CD6</td>
+<td class="instruction">LD B,H</td>
+<td class="comment-1" rowspan="2">Keep the address of the table entry in <span class="register">BC</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cd7"></span>8CD7</td>
+<td class="instruction">LD C,L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cd8"></span>8CD8</td>
+<td class="instruction">LD A,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Fetch the Y position of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cdb"></span>8CDB</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Save it at offset 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cde"></span>8CDE</td>
+<td class="instruction">SUB (IX+$06)</td>
+<td class="comment-1" rowspan="1">Subtract the number of rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ce1"></span>8CE1</td>
+<td class="instruction">LD (IX+$04),A</td>
+<td class="comment-1" rowspan="1">Update the Y position of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ce4"></span>8CE4</td>
+<td class="instruction">LD L,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ce7"></span>8CE7</td>
+<td class="instruction">LD H,$00</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the number of rows in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ce9"></span>8CE9</td>
+<td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double <span class="register">HL</span>, as there are two bytes in each row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cea"></span>8CEA</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add the address of the sprite data to <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ceb"></span>8CEB</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the address of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cec"></span>8CEC</td>
+<td class="instruction">LD (BC),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to the high byte of the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8ced"></span>8CED</td>
+<td class="instruction">DEC BC</td>
+<td class="comment-1" rowspan="1">Move <span class="register">BC</span> back to the low byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cee"></span>8CEE</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the address of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cef"></span>8CEF</td>
+<td class="instruction">LD (BC),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to the low byte of the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cf0"></span>8CF0</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the address of the row on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cf1"></span>8CF1</td>
+<td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the byte at the address of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cf2"></span>8CF2</td>
+<td class="instruction">LD B,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cf5"></span>8CF5</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash them on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cf6"></span>8CF6</td>
+<td class="instruction">LD (HL),$01</td>
+<td class="comment-1" rowspan="1">Write 01 (the height of one row) to the address of the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cf8"></span>8CF8</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player from offset 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cfb"></span>8CFB</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write it to the sprite ID of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8cfe"></span>8CFE</td>
+<td class="instruction">CALL <a href="9F4A.html">DrawEntity</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9F4A.html">DrawEntity</a> to draw the row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d01"></span>8D01</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the byte and the sprite ID from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d02"></span>8D02</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the address of the row from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d03"></span>8D03</td>
+<td class="instruction">LD (HL),C</td>
+<td class="comment-1" rowspan="1">Write the byte back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d04"></span>8D04</td>
+<td class="instruction">LD (IX+$00),B</td>
+<td class="comment-1" rowspan="1">Write the sprite ID back to the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d07"></span>8D07</td>
+<td class="instruction">LD A,(IX+$02)</td>
+<td class="comment-1" rowspan="1">Fetch the saved Y position from offset 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d0a"></span>8D0A</td>
+<td class="instruction">LD (IX+$04),A</td>
+<td class="comment-1" rowspan="1">Write it back to the Y position of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d0d"></span>8D0D</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the address of the table entry from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d0e"></span>8D0E</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the address of the sprite data from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d0f"></span>8D0F</td>
+<td class="instruction">LD (HL),D</td>
+<td class="comment-1" rowspan="1">Write the high byte back to the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d10"></span>8D10</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> back to the low byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d11"></span>8D11</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Write the low byte back to the table entry.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="8d12"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="8D45.html">HandlerPlayerVanishing</a>.
+</div>
+<div class="paragraph">
+Set the colour of the cells that have been drawn so far, which cycles with FRAMES, and make the sound of appearing.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerPlayerAppearing_Colour</td>
+<td class="address-2"><span id="8d12"></span>8D12</td>
+<td class="instruction">LD A,(IX+$05)</td>
+<td class="comment-1" rowspan="1">Fetch the attribute of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d15"></span>8D15</td>
+<td class="instruction">PUSH AF</td>
+<td class="comment-1" rowspan="1">Stash it on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d16"></span>8D16</td>
+<td class="instruction">LD A,($5C78)</td>
+<td class="comment-1" rowspan="1">Fetch FRAMES.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d19"></span>8D19</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="2">Divide FRAMES by four.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d1a"></span>8D1A</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d1b"></span>8D1B</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d1d"></span>8D1D</td>
+<td class="instruction">JR NZ,<a href="8CB7.html#8d20">HandlerPlayerAppearing_SetColour</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="8CB7.html#8d20">HandlerPlayerAppearing_SetColour</a> if the result is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d1f"></span>8D1F</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Use 01 instead, to avoid black.</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerPlayerAppearing_SetColour</td>
+<td class="address-2"><span id="8d20"></span>8D20</td>
+<td class="instruction">OR %01000000</td>
+<td class="comment-1" rowspan="1">Set bit 6 (bright).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d22"></span>8D22</td>
+<td class="instruction">LD (IX+$05),A</td>
+<td class="comment-1" rowspan="1">Update the attribute of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d25"></span>8D25</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the number of rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d28"></span>8D28</td>
+<td class="instruction">CALL <a href="92E0.html#92e2">SetItemAttributes_Lines</a></td>
+<td class="comment-1" rowspan="1">Call <a href="92E0.html#92e2">SetItemAttributes_Lines</a> to set the attributes of that many rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d2b"></span>8D2B</td>
+<td class="instruction">POP AF</td>
+<td class="comment-1" rowspan="1">Restore the attribute of the entity from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d2c"></span>8D2C</td>
+<td class="instruction">LD (IX+$05),A</td>
+<td class="comment-1" rowspan="1">Write it back to the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d2f"></span>8D2F</td>
+<td class="instruction">JP <a href="A45F.html">SoundsAppear</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A45F.html">SoundsAppear</a> to make the sound of appearing.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="8d32"></span>
+<div class="comments">
+<div class="paragraph">
+All of the rows have been drawn, so the player is back.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlerPlayerAppearing_Finish</td>
+<td class="address-2"><span id="8d32"></span>8D32</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player from offset 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d35"></span>8D35</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write it to the sprite ID of the entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d38"></span>8D38</td>
+<td class="instruction">LD (IX+$06),$00</td>
+<td class="comment-1" rowspan="1">Write 00 to offset 06.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d3c"></span>8D3C</td>
+<td class="instruction">LD (IX+$07),$00</td>
+<td class="comment-1" rowspan="1">Write 00 to offset 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d40"></span>8D40</td>
+<td class="instruction">LD (IX+$02),$00</td>
+<td class="comment-1" rowspan="1">Write 00 to offset 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="8d44"></span>8D44</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="8C8C.html">8C8C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#8cb7">Map</a></td>
+<td class="next">
+Next: <a href="8D45.html">8D45</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/aticatac/">Source code</a>.</div>
+<div><a href="../dec/asm/36023.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

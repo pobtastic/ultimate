@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at C4C8</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C4A3.html">C4A3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c4c8">Map</a></td>
+<td class="next">
+Next: <a href="C56C.html">C56C</a>
+</td>
+</tr>
+</table>
+<div class="description">C4C8: Handle Turning</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="C440.html">HandlePlayerLegs</a>.
+</div>
+<div class="paragraph">
+Turns the player to the left or the right, if the controls ask for it. A turn takes the player one quarter of the way round, and the player has to wait for two frames after that before it can turn again.
+</div>
+<div class="paragraph">
+There is a second way of controlling the player, which is for use with a joystick and is chosen by bit 3 of the control method in <a href="A709.html">ControlMethod</a>. That bit is never set, so it is never used. In this way, four of the control bits stand for the four directions that the player can face, and the player turns until it faces the one that is asked for, and then walks.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">Controls</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Record of the legs</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">Controls, in which the bit for walking is set by the second way of</td>
+</tr>
+<tr>
+<td class="register">controlling</td>
+<td class="register-desc">the player</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning</td>
+<td class="address-2"><span id="c4c8"></span>C4C8</td>
+<td class="instruction">LD HL,$A709</td>
+<td class="comment-1" rowspan="1">Take the control method, <a href="A709.html">ControlMethod</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4cb"></span>C4CB</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the control method.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4cc"></span>C4CC</td>
+<td class="instruction">AND %00000110</td>
+<td class="comment-1" rowspan="1">Keep only the bits that choose a joystick.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4ce"></span>C4CE</td>
+<td class="instruction">JR Z,<a href="C4C8.html#c51b">HandleTurning_Usual</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c51b">HandleTurning_Usual</a> to turn the usual way if the keyboard is being used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d0"></span>C4D0</td>
+<td class="instruction">BIT 3,(HL)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c51b">HandleTurning_Usual</a> to turn the usual way if bit 3 of the control method is not set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d2"></span>C4D2</td>
+<td class="instruction">JR Z,<a href="C4C8.html#c51b">HandleTurning_Usual</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c4d4"></span>
+<div class="comments">
+<div class="paragraph">
+Turn towards the direction that is asked for. Return if the player has only just entered the room, or is not on the ground.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d4"></span>C4D4</td>
+<td class="instruction">LD A,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Fetch the collision flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d7"></span>C4D7</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep only the countdown from entering the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d9"></span>C4D9</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if the player has only just entered the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4da"></span>C4DA</td>
+<td class="instruction">BIT 2,(IX+$0C)</td>
+<td class="comment-1" rowspan="2">Return if the player is not on the ground.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4de"></span>C4DE</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4df"></span>C4DF</td>
+<td class="instruction">BIT 0,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c4e7">HandleTurning_TestRight</a> if the bit for turning left is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4e1"></span>C4E1</td>
+<td class="instruction">JR NZ,<a href="C4C8.html#c4e7">HandleTurning_TestRight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4e3"></span>C4E3</td>
+<td class="instruction">BIT 2,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c4f6">HandleTurning_AskForward</a> if the bit for walking forward is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4e5"></span>C4E5</td>
+<td class="instruction">JR NZ,<a href="C4C8.html#c4f6">HandleTurning_AskForward</a></td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_TestRight</td>
+<td class="address-2"><span id="c4e7"></span>C4E7</td>
+<td class="instruction">BIT 1,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c502">HandleTurning_AskRight</a> if the bit for turning right is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4e9"></span>C4E9</td>
+<td class="instruction">JR NZ,<a href="C4C8.html#c502">HandleTurning_AskRight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4eb"></span>C4EB</td>
+<td class="instruction">BIT 4,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c509">HandleTurning_AskPickUp</a> if the bit for picking up and dropping is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4ed"></span>C4ED</td>
+<td class="instruction">JR NZ,<a href="C4C8.html#c509">HandleTurning_AskPickUp</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4ef"></span>C4EF</td>
+<td class="instruction">BIT 0,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c512">HandleTurning_AskLeft</a> if the bit for turning left is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4f1"></span>C4F1</td>
+<td class="instruction">JR NZ,<a href="C4C8.html#c512">HandleTurning_AskLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4f3"></span>C4F3</td>
+<td class="instruction">RES 2,C</td>
+<td class="comment-1" rowspan="1">Clear the bit for walking forward.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4f5"></span>C4F5</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c4f6"></span>
+<div class="comments">
+<div class="paragraph">
+Turn towards the direction that the bit for walking forward stands for, which is direction 02.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_AskForward</td>
+<td class="address-2"><span id="c4f6"></span>C4F6</td>
+<td class="instruction">CALL <a href="C5BD.html">GetFacingDirection</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C5BD.html">GetFacingDirection</a> to find out which way the player is facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4f9"></span>C4F9</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="1">Compare it with the direction.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_Compare</td>
+<td class="address-2"><span id="c4fb"></span>C4FB</td>
+<td class="instruction">JR Z,<a href="C4C8.html#c518">HandleTurning_Walk</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c518">HandleTurning_Walk</a> to walk if the player is facing that way.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4fd"></span>C4FD</td>
+<td class="instruction">CPL</td>
+<td class="comment-1" rowspan="1">Work out which way to turn from the direction.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_Choose</td>
+<td class="address-2"><span id="c4fe"></span>C4FE</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep only one bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c500"></span>C500</td>
+<td class="instruction">JR <a href="C4C8.html#c543">HandleTurning_Turn</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c543">HandleTurning_Turn</a> to turn the player.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c502"></span>
+<div class="comments">
+<div class="paragraph">
+Turn towards the direction that the bit for turning right stands for, which is direction 01.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_AskRight</td>
+<td class="address-2"><span id="c502"></span>C502</td>
+<td class="instruction">CALL <a href="C5BD.html">GetFacingDirection</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C5BD.html">GetFacingDirection</a> to find out which way the player is facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c505"></span>C505</td>
+<td class="instruction">CP $01</td>
+<td class="comment-1" rowspan="1">Compare it with the direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c507"></span>C507</td>
+<td class="instruction">JR <a href="C4C8.html#c4fb">HandleTurning_Compare</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c4fb">HandleTurning_Compare</a> to walk if the player is facing that way, and to turn if not.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c509"></span>
+<div class="comments">
+<div class="paragraph">
+Turn towards the direction that the bit for picking up and dropping stands for, which is direction 03.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_AskPickUp</td>
+<td class="address-2"><span id="c509"></span>C509</td>
+<td class="instruction">CALL <a href="C5BD.html">GetFacingDirection</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C5BD.html">GetFacingDirection</a> to find out which way the player is facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c50c"></span>C50C</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="1">Compare it with the direction.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_WalkIfEqual</td>
+<td class="address-2"><span id="c50e"></span>C50E</td>
+<td class="instruction">JR Z,<a href="C4C8.html#c518">HandleTurning_Walk</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c518">HandleTurning_Walk</a> to walk if the player is facing that way.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c510"></span>C510</td>
+<td class="instruction">JR <a href="C4C8.html#c4fe">HandleTurning_Choose</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c4fe">HandleTurning_Choose</a> to turn if not.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c512"></span>
+<div class="comments">
+<div class="paragraph">
+Turn towards the direction that the bit for turning left stands for, which is direction 00.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_AskLeft</td>
+<td class="address-2"><span id="c512"></span>C512</td>
+<td class="instruction">CALL <a href="C5BD.html">GetFacingDirection</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C5BD.html">GetFacingDirection</a> to find out which way the player is facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c515"></span>C515</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test the direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c516"></span>C516</td>
+<td class="instruction">JR <a href="C4C8.html#c50e">HandleTurning_WalkIfEqual</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c50e">HandleTurning_WalkIfEqual</a> to walk if the player is facing that way, and to turn if not.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_Walk</td>
+<td class="address-2"><span id="c518"></span>C518</td>
+<td class="instruction">SET 2,C</td>
+<td class="comment-1" rowspan="1">Set the bit for walking forward.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c51a"></span>C51A</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c51b"></span>
+<div class="comments">
+<div class="paragraph">
+Turn the usual way. Wait first if the player has turned during the last two frames.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_Usual</td>
+<td class="address-2"><span id="c51b"></span>C51B</td>
+<td class="instruction">LD A,(IX+$0D)</td>
+<td class="comment-1" rowspan="1">Fetch the hit flags, whose lowest three bits hold the time left before the player can turn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c51e"></span>C51E</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only the countdown.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c520"></span>C520</td>
+<td class="instruction">JR Z,<a href="C4C8.html#c526">HandleTurning_TestControls</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c526">HandleTurning_TestControls</a> if there is nothing left to wait for.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c522"></span>C522</td>
+<td class="instruction">DEC (IX+$0D)</td>
+<td class="comment-1" rowspan="1">Take one off the countdown.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c525"></span>C525</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_TestControls</td>
+<td class="address-2"><span id="c526"></span>C526</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c527"></span>C527</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only the bits for turning left and turning right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c529"></span>C529</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if neither is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c52a"></span>C52A</td>
+<td class="instruction">LD A,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Fetch the collision flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c52d"></span>C52D</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Keep only the countdown from entering the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c52f"></span>C52F</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if the player has only just entered the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c530"></span>C530</td>
+<td class="instruction">BIT 3,(IX+$0C)</td>
+<td class="comment-1" rowspan="2">Return if the player is jumping.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c534"></span>C534</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c535"></span>C535</td>
+<td class="instruction">BIT 2,C</td>
+<td class="comment-1" rowspan="2">Test the bit for walking forward, which makes no difference.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c537"></span>C537</td>
+<td class="instruction">JR NZ,<a href="C4C8.html#c539">HandleTurning_StartCountdown</a></td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_StartCountdown</td>
+<td class="address-2"><span id="c539"></span>C539</td>
+<td class="instruction">LD A,(IX+$0D)</td>
+<td class="comment-1" rowspan="1">Fetch the hit flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c53c"></span>C53C</td>
+<td class="instruction">OR %00000010</td>
+<td class="comment-1" rowspan="1">Set bit 1 of them, to start the countdown that stops the player from turning again at once.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c53e"></span>C53E</td>
+<td class="instruction">LD (IX+$0D),A</td>
+<td class="comment-1" rowspan="1">Set them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c541"></span>C541</td>
+<td class="instruction">BIT 1,C</td>
+<td class="comment-1" rowspan="1">Test the bit for turning right.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_Turn</td>
+<td class="address-2"><span id="c543"></span>C543</td>
+<td class="instruction">JR NZ,<a href="C4C8.html#c564">HandleTurning_Right</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c564">HandleTurning_Right</a> to turn right if it is set.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c545"></span>
+<div class="comments">
+<div class="paragraph">
+Turn left, which makes the direction go from 02 to 00 03 01 and back to 02. This is done by flipping the mirror flag of the legs, and the type as well if they were mirrored.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c545"></span>C545</td>
+<td class="instruction">BIT 6,(IX+$07)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c553">HandleTurning_FlipMirror</a> if the legs are not mirrored.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c549"></span>C549</td>
+<td class="instruction">JR Z,<a href="C4C8.html#c553">HandleTurning_FlipMirror</a></td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_FlipType</td>
+<td class="address-2"><span id="c54b"></span>C54B</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the type of the legs.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c54e"></span>C54E</td>
+<td class="instruction">XOR %00000100</td>
+<td class="comment-1" rowspan="1">Flip bit 2 of it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c550"></span>C550</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Write the flipped type of the legs.</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_FlipMirror</td>
+<td class="address-2"><span id="c553"></span>C553</td>
+<td class="instruction">LD A,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Fetch the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c556"></span>C556</td>
+<td class="instruction">XOR %01000000</td>
+<td class="comment-1" rowspan="1">Flip the bit that mirrors the legs.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c558"></span>C558</td>
+<td class="instruction">LD (IX+$07),A</td>
+<td class="comment-1" rowspan="1">Set them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c55b"></span>C55B</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="3">Set the type of the body to be eight more than the type of the legs.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c55e"></span>C55E</td>
+<td class="instruction">ADD A,$08</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c560"></span>C560</td>
+<td class="instruction">LD (IX+$20),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c563"></span>C563</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c564"></span>
+<div class="comments">
+<div class="paragraph">
+Turn right, which makes the direction go from 02 to 01 03 00 and back to 02. This is done in the same way, but the type is flipped if the legs were not mirrored.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandleTurning_Right</td>
+<td class="address-2"><span id="c564"></span>C564</td>
+<td class="instruction">BIT 6,(IX+$07)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4C8.html#c54b">HandleTurning_FlipType</a> if the legs are not mirrored.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c568"></span>C568</td>
+<td class="instruction">JR Z,<a href="C4C8.html#c54b">HandleTurning_FlipType</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c56a"></span>C56A</td>
+<td class="instruction">JR <a href="C4C8.html#c553">HandleTurning_FlipMirror</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4C8.html#c553">HandleTurning_FlipMirror</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/asm/C89F.html">Knight Lore</a></li>
+<li><a href="/ultimate/alien8/asm/C13C.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C4A3.html">C4A3</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c4c8">Map</a></td>
+<td class="next">
+Next: <a href="C56C.html">C56C</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/50376.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

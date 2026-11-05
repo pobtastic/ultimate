@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at BF1B</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BF0D.html">BF0D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bf1b">Map</a></td>
+<td class="next">
+Next: <a href="BF56.html">BF56</a>
+</td>
+</tr>
+</table>
+<div class="description">BF1B: Test Object Intersections</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="B097.html">LoadRoomObjects</a>, <a href="BF79.html">HandlePickupAndDrop</a> and <a href="CBAB.html">CreateCreature</a>.
+</div>
+<div class="paragraph">
+Tests if an object is overlapping any other object, where it is at the moment. This is used to find out if there is room to put the object somewhere, once its position has been changed.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Record of the object</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">F</td>
+<td class="register-desc">Carry flag set if the object overlaps another object</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestObjectIntersections</td>
+<td class="address-2"><span id="bf1b"></span>BF1B</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="3">Stash <span class="register">BC</span>, <span class="register">DE</span> and <span class="register">HL</span> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1c"></span>BF1C</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1d"></span>BF1D</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf1e"></span>BF1E</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="1">Stash <span class="register">IY</span> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf20"></span>BF20</td>
+<td class="instruction">LD IY,$A76F</td>
+<td class="comment-1" rowspan="1">Start with the first object record, <a href="A76F.html">ObjectsTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf24"></span>BF24</td>
+<td class="instruction">LD B,$36</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of the number of object records, 36.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf26"></span>BF26</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Set the distance moved along x to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf28"></span>BF28</td>
+<td class="instruction">LD L,C</td>
+<td class="comment-1" rowspan="2">Set the distances moved along y and z to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf29"></span>BF29</td>
+<td class="instruction">LD H,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf2a"></span>BF2A</td>
+<td class="instruction">SET 1,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Flag the object as being moved, so that it is not tested against itself.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf2e"></span>
+<div class="comments">
+<div class="paragraph">
+Test whether this object overlaps on all three axes.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestObjectIntersections_Loop</td>
+<td class="address-2"><span id="bf2e"></span>BF2E</td>
+<td class="instruction">CALL <a href="B99B.html">TestObjectSolid</a></td>
+<td class="comment-1" rowspan="2">Jump to <a href="BF1B.html#bf4c">TestObjectIntersections_Next</a> to try the next object if this one is free, or is the object that is being tested.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf31"></span>BF31</td>
+<td class="instruction">JR Z,<a href="BF1B.html#bf4c">TestObjectIntersections_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf33"></span>BF33</td>
+<td class="instruction">CALL <a href="B8A2.html">TestOverlapInX</a></td>
+<td class="comment-1" rowspan="2">Jump to <a href="BF1B.html#bf4c">TestObjectIntersections_Next</a> to try the next object if they do not overlap along x.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf36"></span>BF36</td>
+<td class="instruction">JR NC,<a href="BF1B.html#bf4c">TestObjectIntersections_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf38"></span>BF38</td>
+<td class="instruction">CALL <a href="B8B7.html">TestOverlapInY</a></td>
+<td class="comment-1" rowspan="2">Jump to <a href="BF1B.html#bf4c">TestObjectIntersections_Next</a> to try the next object if they do not overlap along y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3b"></span>BF3B</td>
+<td class="instruction">JR NC,<a href="BF1B.html#bf4c">TestObjectIntersections_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf3d"></span>BF3D</td>
+<td class="instruction">CALL <a href="B8CC.html">TestOverlapInZ</a></td>
+<td class="comment-1" rowspan="2">Jump to <a href="BF1B.html#bf4c">TestObjectIntersections_Next</a> to try the next object if they do not overlap along z.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf40"></span>BF40</td>
+<td class="instruction">JR NC,<a href="BF1B.html#bf4c">TestObjectIntersections_Next</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf42"></span>
+<div class="comments">
+<div class="paragraph">
+The objects overlap on all three axes (and the carry flag is set), or there are none left to try (and it is not).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestObjectIntersections_Done</td>
+<td class="address-2"><span id="bf42"></span>BF42</td>
+<td class="instruction">POP IY</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">IY</span> from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf44"></span>BF44</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="3">Restore <span class="register">HL</span>, <span class="register">DE</span> and <span class="register">BC</span> from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf45"></span>BF45</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf46"></span>BF46</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf47"></span>BF47</td>
+<td class="instruction">RES 1,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Clear the flag that says that the object is being moved.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf4b"></span>BF4B</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bf4c"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestObjectIntersections_Next</td>
+<td class="address-2"><span id="bf4c"></span>BF4C</td>
+<td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="2">Move on to the next object record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf4f"></span>BF4F</td>
+<td class="instruction">ADD IY,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf51"></span>BF51</td>
+<td class="instruction">DJNZ <a href="BF1B.html#bf2e">TestObjectIntersections_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the counter and loop until all the records have been tried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf53"></span>BF53</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Clear the carry flag, as nothing overlaps the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf54"></span>BF54</td>
+<td class="instruction">JR <a href="BF1B.html#bf42">TestObjectIntersections_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BF1B.html#bf42">TestObjectIntersections_Done</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/asm/B4FD.html">Knight Lore</a></li>
+<li><a href="/ultimate/alien8/asm/B712.html">Alien 8</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BF0D.html">BF0D</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bf1b">Map</a></td>
+<td class="next">
+Next: <a href="BF56.html">BF56</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/48923.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

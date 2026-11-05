@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pentagram: Routine at C6EA</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pentagram.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C6CC.html">C6CC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c6ea">Map</a></td>
+<td class="next">
+Next: <a href="C74B.html">C74B</a>
+</td>
+</tr>
+</table>
+<div class="description">C6EA: Print Quest Percentage</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="C323.html">ShowGameOverScreen</a>.
+</div>
+<div class="paragraph">
+Works out how much of the quest has been done, and prints it to the buffer for the game over screen. The percentage is the number of rooms that have been visited, halved and no more than 36 plus four for each of the objects that have been collected, plus six for each of the stones that have been put on the pentagram. That makes 64 at the most.
+</div>
+<div class="paragraph">
+The percentage is kept in <a href="A74D.html">PercentComplete</a> as binary coded decimal, and it is printed as three digits if it is 64 and otherwise as two.
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After <a href="C6EA.html">PrintQuestPercentage</a> and <a href="B178.html">UpdateScreen</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="quest-percentage-before" src="../images/scr/quest-percentage-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="quest-percentage-after" src="../images/scr/quest-percentage-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrintQuestPercentage</td>
+<td class="address-2"><span id="c6ea"></span>C6EA</td>
+<td class="instruction">LD HL,$A74F</td>
+<td class="comment-1" rowspan="1">Start at the table of rooms visited, <a href="A74F.html">RoomsVisitedBitmap</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6ed"></span>C6ED</td>
+<td class="instruction">LD C,$1F</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">C</span> of 1F bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6ef"></span>C6EF</td>
+<td class="instruction">LD E,$00</td>
+<td class="comment-1" rowspan="1">Set the count of rooms in <span class="register">E</span> to zero.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintQuestPercentage_Byte</td>
+<td class="address-2"><span id="c6f1"></span>C6F1</td>
+<td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of eight bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6f3"></span>C6F3</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the byte.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintQuestPercentage_Bit</td>
+<td class="address-2"><span id="c6f4"></span>C6F4</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Move a bit into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6f5"></span>C6F5</td>
+<td class="instruction">JR NC,<a href="C6EA.html#c6f8">PrintQuestPercentage_Next</a></td>
+<td class="comment-1" rowspan="2">Count the room if the bit is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6f7"></span>C6F7</td>
+<td class="instruction">INC E</td>
+</tr>
+<tr>
+<td class="asm-label">PrintQuestPercentage_Next</td>
+<td class="address-2"><span id="c6f8"></span>C6F8</td>
+<td class="instruction">DJNZ <a href="C6EA.html#c6f4">PrintQuestPercentage_Bit</a></td>
+<td class="comment-1" rowspan="1">Decrease the counter and loop until all eight bits have been counted.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6fa"></span>C6FA</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6fb"></span>C6FB</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="2">Count down the bytes and loop until all of them have been counted.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6fc"></span>C6FC</td>
+<td class="instruction">JR NZ,<a href="C6EA.html#c6f1">PrintQuestPercentage_Byte</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c6fe"></span>
+<div class="comments">
+<div class="paragraph">
+Add up the points.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c6fe"></span>C6FE</td>
+<td class="instruction">SRL E</td>
+<td class="comment-1" rowspan="1">Halve the count of rooms.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c700"></span>C700</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Fetch it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c701"></span>C701</td>
+<td class="instruction">CP $36</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C6EA.html#c707">PrintQuestPercentage_Total</a> if it is below 36.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c703"></span>C703</td>
+<td class="instruction">JR C,<a href="C6EA.html#c707">PrintQuestPercentage_Total</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c705"></span>C705</td>
+<td class="instruction">LD E,$36</td>
+<td class="comment-1" rowspan="1">Use 36 instead.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintQuestPercentage_Total</td>
+<td class="address-2"><span id="c707"></span>C707</td>
+<td class="instruction">LD A,($A74C)</td>
+<td class="comment-1" rowspan="1">Fetch the number of objects that have been collected.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c70a"></span>C70A</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="2">Multiply it by four.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c70b"></span>C70B</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c70c"></span>C70C</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the points for the rooms.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c70d"></span>C70D</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Set the total in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c70e"></span>C70E</td>
+<td class="instruction">LD A,($A74B)</td>
+<td class="comment-1" rowspan="1">Fetch the number of stones that have been placed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c711"></span>C711</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Multiply it by two.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c712"></span>C712</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Stash twice the number of stones in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c713"></span>C713</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Multiply it by two again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c714"></span>C714</td>
+<td class="instruction">ADD A,D</td>
+<td class="comment-1" rowspan="1">Add the earlier value, to make six times the number of stones.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c715"></span>C715</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the total, to make the number of points.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c716"></span>C716</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Set the counter in <span class="register">B</span> to the number of points.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c717"></span>
+<div class="comments">
+<div class="paragraph">
+Convert the points into decimal.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c717"></span>C717</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Start from zero.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintQuestPercentage_Count</td>
+<td class="address-2"><span id="c718"></span>C718</td>
+<td class="instruction">ADD A,$01</td>
+<td class="comment-1" rowspan="1">Add one.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c71a"></span>C71A</td>
+<td class="instruction">DAA</td>
+<td class="comment-1" rowspan="1">Convert the number to decimal.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c71b"></span>C71B</td>
+<td class="instruction">DJNZ <a href="C6EA.html#c718">PrintQuestPercentage_Count</a></td>
+<td class="comment-1" rowspan="1">Decrease the counter and loop until it has been added up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c71d"></span>C71D</td>
+<td class="instruction">LD ($A74E),A</td>
+<td class="comment-1" rowspan="1">Set the lower two digits of the percentage.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c720"></span>C720</td>
+<td class="instruction">LD A,$00</td>
+<td class="comment-1" rowspan="1">Set <span class="register">A</span> to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c722"></span>C722</td>
+<td class="instruction">ADC A,$00</td>
+<td class="comment-1" rowspan="1">Add the carry flag, which is set if the percentage is 64 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c724"></span>C724</td>
+<td class="instruction">LD ($A74D),A</td>
+<td class="comment-1" rowspan="1">Set the digit that is the hundreds.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c727"></span>C727</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the digit and the flags.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c728"></span>
+<div class="comments">
+<div class="paragraph">
+Print the percentage in the buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c728"></span>C728</td>
+<td class="instruction">LD BC,$5F90</td>
+<td class="comment-1" rowspan="1">Set the position of the number in <span class="register">BC</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c72b"></span>C72B</td>
+<td class="instruction">CALL <a href="B37F.html">CalculateBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B37F.html">CalculateBufferAddress</a> to get the address in the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c72e"></span>C72E</td>
+<td class="instruction">LD L,C</td>
+<td class="comment-1" rowspan="2">Copy it to <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c72f"></span>C72F</td>
+<td class="instruction">LD H,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c730"></span>C730</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Restore the digit and the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c731"></span>C731</td>
+<td class="instruction">LD DE,$A74D</td>
+<td class="comment-1" rowspan="1">Take the percentage, <a href="A74D.html">PercentComplete</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c734"></span>C734</td>
+<td class="instruction">LD B,$01</td>
+<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of one byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c736"></span>C736</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C6EA.html#c745">PrintQuestPercentage_TwoDigits</a> if the percentage is under 64.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c737"></span>C737</td>
+<td class="instruction">JR Z,<a href="C6EA.html#c745">PrintQuestPercentage_TwoDigits</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c739"></span>C739</td>
+<td class="instruction">INC B</td>
+<td class="comment-1" rowspan="1">Set the counter to two bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c73a"></span>C73A</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the buffer address on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c73b"></span>C73B</td>
+<td class="instruction">LD HL,$8355</td>
+<td class="comment-1" rowspan="2">Set the glyph table to the start of the font, 8355 where the digits are.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c73e"></span>C73E</td>
+<td class="instruction">LD ($A732),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c741"></span>C741</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the buffer address from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c742"></span>C742</td>
+<td class="instruction">JP <a href="BB48.html#bb5a">PrintBCDNumber_Lower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BB48.html#bb5a">PrintBCDNumber_Lower</a> to print the digits, starting from the lower digit of the first byte.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintQuestPercentage_TwoDigits</td>
+<td class="address-2"><span id="c745"></span>C745</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move on to the next byte and the next place in the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c746"></span>C746</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c747"></span>C747</td>
+<td class="instruction">JP <a href="BB48.html">PrintBCDNumber</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BB48.html">PrintBCDNumber</a> to print the digits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c74a"></span>C74A</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return, which nothing does.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C6CC.html">C6CC</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c6ea">Map</a></td>
+<td class="next">
+Next: <a href="C74B.html">C74B</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/">Source code</a>.</div>
+<div><a href="../dec/asm/50922.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

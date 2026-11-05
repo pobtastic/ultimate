@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,22 +36,46 @@ Next: <a href="BB5C.html">BB5C</a>
 </td>
 </tr>
 </table>
-<div class="description">BB45: Routine at BB45</div>
+<div class="description">BB45: Colour Rows</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="A680.html">A680</a>.
+Used by the routine at <a href="A680.html">HandlerOrchid</a>.
+</div>
+<div class="paragraph">
+Colours <span class="register">C</span> rows of <span class="register">B</span> attribute cells, working upwards from the attribute address in <span class="register">HL</span>. A cell is only changed if its paper is black.
 </div>
 </div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">The number of columns</td>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">The number of rows</td>
+</tr>
+<tr>
+<td class="register">D</td>
+<td class="register-desc">The attribute value to write</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">The attribute buffer address of the bottom-left cell</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">AttrDrawUnchanged</td>
+<td class="asm-label">ColourRows</td>
 <td class="address-2"><span id="bb45"></span>BB45</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">BC</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Stash the counters and the start of the row on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -56,46 +83,46 @@ Used by the routine at <a href="A680.html">A680</a>.
 <td class="instruction">PUSH HL</td>
 </tr>
 <tr>
-<td class="asm-label">AttrDrawUnchanged_0</td>
+<td class="asm-label">ColourRows_Loop</td>
 <td class="address-2"><span id="bb47"></span>BB47</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the attribute.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb48"></span>BB48</td>
 <td class="instruction">AND %00111000</td>
-<td class="comment-1" rowspan="1">Keep only bits 3-5.</td>
+<td class="comment-1" rowspan="1">Keep only bits 3-5 (the paper).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb4a"></span>BB4A</td>
-<td class="instruction">JR NZ,<a href="BB45.html#bb4d">AttrDrawUnchanged_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="BB45.html#bb4d">ColourRows_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BB45.html#bb4d">ColourRows_Next</a> if the paper is not black.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb4c"></span>BB4C</td>
 <td class="instruction">LD (HL),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Colour the cell with the colour of the actor.</td>
 </tr>
 <tr>
-<td class="asm-label">AttrDrawUnchanged_1</td>
+<td class="asm-label">ColourRows_Next</td>
 <td class="address-2"><span id="bb4d"></span>BB4D</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move on to the next column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb4e"></span>BB4E</td>
-<td class="instruction">DJNZ <a href="BB45.html#bb47">AttrDrawUnchanged_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">DJNZ <a href="BB45.html#bb47">ColourRows_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the column counter by one and loop back to <a href="BB45.html#bb47">ColourRows_Loop</a> until all of the columns have been coloured.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb50"></span>BB50</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the start of the row from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -107,37 +134,47 @@ Used by the routine at <a href="A680.html">A680</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb54"></span>BB54</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reset the carry flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb55"></span>BB55</td>
 <td class="instruction">SBC HL,BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move up one row of attributes.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb57"></span>BB57</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the counters from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb58"></span>BB58</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrease <span class="register">C</span> by one.</td>
+<td class="comment-1" rowspan="2">Decrease the row counter by one and loop back to <a href="BB45.html">ColourRows</a> until all of the rows have been coloured.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb59"></span>BB59</td>
-<td class="instruction">JR NZ,<a href="BB45.html#bb45">AttrDrawUnchanged</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="BB45.html">AttrDrawUnchanged</a> unless <span class="register">C</span> is zero.</td>
+<td class="instruction">JR NZ,<a href="BB45.html#bb45">ColourRows</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb5b"></span>BB5B</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/underwurlde/asm/9888.html">Underwurlde</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at E0FB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="E0EE.html">E0EE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#e0fb">Map</a></td>
+<td class="next">
+Next: <a href="E148.html">E148</a>
+</td>
+</tr>
+</table>
+<div class="description">E0FB: Build Shift Tables</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BDFE.html">StartGame</a>.
+</div>
+<div class="paragraph">
+Builds the tables that the sprite drawing routines use to shift graphics sideways, and the table that reverses the bits in a byte.
+</div>
+<div class="paragraph">
+There are three pairs of 256-byte pages for shifting a byte by two, four and six pixels (the low byte of the shifted result is in the first page of each pair, counting down from FF and the high byte is in the second). FA to FF hold the shifts of the bytes as they are, and F2 to F7 hold the shifts of the bytes with their bits reversed. The page at F900 holds the bytes with their bits reversed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables</td>
+<td class="address-2"><span id="e0fb"></span>E0FB</td>
+<td class="instruction">LD L,$00</td>
+<td class="comment-1" rowspan="1">Start with the byte 00.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_Normal</td>
+<td class="address-2"><span id="e0fd"></span>E0FD</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="4">Start with the byte as a 16-bit number, and point <span class="register">HL</span> at the first page of the tables.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e0ff"></span>E0FF</td>
+<td class="instruction">LD E,L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e100"></span>E100</td>
+<td class="instruction">LD H,$FF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e102"></span>E102</td>
+<td class="instruction">LD B,$03</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_NormalLoop</td>
+<td class="address-2"><span id="e104"></span>E104</td>
+<td class="instruction">SLA E</td>
+<td class="comment-1" rowspan="9">Shift the number left by two pixels, and store it in the next pair of pages.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e106"></span>E106</td>
+<td class="instruction">RL D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e108"></span>E108</td>
+<td class="instruction">SLA E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e10a"></span>E10A</td>
+<td class="instruction">RL D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e10c"></span>E10C</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e10d"></span>E10D</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e10e"></span>E10E</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e10f"></span>E10F</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e110"></span>E110</td>
+<td class="instruction">DJNZ <a href="E0FB.html#e104">BuildShiftTables_NormalLoop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e112"></span>E112</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="2">Move on to the next byte, and loop back until all 256 have been done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e113"></span>E113</td>
+<td class="instruction">JR NZ,<a href="E0FB.html#e0fd">BuildShiftTables_Normal</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e115"></span>E115</td>
+<td class="instruction">LD L,$00</td>
+<td class="comment-1" rowspan="1">Start with the byte 00 again.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_Reversed</td>
+<td class="address-2"><span id="e117"></span>E117</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="3">Count eight bits, and get the byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e119"></span>E119</td>
+<td class="instruction">LD B,$08</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e11b"></span>E11B</td>
+<td class="instruction">LD A,L</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_Reverse</td>
+<td class="address-2"><span id="e11c"></span>E11C</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Reverse the bits of the byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e11d"></span>E11D</td>
+<td class="instruction">RL C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e11f"></span>E11F</td>
+<td class="instruction">DJNZ <a href="E0FB.html#e11c">BuildShiftTables_Reverse</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e121"></span>E121</td>
+<td class="instruction">LD E,C</td>
+<td class="comment-1" rowspan="3">Start with the reversed byte as a 16-bit number, and point <span class="register">HL</span> at the first page of the reversed tables.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e122"></span>E122</td>
+<td class="instruction">LD H,$F7</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e124"></span>E124</td>
+<td class="instruction">LD B,$03</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_ReversedLoop</td>
+<td class="address-2"><span id="e126"></span>E126</td>
+<td class="instruction">SLA E</td>
+<td class="comment-1" rowspan="9">Shift the number left by two pixels, and store it in the next pair of pages.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e128"></span>E128</td>
+<td class="instruction">RL D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e12a"></span>E12A</td>
+<td class="instruction">SLA E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e12c"></span>E12C</td>
+<td class="instruction">RL D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e12e"></span>E12E</td>
+<td class="instruction">LD (HL),E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e12f"></span>E12F</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e130"></span>E130</td>
+<td class="instruction">LD (HL),D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e131"></span>E131</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e132"></span>E132</td>
+<td class="instruction">DJNZ <a href="E0FB.html#e126">BuildShiftTables_ReversedLoop</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e134"></span>E134</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="2">Move on to the next byte, and loop back until all 256 have been done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e135"></span>E135</td>
+<td class="instruction">JR NZ,<a href="E0FB.html#e117">BuildShiftTables_Reversed</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e137"></span>E137</td>
+<td class="instruction">LD HL,$F900</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="F900.html">ReverseBitsTable</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_ReverseTable</td>
+<td class="address-2"><span id="e13a"></span>E13A</td>
+<td class="instruction">LD D,L</td>
+<td class="comment-1" rowspan="2">Start with the byte, and count eight bits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e13b"></span>E13B</td>
+<td class="instruction">LD B,$08</td>
+</tr>
+<tr>
+<td class="asm-label">BuildShiftTables_ReverseBits</td>
+<td class="address-2"><span id="e13d"></span>E13D</td>
+<td class="instruction">SRL D</td>
+<td class="comment-1" rowspan="3">Reverse the bits of the byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e13f"></span>E13F</td>
+<td class="instruction">RL E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e141"></span>E141</td>
+<td class="instruction">DJNZ <a href="E0FB.html#e13d">BuildShiftTables_ReverseBits</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e143"></span>E143</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="3">Store the reversed byte, and loop back until all 256 have been done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e144"></span>E144</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e145"></span>E145</td>
+<td class="instruction">JR NZ,<a href="E0FB.html#e13a">BuildShiftTables_ReverseTable</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="e147"></span>E147</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/gunfright/asm/D4FD.html">Gunfright</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="E0EE.html">E0EE</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#e0fb">Map</a></td>
+<td class="next">
+Next: <a href="E148.html">E148</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/57595.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

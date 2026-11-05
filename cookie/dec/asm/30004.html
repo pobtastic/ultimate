@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,10 @@ Next: <a href="30026.html">30026</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="24545.html">24545</a>, <a href="25568.html">MenuWriteText</a>, <a href="28704.html">ScoreLabelFlash</a>, <a href="29832.html">PrintString</a> and <a href="29934.html">29934</a>.
+Used by the routines at <a href="24740.html">WriteAttributeBlock</a>, <a href="24829.html">ColourShelf</a>, <a href="25568.html">MenuWriteText</a>, <a href="28704.html">ScoreLabelFlash</a>, <a href="29832.html">PrintStringColour</a> and <a href="29934.html">ColourSprite</a>.
+</div>
+<div class="paragraph">
+Converts the pixel co-ordinates to the address of the attribute buffer byte for the character cell containing them.
 </div>
 </div>
 <table class="input">
@@ -63,26 +69,16 @@ Used by the routines at <a href="24545.html">24545</a>, <a href="25568.html">Men
 </td>
 </tr>
 <tr>
-<td class="routine-comment" colspan="5">
-<span id="30004"></span>
-<div class="comments">
-<div class="paragraph">
-Converts a given pixel address to the associated attribute buffer address.
-</div>
-</div>
-</td>
-</tr>
-<tr>
 <td class="asm-label">AttributeAddress</td>
 <td class="address-2"><span id="30004"></span>30004</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="1">Horizontal co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30005"></span>30005</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="3">Divide by 8.</td>
+<td class="comment-1" rowspan="3">Divide by 8 (to get the column).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -98,7 +94,7 @@ Converts a given pixel address to the associated attribute buffer address.
 <td class="asm-label"></td>
 <td class="address-1"><span id="30008"></span>30008</td>
 <td class="instruction">AND %00011111</td>
-<td class="comment-1" rowspan="1">Keep only bits 0-4 (0-31 / minimum-maximum horizontal screen values).</td>
+<td class="comment-1" rowspan="1">Keep only bits 0-4 (0-31 the range of the columns).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -110,13 +106,13 @@ Converts a given pixel address to the associated attribute buffer address.
 <td class="asm-label"></td>
 <td class="address-1"><span id="30011"></span>30011</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1">Vertical co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the vertical co-ordinate.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30012"></span>30012</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2">Multiply by 4.</td>
+<td class="comment-1" rowspan="2">Multiply by 4 (the row is the vertical co-ordinate divided by 8 and there are 32 columns in each row).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -139,13 +135,13 @@ Converts a given pixel address to the associated attribute buffer address.
 <td class="asm-label"></td>
 <td class="address-1"><span id="30017"></span>30017</td>
 <td class="instruction">OR L</td>
-<td class="comment-1" rowspan="1">Set the bits from <span class="register">L</span>.</td>
+<td class="comment-1" rowspan="1">Combine with the column in <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30018"></span>30018</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1"><span class="register">L</span>=<span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Store this back in <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -163,13 +159,13 @@ Converts a given pixel address to the associated attribute buffer address.
 <td class="asm-label"></td>
 <td class="address-1"><span id="30022"></span>30022</td>
 <td class="instruction">OR %01011000</td>
-<td class="comment-1" rowspan="1">Set MSB of the attribute buffer 88. This ensures our value is &gt;= <a href="16384.html#22528">22528</a>.</td>
+<td class="comment-1" rowspan="1">Set the MSB of the attribute buffer address (88). This ensures that the address is at least 22528.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="30024"></span>30024</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1">Store this back in <span class="register">H</span>.</td>
+<td class="comment-1" rowspan="1">Store this in <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -186,7 +182,9 @@ View the equivalent code in; <ul class="">
 <li><a href="/ultimate/jetpac/dec/asm/29198.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/dec/asm/34054.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/dec/asm/29839.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/dec/asm/47325.html">Sabre Wulf</a></li>
 <li><a href="/ultimate/tranzam/dec/asm/28823.html">Tranz Am</a></li>
+<li><a href="/ultimate/underwurlde/dec/asm/44512.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cyberun: Routine at C374</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cyberun.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C33C.html">C33C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c374">Map</a></td>
+<td class="next">
+Next: <a href="C4ED.html">C4ED</a>
+</td>
+</tr>
+</table>
+<div class="description">C374: Run Frame</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="F46C.html">RunLife</a> and <a href="F48B.html">ExplodeShip</a>.
+</div>
+<div class="paragraph">
+Does the work for one frame of the game: increases the frame counter at <a href="9A64.html">FrameCounter</a>, saves the position where the ship can restart with <a href="C33C.html">SaveRestartPosition</a> (every fourth frame) and clears the scroll speeds. Unless the ship is out of control, it is then moved by <a href="B234.html">UpdateShipSpeeds</a> and tested against the terrain and the map objects. The shots are moved by <a href="B706.html">UpdateShots</a> and the rest of the world by <a href="DDF8.html">ScrollWorld</a>, which comes back at <a href="C374.html#c3e3">RunFrame_Draw</a>. Then a part that has just been collected is fitted and the ship is drawn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame</td>
+<td class="address-2"><span id="c374"></span>C374</td>
+<td class="instruction">LD HL,($9A64)</td>
+<td class="comment-1" rowspan="1">The frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c377"></span>C377</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">The next frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c378"></span>C378</td>
+<td class="instruction">LD ($9A64),HL</td>
+<td class="comment-1" rowspan="1">Write the frame counter back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c37b"></span>C37B</td>
+<td class="instruction">BIT 0,L</td>
+<td class="comment-1" rowspan="2">On even frames the falling timer is left alone.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c37d"></span>C37D</td>
+<td class="instruction">JR Z,<a href="C374.html#c389">RunFrame_Counter</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c37f"></span>C37F</td>
+<td class="instruction">LD A,($896F)</td>
+<td class="comment-1" rowspan="1">The falling timer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c382"></span>C382</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Leave it once it has run out.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c383"></span>C383</td>
+<td class="instruction">JR Z,<a href="C374.html#c389">RunFrame_Counter</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c385"></span>C385</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">One frame less on the timer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c386"></span>C386</td>
+<td class="instruction">LD ($896F),A</td>
+<td class="comment-1" rowspan="1">Write the falling timer back.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Counter</td>
+<td class="address-2"><span id="c389"></span>C389</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">The low byte of the frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c38a"></span>C38A</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Only the bottom two bits of the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c38c"></span>C38C</td>
+<td class="instruction">CALL Z,<a href="C33C.html">SaveRestartPosition</a></td>
+<td class="comment-1" rowspan="1">Save the restart position every fourth frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c38f"></span>C38F</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="1">Keep the pointer that was in <span class="register">IY</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c391"></span>C391</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">The scroll starts at rest.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c392"></span>C392</td>
+<td class="instruction">LD ($CCBB),A</td>
+<td class="comment-1" rowspan="1">No horizontal scroll yet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c395"></span>C395</td>
+<td class="instruction">LD ($CCBA),A</td>
+<td class="comment-1" rowspan="1">No vertical scroll yet.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c398"></span>C398</td>
+<td class="instruction">LD A,($8F53)</td>
+<td class="comment-1" rowspan="1">The ship state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c39b"></span>C39B</td>
+<td class="instruction">CP $0B</td>
+<td class="comment-1" rowspan="2">State 0B or more means the ship is gone.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c39d"></span>C39D</td>
+<td class="instruction">JR NC,<a href="C374.html#c3dd">RunFrame_Shots</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c39f"></span>C39F</td>
+<td class="instruction">LD IX,$C8E5</td>
+<td class="comment-1" rowspan="1">The ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3a3"></span>C3A3</td>
+<td class="instruction">CALL <a href="B234.html">UpdateShipSpeeds</a></td>
+<td class="comment-1" rowspan="1">Change the ship's speeds from the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3a6"></span>C3A6</td>
+<td class="instruction">LD A,$FF</td>
+<td class="comment-1" rowspan="1">The ship uses collision mode FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3a8"></span>C3A8</td>
+<td class="instruction">LD ($5C25),A</td>
+<td class="comment-1" rowspan="1">Remember that mode for the terrain test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3ab"></span>C3AB</td>
+<td class="instruction">LD A,($96AB)</td>
+<td class="comment-1" rowspan="1">The crystal-delivery flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3ae"></span>C3AE</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">A delivered stack skips the terrain test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3af"></span>C3AF</td>
+<td class="instruction">JR NZ,<a href="C374.html#c3dd">RunFrame_Shots</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3b1"></span>C3B1</td>
+<td class="instruction">CALL <a href="B9EC.html">SetShipSpeeds</a></td>
+<td class="comment-1" rowspan="1">Give the ship the opposite of the scroll, so it stays put.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3b4"></span>C3B4</td>
+<td class="instruction">LD C,$30</td>
+<td class="comment-1" rowspan="1">The ship's collision width is 30.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3b6"></span>C3B6</td>
+<td class="instruction">LD A,($F5F6)</td>
+<td class="comment-1" rowspan="1">The ninth part flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3b9"></span>C3B9</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Is the ninth part fitted?</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3ba"></span>C3BA</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">Four extra rows of height without that part.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3bc"></span>C3BC</td>
+<td class="instruction">JR Z,<a href="C374.html#c3c0">RunFrame_Add</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C374.html#c3c0">RunFrame_Add</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3be"></span>C3BE</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">No extra rows.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Add</td>
+<td class="address-2"><span id="c3c0"></span>C3C0</td>
+<td class="instruction">LD A,($C1A9)</td>
+<td class="comment-1" rowspan="1">The height of the ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3c3"></span>C3C3</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="1">Add the extra rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3c4"></span>C3C4</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">That is the collision height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3c5"></span>C3C5</td>
+<td class="instruction">CALL <a href="BA21.html">CheckTerrainCollision</a></td>
+<td class="comment-1" rowspan="1">Test the ship against the terrain.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3c8"></span>C3C8</td>
+<td class="instruction">CALL <a href="A8F4.html">CheckMapObjectCollisions</a></td>
+<td class="comment-1" rowspan="1">Test the ship against the map objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3cb"></span>C3CB</td>
+<td class="instruction">LD HL,($C8EC)</td>
+<td class="comment-1" rowspan="1">The ship's horizontal speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3ce"></span>C3CE</td>
+<td class="instruction">LD ($C8FE),HL</td>
+<td class="comment-1" rowspan="1">Keep it for the end of the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3d1"></span>C3D1</td>
+<td class="instruction">LD HL,($C8EE)</td>
+<td class="comment-1" rowspan="1">The ship's vertical speed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3d4"></span>C3D4</td>
+<td class="instruction">LD ($C900),HL</td>
+<td class="comment-1" rowspan="1">Keep it for the end of the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3d7"></span>C3D7</td>
+<td class="instruction">CALL <a href="B9EC.html">SetShipSpeeds</a></td>
+<td class="comment-1" rowspan="1">Set the ship speeds from the scroll again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3da"></span>C3DA</td>
+<td class="instruction">CALL <a href="BF66.html">MoveObject</a></td>
+<td class="comment-1" rowspan="1">Move the ship by those speeds.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Shots</td>
+<td class="address-2"><span id="c3dd"></span>C3DD</td>
+<td class="instruction">CALL <a href="B706.html">UpdateShots</a></td>
+<td class="comment-1" rowspan="1">Call <a href="B706.html">UpdateShots</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3e0"></span>C3E0</td>
+<td class="instruction">JP <a href="DDF8.html">ScrollWorld</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="DDF8.html">ScrollWorld</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c3e3"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="DDF8.html">ScrollWorld</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Draw</td>
+<td class="address-2"><span id="c3e3"></span>C3E3</td>
+<td class="instruction">POP IY</td>
+<td class="comment-1" rowspan="1">Back to the pointer saved at the start of the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3e5"></span>C3E5</td>
+<td class="instruction">LD A,($96AB)</td>
+<td class="comment-1" rowspan="1">The crystal-delivery flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3e8"></span>C3E8</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">A delivered stack draws nothing more this frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3e9"></span>C3E9</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3ea"></span>C3EA</td>
+<td class="instruction">LD A,($8F53)</td>
+<td class="comment-1" rowspan="1">The ship state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3ed"></span>C3ED</td>
+<td class="instruction">CP $0B</td>
+<td class="comment-1" rowspan="2">An explosion past ten draws nothing more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3ef"></span>C3EF</td>
+<td class="instruction">RET NC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3f0"></span>C3F0</td>
+<td class="instruction">CALL <a href="9724.html">StartCrystalObject</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9724.html">StartCrystalObject</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3f3"></span>C3F3</td>
+<td class="instruction">LD A,($9A64)</td>
+<td class="comment-1" rowspan="1">The frame counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3f6"></span>C3F6</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Bit 0 set means an odd frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3f8"></span>C3F8</td>
+<td class="instruction">JR NZ,<a href="C374.html#c421">RunFrame_Ship</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C374.html#c421">RunFrame_Ship</a> if the zero flag is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3fa"></span>C3FA</td>
+<td class="instruction">CALL <a href="C1CE.html">CheckItemDelivery</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C1CE.html">CheckItemDelivery</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c3fd"></span>C3FD</td>
+<td class="instruction">LD A,($C904)</td>
+<td class="comment-1" rowspan="1">The carried-item marker.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c400"></span>C400</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c421">RunFrame_Ship</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c401"></span>C401</td>
+<td class="instruction">JR NZ,<a href="C374.html#c421">RunFrame_Ship</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c403"></span>C403</td>
+<td class="instruction">LD A,($8F53)</td>
+<td class="comment-1" rowspan="1">The ship state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c406"></span>C406</td>
+<td class="instruction">CP $0A</td>
+<td class="comment-1" rowspan="2">State ten skips the flame test.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c408"></span>C408</td>
+<td class="instruction">JR Z,<a href="C374.html#c421">RunFrame_Ship</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c40a"></span>C40A</td>
+<td class="instruction">LD A,($BC12)</td>
+<td class="comment-1" rowspan="1">A finished slope check skips the flames.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c40d"></span>C40D</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c421">RunFrame_Ship</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c40e"></span>C40E</td>
+<td class="instruction">JR NZ,<a href="C374.html#c421">RunFrame_Ship</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c410"></span>C410</td>
+<td class="instruction">LD A,($5C36)</td>
+<td class="comment-1" rowspan="1">The steering direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c413"></span>C413</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4ED.html#c5ea">DrawShipTop_Pause</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c414"></span>C414</td>
+<td class="instruction">JP Z,<a href="C4ED.html#c5ea">DrawShipTop_Pause</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c417"></span>C417</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">The direction being steered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c418"></span>C418</td>
+<td class="instruction">LD A,($C8FD)</td>
+<td class="comment-1" rowspan="1">The ship's facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c41b"></span>C41B</td>
+<td class="instruction">XOR B</td>
+<td class="comment-1" rowspan="1">Flip the bits of <span class="register">A</span> that are set in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c41c"></span>C41C</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C4ED.html#c5ea">DrawShipTop_Pause</a> if bit 7 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c41e"></span>C41E</td>
+<td class="instruction">JP Z,<a href="C4ED.html#c5ea">DrawShipTop_Pause</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c421"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="9572.html">UpdateCrystalStack</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Ship</td>
+<td class="address-2"><span id="c421"></span>C421</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="1">The draw scratch starts clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c424"></span>C424</td>
+<td class="instruction">LD ($5C1C),HL</td>
+<td class="comment-1" rowspan="1">The draw scratch starts at zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c427"></span>C427</td>
+<td class="instruction">LD A,($C903)</td>
+<td class="comment-1" rowspan="1">The ship's screen row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c42a"></span>C42A</td>
+<td class="instruction">LD ($A289),A</td>
+<td class="comment-1" rowspan="1">The row the sprites are drawn on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c42d"></span>C42D</td>
+<td class="instruction">LD HL,$0606</td>
+<td class="comment-1" rowspan="1">A width and height of six.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c430"></span>C430</td>
+<td class="instruction">LD ($5C28),HL</td>
+<td class="comment-1" rowspan="1">The sprite size is six by six.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c433"></span>C433</td>
+<td class="instruction">LD IX,$C8E5</td>
+<td class="comment-1" rowspan="1">The ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c437"></span>C437</td>
+<td class="instruction">LD A,($8F53)</td>
+<td class="comment-1" rowspan="1">The ship state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c43a"></span>C43A</td>
+<td class="instruction">CP $0A</td>
+<td class="comment-1" rowspan="2">State ten skips the flame colour.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c43c"></span>C43C</td>
+<td class="instruction">JR Z,<a href="C374.html#c453">RunFrame_Erase</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c43e"></span>C43E</td>
+<td class="instruction">LD C,(IX+$18)</td>
+<td class="comment-1" rowspan="1">The ship's facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c441"></span>C441</td>
+<td class="instruction">LD A,($5C36)</td>
+<td class="comment-1" rowspan="1">The direction being steered.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c444"></span>C444</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c4ab">RunFrame_Check</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c445"></span>C445</td>
+<td class="instruction">JR Z,<a href="C374.html#c4ab">RunFrame_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c447"></span>C447</td>
+<td class="instruction">XOR C</td>
+<td class="comment-1" rowspan="1">Compare it with the facing byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c448"></span>C448</td>
+<td class="instruction">AND %10000000</td>
+<td class="comment-1" rowspan="1">Only the facing bit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c44a"></span>C44A</td>
+<td class="instruction">LD ($C7C0),A</td>
+<td class="comment-1" rowspan="1">Note that the steering and the facing differ.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c44d"></span>C44D</td>
+<td class="instruction">JR Z,<a href="C374.html#c4ab">RunFrame_Check</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C374.html#c4ab">RunFrame_Check</a> if the zero flag is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c44f"></span>C44F</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c450"></span>C450</td>
+<td class="instruction">LD ($5C39),A</td>
+<td class="comment-1" rowspan="1">Clear the shot scratch.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Erase</td>
+<td class="address-2"><span id="c453"></span>C453</td>
+<td class="instruction">LD HL,($C902)</td>
+<td class="comment-1" rowspan="1">Where the ship was drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c456"></span>C456</td>
+<td class="instruction">LD ($BF83),HL</td>
+<td class="comment-1" rowspan="1">Keep that, so it can be erased.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c459"></span>C459</td>
+<td class="instruction">LD DE,($C1AA)</td>
+<td class="comment-1" rowspan="1">The ship graphic in the buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c45d"></span>C45D</td>
+<td class="instruction">LD A,($C1A9)</td>
+<td class="comment-1" rowspan="1">The height of the ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c460"></span>C460</td>
+<td class="instruction">LD ($5C1C),A</td>
+<td class="comment-1" rowspan="1">The height, kept for the draw.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c463"></span>C463</td>
+<td class="instruction">LD IY,$A629</td>
+<td class="comment-1" rowspan="1">The erase aligned row directly.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c467"></span>C467</td>
+<td class="instruction">CALL <a href="BF85.html">SelectMirroredErase</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BF85.html">SelectMirroredErase</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c46a"></span>C46A</td>
+<td class="instruction">LD HL,($BF83)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="BF7F.html#bf83">BF83</a> into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c46d"></span>C46D</td>
+<td class="instruction">CALL <a href="A149.html">GetScreenAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A149.html">GetScreenAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c470"></span>C470</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c471"></span>C471</td>
+<td class="instruction">LD A,(IX+$1F)</td>
+<td class="comment-1" rowspan="1">Read offset 1F of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c474"></span>C474</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c4ab">RunFrame_Check</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c475"></span>C475</td>
+<td class="instruction">JR Z,<a href="C374.html#c4ab">RunFrame_Check</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c477"></span>C477</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c485">RunFrame_FitPart</a> if bit 7 of <span class="register">A</span> is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c479"></span>C479</td>
+<td class="instruction">JR Z,<a href="C374.html#c485">RunFrame_FitPart</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c47b"></span>C47B</td>
+<td class="instruction">CALL <a href="AA37.html">BuildCarriedItemGraphic</a></td>
+<td class="comment-1" rowspan="1">Call <a href="AA37.html">BuildCarriedItemGraphic</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c47e"></span>C47E</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c480"></span>C480</td>
+<td class="instruction">LD ($C27A),A</td>
+<td class="comment-1" rowspan="1">A piece has been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c483"></span>C483</td>
+<td class="instruction">JR <a href="C374.html#c4b1">RunFrame_Facing</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C374.html#c4b1">RunFrame_Facing</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_FitPart</td>
+<td class="address-2"><span id="c485"></span>C485</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c486"></span>C486</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Step <span class="register">A</span> back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c487"></span>C487</td>
+<td class="instruction">LD HL,$F5EE</td>
+<td class="comment-1" rowspan="1">The first part flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c48a"></span>C48A</td>
+<td class="instruction">CALL <a href="9BCF.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Call <a href="9BCF.html">AddAToHL</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c48d"></span>C48D</td>
+<td class="instruction">LD (HL),B</td>
+<td class="comment-1" rowspan="1">Write <span class="register">B</span> where <span class="register">HL</span> points.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c48e"></span>C48E</td>
+<td class="instruction">CALL <a href="A59F.html">DrawSpritesDirectly</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A59F.html">DrawSpritesDirectly</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c491"></span>C491</td>
+<td class="instruction">CALL <a href="AFE9.html">BuildShip</a></td>
+<td class="comment-1" rowspan="1">Call <a href="AFE9.html">BuildShip</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c494"></span>C494</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=80.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c496"></span>C496</td>
+<td class="instruction">LD ($C27A),A</td>
+<td class="comment-1" rowspan="1">A piece has been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c499"></span>C499</td>
+<td class="instruction">LD IX,$C8E5</td>
+<td class="comment-1" rowspan="1">The ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c49d"></span>C49D</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4a0"></span>C4A0</td>
+<td class="instruction">LD ($5C1C),HL</td>
+<td class="comment-1" rowspan="1">No saved row count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4a3"></span>C4A3</td>
+<td class="instruction">LD HL,$0606</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=0606.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4a6"></span>C4A6</td>
+<td class="instruction">LD ($5C28),HL</td>
+<td class="comment-1" rowspan="1">The ship sprite is six bytes wide.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4a9"></span>C4A9</td>
+<td class="instruction">JR <a href="C374.html#c4b1">RunFrame_Facing</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C374.html#c4b1">RunFrame_Facing</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Check</td>
+<td class="address-2"><span id="c4ab"></span>C4AB</td>
+<td class="instruction">LD A,(IX+$1F)</td>
+<td class="comment-1" rowspan="1">Read offset 1F of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4ae"></span>C4AE</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c453">RunFrame_Erase</a> if <span class="register">A</span> is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4af"></span>C4AF</td>
+<td class="instruction">JR NZ,<a href="C374.html#c453">RunFrame_Erase</a></td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Facing</td>
+<td class="address-2"><span id="c4b1"></span>C4B1</td>
+<td class="instruction">LD A,($5C36)</td>
+<td class="comment-1" rowspan="1">The steering direction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4b4"></span>C4B4</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c4ba">RunFrame_Explosion</a> if <span class="register">A</span> is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4b5"></span>C4B5</td>
+<td class="instruction">JR Z,<a href="C374.html#c4ba">RunFrame_Explosion</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4b7"></span>C4B7</td>
+<td class="instruction">LD (IX+$18),A</td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to offset 18 of <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_Explosion</td>
+<td class="address-2"><span id="c4ba"></span>C4BA</td>
+<td class="instruction">LD A,($8F53)</td>
+<td class="comment-1" rowspan="1">The ship state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4bd"></span>C4BD</td>
+<td class="instruction">CP $0A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C374.html#c4e1">RunFrame_DrawShip</a> if <span class="register">A</span> is 0A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4bf"></span>C4BF</td>
+<td class="instruction">JR Z,<a href="C374.html#c4e1">RunFrame_DrawShip</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4c1"></span>C4C1</td>
+<td class="instruction">LD A,($C903)</td>
+<td class="comment-1" rowspan="1">The row the ship was drawn on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4c4"></span>C4C4</td>
+<td class="instruction">LD ($A28A),A</td>
+<td class="comment-1" rowspan="1">The row the ship was drawn on.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4c7"></span>C4C7</td>
+<td class="instruction">LD DE,($C1AA)</td>
+<td class="comment-1" rowspan="1">Fetch the word at <a href="C1AA.html">ShipBufferAddress</a> into <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4cb"></span>C4CB</td>
+<td class="instruction">LD HL,($C902)</td>
+<td class="comment-1" rowspan="1">Fetch the word at C902 into <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4ce"></span>C4CE</td>
+<td class="instruction">LD ($BF83),HL</td>
+<td class="comment-1" rowspan="1">The position the ship was drawn at.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d1"></span>C4D1</td>
+<td class="instruction">CALL <a href="A149.html">GetScreenAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A149.html">GetScreenAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d4"></span>C4D4</td>
+<td class="instruction">LD A,($C1A9)</td>
+<td class="comment-1" rowspan="1">The height of the ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4d7"></span>C4D7</td>
+<td class="instruction">LD ($5C1D),A</td>
+<td class="comment-1" rowspan="1">The height of the ship.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4da"></span>C4DA</td>
+<td class="instruction">LD IX,$A678</td>
+<td class="comment-1" rowspan="1">The draw aligned row directly.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4de"></span>C4DE</td>
+<td class="instruction">CALL <a href="BFB8.html">SelectMirroredDraw</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BFB8.html">SelectMirroredDraw</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">RunFrame_DrawShip</td>
+<td class="address-2"><span id="c4e1"></span>C4E1</td>
+<td class="instruction">CALL <a href="A59F.html">DrawSpritesDirectly</a></td>
+<td class="comment-1" rowspan="1">Call <a href="A59F.html">DrawSpritesDirectly</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4e4"></span>C4E4</td>
+<td class="instruction">CALL <a href="F1BD.html">ColourShip</a></td>
+<td class="comment-1" rowspan="1">Call <a href="F1BD.html">ColourShip</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4e7"></span>C4E7</td>
+<td class="instruction">LD A,($8F53)</td>
+<td class="comment-1" rowspan="1">The ship state.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4ea"></span>C4EA</td>
+<td class="instruction">CP $0A</td>
+<td class="comment-1" rowspan="2">Return if <span class="register">A</span> is 0A or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c4ec"></span>C4EC</td>
+<td class="instruction">RET NC</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+Continue on to <a href="C4ED.html">DrawShipTop</a>.
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="C33C.html">C33C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c374">Map</a></td>
+<td class="next">
+Next: <a href="C4ED.html">C4ED</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/">Source code</a>.</div>
+<div><a href="../dec/asm/50036.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

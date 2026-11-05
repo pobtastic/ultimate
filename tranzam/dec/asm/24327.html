@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -38,6 +41,9 @@ Next: <a href="24428.html">24428</a>
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Clears the game variables, builds the day time game window and then runs the game selection menu until the player chooses to start a game.
+</div>
 </div>
 </td>
 </tr>
@@ -46,7 +52,7 @@ Next: <a href="24428.html">24428</a>
 <span id="24327"></span>
 <div class="comments">
 <div class="paragraph">
-Blank the game configs.
+Blank the game variables.
 </div>
 </div>
 </td>
@@ -55,7 +61,7 @@ Blank the game configs.
 <td class="asm-label">GameInitialisation</td>
 <td class="address-2"><span id="24327"></span>24327</td>
 <td class="instruction">LD HL,24064</td>
-<td class="comment-1" rowspan="5">Write 0 to 163 bytes starting from 24064.</td>
+<td class="comment-1" rowspan="5">Write 0 to the 164 bytes from 24064 to 24227.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -81,7 +87,7 @@ Blank the game configs.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24340"></span>24340</td>
 <td class="instruction">LD HL,65535</td>
-<td class="comment-1" rowspan="2">Write 65535 to <a href="24064.html">BestTime</a> - this isn't used anywhere until <a href="24067.html">Flag_BestTime</a> is set.</td>
+<td class="comment-1" rowspan="2">Write 65535 to <a href="24064.html">BestTime_1</a> (the best time) - this isn't used anywhere until <a href="24067.html">Flag_BestTime</a> is set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -94,6 +100,9 @@ Blank the game configs.
 <div class="comments">
 <div class="paragraph">
 This entry point is used by the routine at <a href="25427.html">GameOver</a>.
+</div>
+<div class="paragraph">
+Entered again when a game is over, to return to the game selection menu.
 </div>
 </div>
 </td>
@@ -119,19 +128,29 @@ This entry point is used by the routine at <a href="25427.html">GameOver</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24355"></span>24355</td>
 <td class="instruction">CALL <a href="24949.html">SetDayAttributes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="24949.html">SetDayAttributes</a>.</td>
+<td class="comment-1" rowspan="1">Set the day time attributes using <a href="24949.html">SetDayAttributes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24358"></span>24358</td>
 <td class="instruction">CALL <a href="26784.html">CreateWindow</a></td>
-<td class="comment-1" rowspan="1">Call <a href="26784.html">CreateWindow</a>.</td>
+<td class="comment-1" rowspan="1">Create the game window using <a href="26784.html">CreateWindow</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="24361"></span>
+<div class="comments">
+<div class="paragraph">
+Print the menu, then check the keyboard for the player's choice.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">GameSelect_Loop</td>
 <td class="address-2"><span id="24361"></span>24361</td>
 <td class="instruction">CALL <a href="24428.html">GameMenu</a></td>
-<td class="comment-1" rowspan="1">Call <a href="24428.html">GameMenu</a>.</td>
+<td class="comment-1" rowspan="1">Print the game selection menu using <a href="24428.html">GameMenu</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -163,7 +182,7 @@ The "Best Time Today" banner only shows when one is set. The flag at <a href="24
 <td class="asm-label"></td>
 <td class="address-1"><span id="24371"></span>24371</td>
 <td class="instruction">LD A,(24126)</td>
-<td class="comment-1" rowspan="2"><span class="register">D</span>=<a href="24126.html">GameOptions</a>.</td>
+<td class="comment-1" rowspan="2">Take a copy of the control options from <a href="24126.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -210,7 +229,7 @@ The "Best Time Today" banner only shows when one is set. The flag at <a href="24
 <td class="asm-label"></td>
 <td class="address-1"><span id="24381"></span>24381</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="1">Flip the bits.</td>
+<td class="comment-1" rowspan="1">Flip the bits, so a pressed key is now a set bit.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -226,19 +245,18 @@ Handle keyboard selection.
 <td class="asm-label">GameSelect_CheckKeyboard</td>
 <td class="address-1"><span id="24382"></span>24382</td>
 <td class="instruction">BIT 0,A</td>
-<td class="comment-1" rowspan="1">Has key "1" been pressed? ("1 KEYBOARD").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="24327.html#24388">GameSelect_CheckJoystick</a> if key "1" has not been pressed ("1 KEYBOARD").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24384"></span>24384</td>
 <td class="instruction">JR Z,<a href="24327.html#24388">GameSelect_CheckJoystick</a></td>
-<td class="comment-1" rowspan="1">If not jump to <a href="24327.html#24388">GameSelect_CheckJoystick</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24386"></span>24386</td>
 <td class="instruction">RES 1,D</td>
-<td class="comment-1" rowspan="1">Set control method = keyboard.</td>
+<td class="comment-1" rowspan="1">Reset bit 1 of the options in <span class="register">D</span>, to select the keyboard.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -254,19 +272,18 @@ Handle joystick selection.
 <td class="asm-label">GameSelect_CheckJoystick</td>
 <td class="address-2"><span id="24388"></span>24388</td>
 <td class="instruction">BIT 1,A</td>
-<td class="comment-1" rowspan="1">Has key "2" been pressed? ("2 JOYSTICK").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="24327.html#24394">GameSelect_CheckStart</a> if key "2" has not been pressed ("2 JOYSTICK").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24390"></span>24390</td>
 <td class="instruction">JR Z,<a href="24327.html#24394">GameSelect_CheckStart</a></td>
-<td class="comment-1" rowspan="1">If not jump to <a href="24327.html#24394">GameSelect_CheckStart</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24392"></span>24392</td>
 <td class="instruction">SET 1,D</td>
-<td class="comment-1" rowspan="1">Set control method = joystick.</td>
+<td class="comment-1" rowspan="1">Set bit 1 of the options in <span class="register">D</span>, to select the joystick.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -282,20 +299,19 @@ Handle starting a new game.
 <td class="asm-label">GameSelect_CheckStart</td>
 <td class="address-2"><span id="24394"></span>24394</td>
 <td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="1">Has key "3" been pressed? ("3 START GAME").</td>
+<td class="comment-1" rowspan="2">Jump to <a href="24559.html">StartGame</a> if key "3" has been pressed ("3 START GAME").</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24396"></span>24396</td>
 <td class="instruction">JP NZ,<a href="24559.html">StartGame</a></td>
-<td class="comment-1" rowspan="1">If it has then jump to <a href="24559.html">StartGame</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="24399"></span>
 <div class="comments">
 <div class="paragraph">
-Handle flashing each selection.
+Store the choice, then flash the selected menu line.
 </div>
 </div>
 </td>
@@ -304,7 +320,7 @@ Handle flashing each selection.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24399"></span>24399</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="2">Write <span class="register">D</span> to <a href="24126.html">GameOptions</a>.</td>
+<td class="comment-1" rowspan="2">Save the control options back to <a href="24126.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -315,13 +331,13 @@ Handle flashing each selection.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24403"></span>24403</td>
 <td class="instruction">LD HL,24488</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="24487.html#24488">GameSelection_Attributes_Options</a> (the first selectable line, skipping the title).</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the colour of the first selectable menu line (<a href="24487.html#24488">GameSelection_Attributes_Options</a>), which skips the title.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="24406"></span>24406</td>
 <td class="instruction">LD A,(24126)</td>
-<td class="comment-1" rowspan="2"><span class="register">C</span>=<a href="24126.html">GameOptions</a>.</td>
+<td class="comment-1" rowspan="2">Fetch the control options from <a href="24126.html">GameOptions</a> into <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -359,7 +375,7 @@ Set the first menu item, unset the second.
 <td class="asm-label"></td>
 <td class="address-1"><span id="24416"></span>24416</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Move onto the next menu attribute.</td>
+<td class="comment-1" rowspan="1">Move on to the colour of the second menu line.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -414,9 +430,10 @@ Unset the first menu item, set the second.
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/aticatac/dec/asm/31769.html">Atic Atac</a></li>
 <li><a href="/ultimate/cookie/dec/asm/25240.html">Cookie</a></li>
-<li><a href="/ultimate/jetpac/dec/asm/0.html">Jetpac</a></li>
+<li><a href="/ultimate/jetpac/dec/asm/25067.html">Jetpac</a></li>
 <li><a href="/ultimate/lunarjetman/dec/asm/32778.html">Lunar Jetman</a></li>
 <li><a href="/ultimate/pssst/dec/asm/25037.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/dec/asm/39264.html">Sabre Wulf</a></li>
 </ul>
 </div>
 </div>

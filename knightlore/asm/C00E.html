@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Knight Lore: Routine at C00E</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../knightlore.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BFFB.html">BFFB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c00e">Map</a></td>
+<td class="next">
+Next: <a href="C172.html">C172</a>
+</td>
+</tr>
+</table>
+<div class="description">C00E: Handle Pickup And Drop</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="C82B.html">HandlePlayerLegs</a>.
+</div>
+<div class="paragraph">
+Picks up or drops an object when the player presses the control for it. A special object that is close enough is picked up. If the player carries three objects already, the one that has been carried longest is dropped in the place of the new one. Otherwise, if the player is carrying something and there is a free place for a special object in the room, the object that has been carried longest is dropped where the player stands, and the player is lifted up by 0C to stand on it. If the player is in the cauldron room and jumping above the cauldron, the object is dropped into the cauldron.
+</div>
+<div class="paragraph">
+The routine looks for objects by making the player a little wider, deeper and taller, which is put right when the routine ends.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Address of the bottom half of the player</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop</td>
+<td class="address-2"><span id="c00e"></span>C00E</td>
+<td class="instruction">LD A,($5BB3)</td>
+<td class="comment-1" rowspan="1">Fetch the flag that says the control has been pressed and not yet released.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c011"></span>C011</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c012"></span>C012</td>
+<td class="instruction">JP NZ,<a href="C00E.html#c0a9">HandlePickupAndDrop_WaitForRelease</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C00E.html#c0a9">HandlePickupAndDrop_WaitForRelease</a> if it was pressed on a frame before.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c015"></span>C015</td>
+<td class="instruction">CALL <a href="BFFB.html">TestPickupDropKey</a></td>
+<td class="comment-1" rowspan="1">Test whether the control is pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c018"></span>C018</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if it is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c019"></span>C019</td>
+<td class="instruction">CALL <a href="C87A.html">TestPlayerInRoom</a></td>
+<td class="comment-1" rowspan="1">Test whether the player is in the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c01c"></span>C01C</td>
+<td class="instruction">RET NC</td>
+<td class="comment-1" rowspan="1">Return if the player is out of bounds.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c01d"></span>C01D</td>
+<td class="instruction">BIT 3,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Test whether the player is jumping.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c021"></span>C021</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if so.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c022"></span>C022</td>
+<td class="instruction">BIT 2,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Test whether the player has hit something below.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c026"></span>C026</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return if the player is in the air.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c027"></span>
+<div class="comments">
+<div class="paragraph">
+Find out whether there is room to drop an object, by raising the player by 0C to see if it hits anything.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c027"></span>C027</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c028"></span>C028</td>
+<td class="instruction">LD ($5BD3),A</td>
+<td class="comment-1" rowspan="1">Flag that an object can be dropped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c02b"></span>C02B</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the Z coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c02e"></span>C02E</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c02f"></span>C02F</td>
+<td class="instruction">ADD A,$0C</td>
+<td class="comment-1" rowspan="1">Add 0C to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c031"></span>C031</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Set it as the Z coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c034"></span>C034</td>
+<td class="instruction">CALL <a href="B4FD.html">TestObjectIntersections</a></td>
+<td class="comment-1" rowspan="1">Test whether the player intersects another object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c037"></span>C037</td>
+<td class="instruction">LD (IX+$03),B</td>
+<td class="comment-1" rowspan="1">Restore the Z coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c03a"></span>C03A</td>
+<td class="instruction">JR NC,<a href="C00E.html#c041">HandlePickupAndDrop_Pressed</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C00E.html#c041">HandlePickupAndDrop_Pressed</a> if there is room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c03c"></span>C03C</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">Get the value that sets a flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c03e"></span>C03E</td>
+<td class="instruction">LD ($5BD3),A</td>
+<td class="comment-1" rowspan="1">Flag that no object can be dropped.</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Pressed</td>
+<td class="address-2"><span id="c041"></span>C041</td>
+<td class="instruction">CALL <a href="B4A3.html">PlayLowBeep</a></td>
+<td class="comment-1" rowspan="1">Play a beep.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c044"></span>C044</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">Get the value that sets a flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c046"></span>C046</td>
+<td class="instruction">LD ($5BB3),A</td>
+<td class="comment-1" rowspan="1">Flag that the control has been pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c049"></span>C049</td>
+<td class="instruction">LD ($5BB4),A</td>
+<td class="comment-1" rowspan="1">Flag that the objects carried have changed.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c04c"></span>
+<div class="comments">
+<div class="paragraph">
+Make the player wider, deeper and taller, to find an object to pick up.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c04c"></span>C04C</td>
+<td class="instruction">LD B,$02</td>
+<td class="comment-1" rowspan="1">Set the number of special objects in the room to 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c04e"></span>C04E</td>
+<td class="instruction">LD L,(IX+$04)</td>
+<td class="comment-1" rowspan="1">Fetch the width of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c051"></span>C051</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Copy it into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c052"></span>C052</td>
+<td class="instruction">ADD A,$04</td>
+<td class="comment-1" rowspan="1">Add 04 to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c054"></span>C054</td>
+<td class="instruction">LD (IX+$04),A</td>
+<td class="comment-1" rowspan="1">Set the new width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c057"></span>C057</td>
+<td class="instruction">LD H,(IX+$05)</td>
+<td class="comment-1" rowspan="1">Fetch the depth of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c05a"></span>C05A</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="1">Copy it into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c05b"></span>C05B</td>
+<td class="instruction">ADD A,$04</td>
+<td class="comment-1" rowspan="1">Add 04 to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c05d"></span>C05D</td>
+<td class="instruction">LD (IX+$05),A</td>
+<td class="comment-1" rowspan="1">Set the new depth.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c060"></span>C060</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the old width and depth.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c061"></span>C061</td>
+<td class="instruction">LD L,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the height of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c064"></span>C064</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="1">Copy it into <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c065"></span>C065</td>
+<td class="instruction">ADD A,$04</td>
+<td class="comment-1" rowspan="1">Add 04 to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c067"></span>C067</td>
+<td class="instruction">LD (IX+$06),A</td>
+<td class="comment-1" rowspan="1">Set the new height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c06a"></span>C06A</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the old height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c06b"></span>C06B</td>
+<td class="instruction">LD IY,$5C48</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at <a href="5C08.html#5c48">ObjectsTable_FirstSpecial</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_LookForObject</td>
+<td class="address-2"><span id="c06f"></span>C06F</td>
+<td class="instruction">CALL <a href="C172.html">TestObjectCanBePickedUp</a></td>
+<td class="comment-1" rowspan="1">Test whether the object can be picked up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c072"></span>C072</td>
+<td class="instruction">JP C,<a href="C00E.html#c141">HandlePickupAndDrop_PickUp</a></td>
+<td class="comment-1" rowspan="1">Pick it up if it can.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c075"></span>C075</td>
+<td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE</span> to the size of an object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c078"></span>C078</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at the next special object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c07a"></span>C07A</td>
+<td class="instruction">DJNZ <a href="C00E.html#c06f">HandlePickupAndDrop_LookForObject</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="C00E.html#c06f">HandlePickupAndDrop_LookForObject</a> until both have been tried.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c07c"></span>
+<div class="comments">
+<div class="paragraph">
+There is nothing to pick up. Look for a free place to drop an object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c07c"></span>C07C</td>
+<td class="instruction">CALL <a href="BFFB.html">TestPickupDropKey</a></td>
+<td class="comment-1" rowspan="1">Test whether the control is still pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c07f"></span>C07F</td>
+<td class="instruction">JR Z,<a href="C00E.html#c09d">HandlePickupAndDrop_Done</a></td>
+<td class="comment-1" rowspan="1">Finish if it is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c081"></span>C081</td>
+<td class="instruction">LD B,$02</td>
+<td class="comment-1" rowspan="1">Set the number of special objects to look at to 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c083"></span>C083</td>
+<td class="instruction">LD A,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Fetch the room that the player is in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c086"></span>C086</td>
+<td class="instruction">CP $88</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C00E.html#c08c">HandlePickupAndDrop_LookForSpace</a> if it is another room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c088"></span>C088</td>
+<td class="instruction">JR NZ,<a href="C00E.html#c08c">HandlePickupAndDrop_LookForSpace</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c08a"></span>C08A</td>
+<td class="instruction">LD B,$01</td>
+<td class="comment-1" rowspan="1">Set the number of special objects to look at to 01.</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_LookForSpace</td>
+<td class="address-2"><span id="c08c"></span>C08C</td>
+<td class="instruction">LD IY,$5C48</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at the first special object of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c090"></span>C090</td>
+<td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE</span> to the size of an object.</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_TestSlot</td>
+<td class="address-2"><span id="c093"></span>C093</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the graphic number of the special object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c096"></span>C096</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test whether it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c097"></span>C097</td>
+<td class="instruction">JR Z,<a href="C00E.html#c0b2">HandlePickupAndDrop_Drop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C00E.html#c0b2">HandlePickupAndDrop_Drop</a> if the place is free.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c099"></span>C099</td>
+<td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at the next special object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c09b"></span>C09B</td>
+<td class="instruction">DJNZ <a href="C00E.html#c093">HandlePickupAndDrop_TestSlot</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="C00E.html#c093">HandlePickupAndDrop_TestSlot</a> until all of them have been tried.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c09d"></span>
+<div class="comments">
+<div class="paragraph">
+Put the size of the player back.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Done</td>
+<td class="address-2"><span id="c09d"></span>C09D</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the old height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c09e"></span>C09E</td>
+<td class="instruction">LD (IX+$06),L</td>
+<td class="comment-1" rowspan="1">Set the height of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0a1"></span>C0A1</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the old width and depth.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0a2"></span>C0A2</td>
+<td class="instruction">LD (IX+$04),L</td>
+<td class="comment-1" rowspan="1">Set the width of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0a5"></span>C0A5</td>
+<td class="instruction">LD (IX+$05),H</td>
+<td class="comment-1" rowspan="1">Set the depth of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0a8"></span>C0A8</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c0a9"></span>
+<div class="comments">
+<div class="paragraph">
+The control was pressed on a frame before: wait until it is let go.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_WaitForRelease</td>
+<td class="address-2"><span id="c0a9"></span>C0A9</td>
+<td class="instruction">CALL <a href="BFFB.html">TestPickupDropKey</a></td>
+<td class="comment-1" rowspan="1">Test whether the control is still pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ac"></span>C0AC</td>
+<td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if it is.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ad"></span>C0AD</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ae"></span>C0AE</td>
+<td class="instruction">LD ($5BB3),A</td>
+<td class="comment-1" rowspan="1">Flag that the control is not pressed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0b1"></span>C0B1</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c0b2"></span>
+<div class="comments">
+<div class="paragraph">
+Drop the object that has been carried longest in the free place.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Drop</td>
+<td class="address-2"><span id="c0b2"></span>C0B2</td>
+<td class="instruction">LD HL,$5BE4</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the object that has been carried longest.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0b5"></span>C0B5</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch its graphic number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0b6"></span>C0B6</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0b7"></span>C0B7</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test whether there is an object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0b8"></span>C0B8</td>
+<td class="instruction">JR Z,<a href="C00E.html#c12b">HandlePickupAndDrop_Shift</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C00E.html#c12b">HandlePickupAndDrop_Shift</a> if there is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ba"></span>C0BA</td>
+<td class="instruction">LD A,($5BD3)</td>
+<td class="comment-1" rowspan="1">Fetch the flag that says no object can be dropped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0bd"></span>C0BD</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0be"></span>C0BE</td>
+<td class="instruction">JR NZ,<a href="C00E.html#c09d">HandlePickupAndDrop_Done</a></td>
+<td class="comment-1" rowspan="1">Finish if there is no room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0c0"></span>C0C0</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the graphic number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0c1"></span>C0C1</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0c2"></span>C0C2</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0c3"></span>C0C3</td>
+<td class="instruction">LD (IY+$00),A</td>
+<td class="comment-1" rowspan="1">Set it as the graphic number of the special object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0c6"></span>C0C6</td>
+<td class="instruction">LD A,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Fetch the room that the player is in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0c9"></span>C0C9</td>
+<td class="instruction">CP $88</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C00E.html#c0dd">HandlePickupAndDrop_Place</a> if it is another room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0cb"></span>C0CB</td>
+<td class="instruction">JR NZ,<a href="C00E.html#c0dd">HandlePickupAndDrop_Place</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0cd"></span>C0CD</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the Z coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0d0"></span>C0D0</td>
+<td class="instruction">CP $98</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C00E.html#c0dd">HandlePickupAndDrop_Place</a> if the player is below that.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0d2"></span>C0D2</td>
+<td class="instruction">JR C,<a href="C00E.html#c0dd">HandlePickupAndDrop_Place</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0d4"></span>C0D4</td>
+<td class="instruction">SET 3,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Make the object drop into the cauldron.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0d8"></span>C0D8</td>
+<td class="instruction">LD A,$01</td>
+<td class="comment-1" rowspan="1">Get the value that sets a flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0da"></span>C0DA</td>
+<td class="instruction">LD ($5BC4),A</td>
+<td class="comment-1" rowspan="1">Flag that an object is being put into the cauldron.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c0dd"></span>
+<div class="comments">
+<div class="paragraph">
+Put the object where the player is, and lift the player on top of it.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Place</td>
+<td class="address-2"><span id="c0dd"></span>C0DD</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the address of the flags of the object carried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0de"></span>C0DE</td>
+<td class="instruction">LD BC,$0003</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to copy to 03.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e1"></span>C0E1</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IX</span> to <span class="register">HL</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e3"></span>C0E3</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e4"></span>C0E4</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IY</span> to <span class="register">DE</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e6"></span>C0E6</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e7"></span>C0E7</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the X coordinate of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e8"></span>C0E8</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the X coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0e9"></span>C0E9</td>
+<td class="instruction">LDIR</td>
+<td class="comment-1" rowspan="1">Copy the coordinates of the player to the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0eb"></span>C0EB</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the Z coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ee"></span>C0EE</td>
+<td class="instruction">ADD A,$0C</td>
+<td class="comment-1" rowspan="1">Add 0C to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f0"></span>C0F0</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">Set the new Z coordinate of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f3"></span>C0F3</td>
+<td class="instruction">LD A,(IX+$23)</td>
+<td class="comment-1" rowspan="1">Fetch the Z coordinate of the top half of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f6"></span>C0F6</td>
+<td class="instruction">ADD A,$0C</td>
+<td class="comment-1" rowspan="1">Add 0C to it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0f8"></span>C0F8</td>
+<td class="instruction">LD (IX+$23),A</td>
+<td class="comment-1" rowspan="1">Set the new Z coordinate of the top half of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0fb"></span>C0FB</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1">Stash <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0fd"></span>C0FD</td>
+<td class="instruction">PUSH IY</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">IY</span> to <span class="register">IX</span> (using the stack), to point at the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c0ff"></span>C0FF</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c101"></span>C101</td>
+<td class="instruction">CALL <a href="D6C9.html">CalculatePixelCoordinates</a></td>
+<td class="comment-1" rowspan="1">Work out the pixel coordinates of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c104"></span>C104</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">IX</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c106"></span>
+<div class="comments">
+<div class="paragraph">
+Set up the rest of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_SetObject</td>
+<td class="address-2"><span id="c106"></span>C106</td>
+<td class="instruction">LD (IY+$04),$05</td>
+<td class="comment-1" rowspan="1">Set the width of the object to 05.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c10a"></span>C10A</td>
+<td class="instruction">LD (IY+$05),$05</td>
+<td class="comment-1" rowspan="1">Set the depth of the object to 05.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c10e"></span>C10E</td>
+<td class="instruction">LD (IY+$06),$0C</td>
+<td class="comment-1" rowspan="1">Set the height of the object to 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c112"></span>C112</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the address of the flags of the object carried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c113"></span>C113</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c114"></span>C114</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the address of the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c115"></span>C115</td>
+<td class="instruction">LD (IY+$07),A</td>
+<td class="comment-1" rowspan="1">Set the flags of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c118"></span>C118</td>
+<td class="instruction">LD A,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Fetch the room that the player is in.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c11b"></span>C11B</td>
+<td class="instruction">LD (IY+$08),A</td>
+<td class="comment-1" rowspan="1">Set the room of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c11e"></span>C11E</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the address of the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c11f"></span>C11F</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c120"></span>C120</td>
+<td class="instruction">LD (IY+$10),A</td>
+<td class="comment-1" rowspan="1">Set the low byte of the address of the table entry of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c123"></span>C123</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the high byte of the address of the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c124"></span>C124</td>
+<td class="instruction">LD (IY+$11),A</td>
+<td class="comment-1" rowspan="1">Set the high byte of the address of the table entry of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c127"></span>C127</td>
+<td class="instruction">SET 0,(IY+$0D)</td>
+<td class="comment-1" rowspan="1">Flag that the object has just been dropped.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c12b"></span>
+<div class="comments">
+<div class="paragraph">
+Remove the object that was carried longest from the list, by moving the others along.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_Shift</td>
+<td class="address-2"><span id="c12b"></span>C12B</td>
+<td class="instruction">LD HL,$5BE3</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the last byte of the next to last object carried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c12e"></span>C12E</td>
+<td class="instruction">LD DE,$5BE7</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the last byte of the last object carried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c131"></span>C131</td>
+<td class="instruction">LD BC,$000C</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to move to 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c134"></span>C134</td>
+<td class="instruction">LDDR</td>
+<td class="comment-1" rowspan="1">Move the objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c136"></span>C136</td>
+<td class="instruction">LD DE,$5BD8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="5BD8.html">ObjectsCarried</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c139"></span>C139</td>
+<td class="instruction">LD B,$04</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to clear to 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c13b"></span>C13B</td>
+<td class="instruction">CALL <a href="D508.html">ClearBytes</a></td>
+<td class="comment-1" rowspan="1">Clear them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c13e"></span>C13E</td>
+<td class="instruction">JP <a href="C00E.html#c09d">HandlePickupAndDrop_Done</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C00E.html#c09d">HandlePickupAndDrop_Done</a> to finish.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c141"></span>
+<div class="comments">
+<div class="paragraph">
+Pick up the object that <span class="register">IY</span> points at.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">HandlePickupAndDrop_PickUp</td>
+<td class="address-2"><span id="c141"></span>C141</td>
+<td class="instruction">LD HL,$5BD8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the space for a new object carried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c144"></span>C144</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c145"></span>C145</td>
+<td class="instruction">LD ($5BC0),A</td>
+<td class="comment-1" rowspan="1">Allow the spiked balls to drop again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c148"></span>C148</td>
+<td class="instruction">LD A,(IY+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the graphic number of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c14b"></span>C14B</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c14c"></span>C14C</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c14d"></span>C14D</td>
+<td class="instruction">LD A,(IY+$07)</td>
+<td class="comment-1" rowspan="1">Fetch the flags of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c150"></span>C150</td>
+<td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Store them.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c151"></span>C151</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the address of the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c152"></span>C152</td>
+<td class="instruction">LD E,(IY+$10)</td>
+<td class="comment-1" rowspan="1">Fetch the low byte of the address of the table entry of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c155"></span>C155</td>
+<td class="instruction">LD D,(IY+$11)</td>
+<td class="comment-1" rowspan="1">Fetch the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c158"></span>C158</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c159"></span>C159</td>
+<td class="instruction">LD (DE),A</td>
+<td class="comment-1" rowspan="1">Clear the graphic number of the table entry, so that the object is not built again.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c15a"></span>C15A</td>
+<td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="1">Store the low byte of the address of the table entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c15b"></span>C15B</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the high byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c15c"></span>C15C</td>
+<td class="instruction">LD (HL),D</td>
+<td class="comment-1" rowspan="1">Store it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c15d"></span>C15D</td>
+<td class="instruction">CALL <a href="C69D.html">SetWipeAndDrawFlagsForObject</a></td>
+<td class="comment-1" rowspan="1">Flag the object to be wiped and drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c160"></span>C160</td>
+<td class="instruction">LD (IY+$00),$01</td>
+<td class="comment-1" rowspan="1">Make the graphic of the object one that is not shown.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c164"></span>C164</td>
+<td class="instruction">LD HL,$5BE4</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="5BD8.html#5be4">ObjectsCarried_Oldest</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c167"></span>C167</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch its graphic number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c168"></span>C168</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c169"></span>C169</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test whether there is an object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c16a"></span>C16A</td>
+<td class="instruction">JR Z,<a href="C00E.html#c12b">HandlePickupAndDrop_Shift</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C00E.html#c12b">HandlePickupAndDrop_Shift</a> if there is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c16c"></span>C16C</td>
+<td class="instruction">LD (IY+$00),A</td>
+<td class="comment-1" rowspan="1">Make it the graphic of the object that was picked up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c16f"></span>C16F</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the address of the flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="c170"></span>C170</td>
+<td class="instruction">JR <a href="C00E.html#c106">HandlePickupAndDrop_SetObject</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C00E.html#c106">HandlePickupAndDrop_SetObject</a> to drop it where the other object was.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/alien8/asm/BD6B.html">Alien 8</a></li>
+<li><a href="/ultimate/pentagram/asm/BF79.html">Pentagram</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BFFB.html">BFFB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#c00e">Map</a></td>
+<td class="next">
+Next: <a href="C172.html">C172</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/knightlore/">Source code</a>.</div>
+<div><a href="../dec/asm/49166.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

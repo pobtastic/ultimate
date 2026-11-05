@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at BF95</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BF48.html">BF48</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bf95">Map</a></td>
+<td class="next">
+Next: <a href="BFF1.html">BFF1</a>
+</td>
+</tr>
+</table>
+<div class="description">BF95: Spawn Ghost</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BDFE.html">StartGame</a>.
+</div>
+<div class="paragraph">
+Creates a ghost at the player's position every 0100 frames. The ghost is placed in the first of the six short-lived objects at <a href="BC8E.html#bd9e">ObjectTable_Transient</a> that is not close to the player, at a random position within the player's cell. The ghost becomes a burst if it appears on top of the player.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnGhost</td>
+<td class="address-2"><span id="bf95"></span>BF95</td>
+<td class="instruction">LD A,($BBB2)</td>
+<td class="comment-1" rowspan="3">Return unless the frame counter has wrapped round to a multiple of 0100 so that a ghost appears every 0100 frames.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf98"></span>BF98</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf99"></span>BF99</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf9a"></span>BF9A</td>
+<td class="instruction">LD IX,$BD9E</td>
+<td class="comment-1" rowspan="1">Start with the first of the six short-lived objects.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bf9e"></span>BF9E</td>
+<td class="instruction">LD DE,$0010</td>
+<td class="comment-1" rowspan="1">Set the distance between one object and the next (10 bytes).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfa1"></span>BFA1</td>
+<td class="instruction">LD B,$06</td>
+<td class="comment-1" rowspan="1">Set a counter for the six short-lived objects.</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnGhost_FindSlot</td>
+<td class="address-2"><span id="bfa3"></span>BFA3</td>
+<td class="instruction">LD C,$02</td>
+<td class="comment-1" rowspan="1">Look for an object that is at least two cells away from the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfa5"></span>BFA5</td>
+<td class="instruction">CALL <a href="C069.html">CheckPlayerClose</a></td>
+<td class="comment-1" rowspan="1">Check whether the object is close to the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfa8"></span>BFA8</td>
+<td class="instruction">JR NC,<a href="BF95.html#bfb4">SpawnGhost_Create</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BF95.html#bfb4">SpawnGhost_Create</a> to use this object if it is not close to the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfaa"></span>BFAA</td>
+<td class="instruction">ADD IX,DE</td>
+<td class="comment-1" rowspan="1">Move on to the next short-lived object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfac"></span>BFAC</td>
+<td class="instruction">DJNZ <a href="BF95.html#bfa3">SpawnGhost_FindSlot</a></td>
+<td class="comment-1" rowspan="1">Loop back until all six objects have been tried.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfae"></span>BFAE</td>
+<td class="instruction">LD A,$88</td>
+<td class="comment-1" rowspan="2">Every object is close to the player, so use the first one anyway.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfb0"></span>BFB0</td>
+<td class="instruction">LD ($BD9E),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfb3"></span>BFB3</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bfb4"></span>
+<div class="comments">
+<div class="paragraph">
+Place the ghost in the player's cell at a random position.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnGhost_Create</td>
+<td class="address-2"><span id="bfb4"></span>BFB4</td>
+<td class="instruction">LD A,($BBAA)</td>
+<td class="comment-1" rowspan="3">Choose a random place between 40 and BF along the X axis of the player's cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfb7"></span>BFB7</td>
+<td class="instruction">AND $7F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfb9"></span>BFB9</td>
+<td class="instruction">ADD A,$40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfbb"></span>BFBB</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">... and set it as the fractional part of the ghost's X position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfbe"></span>BFBE</td>
+<td class="instruction">LD A,($BC90)</td>
+<td class="comment-1" rowspan="1">Fetch the player's column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfc1"></span>BFC1</td>
+<td class="instruction">LD (IX+$02),A</td>
+<td class="comment-1" rowspan="1">Put the ghost in the same column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfc4"></span>BFC4</td>
+<td class="instruction">LD A,($BBAB)</td>
+<td class="comment-1" rowspan="3">Choose a random place between 40 and BF along the Y axis of the player's cell...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfc7"></span>BFC7</td>
+<td class="instruction">AND $7F</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfc9"></span>BFC9</td>
+<td class="instruction">ADD A,$40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfcb"></span>BFCB</td>
+<td class="instruction">LD (IX+$03),A</td>
+<td class="comment-1" rowspan="1">... and set it as the fractional part of the ghost's Y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfce"></span>BFCE</td>
+<td class="instruction">LD A,($BC92)</td>
+<td class="comment-1" rowspan="1">Fetch the player's row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfd1"></span>BFD1</td>
+<td class="instruction">LD (IX+$04),A</td>
+<td class="comment-1" rowspan="1">Put the ghost in the same row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfd4"></span>BFD4</td>
+<td class="instruction">LD (IX+$08),$10</td>
+<td class="comment-1" rowspan="1">Set the width of the ghost to 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfd8"></span>BFD8</td>
+<td class="instruction">LD (IX+$09),$10</td>
+<td class="comment-1" rowspan="1">Set the depth of the ghost to 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfdc"></span>BFDC</td>
+<td class="instruction">LD (IX+$0C),$F4</td>
+<td class="comment-1" rowspan="2">Set the drawing offsets of the ghost to F4 and 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfe0"></span>BFE0</td>
+<td class="instruction">LD (IX+$0D),$04</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfe4"></span>BFE4</td>
+<td class="instruction">CALL <a href="C55F.html">CheckPlayerCollision</a></td>
+<td class="comment-1" rowspan="1">Check whether the ghost has appeared on top of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfe7"></span>BFE7</td>
+<td class="instruction">LD A,$0C</td>
+<td class="comment-1" rowspan="1">Choose the type for a burst (0C), in case it has.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfe9"></span>BFE9</td>
+<td class="instruction">JR C,<a href="BF95.html#bfed">SpawnGhost_SetType</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BF95.html#bfed">SpawnGhost_SetType</a> if the ghost is on top of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bfeb"></span>BFEB</td>
+<td class="instruction">ADD A,$7C</td>
+<td class="comment-1" rowspan="1">Otherwise choose the type for a ghost (88).</td>
+</tr>
+<tr>
+<td class="asm-label">SpawnGhost_SetType</td>
+<td class="address-2"><span id="bfed"></span>BFED</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Turn the object into a ghost, or a burst.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bff0"></span>BFF0</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BF48.html">BF48</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bf95">Map</a></td>
+<td class="next">
+Next: <a href="BFF1.html">BFF1</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/49045.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

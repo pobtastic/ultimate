@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -39,7 +42,38 @@ Next: <a href="A064.html">A064</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="A13B.html">DrawInventory</a> and <a href="A311.html">MenuIcons</a>.
+Used by the routines at <a href="A14D.html">DrawInventoryItem</a> and <a href="A311.html">MenuIcons</a>.
+</div>
+<div class="paragraph">
+Colours the attribute cells under an entity. This entry point first saves the position of the entity as if it has not moved; <a href="A00E.html#a01a">SetEntityAttributes_Moved</a> instead uses the position saved by <a href="9FFB.html">StoreEntity</a> to work out which way the entity has moved.
+</div>
+<div class="paragraph">
+The cells under the entity are set to the attribute of the entity, and the cells which the entity has just left behind are put back to the attribute of the room (from <a href="5E1A.html">CurrentRoom_Attribute</a>). Which way the entity has moved picks one of the routines in the table at <a href="A064.html">AttributeJumpTable</a>, and that routine is jumped to with the registers set up as follows: <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Register</th>
+<th colspan="1" rowspan="1">Contents</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><span class="register">B</span></td>
+<td class="left" colspan="1" rowspan="1">The width of the sprite in cells</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><span class="register">C</span></td>
+<td class="left" colspan="1" rowspan="1">The number of rows of cells</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><span class="register">D</span></td>
+<td class="left" colspan="1" rowspan="1">The attribute of the entity</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><span class="register">E</span></td>
+<td class="left" colspan="1" rowspan="1">The attribute of the room</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><span class="register">HL</span></td>
+<td class="left" colspan="1" rowspan="1">The attribute address of the cell holding the position of the entity (the cell at the bottom left)</td>
+</tr>
+</table>
 </div>
 </div>
 <table class="input">
@@ -54,10 +88,29 @@ Used by the routines at <a href="A13B.html">DrawInventory</a> and <a href="A311.
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a00e"></span>
+<div class="comments">
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="set-attributes-before" src="../images/scr/set-attributes-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="set-attributes-after" src="../images/scr/set-attributes-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">SetEntityAttributes</td>
 <td class="address-2"><span id="a00e"></span>A00E</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-1" rowspan="2">Write the entity X position to <a href="5E16.html">Saved_X</a>.</td>
+<td class="comment-1" rowspan="2">Write the entity X position to <a href="5E16.html">Previous_X_Position</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -68,7 +121,7 @@ Used by the routines at <a href="A13B.html">DrawInventory</a> and <a href="A311.
 <td class="asm-label"></td>
 <td class="address-1"><span id="a014"></span>A014</td>
 <td class="instruction">LD A,(IX+$04)</td>
-<td class="comment-1" rowspan="2">Write the entity X position to <a href="5E17.html">Saved_Y</a>.</td>
+<td class="comment-1" rowspan="2">Write the entity Y position to <a href="5E17.html">Previous_Y_Position</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -80,16 +133,19 @@ Used by the routines at <a href="A13B.html">DrawInventory</a> and <a href="A311.
 <span id="a01a"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routines at <a href="8209.html">HandlerWeapon</a>, <a href="8301.html">HandlerBatlet</a>, <a href="8E26.html">HandlerKnight</a> and <a href="9252.html">HandlerCaveDoorLocked</a>.
+This entry point is used by the routines at <a href="8209.html">HandlerWeapon</a>, <a href="875F.html">PopCreature</a>, <a href="8E26.html">HandlerKnight</a>, <a href="92E0.html">SetItemAttributes</a> and <a href="9326.html">PickUpItem</a>.
+</div>
+<div class="paragraph">
+Get the entity position, attribute and the room attribute.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">SetEntityAttributes_0</td>
+<td class="asm-label">SetEntityAttributes_Moved</td>
 <td class="address-2"><span id="a01a"></span>A01A</td>
 <td class="instruction">LD L,(IX+$03)</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span>=Entity screen position.</td>
+<td class="comment-1" rowspan="2"><span class="register">L</span>=the entity X position, and <span class="register">H</span>=the entity Y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -100,13 +156,13 @@ This entry point is used by the routines at <a href="8209.html">HandlerWeapon</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="a020"></span>A020</td>
 <td class="instruction">LD D,(IX+$05)</td>
-<td class="comment-1" rowspan="1"><span class="register">D</span>=Entity attribute.</td>
+<td class="comment-1" rowspan="1">Fetch the attribute of the entity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a023"></span>A023</td>
 <td class="instruction">LD A,($5E1A)</td>
-<td class="comment-1" rowspan="2"><span class="register">E</span>=Room attribute.</td>
+<td class="comment-1" rowspan="2"><span class="register">E</span>=the room attribute from <a href="5E1A.html">CurrentRoom_Attribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -117,7 +173,7 @@ This entry point is used by the routines at <a href="8209.html">HandlerWeapon</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="a027"></span>A027</td>
 <td class="instruction">LD A,($5E10)</td>
-<td class="comment-1" rowspan="2"><span class="register">B</span>=Entity width in bytes.</td>
+<td class="comment-1" rowspan="2"><span class="register">B</span>=the width of the sprite from <a href="5E10.html">SpriteWidth</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -125,10 +181,20 @@ This entry point is used by the routines at <a href="8209.html">HandlerWeapon</a
 <td class="instruction">LD B,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a02b"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the number of rows of cells from the height of the sprite in pixels.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a02b"></span>A02B</td>
 <td class="instruction">LD A,($5E11)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=Entity height in pixels.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=the height of the sprite from <a href="5E11.html">SpriteHeight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -169,149 +235,160 @@ This entry point is used by the routines at <a href="8209.html">HandlerWeapon</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="a035"></span>A035</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Store the result in <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Keep the number of rows of cells in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="a036"></span>
+<div class="comments">
+<div class="paragraph">
+Work out which way the entity has moved. The horizontal movement gives 00 (none), 01 (right) or 02 (left), and the vertical movement adds 00 (none), 04 (down) or 08 (up).
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a036"></span>A036</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the width and the number of rows on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a037"></span>A037</td>
 <td class="instruction">LD B,$00</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=00.</td>
+<td class="comment-1" rowspan="1"><span class="register">B</span>=00 (the direction so far, which is no movement).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a039"></span>A039</td>
 <td class="instruction">LD A,($5E16)</td>
-<td class="comment-1" rowspan="2">Compare <a href="5E16.html">Saved_X</a> against <span class="register">L</span> to see if the X position is unchanged.</td>
+<td class="comment-1" rowspan="1">Fetch the previous X position from <a href="5E16.html">Previous_X_Position</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a03c"></span>A03C</td>
 <td class="instruction">CP L</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A00E.html#a043">SetEntityAttributes_Vertical</a> if the X position is unchanged.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a03d"></span>A03D</td>
-<td class="instruction">JR Z,<a href="A00E.html#a043">SetEntityAttributes_2</a></td>
-<td class="comment-1" rowspan="1">If it hasn't changed then jump to <a href="A00E.html#a043">SetEntityAttributes_2</a>.</td>
+<td class="instruction">JR Z,<a href="A00E.html#a043">SetEntityAttributes_Vertical</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a03f"></span>A03F</td>
-<td class="instruction">JR C,<a href="A00E.html#a042">SetEntityAttributes_1</a></td>
-<td class="comment-1" rowspan="1">If the entity has moved left then jump to <a href="A00E.html#a042">SetEntityAttributes_1</a>.</td>
+<td class="instruction">JR C,<a href="A00E.html#a042">SetEntityAttributes_Right</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A00E.html#a042">SetEntityAttributes_Right</a> if the entity has moved right.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a041"></span>A041</td>
 <td class="instruction">INC B</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">B</span> + 01.</td>
+<td class="comment-1" rowspan="1">Add 01 to <span class="register">B</span> (the entity has moved left).</td>
 </tr>
 <tr>
-<td class="asm-label">SetEntityAttributes_1</td>
+<td class="asm-label">SetEntityAttributes_Right</td>
 <td class="address-2"><span id="a042"></span>A042</td>
 <td class="instruction">INC B</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=<span class="register">B</span> + 01.</td>
+<td class="comment-1" rowspan="1">Add 01 to <span class="register">B</span>.</td>
 </tr>
 <tr>
-<td class="asm-label">SetEntityAttributes_2</td>
+<td class="asm-label">SetEntityAttributes_Vertical</td>
 <td class="address-2"><span id="a043"></span>A043</td>
 <td class="instruction">LD A,($5E17)</td>
-<td class="comment-1" rowspan="2">Compare <a href="5E17.html">Saved_Y</a> against <span class="register">H</span> to see if the Y position is unchanged.</td>
+<td class="comment-1" rowspan="1">Fetch the previous Y position from <a href="5E17.html">Previous_Y_Position</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a046"></span>A046</td>
 <td class="instruction">CP H</td>
+<td class="comment-1" rowspan="1">Compare the saved Y position against <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a047"></span>A047</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the horizontal direction from <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a048"></span>A048</td>
-<td class="instruction">JR Z,<a href="A00E.html#a050">SetEntityAttributes_4</a></td>
-<td class="comment-1" rowspan="1">If it hasn't changed then jump to <a href="A00E.html#a050">SetEntityAttributes_4</a>.</td>
+<td class="instruction">JR Z,<a href="A00E.html#a050">SetEntityAttributes_Select</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A00E.html#a050">SetEntityAttributes_Select</a> if the Y position is unchanged.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a04a"></span>A04A</td>
-<td class="instruction">JR C,<a href="A00E.html#a04e">SetEntityAttributes_3</a></td>
-<td class="comment-1" rowspan="1">If the entity has moved up then jump to <a href="A00E.html#a04e">SetEntityAttributes_3</a>.</td>
+<td class="instruction">JR C,<a href="A00E.html#a04e">SetEntityAttributes_Down</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A00E.html#a04e">SetEntityAttributes_Down</a> if the entity has moved down.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a04c"></span>A04C</td>
 <td class="instruction">ADD A,$04</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> + 04.</td>
+<td class="comment-1" rowspan="1">Add 04 to <span class="register">A</span> (the entity has moved up).</td>
 </tr>
 <tr>
-<td class="asm-label">SetEntityAttributes_3</td>
+<td class="asm-label">SetEntityAttributes_Down</td>
 <td class="address-2"><span id="a04e"></span>A04E</td>
 <td class="instruction">ADD A,$04</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> + 04.</td>
+<td class="comment-1" rowspan="1">Add 04 to <span class="register">A</span>.</td>
 </tr>
 <tr>
-<td class="asm-label">SetEntityAttributes_4</td>
+<td class="asm-label">SetEntityAttributes_Select</td>
 <td class="address-2"><span id="a050"></span>A050</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1">Stash the result in <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Stash the direction in <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a051"></span>A051</td>
 <td class="instruction">CALL <a href="9BD2.html">AttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="9BD2.html">AttributeAddress</a> to get the attribute address of the position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a054"></span>A054</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1">Restore the result back into <span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Restore the direction into <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a055"></span>A055</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Restore the width and the number of rows from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a056"></span>A056</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Stash the attribute address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a057"></span>A057</td>
 <td class="instruction">LD HL,$A064</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="A064.html">AttributeJumpTable</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the attribute jump table at <a href="A064.html">AttributeJumpTable</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a05a"></span>A05A</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<span class="register">A</span> * 02.</td>
+<td class="comment-1" rowspan="1">Multiply the direction by 02 as the table contains addresses.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a05c"></span>A05C</td>
-<td class="instruction">CALL <a href="9252.html#926c">HandlerCaveDoorLocked_1</a></td>
-<td class="comment-1" rowspan="1">Call <a href="9252.html#926c">HandlerCaveDoorLocked_1</a>.</td>
+<td class="instruction">CALL <a href="926C.html">AddAToHL</a></td>
+<td class="comment-1" rowspan="1">Call <a href="926C.html">AddAToHL</a> to add it to the address of the table.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="a05f"></span>A05F</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="4"><span class="register">HL</span>=attribute routine selected from <a href="A064.html">AttributeJumpTable</a>.</td>
+<td class="comment-1" rowspan="4">Fetch the routine selected from the table.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -332,7 +409,7 @@ This entry point is used by the routines at <a href="8209.html">HandlerWeapon</a
 <td class="asm-label"></td>
 <td class="address-1"><span id="a063"></span>A063</td>
 <td class="instruction">JP (HL)</td>
-<td class="comment-1" rowspan="1">Indirect jump to the address held in <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Jump to the routine.</td>
 </tr>
 </table>
 <table class="asm-navigation">

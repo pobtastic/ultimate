@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,31 +36,46 @@ Next: <a href="AE34.html">AE34</a>
 </td>
 </tr>
 </table>
-<div class="description">ADD0: Player Movement</div>
+<div class="description">ADD0: Handler: Attacking Sabreman</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Handles the player while they are attacking with the sword (sprite IDs 20 to 2F). Bit 3 of the sprite ID is set when the player is attacking to the right.
 </div>
+<div class="paragraph">
+While the player is holding down "fire" they can move about with a fixed speed in any direction. When "fire" is released, or if the player has an orchid effect, the player is made to walk again by <a href="AE34.html">StopAttack</a>. If the player has been hit (the hit direction in <span class="register">IX</span>+02 is not zero) then they are knocked back by <a href="A985.html">KnockPlayerBack</a>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the player</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PlayerMovement</td>
 <td class="address-2"><span id="add0"></span>ADD0</td>
 <td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB0B.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Remember the previous position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="add3"></span>ADD3</td>
-<td class="instruction">CALL <a href="A18C.html">$A18C</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A18C.html">A18C</a>.</td>
+<td class="instruction">CALL <a href="A18C.html">TestPlayerProgress</a></td>
+<td class="comment-1" rowspan="1">Check the progress of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="add6"></span>ADD6</td>
 <td class="instruction">LD A,$10</td>
-<td class="comment-1" rowspan="2">Write 10 to <a href="96A9.html#96ad">96AD</a>.</td>
+<td class="comment-1" rowspan="2">Set the width of the player in <a href="96AD.html">Actor_Width</a> to 10.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -68,19 +86,18 @@ Next: <a href="AE34.html">AE34</a>
 <td class="asm-label"></td>
 <td class="address-1"><span id="addb"></span>ADDB</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the hit direction of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="adde"></span>ADDE</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A985.html">KnockPlayerBack</a> if the player has been hit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="addf"></span>ADDF</td>
-<td class="instruction">JP NZ,<a href="A985.html">$A985</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JP NZ,<a href="A985.html">KnockPlayerBack</a></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -96,13 +113,23 @@ Initialise the player movement (0000 == no movement).
 <td class="asm-label"></td>
 <td class="address-1"><span id="ade2"></span>ADE2</td>
 <td class="instruction">LD DE,$0000</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0000.</td>
+<td class="comment-1" rowspan="1">Clear the movement of the player in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ade5"></span>
+<div class="comments">
+<div class="paragraph">
+Read the controls.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ade5"></span>ADE5</td>
 <td class="instruction">CALL <a href="B0A3.html">HandlerControls</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B0A3.html">HandlerControls</a>.</td>
+<td class="comment-1" rowspan="1">Read the controls.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -118,28 +145,25 @@ Check if the player is under the influence of an orchid.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ade8"></span>ADE8</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=the colour of the player.</td>
+<td class="comment-1" rowspan="1">Fetch the colour of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="adeb"></span>ADEB</td>
 <td class="instruction">CP $47</td>
-<td class="comment-1" rowspan="2">If the player is not using attribute INK:WHITE, PAPER:BLACK (BRIGHT) then jump to <a href="AE34.html">AE34</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AE34.html">StopAttack</a> if the player is not using attribute INK:WHITE, PAPER:BLACK (BRIGHT).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="aded"></span>ADED</td>
-<td class="instruction">JR NZ,<a href="AE34.html">$AE34</a></td>
+<td class="instruction">JR NZ,<a href="AE34.html">StopAttack</a></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="adef"></span>
 <div class="comments">
 <div class="paragraph">
-Controllers for player controls.
-</div>
-<div class="paragraph">
-Handle "fire".
+Check that "fire" is still being pressed.
 </div>
 </div>
 </td>
@@ -148,12 +172,12 @@ Handle "fire".
 <td class="asm-label"></td>
 <td class="address-1"><span id="adef"></span>ADEF</td>
 <td class="instruction">BIT 4,C</td>
-<td class="comment-1" rowspan="2">Jump to <a href="AE34.html">AE34</a> if "fire" was pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="AE34.html">StopAttack</a> if "fire" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="adf1"></span>ADF1</td>
-<td class="instruction">JR Z,<a href="AE34.html">$AE34</a></td>
+<td class="instruction">JR Z,<a href="AE34.html">StopAttack</a></td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -169,7 +193,7 @@ Handle "right".
 <td class="asm-label"></td>
 <td class="address-1"><span id="adf3"></span>ADF3</td>
 <td class="instruction">BIT 1,C</td>
-<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#adfb">PlayerMovement_Left</a> if "right" was pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#adfb">PlayerMovement_Left</a> if "right" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -177,20 +201,10 @@ Handle "right".
 <td class="instruction">JR Z,<a href="ADD0.html#adfb">PlayerMovement_Left</a></td>
 </tr>
 <tr>
-<td class="routine-comment" colspan="5">
-<span id="adf7"></span>
-<div class="comments">
-<div class="paragraph">
-Update movement for moving right.
-</div>
-</div>
-</td>
-</tr>
-<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="adf7"></span>ADF7</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="3"><span class="register">E</span>=<span class="register">E</span>+20.</td>
+<td class="comment-1" rowspan="3">Add 20 to the X movement in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -216,28 +230,18 @@ Handle "left".
 <td class="asm-label">PlayerMovement_Left</td>
 <td class="address-2"><span id="adfb"></span>ADFB</td>
 <td class="instruction">BIT 0,C</td>
-<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#ae03">PlayerMovement_Down</a> if "left" was pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#ae03">PlayerMovement_Up</a> if "left" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="adfd"></span>ADFD</td>
-<td class="instruction">JR Z,<a href="ADD0.html#ae03">PlayerMovement_Down</a></td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="adff"></span>
-<div class="comments">
-<div class="paragraph">
-Update movement for moving left.
-</div>
-</div>
-</td>
+<td class="instruction">JR Z,<a href="ADD0.html#ae03">PlayerMovement_Up</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="adff"></span>ADFF</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="3"><span class="register">E</span>=<span class="register">E</span>-20.</td>
+<td class="comment-1" rowspan="3">Subtract 20 from the X movement in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -254,37 +258,27 @@ Update movement for moving left.
 <span id="ae03"></span>
 <div class="comments">
 <div class="paragraph">
-Handle "down".
+Handle "up".
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayerMovement_Down</td>
+<td class="asm-label">PlayerMovement_Up</td>
 <td class="address-2"><span id="ae03"></span>AE03</td>
 <td class="instruction">BIT 2,C</td>
-<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#ae0b">PlayerMovement_Up</a> if "down" was pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#ae0b">PlayerMovement_Down</a> if "up" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae05"></span>AE05</td>
-<td class="instruction">JR Z,<a href="ADD0.html#ae0b">PlayerMovement_Up</a></td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="ae07"></span>
-<div class="comments">
-<div class="paragraph">
-Update movement for moving down.
-</div>
-</div>
-</td>
+<td class="instruction">JR Z,<a href="ADD0.html#ae0b">PlayerMovement_Down</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae07"></span>AE07</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="3"><span class="register">D</span>=<span class="register">D</span>-20.</td>
+<td class="comment-1" rowspan="3">Subtract 20 from the Y movement in <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -301,37 +295,27 @@ Update movement for moving down.
 <span id="ae0b"></span>
 <div class="comments">
 <div class="paragraph">
-Handle "up".
+Handle "down".
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayerMovement_Up</td>
+<td class="asm-label">PlayerMovement_Down</td>
 <td class="address-2"><span id="ae0b"></span>AE0B</td>
 <td class="instruction">BIT 3,C</td>
-<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#ae13">PlayerMovement_0</a> if "up" was pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="ADD0.html#ae13">PlayerMovement_Move</a> if "down" is not being pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae0d"></span>AE0D</td>
-<td class="instruction">JR Z,<a href="ADD0.html#ae13">PlayerMovement_0</a></td>
-</tr>
-<tr>
-<td class="routine-comment" colspan="5">
-<span id="ae0f"></span>
-<div class="comments">
-<div class="paragraph">
-Update movement for moving up.
-</div>
-</div>
-</td>
+<td class="instruction">JR Z,<a href="ADD0.html#ae13">PlayerMovement_Move</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae0f"></span>AE0F</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="3"><span class="register">D</span>=<span class="register">D</span>+20.</td>
+<td class="comment-1" rowspan="3">Add 20 to the Y movement in <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -348,76 +332,76 @@ Update movement for moving up.
 <span id="ae13"></span>
 <div class="comments">
 <div class="paragraph">
-Update the player Actor Entity.
+Update the player actor record and move the player.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayerMovement_0</td>
+<td class="asm-label">PlayerMovement_Move</td>
 <td class="address-2"><span id="ae13"></span>AE13</td>
 <td class="instruction">LD (IX+$06),E</td>
-<td class="comment-1" rowspan="1">Write <span class="register">E</span> to <span class="register">IX</span>+06.</td>
+<td class="comment-1" rowspan="1">Set the X velocity of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae16"></span>AE16</td>
 <td class="instruction">LD (IX+$07),D</td>
-<td class="comment-1" rowspan="1">Write <span class="register">D</span> to <span class="register">IX</span>+07.</td>
+<td class="comment-1" rowspan="1">Set the Y velocity of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae19"></span>AE19</td>
-<td class="instruction">CALL <a href="AFE8.html">$AFE8</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AFE8.html">AFE8</a>.</td>
+<td class="instruction">CALL <a href="AFE8.html">MoveActor</a></td>
+<td class="comment-1" rowspan="1">Work out the new position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae1c"></span>AE1C</td>
 <td class="instruction">LD BC,$160E</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=160E.</td>
+<td class="comment-1" rowspan="1">Set the height of the player in <span class="register">B</span> to 16 and the width in <span class="register">C</span> to 0E.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae1f"></span>AE1F</td>
-<td class="instruction">CALL <a href="B81C.html">$B81C</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B81C.html">B81C</a>.</td>
+<td class="instruction">CALL <a href="B81C.html">SlideActorPastObjects</a></td>
+<td class="comment-1" rowspan="1">Stop the player passing through objects in the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae22"></span>AE22</td>
-<td class="instruction">CALL <a href="AE4B.html">$AE4B</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AE4B.html">AE4B</a>.</td>
+<td class="instruction">CALL <a href="AE4B.html">AnimateAttack</a></td>
+<td class="comment-1" rowspan="1">Animate the attacking player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae25"></span>AE25</td>
-<td class="instruction">CALL <a href="AAED.html">$AAED</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AAED.html">AAED</a>.</td>
+<td class="instruction">CALL <a href="AAED.html">TestPositionUnchanged</a></td>
+<td class="comment-1" rowspan="1">Test whether the player has stayed where it was.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae28"></span>AE28</td>
 <td class="instruction">LD (IX+$03),E</td>
-<td class="comment-1" rowspan="1">Write <span class="register">E</span> to <span class="register">IX</span>+03 (sprite x co-ordinate).</td>
+<td class="comment-1" rowspan="1">Set the X position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae2b"></span>AE2B</td>
 <td class="instruction">LD (IX+$04),D</td>
-<td class="comment-1" rowspan="1">Write <span class="register">D</span> to <span class="register">IX</span>+04 (sprite y co-ordinate).</td>
+<td class="comment-1" rowspan="1">Set the Y position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae2e"></span>AE2E</td>
-<td class="instruction">CALL NZ,<a href="BF4B.html">$BF4B</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">CALL NZ,<a href="BF4B.html">PlayFootstepSound</a></td>
+<td class="comment-1" rowspan="1">Play the footstep sound if the player moved.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ae31"></span>AE31</td>
-<td class="instruction">JP <a href="AD57.html#ad5d">$AD5D</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="AD57.html#ad5d">AD5D</a>.</td>
+<td class="instruction">JP <a href="AD5D.html">DisplayActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD5D.html">DisplayActor</a> to display the player.</td>
 </tr>
 </table>
 <table class="asm-navigation">

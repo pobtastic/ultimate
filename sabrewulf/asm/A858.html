@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,212 +36,292 @@ Next: <a href="A8B2.html">A8B2</a>
 </td>
 </tr>
 </table>
-<div class="description">A858: Routine at A858</div>
+<div class="description">A858: Handler: Wulf</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
+<div class="paragraph">
+Handles the Sabre Wulf (sprite IDs 50 to 57) when it is running. Bit 2 of the sprite ID is set when the Wulf is facing right.
 </div>
+<div class="paragraph">
+Each time the Wulf is handled it animates, works out whether to head for the player (see <a href="A922.html">ChooseWulfDirection</a>) or pounce at them (see <a href="A8B2.html">TestWulfPounce</a>), moves with its velocity (see <a href="AFE8.html">MoveActor</a>), turns around if it was blocked and then hurts the player if it is touching them.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Actor record of the Wulf</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerWulf</td>
 <td class="address-2"><span id="a858"></span>A858</td>
 <td class="instruction">CALL <a href="BB0B.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BB0B.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Remember the previous position of the Wulf.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a85b"></span>A85B</td>
 <td class="instruction">LD A,$20</td>
-<td class="comment-1" rowspan="2">Write 20 to <a href="96A9.html#96ad">96AD</a>.</td>
+<td class="comment-1" rowspan="2">Set the width of the Wulf in <a href="96AD.html">Actor_Width</a> to 20.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a85d"></span>A85D</td>
 <td class="instruction">LD ($96AD),A</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a860"></span>A860</td>
-<td class="instruction">CALL <a href="AAED.html#ac0e">$AC0E</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AAED.html#ac0e">AC0E</a>.</td>
+<td class="instruction">CALL <a href="AC0E.html">AnimateActor</a></td>
+<td class="comment-1" rowspan="1">Animate the Wulf.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a863"></span>A863</td>
-<td class="instruction">CALL <a href="A922.html">$A922</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A922.html">A922</a>.</td>
+<td class="instruction">CALL <a href="A922.html">ChooseWulfDirection</a></td>
+<td class="comment-1" rowspan="1">Choose the direction of the Wulf.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a866"></span>A866</td>
-<td class="instruction">CALL <a href="A8B2.html">$A8B2</a></td>
-<td class="comment-1" rowspan="1">Call <a href="A8B2.html">A8B2</a>.</td>
+<td class="instruction">CALL <a href="A8B2.html">TestWulfPounce</a></td>
+<td class="comment-1" rowspan="1">Test whether the Wulf should pounce.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="a869"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="A964.html">A964</a>.
+This entry point is used by the routine at <a href="A964.html">HandlerWulfLanding</a>.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerWulf_Move</td>
 <td class="address-2"><span id="a869"></span>A869</td>
-<td class="instruction">CALL <a href="AFE8.html">$AFE8</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AFE8.html">AFE8</a>.</td>
+<td class="instruction">CALL <a href="AFE8.html">MoveActor</a></td>
+<td class="comment-1" rowspan="1">Work out the new position of the Wulf.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a86c"></span>
+<div class="comments">
+<div class="paragraph">
+Stop the Wulf moving through objects in the room. If it did not manage to move then turn it around.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a86c"></span>A86C</td>
 <td class="instruction">LD BC,$171F</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=171F.</td>
+<td class="comment-1" rowspan="1">Set the height of the Wulf in <span class="register">B</span> to 17 and the width in <span class="register">C</span> to 1F.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a86f"></span>A86F</td>
-<td class="instruction">CALL <a href="B81C.html">$B81C</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B81C.html">B81C</a>.</td>
+<td class="instruction">CALL <a href="B81C.html">SlideActorPastObjects</a></td>
+<td class="comment-1" rowspan="1">Stop the Wulf passing through objects in the room.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a872"></span>A872</td>
-<td class="instruction">CALL <a href="AAED.html">$AAED</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AAED.html">AAED</a>.</td>
+<td class="instruction">CALL <a href="AAED.html">TestPositionUnchanged</a></td>
+<td class="comment-1" rowspan="1">Test whether the Wulf has stayed where it was.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a875"></span>A875</td>
-<td class="instruction">JR NZ,<a href="A858.html#a87a">$A87A</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A858.html#a87a">HandlerWulf_Position</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A858.html#a87a">HandlerWulf_Position</a> if the Wulf has moved.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a877"></span>A877</td>
-<td class="instruction">CALL <a href="ADB3.html">$ADB3</a></td>
-<td class="comment-1" rowspan="1">Call <a href="ADB3.html">ADB3</a>.</td>
+<td class="instruction">CALL <a href="ADB3.html">TurnWulfAround</a></td>
+<td class="comment-1" rowspan="1">Turn the Wulf around.</td>
 </tr>
 <tr>
+<td class="asm-label">HandlerWulf_Position</td>
 <td class="address-2"><span id="a87a"></span>A87A</td>
 <td class="instruction">LD (IX+$03),E</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the X position of the Wulf.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a87d"></span>A87D</td>
 <td class="instruction">LD (IX+$04),D</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the Y position of the Wulf.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="a880"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="A8F5.html">A8F5</a>.
+This entry point is used by the routine at <a href="A8F5.html">HandlerWulfPouncing</a>.
+</div>
+<div class="paragraph">
+The Wulf can only hurt the player if the player is in the same room and has the normal colour.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">HandlerWulf_Touch</td>
 <td class="address-2"><span id="a880"></span>A880</td>
 <td class="instruction">LD A,($9707)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the colour of the player from <a href="9702.html#9707">9707</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a883"></span>A883</td>
 <td class="instruction">CP $47</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A858.html#a8af">HandlerWulf_Draw</a> if the player does not have the normal colour (INK:WHITE, PAPER:BLACK (BRIGHT)).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a885"></span>A885</td>
-<td class="instruction">JR NZ,<a href="A858.html#a8af">$A8AF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A858.html#a8af">HandlerWulf_Draw</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a887"></span>A887</td>
 <td class="instruction">LD A,($9703)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="9702.html#9703">9703</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a88a"></span>A88A</td>
 <td class="instruction">CP (IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A858.html#a8af">HandlerWulf_Draw</a> if the Wulf is in a different room to the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a88d"></span>A88D</td>
-<td class="instruction">JR NZ,<a href="A858.html#a8af">$A8AF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="A858.html#a8af">HandlerWulf_Draw</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a88f"></span>A88F</td>
 <td class="instruction">LD BC,$0F1C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Set the reach used to test whether the Wulf is touching the player in <span class="register">BC</span> to 0F1C.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a892"></span>A892</td>
-<td class="instruction">CALL <a href="AAED.html#ab01">$AB01</a></td>
-<td class="comment-1" rowspan="1">Call <a href="AAED.html#ab01">AB01</a>.</td>
+<td class="instruction">CALL <a href="AB01.html">TestPlayerTouchingActor</a></td>
+<td class="comment-1" rowspan="1">Test whether the Wulf is touching the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a895"></span>A895</td>
-<td class="instruction">JR NC,<a href="A858.html#a8af">$A8AF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NC,<a href="A858.html#a8af">HandlerWulf_Draw</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A858.html#a8af">HandlerWulf_Draw</a> if the Wulf is not touching the player.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a897"></span>
+<div class="comments">
+<div class="paragraph">
+Knock the player in the direction the Wulf is facing.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a897"></span>A897</td>
 <td class="instruction">LD A,(IX+$00)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the Wulf.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a89a"></span>A89A</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Flip the bits.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a89b"></span>A89B</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Rotate right twice, so bit 2 is now in bit 0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a89c"></span>A89C</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a89d"></span>A89D</td>
 <td class="instruction">AND %00000001</td>
 <td class="comment-1" rowspan="1">Keep only bit 0.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a89f"></span>A89F</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Add one, giving a hit direction of 01 or 02.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a8a0"></span>A8A0</td>
 <td class="instruction">LD ($9704),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Store the hit direction in <a href="9702.html#9704">9704</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="a8a3"></span>
+<div class="comments">
+<div class="paragraph">
+Turn the Wulf around unless the player is attacking.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a8a3"></span>A8A3</td>
 <td class="instruction">LD A,($9702)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the player from <a href="9702.html">ImmortalData</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a8a6"></span>A8A6</td>
 <td class="instruction">SUB $20</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract 20 (the first attacking Sabreman sprite ID).</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a8a8"></span>A8A8</td>
 <td class="instruction">CP $10</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="A858.html#a8af">HandlerWulf_Draw</a> if the player is attacking.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a8aa"></span>A8AA</td>
-<td class="instruction">JR C,<a href="A858.html#a8af">$A8AF</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="A858.html#a8af">HandlerWulf_Draw</a></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="a8ac"></span>A8AC</td>
-<td class="instruction">CALL <a href="ADB3.html">$ADB3</a></td>
-<td class="comment-1" rowspan="1">Call <a href="ADB3.html">ADB3</a>.</td>
+<td class="instruction">CALL <a href="ADB3.html">TurnWulfAround</a></td>
+<td class="comment-1" rowspan="1">Turn the Wulf around.</td>
 </tr>
 <tr>
+<td class="asm-label">HandlerWulf_Draw</td>
 <td class="address-2"><span id="a8af"></span>A8AF</td>
-<td class="instruction">JP <a href="AD07.html#ad46">$AD46</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="AD07.html#ad46">AD46</a>.</td>
+<td class="instruction">JP <a href="AD46.html">UpdateActor</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="AD46.html">UpdateActor</a> to update the Wulf.</td>
 </tr>
 </table>
 <table class="asm-navigation">

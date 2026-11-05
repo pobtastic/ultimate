@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../pssst.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,16 @@ Next: <a href="63E1.html">63E1</a>
 </td>
 </tr>
 </table>
-<div class="description">63AA: Leaf Collision</div>
+<div class="description">63AA: Check Bug Leaf Collision</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="64ED.html">64ED</a>.
+Used by the routine at <a href="64ED.html">UpdateBugCommon</a>.
+</div>
+<div class="paragraph">
+Checks whether the bug being updated (<span class="register">IX</span>) is touching any of the four leaf objects. If it is on top of an active leaf, the leaf is marked as being eaten and it returns straight away, so only one leaf is eaten at a time.
 </div>
 </div>
 </td>
@@ -48,25 +54,25 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="asm-label">LeafCollision</td>
 <td class="address-2"><span id="63aa"></span>63AA</td>
 <td class="instruction">LD HL,$5E94</td>
-<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E94.html">Leaf_1_State</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">HL</span>=<a href="5E94.html">Leaf_1_State</a> (the first leaf object).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63ad"></span>63AD</td>
 <td class="instruction">LD B,$04</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=04 (leaf counter).</td>
+<td class="comment-1" rowspan="1">Set the leaf counter to 04.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63af"></span>63AF</td>
 <td class="instruction">LD DE,$0008</td>
-<td class="comment-1" rowspan="1"><span class="register">BC</span>=08 (data offset).</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=08 (the size of an object, used to move onto the next leaf).</td>
 </tr>
 <tr>
 <td class="asm-label">LeafCollision_Loop</td>
 <td class="address-2"><span id="63b2"></span>63B2</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the leaf on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -85,10 +91,20 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="instruction">JR Z,<a href="63AA.html#63dc">LeafCollision_Next</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="63b7"></span>
+<div class="comments">
+<div class="paragraph">
+Is the leaf within 09 pixels of the bug horizontally?
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63b7"></span>63B7</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=current leaf X position.</td>
+<td class="comment-1" rowspan="2"><span class="register">A</span>=the X position of the leaf.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -99,13 +115,13 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="63b9"></span>63B9</td>
 <td class="instruction">SUB (IX+$01)</td>
-<td class="comment-1" rowspan="1">Leaf X position - bug X Position.</td>
+<td class="comment-1" rowspan="1">Subtract the X position of the bug.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63bc"></span>63BC</td>
 <td class="instruction">JP P,<a href="63AA.html#63c1">LeafCollision_Test_X</a></td>
-<td class="comment-1" rowspan="2">Make sure we have a positive byte.</td>
+<td class="comment-1" rowspan="2">Make the horizontal distance positive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -116,7 +132,7 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="asm-label">LeafCollision_Test_X</td>
 <td class="address-2"><span id="63c1"></span>63C1</td>
 <td class="instruction">CP $0A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="63AA.html#63dc">LeafCollision_Next</a> if <span class="register">A</span> &gt;= 0A.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="63AA.html#63dc">LeafCollision_Next</a> if the leaf is 0A or more pixels away.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -124,10 +140,20 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="instruction">JR NC,<a href="63AA.html#63dc">LeafCollision_Next</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="63c5"></span>
+<div class="comments">
+<div class="paragraph">
+Is the leaf within 09 pixels of the bug vertically?
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63c5"></span>63C5</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2"><span class="register">A</span>=current leaf Y position.</td>
+<td class="comment-1" rowspan="2"><span class="register">A</span>=the Y position of the leaf.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -138,13 +164,13 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="63c7"></span>63C7</td>
 <td class="instruction">SUB (IX+$02)</td>
-<td class="comment-1" rowspan="1">Leaf Y position - bug Y Position.</td>
+<td class="comment-1" rowspan="1">Subtract the Y position of the bug.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63ca"></span>63CA</td>
 <td class="instruction">JP P,<a href="63AA.html#63cf">LeafCollision_Test_Y</a></td>
-<td class="comment-1" rowspan="2">Make sure we have a positive byte.</td>
+<td class="comment-1" rowspan="2">Make the vertical distance positive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -155,7 +181,7 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="asm-label">LeafCollision_Test_Y</td>
 <td class="address-2"><span id="63cf"></span>63CF</td>
 <td class="instruction">CP $0A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="63AA.html#63dc">LeafCollision_Next</a> if <span class="register">A</span> &gt;= 0A.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="63AA.html#63dc">LeafCollision_Next</a> if the leaf is 0A or more pixels away.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -163,10 +189,20 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="instruction">JR NC,<a href="63AA.html#63dc">LeafCollision_Next</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="63d3"></span>
+<div class="comments">
+<div class="paragraph">
+The bug is on the leaf, so the leaf starts to shrink away.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63d3"></span>63D3</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2">Increment <span class="register">HL</span> by two (skip colour attribute).</td>
+<td class="comment-1" rowspan="2">Skip the colour attribute to point to the leaf animating flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -177,7 +213,7 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="63d5"></span>63D5</td>
 <td class="instruction">LD A,$01</td>
-<td class="comment-1" rowspan="4">Write 01 to todo and todo (being eaten?)</td>
+<td class="comment-1" rowspan="4">Write 01 to the animating flag and the "being eaten" flag of the leaf (see <a href="6C53.html">UpdateLeaf</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -198,7 +234,7 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="63da"></span>63DA</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the address of the leaf from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -211,7 +247,7 @@ Used by the routine at <a href="64ED.html">64ED</a>.
 <span id="63dc"></span>
 <div class="comments">
 <div class="paragraph">
-Handles moving onto the next leaf object.
+Move onto the next leaf object.
 </div>
 </div>
 </td>
@@ -226,13 +262,13 @@ Handles moving onto the next leaf object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="63dd"></span>63DD</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1">Add the data offset/ move onto the next leaf.</td>
+<td class="comment-1" rowspan="1">Add the object size to move onto the next leaf.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63de"></span>63DE</td>
 <td class="instruction">DJNZ <a href="63AA.html#63b2">LeafCollision_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="63AA.html#63b2">LeafCollision_Loop</a> until counter is zero.</td>
+<td class="comment-1" rowspan="1">Decrease the leaf counter by one and loop back to <a href="63AA.html#63b2">LeafCollision_Loop</a> until all four leaves have been checked.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

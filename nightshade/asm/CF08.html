@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at CF08</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CEF8.html">CEF8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cf08">Map</a></td>
+<td class="next">
+Next: <a href="CFA5.html">CFA5</a>
+</td>
+</tr>
+</table>
+<div class="description">CF08: Draw View</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BDFE.html">StartGame</a>.
+</div>
+<div class="paragraph">
+Draws the view of the village in the pixel buffer, as seen from the player. The view is made of cells of the map, drawn from the furthest to the nearest, with the objects that are in each cell drawn after the cell.
+</div>
+<div class="paragraph">
+The cells around the player are drawn in an order that depends on which of the five cells beside the player's cell are not empty. A pattern of five bits is made from them and used to find an entry in the table at <a href="6204.html">ViewPatterns</a>, which is made of five bytes for each pattern. Each byte gives one cell to draw: bits 0 and 1 choose what to draw (0 for only the objects in the cell, 1 for the cell with its walls, 2 for the cell); bits 4 and 5 give the column (0 for one back, 1 for one on, 2 or 3 for the same one); and bits 6 and 7 give the row in the same way.
+</div>
+<div class="paragraph">
+<table class="">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After <a href="CF08.html">DrawView</a></th>
+</tr>
+<tr>
+<td class="" colspan="1" rowspan="1"><img alt="draw-view-before" src="../images/scr/draw-view-before.png" /></td>
+<td class="" colspan="1" rowspan="1"><img alt="draw-view-after" src="../images/scr/draw-view-after.png" /></td>
+</tr>
+</table>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView</td>
+<td class="address-2"><span id="cf08"></span>CF08</td>
+<td class="instruction">LD HL,$E001</td>
+<td class="comment-1" rowspan="2">Mark the columns that are outside the view as already drawn (see <a href="BBBB.html">DrawnColumns</a>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf0b"></span>CF0B</td>
+<td class="instruction">LD ($BBBB),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf0e"></span>CF0E</td>
+<td class="instruction">LD A,($BC90)</td>
+<td class="comment-1" rowspan="4">Fetch the column and the row of the player's cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf11"></span>CF11</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf12"></span>CF12</td>
+<td class="instruction">LD A,($BC92)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf15"></span>CF15</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf16"></span>CF16</td>
+<td class="instruction">CALL <a href="D17D.html">ConvertCell</a></td>
+<td class="comment-1" rowspan="1">Turn them into the column and the row in the view, if the view is turned round.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf19"></span>CF19</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Keep the player's cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf1a"></span>CF1A</td>
+<td class="instruction">LD E,$00</td>
+<td class="comment-1" rowspan="1">Start with an empty pattern of cells.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cf1c"></span>
+<div class="comments">
+<div class="paragraph">
+Make the pattern of the five cells next to the player's cell that are not empty.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf1c"></span>CF1C</td>
+<td class="instruction">DEC L</td>
+<td class="comment-1" rowspan="5">Set bit 0 if the cell one column back and one row on is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf1d"></span>CF1D</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf1e"></span>CF1E</td>
+<td class="instruction">CALL <a href="D564.html">GetMapCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf21"></span>CF21</td>
+<td class="instruction">JR Z,<a href="CF08.html#cf25">DrawView_Pattern1</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf23"></span>CF23</td>
+<td class="instruction">SET 0,E</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Pattern1</td>
+<td class="address-2"><span id="cf25"></span>CF25</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="6">Set bit 1 if the cell one column back is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf26"></span>CF26</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf27"></span>CF27</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf28"></span>CF28</td>
+<td class="instruction">CALL <a href="D564.html">GetMapCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf2b"></span>CF2B</td>
+<td class="instruction">JR Z,<a href="CF08.html#cf2f">DrawView_Pattern2</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf2d"></span>CF2D</td>
+<td class="instruction">SET 1,E</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Pattern2</td>
+<td class="address-2"><span id="cf2f"></span>CF2F</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="6">Set bit 2 if the cell one row on is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf30"></span>CF30</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf31"></span>CF31</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf32"></span>CF32</td>
+<td class="instruction">CALL <a href="D564.html">GetMapCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf35"></span>CF35</td>
+<td class="instruction">JR Z,<a href="CF08.html#cf39">DrawView_Pattern3</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf37"></span>CF37</td>
+<td class="instruction">SET 2,E</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Pattern3</td>
+<td class="address-2"><span id="cf39"></span>CF39</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="7">Set bit 3 if the cell one column back and one row back is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf3a"></span>CF3A</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf3b"></span>CF3B</td>
+<td class="instruction">DEC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf3c"></span>CF3C</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf3d"></span>CF3D</td>
+<td class="instruction">CALL <a href="D564.html">GetMapCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf40"></span>CF40</td>
+<td class="instruction">JR Z,<a href="CF08.html#cf44">DrawView_Pattern4</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf42"></span>CF42</td>
+<td class="instruction">SET 3,E</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Pattern4</td>
+<td class="address-2"><span id="cf44"></span>CF44</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="7">Set bit 4 if the cell one column on and one row on is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf45"></span>CF45</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf46"></span>CF46</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf47"></span>CF47</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf48"></span>CF48</td>
+<td class="instruction">CALL <a href="D564.html">GetMapCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf4b"></span>CF4B</td>
+<td class="instruction">JR Z,<a href="CF08.html#cf4f">DrawView_FindEntry</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf4d"></span>CF4D</td>
+<td class="instruction">SET 4,E</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cf4f"></span>
+<div class="comments">
+<div class="paragraph">
+Find the entry in the table at <a href="6204.html">ViewPatterns</a> for the pattern.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_FindEntry</td>
+<td class="address-2"><span id="cf4f"></span>CF4F</td>
+<td class="instruction">LD D,$00</td>
+<td class="comment-1" rowspan="12">Find the entry in the table for the pattern, and set a counter for five cells.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf51"></span>CF51</td>
+<td class="instruction">LD A,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf52"></span>CF52</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf53"></span>CF53</td>
+<td class="instruction">LD E,L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf54"></span>CF54</td>
+<td class="instruction">LD D,H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf55"></span>CF55</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf56"></span>CF56</td>
+<td class="instruction">ADD HL,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf57"></span>CF57</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf58"></span>CF58</td>
+<td class="instruction">LD DE,$6204</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf5b"></span>CF5B</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf5c"></span>CF5C</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf5d"></span>CF5D</td>
+<td class="instruction">LD B,$05</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Cell</td>
+<td class="address-2"><span id="cf5f"></span>CF5F</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="4">Get the player's cell back and fetch the next byte of the entry.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf60"></span>CF60</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf61"></span>CF61</td>
+<td class="instruction">LD A,(DE)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf62"></span>CF62</td>
+<td class="instruction">INC DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf63"></span>CF63</td>
+<td class="instruction">BIT 5,A</td>
+<td class="comment-1" rowspan="2">Keep the column as it is if bit 5 is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf65"></span>CF65</td>
+<td class="instruction">JR NZ,<a href="CF08.html#cf6e">DrawView_Row</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf67"></span>CF67</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CF08.html#cf6d">DrawView_ColumnBack</a> to move the column back one if bit 4 is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf69"></span>CF69</td>
+<td class="instruction">JR Z,<a href="CF08.html#cf6d">DrawView_ColumnBack</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf6b"></span>CF6B</td>
+<td class="instruction">INC L</td>
+<td class="comment-1" rowspan="2">Move the column on two...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf6c"></span>CF6C</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_ColumnBack</td>
+<td class="address-2"><span id="cf6d"></span>CF6D</td>
+<td class="instruction">DEC L</td>
+<td class="comment-1" rowspan="1">... and back one, to give one on.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Row</td>
+<td class="address-2"><span id="cf6e"></span>CF6E</td>
+<td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Keep the row as it is if bit 7 is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf70"></span>CF70</td>
+<td class="instruction">JR NZ,<a href="CF08.html#cf79">DrawView_Select</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf72"></span>CF72</td>
+<td class="instruction">BIT 6,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CF08.html#cf78">DrawView_RowBack</a> to move the row back one if bit 6 is clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf74"></span>CF74</td>
+<td class="instruction">JR Z,<a href="CF08.html#cf78">DrawView_RowBack</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf76"></span>CF76</td>
+<td class="instruction">INC H</td>
+<td class="comment-1" rowspan="2">Move the row on two...</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf77"></span>CF77</td>
+<td class="instruction">INC H</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_RowBack</td>
+<td class="address-2"><span id="cf78"></span>CF78</td>
+<td class="instruction">DEC H</td>
+<td class="comment-1" rowspan="1">... and back one, to give one on.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Select</td>
+<td class="address-2"><span id="cf79"></span>CF79</td>
+<td class="instruction">AND $03</td>
+<td class="comment-1" rowspan="5">Keep the counter and the address of the entry, and make <a href="CF08.html#cf8d">DrawView_Next</a> the address to return to.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf7b"></span>CF7B</td>
+<td class="instruction">PUSH BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf7c"></span>CF7C</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf7d"></span>CF7D</td>
+<td class="instruction">LD DE,$CF8D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf80"></span>CF80</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf81"></span>CF81</td>
+<td class="instruction">JP Z,<a href="CFA5.html#cfaa">DrawObjectsInCell</a></td>
+<td class="comment-1" rowspan="1">Draw only the objects in the cell if bits 0 and 1 are 0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf84"></span>CF84</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Draw the cell with its walls if bits 0 and 1 are 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf85"></span>CF85</td>
+<td class="instruction">JP Z,<a href="D372.html">DrawCellWithWalls</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf88"></span>CF88</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Draw the cell if bits 0 and 1 are 2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf89"></span>CF89</td>
+<td class="instruction">JP Z,<a href="D19D.html">DrawCell</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf8c"></span>CF8C</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Throw away the address to return to.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawView_Next</td>
+<td class="address-1"><span id="cf8d"></span>CF8D</td>
+<td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="3">Get the address of the entry and the counter back, and loop back until all five cells have been drawn.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf8e"></span>CF8E</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf8f"></span>CF8F</td>
+<td class="instruction">DJNZ <a href="CF08.html#cf5f">DrawView_Cell</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cf91"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the player's cell and the three cells next to it that are nearer to the viewer, with the objects in each.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf91"></span>CF91</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="3">Draw the player's cell, and the objects in it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf92"></span>CF92</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf93"></span>CF93</td>
+<td class="instruction">CALL <a href="CFA5.html">DrawCellAndObjects</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf96"></span>CF96</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="4">Draw the cell one row back, and the objects in it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf97"></span>CF97</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf98"></span>CF98</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf99"></span>CF99</td>
+<td class="instruction">CALL <a href="CFA5.html">DrawCellAndObjects</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf9c"></span>CF9C</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="4">Draw the cell one column on, and the objects in it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf9d"></span>CF9D</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf9e"></span>CF9E</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf9f"></span>CF9F</td>
+<td class="instruction">CALL <a href="CFA5.html">DrawCellAndObjects</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cfa2"></span>CFA2</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="3">Move to the cell one column on and one row back, and draw it and its objects in the routine that follows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cfa3"></span>CFA3</td>
+<td class="instruction">INC L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cfa4"></span>CFA4</td>
+<td class="instruction">DEC H</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/gunfright/asm/C0F8.html">Gunfright</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CEF8.html">CEF8</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#cf08">Map</a></td>
+<td class="next">
+Next: <a href="CFA5.html">CFA5</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/53000.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

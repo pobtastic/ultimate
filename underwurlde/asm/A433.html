@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Underwurlde: Routine at A433</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../underwurlde.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A406.html">A406</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#42035">Map</a></td>
+<td class="next">
+Next: <a href="A5F1.html">A5F1</a>
+</td>
+</tr>
+</table>
+<div class="description">A433: Handle Sabreman Walking</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Handler for the object types 09 to 10 which are the walking sprites of Sabreman (09 to 0C when he walks to the left and 0D to 10 when he walks to the right). It is also the state that he is in when he is standing still.
+</div>
+<div class="paragraph">
+Each time it saves the object state, handles being carried off (bit 6 of the redraw flags), tumbling (bit 7) and the special state at <a href="E8A2.html">Tumble_Sabreman</a> (bit 3), checks for contact with the bubbles, the stalactite and the creatures, reads the controls, moves him sideways, and finally keeps him inside the room, moving him to the next room when he walks off the edge.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Object record of Sabreman</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42035"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the countdown and the contact flags. In the top part of the room (y position less than 48) the contact flags are set to 44 which marks both side walls as solid.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking</td>
+<td class="address-2"><span id="42035"></span>A433</td>
+<td class="instruction">CALL <a href="989F.html">StoreEntity</a></td>
+<td class="comment-1" rowspan="1">Remember the position and sprite id of Sabreman (see <a href="989F.html">StoreEntity</a>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42038"></span>A436</td>
+<td class="instruction">LD A,(IX+$0F)</td>
+<td class="comment-1" rowspan="1">Fetch the redraw flags of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42041"></span>A439</td>
+<td class="instruction">AND %01000000</td>
+<td class="comment-1" rowspan="1">Keep only bit 6 (being carried).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42043"></span>A43B</td>
+<td class="instruction">JP NZ,<a href="B72C.html">Start_Being_Carried</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="B72C.html">Start_Being_Carried</a> if Sabreman is being carried by an eagle (bit 6 of the redraw flags is set).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42046"></span>A43E</td>
+<td class="instruction">LD (IX+$0A),$00</td>
+<td class="comment-1" rowspan="1">Clear the countdown of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42050"></span>A442</td>
+<td class="instruction">LD (IX+$0B),$00</td>
+<td class="comment-1" rowspan="1">Clear the contact flags of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42054"></span>A446</td>
+<td class="instruction">LD A,(IX+$03)</td>
+<td class="comment-1" rowspan="1">Fetch the y position of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42057"></span>A449</td>
+<td class="instruction">CP $48</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42065">Handle_Sabreman_Walking_Check_Special_States</a> if Sabreman is in the lower part of the room (y position 48 or more).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42059"></span>A44B</td>
+<td class="instruction">JR NC,<a href="A433.html#42065">Handle_Sabreman_Walking_Check_Special_States</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42061"></span>A44D</td>
+<td class="instruction">LD (IX+$0B),$44</td>
+<td class="comment-1" rowspan="1">Mark the walls on both sides as solid by setting the contact flags to 44 as he is in the upper part of the room.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42065"></span>
+<div class="comments">
+<div class="paragraph">
+Check the special states.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Check_Special_States</td>
+<td class="address-2"><span id="42065"></span>A451</td>
+<td class="instruction">BIT 7,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A406.html">Start_Tumbling</a> if bit 7 of the redraw flags is set (Sabreman starts to tumble).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42069"></span>A455</td>
+<td class="instruction">JR NZ,<a href="A406.html">Start_Tumbling</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42071"></span>A457</td>
+<td class="instruction">BIT 3,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="E8A2.html">Tumble_Sabreman</a> if bit 3 of the redraw flags is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42075"></span>A45B</td>
+<td class="instruction">JP NZ,<a href="E8A2.html">Tumble_Sabreman</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42078"></span>
+<div class="comments">
+<div class="paragraph">
+Check for contact with the bubbles, the stalactite and the creatures. The result of the bubble contact check is kept in byte 0E of the record of Sabreman.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42078"></span>A45E</td>
+<td class="instruction">CALL <a href="98CC.html">Read_World_Map</a></td>
+<td class="comment-1" rowspan="1">Read the world map entry of the room (the room flags are returned in <span class="register">E</span>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42081"></span>A461</td>
+<td class="instruction">CALL <a href="E1B4.html">Check_Bubble_Contact</a></td>
+<td class="comment-1" rowspan="1">Check for contact with the bubbles.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42084"></span>A464</td>
+<td class="instruction">LD (IX+$0E),C</td>
+<td class="comment-1" rowspan="1">Store the bubble contact result in byte 0E of the record of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42087"></span>A467</td>
+<td class="instruction">CALL <a href="E833.html">Check_Stalactite_Contact</a></td>
+<td class="comment-1" rowspan="1">Check for contact with the falling stalactite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42090"></span>A46A</td>
+<td class="instruction">BIT 2,C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42104">Handle_Sabreman_Walking_Check_Creatures</a> if the stalactite does not touch him (bit 2 of <span class="register">C</span> is clear).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42092"></span>A46C</td>
+<td class="instruction">JR Z,<a href="A433.html#42104">Handle_Sabreman_Walking_Check_Creatures</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42094"></span>A46E</td>
+<td class="instruction">BIT 2,(IX+$0E)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="E894.html">Knock_Sabreman_Down</a> to knock Sabreman down if the stalactite hit him while he was touching a bubble.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42098"></span>A472</td>
+<td class="instruction">JP NZ,<a href="E894.html">Knock_Sabreman_Down</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42101"></span>A475</td>
+<td class="instruction">JP <a href="A3E9.html">Handle_Stalactite_Hit</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A3E9.html">Handle_Stalactite_Hit</a> to handle the stalactite hit.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Check_Creatures</td>
+<td class="address-2"><span id="42104"></span>A478</td>
+<td class="instruction">BIT 2,(IX+$0E)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42124">Handle_Sabreman_Walking_Read_Controls</a> if he is touching a bubble, as the creatures are only checked when he is not.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42108"></span>A47C</td>
+<td class="instruction">JR NZ,<a href="A433.html#42124">Handle_Sabreman_Walking_Read_Controls</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42110"></span>A47E</td>
+<td class="instruction">CALL <a href="B43E.html">Check_Decoration_Contact</a></td>
+<td class="comment-1" rowspan="1">Check for contact with the creatures.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42113"></span>A481</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Copy the creature contact result to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42114"></span>A482</td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 6 (ignore which side the creature is on).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42116"></span>A484</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="2">Jump to <a href="E272.html">Start_Tumbling_Downwards</a> to start tumbling downwards if a creature is touching him from the side (the contact result is 04).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42118"></span>A486</td>
+<td class="instruction">JP Z,<a href="E272.html">Start_Tumbling_Downwards</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42121"></span>A489</td>
+<td class="instruction">LD (IX+$0E),C</td>
+<td class="comment-1" rowspan="1">Store the creature contact result in byte 0E of the record of Sabreman.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42124"></span>
+<div class="comments">
+<div class="paragraph">
+Read the controls. A clear fire bit throws a weapon, and a set fire bit sets the flag for the released fire key. Then bit 3 of the controls (clear) starts a jump, bit 0 (clear) moves him to the right and bit 1 (clear) moves him to the left.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Read_Controls</td>
+<td class="address-2"><span id="42124"></span>A48C</td>
+<td class="instruction">CALL <a href="AE17.html">ReadControls</a></td>
+<td class="comment-1" rowspan="1">Read the controls.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42127"></span>A48F</td>
+<td class="instruction">BIT 4,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42137">Handle_Sabreman_Walking_Fire_Released</a> if bit 4 of the controls is set (the fire key is not pressed).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42129"></span>A491</td>
+<td class="instruction">JR NZ,<a href="A433.html#42137">Handle_Sabreman_Walking_Fire_Released</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42131"></span>A493</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the controls in <span class="register">AF'</span> while the weapon is thrown.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42132"></span>A494</td>
+<td class="instruction">CALL <a href="B4D1.html">Throw_Weapon</a></td>
+<td class="comment-1" rowspan="1">Throw a weapon (see <a href="B4D1.html">Throw_Weapon</a>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42135"></span>A497</td>
+<td class="instruction">JR <a href="A433.html#42143">Handle_Sabreman_Walking_Check_Movement</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A433.html#42143">Handle_Sabreman_Walking_Check_Movement</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Fire_Released</td>
+<td class="address-2"><span id="42137"></span>A499</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the controls in <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42138"></span>A49A</td>
+<td class="instruction">LD A,$FF</td>
+<td class="comment-1" rowspan="2">Set the flag for the released fire key (<a href="AAAB.html">Fire_Key_Flag</a>) to FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42140"></span>A49C</td>
+<td class="instruction">LD ($AAAB),A</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Check_Movement</td>
+<td class="address-2"><span id="42143"></span>A49F</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Fetch the controls again from <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42144"></span>A4A0</td>
+<td class="instruction">BIT 3,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42390">Handle_Sabreman_Walking_Jump</a> to start a jump if the up control is used (bit 3 of the controls is clear).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42146"></span>A4A2</td>
+<td class="instruction">JP Z,<a href="A433.html#42390">Handle_Sabreman_Walking_Jump</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42149"></span>A4A5</td>
+<td class="instruction">BIT 0,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42314">Handle_Sabreman_Walking_Right</a> to walk to the right if the right control is used (bit 0 of the controls is clear).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42151"></span>A4A7</td>
+<td class="instruction">JP Z,<a href="A433.html#42314">Handle_Sabreman_Walking_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42154"></span>A4AA</td>
+<td class="instruction">BIT 1,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42350">Handle_Sabreman_Walking_Left</a> to walk to the left if the left control is used (bit 1 of the controls is clear).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42156"></span>A4AC</td>
+<td class="instruction">JP Z,<a href="A433.html#42350">Handle_Sabreman_Walking_Left</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42159"></span>A4AF</td>
+<td class="instruction">LD (IX+$06),$00</td>
+<td class="comment-1" rowspan="1">Set the x velocity to 00 as he is standing still.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42163"></span>
+<div class="comments">
+<div class="paragraph">
+Move Sabreman sideways by the x velocity, unless the contact bits of the bubble or creature that he touches (bits 0 to 2) are all set, in which case the routine goes to <a href="A433.html#42475">Handle_Sabreman_Walking_Jump_Straight_Up</a>, which starts a jump with a y velocity of zero.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Move_Sideways</td>
+<td class="address-2"><span id="42163"></span>A4B3</td>
+<td class="instruction">LD A,(IX+$0E)</td>
+<td class="comment-1" rowspan="1">Fetch the bubble or creature contact result of Sabreman (byte 0E).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42166"></span>A4B6</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 2 (touching, on top and at the edge).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42168"></span>A4B8</td>
+<td class="instruction">CP $07</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42475">Handle_Sabreman_Walking_Jump_Straight_Up</a> if all three are set (he is standing on the edge of a bubble or a creature).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42170"></span>A4BA</td>
+<td class="instruction">JP Z,<a href="A433.html#42475">Handle_Sabreman_Walking_Jump_Straight_Up</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42173"></span>A4BD</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the x position of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42176"></span>A4C0</td>
+<td class="instruction">ADD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Add the x velocity of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42179"></span>A4C3</td>
+<td class="instruction">LD (IX+$01),A</td>
+<td class="comment-1" rowspan="1">Store the new x position of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42182"></span>A4C6</td>
+<td class="instruction">CALL <a href="98CC.html">Read_World_Map</a></td>
+<td class="comment-1" rowspan="1">Read the world map entry of the room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42185"></span>A4C9</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Copy the room flags to <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42186"></span>A4CA</td>
+<td class="instruction">LD ($AAAC),A</td>
+<td class="comment-1" rowspan="1">Store the room flags in <a href="AAAC.html">Room_Flags</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42189"></span>A4CD</td>
+<td class="instruction">OR (IX+$0B)</td>
+<td class="comment-1" rowspan="1">Combine the room flags with the contact flags of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42192"></span>A4D0</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Keep the combined flags in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42193"></span>A4D1</td>
+<td class="instruction">LD A,(IX+$01)</td>
+<td class="comment-1" rowspan="1">Fetch the x position of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42196"></span>A4D4</td>
+<td class="instruction">CP $10</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42219">Handle_Sabreman_Walking_On_Ground</a> if Sabreman is at the left edge of the room (x position less than 10).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42198"></span>A4D6</td>
+<td class="instruction">JR C,<a href="A433.html#42219">Handle_Sabreman_Walking_On_Ground</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42200"></span>A4D8</td>
+<td class="instruction">CP $E8</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42219">Handle_Sabreman_Walking_On_Ground</a> if Sabreman is at the right edge of the room (x position E8 or more).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42202"></span>A4DA</td>
+<td class="instruction">JR NC,<a href="A433.html#42219">Handle_Sabreman_Walking_On_Ground</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42204"></span>A4DC</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the controls in <span class="register">AF'</span> while the room redrawn flag is fetched.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42205"></span>A4DD</td>
+<td class="instruction">LD A,($8EF0)</td>
+<td class="comment-1" rowspan="1">Fetch the room redrawn flag from <a href="8EF0.html">Room_Redrawn_Flag</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42208"></span>A4E0</td>
+<td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Copy the flag to <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42209"></span>A4E1</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Fetch the controls again from <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42210"></span>A4E2</td>
+<td class="instruction">BIT 0,D</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42219">Handle_Sabreman_Walking_On_Ground</a> if the room has just been drawn (bit 0 of the flag is set).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42212"></span>A4E4</td>
+<td class="instruction">JR NZ,<a href="A433.html#42219">Handle_Sabreman_Walking_On_Ground</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42214"></span>A4E6</td>
+<td class="instruction">BIT 4,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42435">Handle_Sabreman_Walking_No_Floor</a> if there is no floor under him (bit 4 of <span class="register">E</span> is clear), as he walks off the ledge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42216"></span>A4E8</td>
+<td class="instruction">JP Z,<a href="A433.html#42435">Handle_Sabreman_Walking_No_Floor</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42219"></span>
+<div class="comments">
+<div class="paragraph">
+Sabreman is on the ground, so the y velocity is cleared. Then the x position is kept inside the room. Bit 2 of the sprite id less one tells which way he is facing (set for the right).
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_On_Ground</td>
+<td class="address-2"><span id="42219"></span>A4EB</td>
+<td class="instruction">LD (IX+$09),$00</td>
+<td class="comment-1" rowspan="1">Set the y velocity to 00 as he is standing on the floor.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42223"></span>A4EF</td>
+<td class="instruction">LD B,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite id of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42226"></span>A4F2</td>
+<td class="instruction">DEC B</td>
+<td class="comment-1" rowspan="1">Decrease it so that bit 2 tells which way he is facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42227"></span>A4F3</td>
+<td class="instruction">BIT 2,B</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42272">Handle_Sabreman_Walking_Facing_Right</a> if he is facing right (bit 2 is set).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42229"></span>A4F5</td>
+<td class="instruction">JR NZ,<a href="A433.html#42272">Handle_Sabreman_Walking_Facing_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42231"></span>A4F7</td>
+<td class="instruction">BIT 7,(IX+$01)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="96CB.html">Update_Object_Sprite</a> if he is in the right half of the room (bit 7 of the x position is set), as he is far from the left wall.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42235"></span>A4FB</td>
+<td class="instruction">JP NZ,<a href="96CB.html">Update_Object_Sprite</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42238"></span>A4FE</td>
+<td class="instruction">CP $18</td>
+<td class="comment-1" rowspan="2">Jump to <a href="96CB.html">Update_Object_Sprite</a> if he has not reached the left wall (x position 18 or more).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42240"></span>A500</td>
+<td class="instruction">JP NC,<a href="96CB.html">Update_Object_Sprite</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42243"></span>A503</td>
+<td class="instruction">BIT 6,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42254">Handle_Sabreman_Walking_Left_Room_Edge</a> if the left wall is not solid (bit 6 of <span class="register">E</span> is clear).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42245"></span>A505</td>
+<td class="instruction">JR Z,<a href="A433.html#42254">Handle_Sabreman_Walking_Left_Room_Edge</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42247"></span>A507</td>
+<td class="instruction">LD (IX+$01),$18</td>
+<td class="comment-1" rowspan="1">Stop him at the left wall by setting the x position to 18.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42251"></span>A50B</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Left_Room_Edge</td>
+<td class="address-2"><span id="42254"></span>A50E</td>
+<td class="instruction">CP $08</td>
+<td class="comment-1" rowspan="2">Jump to <a href="96CB.html">Update_Object_Sprite</a> if he has not left the room (x position 08 or more).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42256"></span>A510</td>
+<td class="instruction">JP NC,<a href="96CB.html">Update_Object_Sprite</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42259"></span>A513</td>
+<td class="instruction">LD (IX+$01),$F0</td>
+<td class="comment-1" rowspan="1">Put him at the right edge of the next room (x position F0).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42263"></span>A517</td>
+<td class="instruction">DEC (IX+$02)</td>
+<td class="comment-1" rowspan="1">Decrease the room x, to go to the room on the left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42266"></span>A51A</td>
+<td class="instruction">CALL <a href="9906.html">Draw_Room</a></td>
+<td class="comment-1" rowspan="1">Draw the new room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42269"></span>A51D</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Facing_Right</td>
+<td class="address-2"><span id="42272"></span>A520</td>
+<td class="instruction">BIT 7,(IX+$01)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="96CB.html">Update_Object_Sprite</a> if he is in the left half of the room (bit 7 of the x position is clear), as he is far from the right wall.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42276"></span>A524</td>
+<td class="instruction">JP Z,<a href="96CB.html">Update_Object_Sprite</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42279"></span>A527</td>
+<td class="instruction">CP $D8</td>
+<td class="comment-1" rowspan="2">Jump to <a href="96CB.html">Update_Object_Sprite</a> if he has not reached the right wall (x position less than D8).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42281"></span>A529</td>
+<td class="instruction">JP C,<a href="96CB.html">Update_Object_Sprite</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42284"></span>A52C</td>
+<td class="instruction">BIT 2,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42296">Handle_Sabreman_Walking_Right_Room_Edge</a> if the right wall is not solid (bit 2 of <span class="register">E</span> is clear).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42286"></span>A52E</td>
+<td class="instruction">JP Z,<a href="A433.html#42296">Handle_Sabreman_Walking_Right_Room_Edge</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42289"></span>A531</td>
+<td class="instruction">LD (IX+$01),$D8</td>
+<td class="comment-1" rowspan="1">Stop him at the right wall by setting the x position to D8.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42293"></span>A535</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Right_Room_Edge</td>
+<td class="address-2"><span id="42296"></span>A538</td>
+<td class="instruction">CP $F1</td>
+<td class="comment-1" rowspan="2">Jump to <a href="96CB.html">Update_Object_Sprite</a> if he has not left the room (x position less than F1).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42298"></span>A53A</td>
+<td class="instruction">JP C,<a href="96CB.html">Update_Object_Sprite</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42301"></span>A53D</td>
+<td class="instruction">LD (IX+$01),$08</td>
+<td class="comment-1" rowspan="1">Put him at the left edge of the next room (x position 08).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42305"></span>A541</td>
+<td class="instruction">INC (IX+$02)</td>
+<td class="comment-1" rowspan="1">Increase the room x, to go to the room on the right.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42308"></span>A544</td>
+<td class="instruction">CALL <a href="9906.html">Draw_Room</a></td>
+<td class="comment-1" rowspan="1">Draw the new room.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42311"></span>A547</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42314"></span>
+<div class="comments">
+<div class="paragraph">
+Walk to the right. If the contact bits of the bubble or creature that he touches (bits 1, 2 and 7) are exactly 04 he is blocked and stands still. Otherwise the x velocity is 02 and the sprite id is 0D plus bits 1 and 2 of the animation counter.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Right</td>
+<td class="address-2"><span id="42314"></span>A54A</td>
+<td class="instruction">LD A,(IX+$0E)</td>
+<td class="comment-1" rowspan="1">Fetch the bubble or creature contact result of Sabreman (byte 0E).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42317"></span>A54D</td>
+<td class="instruction">AND %10000110</td>
+<td class="comment-1" rowspan="1">Keep only bits 1, 2 and 7 (on top, touching and the side).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42319"></span>A54F</td>
+<td class="instruction">CP $04</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42330">Handle_Sabreman_Walking_Right_Free</a> if he is not blocked on the right (the result is not 04).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42321"></span>A551</td>
+<td class="instruction">JR NZ,<a href="A433.html#42330">Handle_Sabreman_Walking_Right_Free</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42323"></span>A553</td>
+<td class="instruction">LD (IX+$06),$00</td>
+<td class="comment-1" rowspan="1">Set the x velocity to 00 as he is blocked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42327"></span>A557</td>
+<td class="instruction">JP <a href="A433.html#42163">Handle_Sabreman_Walking_Move_Sideways</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A433.html#42163">Handle_Sabreman_Walking_Move_Sideways</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Right_Free</td>
+<td class="address-2"><span id="42330"></span>A55A</td>
+<td class="instruction">LD (IX+$06),$02</td>
+<td class="comment-1" rowspan="1">Set the x velocity to 02 (walking right).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42334"></span>A55E</td>
+<td class="instruction">INC (IX+$08)</td>
+<td class="comment-1" rowspan="1">Increase the animation counter of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42337"></span>A561</td>
+<td class="instruction">LD A,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Fetch the animation counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42340"></span>A564</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Halve the animation counter so that the frame changes every other pass.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42341"></span>A565</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only the two low bits (one of four frames).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42343"></span>A567</td>
+<td class="instruction">ADD A,$0D</td>
+<td class="comment-1" rowspan="1">Add 0D to make the sprite id (the frames for walking right).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42345"></span>A569</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Set the sprite id.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42348"></span>A56C</td>
+<td class="instruction">JR <a href="A433.html#42384">Handle_Sabreman_Walking_Play_Tone</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A433.html#42384">Handle_Sabreman_Walking_Play_Tone</a> to play the footstep sound.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42350"></span>
+<div class="comments">
+<div class="paragraph">
+Walk to the left. If the contact bits of the bubble or creature that he touches (bits 1, 2 and 7) are exactly 84 he is blocked and stands still. Otherwise the x velocity is FE and the sprite id is 09 plus bits 1 and 2 of the animation counter.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Left</td>
+<td class="address-2"><span id="42350"></span>A56E</td>
+<td class="instruction">LD A,(IX+$0E)</td>
+<td class="comment-1" rowspan="1">Fetch the bubble or creature contact result of Sabreman (byte 0E).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42353"></span>A571</td>
+<td class="instruction">AND %10000110</td>
+<td class="comment-1" rowspan="1">Keep only bits 1, 2 and 7 (on top, touching and the side).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42355"></span>A573</td>
+<td class="instruction">CP $84</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42366">Handle_Sabreman_Walking_Left_Free</a> if he is not blocked on the left (the result is not 84).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42357"></span>A575</td>
+<td class="instruction">JR NZ,<a href="A433.html#42366">Handle_Sabreman_Walking_Left_Free</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42359"></span>A577</td>
+<td class="instruction">LD (IX+$06),$00</td>
+<td class="comment-1" rowspan="1">Set the x velocity to 00 as he is blocked.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42363"></span>A57B</td>
+<td class="instruction">JP <a href="A433.html#42163">Handle_Sabreman_Walking_Move_Sideways</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A433.html#42163">Handle_Sabreman_Walking_Move_Sideways</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Left_Free</td>
+<td class="address-2"><span id="42366"></span>A57E</td>
+<td class="instruction">LD (IX+$06),$FE</td>
+<td class="comment-1" rowspan="1">Set the x velocity to FE (walking left).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42370"></span>A582</td>
+<td class="instruction">INC (IX+$08)</td>
+<td class="comment-1" rowspan="1">Increase the animation counter of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42373"></span>A585</td>
+<td class="instruction">LD A,(IX+$08)</td>
+<td class="comment-1" rowspan="1">Fetch the animation counter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42376"></span>A588</td>
+<td class="instruction">RRA</td>
+<td class="comment-1" rowspan="1">Halve the animation counter so that the frame changes every other pass.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42377"></span>A589</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep only the two low bits (one of four frames).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42379"></span>A58B</td>
+<td class="instruction">ADD A,$09</td>
+<td class="comment-1" rowspan="1">Add 09 to make the sprite id (the frames for walking left).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42381"></span>A58D</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Set the sprite id.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Play_Tone</td>
+<td class="address-2"><span id="42384"></span>A590</td>
+<td class="instruction">CALL <a href="A087.html">Play_Alternating_Tone</a></td>
+<td class="comment-1" rowspan="1">Play the footstep sound (see <a href="A087.html">Play_Alternating_Tone</a>).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42387"></span>A593</td>
+<td class="instruction">JP <a href="A433.html#42163">Handle_Sabreman_Walking_Move_Sideways</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A433.html#42163">Handle_Sabreman_Walking_Move_Sideways</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42390"></span>
+<div class="comments">
+<div class="paragraph">
+Jump. The y velocity is set to D0 the countdown to 08 and the sprite id becomes 11 (facing left) or 13 (facing right), according to the direction of the x velocity or, when he is not moving sideways, to the way that he faced.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Jump</td>
+<td class="address-2"><span id="42390"></span>A596</td>
+<td class="instruction">LD (IX+$09),$D0</td>
+<td class="comment-1" rowspan="1">Set the y velocity to D0 (up) to start the jump.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Jump_Set_Countdown</td>
+<td class="address-2"><span id="42394"></span>A59A</td>
+<td class="instruction">LD (IX+$0A),$08</td>
+<td class="comment-1" rowspan="1">Set the jump countdown to 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42398"></span>A59E</td>
+<td class="instruction">LD A,(IX+$00)</td>
+<td class="comment-1" rowspan="1">Fetch the sprite id of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42401"></span>A5A1</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Decrease it so that bit 2 tells which way he is facing.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42402"></span>A5A2</td>
+<td class="instruction">AND %00000100</td>
+<td class="comment-1" rowspan="1">Keep only bit 2 (set when he faces right).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42404"></span>A5A4</td>
+<td class="instruction">SRL A</td>
+<td class="comment-1" rowspan="1">Shift it right to make 00 (left) or 02 (right).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42406"></span>A5A6</td>
+<td class="instruction">ADD A,$11</td>
+<td class="comment-1" rowspan="1">Add 11 to make the jumping sprite id.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42408"></span>A5A8</td>
+<td class="instruction">LD (IX+$00),A</td>
+<td class="comment-1" rowspan="1">Set the sprite id.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42411"></span>A5AB</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the x velocity of Sabreman.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42414"></span>A5AE</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="96CB.html">Update_Object_Sprite</a> if he is not moving sideways.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42415"></span>A5AF</td>
+<td class="instruction">JP Z,<a href="96CB.html">Update_Object_Sprite</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42418"></span>A5B2</td>
+<td class="instruction">JP M,<a href="A433.html#42428">Handle_Sabreman_Walking_Jump_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A433.html#42428">Handle_Sabreman_Walking_Jump_Left</a> if he is moving to the left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42421"></span>A5B5</td>
+<td class="instruction">LD (IX+$00),$13</td>
+<td class="comment-1" rowspan="1">Set the sprite id to 13 (jumping right).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42425"></span>A5B9</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Jump_Left</td>
+<td class="address-2"><span id="42428"></span>A5BC</td>
+<td class="instruction">LD (IX+$00),$11</td>
+<td class="comment-1" rowspan="1">Set the sprite id to 11 (jumping left).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42432"></span>A5C0</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="42435"></span>
+<div class="comments">
+<div class="paragraph">
+The room has no floor at this position. Sabreman jumps with a y velocity of C0 and an x velocity of 02 (when his x position is below 80) or FE.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_No_Floor</td>
+<td class="address-2"><span id="42435"></span>A5C3</td>
+<td class="instruction">LD (IX+$09),$C0</td>
+<td class="comment-1" rowspan="1">Set the y velocity to C0 (up), as he steps off the ledge.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42439"></span>A5C7</td>
+<td class="instruction">BIT 7,(IX+$01)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="A433.html#42460">Handle_Sabreman_Walking_No_Floor_Left</a> if bit 7 of the x position is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42443"></span>A5CB</td>
+<td class="instruction">JR NZ,<a href="A433.html#42460">Handle_Sabreman_Walking_No_Floor_Left</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42445"></span>A5CD</td>
+<td class="instruction">LD (IX+$06),$02</td>
+<td class="comment-1" rowspan="1">Set the x velocity to 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42449"></span>A5D1</td>
+<td class="instruction">LD (IX+$0A),$08</td>
+<td class="comment-1" rowspan="1">Set the countdown to 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42453"></span>A5D5</td>
+<td class="instruction">LD (IX+$00),$13</td>
+<td class="comment-1" rowspan="1">Set the sprite id to 13 (jumping right).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42457"></span>A5D9</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_No_Floor_Left</td>
+<td class="address-2"><span id="42460"></span>A5DC</td>
+<td class="instruction">LD (IX+$06),$FE</td>
+<td class="comment-1" rowspan="1">Set the x velocity to FE.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42464"></span>A5E0</td>
+<td class="instruction">LD (IX+$0A),$08</td>
+<td class="comment-1" rowspan="1">Set the countdown to 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42468"></span>A5E4</td>
+<td class="instruction">LD (IX+$00),$11</td>
+<td class="comment-1" rowspan="1">Set the sprite id to 11 (jumping left).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42472"></span>A5E8</td>
+<td class="instruction">JP <a href="96CB.html">Update_Object_Sprite</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="96CB.html">Update_Object_Sprite</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">Handle_Sabreman_Walking_Jump_Straight_Up</td>
+<td class="address-2"><span id="42475"></span>A5EB</td>
+<td class="instruction">LD (IX+$09),$00</td>
+<td class="comment-1" rowspan="1">Set the y velocity to 00 so that the jump has no height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="42479"></span>A5EF</td>
+<td class="instruction">JR <a href="A433.html#42394">Handle_Sabreman_Walking_Jump_Set_Countdown</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="A433.html#42394">Handle_Sabreman_Walking_Jump_Set_Countdown</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="A406.html">A406</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#42035">Map</a></td>
+<td class="next">
+Next: <a href="A5F1.html">A5F1</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/underwurlde/">Source code</a>.</div>
+<div><a href="../dec/asm/42035.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

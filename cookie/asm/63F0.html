@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../cookie.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,7 +36,7 @@ Next: <a href="6416.html">6416</a>
 </td>
 </tr>
 </table>
-<div class="description">63F0: Initialise Players</div>
+<div class="description">63F0: Initialise New Game</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -41,26 +44,39 @@ Next: <a href="6416.html">6416</a>
 <div class="paragraph">
 Used by the routine at <a href="6428.html">StartGame</a>.
 </div>
+<div class="paragraph">
+Sets up the data for both players at the start of a game. Both players start with level 00 and four lives. The data for the player who is not active is then changed; the level is set to FF so that when it is the turn of that player <a href="6C3C.html">NextLevel</a> (which adds one to the level) starts them on level 00 and the lives are made 05 for a two player game or 00 for a one player game.
+</div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayersInit</td>
-<td class="address-2"><span id="63f0"></span>63F0</td>
-<td class="instruction">LD B,$02</td>
-<td class="comment-1" rowspan="1"><span class="register">B</span>=02 (counter; both players).</td>
+<td class="routine-comment" colspan="5">
+<span id="63f0"></span>
+<div class="comments">
+<div class="paragraph">
+Set the level and the lives for both players.
+</div>
+</div>
+</td>
 </tr>
 <tr>
-<td class="asm-label">PlayersInit_Loop</td>
+<td class="asm-label">NewGame</td>
+<td class="address-2"><span id="63f0"></span>63F0</td>
+<td class="instruction">LD B,$02</td>
+<td class="comment-1" rowspan="1">Set the player counter to 02 (one for each player).</td>
+</tr>
+<tr>
+<td class="asm-label">NewGame_Loop</td>
 <td class="address-2"><span id="63f2"></span>63F2</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the player counter on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="63f3"></span>63F3</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Write 00 to <a href="5F2D.html">1UP_Level</a>.</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="5F2D.html">ActivePlayer_Level</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -81,7 +97,7 @@ Set both players starting lives.
 <td class="asm-label"></td>
 <td class="address-1"><span id="63f7"></span>63F7</td>
 <td class="instruction">LD A,$04</td>
-<td class="comment-1" rowspan="2">Write 04 to <a href="5F2D.html#5f2e">1UP_Lives</a>.</td>
+<td class="comment-1" rowspan="2">Write 04 to <a href="5F2E.html">ActivePlayer_Lives</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -98,13 +114,13 @@ Set both players starting lives.
 <td class="asm-label"></td>
 <td class="address-1"><span id="63ff"></span>63FF</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the player counter from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6400"></span>6400</td>
-<td class="instruction">DJNZ <a href="63F0.html#63f2">PlayersInit_Loop</a></td>
-<td class="comment-1" rowspan="1">Decrease counter by one and loop back to <a href="63F0.html#63f2">PlayersInit_Loop</a> until counter is zero.</td>
+<td class="instruction">DJNZ <a href="63F0.html#63f2">NewGame_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the player counter by one and loop back to <a href="63F0.html#63f2">NewGame_Loop</a> until both players have been set up.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -120,7 +136,7 @@ Note this is +01 to <a href="63F0.html#63f7">63F7</a> as you "spend a life", and
 <td class="asm-label"></td>
 <td class="address-1"><span id="6402"></span>6402</td>
 <td class="instruction">LD A,$05</td>
-<td class="comment-1" rowspan="2">Write 05 to <a href="5F31.html#5f32">2UP_Lives</a>.</td>
+<td class="comment-1" rowspan="2">Write 05 to <a href="5F32.html">InactivePlayer_Lives</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -132,7 +148,7 @@ Note this is +01 to <a href="63F0.html#63f7">63F7</a> as you "spend a life", and
 <span id="6407"></span>
 <div class="comments">
 <div class="paragraph">
-Default to writing FF to <a href="5F31.html">2UP_Level</a> (this is a 1UP game).
+The level for the other player starts at FF.
 </div>
 </div>
 </td>
@@ -141,7 +157,7 @@ Default to writing FF to <a href="5F31.html">2UP_Level</a> (this is a 1UP game).
 <td class="asm-label"></td>
 <td class="address-1"><span id="6407"></span>6407</td>
 <td class="instruction">LD A,$FF</td>
-<td class="comment-1" rowspan="2">Write FF to <a href="5F31.html">2UP_Level</a>.</td>
+<td class="comment-1" rowspan="2">Write FF to <a href="5F31.html">InactivePlayer_Level</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -153,7 +169,7 @@ Default to writing FF to <a href="5F31.html">2UP_Level</a> (this is a 1UP game).
 <span id="640c"></span>
 <div class="comments">
 <div class="paragraph">
-Handle 2UP game.
+Handle a one player game; the other player has no lives.
 </div>
 </div>
 </td>
@@ -162,29 +178,43 @@ Handle 2UP game.
 <td class="asm-label"></td>
 <td class="address-1"><span id="640c"></span>640C</td>
 <td class="instruction">LD A,($5F0C)</td>
-<td class="comment-1" rowspan="3">Return if bit 0 of <a href="5F0C.html">GameOptions</a> is not set (i.e. if this is a 1UP game).</td>
+<td class="comment-1" rowspan="1">Fetch the game options.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="640f"></span>640F</td>
 <td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Keep only bit 0 (set for a two player game).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6411"></span>6411</td>
 <td class="instruction">RET NZ</td>
+<td class="comment-1" rowspan="1">Return if this is a two player game.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6412"></span>6412</td>
 <td class="instruction">LD ($5F32),A</td>
-<td class="comment-1" rowspan="1">Else, write it to <a href="5F31.html#5f32">2UP_Lives</a>.</td>
+<td class="comment-1" rowspan="1">Write 00 to the lives of the inactive player (<a href="5F32.html">InactivePlayer_Lives</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="6415"></span>6415</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/lunarjetman/asm/A84C.html">Lunar Jetman</a></li>
+<li><a href="/ultimate/tranzam/asm/6391.html">Tranz Am</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">

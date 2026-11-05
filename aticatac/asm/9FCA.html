@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,157 +44,191 @@ Next: <a href="9FFB.html">9FFB</a>
 <div class="paragraph">
 Used by the routine at <a href="8E26.html">HandlerKnight</a>.
 </div>
+<div class="paragraph">
+Erases the sprite from the position recorded by <a href="9FFB.html">StoreEntity</a> and draws it at the new position held by the entity. The old and the new sprite are processed together so that the screen lines which they share are updated in step.
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The entity</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">DisplayEntity</td>
 <td class="address-2"><span id="9fca"></span>9FCA</td>
 <td class="instruction">CALL <a href="9F9F.html">PrepDraw2</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Prepare the new sprite with <a href="9F9F.html">PrepDraw2</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fcd"></span>9FCD</td>
 <td class="instruction">EXX</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fce"></span>9FCE</td>
 <td class="instruction">CALL <a href="9F80.html">PrepDraw23</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Prepare the old sprite with <a href="9F80.html">PrepDraw23</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="9fd1"></span>
 <div class="comments">
 <div class="paragraph">
-This entry point is used by the routine at <a href="9F56.html">RemoveEntity</a>.
+Compare the vertical position of the old sprite with the new one.
 </div>
 </div>
 </td>
 </tr>
 <tr>
-<td class="asm-label">DisplayEntity_0</td>
-<td class="address-2"><span id="9fd1"></span>9FD1</td>
+<td class="asm-label">DisplayEntity_Compare</td>
+<td class="address-1"><span id="9fd1"></span>9FD1</td>
 <td class="instruction">LD A,($5E17)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the previous Y position from <a href="5E17.html">Previous_Y_Position</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fd4"></span>9FD4</td>
 <td class="instruction">SUB (IX+$04)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the new vertical position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fd7"></span>9FD7</td>
-<td class="instruction">JP Z,<a href="9E9B.html#9eb5">$9EB5</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP Z,<a href="9E9B.html#9eb5">XORSpriteLoop_Remaining</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9E9B.html#9eb5">XORSpriteLoop_Remaining</a> if they are the same.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fda"></span>9FDA</td>
-<td class="instruction">JP M,<a href="9FCA.html#9fec">DisplayEntity_1</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP M,<a href="9FCA.html#9fec">DisplayEntity_NewLower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9FCA.html#9fec">DisplayEntity_NewLower</a> if the new sprite is lower down the screen.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9fdd"></span>
+<div class="comments">
+<div class="paragraph">
+The old sprite is lower down. Draw the rows of it which the new sprite does not cover first.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fdd"></span>9FDD</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the number of rows.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fde"></span>9FDE</td>
 <td class="instruction">LD A,($5E18)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the number of old sprite rows from <a href="5E18.html">Old_Sprite_Row_Count</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fe1"></span>9FE1</td>
 <td class="instruction">CP C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9E9B.html#9eb5">XORSpriteLoop_Remaining</a> if the sprites do not overlap.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fe2"></span>9FE2</td>
-<td class="instruction">JP C,<a href="9E9B.html#9eb5">$9EB5</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP C,<a href="9E9B.html#9eb5">XORSpriteLoop_Remaining</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fe5"></span>9FE5</td>
 <td class="instruction">SUB C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the rows which are about to be drawn.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fe6"></span>9FE6</td>
 <td class="instruction">LD ($5E18),A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write the number of rows remaining to <a href="5E18.html">Old_Sprite_Row_Count</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fe9"></span>9FE9</td>
-<td class="instruction">JP <a href="9E9B.html">$9E9B</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP <a href="9E9B.html">XORSpriteLoop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9E9B.html">XORSpriteLoop</a> to draw the sprites onto the screen.</td>
 </tr>
 <tr>
-<td class="asm-label">DisplayEntity_1</td>
+<td class="routine-comment" colspan="5">
+<span id="9fec"></span>
+<div class="comments">
+<div class="paragraph">
+The new sprite is lower down. Draw the rows of it which the old sprite does not cover first.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DisplayEntity_NewLower</td>
 <td class="address-2"><span id="9fec"></span>9FEC</td>
 <td class="instruction">EXX</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fed"></span>9FED</td>
 <td class="instruction">NEG</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Make the number of rows positive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9fef"></span>9FEF</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the number of rows.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ff0"></span>9FF0</td>
 <td class="instruction">LD A,($5E19)</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the number of new sprite rows from <a href="5E19.html">New_Sprite_Row_Count</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ff3"></span>9FF3</td>
 <td class="instruction">CP C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="9E9B.html#9eb4">XORSpriteLoop_Restore</a> if the sprites do not overlap.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ff4"></span>9FF4</td>
-<td class="instruction">JP C,<a href="9E9B.html#9eb4">$9EB4</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP C,<a href="9E9B.html#9eb4">XORSpriteLoop_Restore</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ff7"></span>9FF7</td>
 <td class="instruction">SUB C</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the rows which are about to be drawn.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ff8"></span>9FF8</td>
-<td class="instruction">JP <a href="9E9B.html#9ec8">$9EC8</a></td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">JP <a href="9E9B.html#9ec8">XORSpriteLoop_Continue</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="9E9B.html#9ec8">XORSpriteLoop_Continue</a> to write the number of rows remaining to <a href="5E19.html">New_Sprite_Row_Count</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="comments">
 <div class="paragraph">
 View the equivalent code in; <ul class="">
+<li><a href="/ultimate/cookie/asm/75CC.html">Cookie</a></li>
+<li><a href="/ultimate/jetpac/asm/726A.html">Jetpac</a></li>
 <li><a href="/ultimate/sabrewulf/asm/B9A9.html">Sabre Wulf</a></li>
+<li><a href="/ultimate/tranzam/asm/7101.html">Tranz Am</a></li>
+<li><a href="/ultimate/underwurlde/asm/96F7.html">Underwurlde</a></li>
 </ul>
 </div>
 </div>

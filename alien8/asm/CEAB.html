@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Alien 8: Routine at CEAB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../alien8.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CE85.html">CE85</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ceab">Map</a></td>
+<td class="next">
+Next: <a href="CF85.html">CF85</a>
+</td>
+</tr>
+</table>
+<div class="description">CEAB: Draw Changed Objects</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="A68B.html">RunGame</a>.
+</div>
+<div class="paragraph">
+Updates the playing area for the objects that have changed. First the sprites of the objects that moved are wiped out of the screen buffer: for each object in the list at <a href="C745.html">ObjectsToDrawList</a> that is flagged to be wiped, the area covered by the old and the new position of its sprite is cleared, and the area is kept on the stack. Then the objects are drawn in order and the objects that the player is carrying are shown. Last, each of the areas that were kept is copied from the buffer to the screen. When the panel is to be drawn again, the whole screen is going to be drawn, so none of the areas are wiped.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ceab"></span>
+<div class="comments">
+<div class="paragraph">
+Wipe each flagged sprite, unless the panel is to be drawn again.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects</td>
+<td class="address-2"><span id="ceab"></span>CEAB</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Write 00 to <a href="5B08.html">WipedAreaCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceac"></span>CEAC</td>
+<td class="instruction">LD ($5B08),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceaf"></span>CEAF</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="1">Stash <span class="register">IX</span> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceb1"></span>CEB1</td>
+<td class="instruction">LD A,($5B17)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="5B17.html">RedrawPanelFlag</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceb4"></span>CEB4</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CEAB.html#cf5f">DrawChangedObjects_Draw</a> if it is not zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceb5"></span>CEB5</td>
+<td class="instruction">JP NZ,<a href="CEAB.html#cf5f">DrawChangedObjects_Draw</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceb8"></span>CEB8</td>
+<td class="instruction">LD HL,$C745</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="C745.html">ObjectsToDrawList</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cebb"></span>CEBB</td>
+<td class="instruction">LD ($5B2B),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="5B2B.html">DrawingListPointer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Wipe</td>
+<td class="address-2"><span id="cebe"></span>CEBE</td>
+<td class="instruction">LD HL,($5B2B)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="5B2B.html">DrawingListPointer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cec1"></span>CEC1</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the index of the object.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cec2"></span>CEC2</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cec3"></span>CEC3</td>
+<td class="instruction">LD ($5B2B),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="5B2B.html">DrawingListPointer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cec6"></span>CEC6</td>
+<td class="instruction">CP $FF</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CEAB.html#cf5f">DrawChangedObjects_Draw</a> if it is FF.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cec8"></span>CEC8</td>
+<td class="instruction">JP Z,<a href="CEAB.html#cf5f">DrawChangedObjects_Draw</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cecb"></span>CECB</td>
+<td class="instruction">CALL <a href="CC96.html">FindObjectAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="CC96.html">FindObjectAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cece"></span>CECE</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Copy <span class="register">HL</span> to <span class="register">IX</span> (using the stack).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cecf"></span>CECF</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ced1"></span>CED1</td>
+<td class="instruction">BIT 5,(IX+$07)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CEAB.html#cebe">DrawChangedObjects_Wipe</a> if the object is not flagged to be wiped.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ced5"></span>CED5</td>
+<td class="instruction">JR Z,<a href="CEAB.html#cebe">DrawChangedObjects_Wipe</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ced7"></span>CED7</td>
+<td class="instruction">RES 5,(IX+$07)</td>
+<td class="comment-1" rowspan="1">Reset bit 5 of the flags.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cedb"></span>
+<div class="comments">
+<div class="paragraph">
+The left edge of the area is the lower of the old and the new pixel x position. The width is worked out in bytes of the screen from there to the higher of the old and the new right edge.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cedb"></span>CEDB</td>
+<td class="instruction">LD A,(IX+$1A)</td>
+<td class="comment-1" rowspan="2">Subtract the old pixel x from the new.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cede"></span>CEDE</td>
+<td class="instruction">SUB (IX+$1E)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cee1"></span>CEE1</td>
+<td class="instruction">JP C,<a href="CEAB.html#cf55">DrawChangedObjects_Left</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cf55">DrawChangedObjects_Left</a> if carry is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cee4"></span>CEE4</td>
+<td class="instruction">LD C,(IX+$1E)</td>
+<td class="comment-1" rowspan="1">Copy the old pixel x to <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Width</td>
+<td class="address-2"><span id="cee7"></span>CEE7</td>
+<td class="instruction">LD A,(IX+$1E)</td>
+<td class="comment-1" rowspan="1">Fetch the old pixel x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceea"></span>CEEA</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceeb"></span>CEEB</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceec"></span>CEEC</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceed"></span>CEED</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceef"></span>CEEF</td>
+<td class="instruction">ADD A,(IX+$1C)</td>
+<td class="comment-1" rowspan="1">Add the old width in bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cef2"></span>CEF2</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cef3"></span>CEF3</td>
+<td class="instruction">LD A,(IX+$1A)</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel x position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cef6"></span>CEF6</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cef7"></span>CEF7</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cef8"></span>CEF8</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cef9"></span>CEF9</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cefb"></span>CEFB</td>
+<td class="instruction">ADD A,(IX+$18)</td>
+<td class="comment-1" rowspan="1">Add the new width in bytes.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cefe"></span>CEFE</td>
+<td class="instruction">CP E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CEAB.html#cf02">DrawChangedObjects_WidthFetchLeft</a> if it is lower than <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="ceff"></span>CEFF</td>
+<td class="instruction">JR C,<a href="CEAB.html#cf02">DrawChangedObjects_WidthFetchLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf01"></span>CF01</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_WidthFetchLeft</td>
+<td class="address-2"><span id="cf02"></span>CF02</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Fetch <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf03"></span>CF03</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf04"></span>CF04</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf05"></span>CF05</td>
+<td class="instruction">RRCA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf06"></span>CF06</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 4.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf08"></span>CF08</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf09"></span>CF09</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Fetch <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf0a"></span>CF0A</td>
+<td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="1">Subtract <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf0b"></span>CF0B</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cf0c"></span>
+<div class="comments">
+<div class="paragraph">
+The bottom edge of the area is the lower of the old and the new pixel y position. The height is worked out from there to the higher of the old and the new top edge.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf0c"></span>CF0C</td>
+<td class="instruction">LD A,(IX+$1B)</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf0f"></span>CF0F</td>
+<td class="instruction">SUB (IX+$1F)</td>
+<td class="comment-1" rowspan="1">Subtract the old pixel y.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf12"></span>CF12</td>
+<td class="instruction">JR C,<a href="CEAB.html#cf5a">DrawChangedObjects_Bottom</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cf5a">DrawChangedObjects_Bottom</a> if carry is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf14"></span>CF14</td>
+<td class="instruction">LD B,(IX+$1F)</td>
+<td class="comment-1" rowspan="1">Copy the old pixel y to <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Height</td>
+<td class="address-2"><span id="cf17"></span>CF17</td>
+<td class="instruction">LD A,(IX+$1F)</td>
+<td class="comment-1" rowspan="1">Fetch the old pixel y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf1a"></span>CF1A</td>
+<td class="instruction">ADD A,(IX+$1D)</td>
+<td class="comment-1" rowspan="1">Add the old height in lines.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf1d"></span>CF1D</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf1e"></span>CF1E</td>
+<td class="instruction">LD A,(IX+$1B)</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel y position.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf21"></span>CF21</td>
+<td class="instruction">ADD A,(IX+$19)</td>
+<td class="comment-1" rowspan="1">Add the new height in lines.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf24"></span>CF24</td>
+<td class="instruction">CP E</td>
+<td class="comment-1" rowspan="1">Compare it with <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf25"></span>CF25</td>
+<td class="instruction">JR NC,<a href="CEAB.html#cf28">DrawChangedObjects_HeightTakeBottom</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cf28">DrawChangedObjects_HeightTakeBottom</a> if it is <span class="register">E</span> or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf27"></span>CF27</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Fetch <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_HeightTakeBottom</td>
+<td class="address-2"><span id="cf28"></span>CF28</td>
+<td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="1">Subtract <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf29"></span>CF29</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf2a"></span>CF2A</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Fetch <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf2b"></span>CF2B</td>
+<td class="instruction">CP $C0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CEAB.html#cebe">DrawChangedObjects_Wipe</a> if it is C0 or more.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf2d"></span>CF2D</td>
+<td class="instruction">JR NC,<a href="CEAB.html#cebe">DrawChangedObjects_Wipe</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf2f"></span>CF2F</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf30"></span>CF30</td>
+<td class="instruction">SUB $C0</td>
+<td class="comment-1" rowspan="1">Subtract C0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf32"></span>CF32</td>
+<td class="instruction">JR C,<a href="CEAB.html#cf38">DrawChangedObjects_Keep</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cf38">DrawChangedObjects_Keep</a> if carry is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf34"></span>CF34</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf36"></span>CF36</td>
+<td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf37"></span>CF37</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cf38"></span>
+<div class="comments">
+<div class="paragraph">
+Wipe the area and keep it on the stack.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Keep</td>
+<td class="address-2"><span id="cf38"></span>CF38</td>
+<td class="instruction">CALL <a href="D135.html">CalculateScreenAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D135.html">CalculateScreenAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf3b"></span>CF3B</td>
+<td class="instruction">CALL <a href="D120.html">CalculateBufferAddress</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D120.html">CalculateBufferAddress</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf3e"></span>CF3E</td>
+<td class="instruction">LD A,L</td>
+<td class="comment-1" rowspan="3">Exchange <span class="register">L</span> and <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf3f"></span>CF3F</td>
+<td class="instruction">LD L,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf40"></span>CF40</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf41"></span>CF41</td>
+<td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Exchange <span class="register">H</span> and <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf42"></span>CF42</td>
+<td class="instruction">LD H,B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf43"></span>CF43</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf44"></span>CF44</td>
+<td class="instruction">LD A,($5B08)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="5B08.html">WipedAreaCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf47"></span>CF47</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">A</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf48"></span>CF48</td>
+<td class="instruction">LD ($5B08),A</td>
+<td class="comment-1" rowspan="1">Set <a href="5B08.html">WipedAreaCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf4b"></span>CF4B</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="3">Stash <span class="register">BC</span>, <span class="register">DE</span> and <span class="register">HL</span> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf4c"></span>CF4C</td>
+<td class="instruction">PUSH DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf4d"></span>CF4D</td>
+<td class="instruction">PUSH HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf4e"></span>CF4E</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Set <span class="register">A</span> to 00.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf4f"></span>CF4F</td>
+<td class="instruction">CALL <a href="BF83.html">FillWindow</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BF83.html">FillWindow</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf52"></span>CF52</td>
+<td class="instruction">JP <a href="CEAB.html#cebe">DrawChangedObjects_Wipe</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cebe">DrawChangedObjects_Wipe</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Left</td>
+<td class="address-2"><span id="cf55"></span>CF55</td>
+<td class="instruction">LD C,(IX+$1A)</td>
+<td class="comment-1" rowspan="1">Copy the new pixel x to <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf58"></span>CF58</td>
+<td class="instruction">JR <a href="CEAB.html#cee7">DrawChangedObjects_Width</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cee7">DrawChangedObjects_Width</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Bottom</td>
+<td class="address-2"><span id="cf5a"></span>CF5A</td>
+<td class="instruction">LD B,(IX+$1B)</td>
+<td class="comment-1" rowspan="1">Copy the new pixel y to <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf5d"></span>CF5D</td>
+<td class="instruction">JR <a href="CEAB.html#cf17">DrawChangedObjects_Height</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cf17">DrawChangedObjects_Height</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cf5f"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the objects, then copy the wiped areas to the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Draw</td>
+<td class="address-2"><span id="cf5f"></span>CF5F</td>
+<td class="instruction">CALL <a href="C785.html">DrawObjectsInOrder</a></td>
+<td class="comment-1" rowspan="1">Call <a href="C785.html">DrawObjectsInOrder</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf62"></span>CF62</td>
+<td class="instruction">CALL <a href="BC9D.html">DisplayObjectsCarried</a></td>
+<td class="comment-1" rowspan="1">Call <a href="BC9D.html">DisplayObjectsCarried</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf65"></span>CF65</td>
+<td class="instruction">LD HL,$5B08</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="5B08.html">WipedAreaCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf68"></span>CF68</td>
+<td class="instruction">LD A,($5B1E)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="5B1E.html">ObjectsDrawn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf6b"></span>CF6B</td>
+<td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="1">Add <a href="5B08.html">WipedAreaCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf6c"></span>CF6C</td>
+<td class="instruction">LD ($5B1E),A</td>
+<td class="comment-1" rowspan="1">Set <a href="5B1E.html">ObjectsDrawn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Copy</td>
+<td class="address-2"><span id="cf6f"></span>CF6F</td>
+<td class="instruction">LD HL,$5B08</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="5B08.html">WipedAreaCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf72"></span>CF72</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="CEAB.html#cf82">DrawChangedObjects_Finish</a> if it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf73"></span>CF73</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf74"></span>CF74</td>
+<td class="instruction">JR Z,<a href="CEAB.html#cf82">DrawChangedObjects_Finish</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf76"></span>CF76</td>
+<td class="instruction">DEC (HL)</td>
+<td class="comment-1" rowspan="1">Decrement <a href="5B08.html">WipedAreaCount</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf77"></span>CF77</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="3">Restore <span class="register">HL</span>, <span class="register">DE</span> and <span class="register">BC</span> from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf78"></span>CF78</td>
+<td class="instruction">POP DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf79"></span>CF79</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf7a"></span>CF7A</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Exchange <span class="register">B</span> and <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf7b"></span>CF7B</td>
+<td class="instruction">LD B,C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf7c"></span>CF7C</td>
+<td class="instruction">LD C,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf7d"></span>CF7D</td>
+<td class="instruction">CALL <a href="CF85.html">CopyBlockToScreen</a></td>
+<td class="comment-1" rowspan="1">Call <a href="CF85.html">CopyBlockToScreen</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf80"></span>CF80</td>
+<td class="instruction">JR <a href="CEAB.html#cf6f">DrawChangedObjects_Copy</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CEAB.html#cf6f">DrawChangedObjects_Copy</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawChangedObjects_Finish</td>
+<td class="address-2"><span id="cf82"></span>CF82</td>
+<td class="instruction">POP IX</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">IX</span> from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="cf84"></span>CF84</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/knightlore/asm/D59F.html">Knight Lore</a></li>
+<li><a href="/ultimate/pentagram/asm/B19E.html">Pentagram</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="CE85.html">CE85</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#ceab">Map</a></td>
+<td class="next">
+Next: <a href="CF85.html">CF85</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/alien8/">Source code</a>.</div>
+<div><a href="../dec/asm/52907.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

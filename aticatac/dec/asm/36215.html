@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../aticatac.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -41,26 +44,58 @@ Next: <a href="36292.html">36292</a>
 <div class="paragraph">
 Used by the routines at <a href="32978.html">HandlerWizard</a>, <a href="36292.html">HandlerSerf</a> and <a href="36390.html">HandlerKnight</a>.
 </div>
+<div class="paragraph">
+Moves the entity of a character, using the controls. Called by the handlers of the knight and the serf (and the wizard). The velocities of the entity are kept at offsets 6 (X) and 7 (Y), and have four bits after the point, so only the top four bits make up the whole pixels moved each frame. They are changed by <a href="36591.html">UpdateVelocity</a>, slowed by <a href="36758.html">SlowVelocity</a> and limited by <a href="36810.html">CheckRoomBounds</a> and <a href="36874.html">CheckObstacles</a> before <a href="36710.html">ApplyMovement</a> moves the entity. The bits at offset 2 are the number of steps still to be taken in the bottom four, and in bits 4-5 a flag that is set when movement is blocked along the X axis (bit 4) or the Y axis (bit 5).
 </div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">B</td>
+<td class="register-desc">The change made to a velocity each frame by the controls</td>
+</tr>
+<tr>
+<td class="register">C</td>
+<td class="register-desc">The fastest X velocity</td>
+</tr>
+<tr>
+<td class="register">the Y velocity is limited by <span class="register">B</span></td>
+<td class="register-desc"></td>
+</tr>
+<tr>
+<td class="register">D</td>
+<td class="register-desc">The amount that the Y velocity is slowed by each frame</td>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">The amount that the X velocity is slowed by each frame</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The entity of the character</td>
+</tr>
+</table>
 </td>
 </tr>
 <tr>
 <td class="asm-label">ControlPlayer</td>
 <td class="address-2"><span id="36215"></span>36215</td>
 <td class="instruction">LD A,(60049)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="60049.html">PlayerRoom</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="60048.html#60049">PlayerRoom</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36218"></span>36218</td>
 <td class="instruction">LD (61017),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Write <span class="register">A</span> to 61017 (the room of the entity at <a href="25557.html">Initialisation_Blank</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36221"></span>36221</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="3">Stash <span class="register">BC</span>, <span class="register">DE</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="3">Stash the speed limits (<span class="register">BC</span>), the slowing (<span class="register">DE</span>) and <span class="register">HL</span> on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -76,43 +111,53 @@ Used by the routines at <a href="32978.html">HandlerWizard</a>, <a href="36292.h
 <td class="asm-label"></td>
 <td class="address-1"><span id="36224"></span>36224</td>
 <td class="instruction">CALL <a href="36205.html">AutoWalkStep</a></td>
-<td class="comment-1" rowspan="1">Call <a href="36205.html">AutoWalkStep</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="36205.html">AutoWalkStep</a> to take a step of the auto walk.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36227"></span>36227</td>
 <td class="instruction">LD A,(IX+2)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch offset 2 of the entity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36230"></span>36230</td>
 <td class="instruction">OR %00110000</td>
-<td class="comment-1" rowspan="1">Set bits 4-5.</td>
+<td class="comment-1" rowspan="1">Set bits 4-5, to stop all movement until a check shows it is possible.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36232"></span>36232</td>
 <td class="instruction">LD (IX+2),A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Update offset 2 of the entity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36235"></span>36235</td>
 <td class="instruction">CALL <a href="40955.html">StoreEntity</a></td>
-<td class="comment-1" rowspan="1">Call <a href="40955.html">StoreEntity</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="40955.html">StoreEntity</a> to save the position of the entity.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="36238"></span>
+<div class="comments">
+<div class="paragraph">
+Read the controls (a bit is zero when the control is used) and work out the change in velocity for each axis.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36238"></span>36238</td>
-<td class="instruction">CALL <a href="37458.html#37822">HandlerCaveDoorLocked_20</a></td>
-<td class="comment-1" rowspan="1">Call <a href="37458.html#37822">HandlerCaveDoorLocked_20</a>.</td>
+<td class="instruction">CALL <a href="37822.html">ReadControls</a></td>
+<td class="comment-1" rowspan="1">Call <a href="37822.html">ReadControls</a> to read the controls.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36241"></span>36241</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Keep the controls in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -124,151 +169,157 @@ Used by the routines at <a href="32978.html">HandlerWizard</a>, <a href="36292.h
 <td class="asm-label"></td>
 <td class="address-1"><span id="36243"></span>36243</td>
 <td class="instruction">LD DE,0</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=0000.</td>
+<td class="comment-1" rowspan="1"><span class="register">DE</span>=0000 (no change in either velocity).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36246"></span>36246</td>
 <td class="instruction">BIT 1,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="36215.html#36254">ControlPlayer_Right</a> if bit 1 (left) is not used.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36248"></span>36248</td>
-<td class="instruction">JR NZ,<a href="36215.html#36254">ControlPlayer_0</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="36215.html#36254">ControlPlayer_Right</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36250"></span>36250</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the change in velocity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36251"></span>36251</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reverse the change, so that it is negative.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36253"></span>36253</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">A</span> (the X change is -<span class="register">B</span>).</td>
 </tr>
 <tr>
-<td class="asm-label">ControlPlayer_0</td>
+<td class="asm-label">ControlPlayer_Right</td>
 <td class="address-2"><span id="36254"></span>36254</td>
 <td class="instruction">BIT 0,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="36215.html#36259">ControlPlayer_Down</a> if bit 0 (right) is not used.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36256"></span>36256</td>
-<td class="instruction">JR NZ,<a href="36215.html#36259">ControlPlayer_1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="36215.html#36259">ControlPlayer_Down</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36258"></span>36258</td>
 <td class="instruction">LD E,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">E</span>=<span class="register">B</span> (the X change is <span class="register">B</span>).</td>
 </tr>
 <tr>
-<td class="asm-label">ControlPlayer_1</td>
+<td class="asm-label">ControlPlayer_Down</td>
 <td class="address-2"><span id="36259"></span>36259</td>
 <td class="instruction">BIT 2,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="36215.html#36264">ControlPlayer_Up</a> if bit 2 (down) is not used.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36261"></span>36261</td>
-<td class="instruction">JR NZ,<a href="36215.html#36264">ControlPlayer_2</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="36215.html#36264">ControlPlayer_Up</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36263"></span>36263</td>
 <td class="instruction">LD D,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">D</span>=<span class="register">B</span> (the Y change is <span class="register">B</span>).</td>
 </tr>
 <tr>
-<td class="asm-label">ControlPlayer_2</td>
+<td class="asm-label">ControlPlayer_Up</td>
 <td class="address-2"><span id="36264"></span>36264</td>
 <td class="instruction">BIT 3,C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="36215.html#36272">ControlPlayer_Move</a> if bit 3 (up) is not used.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36266"></span>36266</td>
-<td class="instruction">JR NZ,<a href="36215.html#36272">ControlPlayer_3</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR NZ,<a href="36215.html#36272">ControlPlayer_Move</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36268"></span>36268</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Fetch the change in velocity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36269"></span>36269</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Reverse the change, so that it is negative.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36271"></span>36271</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">D</span>=<span class="register">A</span> (the Y change is -<span class="register">B</span>).</td>
 </tr>
 <tr>
-<td class="asm-label">ControlPlayer_3</td>
+<td class="routine-comment" colspan="5">
+<span id="36272"></span>
+<div class="comments">
+<div class="paragraph">
+Slow the velocities, change them, check for obstacles and then move the entity.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ControlPlayer_Move</td>
 <td class="address-2"><span id="36272"></span>36272</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the amounts of slowing from the stack into <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36273"></span>36273</td>
-<td class="instruction">CALL <a href="36710.html#36758">ApplyMovement_3</a></td>
-<td class="comment-1" rowspan="1">Call <a href="36710.html#36758">ApplyMovement_3</a>.</td>
+<td class="instruction">CALL <a href="36758.html">SlowVelocity</a></td>
+<td class="comment-1" rowspan="1">Call <a href="36758.html">SlowVelocity</a> to slow the entity down.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36276"></span>36276</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the fastest velocities from the stack into <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36277"></span>36277</td>
-<td class="instruction">CALL <a href="36390.html#36591">HandlerKnight_14</a></td>
-<td class="comment-1" rowspan="1">Call <a href="36390.html#36591">HandlerKnight_14</a>.</td>
+<td class="instruction">CALL <a href="36591.html">UpdateVelocity</a></td>
+<td class="comment-1" rowspan="1">Call <a href="36591.html">UpdateVelocity</a> to update the velocities of the entity.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36280"></span>36280</td>
-<td class="instruction">CALL <a href="36710.html#36810">ApplyMovement_11</a></td>
-<td class="comment-1" rowspan="1">Call <a href="36710.html#36810">ApplyMovement_11</a>.</td>
+<td class="instruction">CALL <a href="36810.html">CheckRoomBounds</a></td>
+<td class="comment-1" rowspan="1">Call <a href="36810.html">CheckRoomBounds</a> to check whether the entity is inside the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36283"></span>36283</td>
 <td class="instruction">CALL <a href="38269.html">CheckDoorway</a></td>
-<td class="comment-1" rowspan="1">Call <a href="38269.html">CheckDoorway</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="38269.html">CheckDoorway</a> to check the doorway.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36286"></span>36286</td>
-<td class="instruction">CALL <a href="36710.html#36874">ApplyMovement_15</a></td>
-<td class="comment-1" rowspan="1">Call <a href="36710.html#36874">ApplyMovement_15</a>.</td>
+<td class="instruction">CALL <a href="36874.html">CheckObstacles</a></td>
+<td class="comment-1" rowspan="1">Call <a href="36874.html">CheckObstacles</a> to check whether the entity would hit an item.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="36289"></span>36289</td>
 <td class="instruction">JP <a href="36710.html">ApplyMovement</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="36710.html">ApplyMovement</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="36710.html">ApplyMovement</a> to move the entity by its velocities.</td>
 </tr>
 </table>
 <table class="asm-navigation">

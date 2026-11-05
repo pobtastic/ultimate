@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Knight Lore: Routine at BC10</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../knightlore.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BBC7.html">BBC7</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bc10">Map</a></td>
+<td class="next">
+Next: <a href="BC66.html">BC66</a>
+</td>
+</tr>
+</table>
+<div class="description">BC10: Print Percentage Complete</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="BA22.html">GameOver</a>.
+</div>
+<div class="paragraph">
+Works out how much of the quest has been completed and prints the percentage in the screen buffer. Each room that has been visited counts for one point and each charm that has been put in the cauldron counts for two. The most that can be scored is 9C points (80 rooms and 0E charms counted twice), so each point is worth about 0.64 percent. The percentage is worked out as a BCD number and is printed with the hundreds digit only if the quest has been completed in full.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrintPercentageComplete</td>
+<td class="address-2"><span id="bc10"></span>BC10</td>
+<td class="instruction">LD E,$00</td>
+<td class="comment-1" rowspan="1">Set the count of rooms to zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc12"></span>BC12</td>
+<td class="instruction">LD BC,$0820</td>
+<td class="comment-1" rowspan="1">Set <span class="register">B</span> to the number of bits in a byte and <span class="register">C</span> to the number of bytes of flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc15"></span>BC15</td>
+<td class="instruction">LD HL,$5BE8</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the flags for the rooms that have been visited.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintPercentageComplete_CountByte</td>
+<td class="address-2"><span id="bc18"></span>BC18</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the counters.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc19"></span>BC19</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch a byte of flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc1a"></span>BC1A</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintPercentageComplete_CountBit</td>
+<td class="address-2"><span id="bc1b"></span>BC1B</td>
+<td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="1">Move a flag into the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc1c"></span>BC1C</td>
+<td class="instruction">JR NC,<a href="BC10.html#bc1f">PrintPercentageComplete_NextBit</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BC10.html#bc1f">PrintPercentageComplete_NextBit</a> if the room has not been visited.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc1e"></span>BC1E</td>
+<td class="instruction">INC E</td>
+<td class="comment-1" rowspan="1">Count the room.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintPercentageComplete_NextBit</td>
+<td class="address-2"><span id="bc1f"></span>BC1F</td>
+<td class="instruction">DJNZ <a href="BC10.html#bc1b">PrintPercentageComplete_CountBit</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="BC10.html#bc1b">PrintPercentageComplete_CountBit</a> until the whole byte has been counted.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc21"></span>BC21</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the counters.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc22"></span>BC22</td>
+<td class="instruction">DEC C</td>
+<td class="comment-1" rowspan="1">Decrease the number of bytes left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc23"></span>BC23</td>
+<td class="instruction">JR NZ,<a href="BC10.html#bc18">PrintPercentageComplete_CountByte</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="BC10.html#bc18">PrintPercentageComplete_CountByte</a> until all of the bytes have been counted.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bc25"></span>
+<div class="comments">
+<div class="paragraph">
+Keep the number of rooms visited for the rating, and work out the number of points.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc25"></span>BC25</td>
+<td class="instruction">LD A,E</td>
+<td class="comment-1" rowspan="1">Fetch the number of rooms visited.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc26"></span>BC26</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="1">Take off one, so that the first room does not count towards the rating.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc27"></span>BC27</td>
+<td class="instruction">LD ($5BC6),A</td>
+<td class="comment-1" rowspan="1">Store it for the rating.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc2a"></span>BC2A</td>
+<td class="instruction">LD A,($5BBB)</td>
+<td class="comment-1" rowspan="1">Fetch the number of charms collected.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc2d"></span>BC2D</td>
+<td class="instruction">SLA A</td>
+<td class="comment-1" rowspan="1">Double it.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc2f"></span>BC2F</td>
+<td class="instruction">ADD A,E</td>
+<td class="comment-1" rowspan="1">Add the number of rooms visited.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc30"></span>BC30</td>
+<td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Stash the number of points in <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bc31"></span>
+<div class="comments">
+<div class="paragraph">
+Add up the percentage as a BCD number. The percentage that each point is worth is A41A divided by 10000.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc31"></span>BC31</td>
+<td class="instruction">LD BC,$A41A</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to the percentage that each point is worth.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc34"></span>BC34</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="1">Clear the fraction of the percentage.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc37"></span>BC37</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Clear the whole percentage.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintPercentageComplete_AddPoint</td>
+<td class="address-2"><span id="bc38"></span>BC38</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add the percentage for a point to the fraction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc39"></span>BC39</td>
+<td class="instruction">ADC A,$00</td>
+<td class="comment-1" rowspan="1">Carry into the whole percentage.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc3b"></span>BC3B</td>
+<td class="instruction">DAA</td>
+<td class="comment-1" rowspan="1">Keep the whole percentage as a BCD number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc3c"></span>BC3C</td>
+<td class="instruction">DEC E</td>
+<td class="comment-1" rowspan="1">Decrease the number of points left.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc3d"></span>BC3D</td>
+<td class="instruction">JR NZ,<a href="BC10.html#bc38">PrintPercentageComplete_AddPoint</a></td>
+<td class="comment-1" rowspan="1">Jump back to <a href="BC10.html#bc38">PrintPercentageComplete_AddPoint</a> until every point has been added.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc3f"></span>BC3F</td>
+<td class="instruction">LD BC,$0028</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to the amount that makes up for the rounding. The total for all of the points is 63FFD8 and this takes it up to 640000.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc42"></span>BC42</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Add it to the fraction.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc43"></span>BC43</td>
+<td class="instruction">ADC A,$00</td>
+<td class="comment-1" rowspan="1">Carry into the whole percentage.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc45"></span>BC45</td>
+<td class="instruction">DAA</td>
+<td class="comment-1" rowspan="1">Keep the whole percentage as a BCD number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc46"></span>BC46</td>
+<td class="instruction">LD ($5BCA),A</td>
+<td class="comment-1" rowspan="1">Store the lowest two digits of the percentage.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc49"></span>BC49</td>
+<td class="instruction">LD A,$00</td>
+<td class="comment-1" rowspan="1">Clear <span class="register">A</span> without changing the carry flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc4b"></span>BC4B</td>
+<td class="instruction">ADC A,$00</td>
+<td class="comment-1" rowspan="1">Carry into the hundreds digit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc4d"></span>BC4D</td>
+<td class="instruction">DAA</td>
+<td class="comment-1" rowspan="1">Keep the hundreds digit as a BCD number.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc4e"></span>BC4E</td>
+<td class="instruction">LD ($5BC9),A</td>
+<td class="comment-1" rowspan="1">Store the hundreds digit.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bc51"></span>
+<div class="comments">
+<div class="paragraph">
+Print the digits.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc51"></span>BC51</td>
+<td class="instruction">LD HL,$E4E6</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="D8F3.html#e4e6">ScreenBuffer_ResultsPercentage</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc54"></span>BC54</td>
+<td class="instruction">LD DE,$5BC9</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="5BC9.html">PercentComplete</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc57"></span>BC57</td>
+<td class="instruction">LD B,$01</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to print to 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc59"></span>BC59</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Fetch the hundreds digit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc5a"></span>BC5A</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="1">Test whether it is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc5b"></span>BC5B</td>
+<td class="instruction">JR Z,<a href="BC10.html#bc61">PrintPercentageComplete_TwoDigits</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BC10.html#bc61">PrintPercentageComplete_TwoDigits</a> if the quest is not complete.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc5d"></span>BC5D</td>
+<td class="instruction">INC B</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to print to 02.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc5e"></span>BC5E</td>
+<td class="instruction">JP <a href="BCAE.html#bcc0">PrintBCDNumber_SecondDigit</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BCAE.html#bcc0">PrintBCDNumber_SecondDigit</a> to print the hundreds digit and then the rest.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintPercentageComplete_TwoDigits</td>
+<td class="address-2"><span id="bc61"></span>BC61</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move the position past the space for the hundreds digit.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc62"></span>BC62</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the lowest two digits.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="bc63"></span>BC63</td>
+<td class="instruction">JP <a href="BCAE.html">PrintBCDNumber</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BCAE.html">PrintBCDNumber</a> to print them.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="BBC7.html">BBC7</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#bc10">Map</a></td>
+<td class="next">
+Next: <a href="BC66.html">BC66</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/knightlore/">Source code</a>.</div>
+<div><a href="../dec/asm/48144.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

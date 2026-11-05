@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at B43C</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B436.html">B436</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b43c">Map</a></td>
+<td class="next">
+Next: <a href="B4C0.html">B4C0</a>
+</td>
+</tr>
+</table>
+<div class="description">B43C: Draw Sprite</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="B436.html">DrawEntityItem</a>.
+</div>
+<div class="paragraph">
+Draws the sprite of an entity into the screen buffer, which is 18 bytes wide. The sprite data is read by using the stack pointer, and the sprite is drawn by one of the row routines in the table at <a href="ADE9.html">RowRoutineTable</a>, which is chosen using the width of the sprite and whether it is shifted by the low bits of the column. The addresses of the row routine and the step to the previous row are written into the drawing code before it is entered. If the sprite goes beyond the top of the screen buffer, the rows that are not needed are skipped.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">The entity</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite</td>
+<td class="address-2"><span id="b43c"></span>B43C</td>
+<td class="instruction">CALL <a href="6653.html">FindSpriteFrame</a></td>
+<td class="comment-1" rowspan="1">Find the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b43f"></span>B43F</td>
+<td class="instruction">LD A,(IX+$16)</td>
+<td class="comment-1" rowspan="1">Read the width byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b442"></span>B442</td>
+<td class="instruction">AND %11110000</td>
+<td class="comment-1" rowspan="1">Use the countdown nibble.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b444"></span>B444</td>
+<td class="instruction">CALL NZ,<a href="B3CB.html">BuildPatternedSprite</a></td>
+<td class="comment-1" rowspan="1">Build a patterned copy when that nibble is set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b447"></span>B447</td>
+<td class="instruction">LD ($5CDA),SP</td>
+<td class="comment-1" rowspan="1">Remember the stack pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b44b"></span>B44B</td>
+<td class="instruction">LD HL,$ADE7</td>
+<td class="comment-1" rowspan="1">Use the row-routine table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b44e"></span>B44E</td>
+<td class="instruction">LD A,(IX+$0E)</td>
+<td class="comment-1" rowspan="1">Read the column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b451"></span>B451</td>
+<td class="instruction">AND %00000110</td>
+<td class="comment-1" rowspan="1">Use bits 1-2 as the shift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b453"></span>B453</td>
+<td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Keep the shift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b454"></span>B454</td>
+<td class="instruction">LD A,(DE)</td>
+<td class="comment-1" rowspan="1">Read the sprite's width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b455"></span>B455</td>
+<td class="instruction">LD ($B4A7),A</td>
+<td class="comment-1" rowspan="1">Give the width to the skip loop.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b458"></span>B458</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b459"></span>B459</td>
+<td class="instruction">JR Z,<a href="B43C.html#b45e">DrawSprite_Index</a></td>
+<td class="comment-1" rowspan="3">A shifted sprite uses the next routine and one more byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b45b"></span>B45B</td>
+<td class="instruction">ADD A,$04</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b45d"></span>B45D</td>
+<td class="instruction">INC B</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Index</td>
+<td class="address-2"><span id="b45e"></span>B45E</td>
+<td class="instruction">ADD A,A</td>
+<td class="comment-1" rowspan="1">Double the width to make a table index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b45f"></span>B45F</td>
+<td class="instruction">CALL <a href="AA3C.html">AddToAddress</a></td>
+<td class="comment-1" rowspan="1">Look the row routine up.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b462"></span>B462</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="4">Read the routine's address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b463"></span>B463</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b464"></span>B464</td>
+<td class="instruction">LD H,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b465"></span>B465</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b466"></span>B466</td>
+<td class="instruction">LD ($B4BA),HL</td>
+<td class="comment-1" rowspan="5">Give the routine and the row step to the drawers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b469"></span>B469</td>
+<td class="instruction">LD ($B4BE),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b46c"></span>B46C</td>
+<td class="instruction">LD ($B4E1),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b46f"></span>B46F</td>
+<td class="instruction">LD ($B534),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b472"></span>B472</td>
+<td class="instruction">LD ($B539),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b475"></span>B475</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the sprite data.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b476"></span>B476</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">The step back across a row is the width plus 17.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b477"></span>B477</td>
+<td class="instruction">ADD A,$17</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b479"></span>B479</td>
+<td class="instruction">LD ($B530),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b47c"></span>B47C</td>
+<td class="instruction">NEG</td>
+<td class="comment-1" rowspan="2">The other step is the opposite of that width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b47e"></span>B47E</td>
+<td class="instruction">LD ($B4DC),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b481"></span>B481</td>
+<td class="instruction">LD L,(IX+$18)</td>
+<td class="comment-1" rowspan="2">Fetch the screen address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b484"></span>B484</td>
+<td class="instruction">LD H,(IX+$19)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b487"></span>B487</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep the sprite address aside.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b488"></span>B488</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Read how many rows the sprite has.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b489"></span>B489</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b48a"></span>B48A</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Remember that count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b48b"></span>B48B</td>
+<td class="instruction">LD A,(IX+$0F)</td>
+<td class="comment-1" rowspan="2">The first row to draw is one past the entity's row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b48e"></span>B48E</td>
+<td class="instruction">INC A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b48f"></span>B48F</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Read the sprite through the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b490"></span>B490</td>
+<td class="instruction">LD SP,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b491"></span>B491</td>
+<td class="instruction">CP B</td>
+<td class="comment-1" rowspan="2">Clip the sprite when its rows end above the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b492"></span>B492</td>
+<td class="instruction">JP NC,<a href="B43C.html#b49a">DrawSprite_Clip</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b495"></span>B495</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">The row count is that first row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b496"></span>B496</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Bring the sprite's row count back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b497"></span>B497</td>
+<td class="instruction">JP <a href="B43C.html#b4b1">DrawSprite_2</a></td>
+<td class="comment-1" rowspan="1">Draw the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_Clip</td>
+<td class="address-2"><span id="b49a"></span>B49A</td>
+<td class="instruction">SUB $80</td>
+<td class="comment-1" rowspan="2">A count below 80 is drawn whole.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b49c"></span>B49C</td>
+<td class="instruction">JP C,<a href="B43C.html#b4b1">DrawSprite_2</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b49f"></span>B49F</td>
+<td class="instruction">JP Z,<a href="B43C.html#b4b1">DrawSprite_2</a></td>
+<td class="comment-1" rowspan="1">A count of exactly 80 is drawn whole.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4a2"></span>B4A2</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">The rows above the view are the excess.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4a3"></span>B4A3</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Bring the sprite's row count back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4a4"></span>B4A4</td>
+<td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="2">Drop the rows that are off the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4a5"></span>B4A5</td>
+<td class="instruction">EX AF,AF'</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_0</td>
+<td class="address-2"><span id="b4a6"></span>B4A6</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">Skip one row of the sprite.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_1</td>
+<td class="address-2"><span id="b4a8"></span>B4A8</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="2">Skip the bytes of that row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4a9"></span>B4A9</td>
+<td class="instruction">DJNZ <a href="B43C.html#b4a8">DrawSprite_1</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4ab"></span>B4AB</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Repeat for the remaining rows above the view.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4ac"></span>B4AC</td>
+<td class="instruction">JR NZ,<a href="B43C.html#b4a6">DrawSprite_0</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4ae"></span>B4AE</td>
+<td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Bring the rows that are in view back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4af"></span>B4AF</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="2">Use that as the row count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4b0"></span>B4B0</td>
+<td class="instruction">EX AF,AF'</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_2</td>
+<td class="address-2"><span id="b4b1"></span>B4B1</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="1">Read the shift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4b2"></span>B4B2</td>
+<td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">An unshifted sprite is drawn directly.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4b3"></span>B4B3</td>
+<td class="instruction">JR Z,<a href="B43C.html#b4bc">DrawSprite_4</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4b5"></span>B4B5</td>
+<td class="instruction">ADD A,$F8</td>
+<td class="comment-1" rowspan="3">A shifted sprite uses the page selected by the shift.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4b7"></span>B4B7</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b4b8"></span>B4B8</td>
+<td class="instruction">LD A,(DE)</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_3</td>
+<td class="address-2"><span id="b4b9"></span>B4B9</td>
+<td class="instruction">JP <a href="B43C.html#b4b9">DrawSprite_3</a></td>
+<td class="comment-1" rowspan="1">Draw the shifted rows. The target is patched.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_4</td>
+<td class="address-2"><span id="b4bc"></span>B4BC</td>
+<td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Put the screen address in <span class="register">HL</span>.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawSprite_5</td>
+<td class="address-2"><span id="b4bd"></span>B4BD</td>
+<td class="instruction">JP <a href="B43C.html#b4bd">DrawSprite_5</a></td>
+<td class="comment-1" rowspan="1">Draw the unshifted rows. The target is patched.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B436.html">B436</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b43c">Map</a></td>
+<td class="next">
+Next: <a href="B4C0.html">B4C0</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/46140.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

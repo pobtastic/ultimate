@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../sabrewulf.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,87 +36,123 @@ Next: <a href="BBDD.html">BBDD</a>
 </td>
 </tr>
 </table>
-<div class="description">BBBB: Routine at BBBB</div>
+<div class="description">BBBB: Draw Room Actors</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routine at <a href="BBAE.html">BBAE</a>.
+Used by the routine at <a href="BBAE.html">DrawRoomContents</a>.
+</div>
+<div class="paragraph">
+Works through the actor table from <a href="9702.html#970e">ImmortalData_Actors</a> and draws (with <a href="B919.html">DrawEntity</a>) every actor whose room (byte 01) is the same as the room the player is in (<a href="9702.html#9703">9703</a>).
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">DrawRoomActors</td>
 <td class="address-2"><span id="bbbb"></span>BBBB</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">IX</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the actor record pointer on the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbbd"></span>BBBD</td>
 <td class="instruction">LD IX,$970E</td>
-<td class="comment-1" rowspan="1"><span class="register">IX</span>=<a href="9702.html#970e">970E</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at the first actor after the player at <a href="9702.html#970e">ImmortalData_Actors</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="bbc1"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the actor if it is in the same room as the player.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawRoomActors_Loop</td>
 <td class="address-2"><span id="bbc1"></span>BBC1</td>
 <td class="instruction">LD A,($9703)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="9702.html#9703">9703</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the room of the player from <a href="9702.html#9703">9703</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbc4"></span>BBC4</td>
 <td class="instruction">CP (IX+$01)</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Draw the actor if it is in the room of the player.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbc7"></span>BBC7</td>
 <td class="instruction">CALL Z,<a href="B919.html">DrawEntity</a></td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="bbca"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next actor, until the end of the actor table is reached.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbca"></span>BBCA</td>
 <td class="instruction">LD DE,$000C</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=000C.</td>
+<td class="comment-1" rowspan="1">Set the size of an actor record in <span class="register">DE</span> to 0C.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbcd"></span>BBCD</td>
 <td class="instruction">ADD IX,DE</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Move onto the next actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbcf"></span>BBCF</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="2"><span class="register">HL</span>=<span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="2">Copy the pointer to the actor into <span class="register">HL</span>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbd1"></span>BBD1</td>
 <td class="instruction">POP HL</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbd2"></span>BBD2</td>
 <td class="instruction">LD DE,$982E</td>
-<td class="comment-1" rowspan="1"><span class="register">DE</span>=<a href="982E.html">982E</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the end of the actor table at <a href="982E.html">StoredActorTable</a>.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbd5"></span>BBD5</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Subtract the end of the actor table from the pointer to the actor.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbd6"></span>BBD6</td>
 <td class="instruction">SBC HL,DE</td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbd8"></span>BBD8</td>
-<td class="instruction">JR C,<a href="BBBB.html#bbc1">$BBC1</a></td>
-<td class="comment-1" rowspan="1"></td>
+<td class="instruction">JR C,<a href="BBBB.html#bbc1">DrawRoomActors_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="BBBB.html#bbc1">DrawRoomActors_Loop</a> if there are more actors to draw.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbda"></span>BBDA</td>
 <td class="instruction">POP IX</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">IX</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the actor record pointer from the stack.</td>
 </tr>
 <tr>
+<td class="asm-label"></td>
 <td class="address-1"><span id="bbdc"></span>BBDC</td>
 <td class="instruction">RET</td>
 <td class="comment-1" rowspan="1">Return.</td>

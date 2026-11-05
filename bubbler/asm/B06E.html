@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Bubbler: Routine at B06E</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../bubbler.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B06C.html">B06C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b06e">Map</a></td>
+<td class="next">
+Next: <a href="B1B2.html">B1B2</a>
+</td>
+</tr>
+</table>
+<div class="description">B06E: Draw Items</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="CD11.html">RunFrame</a> and <a href="DFF0.html">RunGame</a>.
+</div>
+<div class="paragraph">
+Draws every item in the sorted draw list at <a href="AF8F.html">SortedDrawList</a>, in order. The flag in each item selects what is drawn: 01 is an entity, 02 is one of the extra records (which is first copied into the temporary entity at <a href="B7A4.html">TemporaryEntity</a>) and 03 is one of the 14-byte records.
+</div>
+<div class="paragraph">
+For a 14-byte record, the items drawn before it that overlap it are collected into the table at <a href="B1B2.html">B1B3</a> and then the record is drawn with <a href="C15E.html">DrawBlock</a>. An extra record is drawn with <a href="B436.html">DrawEntityItem</a> after its column, row, frame, width and height have been copied into the temporary entity.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems</td>
+<td class="address-2"><span id="b06e"></span>B06E</td>
+<td class="instruction">LD HL,$AF8F</td>
+<td class="comment-1" rowspan="1">Take the sorted draw list.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Next</td>
+<td class="address-2"><span id="b071"></span>B071</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Read the kind of the next item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b072"></span>B072</td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">Keep the kind of the item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b074"></span>B074</td>
+<td class="instruction">RET Z</td>
+<td class="comment-1" rowspan="1">Return at the end of the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b075"></span>B075</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="5">Read the address of the record and step to the next item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b076"></span>B076</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b077"></span>B077</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b078"></span>B078</td>
+<td class="instruction">LD D,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b079"></span>B079</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b07a"></span>B07A</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="2">Take that record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b07b"></span>B07B</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b07d"></span>B07D</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Remember the next item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b07e"></span>B07E</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Draw an entity with <a href="B436.html">DrawEntityItem</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b07f"></span>B07F</td>
+<td class="instruction">JP Z,<a href="B436.html">DrawEntityItem</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b082"></span>B082</td>
+<td class="instruction">CP $02</td>
+<td class="comment-1" rowspan="2">Draw a 14-byte record at <a href="B06E.html#b0c4">DrawItems_Record</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b084"></span>B084</td>
+<td class="instruction">JP Z,<a href="B06E.html#b0c4">DrawItems_Record</a></td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Extra</td>
+<td class="address-1"><span id="b087"></span>B087</td>
+<td class="instruction">BIT 7,(IX+$09)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B06E.html#b0c1">DrawItems_NextItem</a> to skip an extra record that is not in use.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b08b"></span>B08B</td>
+<td class="instruction">JR Z,<a href="B06E.html#b0c1">DrawItems_NextItem</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b08d"></span>B08D</td>
+<td class="instruction">LD L,(IX+$00)</td>
+<td class="comment-1" rowspan="3">Copy the column and the row into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b090"></span>B090</td>
+<td class="instruction">LD H,(IX+$01)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b093"></span>B093</td>
+<td class="instruction">LD ($B7B2),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b096"></span>B096</td>
+<td class="instruction">LD L,(IX+$08)</td>
+<td class="comment-1" rowspan="3">Copy fields 08 and 09 of the extra record into the screen address of the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b099"></span>B099</td>
+<td class="instruction">LD H,(IX+$09)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b09c"></span>B09C</td>
+<td class="instruction">LD ($B7BC),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b09f"></span>B09F</td>
+<td class="instruction">LD A,(IX+$0B)</td>
+<td class="comment-1" rowspan="2">Fetch the frame and the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a2"></span>B0A2</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a3"></span>B0A3</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a5"></span>B0A5</td>
+<td class="instruction">LD ($B7BA),A</td>
+<td class="comment-1" rowspan="1">Store the width in the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0a8"></span>B0A8</td>
+<td class="instruction">LD A,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Fetch the height byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ab"></span>B0AB</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Keep the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ad"></span>B0AD</td>
+<td class="instruction">LD ($B7BB),A</td>
+<td class="comment-1" rowspan="1">Store the height in the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b0"></span>B0B0</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="5">Move the frame down from the high nibble.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b1"></span>B0B1</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b2"></span>B0B2</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b3"></span>B0B3</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b4"></span>B0B4</td>
+<td class="instruction">RRA</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b5"></span>B0B5</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the frame.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0b7"></span>B0B7</td>
+<td class="instruction">LD ($B7A5),A</td>
+<td class="comment-1" rowspan="1">Store the frame in the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ba"></span>B0BA</td>
+<td class="instruction">LD IX,$B7A4</td>
+<td class="comment-1" rowspan="1">Use the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0be"></span>B0BE</td>
+<td class="instruction">JP <a href="B436.html">DrawEntityItem</a></td>
+<td class="comment-1" rowspan="1">Draw it.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b0c1"></span>
+<div class="comments">
+<div class="paragraph">
+This entry point is used by the routine at <a href="B436.html">DrawEntityItem</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_NextItem</td>
+<td class="address-2"><span id="b0c1"></span>B0C1</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the next item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c2"></span>B0C2</td>
+<td class="instruction">JR <a href="B06E.html#b071">DrawItems_Next</a></td>
+<td class="comment-1" rowspan="1">Take the next item.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b0c4"></span>
+<div class="comments">
+<div class="paragraph">
+Look back through the items drawn before this 14-byte record. The alternate <span class="register">C</span> counts the ones that overlap it, and the alternate <span class="register">HL</span> walks the overlap table.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Record</td>
+<td class="address-2"><span id="b0c4"></span>B0C4</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c5"></span>B0C5</td>
+<td class="instruction">LD C,$00</td>
+<td class="comment-1" rowspan="1">Clear the overlap count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0c7"></span>B0C7</td>
+<td class="instruction">LD HL,$B1B3</td>
+<td class="comment-1" rowspan="1">Use the overlap table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ca"></span>B0CA</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch back.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0cb"></span>B0CB</td>
+<td class="instruction">PUSH IX</td>
+<td class="comment-1" rowspan="2">Keep this record aside.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0cd"></span>B0CD</td>
+<td class="instruction">POP IY</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0cf"></span>B0CF</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="3">Step back to this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d0"></span>B0D0</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d1"></span>B0D1</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Previous</td>
+<td class="address-2"><span id="b0d2"></span>B0D2</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="6">Read the previous item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d3"></span>B0D3</td>
+<td class="instruction">LD D,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d4"></span>B0D4</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d5"></span>B0D5</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d6"></span>B0D6</td>
+<td class="instruction">DEC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d7"></span>B0D7</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0d8"></span>B0D8</td>
+<td class="instruction">CP $FF</td>
+<td class="comment-1" rowspan="2">Stop at the start of the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0da"></span>B0DA</td>
+<td class="instruction">JR Z,<a href="B06E.html#b130">DrawItems_Collected</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0dc"></span>B0DC</td>
+<td class="instruction">CP $03</td>
+<td class="comment-1" rowspan="2">Skip another 14-byte record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0de"></span>B0DE</td>
+<td class="instruction">JR Z,<a href="B06E.html#b12e">DrawItems_Continue</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e0"></span>B0E0</td>
+<td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="2">Take the previous item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e1"></span>B0E1</td>
+<td class="instruction">POP IX</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e3"></span>B0E3</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Remember the place in the list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e4"></span>B0E4</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Test an entity now.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e5"></span>B0E5</td>
+<td class="instruction">JR Z,<a href="B06E.html#b11f">DrawItems_Test</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0e7"></span>B0E7</td>
+<td class="instruction">LD L,(IX+$00)</td>
+<td class="comment-1" rowspan="3">Copy the column and the row of the extra record into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ea"></span>B0EA</td>
+<td class="instruction">LD H,(IX+$01)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ed"></span>B0ED</td>
+<td class="instruction">LD ($B7B2),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f0"></span>B0F0</td>
+<td class="instruction">LD L,(IX+$02)</td>
+<td class="comment-1" rowspan="3">Copy the adjusted x coordinate into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f3"></span>B0F3</td>
+<td class="instruction">LD H,(IX+$03)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f6"></span>B0F6</td>
+<td class="instruction">LD ($B7A6),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0f9"></span>B0F9</td>
+<td class="instruction">LD L,(IX+$04)</td>
+<td class="comment-1" rowspan="3">Copy the adjusted y coordinate into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0fc"></span>B0FC</td>
+<td class="instruction">LD H,(IX+$05)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b0ff"></span>B0FF</td>
+<td class="instruction">LD ($B7A9),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b102"></span>B102</td>
+<td class="instruction">LD L,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Copy the adjusted z coordinate into the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b105"></span>B105</td>
+<td class="instruction">LD H,(IX+$07)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b108"></span>B108</td>
+<td class="instruction">LD ($B7AC),HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b10b"></span>B10B</td>
+<td class="instruction">LD A,(IX+$0B)</td>
+<td class="comment-1" rowspan="1">Fetch the frame and the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b10e"></span>B10E</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep the width.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b110"></span>B110</td>
+<td class="instruction">LD ($B7BA),A</td>
+<td class="comment-1" rowspan="1">Store the width in the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b113"></span>B113</td>
+<td class="instruction">LD A,(IX+$0C)</td>
+<td class="comment-1" rowspan="1">Fetch the height byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b116"></span>B116</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Keep the height.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b118"></span>B118</td>
+<td class="instruction">LD ($B7BB),A</td>
+<td class="comment-1" rowspan="1">Store the height in the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b11b"></span>B11B</td>
+<td class="instruction">LD IX,$B7A4</td>
+<td class="comment-1" rowspan="1">Use the temporary entity.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Test</td>
+<td class="address-2"><span id="b11f"></span>B11F</td>
+<td class="instruction">CALL <a href="B2EB.html">TestRecordOverlap</a></td>
+<td class="comment-1" rowspan="1">Test this item against the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b122"></span>B122</td>
+<td class="instruction">BIT 7,(IY+$0A)</td>
+<td class="comment-1" rowspan="1">Test whether the record still has to collect this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b126"></span>B126</td>
+<td class="instruction">RES 7,(IY+$0A)</td>
+<td class="comment-1" rowspan="1">Mark the record as having been tested against this item.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b12a"></span>B12A</td>
+<td class="instruction">CALL NZ,<a href="B399.html">CollectOverlappingItem</a></td>
+<td class="comment-1" rowspan="1">Collect the item when it overlaps the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b12d"></span>B12D</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the place in the list.</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Continue</td>
+<td class="address-2"><span id="b12e"></span>B12E</td>
+<td class="instruction">JR <a href="B06E.html#b0d2">DrawItems_Previous</a></td>
+<td class="comment-1" rowspan="1">Look at the previous item.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b130"></span>
+<div class="comments">
+<div class="paragraph">
+Patch the drawing routines with this record, then draw the block. A record whose byte 0A is 11 or 12 keeps the default details 1010.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Collected</td>
+<td class="address-2"><span id="b130"></span>B130</td>
+<td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b131"></span>B131</td>
+<td class="instruction">LD A,C</td>
+<td class="comment-1" rowspan="2">Test the overlap count.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b132"></span>B132</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b133"></span>B133</td>
+<td class="instruction">JP Z,<a href="B06E.html#b0c1">DrawItems_NextItem</a></td>
+<td class="comment-1" rowspan="1">Leave a record that nothing overlaps.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b136"></span>B136</td>
+<td class="instruction">LD ($B1B2),A</td>
+<td class="comment-1" rowspan="1">Remember how many items overlap the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b139"></span>B139</td>
+<td class="instruction">LD ($C653),A</td>
+<td class="comment-1" rowspan="1">Give that count to the overlapped-block routine.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b13c"></span>B13C</td>
+<td class="instruction">LD A,($5CF0)</td>
+<td class="comment-1" rowspan="1">Fetch the drawing flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b13f"></span>B13F</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the low three drawing flags.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b141"></span>B141</td>
+<td class="instruction">LD ($C65D),A</td>
+<td class="comment-1" rowspan="1">Give the drawing flags to the overlapped-block routine.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b144"></span>B144</td>
+<td class="instruction">LD A,(IY+$0A)</td>
+<td class="comment-1" rowspan="1">Fetch byte 0A of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b147"></span>B147</td>
+<td class="instruction">LD ($C1FE),A</td>
+<td class="comment-1" rowspan="1">Give that byte to the block routine.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b14a"></span>B14A</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="6">Build an instruction that loads three times that byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b14b"></span>B14B</td>
+<td class="instruction">LD L,$3E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b14d"></span>B14D</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b14e"></span>B14E</td>
+<td class="instruction">ADD A,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b14f"></span>B14F</td>
+<td class="instruction">SUB H</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b150"></span>B150</td>
+<td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b151"></span>B151</td>
+<td class="instruction">LD ($C1A0),HL</td>
+<td class="comment-1" rowspan="1">Patch that instruction into <a href="C15E.html">C1A0</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b154"></span>B154</td>
+<td class="instruction">LD A,$C3</td>
+<td class="comment-1" rowspan="1">Take the opcode of a jump.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b156"></span>B156</td>
+<td class="instruction">LD ($C75D),A</td>
+<td class="comment-1" rowspan="1">Patch it into <a href="C72E.html">C75D</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b159"></span>B159</td>
+<td class="instruction">LD HL,$C7AC</td>
+<td class="comment-1" rowspan="1">Take <a href="C7AC.html">DrawBlockSection</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b15c"></span>B15C</td>
+<td class="instruction">LD ($C75E),HL</td>
+<td class="comment-1" rowspan="1">Patch the jump so that it enters <a href="C7AC.html">DrawBlockSection</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b15f"></span>B15F</td>
+<td class="instruction">LD DE,($5CE7)</td>
+<td class="comment-1" rowspan="1">Fetch the view origin.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b163"></span>B163</td>
+<td class="instruction">LD B,(IY+$00)</td>
+<td class="comment-1" rowspan="2">Fetch the first two bytes of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b166"></span>B166</td>
+<td class="instruction">LD C,(IY+$01)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b169"></span>B169</td>
+<td class="instruction">LD HL,$0000</td>
+<td class="comment-1" rowspan="1">Start from zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b16c"></span>B16C</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="3">Subtract the view origin and add the first two bytes of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b16d"></span>B16D</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b16f"></span>B16F</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b170"></span>B170</td>
+<td class="instruction">LD ($BB9F),HL</td>
+<td class="comment-1" rowspan="1">Store the result in the drawing variables.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b173"></span>B173</td>
+<td class="instruction">LD H,(IY+$0E)</td>
+<td class="comment-1" rowspan="2">Fetch the screen position saved in the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b176"></span>B176</td>
+<td class="instruction">LD L,(IY+$0F)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b179"></span>B179</td>
+<td class="instruction">LD ($BBA1),HL</td>
+<td class="comment-1" rowspan="1">Store it in the drawing variables.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b17c"></span>B17C</td>
+<td class="instruction">LD HL,$1010</td>
+<td class="comment-1" rowspan="1">Take the default record details.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b17f"></span>B17F</td>
+<td class="instruction">LD A,(IY+$0A)</td>
+<td class="comment-1" rowspan="1">Fetch byte 0A of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b182"></span>B182</td>
+<td class="instruction">CP $11</td>
+<td class="comment-1" rowspan="2">Keep the default details when the byte is 11.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b184"></span>B184</td>
+<td class="instruction">JR Z,<a href="B06E.html#b190">DrawItems_Details</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b186"></span>B186</td>
+<td class="instruction">CP $12</td>
+<td class="comment-1" rowspan="2">Keep the default details when the byte is 12.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b188"></span>B188</td>
+<td class="instruction">JR Z,<a href="B06E.html#b190">DrawItems_Details</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b18a"></span>B18A</td>
+<td class="instruction">LD H,(IY+$0C)</td>
+<td class="comment-1" rowspan="2">Take fields 0B and 0C of the record as the details.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b18d"></span>B18D</td>
+<td class="instruction">LD L,(IY+$0B)</td>
+</tr>
+<tr>
+<td class="asm-label">DrawItems_Details</td>
+<td class="address-2"><span id="b190"></span>B190</td>
+<td class="instruction">LD ($5CF3),HL</td>
+<td class="comment-1" rowspan="1">Store the details.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b193"></span>B193</td>
+<td class="instruction">LD A,(IY+$0D)</td>
+<td class="comment-1" rowspan="1">Fetch byte 0D of the record.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b196"></span>B196</td>
+<td class="instruction">LD ($5CF5),A</td>
+<td class="comment-1" rowspan="1">Store the third detail byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b199"></span>B199</td>
+<td class="instruction">LD HL,$C646</td>
+<td class="comment-1" rowspan="1">Take the overlapped-block routine.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b19c"></span>B19C</td>
+<td class="instruction">LD ($C3D8),HL</td>
+<td class="comment-1" rowspan="1">Patch <a href="C381.html">DrawBlockShape</a> so that it uses <a href="C646.html">DrawOverlappedBlock</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b19f"></span>B19F</td>
+<td class="instruction">LD A,$1A</td>
+<td class="comment-1" rowspan="1">Take the value 1A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b1a1"></span>B1A1</td>
+<td class="instruction">LD ($B530),A</td>
+<td class="comment-1" rowspan="1">Patch it into <a href="B4E8.html">B530</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b1a4"></span>B1A4</td>
+<td class="instruction">CALL <a href="C15E.html">DrawBlock</a></td>
+<td class="comment-1" rowspan="1">Draw the block.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b1a7"></span>B1A7</td>
+<td class="instruction">LD A,$08</td>
+<td class="comment-1" rowspan="1">Take the row step 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b1a9"></span>B1A9</td>
+<td class="instruction">LD ($C794),A</td>
+<td class="comment-1" rowspan="1">Restore it in <a href="C76D.html">C794</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b1ac"></span>B1AC</td>
+<td class="instruction">LD ($C7A6),A</td>
+<td class="comment-1" rowspan="1">Restore it in <a href="C76D.html">C7A6</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="b1af"></span>B1AF</td>
+<td class="instruction">JP <a href="B06E.html#b0c1">DrawItems_NextItem</a></td>
+<td class="comment-1" rowspan="1">Take the next item.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="B06C.html">B06C</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#b06e">Map</a></td>
+<td class="next">
+Next: <a href="B1B2.html">B1B2</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/">Source code</a>.</div>
+<div><a href="../dec/asm/45166.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Nightshade: Routine at DB89</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../nightshade.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html"><img alt="logo" src="../images/logo.png" /></a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="DB68.html">DB68</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#db89">Map</a></td>
+<td class="next">
+Next: <a href="DC14.html">DC14</a>
+</td>
+</tr>
+</table>
+<div class="description">DB89: Choose Direction</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="DA7A.html">UpdatePlayerLegs</a>.
+</div>
+<div class="paragraph">
+Works out the direction that the player is facing from the controls, which is held in bits 6 and 7 of the direction and timer of the player (0 is up the screen, 1 is right, 2 is down and 3 is left). A turn takes a few frames, which are counted in the lowest bits of the timer.
+</div>
+<div class="paragraph">
+With the keyboard or when the option for directional control is not set, the controls for left and right turn the player. When it is set, the player turns towards the direction that the controls give, one quarter at a time, and moves when it faces that way.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">Controls</td>
+</tr>
+<tr>
+<td class="register">IX</td>
+<td class="register-desc">Player</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">E</td>
+<td class="register-desc">Controls, with bit 2 set only if the player is to move forward</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection</td>
+<td class="address-2"><span id="db89"></span>DB89</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="DB89.html#db95">ChooseDirection_Controls</a> if the player is not turning.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db8c"></span>DB8C</td>
+<td class="instruction">AND $07</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db8e"></span>DB8E</td>
+<td class="instruction">JR Z,<a href="DB89.html#db95">ChooseDirection_Controls</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db90"></span>DB90</td>
+<td class="instruction">DEC (IX+$06)</td>
+<td class="comment-1" rowspan="2">Count down the turn counter, and set the sprite of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db93"></span>DB93</td>
+<td class="instruction">JR <a href="DC14.html">SetFacingFlags</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Controls</td>
+<td class="address-2"><span id="db95"></span>DB95</td>
+<td class="instruction">LD HL,$BBB0</td>
+<td class="comment-1" rowspan="4">Jump to <a href="DB89.html#dbfe">ChooseDirection_Relative</a> if the controls are the keyboard.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db98"></span>DB98</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db99"></span>DB99</td>
+<td class="instruction">AND $06</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db9b"></span>DB9B</td>
+<td class="instruction">JR Z,<a href="DB89.html#dbfe">ChooseDirection_Relative</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db9d"></span>DB9D</td>
+<td class="instruction">BIT 3,(HL)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbfe">ChooseDirection_Relative</a> if the option for directional control is not set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="db9f"></span>DB9F</td>
+<td class="instruction">JR Z,<a href="DB89.html#dbfe">ChooseDirection_Relative</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dba1"></span>DBA1</td>
+<td class="instruction">LD A,($BBBA)</td>
+<td class="comment-1" rowspan="3">Swap the controls for left and right, and up and down, if the view is rotated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dba4"></span>DBA4</td>
+<td class="instruction">AND $01</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dba6"></span>DBA6</td>
+<td class="instruction">CALL NZ,<a href="DC43.html">SwapControls</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dba9"></span>DBA9</td>
+<td class="instruction">BIT 0,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbb1">ChooseDirection_Right</a> if the control for left is used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbab"></span>DBAB</td>
+<td class="instruction">JR NZ,<a href="DB89.html#dbb1">ChooseDirection_Right</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbad"></span>DBAD</td>
+<td class="instruction">BIT 2,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbc0">ChooseDirection_Up</a> if the control for up is used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbaf"></span>DBAF</td>
+<td class="instruction">JR NZ,<a href="DB89.html#dbc0">ChooseDirection_Up</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Right</td>
+<td class="address-2"><span id="dbb1"></span>DBB1</td>
+<td class="instruction">BIT 1,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbe6">ChooseDirection_WantRight</a> if the control for right is used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbb3"></span>DBB3</td>
+<td class="instruction">JR NZ,<a href="DB89.html#dbe6">ChooseDirection_WantRight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbb5"></span>DBB5</td>
+<td class="instruction">BIT 4,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbed">ChooseDirection_WantDown</a> if the control for down is used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbb7"></span>DBB7</td>
+<td class="instruction">JR NZ,<a href="DB89.html#dbed">ChooseDirection_WantDown</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbb9"></span>DBB9</td>
+<td class="instruction">BIT 0,E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbf4">ChooseDirection_WantLeft</a> if the control for left is used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbbb"></span>DBBB</td>
+<td class="instruction">JR NZ,<a href="DB89.html#dbf4">ChooseDirection_WantLeft</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbbd"></span>DBBD</td>
+<td class="instruction">RES 2,E</td>
+<td class="comment-1" rowspan="2">Clear the control for up, and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbbf"></span>DBBF</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Up</td>
+<td class="address-2"><span id="dbc0"></span>DBC0</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the direction of the player.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="dbc3"></span>
+<div class="comments">
+<div class="paragraph">
+Work out how far the player has to turn.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Turn</td>
+<td class="address-2"><span id="dbc3"></span>DBC3</td>
+<td class="instruction">AND $C0</td>
+<td class="comment-1" rowspan="3">Clear the control for up, and jump to <a href="DB89.html#dbfb">ChooseDirection_Forward</a> if the player is facing the direction that is wanted.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbc5"></span>DBC5</td>
+<td class="instruction">RES 2,E</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbc7"></span>DBC7</td>
+<td class="instruction">JR Z,<a href="DB89.html#dbfb">ChooseDirection_Forward</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbc9"></span>DBC9</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbd8">ChooseDirection_TurnBack</a> if the player has to turn back by a quarter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbcb"></span>DBCB</td>
+<td class="instruction">JR Z,<a href="DB89.html#dbd8">ChooseDirection_TurnBack</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbcd"></span>DBCD</td>
+<td class="instruction">CP $C0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="DB89.html#dbdf">ChooseDirection_TurnOn</a> if the player has to turn on by a quarter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbcf"></span>DBCF</td>
+<td class="instruction">JR Z,<a href="DB89.html#dbdf">ChooseDirection_TurnOn</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbd1"></span>DBD1</td>
+<td class="instruction">LD A,($BBAA)</td>
+<td class="comment-1" rowspan="3">Choose which way to turn from the random seed, as the player has to turn right round.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbd4"></span>DBD4</td>
+<td class="instruction">CP $80</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbd6"></span>DBD6</td>
+<td class="instruction">JR C,<a href="DB89.html#dbdf">ChooseDirection_TurnOn</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_TurnBack</td>
+<td class="address-2"><span id="dbd8"></span>DBD8</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Turn the player back by a quarter, and jump to <a href="DB89.html#dc0f">ChooseDirection_Counter</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbdb"></span>DBDB</td>
+<td class="instruction">SUB $40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbdd"></span>DBDD</td>
+<td class="instruction">JR <a href="DB89.html#dc0f">ChooseDirection_Counter</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_TurnOn</td>
+<td class="address-2"><span id="dbdf"></span>DBDF</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Turn the player on by a quarter, and jump to <a href="DB89.html#dc0f">ChooseDirection_Counter</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbe2"></span>DBE2</td>
+<td class="instruction">ADD A,$40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbe4"></span>DBE4</td>
+<td class="instruction">JR <a href="DB89.html#dc0f">ChooseDirection_Counter</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_WantRight</td>
+<td class="address-2"><span id="dbe6"></span>DBE6</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Work out the direction of the player compared with right, and jump to <a href="DB89.html#dbc3">ChooseDirection_Turn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbe9"></span>DBE9</td>
+<td class="instruction">SUB $40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbeb"></span>DBEB</td>
+<td class="instruction">JR <a href="DB89.html#dbc3">ChooseDirection_Turn</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_WantDown</td>
+<td class="address-2"><span id="dbed"></span>DBED</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Work out the direction of the player compared with down, and jump to <a href="DB89.html#dbc3">ChooseDirection_Turn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbf0"></span>DBF0</td>
+<td class="instruction">SUB $80</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbf2"></span>DBF2</td>
+<td class="instruction">JR <a href="DB89.html#dbc3">ChooseDirection_Turn</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_WantLeft</td>
+<td class="address-2"><span id="dbf4"></span>DBF4</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="3">Work out the direction of the player compared with left, and jump to <a href="DB89.html#dbc3">ChooseDirection_Turn</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbf7"></span>DBF7</td>
+<td class="instruction">SUB $C0</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbf9"></span>DBF9</td>
+<td class="instruction">JR <a href="DB89.html#dbc3">ChooseDirection_Turn</a></td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Forward</td>
+<td class="address-2"><span id="dbfb"></span>DBFB</td>
+<td class="instruction">SET 2,E</td>
+<td class="comment-1" rowspan="2">Set the control for moving forward, and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dbfd"></span>DBFD</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="dbfe"></span>
+<div class="comments">
+<div class="paragraph">
+Turn the player with the controls for left and right.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Relative</td>
+<td class="address-2"><span id="dbfe"></span>DBFE</td>
+<td class="instruction">LD A,(IX+$06)</td>
+<td class="comment-1" rowspan="1">Fetch the direction of the player.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dc01"></span>DC01</td>
+<td class="instruction">BIT 0,E</td>
+<td class="comment-1" rowspan="4">Turn the player back by a quarter if the control for left is used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dc03"></span>DC03</td>
+<td class="instruction">JR Z,<a href="DB89.html#dc09">ChooseDirection_RelativeRight</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dc05"></span>DC05</td>
+<td class="instruction">SUB $40</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dc07"></span>DC07</td>
+<td class="instruction">OR $01</td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_RelativeRight</td>
+<td class="address-2"><span id="dc09"></span>DC09</td>
+<td class="instruction">BIT 1,E</td>
+<td class="comment-1" rowspan="3">Turn the player on by a quarter if the control for right is used.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dc0b"></span>DC0B</td>
+<td class="instruction">JR Z,<a href="DB89.html#dc11">ChooseDirection_Set</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="dc0d"></span>DC0D</td>
+<td class="instruction">ADD A,$40</td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Counter</td>
+<td class="address-2"><span id="dc0f"></span>DC0F</td>
+<td class="instruction">OR %00000001</td>
+<td class="comment-1" rowspan="1">Set the turn counter to one.</td>
+</tr>
+<tr>
+<td class="asm-label">ChooseDirection_Set</td>
+<td class="address-2"><span id="dc11"></span>DC11</td>
+<td class="instruction">LD (IX+$06),A</td>
+<td class="comment-1" rowspan="1">Set the direction of the player.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+Continue on to <a href="DC14.html">SetFacingFlags</a>.
+</div>
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/gunfright/asm/CB86.html">Gunfright</a></li>
+</ul>
+</div>
+</div>
+</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="DB68.html">DB68</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#db89">Map</a></td>
+<td class="next">
+Next: <a href="DC14.html">DC14</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/">Source code</a>.</div>
+<div><a href="../dec/asm/56201.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

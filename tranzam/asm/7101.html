@@ -6,6 +6,9 @@
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<link rel="stylesheet" type="text/css" href="../tranzam.css" />
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
 <script>
@@ -33,13 +36,25 @@ Next: <a href="7139.html">7139</a>
 </td>
 </tr>
 </table>
-<div class="description">7101: Erase Actor Sprite</div>
+<div class="description">7101: Display Entity</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="633C.html">633C</a>, <a href="6633.html">6633</a> and <a href="6FAC.html">6FAC</a>.
+Used by the routines at <a href="6318.html">HandlerExplosion</a>, <a href="6633.html">HandlerCar</a> and <a href="6F3C.html">PlaceObject</a>.
+</div>
+<div class="paragraph">
+Erases the sprite of an actor from where it was last drawn (the old state held in the actor buffer at <a href="5E20.html">Actor_Position_X</a>) and draws it at its new position. Both sprites are handled a line at a time by <a href="7170.html">MaskSprite</a>, but if the old and the new Y positions are different then the lines of one sprite that stick out below the other are handled first.  <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="display-entity-before" src="../images/scr/display-entity-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="display-entity-after" src="../images/scr/display-entity-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 <table class="input">
@@ -48,86 +63,87 @@ Used by the routines at <a href="633C.html">633C</a>, <a href="6633.html">6633</
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Actor Entity</td>
+<td class="register-desc">Actor entity</td>
 </tr>
 </table>
 </td>
 </tr>
 <tr>
-<td class="asm-label">ActorEraseMovedSprite</td>
+<td class="asm-label">DisplayEntity</td>
 <td class="address-2"><span id="7101"></span>7101</td>
 <td class="instruction">LD A,($5E22)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="7149.html">7149</a> if <a href="5E20.html#5e22">5E22</a> is zero.</td>
+<td class="comment-1" rowspan="1">Fetch the sprite ID of the old sprite (<a href="5E20.html#5e22">Actor_SpriteID</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7104"></span>7104</td>
 <td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="7149.html">DrawEntity</a> if there is no old sprite, as there is nothing to erase.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7105"></span>7105</td>
-<td class="instruction">JP Z,<a href="7149.html">$7149</a></td>
+<td class="instruction">JP Z,<a href="7149.html">DrawEntity</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7108"></span>7108</td>
-<td class="instruction">CALL <a href="70D2.html">FindActorSpriteAndUpdate</a></td>
-<td class="comment-1" rowspan="1">Call <a href="70D2.html">FindActorSpriteAndUpdate</a>.</td>
+<td class="instruction">CALL <a href="70D2.html">PrepareActorSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="70D2.html">PrepareActorSprite</a> to prepare the new sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="710b"></span>710B</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers (to keep the new sprite).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="710c"></span>710C</td>
-<td class="instruction">CALL <a href="70B2.html">ActorFindPosDir</a></td>
-<td class="comment-1" rowspan="1">Call <a href="70B2.html">ActorFindPosDir</a>.</td>
+<td class="instruction">CALL <a href="70B2.html">PrepareOldSprite</a></td>
+<td class="comment-1" rowspan="1">Call <a href="70B2.html">PrepareOldSprite</a> to prepare the old sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="710f"></span>710F</td>
 <td class="instruction">LD A,($5E21)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e21">Actor_Position_Y</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e21">Actor_Position_Y</a> (the old Y position).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7112"></span>7112</td>
 <td class="instruction">SUB (IX+$02)</td>
-<td class="comment-1" rowspan="1">Subtract the actor Y position.</td>
+<td class="comment-1" rowspan="1">Subtract the new Y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7115"></span>7115</td>
 <td class="instruction">JP Z,<a href="71CB.html#71d1">ActorUpdateSize</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="71CB.html#71d1">ActorUpdateSize</a> if the result is zero.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="71CB.html#71d1">ActorUpdateSize</a> if the old and new Y positions are the same.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7118"></span>7118</td>
-<td class="instruction">JP M,<a href="7101.html#712a">ActorEraseMovedSprite_0</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="7101.html#712a">ActorEraseMovedSprite_0</a> if the result is negative.</td>
+<td class="instruction">JP M,<a href="7101.html#712a">DisplayEntity_NewLower</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="7101.html#712a">DisplayEntity_NewLower</a> if the new sprite is lower down than the old sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="711b"></span>711B</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Else store the result in <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1"><span class="register">C</span>=the number of lines that the old sprite sticks out below the new sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="711c"></span>711C</td>
 <td class="instruction">LD A,($5E25)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e25">CurrentSpriteHeight</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e25">CurrentSpriteHeight</a> (the number of lines in the old sprite).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="711f"></span>711F</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="3">Jump to <a href="71CB.html#71d1">ActorUpdateSize</a> if <span class="register">A</span> &lt; <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="71CB.html#71d1">ActorUpdateSize</a> if the old sprite has fewer lines than this.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -138,66 +154,92 @@ Used by the routines at <a href="633C.html">633C</a>, <a href="6633.html">6633</
 <td class="asm-label"></td>
 <td class="address-1"><span id="7123"></span>7123</td>
 <td class="instruction">SUB C</td>
+<td class="comment-1" rowspan="1">Subtract the lines that stick out.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7124"></span>7124</td>
 <td class="instruction">LD ($5E25),A</td>
-<td class="comment-1" rowspan="1">Store the result at <a href="5E20.html#5e25">CurrentSpriteHeight</a>.</td>
+<td class="comment-1" rowspan="1">Write the number of lines left to <a href="5E20.html#5e25">CurrentSpriteHeight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7127"></span>7127</td>
 <td class="instruction">JP <a href="7170.html">MaskSprite</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="7170.html">MaskSprite</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="7170.html">MaskSprite</a> to erase the lines that stick out.</td>
 </tr>
 <tr>
-<td class="asm-label">ActorEraseMovedSprite_0</td>
+<td class="routine-comment" colspan="5">
+<span id="712a"></span>
+<div class="comments">
+<div class="paragraph">
+The new sprite is lower down, so it has some lines to draw before any lines are erased.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">DisplayEntity_NewLower</td>
 <td class="address-2"><span id="712a"></span>712A</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers (the new sprite).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="712b"></span>712B</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Make the result positive.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="712d"></span>712D</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1"><span class="register">C</span>=the number of lines that the new sprite sticks out below the old sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="712e"></span>712E</td>
 <td class="instruction">LD A,($5E26)</td>
-<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e26">HeightLines</a>.</td>
+<td class="comment-1" rowspan="1"><span class="register">A</span>=<a href="5E20.html#5e26">HeightLines</a> (the number of lines in the new sprite).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7131"></span>7131</td>
 <td class="instruction">CP C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="2">Jump to <a href="71CB.html#71d0">ActorUpdateSizeFlipReg</a> if the new sprite has fewer lines than this.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7132"></span>7132</td>
 <td class="instruction">JP C,<a href="71CB.html#71d0">ActorUpdateSizeFlipReg</a></td>
-<td class="comment-1" rowspan="1"></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7135"></span>7135</td>
 <td class="instruction">SUB C</td>
-<td class="comment-1" rowspan="1"></td>
+<td class="comment-1" rowspan="1">Subtract the lines that stick out.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="7136"></span>7136</td>
 <td class="instruction">JP <a href="71CB.html#71e4">ActorUpdateHeightAndMask</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="71CB.html#71e4">ActorUpdateHeightAndMask</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="71CB.html#71e4">ActorUpdateHeightAndMask</a> to store the number of lines left and to draw the lines that stick out.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="comments">
+<div class="paragraph">
+View the equivalent code in; <ul class="">
+<li><a href="/ultimate/aticatac/asm/9FCA.html">Atic Atac</a></li>
+<li><a href="/ultimate/cookie/asm/75CC.html">Cookie</a></li>
+<li><a href="/ultimate/jetpac/asm/726A.html">Jetpac</a></li>
+<li><a href="/ultimate/pssst/asm/74EB.html">Pssst</a></li>
+<li><a href="/ultimate/sabrewulf/asm/B9A9.html">Sabre Wulf</a></li>
+<li><a href="/ultimate/underwurlde/asm/96F7.html">Underwurlde</a></li>
+</ul>
+</div>
+</div>
+</td>
 </tr>
 </table>
 <table class="asm-navigation">
