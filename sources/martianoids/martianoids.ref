@@ -3,12 +3,13 @@
 ;
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @martianoids.t2s
-;   sna2skool.py -H -c sources/martianoids/martianoids.ctl Martianoids.z80 > sources/martianoids/martianoids.skool
+;   sna2skool.py -H -c sources/martianoids/martianoids.ctl Martianoids.z80 \
+;     > sources/martianoids/martianoids.skool
 ;   skool2html.py -H sources/martianoids/martianoids.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;sounds.ref;martianoidsGraphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/martianoids
 
@@ -17,8 +18,117 @@ Game=Martianoids
 Logo=#SCR$01,$02,$06,$1C,$03,$4000,$5800(/images/logo)
 Copyright=&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/martianoids/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;martianoids.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Map
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+
+[Links]
+Graphics=[Graphics]
+Map=[Map]
+Sound=[Sound]
+
+[Paths]
+Graphics=graphics/graphics.html
+Map=graphics/map.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Map]
+JavaScript=openseadragon.min.js;world-map.js
+PageContent=#INCLUDE(WorldMap)
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[WorldMap]
+<p>
+The map of the world is stored at #R$C515. It is #N$40 cells on a
+side, but only the first #N$31 columns and rows have anything in
+them. The lower four bits of each cell are the type that it is now,
+and the upper four bits are the type that it started as. The picture
+uses the current type, or the initial type when the cell is empty.
+</p>
+<p>
+Type #N$00 is empty ground. The other types are the walls, terminals,
+batteries and hazards listed with the templates at #R$97C0. The
+purple lines mark the nine sectors of #N$10 by #N$10 cells. North is
+at the top. Drag to move, and use the mouse wheel or pinch to zoom.
+</p>
+#HTML(<div class="world-map-viewer" id="world-map-viewer"></div>)
+<p class="world-map-hint">Drag to move. Scroll or pinch to zoom.</p>
+
+[Expand]
+#DEF(#MASKEDTWO(c)(f)
+  #UDGARRAY$02,attr=$c,scale=4,step=4,flip=2,mask=2(($F101)-({e})-$02-$20,$c:($F100)-({e}-$01)-$02-$20){$00,{y},{cw},{ch}}($f)
+)
+
+#DEF(#MASKEDTHREE(c)(f)
+  #UDGARRAY$03,attr=$c,scale=4,step=6,flip=2,mask=2(($F101)-({e})-$02-$30,$c:($F100)-({e}-$01)-$02-$30){$00,{y},{cw},{ch}}($f)
+)
+
+#DEF(#MASKEDFOUR(c)(f)
+  #UDGARRAY$04,attr=$c,scale=4,step=8,flip=2,mask=2(($F101)-({e})-$02-$40,$c:($F100)-({e}-$01)-$02-$40){$00,{y},{cw},{ch}}($f)
+)
+
+#DEF(#MASKED(a,w,h,c)(f)
+  #PUSHS
+  #FOR($00,($w*$h-$01))//i/
+    #POKES(($F100+$02*i),($FF^(#PEEK($a+$02*i)|#PEEK($a+$02*i+$01))))
+    #POKES(($F101+$02*i),(#PEEK($a+$02*i)^#PEEK($a+$02*i+$01)))
+  //
+  #LET(e=$F101+(((($h+$07)/$08)-$01)*$10*$w)+($02*($w-$01)))
+  #LET(y=$04*(((($h+$07)/$08)*$08)-$h))
+  #LET(cw=$w*$20)
+  #LET(ch=$h*$04)
+  #IF($w==$02)(
+    #MASKEDTWO($c)($f),
+    #IF($w==$03)(
+      #MASKEDTHREE($c)($f),
+      #MASKEDFOUR($c)($f)
+    )
+  )
+  #POPS
+)
+
+#DEF(#SPRITEAT(addr,attr=$47)(fname)
+  #LET(width=#PEEK($addr)&$3F)
+  #LET(height=#PEEK($addr+$01))
+  #MASKED($addr+$02,{width},{height},$attr)($fname)
+)
+
+#DEF(#SPRITE(id,attr=$47)(fname)
+  #LET(address=#PEEK($60A3+$id*$02)+#PEEK($60A4+$id*$02)*$100)
+  #SPRITEAT({address},$attr)($fname)
+)
+
+#DEF(#PANEL()(f)
+  #PUSHS
+  #FOR$00,$77//i/
+    #FOR$00,$07||j|
+      #POKES($4000+(((i>>3)>>3)*$800)+(((i>>3)&$07)*$20)+(i&$07)+j*$100,#PEEK($9421+#PEEK($9511+i)*$08+j))
+    ||
+    #POKES($5800+(i>>3)*$20+(i&$07),#PEEK($9589+i))
+  //
+  #SCR$03,$00,$00,$08,$0F($f)
+  #POPS
+)

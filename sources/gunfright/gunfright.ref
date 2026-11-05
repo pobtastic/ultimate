@@ -3,22 +3,176 @@
 ;
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @gunfright.t2s
-;   sna2skool.py -H -c sources/gunfright/gunfright.ctl Gunfright.z80 > sources/gunfright/gunfright.skool
+;   sna2skool.py -H -c sources/gunfright/gunfright.ctl Gunfright.z80 \
+;     > sources/gunfright/gunfright.skool
 ;   skool2html.py -H sources/gunfright/gunfright.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;gunfrightGraphics.ref;pokes.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/gunfright
 
 [Game]
 Game=Gunfright
-Logo=#SCR$01,$04,$00,$17,$04,$4000,$5800(/images/logo)
+Logo=#SCR$01,$05,$00,$16,$04,$4000,$5800(/images/logo)
 Copyright=&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/gunfright/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;gunfright.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Map
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+Credits
+
+[Links]
+Graphics=[Graphics]
+Map=[Map]
+Sound=[Sound]
+
+[Paths]
+Credits=reference/credits.html
+Graphics=graphics/graphics.html
+Map=graphics/map.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Map]
+JavaScript=openseadragon.min.js;town-map.js
+PageContent=#INCLUDE(TownMap)
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+  { tcdev, for the annotated disassembly of Knight Lore that Michael converted
+    to SkoolKit }
+LIST#
+  This game shares a lot of functionality with Knight Lore, hence that
+  disassembly was a great help.
+</div>
+
+[TownMap]
+<p>
+The map of the town is stored at #R$5FB1. It is #N$10 cells wide and
+#N$10 cells high. Each cell holds a code from #N$00 to #N$19. Code
+#N$00 is empty ground, which shows as the black streets in the
+picture, and code #N$01 is the edge of the town. The other codes are
+the buildings.
+</p>
+<p>
+The picture is drawn from those cells in the same way as #R$C54B, with
+the view not turned round. The colour of each wall is taken from the
+lowest two bits of the code: bright green, cyan, yellow or white. The
+picture is four times the size of the Spectrum pixels: drag to move,
+and use the mouse wheel or pinch to zoom.
+</p>
+#HTML(<div class="town-map-viewer" id="town-map-viewer"></div>)
+<p class="town-map-hint">Drag to move. Scroll or pinch to zoom.</p>
+
+[Expand]
+; One wall rectangle at #PC: middle X, middle Y, half width, half height.
+#DEF(#WALLRECTS()
+  #N(#PEEK(#PC)), #N(#PEEK(#PC+$01)), #N(#PEEK(#PC+$02)), #N(#PEEK(#PC+$03))
+)
+
+; Draws a strip: a byte for the number of rows, and then two bytes of pixels
+; for each row, with the bottom row first.
+#DEF(#STRIP(addr,attr=$07)(fname)
+  #LET(stripheight=#PEEK($addr))
+  #LET(strippages=({stripheight}+$07)/$08)
+  #UDGARRAY(2,attr=$attr,scale=4,step=2,flip=2)((($addr)+$01)-(($addr)+{strippages}*$10)-$01-$10){$00,$04*(($08-({stripheight}%$08))%$08),$40,$04*{stripheight}}($fname)
+)
+
+; Draws a strip whose rows follow the address of the macro.
+#DEF(#STRIPDATA()(fname)
+  #STRIP(#PC-$01,$07)($fname)
+)
+
+; Draws an image of the walls of the buildings from the table of images.
+#DEF(#WALLIMAGE(id,attr=$07)(fname)
+  #LET(wallimage=#PEEK($8FF8+$id*$02)+#PEEK($8FF9+$id*$02)*$100)
+  #STRIP({wallimage},$attr)($fname)
+)
+
+; Draws a sprite of the given size, which is stored as a mask byte and then a
+; graphic byte for each row of each character, with the first row at the
+; bottom. A set bit in the mask means that the sprite covers the background,
+; so the masks are copied inverted into an unused page of memory for SkoolKit.
+#DEF(#MASKED(addr,cols,rows,attr)(fname)
+  #LET(pages=($rows+$07)/$08)
+  #PUSHS
+  #FOR($00,$cols*$rows-$01)||n|#POKES($F800+n,$FF-#PEEK($addr+n*$02))||
+  #UDGARRAY($cols,attr=$attr,scale=4,step=$cols*$02,flip=2,mask=2)((($addr)+$01)-(($addr)+{pages}*$10*$cols)-$02-($cols*$10):($F800)-($F800+{pages}*$08*$cols-$01)-$01-($cols*$08),$cols){$00,$04*(($08-($rows%$08))%$08),$04*$cols*$08,$04*$rows}($fname)
+  #POPS
+)
+
+; Draws a sprite from the table of sprites.
+#DEF(#SPRITE(id,attr=$07)(fname)
+  #LET(spriteaddr=#PEEK($67F4+$id*$02)+#PEEK($67F5+$id*$02)*$100)
+  #LET(spritecols=#PEEK({spriteaddr}))
+  #LET(spriterows=#PEEK({spriteaddr}+$01))
+  #MASKED({spriteaddr}+$02,{spritecols},{spriterows},$attr)($fname)
+)
+
+; Draws a sprite whose rows follow the address of the macro.
+#DEF(#SPRITEDATA()(fname)
+  #LET(spritecols=#PEEK(#PC-$02))
+  #LET(spriterows=#PEEK(#PC-$01))
+  #MASKED(#PC,{spritecols},{spriterows},$07)($fname)
+)
+
+; Draws an image from the table of images of the faces and bodies of the
+; outlaws, which are thirty-two pixels wide and eight rows high, with the
+; bottom row first.
+#DEF(#POSTERIMAGE(id,attr=$07)(fname)
+  #LET(posteraddr=#PEEK($6AC6+$id*$02)+#PEEK($6AC7+$id*$02)*$100)
+  #UDGARRAY(4,attr=$attr,scale=4,step=4,flip=2)(({posteraddr})-({posteraddr}+$03)-$01)($fname)
+)
+
+; Draws an image whose rows follow the address of the macro.
+#DEF(#POSTERDATA()(fname)
+  #UDGARRAY(4,attr=$07,scale=4,step=4,flip=2)((#PC)-(#PC+$03)-$01)($fname)
+)
+
+; Draws the face of an outlaw on the wanted poster, which is made of four
+; images with the bottom one first.
+#DEF(#FACE(id,attr=$07)(fname)
+  #LET(facerecord=$B5B0+$id*$05)
+  #LET(face1=#PEEK($6AC6+#PEEK({facerecord}+$01)*$02)+#PEEK($6AC7+#PEEK({facerecord}+$01)*$02)*$100)
+  #LET(face2=#PEEK($6AC6+#PEEK({facerecord}+$02)*$02)+#PEEK($6AC7+#PEEK({facerecord}+$02)*$02)*$100)
+  #LET(face3=#PEEK($6AC6+#PEEK({facerecord}+$03)*$02)+#PEEK($6AC7+#PEEK({facerecord}+$03)*$02)*$100)
+  #LET(face4=#PEEK($6AC6+#PEEK({facerecord}+$04)*$02)+#PEEK($6AC7+#PEEK({facerecord}+$04)*$02)*$100)
+  #UDGARRAY(4,attr=$attr,scale=3,step=4,flip=2)(({face1})-({face1}+$03)-$01;({face2})-({face2}+$03)-$01;({face3})-({face3}+$03)-$01;({face4})-({face4}+$03)-$01)($fname)
+)
+
+; Draws a number of tiles of eight bytes each, in rows of the given length.
+#DEF(#TILES(addr,count,cols,attr=$07)(fname)
+  #UDGARRAY($cols,attr=$attr,scale=3,step=1)(($addr)-($addr+$count*$08-$01)-$08)($fname)
+)

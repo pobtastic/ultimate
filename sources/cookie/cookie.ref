@@ -8,15 +8,16 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;cookieGraphics.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;cookieGraphics.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/cookie
 
 [Game]
 Game=Cookie
-Logo=#SCR1,4,0,24,8,$4000,$5800(/images/logo)
+Logo=#SCR$01,$04,$00,$18,$08,$4000,$5800(/images/logo)
 Copyright=&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/cookie/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;cookie.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
@@ -29,10 +30,11 @@ Graphics
 DataTables
 Reference
 
-[Index:Graphics:Graphics]
+[Index:Graphics:Graphics And Sounds]
 Player
 Ingredients
 Nasties
+Sound
 
 [Index:Reference:Reference]
 Changelog
@@ -52,6 +54,7 @@ Credits=reference/credits.html
 Player=graphics/player.html
 Ingredients=graphics/ingredients.html
 Nasties=graphics/nasties.html
+Sound=sound/sounds.html
 
 [Page:Player]
 SectionPrefix=Player
@@ -61,6 +64,9 @@ SectionPrefix=Ingredients
 
 [Page:Nasties]
 SectionPrefix=Nasties
+
+[Page:Sound]
+SectionPrefix=Audio
 
 [Page:Credits]
 PageContent=#INCLUDE(Credits)
@@ -82,4 +88,18 @@ LIST#
   #FOR($00,{length})||n|
     #IF(#PEEK($02 + $addr + n) == $FF)(#POKES(($02 + $addr + n), $47))
   ||
+)
+
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr+(((({height}+$07)/$08)*$08)*$size)-$01)-$01-($size*$08))($fname))
+
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr+(((({height}+$07)/$08)*$08)*$size)-$01)-$01-($size*$08)){$00,$04*($08-({height}%$08)),$04*$size*$08,$04*{height}}($fname))
+
+#DEF(#SPRITE(id,base=$7702,size=$02,attr=$07)(fname)
+  #LET(offset=($id-$01)*$02)
+  #LET(addr=#PEEK($base+{offset})+#PEEK($base+{offset}+$01)*$100)
+  #LET(height=#PEEK({addr}))
+  #IF({height}%$08)(
+    #CROP({addr}+$01,$size,$attr)($fname),
+    #NOCROP({addr}+$01,$size,$attr)($fname)
+  )
 )

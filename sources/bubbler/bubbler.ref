@@ -8,7 +8,7 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;sounds.ref;bubblerGraphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/bubbler
 
@@ -19,6 +19,109 @@ Copyright=&copy; 1987 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/bubbler/
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;bubbler.css
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+
+[Links]
+Graphics=[Graphics]
+Sound=[Sound]
+
+[Paths]
+Graphics=graphics/graphics.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[Expand]
+#DEF(#BLANKSCREEN(z)
+  #SIM(start=$A8E1,stop=$0000,clear=1,sp=$5B60)
+  #SIM(start=$A8D1,stop=$0000,sp=$5B60)
+)
+
+#DEF(#NEWGAME(z)
+  #SIM(start=$876B,stop=$0000,clear=1,sp=$5B60)
+  #SIM(start=$DF1F,stop=$0000,sp=$5B60)
+  #SIM(start=$A8E1,stop=$0000,sp=$5B60)
+  #SIM(start=$A8D1,stop=$0000,sp=$5B60)
+  #SIM(start=$E229,stop=$0000,sp=$5B60)
+  #SIM(start=$E01E,stop=$E027,sp=$5B60)
+  #SIM(start=$E027,stop=$E06D,sp=$5B60)
+)
+
+#DEF(#NOCROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s)-$01)
+  #LET(r=$s*$08)
+  #UDGARRAY($s,$c,4,$s,0,2)(($a)-({e})-$01-({r}))($f)
+)
+
+#DEF(#CROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s)-$01)
+  #LET(r=$s*$08)
+  #LET(y=$04*($08-({height}%$08)))
+  #LET(w=$04*$s*$08)
+  #LET(h=$04*{height})
+  #UDGARRAY($s,$c,4,$s,0,2)(($a)-({e})-$01-({r})){$00,{y},{w},{h}}($f)
+)
+
+#DEF(#PICTURE(addr,attr=$47)(fname)
+  #LET(width=#PEEK($addr))
+  #LET(height=#PEEK($addr+$01))
+  #IF({height}%$08)(
+    #CROP($addr+$02,{width},$attr)($fname),
+    #NOCROP($addr+$02,{width},$attr)($fname)
+  )
+)
+
+#DEF(#PICTUREDATA()(fname)
+  #LET(width=#PEEK(#PC-$02))
+  #LET(height=#PEEK(#PC-$01))
+  #IF({height}%$08)(
+    #CROP(#PC,{width},$47)($fname),
+    #NOCROP(#PC,{width},$47)($fname)
+  )
+)
+
+#DEF(#MASKED(a,w,h,c)(f)
+  #PUSHS
+  #LET(s=$w*$02)
+  #LET(e=$a+$01+(((($h+$07)/$08)-$01)*$10*$w)+($02*($w-$01)))
+  #FOR($00,($w*$h-$01))||i|#POKES(($a+$02*i),(#PEEK($a+$02*i)^$FF))||
+  #UDGARRAY$w,attr=$c,scale=4,mask=2(($a+$01)-({e})-$02-($10*$w),($c,{s}):($a)-({e}-$01)-$02-($10*$w)){$00,$00,($w*$20),($h*$04)}($f)
+  #POPS
+)
+
+#DEF(#SPRITE(addr,attr=$47)(fname)
+  #LET(width=#PEEK($addr))
+  #LET(height=#PEEK($addr+$01))
+  #MASKED($addr+$02,{width},{height},$attr)($fname)
+)
+
+#DEF(#SPRITEDATA()(fname)
+  #LET(width=#PEEK(#PC-$02))
+  #LET(height=#PEEK(#PC-$01))
+  #MASKED(#PC,{width},{height},$47)($fname)
+)
+
+#DEF(#TILEDATA(h)(fname) #MASKED(#PC,$02,$h,$47)($fname))
+
+#DEF(#TILE(addr,h,attr=$47)(fname) #MASKED($addr+$01,$02,$h,$attr)($fname))

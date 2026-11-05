@@ -8,15 +8,16 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;sabrewulfGraphics.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/sabrewulf
 
 [Game]
 Game=Sabre Wulf
-Logo=#SCR1,4,0,24,15,$4000,$5800(/images/logo)
+Logo=#SCR$01,$04,$00,$18,$0F,$4000,$5800(/images/logo)
 Copyright=&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/sabrewulf/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;sabrewulf.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
@@ -32,10 +33,11 @@ Graphics
 DataTables
 Reference
 
-[Index:Graphics:Graphics]
+[Index:Graphics:Graphics And Sounds]
 Backgrounds
 Graphics
 Sprites
+Sound
 
 [Index:Reference:Reference]
 Changelog
@@ -47,12 +49,14 @@ Credits
 Backgrounds=[Backgrounds]
 Graphics=[Graphics]
 Sprites=[Sprites]
+Sound=[Sound]
 
 [Paths]
 Credits=reference/credits.html
 Backgrounds=graphics/backgrounds.html
 Graphics=graphics/graphics.html
 Sprites=graphics/sprites.html
+Sound=sound/sounds.html
 
 [Page:Backgrounds]
 SectionPrefix=Backgrounds
@@ -62,6 +66,9 @@ SectionPrefix=Graphics
 
 [Page:Sprites]
 SectionPrefix=Sprites
+
+[Page:Sound]
+SectionPrefix=Audio
 
 [Page:Credits]
 PageContent=#INCLUDE(Credits)
@@ -108,7 +115,7 @@ LIST#
   #UDGARRAY($width,scale=4,step=$width,mask=1,flip=$flip)($addr-($addr + ($height * $width) - $width)-$01-($width * $08))[$attr-($attr + $awidth * $aheight)]{$00, $04 * ($08 - ($aheight % $08)), $04 * $awidth * $08, $04 * $aheight}($fname)
 )
 
-#DEF(#GRAPHIC(id,base=$BF84,attributes=0)(fname)
+#DEF(#GRAPHIC(id,base=$BF84,attr=$07,attributes=0)(fname)
   #LET(offset=$id * $02)
   #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
   #LET(width=#PEEK({addr}))
@@ -126,8 +133,8 @@ LIST#
     #POPS
   |
     #IF({height} % $08)(
-      #CROP({addr} + $02, {width}, {height}, $07)($fname),
-      #NOCROP({addr} + $02, {width}, {height}, $07)($fname)
+      #CROP({addr} + $02, {width}, {height}, $attr)($fname),
+      #NOCROP({addr} + $02, {width}, {height}, $attr)($fname)
     )
   ||
 )
@@ -148,19 +155,20 @@ LIST#
   #POPS
 )
 
-#DEF(#SPRITE(id,base=$BF84)(fname)
+#DEF(#SPRITE(id,base=$BF84,attr=$07)(fname)
   #LET(offset=$id * $02)
   #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
-  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+  #LET(width=#PEEK({addr}))
+  #LET(height=#PEEK({addr} + $01))
+  #IF({height} % $08)(
+    #CROP({addr} + $02, {width}, {height}, $attr)($fname),
+    #NOCROP({addr} + $02, {width}, {height}, $attr)($fname)
+  )
+)
 
 #DEF(#ROOM(base,scale=$02)(fname)
   #PUSHS
-  #FOR($4000,$57FF)||n|
-    #POKES(n, $00)
-  ||
-  #FOR($5800,$5B7F)||n|
-    #POKES(n, $47)
-  ||
+  #SIM(clear=1)
   #SCR$scale(*room-background)
   #LET(data=$base)
   #WHILE(#PEEK({data})>$00)(
@@ -238,10 +246,10 @@ LIST#
     57:"Tribesman: Left Frame 2",
     58:"Tribesman: Left Frame 3",
     59:"Tribesman: Left Frame 2",
-    60:"Tribesman: Left Frame 4",
-    61:"Tribesman: Right Frame 1",
-    62:"Tribesman: Right Frame 2",
-    63:"Tribesman: Right Frame 1",
+    60:"Tribesman: Right Frame 1",
+    61:"Tribesman: Right Frame 2",
+    62:"Tribesman: Right Frame 3",
+    63:"Tribesman: Right Frame 2",
     64:"Sabreman: Flying Left",
     65:"Sabreman: Sitting Left",
     66:"Sabreman: Dead Left",

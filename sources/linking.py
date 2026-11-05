@@ -20,6 +20,14 @@ class UltimateHtmlWriter(HtmlWriter):
 	def init(self):
 		self._type = 'asm' if self.base == 16 else 'dec/asm'
 
+	def expand_alieneight(self, text, index, cwd):
+		# #ALIENEIGHTaddress[#anchor][(link text)]
+		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
+		if not link_text:
+			link_text = "Alien 8"
+		href = self._asm_relpath(cwd, address, code_id, True)
+		return end, self.format_link(f"/ultimate/alien8/{self._type}/{href}", link_text)
+
 	def expand_aticatac(self, text, index, cwd):
 		# #ATICATACaddress[#anchor][(link text)]
 		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
@@ -28,6 +36,14 @@ class UltimateHtmlWriter(HtmlWriter):
 		href = self._asm_relpath(cwd, address, code_id, True)
 		return end, self.format_link(f"/ultimate/aticatac/{self._type}/{href}", link_text)
 
+	def expand_bubbler(self, text, index, cwd):
+		# #BUBBLERaddress[#anchor][(link text)]
+		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
+		if not link_text:
+			link_text = "Bubbler"
+		href = self._asm_relpath(cwd, address, code_id, True)
+		return end, self.format_link(f"/ultimate/bubbler/{self._type}/{href}", link_text)
+
 	def expand_cookie(self, text, index, cwd):
 		# #COOKIEaddress[#anchor][(link text)]
 		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
@@ -35,6 +51,22 @@ class UltimateHtmlWriter(HtmlWriter):
 			link_text = "Cookie"
 		href = self._asm_relpath(cwd, address, code_id, True)
 		return end, self.format_link(f"/ultimate/cookie/{self._type}/{href}", link_text)
+
+	def expand_cyberun(self, text, index, cwd):
+		# #CYBERUNaddress[#anchor][(link text)]
+		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
+		if not link_text:
+			link_text = "Cyberun"
+		href = self._asm_relpath(cwd, address, code_id, True)
+		return end, self.format_link(f"/ultimate/cyberun/{self._type}/{href}", link_text)
+
+	def expand_gunfright(self, text, index, cwd):
+		# #GUNFRIGHTaddress[#anchor][(link text)]
+		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
+		if not link_text:
+			link_text = "Gunfright"
+		href = self._asm_relpath(cwd, address, code_id, True)
+		return end, self.format_link(f"/ultimate/gunfright/{self._type}/{href}", link_text)
 
 	def expand_jetpac(self, text, index, cwd):
 		# #JETPACaddress[#anchor][(link text)]
@@ -59,6 +91,30 @@ class UltimateHtmlWriter(HtmlWriter):
 			link_text = "Lunar Jetman"
 		href = self._asm_relpath(cwd, address, code_id, True)
 		return end, self.format_link(f"/ultimate/lunarjetman/{self._type}/{href}", link_text)
+
+	def expand_martianoids(self, text, index, cwd):
+		# #MARTIANOIDSaddress[#anchor][(link text)]
+		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
+		if not link_text:
+			link_text = "Martianoids"
+		href = self._asm_relpath(cwd, address, code_id, True)
+		return end, self.format_link(f"/ultimate/martianoids/{self._type}/{href}", link_text)
+
+	def expand_nightshade(self, text, index, cwd):
+		# #NIGHTSHADEaddress[#anchor][(link text)]
+		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
+		if not link_text:
+			link_text = "Nightshade"
+		href = self._asm_relpath(cwd, address, code_id, True)
+		return end, self.format_link(f"/ultimate/nightshade/{self._type}/{href}", link_text)
+
+	def expand_pentagram(self, text, index, cwd):
+		# #PENTAGRAMaddress[#anchor][(link text)]
+		end, addr_str, address, code_id, anchor, link_text = parse_r(self.fields, text, index)
+		if not link_text:
+			link_text = "Pentagram"
+		href = self._asm_relpath(cwd, address, code_id, True)
+		return end, self.format_link(f"/ultimate/pentagram/{self._type}/{href}", link_text)
 
 	def expand_pssst(self, text, index, cwd):
 		# #PSSSTaddress[#anchor][(link text)]

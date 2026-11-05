@@ -1,5 +1,6 @@
 @org=$4000
 @start=$5B80
+@expand=#DEF(#POKE()(anchor,text) #LINK(Pokes#$anchor)($text))
 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
@@ -230,7 +231,7 @@ b$4000 DEFB $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,
 
 i$5B00
 
-; Game entry point
+; Game Entry Point
 @label=GameEntry
 c$5B80 LD HL,$6004   ; {Moves #N$2000 bytes from #N$6004 to #N$6000.
  $5B83 LD DE,$6000   ;
@@ -241,7 +242,9 @@ c$5B80 LD HL,$6004   ; {Moves #N$2000 bytes from #N$6004 to #N$6000.
 ; #LIST
 ; { #COOKIE$5B80 }
 ; { #PSSST$5B80 }
+; { #SABREWULF$6000 }
 ; { #TRANZAM$5B80 }
+; { #UNDERWURLDE$67F2 }
 ; LIST#
 ; .
 ; Later Ultimate games use more advanced decryption mechanisms;
@@ -262,6 +265,8 @@ g$5CF0 DEFB $31,$0E,$7D
 ; { #COOKIE$5F09 }
 ; { #LUNARJETMAN$5E06 }
 ; { #PSSST$5E00 }
+; { #SABREWULF$B304 }
+; { #TRANZAM$5E49 }
 ; LIST#
 
 ; Game Options
@@ -288,6 +293,7 @@ g$5CF3 DEFB $4C
 ; { #COOKIE$5F0C }
 ; { #LUNARJETMAN$5E00 }
 ; { #PSSST$5E03 }
+; { #UNDERWURLDE$8ED5 }
 ; LIST#
 
 ; 1UP Score
@@ -383,6 +389,10 @@ g$5D08 DEFB $CC,$2C,$33,$0E,$00,$00,$03,$00 ; Laser Beam #1.
  $5D18 DEFB $CC,$CC,$CC,$2C,$34,$0E,$00,$00 ; Laser Beam #3.
 @label=Laser_Parameter_4
  $5D20 DEFB $04,$00,$00,$3A,$D7,$2E,$31,$0E ; Laser Beam #4.
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$6000 }
+; LIST#
 
 ; Explosion Sound Parameters
 ;
@@ -566,6 +576,10 @@ g$5DCB DEFB $00
 ;       loops around after reaching #N$FFFF.
 @label=GameTimer
 g$5DCC DEFW $0000
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$5E42 }
+; LIST#
 
 ; Random Number
 ;
@@ -574,6 +588,10 @@ g$5DCC DEFW $0000
 ; the current #REGr.
 @label=Random_Number
 g$5DCE DEFB $00
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$5E40 }
+; LIST#
 
 ; Actor Screen Position
 @label=ActorScreenPos
@@ -767,6 +785,10 @@ t$6040 DEFM $47                                      ; {"© 1983 A.C.G. ALL
 t$6061 DEFM "COPYRIGHT 1983 A.C.G. ALL RIGHTS RESERVED" ; "COPYRIGHT 1983
                                                         ; A.C.G. ALL RIGHTS
                                                         ; RESERVED".
+; View the equivalent code in;
+; #LIST
+; { #UNDERWURLDE$9174 }
+; LIST#
 
 ; Create Game Window
 ;
@@ -795,9 +817,9 @@ c$608A XOR A         ; {Set the border to #INK$00.
 ; #LIST
 ; { #ATICATAC$80AA }
 ; { #COOKIE$5FB7 }
-; { #LUNARJETMAN$0000 }
+; { #LUNARJETMAN$84D8 }
 ; { #PSSST$5F53 }
-; { #TRANZAM$0000 }
+; { #TRANZAM$68A0 }
 ; LIST#
 
 ; Initialise New Level
@@ -820,6 +842,10 @@ c$60A9 LD A,($5DF0)  ; #REGa=#R$5DF0.
  $60C6 LD A,($5C78)  ; #REGa=#SKOOLKID$5C78(FRAMES).
  $60C9 LD ($5DD4),A  ; Write #REGa to #R$5DD4.
  $60CC RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$A826 }
+; LIST#
 
 ; Reset Rocket
 ;
@@ -929,14 +955,16 @@ c$616A LD HL,$5DF0   ; #REGhl=#R$5DF0.
 ; View the equivalent code in;
 ; #LIST
 ; { #COOKIE$6416 }
-; { #LUNARJETMAN$0000 }
+; { #LUNARJETMAN$A880 }
 ; { #PSSST$613B }
+; { #SABREWULF$B235 }
 ; LIST#
 
 ; Game Over P1 Message
 @label=Message_GameOverP1
-t$6187 DEFM $47                         ; {"GAME OVER PLAYER 1" (#N(#PEEK(#PC))
- $6188 DEFM "GAME OVER PLAYER ","1"+$80 ; is the attribute).}
+t$6187 DEFM $47                         ; {"GAME OVER PLAYER 1"
+ $6188 DEFM "GAME OVER PLAYER ","1"+$80 ; (#COLOUR(#PEEK(#PC)) is the
+                                        ; attribute).}
 
 ; Player Initialisation
 ;
@@ -953,6 +981,7 @@ c$619A LD HL,$6010   ; #REGhl Source address: #R$6010
  $61AC JR Z,$61B0    ; }
  $61AE ADD A,$7F     ; {Add $7F to #REGa and update #R$5DD7 with the result
 *$61B0 LD ($5DD7),A  ; }
+; See #POKE(infinite_lives,Infinite lives).
  $61B3 LD A,($5DF1)  ; {Decrease #R$5DF1 by 1
  $61B6 DEC A         ;
  $61B7 LD ($5DF1),A  ; }
@@ -1005,6 +1034,7 @@ c$61E5 LD A,($5C79)  ; #REGa=#SKOOLKID$5C78(FRAMES)+#N$01.
 ; { #COOKIE$5F00 }
 ; { #LUNARJETMAN$8000 }
 ; { #PSSST$61C6 }
+; { #SABREWULF$995A }
 ; { #TRANZAM$5F00 }
 ; LIST#
 
@@ -1040,28 +1070,28 @@ c$61EB LD HL,$5CF0   ; {Write #N$00 to #N$0A bytes from #R$5CF0 to #N$5CFA.
                      ; TABLE#}
  $620E CPL           ; Flip the bits.
 ; Handle 1UP selection.
- $620F BIT 0,A       ; Has key "1" been pressed? ("1 PLAYER GAME").
- $6211 JR Z,$6215    ; If not jump to #R$6215.
+ $620F BIT 0,A       ; {Jump to #R$6215 if key "1" has not been pressed ("1
+ $6211 JR Z,$6215    ; PLAYER GAME").}
  $6213 RES 0,D       ; Set player count = 1.
 ; Handle 2UP selection.
 @label=GameSelect_CheckP2
-*$6215 BIT 1,A       ; Has key "2" been pressed? ("2 PLAYER GAME").
- $6217 JR Z,$621B    ; If not jump to #R$621B.
+*$6215 BIT 1,A       ; {Jump to #R$621B if key "2" has not been pressed ("2
+ $6217 JR Z,$621B    ; PLAYER GAME").}
  $6219 SET 0,D       ; Set player count = 2.
 ; Handle Keyboard selection.
 @label=GameSelect_CheckKeyboard
-*$621B BIT 2,A       ; Has key "3" been pressed? ("3 KEYBOARD").
- $621D JR Z,$6221    ; If not jump to #R$6221.
+*$621B BIT 2,A       ; {Jump to #R$6221 if key "3" has not been pressed ("3
+ $621D JR Z,$6221    ; KEYBOARD").}
  $621F RES 1,D       ; Set control = "keyboard".
 ; Handle Kempston Joystick selection.
 @label=GameSelect_CheckKempston
-*$6221 BIT 3,A       ; Has key "4" been pressed? ("4 KEMPSTON JOYSTICK").
- $6223 JR Z,$6227    ; If not jump to #R$6227.
+*$6221 BIT 3,A       ; {Jump to #R$6227 if key "4" has not been pressed ("4 KEMPSTON
+ $6223 JR Z,$6227    ; JOYSTICK").}
  $6225 SET 1,D       ; Set control = "joystick".
 ; Handle starting a new game.
 @label=GameSelect_CheckStart
-*$6227 BIT 4,A       ; Has key "5" been pressed? ("5 START GAME").
- $6229 JP NZ,$6333   ; If so, jump to #R$6333.
+*$6227 BIT 4,A       ; {Jump to #R$6333 if key "5" has been pressed ("5 START
+ $6229 JP NZ,$6333   ; GAME").}
 ; Handle flashing each selection.
  $622C LD A,D        ;
  $622D LD ($5CF3),A  ;
@@ -1096,6 +1126,7 @@ c$61EB LD HL,$5CF0   ; {Write #N$00 to #N$0A bytes from #R$5CF0 to #N$5CFA.
 ; { #COOKIE$6298 }
 ; { #LUNARJETMAN$800A }
 ; { #PSSST$61CD }
+; { #SABREWULF$9960 }
 ; { #TRANZAM$5F07 }
 ; LIST#
 
@@ -1138,7 +1169,9 @@ c$6260 LD DE,$628D   ; #REGde=#R$628D.
 ; { #COOKIE$6332 }
 ; { #LUNARJETMAN$80D1 }
 ; { #PSSST$6250 }
+; { #SABREWULF$B473 }
 ; { #TRANZAM$5F6C }
+; { #UNDERWURLDE$90E4 }
 ; LIST#
 
 ; Game Select Attribute Table
@@ -1164,7 +1197,9 @@ b$628D DEFB $47      ; {#TABLE(default,centre)
 ; { #COOKIE$635E }
 ; { #LUNARJETMAN$810E }
 ; { #PSSST$627C }
+; { #SABREWULF$B498 }
 ; { #TRANZAM$5FA7 }
+; { #UNDERWURLDE$9119 }
 ; LIST#
 
 ; Game Select Y Position Table
@@ -1184,7 +1219,9 @@ b$6293 DEFB $20      ; {#TABLE(default,centre,centre)
 ; { #COOKIE$6365 }
 ; { #LUNARJETMAN$8115 }
 ; { #PSSST$6282 }
+; { #SABREWULF$B4A0 }
 ; { #TRANZAM$5FAC }
+; { #UNDERWURLDE$911F }
 ; LIST#
 
 ; Game Selection Title text
@@ -1201,13 +1238,15 @@ t$6299 DEFM "JETPAC GAME SELECTIO","N"+$80 ; "JETPAC GAME SELECTION".
 ; { #COOKIE$636C }
 ; { #LUNARJETMAN$811C }
 ; { #PSSST$6288 }
+; { #SABREWULF$B4B0 }
 ; { #TRANZAM$5FB1 }
+; { #UNDERWURLDE$9125 }
 ; LIST#
 
-; Print Menu Item
+; Write Menu Line
 ;
 ; Used by the routine at #R$6260.
-@label=PrintMenuItem
+@label=MenuWriteText
 c$62FF PUSH HL       ; Store #REGhl on the stack
  $6300 CALL $7308    ;
  $6303 LD A,($5DD6)  ; #REGa=#R$5DD6
@@ -1217,6 +1256,14 @@ c$62FF PUSH HL       ; Store #REGhl on the stack
  $6308 POP HL        ; Restore #REGhl
  $6309 CALL $720E    ;
  $630C JP $7178      ; Jump to #R$7178
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$63E0 }
+; { #LUNARJETMAN$81AB }
+; { #SABREWULF$B52D }
+; { #TRANZAM$5F97 }
+; { #UNDERWURLDE$91B0 }
+; LIST#
 
 ; Reset Players
 ;
@@ -1226,12 +1273,14 @@ c$630F LD B,$02      ; #REGb=$02
 *$6311 PUSH BC       ; Stores #REGbc on the stack
  $6312 XOR A         ; Clear #REGa (sets to $00)
  $6313 LD ($5DF0),A  ; #R$5DF0=#REGa
+; See #POKE(starting_lives_1up,Starting lives 1UP).
  $6316 LD A,$04      ; #REGa=Number of lives for 1UP on starting a game
  $6318 LD ($5DF1),A  ; Updates #R$5DF1 with the number of starting lives
  $631B CALL $60CD    ;
  $631E CALL $616A    ;
  $6321 POP BC        ;
  $6322 DJNZ $6311    ; Decrease #REGb by one, jump to #R$6311 if not zero
+; See #POKE(starting_lives_2up,Starting lives 2UP).
  $6324 LD A,$05      ; #REGa=Number of lives for 2UP on starting a game
  $6326 LD ($5DF9),A  ; Updates #R$5DF9 with the number of starting lives
  $6329 LD A,($5CF3)  ; #REGa=#R$5CF3
@@ -1283,7 +1332,7 @@ c$6333 LD HL,$5CF4   ; #REGhl=#R$5CF4
 ; { #ATICATAC$7D9A }
 ; { #COOKIE$6428 }
 ; { #LUNARJETMAN$81BB }
-; { #PSSST$631E }
+; { #PSSST$632D }
 ; { #TRANZAM$5FEF }
 ; LIST#
 
@@ -1308,10 +1357,10 @@ w$6374 DEFW $691B
  $6394 DEFW $6FFC
  $6396 DEFW $6A6C
 
-; Routine at 6398
+; Check High Score
 ;
 ; Used by the routine at #R$60DD.
-@label=NewHighScore
+@label=CheckHighScore
 c$6398 LD HL,($5CF4) ;
  $639B LD DE,($5CF7) ;
  $639F LD A,L        ;
@@ -1347,6 +1396,11 @@ c$6398 LD HL,($5CF4) ;
  $63C7 DJNZ $63BF    ; Decrease #REGb by one, jump to #R$63BF if not zero
 *$63C9 POP HL        ; Fetch #REGhl off the stack (to clear it)
  $63CA RET           ; Return
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$73D3 }
+; { #TRANZAM$605B }
+; LIST#
 
 ; Update Highscore
 ;
@@ -1587,9 +1641,11 @@ c$651F CALL $7327      ;
 *$65C4 CALL $72A5      ;
  $65C7 LD (IX+$00),$00 ;
  $65CB JP $67FD        ;
+; See #POKE(fuel_drops_immediately,Fuel drops immediately).
 *$65CE LD A,(IX+$02)   ; #REGa=(#REGix+$02) (fuel Y co-ordinate)
  $65D1 CP $B0          ; Is #REGa=$B0? (has the fuel reached the ship yet?)
  $65D3 JP C,$653F      ; If not, jump back to #R$653F
+; See #POKE(only_need_one_fuel_cell,Only need one fuel cell).
  $65D6 LD A,($5D35)    ; {Fuel pod deposited correctly; increase #R$5D35 by one
  $65D9 INC A           ;
  $65DA LD ($5D35),A    ; }
@@ -1928,7 +1984,7 @@ w$67C3 DEFW $7CCE    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) *
 ; { #COOKIE$7702 }
 ; { #LUNARJETMAN$BAC0 }
 ; { #PSSST$761A }
-; { #TRANZAM$0000 }
+; { #TRANZAM$7F06 }
 ; LIST#
 
 ; Sounds: Thrusters
@@ -1993,6 +2049,11 @@ c$680D LD A,$10      ; {#REGa=#N$10 (speaker on = bit 4).
  $681A DEC C         ;
  $681B JR NZ,$680D   ;
  $681D RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$68B1 }
+; { #LUNARJETMAN$B8DA }
+; LIST#
 
 ; Sounds: Laser Beam
 ;
@@ -2014,6 +2075,10 @@ c$681E LD C,$08      ;
  $682F CP $38        ;
  $6831 JR NZ,$6820   ;
  $6833 RET           ; Return.
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$B8A8 }
+; LIST#
 
 ; Set Explosion Sound Defaults
 ;
@@ -2066,6 +2131,10 @@ c$685F LD A,$10      ;
  $686C DEC C         ;
  $686D JR NZ,$685F   ;
  $686F RET           ;
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$B8FF }
+; LIST#
 
 ; End Sound
 ;
@@ -2073,6 +2142,10 @@ c$685F LD A,$10      ;
 @label=EndSound
 c$6870 LD (IX+$00),$00 ; Shut off sound by setting frequency to zero
  $6874 RET             ; Return.
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$B94B }
+; LIST#
 
 ; Do explosion after object death
 ;
@@ -2120,7 +2193,7 @@ c$689F LD (IX+$06),A   ;
 c$68AB LD (IX+$05),$01 ;
  $68AF JR $689F        ;
 
-; Animate explosion
+; Animate Explosion
 @label=AnimateExplosion
 c$68B1 LD HL,$5DCB     ;
  $68B4 INC (HL)        ;
@@ -2189,7 +2262,7 @@ w$690F DEFW $7C32    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
 ; { #COOKIE$7702 }
 ; { #LUNARJETMAN$BAC0 }
 ; { #PSSST$761A }
-; { #TRANZAM$0000 }
+; { #TRANZAM$7F06 }
 ; LIST#
 
 ; Limit Frame Rate
@@ -2293,12 +2366,13 @@ w$6945 DEFW $7B9E    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
 ; { #COOKIE$7702 }
 ; { #LUNARJETMAN$BAC0 }
 ; { #PSSST$761A }
-; { #TRANZAM$0000 }
+; { #TRANZAM$7F06 }
 ; LIST#
 
-; Routine at 6965
+; Frame Update
 ;
 ; Used by the routine at #R$6333.
+@label=FrameUpdate
 c$6965 DI            ;
  $6966 LD A,($5C78)  ;
  $6969 LD ($5DD4),A  ;
@@ -2427,6 +2501,10 @@ c$6965 DI            ;
  $6A69 DEC B         ;
  $6A6A INC BC        ;
  $6A6B RRCA          ;
+; View the equivalent code in;
+; #LIST
+; { #COOKIE$7160 }
+; LIST#
 
 ; Routine at 6A6C
 c$6A6C LD HL,$5DCB    ;
@@ -3114,82 +3192,91 @@ c$6DD3 CALL $7327     ;
 ;
 ; Only handle the laser beam on every 4th frame.
 @label=Handler_LaserBeam
-c$6F91 LD A,($5C78)         ; #REGa=#SKOOLKID$5C78(FRAMES).
- $6F94 AND %00000011        ; Keep only bits 0-1.
- $6F96 RET NZ               ; Return if #SKOOLKID$5C78(FRAMES) is non-zero.
+c$6F91 LD A,($5C78)  ; #REGa=#SKOOLKID$5C78(FRAMES).
+ $6F94 AND %00000011 ; Keep only bits 0-1.
+ $6F96 RET NZ        ; Return if #SKOOLKID$5C78(FRAMES) is non-zero.
 ; Search for a "free" laser beam slot.
- $6F97 LD HL,$5D08          ; #REGhl=#R$5D08.
- $6F9A LD DE,$0008          ; #REGde=#N($0008, $04, $04) (each slot is #N$08
-                            ; bytes).
- $6F9D LD B,$04             ; #REGb=#N$04 (counter; there are 4 "slots").
+ $6F97 LD HL,$5D08   ; #REGhl=#R$5D08.
+ $6F9A LD DE,$0008   ; #REGde=#N($0008, $04, $04) (each slot is #N$08 bytes).
+ $6F9D LD B,$04      ; #REGb=#N$04 (counter; there are 4 "slots").
 @label=LaserBeam_Slot
-*$6F9F LD A,(HL)            ; {If the slot is not in use, jump to #R$6FA7.
- $6FA0 AND A                ;
- $6FA1 JR Z,$6FA7           ; }
- $6FA3 ADD HL,DE            ; #REGhl=#REGhl+#REGde (move onto the next slot).
- $6FA4 DJNZ $6F9F           ; Decrease counter by one and loop back to #R$6F9F
-                            ; until counter is zero.
+*$6F9F LD A,(HL)     ; {If the slot is not in use, jump to #R$6FA7.
+ $6FA0 AND A         ;
+ $6FA1 JR Z,$6FA7    ; }
+ $6FA3 ADD HL,DE     ; #REGhl=#REGhl+#REGde (move onto the next slot).
+ $6FA4 DJNZ $6F9F    ; Decrease counter by one and loop back to #R$6F9F until
+                     ; counter is zero.
 ; All laser beam slots are in use so just return...
- $6FA6 RET                  ; Return.
+ $6FA6 RET           ; Return.
 ; Initialise a new laser beam.
 @label=Initialise_LaserBeam
-*$6FA7 LD (HL),$10          ; Mark the laser beam slot as "in-use".
- $6FA9 INC HL               ; #REGhl=Laser beam Y position.
- $6FAA LD DE,$5D00          ; {#REGb=#R$5D00.
- $6FAD LD A,(DE)            ;
- $6FAE LD B,A               ; }
- $6FAF INC DE               ; {#REGa=#R$5D01.
- $6FB0 LD A,(DE)            ; }
- $6FB1 AND %11111000        ; Keep only bits 3-7.
- $6FB3 OR %00000101         ; Set bits 0 and 2.
- $6FB5 LD C,A               ;
- $6FB6 BIT 6,B              ;
- $6FB8 JR Z,$6FED           ;
- $6FBA SUB $08              ;
- $6FBC LD C,A               ;
+*$6FA7 LD (HL),$10   ; Mark the laser beam slot as "in-use".
+ $6FA9 INC HL        ; #REGhl=Laser beam Y position.
+ $6FAA LD DE,$5D00   ; {#REGb=#R$5D00.
+ $6FAD LD A,(DE)     ;
+ $6FAE LD B,A        ; }
+ $6FAF INC DE        ; {#REGa=#R$5D01.
+ $6FB0 LD A,(DE)     ; }
+ $6FB1 AND %11111000 ; Keep only bits 3-7.
+ $6FB3 OR %00000101  ; Set bits 0 and 2.
+ $6FB5 LD C,A        ;
+ $6FB6 BIT 6,B       ;
+ $6FB8 JR Z,$6FED    ;
+ $6FBA SUB $08       ;
+ $6FBC LD C,A        ;
 @label=LaserBeam_Left
-*$6FBD INC DE               ;
- $6FBE LD A,(DE)            ;
- $6FBF SUB $0D              ;
- $6FC1 LD (HL),A            ;
- $6FC2 INC HL               ;
- $6FC3 LD B,$03             ;
- $6FC5 LD (HL),C            ;
- $6FC6 LD A,C               ;
- $6FC7 AND $FB              ;
-*$6FC9 INC HL               ;
- $6FCA LD (HL),A            ;
- $6FCB DJNZ $6FC9           ;
- $6FCD INC HL               ;
- $6FCE LD A,($5DCE)         ; #REGa=#R$5DCE.
- $6FD1 AND %00111000        ; Keep only bits 3-5.
- $6FD3 OR %10000100         ; Set bits 2 and 7.
- $6FD5 LD (HL),A            ;
- $6FD6 INC HL               ;
- $6FD7 EX DE,HL             ;
- $6FD8 LD HL,$6FE9          ; #REGhl=#R$6FE9.
- $6FDB LD A,($5DCE)         ; #REGa=#R$5DCE.
- $6FDE AND %00000011        ; Keep only bits 0-1.
- $6FE0 LD C,A               ;
- $6FE1 LD B,$00             ;
- $6FE3 ADD HL,BC            ;
- $6FE4 LD A,(HL)            ;
- $6FE5 LD (DE),A            ;
- $6FE6 JP $681E             ; Jump to #R$681E.
+*$6FBD INC DE        ;
+ $6FBE LD A,(DE)     ;
+ $6FBF SUB $0D       ;
+ $6FC1 LD (HL),A     ;
+ $6FC2 INC HL        ;
+ $6FC3 LD B,$03      ;
+ $6FC5 LD (HL),C     ;
+ $6FC6 LD A,C        ;
+ $6FC7 AND $FB       ;
+*$6FC9 INC HL        ;
+ $6FCA LD (HL),A     ;
+ $6FCB DJNZ $6FC9    ;
+ $6FCD INC HL        ;
+ $6FCE LD A,($5DCE)  ; #REGa=#R$5DCE.
+ $6FD1 AND %00111000 ; Keep only bits 3-5.
+ $6FD3 OR %10000100  ; Set bits 2 and 7.
+ $6FD5 LD (HL),A     ;
+ $6FD6 INC HL        ;
+ $6FD7 EX DE,HL      ;
+ $6FD8 LD HL,$6FE9   ; #REGhl=#R$6FE9.
+ $6FDB LD A,($5DCE)  ; #REGa=#R$5DCE.
+ $6FDE AND %00000011 ; Keep only bits 0-1.
+ $6FE0 LD C,A        ;
+ $6FE1 LD B,$00      ;
+ $6FE3 ADD HL,BC     ;
+ $6FE4 LD A,(HL)     ;
+ $6FE5 LD (DE),A     ;
+ $6FE6 JP $681E      ; Jump to #R$681E.
 ; All the attributes a laser beam can be.
 @label=LaserBeam_Attributes
- $6FE9 DEFB $47,$43,$43,$45 ;
+ $6FE9 DEFB $47      ; #COLOUR(#PEEK(#PC)).
+; All the attributes a laser beam can be.
+ $6FEA DEFB $43      ; #COLOUR(#PEEK(#PC)).
+; All the attributes a laser beam can be.
+ $6FEB DEFB $43      ; #COLOUR(#PEEK(#PC)).
+; All the attributes a laser beam can be.
+ $6FEC DEFB $45      ; #COLOUR(#PEEK(#PC)).
 ; Handle drawing the laser beam moving to the right.
 @label=LaserBeam_Right
-*$6FED LD A,(DE)            ; #REGa=Jetman X position.
- $6FEE AND %00000111        ; Keep only bits 0-2.
- $6FF0 LD A,C               ; #REGa=.
- $6FF1 JR Z,$6FF5           ;
- $6FF3 ADD A,$08            ;
-*$6FF5 ADD A,$10            ;
- $6FF7 AND %11111110        ; Keep only bits 1-7.
- $6FF9 LD C,A               ; Store the result in #REGc.
- $6FFA JR $6FBD             ; Jump to #R$6FBD.
+*$6FED LD A,(DE)     ; #REGa=Jetman X position.
+ $6FEE AND %00000111 ; Keep only bits 0-2.
+ $6FF0 LD A,C        ; #REGa=.
+ $6FF1 JR Z,$6FF5    ;
+ $6FF3 ADD A,$08     ;
+*$6FF5 ADD A,$10     ;
+ $6FF7 AND %11111110 ; Keep only bits 1-7.
+ $6FF9 LD C,A        ; Store the result in #REGc.
+ $6FFA JR $6FBD      ; Jump to #R$6FBD.
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$9DC0 }
+; LIST#
 
 ; Animate: Laser Beam
 @label=LaserBeam_Animate
@@ -3255,6 +3342,7 @@ c$6FFC LD D,(IX+$01)   ;
  $7067 BIT 2,A         ;
  $7069 JR NZ,$7086     ;
  $706B DEC (IX+$06)    ;
+; See #POKE(disable_firing,Disable firing).
  $706E LD A,(IX+$06)   ; #REGa=(IX+$06)
  $7071 AND $07         ;
  $7073 RET NZ          ;
@@ -3289,6 +3377,10 @@ c$6FFC LD D,(IX+$01)   ;
  $709F DEC E           ;
  $70A0 JP NZ,$704D     ;
  $70A3 RET             ;
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$9E2C }
+; LIST#
 
 ; Display Lives
 ;
@@ -3361,11 +3453,11 @@ c$70A4 LD HL,$0040    ; {Call #R$7308 with #N($0040, $04, $04) (screen buffer
  $70F7 JR $70E9       ; Jump to #R$70E9.
 ; View the equivalent code in;
 ; #LIST
-; { #ATICATAC$0000 }
 ; { #COOKIE$7378 }
 ; { #LUNARJETMAN$894F }
 ; { #PSSST$7325 }
-; { #TRANZAM$0000 }
+; { #SABREWULF$B7CD }
+; { #TRANZAM$687B }
 ; LIST#
 
 ; Add Points To Score
@@ -3398,9 +3490,13 @@ c$70F9 LD A,($5DD1)  ; {Evaluate #R$5DD1
  $711A JR NZ,$7124   ; Jump to #R$7124 if 2UP is active player
 ; View the equivalent code in;
 ; #LIST
+; { #ATICATAC$A19C }
 ; { #COOKIE$7415 }
+; { #LUNARJETMAN$899C }
 ; { #PSSST$737A }
+; { #SABREWULF$B5A9 }
 ; { #TRANZAM$6046 }
+; { #UNDERWURLDE$A045 }
 ; LIST#
 
 ; Print Scores
@@ -3449,9 +3545,11 @@ c$711C LD HL,$4021   ; #REGhl=#N$4021 (screen buffer address).
  $714B RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
+; { #ATICATAC$A1AE }
 ; { #COOKIE$7438 }
 ; { #LUNARJETMAN$89BF }
 ; { #PSSST$739D }
+; { #SABREWULF$B5CC }
 ; { #TRANZAM$6CB6 }
 ; LIST#
 
@@ -3504,16 +3602,20 @@ c$714C PUSH BC       ; {Stash #REGbc, #REGde and #REGhl on the stack.
 ; { #ATICATAC$A1D3 }
 ; { #COOKIE$7468 }
 ; { #LUNARJETMAN$89EF }
+; { #MARTIANOIDS$B5CB }
+; { #NIGHTSHADE$CB19 }
 ; { #PSSST$73CD }
+; { #SABREWULF$B589 }
 ; { #TRANZAM$6C96 }
+; { #UNDERWURLDE$98DF }
 ; LIST#
 
-; Print String
+; Print Colour String
 ;
 ; Used by the routines at #R$60DD, #R$6260 and #R$7192.
 ;
 ; DE Pointer to string data
-@label=PrintString
+@label=PrintStringColour
 c$716C PUSH HL       ; Stash #REGhl on the stack.
  $716D CALL $7308    ; Call #R$7308.
  $7170 LD A,(DE)     ; Fetch the attribute byte.
@@ -3550,9 +3652,11 @@ c$716C PUSH HL       ; Stash #REGhl on the stack.
 ; #LIST
 ; { #ATICATAC$A1F3 }
 ; { #COOKIE$7488 }
-; { #LUNARJETMAN$0000 }
+; { #LUNARJETMAN$8A11 }
 ; { #PSSST$73ED }
-; { #TRANZAM$0000 }
+; { #SABREWULF$B53D }
+; { #TRANZAM$6518 }
+; { #UNDERWURLDE$9C3C }
 ; LIST#
 
 ; Print Banner
@@ -3576,19 +3680,20 @@ c$7192 LD HL,$0018       ; #REGhl=#N($0018, 4, 4).
  $71AA JP $716C          ; Jump to #R$711C.
 ; Banner text data.
 @label=1UP_Text
- $71AD DEFM $47          ; {"1UP" (#N(#PEEK(#PC)) is the attribute).
+ $71AD DEFM $47          ; {"1UP" (#COLOUR(#PEEK(#PC)) is the attribute).
  $71AE DEFM "1U","P"+$80 ; }
 @label=2UP_Text
- $71B1 DEFM $47          ; {"2UP" (#N(#PEEK(#PC)) is the attribute).
+ $71B1 DEFM $47          ; {"2UP" (#COLOUR(#PEEK(#PC)) is the attribute).
  $71B2 DEFM "2U","P"+$80 ; }
 @label=HI_Text
- $71B5 DEFM $45          ; {"HI" (#N(#PEEK(#PC)) is the attribute).
+ $71B5 DEFM $45          ; {"HI" (#COLOUR(#PEEK(#PC)) is the attribute).
  $71B6 DEFM "H","I"+$80  ; }
 ; View the equivalent code in;
 ; #LIST
 ; { #COOKIE$74AE }
 ; { #LUNARJETMAN$8A37 }
 ; { #PSSST$7413 }
+; { #SABREWULF$B563 }
 ; LIST#
 
 ; Reset Screen Buffer
@@ -3602,10 +3707,16 @@ c$71B8 LD HL,$4000   ; #REGhl=#R$4000(screen buffer).
 *$71BD LD C,$00      ; #REGc=#N$00 (value to write).
 ; View the equivalent code in;
 ; #LIST
+; { #ALIENEIGHT$CE60 }
 ; { #ATICATAC$80B4 }
 ; { #COOKIE$74D4 }
+; { #CYBERUN$9A7E }
+; { #GUNFRIGHT$D6DB }
+; { #KNIGHTLORE$D544 }
 ; { #LUNARJETMAN$84AD }
+; { #NIGHTSHADE$E5A8 }
 ; { #PSSST$7439 }
+; { #SABREWULF$BB81 }
 ; { #TRANZAM$7211 }
 ; LIST#
 ; .
@@ -3633,6 +3744,7 @@ c$71BF LD (HL),C     ; Write #REGc to the target address.
 ; { #COOKIE$74DB }
 ; { #LUNARJETMAN$84B4 }
 ; { #PSSST$7440 }
+; { #SABREWULF$BB88 }
 ; { #TRANZAM$7218 }
 ; LIST#
 
@@ -3651,6 +3763,7 @@ c$71C6 LD HL,$5800   ; #REGhl=#R$5800(attribute buffer).
 ; { #COOKIE$74E2 }
 ; { #LUNARJETMAN$84BB }
 ; { #PSSST$7447 }
+; { #SABREWULF$BB8F }
 ; { #TRANZAM$7200 }
 ; LIST#
 
@@ -3703,6 +3816,10 @@ c$71CF EXX                     ; Switch to the shadow registers.
  $720A DEC C                   ; Decrement height counter.
  $720B JR NZ,$71E9             ; Repeat until all tiles have been coloured.
  $720D RET                     ; Return.
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$8733 }
+; LIST#
 
 ; Calculate Attribute Address
 ;
@@ -3740,7 +3857,9 @@ c$720E LD A,L        ; Horizontal co-ordinate.
 ; { #COOKIE$7534 }
 ; { #LUNARJETMAN$8506 }
 ; { #PSSST$748F }
+; { #SABREWULF$B8DD }
 ; { #TRANZAM$7097 }
+; { #UNDERWURLDE$ADE0 }
 ; LIST#
 
 ; Routine at 7224
@@ -3798,9 +3917,10 @@ c$725E PUSH DE       ;
  $7267 EXX           ;
  $7268 JR $7271      ;
 
-; Routine at 726A
+; Display Entity
 ;
 ; Used by the routines at #R$63DA, #R$651F, #R$6CF5, #R$6DD3 and #R$73D3.
+@label=DisplayEntity
 c$726A CALL $723C    ;
  $726D EXX           ;
  $726E CALL $7224    ;
@@ -3816,6 +3936,8 @@ c$726A CALL $723C    ;
  $7285 SUB C         ;
  $7286 LD ($5DC5),A  ;
  $7289 JP $773A      ;
+; The new sprite starts lower down the screen.
+@label=DisplayEntity_NewLower
 *$728C EXX           ;
  $728D NEG           ;
  $728F LD C,A        ;
@@ -3831,6 +3953,9 @@ c$726A CALL $723C    ;
 *$72A0 CALL $7227    ;
  $72A3 JR $72A8      ;
 ; This entry point is used by the routines at #R$651F, #R$6707 and #R$68B1.
+; .
+; Erases the previous sprite of an actor.
+@label=RemoveEntity
 *$72A5 CALL $7224    ;
 ; This entry point is used by the routine at #R$68B1.
 *$72A8 EXX           ;
@@ -3840,6 +3965,8 @@ c$726A CALL $723C    ;
  $72AE LD ($5DC3),A  ;
  $72B1 EXX           ;
  $72B2 JP $773A      ;
+; Draws the sprite of the actor at its current position.
+@label=DrawEntity
  $72B5 CALL $723C    ;
 *$72B8 EXX           ;
  $72B9 XOR A         ;
@@ -3875,6 +4002,15 @@ c$726A CALL $723C    ;
  $72E8 LD C,A        ;
  $72E9 LD A,(IX+$00) ;
  $72EC JR $72CA      ;
+; View the equivalent code in;
+; #LIST
+; { #ATICATAC$9FCA }
+; { #COOKIE$75CC }
+; { #PSSST$74EB }
+; { #SABREWULF$B9A9 }
+; { #TRANZAM$7101 }
+; { #UNDERWURLDE$96F7 }
+; LIST#
 
 ; Routine at 72EE
 ;
@@ -3936,7 +4072,9 @@ c$7308 LD A,L        ; #REGa=#REGl.
 ; { #COOKIE$76E3 }
 ; { #LUNARJETMAN$851E }
 ; { #PSSST$759A }
+; { #SABREWULF$B8AD }
 ; { #TRANZAM$6F10 }
+; { #UNDERWURLDE$ADF8 }
 ; LIST#
 
 ; Store Entity
@@ -3954,10 +4092,11 @@ c$7327 LD A,(IX+$01) ; {Copy actor X position to active actor X position.
 ; View the equivalent code in;
 ; #LIST
 ; { #ATICATAC$9FFB }
-; { #COOKIE$0000 }
-; { #LUNARJETMAN$0000 }
+; { #COOKIE$76D0 }
 ; { #PSSST$75B9 }
+; { #SABREWULF$BB0B }
 ; { #TRANZAM$71ED }
+; { #UNDERWURLDE$989F }
 ; LIST#
 
 ; Controls: Kempston Joystick
@@ -3971,11 +4110,11 @@ c$733A IN A,($1F)    ; #REGa=controls.
  $733D RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
-; { #ATICATAC$0000 }
-; { #COOKIE$0000 }
-; { #LUNARJETMAN$0000 }
+; { #COOKIE$6FB0 }
+; { #LUNARJETMAN$8F9B }
 ; { #PSSST$75CC }
-; { #TRANZAM$0000 }
+; { #SABREWULF$B0D9 }
+; { #TRANZAM$6188 }
 ; LIST#
 
 ; Input: Left/ Right
@@ -4111,8 +4250,8 @@ c$7393 LD A,($5CF3)  ; {If #R$5CF3 indicates the control method is via the
 ; { #TRANZAM$61E0 }
 ; LIST#
 
-; Game Play Starts
-@label=GamePlayStarts
+; Game Play Entry
+@label=GamePlayEntry
 c$73B2 LD HL,$5DD7   ;
  $73B5 LD A,(HL)     ;
  $73B6 AND A         ;
@@ -4128,6 +4267,11 @@ c$73B2 LD HL,$5DD7   ;
  $73CC JR $73D3      ;
 *$73CE LD HL,$00D8   ;
  $73D1 JR $73C9      ;
+; View the equivalent code in;
+; #LIST
+; { #PSSST$6DBA }
+; { #SABREWULF$AECF }
+; LIST#
 
 ; Jetman Fly
 ;
@@ -4580,7 +4724,7 @@ w$76FA DEFW $7796    ; Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) *
 ; { #COOKIE$7702 }
 ; { #LUNARJETMAN$BAC0 }
 ; { #PSSST$761A }
-; { #TRANZAM$0000 }
+; { #TRANZAM$7F06 }
 ; LIST#
 
 ; Data block at 771A
@@ -4676,6 +4820,10 @@ c$773A LD A,C        ;
 *$7790 LD ($5DC6),A  ;
  $7793 EXX           ;
  $7794 JR $773A      ;
+; View the equivalent code in;
+; #LIST
+; { #LUNARJETMAN$8A5C }
+; LIST#
 
 ; JetMan Graphics
 ;

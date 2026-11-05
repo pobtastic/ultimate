@@ -9,3 +9,17 @@ Nightshade.z80
 
 --tape-name "NIGHT.tzx"
 --sim-load-config accelerator=speedlock
+
+; The BASIC loader loads the screen to $4000, the (encrypted) game to $6000,
+; a 43-byte stub to $5B80 and the two FRAMES bytes that the game checks on
+; entry ($5C78 = $34, $5C79 = $63). The stub then decrypts the game (RLD in
+; place), copies it down to $5E00 and jumps there, and the simulation runs all
+; of that, so stopping at the start address leaves the game decrypted and at
+; its real addresses with nothing else to do here. The game proper begins at
+; $5E00 with DI and JP $BDFE.
+--start 24064
+
+; from tape block #3 to address 16384.
+;--ram load=3,$4000   ;  6912 bytes ; Loading SCREEN$
+;--ram load=5,$6000   ; 34816 bytes ; Game code (encrypted, moved to $5E00)
+;--ram load=7,$5B80   ;    43 bytes ; Decrypt/move stub

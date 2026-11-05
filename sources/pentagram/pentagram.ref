@@ -3,12 +3,13 @@
 ;
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @pentagram.t2s
-;   sna2skool.py -H -c sources/pentagram/pentagram.ctl Pentagram.z80 > sources/pentagram/pentagram.skool
+;   sna2skool.py -H -c sources/pentagram/pentagram.ctl Pentagram.z80 \
+;     > sources/pentagram/pentagram.skool
 ;   skool2html.py -H sources/pentagram/pentagram.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pentagramGraphics.ref;pokes.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/pentagram
 
@@ -17,8 +18,95 @@ Game=Pentagram
 Logo=#SCR$01,$06,$04,$14,$10,$4000,$5800(/images/logo)
 Copyright=&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/pentagram/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;pentagram.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+Credits
+
+[Links]
+Graphics=[Graphics]
+Sound=[Sound]
+
+[Paths]
+Credits=reference/credits.html
+Graphics=graphics/graphics.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+  { tcdev, for the annotated disassembly of Knight Lore that Michael converted
+    to SkoolKit }
+LIST#
+  This game shares a lot of functionality with Knight Lore, hence that
+  disassembly was a great help.
+</div>
+
+[Expand]
+; Draws a sprite of the given size, which is stored as a mask byte and then a
+; graphic byte for each row of each character, with the first row at the bottom.
+; A set bit in the mask means that the sprite covers the background, so the
+; masks are copied inverted into an unused page of memory for SkoolKit.
+#DEF(#MASKED(addr,cols,rows,attr)(fname)
+  #LET(pages=($rows+$07)/$08)
+  #PUSHS
+  #FOR($00,$cols*$rows-$01)||n|#POKES($E800+n,$FF-#PEEK($addr+n*$02))||
+  #UDGARRAY($cols,attr=$attr,scale=4,step=$cols*$02,flip=2,mask=2)((($addr)+$01)-(($addr)+{pages}*$10*$cols)-$02-($cols*$10):($E800)-($E800+{pages}*$08*$cols-$01)-$01-($cols*$08),$cols){$00,$04*(($08-($rows%$08))%$08),$04*$cols*$08,$04*$rows}($fname)
+  #POPS
+)
+
+; Draws a sprite from the table of sprites.
+#DEF(#SPRITE(id,attr=$07)(fname)
+  #LET(spriteaddr=#PEEK($6DD7+$id*$02)+#PEEK($6DD8+$id*$02)*$100)
+  #LET(spritecols=#PEEK({spriteaddr})&$0F)
+  #LET(spriterows=#PEEK({spriteaddr}+$01))
+  #MASKED({spriteaddr}+$02,{spritecols},{spriterows},$attr)($fname)
+)
+
+; Draws a sprite from an address, for a sprite that is not in the table.
+#DEF(#SPRITEAT(loc,attr=$07)(fname)
+  #LET(spritecols=#PEEK($loc)&$0F)
+  #LET(spriterows=#PEEK($loc+$01))
+  #MASKED($loc+$02,{spritecols},{spriterows},$attr)($fname)
+)
+
+; Draws a sprite whose pairs of bytes follow the address of the macro.
+#DEF(#SPRITEDATA()(fname)
+  #LET(spritecols=#PEEK(#PC-$02)&$0F)
+  #LET(spriterows=#PEEK(#PC-$01))
+  #MASKED(#PC,{spritecols},{spriterows},$07)($fname)
+)
+
+#DEF(#FONT()(fname)
+  #UDGARRAY$16,attr=$47,scale=3(($8355)-($8404)-$08)($fname-1)
+  #UDGARRAY$15,attr=$47,scale=3(($8405)-($84AC)-$08)($fname-2)
+)

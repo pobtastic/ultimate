@@ -18,7 +18,12 @@ c $5B80 Decryption Routine
 @ $5B80 label=GameEntry
 D $5B80 Decrypts the game by running RRD on every byte from
 . #N$7FFF up to #N($FBFE), then jumps to #R$8000.
-E $5B80 View the equivalent code in #ATICATAC$5B80.
+E $5B80 View the equivalent code in;
+. #LIST
+. { #ATICATAC$5B80 }
+. { #NIGHTSHADE$5B80 }
+. { #SABREWULF$5B80 }
+. LIST#
 E $5B80 Earlier Ultimate games use a much simpler mechanism;
 . #LIST
 . { #COOKIE$5B80 }
@@ -46,6 +51,14 @@ i $5B92
 c $5CB0 Indirect Jump
 @ $5CB0 label=IndirectJump
 D $5CB0 Jumps to the handler address already held in #REGhl.
+E $5CB0 View the equivalent code in;
+. #LIST
+. { #GUNFRIGHT$5CB0 }
+. { #NIGHTSHADE$5CB0 }
+. { #PSSST$5CB0 }
+. { #SABREWULF$5CB0 }
+. { #TRANZAM$5CB0 }
+. LIST#
 R $5CB0 HL Jump address
   $5CB0,$01 Jump to the address held in #REGhl.
 
@@ -62,6 +75,12 @@ D $5E00 Holds the number of players and the chosen control method.
 . { #N$04 | Cursor Joystick }
 . TABLE#
 . Bit #N$00 is reset for a 1UP game, or set for a 2UP game.
+E $5E00 View the equivalent code in;
+. #LIST
+. { #JETPAC$5CF3 }
+. { #PSSST$5E03 }
+. { #UNDERWURLDE$8ED5 }
+. LIST#
 B $5E00,$01
 
 u $5E01 Unused
@@ -81,6 +100,8 @@ E $5E06 View the equivalent code in;
 . { #COOKIE$5F09 }
 . { #JETPAC$5CF0 }
 . { #PSSST$5E00 }
+. { #SABREWULF$B304 }
+. { #TRANZAM$5E49 }
 . LIST#
 
 g $5E09 High Score Table
@@ -577,7 +598,7 @@ i $7800
 c $8000 Security Check
 @ $8000 label=SecurityCheck
 D $8000 A short copy-protection test on the FRAMES timer. The
-. game continues into #R$800A when the check passes.
+. game starts when the check passes.
 E $8000 Continue on to #R$800A.
 E $8000 View the equivalent code in;
 . #LIST
@@ -745,6 +766,7 @@ E $80D1 View the equivalent code in;
 . { #PSSST$6250 }
 . { #SABREWULF$B473 }
 . { #TRANZAM$5F6C }
+. { #UNDERWURLDE$90E4 }
 . LIST#
 N $80D1 #PUSHS #UDGTABLE { #SIM(start=$800A,stop=$8024,sp=$5E00)
 . #SIM(start=$80D1,stop=$80F4,sp=$5E00)
@@ -808,7 +830,9 @@ E $810E View the equivalent code in;
 . { #COOKIE$635E }
 . { #JETPAC$628D }
 . { #PSSST$627C }
+. { #SABREWULF$B498 }
 . { #TRANZAM$5FA7 }
+. { #UNDERWURLDE$9119 }
 . LIST#
   $810E,$07,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
@@ -828,7 +852,9 @@ E $8115 View the equivalent code in;
 . { #COOKIE$6365 }
 . { #JETPAC$6293 }
 . { #PSSST$6282 }
+. { #SABREWULF$B4A0 }
 . { #TRANZAM$5FAC }
+. { #UNDERWURLDE$911F }
 . LIST#
 @ $8115 label=GameSelection_Position
   $8115,$07,$01 #TABLE(default,centre,centre)
@@ -849,6 +875,7 @@ E $811C View the equivalent code in;
 . { #COOKIE$636C }
 . { #JETPAC$6299 }
 . { #PSSST$6288 }
+. { #SABREWULF$B4B0 }
 . { #TRANZAM$5FB1 }
 . LIST#
 N $811C #FONTaddr=$D347,attr=$47,chars=0(GAME SELECTION)(game-selection)
@@ -891,6 +918,7 @@ E $81AB View the equivalent code in;
 . { #PSSST$62E7 }
 . { #SABREWULF$B52D }
 . { #TRANZAM$5F97 }
+. { #UNDERWURLDE$91B0 }
 . LIST#
 R $81AB HL Menu line co-ordinate
 R $81AB DE Message pointer
@@ -913,7 +941,7 @@ E $81BB View the equivalent code in;
 . { #ATICATAC$7D9A }
 . { #COOKIE$6428 }
 . { #JETPAC$6333 }
-. { #PSSST$631E }
+. { #PSSST$632D }
 . { #TRANZAM$5FEF }
 . LIST#
 N $81BB Queue the start-game tune and clear planet RAM.
@@ -1104,14 +1132,18 @@ D $82C5 Handler routine address for each actor type, indexed by the
 
 c $84AD Reset Screen Buffer
 @ $84AD label=ResetScreen
-D $84AD Points at the screen buffer and falls into #R$84B4 to
-. fill it with #N$00.
+D $84AD Points at the screen buffer and fills it with #N$00.
 E $84AD Continue on to #R$84B4 to blank the screen buffer.
 E $84AD View the equivalent code in;
 . #LIST
+. { #ALIENEIGHT$CE60 }
 . { #ATICATAC$80B4 }
 . { #COOKIE$74D4 }
+. { #CYBERUN$9A7E }
+. { #GUNFRIGHT$D6DB }
 . { #JETPAC$71B8 }
+. { #KNIGHTLORE$D544 }
+. { #NIGHTSHADE$E5A8 }
 . { #PSSST$7439 }
 . { #SABREWULF$BB81 }
 . { #TRANZAM$7211 }
@@ -1233,9 +1265,11 @@ E $8506 View the equivalent code in;
 . { #ATICATAC$9BD2 }
 . { #COOKIE$7534 }
 . { #JETPAC$720E }
+. { #MARTIANOIDS$BD6A }
 . { #PSSST$748F }
 . { #SABREWULF$B8DD }
 . { #TRANZAM$7097 }
+. { #UNDERWURLDE$ADE0 }
 . LIST#
 @ $8506 label=AttributeAddress
 D $8506 Converts a pixel address into the matching attribute
@@ -1270,9 +1304,11 @@ E $851E View the equivalent code in;
 . { #ATICATAC$9BA2 }
 . { #COOKIE$76E3 }
 . { #JETPAC$7308 }
+. { #MARTIANOIDS$BD4B }
 . { #PSSST$759A }
 . { #SABREWULF$B8AD }
 . { #TRANZAM$6F10 }
+. { #UNDERWURLDE$ADF8 }
 . LIST#
 @ $851E label=ScreenAddress
 D $851E Converts a pixel address into the matching screen
@@ -1351,6 +1387,7 @@ E $8568 View the equivalent code in;
 . { #COOKIE$7623 }
 . { #SABREWULF$B928 }
 . { #TRANZAM$7155 }
+. { #UNDERWURLDE$9646 }
 . LIST#
 R $8568 O:DE Sprite address
   $8568,$03 Point the sprite table at #R$BAC0.
@@ -1370,6 +1407,7 @@ E $857F View the equivalent code in;
 . #LIST
 . { #ATICATAC$9E96 }
 . { #SABREWULF$B934 }
+. { #UNDERWURLDE$9652 }
 . LIST#
 R $857F IX Actor slot
 R $857F O:DE Sprite address
@@ -1385,6 +1423,12 @@ D $858E XOR the old sprite (normal registers) and the new sprite
 . (shadow registers) onto the screen one row at a time, using
 . #REGc as each sprite's row counter. Any rows left in #R$5E5A
 . and #R$5E59 are then picked up.
+E $858E View the equivalent code in;
+. #LIST
+. { #COOKIE$763A }
+. { #SABREWULF$B9DA }
+. { #UNDERWURLDE$9728 }
+. LIST#
 R $858E HL Screen address
 R $858E DE Graphic pointer
 N $858E Draw remaining rows from the current graphic pair.
@@ -1442,8 +1486,11 @@ R $85F6 HL Current position
 R $85F6 O:HL Address for new position
 E $85F6 View the equivalent code in;
 . #LIST
+. { #ATICATAC$9F03 }
+. { #CYBERUN$A1C3 }
 . { #PSSST$7585 }
 . { #TRANZAM$6ECB }
+. { #UNDERWURLDE$AE71 }
 . LIST#
 N $85F6 Move the screen address up one pixel, wrapping the row.
   $85F6,$01 Move up one pixel.
@@ -1482,6 +1529,10 @@ c $8634 Position And Draw Sprite
 @ $8634 label=PositionAndDrawSprite
 D $8634 Position the actor's sprite with #R$86A1, clear the remaining row
 . count and start the draw through #R$858E.
+E $8634 View the equivalent code in;
+. #LIST
+. { #UNDERWURLDE$962A }
+. LIST#
 R $8634 IX Actor slot
 N $8634 #PUSHS #UDGTABLE(default,centre,centre)
 . { =h Before | =h After #R$8634 | =h After #R$8733 }
@@ -1994,9 +2045,15 @@ R $8931 HL Attribute address of the bottom-left cell
 . every row is painted.
   $8946,$01 Return.
 
-c $8947 Negate Pair
-@ $8947 label=NegatePair
+c $8947 Negate HL
+@ $8947 label=NegateHL
 D $8947 Two's-complement #REGhl and return.
+E $8947 View the equivalent code in;
+. #LIST
+. { #GUNFRIGHT$D01B }
+. { #MARTIANOIDS$B4B1 }
+. { #NIGHTSHADE$E0DD }
+. LIST#
 R $8947 HL Value to negate
 R $8947 O:HL Negated value
   $8947,$07 Invert #REGhl and add one.
@@ -2072,6 +2129,7 @@ E $899C View the equivalent code in;
 . { #PSSST$737A }
 . { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }
+. { #UNDERWURLDE$A045 }
 . LIST#
 R $899C BC Points to add to score
 N $899C Check the active player.
@@ -2155,9 +2213,12 @@ E $89EF View the equivalent code in;
 . { #ATICATAC$A1D3 }
 . { #COOKIE$7468 }
 . { #JETPAC$714C }
+. { #MARTIANOIDS$B5CB }
+. { #NIGHTSHADE$CB19 }
 . { #PSSST$73CD }
 . { #SABREWULF$B589 }
 . { #TRANZAM$6C96 }
+. { #UNDERWURLDE$98DF }
 . LIST#
 R $89EF A ASCII value to print
 R $89EF HL Screen address
@@ -2199,9 +2260,11 @@ E $8A11 View the equivalent code in;
 . { #ATICATAC$A1F3 }
 . { #COOKIE$7488 }
 . { #JETPAC$716C }
+. { #MARTIANOIDS$BD99 }
 . { #PSSST$73ED }
 . { #SABREWULF$B53D }
 . { #TRANZAM$6518 }
+. { #UNDERWURLDE$9C3C }
 . LIST#
 R $8A11 DE Pointer to string data
 R $8A11 HL Pixel address co-ordinates
@@ -2456,6 +2519,10 @@ c $8BA5 Blank Play Area
 @ $8BA5 label=BlankPlayArea
 D $8BA5 Clear the playfield pixels upward from #N($57BF), one scan
 . line at a time.
+E $8BA5 View the equivalent code in;
+. #LIST
+. { #MARTIANOIDS$B1EC }
+. LIST#
 N $8BA5 Clear the playfield pixels upward from #N$57BF.
   $8BA5,$03 Set the start address to #N$57BF.
   $8BA8,$03 Set the line width to #N$20 and the line count to
@@ -2586,7 +2653,7 @@ N $8C34 Restore the gauge value.
   $8C3B,$03 Jump to #R$89EF.
 
 c $8C3E Flash Score Label
-@ $8C3E label=HandlerScoreLabel
+@ $8C3E label=ScoreLabelFlash
 D $8C3E Flash the active player's 1UP or 2UP banner label, or
 . clear the actor if #R$5E6C is set.
 E $8C3E View the equivalent code in;
@@ -2600,7 +2667,7 @@ N $8C3E Flash the active player's 1UP or 2UP banner label.
   $8C44,$04 Write #N$00 to *#REGix+#N$00.
   $8C48,$01 Return.
 N $8C49 Controller for handling whether to action 1UP or 2UP score label.
-@ $8C49 label=ScoreLabelFlash
+@ $8C49 label=ScoreLabelFlash_Choose
   $8C49,$06 If #R$5E65 is not zero, jump to #R$8C6C.
 N $8C4F Flash 1UP score label.
   $8C4F,$03 #REGhl=#N($0018,$04,$04) (position of the 1UP score label).
@@ -5551,8 +5618,7 @@ N $9F2E There is no carry, so flash the second tile (#N$5863) and set the
   $9F3C,$03 Jump to #R$AD00 to colour the tile with #REGa.
 @ $9F3F label=Handler_RoverFrames_Tint
 N $9F3F Tint the rover from the frame value in #REGa.
-  $9F3F,$02 Compare #REGa against #N$30.
-  $9F41,$03 Jump to #R$B03B if it is at least #N$30.
+  $9F3F,$05 Jump to #R$B03B if it is at least #N$30.
 N $9F44 Use bits 1-3 of the value as the INK colour, stepping through the
 . colours as it counts up.
   $9F44,$01 Rotate it right once.
@@ -5614,8 +5680,7 @@ N $9F87 Keep the new world X at least #N$10 away from
   $9F8E,$03 Jump to #R$9F93 if the result is positive.
   $9F91,$02 Negate the difference.
 @ $9F93 label=Handler_Pickups_TestJetmanX
-  $9F93,$02 Compare it against #N$10.
-  $9F95,$02 Jump to #R$9F6A if it is closer than that.
+  $9F93,$04 Jump to #R$9F6A if it is closer than that.
 N $9F97 Retry unless the candidate is also at least #N$10 from #R$6092.
   $9F97,$03 Fetch the high byte of #R$6092.
   $9F9A,$03 Multiply it by #N$08.
@@ -5623,8 +5688,7 @@ N $9F97 Retry unless the candidate is also at least #N$10 from #R$6092.
   $9F9E,$03 Jump to #R$9FA3 if the result is positive.
   $9FA1,$02 Negate the difference.
 @ $9FA3 label=Handler_Pickups_TestRoverX
-  $9FA3,$02 Compare it against #N$10.
-  $9FA5,$02 Jump to #R$9F6A if it is closer than that.
+  $9FA3,$04 Jump to #R$9F6A if it is closer than that.
 N $9FA7 Write the new pickup positions into the pickup slots.
   $9FA7,$06 Divide the candidate high byte by #N$08.
   $9FAD,$03 Write it to #R$6108(#N$610A).
@@ -5871,8 +5935,7 @@ N $A220 Find the object to teleport to: the position at #R$60AA, unless this
   $A220,$03 Copy the slot pointer into #REGhl (using the
 . stack).
   $A223,$03 Set #REGbc to the slot-1 address #R$60A8.
-  $A226,$01 Clear the carry flag.
-  $A227,$02 Subtract the slot-1 address.
+  $A226,$03 Subtract the slot-1 address.
   $A229,$03 Jump to #R$A30A if this is slot 1.
   $A22C,$03 Fetch #R$60AC.
   $A22F,$03 Fetch #R$60AA.
@@ -6307,8 +6370,7 @@ N $A4C5 Work out the horizontal distance between the rover and
 . the actor.
   $A4C5,$03 Fetch #R$6092.
   $A4C8,$03 Multiply it by #N$08.
-  $A4CB,$01 Clear the carry flag.
-  $A4CC,$02 Subtract the actor world X.
+  $A4CB,$03 Subtract the actor world X.
 N $A4CE Make the difference positive.
   $A4CE,$01 Fetch the high byte of the difference.
   $A4CF,$04 Jump to #R$A4D6 if the result is positive.
@@ -6316,8 +6378,7 @@ N $A4CE Make the difference positive.
 N $A4D6 Return if the actor is outside the collect range.
 @ $A4D6 label=CompareActorDistance_TestRange
   $A4D6,$03 Set the collect range in #REGbc to #N($00C0,$04,$04).
-  $A4D9,$01 Clear the carry flag.
-  $A4DA,$02 Subtract the collect range.
+  $A4D9,$03 Subtract the collect range.
   $A4DC,$01 Return if the actor is too far away.
 N $A4DD Compare the rover's height against the actor's Y.
   $A4DD,$03 Fetch the rover Y.
@@ -6348,8 +6409,7 @@ N $A4FC Compare this actor against #R$607A and #R$607C.
   $A502,$04 Add an #N$08 offset.
 N $A506 Return unless Jetman is horizontally close to the actor.
   $A506,$04 Fetch #R$607A.
-  $A50A,$01 Clear the carry flag.
-  $A50B,$02 Subtract Jetman's world X.
+  $A50A,$03 Subtract Jetman's world X.
   $A50D,$01 Fetch the high byte of the difference.
   $A50E,$02,b$01 Keep only bits 0-4.
   $A510,$01 Return if the actor is on a different screen.
@@ -6580,11 +6640,8 @@ N $A654 Work out a negative Y step when the thrust is negative.
   $A66A,$03 Add the step to the shot Y.
 N $A66D Destroy the shot if it hits the ground or leaves the
 . play area.
-  $A66D,$02 Compare it against #N$AF.
-  $A66F,$03 Jump to #R$A73C if the shot is on the ground.
-  $A672,$02 Compare it against #N$30.
-  $A674,$03 Jump to #R$A73C if the shot is above the play
-. area.
+  $A66D,$05 Jump to #R$A73C if the shot is on the ground.
+  $A672,$05 Jump to #R$A73C if the shot is above the play area.
 N $A677 Store the new Y, flip the shot frame and draw the shot.
   $A677,$03 Write the new Y.
   $A67A,$03 Fetch the shot type.
@@ -6645,8 +6702,7 @@ N $A701 Compare this slot's box against the shot.
 N $A70E Check the shot is horizontally within reach of the slot.
   $A70E,$03 Fetch the shot world X.
   $A711,$03 Fetch the shot world X high byte.
-  $A714,$01 Clear the carry flag.
-  $A715,$02 Subtract the shot world X.
+  $A714,$03 Subtract the shot world X.
   $A717,$01 Fetch the high byte of the difference.
   $A718,$02,b$01 Keep only bits 0-4.
   $A71A,$01 Return if they are on different screens.
@@ -6827,8 +6883,7 @@ N $A7EF Compare that box against the current laser pulse.
   $A7F8,$01 Copy the high byte into #REGa.
   $A7F9,$02 Add the carry.
   $A7FB,$01 Copy it into #REGb.
-  $A7FC,$01 Clear the carry flag.
-  $A7FD,$02 Subtract the pulse world X.
+  $A7FC,$03 Subtract the pulse world X.
 N $A7FF Return if the pulse is outside the hit-box
 . horizontally.
   $A7FF,$01 Fetch the high byte of the difference.
@@ -6901,7 +6956,7 @@ D $A84C Sets the starting level and lives for both players. The loop
 . 2UP starting lives and level are written afterwards.
 E $A84C View the equivalent code in;
 . #LIST
-. { #COOKIE$6C58 }
+. { #COOKIE$63F0 }
 . { #TRANZAM$6391 }
 . LIST#
 N $A84C Write the starting level and lives for both players.
@@ -7389,8 +7444,7 @@ N $AC04 Print the base or alien banner message at fixed
 . points in the timer, otherwise return.
   $AC04,$03 Fetch #R$5E42.
   $AC07,$02,b$01 Keep only bits 0-5.
-  $AC09,$02 Compare it against #N$0F.
-  $AC0B,$02 Jump to #R$AC1A if they are equal.
+  $AC09,$04 Jump to #R$AC1A if it is #N$0F.
   $AC0D,$03 Return if it is not #N$2F.
 N $AC10 Handle printing the "#FONTaddr=$D347,attr=$45,chars=0(ghij)(alien)" messaging.
   $AC10,$03 #REGde=#R$AC24.
@@ -7430,21 +7484,18 @@ N $AC3E Prefer the rover X when its type is in the
 . #N$10 rover frames #N$1A-#N$29.
   $AC3E,$03 #REGa=*#R$6090.
   $AC41,$02 Subtract #N$1A.
-  $AC43,$02 Compare it with #N$10.
-  $AC45,$02 Jump to #R$AC39 if that is not a rover frame.
+  $AC43,$04 Jump to #R$AC39 if that is not a rover frame.
   $AC47,$03 #REGhl=*#R$6092.
 @ $AC4A label=AlignToRover_TestType
 N $AC4A Test whether this actor is in range of that X, then its type.
   $AC4A,$03 Call #R$AD39.
   $AC4D,$03 #REGa=*#REGix+#N$00.
   $AC50,$02 Jump to #R$AC59 if carry is set.
-  $AC52,$02 Compare #REGa with #N$78.
-  $AC54,$02 Jump to #R$AC60 if they are equal.
+  $AC52,$04 Jump to #R$AC60 if it is #N$78.
   $AC56,$03 Jump to #R$ABA9.
 @ $AC59 label=AlignToRover_Type70
 N $AC59 Type #N$70 copies #R$ACA0.
-  $AC59,$02 Compare #REGa with #N$70.
-  $AC5B,$02 Jump to #R$AC6F if they are equal.
+  $AC59,$04 Jump to #R$AC6F if it is #N$70.
   $AC5D,$03 Jump to #R$ABA9.
 @ $AC60 label=AlignToRover_Type78
 N $AC60 Type #N$78 copies #R$ACD0 and becomes #N$98.
@@ -7561,22 +7612,19 @@ R $AD36 IX Actor slot
 @ $AD3F label=Handler_Missile_CompareWorldX
 N $AD3F Return carry if #REGhl is ahead of #REGbc (to its right) by
 . less than #N$1000 (allowing for the wrap at #N$2000).
-  $AD3F,$01 Clear the carry flag.
-  $AD40,$02 Subtract the second world X.
+  $AD3F,$03 Subtract the second world X.
   $AD42,$01 Fetch the high byte of the difference.
   $AD43,$04 Jump to #R$AD4E if the result is negative.
 N $AD47 Test a positive difference against the range and return carry.
   $AD47,$03 Set the range in #REGbc to #N$1000.
-  $AD4A,$01 Clear the carry flag.
-  $AD4B,$02 Subtract the range.
+  $AD4A,$03 Subtract the range.
   $AD4D,$01 Return.
 N $AD4E Call #R$8947 on a negative difference, then test it against the
 . range and invert the carry.
 @ $AD4E label=Handler_Missile_NegateThenRange
   $AD4E,$03 Call #R$8947.
   $AD51,$03 Set the range in #REGbc to #N$1000.
-  $AD54,$01 Clear the carry flag.
-  $AD55,$02 Subtract the range.
+  $AD54,$03 Subtract the range.
   $AD57,$01 Invert the carry flag.
   $AD58,$01 Return.
 
@@ -7708,8 +7756,7 @@ N $AE1D The same hang, offset left, for type #N$84.
   $AE20,$04 Jump to #R$AE2F if the type is not #N$84.
   $AE24,$03 Fetch #R$613A.
   $AE27,$03 Set the offset in #REGbc to #N($0010,$04,$04).
-  $AE2A,$01 Clear the carry flag.
-  $AE2B,$02 Subtract the offset.
+  $AE2A,$03 Subtract the offset.
   $AE2D,$02 Jump to #R$ADF8.
 @ $AE2F label=Handler_Missile_ClearType
   $AE2F,$03 Call #R$8640.
@@ -7920,8 +7967,7 @@ N $AFD6 In the middle band, steer the Y toward #N$80.
 N $AFDD In the low band, steer the Y toward #N$A7.
 @ $AFDD label=Handler_Missile_LowBand
   $AFDD,$03 Fetch the actor Y.
-  $AFE0,$02 Compare it against #N$A7.
-  $AFE2,$02 Jump to #R$AFAB if they are equal.
+  $AFE0,$04 Jump to #R$AFAB if it is #N$A7.
   $AFE4,$01 Increase the Y by one.
   $AFE5,$02 Compare it against #N$A7.
   $AFE7,$02 Jump to #R$AFCA.
@@ -8020,8 +8066,7 @@ N $B07C Match the flame Y to the missile Y.
 N $B082 Place the flame to the left of the missile's world X.
   $B082,$03 Fetch #R$6108(#N$610A).
   $B085,$03 Set the offset in #REGbc to #N($0018,$04,$04).
-  $B088,$01 Clear the carry flag.
-  $B089,$02 Subtract the offset.
+  $B088,$03 Subtract the offset.
   $B08B,$01 Fetch the high byte.
   $B08C,$02,b$01 Keep only bits 0-4.
   $B08E,$01 Write it back.
@@ -8085,16 +8130,14 @@ N $B0EA Scale both world X values and test the horizontal range.
   $B0F4,$03 Multiply the actor world X by #N$08.
 N $B0F7 Take the absolute horizontal distance between the two scaled
 . X values.
-  $B0F7,$01 Clear the carry flag.
-  $B0F8,$02 Subtract the target world X.
+  $B0F7,$03 Subtract the target world X.
   $B0FA,$01 Fetch the high byte of the difference.
   $B0FB,$04 Jump to #R$B102 if the result is positive.
   $B0FF,$03 Call #R$8947.
 N $B102 Return unless the actor is within the horizontal range.
 @ $B102 label=Handler_Missile_SubtractRange
   $B102,$03 #REGde=#N($00C0,$04,$04).
-  $B105,$01 Clear the carry flag.
-  $B106,$02 Subtract the range.
+  $B105,$03 Subtract the range.
   $B108,$01 Return if the actor is too far away.
 N $B109 Test the vertical distance to the target.
   $B109,$03 Fetch the actor Y.
@@ -8209,8 +8252,7 @@ N $B1BD Return unless this actor is in Jetman's slot.
   $B1BD,$03 Copy the slot pointer into #REGhl (using the
 . stack).
   $B1C0,$03 Set #REGbc to Jetman's slot address #R$6078.
-  $B1C3,$01 Clear the carry flag.
-  $B1C4,$02 Subtract Jetman's slot address.
+  $B1C3,$03 Subtract Jetman's slot address.
   $B1C6,$01 Return if this is not Jetman.
   $B1C7,$03 Call #R$8640.
   $B1CA,$04 Write #N$81 to the actor type.
@@ -8338,11 +8380,8 @@ N $B272 Move the actor Y, exploding on the ground or above the
 . play area.
 @ $B272 label=TickThenExplode_AddY
   $B272,$03 Add the step to the actor Y.
-  $B275,$02 Compare it against #N$AF.
-  $B277,$03 Jump to #R$A73C if the actor is on the ground.
-  $B27A,$02 Compare it against #N$30.
-  $B27C,$03 Jump to #R$A73C if the actor is above the play
-. area.
+  $B275,$05 Jump to #R$A73C if the actor is on the ground.
+  $B27A,$05 Jump to #R$A73C if the actor is above the play area.
   $B27F,$03 Write the new Y.
 N $B282 Advance the frame within the actor's type family.
   $B282,$03 Fetch the actor type.
@@ -8382,8 +8421,7 @@ N $B2AF Test the horizontal distance to Jetman.
   $B2B2,$03 Fetch the high byte.
   $B2B5,$04 Add an #N$08 box offset.
   $B2B9,$04 Fetch #R$607A.
-  $B2BD,$01 Clear the carry flag.
-  $B2BE,$02 Subtract Jetman's world X.
+  $B2BD,$03 Subtract Jetman's world X.
   $B2C0,$01 Fetch the high byte of the difference.
   $B2C1,$02,b$01 Keep only bits 0-4.
   $B2C3,$01 Return if they are on different screens.
@@ -8674,14 +8712,12 @@ N $B460 Reload the delay from *#REGix+#N$11 when it expires.
 N $B46B Increase the thrust and land once it reaches #N$01.
   $B46B,$03 Increment *#REGix+#N$06 by one.
   $B46E,$03 #REGa=*#REGix+#N$06.
-  $B471,$02 Compare #REGa with #N$01.
-  $B473,$02 Jump to #R$B48B if they are equal.
+  $B471,$04 Jump to #R$B48B if it is #N$01.
 @ $B475 label=Handler_FallingSprite_CycleType
 N $B475 Step the type (#N$E6 becomes #N($E7), else reset to #N$E4), then move.
   $B475,$03 #REGa=*#REGix+#N$00.
   $B478,$01 Increment #REGa by one.
-  $B479,$02 Compare #REGa with #N$E7.
-  $B47B,$02 Jump to #R$B47F if #REGa is #N$E7 or higher.
+  $B479,$04 Jump to #R$B47F if #REGa is #N$E7 or higher.
 N $B47D "#SPRITENAME$E4".
   $B47D,$02 #REGa=#N$E4.
 @ $B47F label=Handler_FallingSprite_MoveDown
@@ -9026,8 +9062,7 @@ N $B6F8 Collect the bomb when the rover type is in
 . #N$1A-#N$29.
   $B6F8,$03 Fetch #R$6090.
   $B6FB,$02 Subtract #N$1A.
-  $B6FD,$02 Compare it with #N$10.
-  $B6FF,$02 Jump to #R$B71C if it is out of range.
+  $B6FD,$04 Jump to #R$B71C if it is out of range.
   $B701,$03 Call #R$A4E7.
   $B704,$02 Jump to #R$B719 if Jetman cannot collect it.
 N $B706 Mark the bomb as carried and play the take sound.
@@ -9043,8 +9078,7 @@ N $B71C Hang the bomb beside Jetman. Type #N$16 and
 . above is seated facing right; hang it on the left.
 @ $B71C label=Handler_ArmedBomb_HangBeside
   $B71C,$03 Fetch #R$6078.
-  $B71F,$02 Compare it with #N$16.
-  $B721,$02 Jump to #R$B72C if it is lower.
+  $B71F,$04 Jump to #R$B72C if it is lower.
   $B723,$03 Set the offset in #REGbc to #N$FFF4 (-#N$0C).
 @ $B726 label=Handler_ArmedBomb_Loop
   $B726,$03 Fetch #R$607A.
@@ -9065,8 +9099,7 @@ N $B731 Copy the bomb template into #R$6198 when that slot is empty.
 N $B73F Take the spawn X from the rover or from Jetman.
   $B73F,$03 Fetch #R$6090.
   $B742,$02 Subtract #N$1A.
-  $B744,$02 Compare it with #N$10.
-  $B746,$02 Jump to #R$B763 if the rover type is in range.
+  $B744,$04 Jump to #R$B763 if the rover type is in range.
   $B748,$03 Fetch #R$607A.
 N $B74B Offset the spawn X by #N$30 to the right, or to the
 . left when the rover is outside the alien base range.
@@ -9735,6 +9768,7 @@ E $BAC0 View the equivalent code in;
 . { #COOKIE$7702 }
 . { #JETPAC$6945 }
 . { #PSSST$761A }
+. { #TRANZAM$7F06 }
 . LIST#
   $BAC0,$02 Sprite ID: #R(#PEEK(#PC)+#PEEK(#PC+$01)*$100)(#N((#PC-$BABE)/$02)) #SPRITENAME((#PC-$BABE)/$02).
 L $BAC0,$02,$EF

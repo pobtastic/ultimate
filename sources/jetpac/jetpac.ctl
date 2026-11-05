@@ -1,6 +1,7 @@
 ; Copyright Ashby Computers & Graphics Ltd 1983, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
 > $4000 @start=$5B80
+> $4000 @expand=#DEF(#POKE()(anchor,text) #LINK(Pokes#$anchor)($text))
 > $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
 > $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
 > $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
@@ -12,12 +13,14 @@ B $5800,$0300,$20 Attributes
 
 i $5B00
 
-c $5B80 Game entry point
+c $5B80 Game Entry Point
 E $5B80 View the equivalent code in;
 . #LIST
 . { #COOKIE$5B80 }
 . { #PSSST$5B80 }
+. { #SABREWULF$6000 }
 . { #TRANZAM$5B80 }
+. { #UNDERWURLDE$67F2 }
 . LIST#
 E $5B80 Later Ultimate games use more advanced decryption mechanisms;
 . #LIST
@@ -36,6 +39,8 @@ E $5CF0 View the equivalent code in;
 . { #COOKIE$5F09 }
 . { #LUNARJETMAN$5E06 }
 . { #PSSST$5E00 }
+. { #SABREWULF$B304 }
+. { #TRANZAM$5E49 }
 . LIST#
 D $5CF0 3-byte representation of the score.
 @ $5CF0 label=High_Score
@@ -48,6 +53,7 @@ E $5CF3 View the equivalent code in;
 . { #COOKIE$5F0C }
 . { #LUNARJETMAN$5E00 }
 . { #PSSST$5E03 }
+. { #UNDERWURLDE$8ED5 }
 . LIST#
 @ $5CF3 label=GameOptions
 D $5CF3 Holds the number of players and the chosen control method.
@@ -130,6 +136,10 @@ D $5D08 #TABLE(default,centre) { =h Bytes(n) | =h Variable }
 . { 7 | Colour attribute }
 . TABLE#
 @ $5D08 label=Laser_Parameter_1
+E $5D08 View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$6000 }
+. LIST#
 B $5D08,$08 Laser Beam #1.
 @ $5D10 label=Laser_Parameter_2
 B $5D10,$08 Laser Beam #2.
@@ -285,11 +295,19 @@ g $5DCC Game Timer
 D $5DCC 16-bit counter starting at 0x0000 and counting +1 (each time a sprite is moved or redrawn), although sometimes
 .       it will increment + #N$02. This continues until the whole game is over - for both 1 and 2 player games. Counter
 .       loops around after reaching #N$FFFF.
+E $5DCC View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$5E42 }
+. LIST#
 @ $5DCC label=GameTimer
 W $5DCC,$02
 
 g $5DCE Random Number
 D $5DCE Value is calculated using the 16-bit game timer LSB value, which is used to fetch a byte from the ROM (between addresses #N$00 and #N$FF), then by adding the current #REGr.
+E $5DCE View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$5E40 }
+. LIST#
 @ $5DCE label=Random_Number
 B $5DCE,$01
 
@@ -377,12 +395,16 @@ g $6038 Collectible Initialisation Data
 @ $6038 label=Initialisation_Collectible
 B $6038,$08
 
-t $6040 Rights Messaging
+t $6040 Messaging: Rights
 @ $6040 label=Message_Rights
   $6040,$21,h$01,c$01,$1E:$01 "© 1983 A.C.G. ALL RIGHTS RESERVED".
 
-t $6061 Copyright Messaging
+t $6061 Messaging: Copyright
 @ $6061 label=Message_Copyright
+E $6061 View the equivalent code in;
+. #LIST
+. { #UNDERWURLDE$9174 }
+. LIST#
   $6061,$29 "COPYRIGHT 1983 A.C.G. ALL RIGHTS RESERVED".
 
 c $608A Create Game Window
@@ -390,9 +412,9 @@ E $608A View the equivalent code in;
 . #LIST
 . { #ATICATAC$80AA }
 . { #COOKIE$5FB7 }
-. { #LUNARJETMAN$0000 }
+. { #LUNARJETMAN$84D8 }
 . { #PSSST$5F53 }
-. { #TRANZAM$0000 }
+. { #TRANZAM$68A0 }
 . LIST#
 @ $608A label=CreateWindow
 N $608A Blank the screen and write the banner.
@@ -411,6 +433,10 @@ N $608A Blank the screen and write the banner.
 
 c $60A9 Initialise New Level
 @ $60A9 label=LevelNew
+E $60A9 View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$A826 }
+. LIST#
   $60A9,$03 #REGa=#R$5DF0.
 M $60AC,$04 If #R$5DF0 % $04 (every 4th level) ... then continue and reset the rocket else jump to #R$60BA.
   $60AC,$02,b$01
@@ -443,8 +469,9 @@ c $616A  1UP/ 2UP Swapper
 E $616A View the equivalent code in;
 . #LIST
 . { #COOKIE$6416 }
-. { #LUNARJETMAN$0000 }
+. { #LUNARJETMAN$A880 }
 . { #PSSST$613B }
+. { #SABREWULF$B235 }
 . LIST#
 @ $616A label=ChangePlayer
 N $616A This routine "swaps" the data between #REGde and #REGhl.
@@ -465,7 +492,7 @@ N $617D This looks complicated but it's just grabbing the data from #REGde, grab
   $6184,$02 Decrease counter by one and loop back to #R$617D until counter is zero.
   $6186,$01 Return.
 
-t $6187 Game Over P1 Message
+t $6187 Messaging: Game Over P1
 @ $6187 label=Message_GameOverP1
   $6187,$13,h$01,$11:$01 "GAME OVER PLAYER 1" (#COLOUR(#PEEK(#PC)) is the attribute).
 
@@ -478,6 +505,7 @@ c $619A Player Initialisation
   $61A5,$02 #REGa=$80
   $61A7,$07 if bit 0 is set for #R$5CF3 (is this a 2UP game) then jump to #R$61B0
   $61AE,$05 Add $7F to #REGa and update #R$5DD7 with the result
+N $61B3 See #POKE(infinite_lives,Infinite lives).
   $61B3,$07 Decrease #R$5DF1 by 1
   $61BA,$03 Jump to #R$70A4
 
@@ -506,6 +534,7 @@ E $61E5 View the equivalent code in;
 . { #COOKIE$5F00 }
 . { #LUNARJETMAN$8000 }
 . { #PSSST$61C6 }
+. { #SABREWULF$995A }
 . { #TRANZAM$5F00 }
 . LIST#
 @ $61E5 label=SecurityCheck
@@ -519,6 +548,7 @@ E $61EB View the equivalent code in;
 . { #COOKIE$6298 }
 . { #LUNARJETMAN$800A }
 . { #PSSST$61CD }
+. { #SABREWULF$9960 }
 . { #TRANZAM$5F07 }
 . LIST#
 @ $61EB label=GameInitialisation
@@ -541,28 +571,24 @@ N $61EB Blank the 1UP, 2UP and HI scores.
 . TABLE#
   $620E,$01 Flip the bits.
 N $620F Handle 1UP selection.
-  $620F,$02 Has key "1" been pressed? ("1 PLAYER GAME").
-  $6211,$02 If not jump to #R$6215.
+  $620F,$04 Jump to #R$6215 if key "1" has not been pressed ("1 PLAYER GAME").
   $6213,$02 Set player count = 1.
 N $6215 Handle 2UP selection.
 @ $6215 label=GameSelect_CheckP2
-  $6215,$02 Has key "2" been pressed? ("2 PLAYER GAME").
-  $6217,$02 If not jump to #R$621B.
+  $6215,$04 Jump to #R$621B if key "2" has not been pressed ("2 PLAYER GAME").
   $6219,$02 Set player count = 2.
 N $621B Handle Keyboard selection.
 @ $621B label=GameSelect_CheckKeyboard
-  $621B,$02 Has key "3" been pressed? ("3 KEYBOARD").
-  $621D,$02 If not jump to #R$6221.
+  $621B,$04 Jump to #R$6221 if key "3" has not been pressed ("3 KEYBOARD").
   $621F,$02 Set control = "keyboard".
 N $6221 Handle Kempston Joystick selection.
 @ $6221 label=GameSelect_CheckKempston
-  $6221,$02 Has key "4" been pressed? ("4 KEMPSTON JOYSTICK").
-  $6223,$02 If not jump to #R$6227.
+  $6221,$04 Jump to #R$6227 if key "4" has not been pressed ("4 KEMPSTON
+. JOYSTICK").
   $6225,$02 Set control = "joystick".
 N $6227 Handle starting a new game.
 @ $6227 label=GameSelect_CheckStart
-  $6227,$02 Has key "5" been pressed? ("5 START GAME").
-  $6229,$03 If so, jump to #R$6333.
+  $6227,$05 Jump to #R$6333 if key "5" has been pressed ("5 START GAME").
 N $622C Handle flashing each selection.
   $6230,$03 #REGhl=#R$628E (the first selectable line, skipping the title).
 
@@ -573,7 +599,9 @@ E $6260 View the equivalent code in;
 . { #COOKIE$6332 }
 . { #LUNARJETMAN$80D1 }
 . { #PSSST$6250 }
+. { #SABREWULF$B473 }
 . { #TRANZAM$5F6C }
+. { #UNDERWURLDE$90E4 }
 . LIST#
 @ $6260 label=GameMenu
   $6260,$03 #REGde=#R$628D.
@@ -615,7 +643,9 @@ E $628D View the equivalent code in;
 . { #COOKIE$635E }
 . { #LUNARJETMAN$810E }
 . { #PSSST$627C }
+. { #SABREWULF$B498 }
 . { #TRANZAM$5FA7 }
+. { #UNDERWURLDE$9119 }
 . LIST#
   $628D,$06,$01 #TABLE(default,centre)
 . { =h Byte(n) | =h Menu Item }
@@ -634,7 +664,9 @@ E $6293 View the equivalent code in;
 . { #COOKIE$6365 }
 . { #LUNARJETMAN$8115 }
 . { #PSSST$6282 }
+. { #SABREWULF$B4A0 }
 . { #TRANZAM$5FAC }
+. { #UNDERWURLDE$911F }
 . LIST#
 @ $6293 label=GameSelection_Position
   $6293,$06,$01 #TABLE(default,centre,centre)
@@ -647,14 +679,16 @@ E $6293 View the equivalent code in;
 . { #N$06 | #EVAL(#PEEK(#PC+$05) / $08) | 5 Start Game }
 . TABLE#
 
-t $6299 Game Selection Title text
+t $6299 Messaging: Game Selection Title text
 E $6299 View the equivalent code in;
 . #LIST
 . { #ATICATAC$7CF8 }
 . { #COOKIE$636C }
 . { #LUNARJETMAN$811C }
 . { #PSSST$6288 }
+. { #SABREWULF$B4B0 }
 . { #TRANZAM$5FB1 }
+. { #UNDERWURLDE$9125 }
 . LIST#
 @ $6299 label=GameSelection_Text
   $6299,$15,$14:$01 "JETPAC GAME SELECTION".
@@ -664,8 +698,16 @@ E $6299 View the equivalent code in;
   $62DC,$15,$14:$01 "4   KEMPSTON JOYSTICK".
   $62F1,$0E,$0D:$01 "5   START GAME".
 
-c $62FF Print Menu Item
-@ $62FF label=PrintMenuItem
+c $62FF Write Menu Line
+@ $62FF label=MenuWriteText
+E $62FF View the equivalent code in;
+. #LIST
+. { #COOKIE$63E0 }
+. { #LUNARJETMAN$81AB }
+. { #SABREWULF$B52D }
+. { #TRANZAM$5F97 }
+. { #UNDERWURLDE$91B0 }
+. LIST#
 C $62FF Store #REGhl on the stack
   $6300
   $6303 #REGa=#R$5DD6
@@ -681,9 +723,11 @@ C $630F,$02 #REGb=$02
   $6311,$01 Stores #REGbc on the stack
 C $6312,$01 Clear #REGa (sets to $00)
 C $6313,$03 #R$5DF0=#REGa
+N $6316 See #POKE(starting_lives_1up,Starting lives 1UP).
   $6316,$02 #REGa=Number of lives for 1UP on starting a game
   $6318,$03 Updates #R$5DF1 with the number of starting lives
   $6322,$02 Decrease #REGb by one, jump to #R$6311 if not zero
+N $6324 See #POKE(starting_lives_2up,Starting lives 2UP).
   $6324,$02 #REGa=Number of lives for 2UP on starting a game
   $6326,$03 Updates #R$5DF9 with the number of starting lives
   $6329,$03 #REGa=#R$5CF3
@@ -698,7 +742,7 @@ E $6333 View the equivalent code in;
 . { #ATICATAC$7D9A }
 . { #COOKIE$6428 }
 . { #LUNARJETMAN$81BB }
-. { #PSSST$631E }
+. { #PSSST$632D }
 . { #TRANZAM$5FEF }
 . LIST#
 @ $6333 label=StartGame
@@ -724,8 +768,13 @@ w $6374 Jump Table
 @ $6374 label=JumpTable
   $6374,$24,$02
 
-c $6398
-@ $6398 label=NewHighScore
+c $6398 Check High Score
+@ $6398 label=CheckHighScore
+E $6398 View the equivalent code in;
+. #LIST
+. { #COOKIE$73D3 }
+. { #TRANZAM$605B }
+. LIST#
   $63AC,$04 #REGe=#R$5CF4(#N$5CF6).
 
   $63B0,$04 Compare #REGe with #R$5CF7(#N$5CF9).
@@ -769,9 +818,11 @@ c $6498
 c $651F
   $653F,$06 Drop #REGix+$02 (fuel Y co-ordinate) by two pixels
 
+N $65CE See #POKE(fuel_drops_immediately,Fuel drops immediately).
 C $65CE,$03 #REGa=(#REGix+$02) (fuel Y co-ordinate)
 C $65D1,$02 Is #REGa=$B0? (has the fuel reached the ship yet?)
 C $65D3,$03 If not, jump back to #R$653F
+N $65D6 See #POKE(only_need_one_fuel_cell,Only need one fuel cell).
 C $65D6,$07 Fuel pod deposited correctly; increase #R$5D35 by one
 C $65DD,$02 Jump to #R$65C4
 C $65DF,$06 If #R$5D00 is &$3F then return...
@@ -830,7 +881,7 @@ E $67C3 View the equivalent code in;
 . { #COOKIE$7702 }
 . { #LUNARJETMAN$BAC0 }
 . { #PSSST$761A }
-. { #TRANZAM$0000 }
+. { #TRANZAM$7F06 }
 . LIST#
 @ $67C3 label=CollectableSpritesTable
   $67C3,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + $01) * $100)(#N((#PC - $67C3) / $02)) #COLLECTABLENAME((#PC - $67C3) / 2).
@@ -854,6 +905,11 @@ E $6809 View the equivalent code in;
 
 c $680D Play Square Wave
 @ $680D label=PlaySquareWave
+E $680D View the equivalent code in;
+. #LIST
+. { #COOKIE$68B1 }
+. { #LUNARJETMAN$B8DA }
+. LIST#
 R $680D D Duration of wave
   $680D,$04 #REGa=#N$10 (speaker on = bit 4).
   $6811,$03 Decrease duration by one and loop back to #R$6812 until duration is zero.
@@ -865,6 +921,10 @@ R $680D D Duration of wave
 
 c $681E Sounds: Laser Beam
 @ $681E label=SoundsLaserBeam
+E $681E View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$B8A8 }
+. LIST#
   $6821,$02 Decrease #REGb by one, and loop back to #R$6821 until zero
   $6828,$02 Decrease #REGb by one, and loop back to #R$6828 until zero
   $6833,$01 Return.
@@ -881,11 +941,19 @@ c $6854 Sounds: Enenmy Death
 
 c $685F Sounds: Explosion
 @ $685F label=SoundsExplosion
+E $685F View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$B8FF }
+. LIST#
   $6864,$02 Decrease #REGb by one, and loop back to #R$6864 until zero
   $686A,$02 Decrease #REGb by one, and loop back to #R$686A until zero
 
 c $6870 End Sound
 @ $6870 label=EndSound
+E $6870 View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$B94B }
+. LIST#
 C $6870,$04 Shut off sound by setting frequency to zero
   $6874,$01 Return.
 
@@ -901,7 +969,7 @@ c $689F Start Animation
 c $68AB Change Animation
 @ $68AB label=ChangeAnimation
 
-c $68B1 Animate explosion
+c $68B1 Animate Explosion
 @ $68B1 label=AnimateExplosion
 
 w $690F Explosion Sprite Table
@@ -911,7 +979,7 @@ E $690F View the equivalent code in;
 . { #COOKIE$7702 }
 . { #LUNARJETMAN$BAC0 }
 . { #PSSST$761A }
-. { #TRANZAM$0000 }
+. { #TRANZAM$7F06 }
 . LIST#
 @ $690F label=ExplosionSpritesTable
   $690F,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $690F) / 2)) #EXPLOSIONNAME((#PC - $690F) / 2).
@@ -945,13 +1013,18 @@ E $6945 View the equivalent code in;
 . { #COOKIE$7702 }
 . { #LUNARJETMAN$BAC0 }
 . { #PSSST$761A }
-. { #TRANZAM$0000 }
+. { #TRANZAM$7F06 }
 . LIST#
 @ $6945 label=AlienSpritesTable
   $6945,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $6945) / 2)) #ALIENNAME((#PC - $6945) / 2).
 L $6945,$02,$10
 
-c $6965
+c $6965 Frame Update
+@ $6965 label=FrameUpdate
+E $6965 View the equivalent code in;
+. #LIST
+. { #COOKIE$7160 }
+. LIST#
   $698B,$03 #REGhl=#R$5D88
   $698E,$03 Push #REGhl to $69B5
   $6991,$02 #REGa=$3A
@@ -994,6 +1067,10 @@ c $6DD3 Meteor Update
 
 c $6F91 Handler: Laser Beam
 @ $6F91 label=Handler_LaserBeam
+E $6F91 View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$9DC0 }
+. LIST#
 N $6F91 Only handle the laser beam on every 4th frame.
   $6F91,$03 #REGa=#SKOOLKID$5C78(FRAMES).
   $6F94,$02,b$01 Keep only bits 0-1.
@@ -1026,7 +1103,8 @@ N $6FA7 Initialise a new laser beam.
   $6FE6,$03 Jump to #R$681E.
 N $6FE9 All the attributes a laser beam can be.
 @ $6FE9 label=LaserBeam_Attributes
-B $6FE9,$04
+B $6FE9,$01 #COLOUR(#PEEK(#PC)).
+L $6FE9,$01,$04
 
 N $6FED Handle drawing the laser beam moving to the right.
 @ $6FED label=LaserBeam_Right
@@ -1039,17 +1117,22 @@ N $6FED Handle drawing the laser beam moving to the right.
 
 c $6FFC Animate: Laser Beam
 @ $6FFC label=LaserBeam_Animate
+E $6FFC View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$9E2C }
+. LIST#
 
+N $706E See #POKE(disable_firing,Disable firing).
   $706E,$03 #REGa=(IX+$06)
 
 c $70A4 Display Lives
 E $70A4 View the equivalent code in;
 . #LIST
-. { #ATICATAC$0000 }
 . { #COOKIE$7378 }
 . { #LUNARJETMAN$894F }
 . { #PSSST$7325 }
-. { #TRANZAM$0000 }
+. { #SABREWULF$B7CD }
+. { #TRANZAM$687B }
 . LIST#
 @ $70A4 label=DisplayPlayerLives
 N $70A4 Controller for 1UP lives.
@@ -1103,9 +1186,13 @@ N $70F1 Return the 2UP player's lives left.
 c $70F9 Add Points To Score
 E $70F9 View the equivalent code in;
 . #LIST
+. { #ATICATAC$A19C }
 . { #COOKIE$7415 }
+. { #LUNARJETMAN$899C }
 . { #PSSST$737A }
+. { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }
+. { #UNDERWURLDE$A045 }
 . LIST#
 @ $70F9 label=AddPointsToScore
   $70F9,$04 Evaluate #R$5DD1
@@ -1122,9 +1209,11 @@ E $70F9 View the equivalent code in;
 c $711C Print Scores
 E $711C View the equivalent code in;
 . #LIST
+. { #ATICATAC$A1AE }
 . { #COOKIE$7438 }
 . { #LUNARJETMAN$89BF }
 . { #PSSST$739D }
+. { #SABREWULF$B5CC }
 . { #TRANZAM$6CB6 }
 . LIST#
 @ $711C label=Score_1UP
@@ -1167,8 +1256,12 @@ E $714C View the equivalent code in;
 . { #ATICATAC$A1D3 }
 . { #COOKIE$7468 }
 . { #LUNARJETMAN$89EF }
+. { #MARTIANOIDS$B5CB }
+. { #NIGHTSHADE$CB19 }
 . { #PSSST$73CD }
+. { #SABREWULF$B589 }
 . { #TRANZAM$6C96 }
+. { #UNDERWURLDE$98DF }
 . LIST#
 @ $714C label=PrintScreen
 R $714C A ASCII value to print
@@ -1198,16 +1291,18 @@ N $7166 Reset #REGhl and move to the next column, ready to print the next charac
   $716A,$01 Increment screen column by one.
   $716B,$01 Return.
 
-c $716C Print String
+c $716C Print Colour String
 E $716C View the equivalent code in;
 . #LIST
 . { #ATICATAC$A1F3 }
 . { #COOKIE$7488 }
-. { #LUNARJETMAN$0000 }
+. { #LUNARJETMAN$8A11 }
 . { #PSSST$73ED }
-. { #TRANZAM$0000 }
+. { #SABREWULF$B53D }
+. { #TRANZAM$6518 }
+. { #UNDERWURLDE$9C3C }
 . LIST#
-@ $716C label=PrintString
+@ $716C label=PrintStringColour
 R $716C DE Pointer to string data
   $716C,$01 Stash #REGhl on the stack.
   $716D,$03 Call #R$7308.
@@ -1245,6 +1340,7 @@ E $7192 View the equivalent code in;
 . { #COOKIE$74AE }
 . { #LUNARJETMAN$8A37 }
 . { #PSSST$7413 }
+. { #SABREWULF$B563 }
 . LIST#
 @ $7192 label=PrintBanner
 N $7192 Prints "1UP".
@@ -1270,10 +1366,16 @@ T $71B5,$03,h$01,$01:$01 "HI" (#COLOUR(#PEEK(#PC)) is the attribute).
 c $71B8 Reset Screen Buffer
 E $71B8 View the equivalent code in;
 . #LIST
+. { #ALIENEIGHT$CE60 }
 . { #ATICATAC$80B4 }
 . { #COOKIE$74D4 }
+. { #CYBERUN$9A7E }
+. { #GUNFRIGHT$D6DB }
+. { #KNIGHTLORE$D544 }
 . { #LUNARJETMAN$84AD }
+. { #NIGHTSHADE$E5A8 }
 . { #PSSST$7439 }
+. { #SABREWULF$BB81 }
 . { #TRANZAM$7211 }
 . LIST#
 @ $71B8 label=ResetScreen
@@ -1289,6 +1391,7 @@ E $71BF View the equivalent code in;
 . { #COOKIE$74DB }
 . { #LUNARJETMAN$84B4 }
 . { #PSSST$7440 }
+. { #SABREWULF$BB88 }
 . { #TRANZAM$7218 }
 . LIST#
 R $71BF HL Target address
@@ -1308,6 +1411,7 @@ E $71C6 View the equivalent code in;
 . { #COOKIE$74E2 }
 . { #LUNARJETMAN$84BB }
 . { #PSSST$7447 }
+. { #SABREWULF$BB8F }
 . { #TRANZAM$7200 }
 . LIST#
 @ $71C6 label=ResetAttributes
@@ -1318,6 +1422,10 @@ E $71C6 View the equivalent code in;
 
 c $71CF Colourise Sprite
 @ $71CF label=ColouriseSprite
+E $71CF View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$8733 }
+. LIST#
   $71CF,$01 Switch to the shadow registers.
   $71D0,$03 #REGhl'=actor co-ordinates.
   $71D3,$03 Call #R$720E - #REGhl' now holds the co-ordinates to an attribute file address.
@@ -1357,7 +1465,9 @@ E $720E View the equivalent code in;
 . { #COOKIE$7534 }
 . { #LUNARJETMAN$8506 }
 . { #PSSST$748F }
+. { #SABREWULF$B8DD }
 . { #TRANZAM$7097 }
+. { #UNDERWURLDE$ADE0 }
 . LIST#
 @ $720E label=AttributeAddress
 N $720E Converts a given pixel address to the associated attribute buffer address.
@@ -1385,7 +1495,23 @@ c $723C
 
 c $725E
 
-c $726A
+c $726A Display Entity
+@ $726A label=DisplayEntity
+E $726A View the equivalent code in;
+. #LIST
+. { #ATICATAC$9FCA }
+. { #COOKIE$75CC }
+. { #PSSST$74EB }
+. { #SABREWULF$B9A9 }
+. { #TRANZAM$7101 }
+. { #UNDERWURLDE$96F7 }
+. LIST#
+N $728C The new sprite starts lower down the screen.
+@ $728C label=DisplayEntity_NewLower
+N $72A5 Erases the previous sprite of an actor.
+@ $72A5 label=RemoveEntity
+N $72B5 Draws the sprite of the actor at its current position.
+@ $72B5 label=DrawEntity
 
 c $72EE
 
@@ -1396,7 +1522,9 @@ E $7308 View the equivalent code in;
 . { #COOKIE$76E3 }
 . { #LUNARJETMAN$851E }
 . { #PSSST$759A }
+. { #SABREWULF$B8AD }
 . { #TRANZAM$6F10 }
+. { #UNDERWURLDE$ADF8 }
 . LIST#
 @ $7308 label=ScreenAddress
   $7308,$01 #REGa=#REGl.
@@ -1425,10 +1553,11 @@ c $7327 Store Entity
 E $7327 View the equivalent code in;
 . #LIST
 . { #ATICATAC$9FFB }
-. { #COOKIE$0000 }
-. { #LUNARJETMAN$0000 }
+. { #COOKIE$76D0 }
 . { #PSSST$75B9 }
+. { #SABREWULF$BB0B }
 . { #TRANZAM$71ED }
+. { #UNDERWURLDE$989F }
 . LIST#
 @ $7327 label=StoreEntity
   $7327,$06 Copy actor X position to active actor X position.
@@ -1439,11 +1568,11 @@ E $7327 View the equivalent code in;
 c $733A Controls: Kempston Joystick
 E $733A View the equivalent code in;
 . #LIST
-. { #ATICATAC$0000 }
-. { #COOKIE$0000 }
-. { #LUNARJETMAN$0000 }
+. { #COOKIE$6FB0 }
+. { #LUNARJETMAN$8F9B }
 . { #PSSST$75CC }
-. { #TRANZAM$0000 }
+. { #SABREWULF$B0D9 }
+. { #TRANZAM$6188 }
 . LIST#
 @ $733A label=ReadKempstonJoystick
 R $733A A Joystick controls
@@ -1555,8 +1684,13 @@ N $73AF Return "Thrust" button pressed.
   $73AF,$02 #REGa=#EVAL($F7, $02, $08).
   $73B1,$01 Return.
 
-c $73B2 Game Play Starts
-@ $73B2 label=GamePlayStarts
+c $73B2 Game Play Entry
+@ $73B2 label=GamePlayEntry
+E $73B2 View the equivalent code in;
+. #LIST
+. { #PSSST$6DBA }
+. { #SABREWULF$AECF }
+. LIST#
 
 c $73D3 Jetman Fly
 @ $73D3 label=JetmanThrust
@@ -1593,7 +1727,7 @@ E $76FA View the equivalent code in;
 . { #COOKIE$7702 }
 . { #LUNARJETMAN$BAC0 }
 . { #PSSST$761A }
-. { #TRANZAM$0000 }
+. { #TRANZAM$7F06 }
 . LIST#
 @ $76FA label=JetmanSpritesTable
   $76FA,$02 Sprite ID: #R(#PEEK(#PC) + #PEEK(#PC + 1) * $100)(#N((#PC - $76FA) / 2)) #JETMANNAME((#PC - $76FA) / $02).
@@ -1603,6 +1737,10 @@ w $771A
 
 c $773A Mask Sprite
 @ $773A label=MaskSprite
+E $773A View the equivalent code in;
+. #LIST
+. { #LUNARJETMAN$8A5C }
+. LIST#
 
 @ $777C label=ActorUpdateSizeFlipReg
 @ $777D label=ActorUpdateSize
@@ -1912,7 +2050,7 @@ N $7FAF Flame Frame 2
   $7FB1,$01 Height = #N(#PEEK(#PC)) pixels.
   $7FB2,$1E,b$02 #UDGARRAY$02,attr=$02,scale=$04,step=$02,flip=$02((#PC)-(#PC+$11)-$01-$10){0,($10-#PEEK(#PC-$01))*$04,$10*$04,#PEEK(#PC-$01)*$04}(flame-2*)
 
-t $7FD0 Copyright Messaging
+t $7FD0 Messaging: Copyright
 @ $7FD0 label=Message_Copyright2
   $7FD0,$2C,h$01,c$01,$29:$01 COPYRIGHT 1983 A.C.G. ALL RIGHTS RESERVED
 S $7FFC,$04

@@ -1,1 +1,216 @@
 ; Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
+
+[Poke:Infinite Lives]
+<div>
+  <code>POKE #R$CBDD(#N$CBDD),#N$00</code>
+</div>
+<div>
+  <code>POKE #R$CBB1(#N$CBB5),#N$00</code>
+</div>
+
+Removes the instruction which would otherwise decrease #R$BBCD, and changes
+the copy protection check in #R$CBAC so that it still accepts the new
+instruction.
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$CBDA(#N$CBDA)</td>
+      <td class="instruction">LD #REGhl,#R$BBCD(#N$BBCD)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CBDD(#N$CBDD)</td>
+      <td class="instruction">DEC (#REGhl)</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$CBB1(#N$CBB1)</td>
+      <td class="instruction">LD #REGa,(#R$CBDD(#N$CBDD))</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CBB1(#N$CBB4)</td>
+      <td class="instruction">CP #N$35</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CBB6(#N$CBB6)</td>
+      <td class="instruction">JP NZ,#R$C1F9(#N$C1F9)</td>
+    </tr>
+  </tbody>
+</table>
+
+To:
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$CBDA(#N$CBDA)</td>
+      <td class="instruction">LD #REGhl,#R$BBCD(#N$BBCD)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CBDD(#N$CBDD)</td>
+      <td class="instruction">NOP</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$CBB1(#N$CBB1)</td>
+      <td class="instruction">LD #REGa,(#R$CBDD(#N$CBDD))</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CBB1(#N$CBB4)</td>
+      <td class="instruction">CP #N$00</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CBB6(#N$CBB6)</td>
+      <td class="instruction">JP NZ,#R$C1F9(#N$C1F9)</td>
+    </tr>
+  </tbody>
+</table>
+
+[Poke:Infinite Health]
+<div>
+  <code>POKE #R$CEBB(#N$CEC2),#N$C9</code>
+</div>
+
+Returns from #R$CEBB before one point is taken from #R$BBF3, so the
+player never dies from a ghost, a creature or a spore. Monsters still
+kill the player on contact; see Immunity To Monsters.
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$CEBB(#N$CEBF)</td>
+      <td class="instruction">LD #REGhl,#R$BBF3(#N$BBF3)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CEBB(#N$CEC2)</td>
+      <td class="instruction">DEC (#REGhl)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CEBB(#N$CEC3)</td>
+      <td class="instruction">RET NZ</td>
+    </tr>
+  </tbody>
+</table>
+
+To:
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$CEBB(#N$CEBF)</td>
+      <td class="instruction">LD #REGhl,#R$BBF3(#N$BBF3)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$CEBB(#N$CEC2)</td>
+      <td class="instruction">RET</td>
+    </tr>
+  </tbody>
+</table>
+
+[Poke:Immunity To Monsters]
+<div>
+  <code>POKE #R$D94F(#N$D975),#N$C9</code>
+</div>
+
+Returns from #R$D94F when a monster is touching the player, instead of
+jumping to #R$CEC4.
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$D94F(#N$D971)</td>
+      <td class="instruction">CALL #R$C55F(#N$C55F)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$D94F(#N$D974)</td>
+      <td class="instruction">RET NC</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$D94F(#N$D975)</td>
+      <td class="instruction">JP #R$CEC4(#N$CEC4)</td>
+    </tr>
+  </tbody>
+</table>
+
+To:
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$D94F(#N$D971)</td>
+      <td class="instruction">CALL #R$C55F(#N$C55F)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$D94F(#N$D974)</td>
+      <td class="instruction">RET NC</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$D94F(#N$D975)</td>
+      <td class="instruction">RET</td>
+    </tr>
+  </tbody>
+</table>
+
+[Poke:No Throw Delay]
+<div>
+  <code>POKE #R$DAB7(#N$DABC),#N$18</code>
+</div>
+
+Turns the timer check into an unconditional skip, so #R$BBC8 is never
+counted down from here.
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DAB7)</td>
+      <td class="instruction">LD #REGhl,#R$BBC8(#N$BBC8)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DABA)</td>
+      <td class="instruction">LD #REGa,(#REGhl)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DABB)</td>
+      <td class="instruction">AND #REGa</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DABC)</td>
+      <td class="instruction">JR Z,#R$DAC0(#N$DAC0)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DABE)</td>
+      <td class="instruction">DEC (#REGhl)</td>
+    </tr>
+  </tbody>
+</table>
+
+To:
+
+<table>
+  <tbody>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DAB7)</td>
+      <td class="instruction">LD #REGhl,#R$BBC8(#N$BBC8)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DABA)</td>
+      <td class="instruction">LD #REGa,(#REGhl)</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DABB)</td>
+      <td class="instruction">AND #REGa</td>
+    </tr>
+    <tr>
+      <td class="address-1">#R$DAB7(#N$DABC)</td>
+      <td class="instruction">JR #R$DAC0(#N$DAC0)</td>
+    </tr>
+  </tbody>
+</table>

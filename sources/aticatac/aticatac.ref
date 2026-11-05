@@ -8,15 +8,16 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref;aticatacGraphics.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;aticatacGraphics.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/aticatac
 
 [Game]
 Game=Atic Atac
-Logo=#SCR1,0,0,32,8,$4000,$5800(/images/logo)
+Logo=#SCR$01,$00,$00,$20,$08,$4000,$5800(/images/logo)
 Copyright=&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/aticatac/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;aticatac.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
@@ -29,10 +30,12 @@ Graphics
 DataTables
 Reference
 
-[Index:Graphics:Graphics]
+[Index:Graphics:Graphics And Sounds]
 Warriors
 Graphics
 Sprites
+Map
+Sound
 
 [Index:Reference:Reference]
 Changelog
@@ -44,12 +47,15 @@ Credits
 Warriors=[Warriors]
 Graphics=[Graphics]
 Sprites=[Sprites]
+Map=[Map]
 
 [Paths]
 Credits=reference/credits.html
 Warriors=graphics/warriors.html
 Graphics=graphics/graphics.html
 Sprites=graphics/sprites.html
+Map=graphics/map.html
+Sound=sound/sounds.html
 
 [Page:Warriors]
 SectionPrefix=Warriors
@@ -60,8 +66,31 @@ SectionPrefix=Graphics
 [Page:Sprites]
 SectionPrefix=Sprites
 
+[Page:Map]
+JavaScript=openseadragon.min.js;castle-map.js
+PageContent=#INCLUDE(CastleMap)
+
+[Page:Sound]
+SectionPrefix=Audio
+
 [Page:Credits]
 PageContent=#INCLUDE(Credits)
+
+[CastleMap]
+<p>
+The rooms of the castle are listed at #R$757D. There are #N$95 of
+them, from #N$00 to #N$94. The game has no floor table: a wall door
+stays on the same storey, and a staircase or trapdoor in #R$645D
+changes level. That gives five floors, from the attic down to the
+caverns. Secret passages (the clocks, bookcases and barrel stacks)
+and trapdoors are shortcuts between rooms that are not next to each
+other. Each cell is the play area of a room, drawn by #R$9BEA and
+the items in that room's list. The hex number is the room ID. The
+picture is twice the size of the Spectrum pixels: drag to move, and
+use the mouse wheel or pinch to zoom.
+</p>
+#HTML(<div class="castle-map-viewer" id="castle-map-viewer"></div>)
+<p class="castle-map-hint">Drag to move. Scroll or pinch to zoom.</p>
 
 [Credits]
 <div class="box box-1">
@@ -84,6 +113,10 @@ LIST#
 #DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08))($fname))
 
 #DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
+
+#DEF(#CHICKENSTRIP()(fname)
+  #UDGARRAY($06,attr=$46,scale=2,step=$06,mask=1,flip=2)(($C544)-($C544+$B4-$06)-$01-$30){$00,$04,$60,$3C}($fname)
+)
 
 #DEF(#COLOURNOCROP(addr,width,height,attrtable)(fname)
   #UDGARRAY($width,scale=4,step=$width,mask=1,flip=2)($addr-($addr + ($height * $width) - $width)-$01-($width * $08))[$attrtable-($attrtable + $width * $height)]($fname)
@@ -115,10 +148,10 @@ LIST#
   ||
 )
 
-#DEF(#SPRITE(id)(fname)
+#DEF(#SPRITE(id,attr=$07)(fname)
   #LET(offset=$id * $02)
   #LET(addr=#PEEK($A4BE + {offset}) + #PEEK($A4BE + {offset} + $01) * $100)
-  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $attr)($fname),#NOCROP({addr} + $01, $02, $attr)($fname)))
 
 #DEF(#GRAPHICNAME(id)
   #MAP($id)(

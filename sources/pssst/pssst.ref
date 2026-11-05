@@ -8,15 +8,16 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref;pssstGraphics.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;pssstGraphics.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/pssst
 
 [Game]
 Game=PSSST
-Logo=#SCR1,0,16,18,6,$4000,$5800(/images/ultimate) #SCR1,0,2,19,13,$4000,$5800(/images/logo)
+Logo=#SCR$01,$00,$10,$12,$06,$4000,$5800(/images/ultimate) #SCR$01,$00,$02,$13,$0D,$4000,$5800(/images/logo)
 Copyright=&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/pssst/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;pssst.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
@@ -29,11 +30,13 @@ Graphics
 DataTables
 Reference
 
-[Index:Graphics:Graphics]
+[Index:Graphics:Graphics And Sounds]
 Player
 Weapons
+Plant
 Items
 Pests
+Sound
 
 [Index:Reference:Reference]
 Changelog
@@ -46,6 +49,7 @@ Credits
 [Links]
 Player=[Player]
 Weapons=[Weapons]
+Plant=[Plant]
 Items=[Items]
 Pests=[Pests]
 
@@ -53,7 +57,9 @@ Pests=[Pests]
 Credits=reference/credits.html
 Items=graphics/items.html
 Pests=graphics/pests.html
+Plant=graphics/plant.html
 Player=graphics/player.html
+Sound=sound/sounds.html
 Weapons=graphics/weapons.html
 
 [Page:Items]
@@ -62,8 +68,14 @@ SectionPrefix=Items
 [Page:Pests]
 SectionPrefix=Pests
 
+[Page:Plant]
+SectionPrefix=Plant
+
 [Page:Player]
 SectionPrefix=Player
+
+[Page:Sound]
+SectionPrefix=Audio
 
 [Page:Weapons]
 SectionPrefix=Weapons
@@ -83,6 +95,19 @@ LIST#
 </div>
 
 [Expand]
+#DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,flip=2)(($addr)-($addr+(((({height}+$07)/$08)*$08)*$size)-$01)-$01-($size*$08))($fname))
+
+#DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,flip=2)(($addr)-($addr+(((({height}+$07)/$08)*$08)*$size)-$01)-$01-($size*$08)){$00,$04*($08-({height}%$08)),$04*$size*$08,$04*{height}}($fname))
+
+#DEF(#SPRITE(addr,attr=$07)(fname)
+  #LET(width=#PEEK($addr+$01))
+  #LET(height=#PEEK($addr+$02))
+  #IF({height}%$08)(
+    #CROP($addr+$03,{width},$attr)($fname),
+    #NOCROP($addr+$03,{width},$attr)($fname)
+  )
+)
+
 #DEF(#CONVERTFF(addr)
   #LET(length=#PEEK($addr) * #PEEK($addr + $01))
   #FOR($00,{length})||n|

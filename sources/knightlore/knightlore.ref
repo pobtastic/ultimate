@@ -8,7 +8,7 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;knightloreGraphics.ref;pokes.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/knightlore
 
@@ -17,16 +17,92 @@ Game=Knight Lore
 Logo=#SCR$02,$12,$05,$09,$08,$4000,$5800(/images/logo)
 Copyright=&copy; 1984 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/knightlore/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;knightlore.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
 
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+Credits
+
+[Links]
+Graphics=[Graphics]
+Sound=[Sound]
+
+[Paths]
+Credits=reference/credits.html
+Graphics=graphics/graphics.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+  { tcdev, for the annotated disassembly of Knight Lore that Michael converted
+    to SkoolKit }
+LIST#
+</div>
+
 [Expand]
-#DEF(#CONVERTFF(addr)
-  #LET(length=#PEEK($addr) * #PEEK($addr + $01))
-  #FOR($00,{length})||n|
-    #IF(#PEEK($02 + $addr + n) == $FF)(#POKES(($02 + $addr + n), $47))
-  ||
+; A sprite of Knight Lore is a width byte (bits 0-3, with bits 6 and 7 that are
+; changed as the sprite is drawn) and a height byte, followed by a mask byte and
+; a data byte for every byte of every line, from the bottom line to the top.
+; Only the data bytes are drawn here, which are at the odd offsets.
+#DEF(#NOCROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s*$02)-$01)
+  #LET(r=$s*$10)
+  #UDGARRAY($s,$c,4,$s*$02,0,2)(($a)-({e})-$02-({r}))($f)
+)
+
+#DEF(#CROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s*$02)-$01)
+  #LET(r=$s*$10)
+  #LET(y=$04*($08-({height}%$08)))
+  #LET(w=$04*$s*$08)
+  #LET(h=$04*{height})
+  #UDGARRAY($s,$c,4,$s*$02,0,2)(($a)-({e})-$02-({r})){$00,{y},{w},{h}}($f)
+)
+
+#DEF(#SPRITE(id,attr=$07)(fname)
+  #LET(addr=#PEEK($7112+$id*$02)+#PEEK($7113+$id*$02)*$100)
+  #LET(width=#PEEK({addr})&$0F)
+  #LET(height=#PEEK({addr}+$01))
+  #IF({height}%$08)(
+    #CROP({addr}+$03,{width},$attr)($fname),
+    #NOCROP({addr}+$03,{width},$attr)($fname)
+  )
+)
+
+#DEF(#SPRITEDATA()(fname)
+  #LET(width=#PEEK(#PC-$02)&$0F)
+  #LET(height=#PEEK(#PC-$01))
+  #IF({height}%$08)(
+    #CROP(#PC+$01,{width},$07)($fname),
+    #NOCROP(#PC+$01,{width},$07)($fname)
+  )
 )

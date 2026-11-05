@@ -3,22 +3,115 @@
 ;
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @cyberun.t2s
+;   tap2sna.py @cyberun-loader.t2s
 ;   sna2skool.py -H -c sources/cyberun/cyberun.ctl Cyberun.z80 > sources/cyberun/cyberun.skool
+;   sna2skool.py -H -c sources/cyberun/loader.ctl CyberunLoader.z80 > sources/cyberun/loader.skool
 ;   skool2html.py -H sources/cyberun/cyberun.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;sounds.ref;cyberunGraphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/cyberun
 
 [Game]
 Game=Cyberun
 Logo=#SCR$01,$02,$00,$1C,$06,$4000,$5800(/images/logo)
-Copyright=&copy; 1986 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
+Copyright=&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/cyberun/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;cyberun.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
+[Titles]
+loader-Index=Loading Code
+
+[OtherCode:loader]
+
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+OtherCode
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Map
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+
+[Links]
+Graphics=[Graphics]
+Map=[Map]
+Sound=[Sound]
+
+[Paths]
+Graphics=graphics/graphics.html
+Map=graphics/map.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Map]
+JavaScript=openseadragon.min.js;planet-map.js
+PageContent=#INCLUDE(PlanetMap)
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[PlanetMap]
+<p>
+The map of the world is stored at #R$61BC. It is #N$60 tiles wide and
+#N$1C tiles high, row by row from the top. Tile #N$00 is blank sky.
+The other tiles are the ground, coloured by their number.
+</p>
+<p>
+The dots mark the objects from #R$5E17. Their column is taken from
+#R$5DB6 and their row from the second byte of each pair. Yellow dots
+are empty slots; magenta dots are the kinds listed at #R$E0FD. Drag
+to move, and use the mouse wheel or pinch to zoom.
+</p>
+#HTML(<div class="planet-map-viewer" id="planet-map-viewer"></div>)
+<p class="planet-map-hint">Drag to move. Scroll or pinch to zoom.</p>
+
+[Expand]
+#DEF(#NOCROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s)-$01)
+  #LET(r=$s*$08)
+  #UDGARRAY($s,$c,4,$s,0,2)(($a)-({e})-$01-({r}))($f)
+)
+
+#DEF(#CROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s)-$01)
+  #LET(r=$s*$08)
+  #LET(y=$04*($08-({height}%$08)))
+  #LET(w=$04*$s*$08)
+  #LET(h=$04*{height})
+  #UDGARRAY($s,$c,4,$s,0,2)(($a)-({e})-$01-({r})){$00,{y},{w},{h}}($f)
+)
+
+#DEF(#SPRITE(sp,attr=$07)(fname)
+  #LET(width=#PEEK($sp))
+  #LET(height=#PEEK($sp+$01))
+  #IF({height}%$08)(
+    #CROP($sp+$02,{width},$attr)($fname),
+    #NOCROP($sp+$02,{width},$attr)($fname)
+  )
+)
+
+#DEF(#SPRITEDATA()(fname)
+  #LET(width=#PEEK(#PC-$02))
+  #LET(height=#PEEK(#PC-$01))
+  #IF({height}%$08)(
+    #CROP(#PC,{width},$07)($fname),
+    #NOCROP(#PC,{width},$07)($fname)
+  )
+)

@@ -3,22 +3,126 @@
 ;
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @alien8.t2s
-;   sna2skool.py -H -c sources/alien8/alien8.ctl Alien8.z80 > sources/alien8/alien8.skool
+;   sna2skool.py -H -c sources/alien8/alien8.ctl Alien8.z80 \
+;     > sources/alien8/alien8.skool
 ;   skool2html.py -H sources/alien8/alien8.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;sounds.ref;alien8Graphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/alien8
 
 [Game]
 Game=Alien 8
-Logo=#SCR$01,$03,$0B,$0C,$06,$4000,$5800(/images/logo)
+Logo=#FONTaddr=$6288,attr=$43,chars=0,scale=2(ALIEN 8)(/images/logo)
 Copyright=&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/alien8/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;alien8.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Map
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+Credits
+
+[Links]
+Graphics=[Graphics]
+Map=[Map]
+Sound=[Sound]
+
+[Paths]
+Credits=reference/credits.html
+Graphics=graphics/graphics.html
+Map=graphics/map.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Map]
+JavaScript=openseadragon.min.js;station-map.js
+PageContent=#INCLUDE(StationMap)
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+  { tcdev, for the annotated disassembly of Knight Lore that Michael converted
+    to SkoolKit }
+LIST#
+  This game shares a lot of functionality with Knight Lore, hence that
+  disassembly was a great help.
+</div>
+
+[StationMap]
+<p>
+The rooms of the station are stored at #R$6469. There are #N$80 of
+them. The room number has the row in the high nibble and the column in
+the low nibble: the rows to the north have the larger numbers, and the
+columns to the east have the larger numbers (see #R$C3B0).
+</p>
+<p>
+The colour of each room is bits 3-5 of its size-and-colour byte, which
+#R$CAD2 copies into bits 0-2 when the game starts. The objects in each
+room are the sprites from the room data at #R$6469, drawn in that
+colour, back to front (the bottom right of the map is the front),
+with each sprite's mask so that a nearer object does not merge
+into the one behind it. Adjacent rooms meet at their doorways,
+including where a tall door opens onto the room above.
+The walls are left off so that the objects stay in view; a line
+on the floor marks each room, with a gap at every doorway. The
+picture is twice the size of the Spectrum pixels: drag to move, and
+use the mouse wheel or pinch to zoom.
+</p>
+#HTML(<div class="station-map-viewer" id="station-map-viewer"></div>)
+<p class="station-map-hint">Drag to move. Scroll or pinch to zoom.</p>
+
+[Expand]
+#DEF(#NOCROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s*$02)-$01)
+  #LET(r=$s*$10)
+  #UDGARRAY($s,$c,4,$s*$02,0,2)(($a)-({e})-$02-({r}))($f)
+)
+#DEF(#CROP(a,s,c)(f)
+  #LET(e=$a+(((({height}+$07)/$08)*$08)*$s*$02)-$01)
+  #LET(r=$s*$10)
+  #LET(y=$04*($08-({height}%$08)))
+  #LET(w=$04*$s*$08)
+  #LET(h=$04*{height})
+  #UDGARRAY($s,$c,4,$s*$02,0,2)(($a)-({e})-$02-({r})){$00,{y},{w},{h}}($f)
+)
+#DEF(#SPRITE(id,attr=$07)(fname)
+  #LET(addr=#PEEK($7827+$id*$02)+#PEEK($7828+$id*$02)*$100)
+  #LET(width=#PEEK({addr})&$0F)
+  #LET(height=#PEEK({addr}+$01))
+  #IF({height}%$08)(#CROP({addr}+$03,{width},$attr)($fname),#NOCROP({addr}+$03,{width},$attr)($fname))
+)
+#DEF(#SPRITEDATA()(fname)
+  #LET(width=#PEEK(#PC-$02)&$0F)
+  #LET(height=#PEEK(#PC-$01))
+  #IF({height}%$08)(#CROP(#PC+$01,{width},$07)($fname),#NOCROP(#PC+$01,{width},$07)($fname))
+)

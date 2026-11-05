@@ -3,22 +3,143 @@
 ;
 ; To build the HTML disassembly, run these commands:
 ;   tap2sna.py @nightshade.t2s
-;   sna2skool.py -H -c sources/nightshade/nightshade.ctl Nightshade.z80 > sources/nightshade/nightshade.skool
+;   sna2skool.py -H -c sources/nightshade/nightshade.ctl Nightshade.z80 \
+;     > sources/nightshade/nightshade.skool
 ;   skool2html.py -H sources/nightshade/nightshade.skool -T dark -T wide -toOa
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;sounds.ref;nightshadeGraphics.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/nightshade
 
 [Game]
 Game=Nightshade
-Logo=#SCR$02,$0B,$03,$0B,$07,$4000,$5800(/images/logo)
+Logo=#SCR$02,$0B,$02,$0B,$08,$4000,$5800{$00,$06}(/images/logo)
 Copyright=&copy; 1985 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/nightshade/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;nightshade.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
 [PageHeaders]
 GameIndex=The complete<>RAM disassembly (work in progress)
+
+[Index]
+MemoryMaps
+Graphics
+DataTables
+Reference
+
+[Index:Graphics:Graphics And Sounds]
+Graphics
+Map
+Sound
+
+[Index:Reference:Reference]
+Changelog
+Pokes
+Credits
+
+[Links]
+Graphics=[Graphics]
+Map=[Map]
+Sound=[Sound]
+
+[Paths]
+Credits=reference/credits.html
+Graphics=graphics/graphics.html
+Map=graphics/map.html
+Sound=sound/sounds.html
+
+[Page:Graphics]
+SectionPrefix=Graphics
+
+[Page:Map]
+JavaScript=openseadragon.min.js;village-map.js
+PageContent=#INCLUDE(VillageMap)
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
+[Credits]
+<div class="box box-1">
+  This disassembly would have taken a lot longer to finish if it weren't for the
+  research and documentation already done and made available by:
+#LIST
+  { <a href="https://mrcook.uk/">Michael R. Cook</a> }
+  { tcdev, for the annotated disassembly of Knight Lore that Michael converted
+    to SkoolKit }
+LIST#
+  This game shares a lot of functionality with Knight Lore, hence that
+  disassembly was a great help.
+</div>
+
+[Expand]
+; Draws the graphic of a strip: a byte for the number of rows followed by two
+; bytes of pixels for each row, with the first row at the bottom.
+#DEF(#STRIP(addr,attr=$07)(fname)
+  #LET(stripheight=#PEEK($addr))
+  #LET(strippages=({stripheight}+$07)/$08)
+  #UDGARRAY(2,attr=$attr,scale=4,step=2,flip=2)((($addr)+$01)-(($addr)+{strippages}*$10)-$01-$10){$00,$04*(($08-({stripheight}%$08))%$08),$40,$04*{stripheight}}($fname)
+)
+
+; Draws the graphic of a strip whose rows follow the address of the macro.
+#DEF(#STRIPDATA()(fname)
+  #STRIP(#PC-$01,$07)($fname)
+)
+
+; Draws the graphic of a strip of wall from the table of wall strips.
+#DEF(#WALLSTRIP(id,attr=$07)(fname)
+  #LET(wallstrip=#PEEK($6E36+$id*$02)+#PEEK($6E37+$id*$02)*$100)
+  #STRIP({wallstrip},$attr)($fname)
+)
+
+; Draws a sprite of the given size, which is stored as a mask byte and then a
+; graphic byte for each row of each character, with the first row at the bottom.
+; A set bit in the mask means that the sprite covers the background, so the
+; masks are copied inverted into an unused page of memory for SkoolKit.
+#DEF(#MASKED(addr,cols,rows,attr)(fname)
+  #LET(pages=($rows+$07)/$08)
+  #PUSHS
+  #FOR($00,$cols*$rows-$01)||n|#POKES($F800+n,$FF-#PEEK($addr+n*$02))||
+  #UDGARRAY($cols,attr=$attr,scale=4,step=$cols*$02,flip=2,mask=2)((($addr)+$01)-(($addr)+{pages}*$10*$cols)-$02-($cols*$10):($F800)-($F800+{pages}*$08*$cols-$01)-$01-($cols*$08),$cols){$00,$04*(($08-($rows%$08))%$08),$04*$cols*$08,$04*$rows}($fname)
+  #POPS
+)
+
+; Draws a sprite from the table of sprites.
+#DEF(#SPRITE(id,attr=$07)(fname)
+  #LET(spriteaddr=#PEEK($6E9E+$id*$02)+#PEEK($6E9F+$id*$02)*$100)
+  #LET(spritecols=#PEEK({spriteaddr})&$0F)
+  #LET(spriterows=#PEEK({spriteaddr}+$01))
+  #MASKED({spriteaddr}+$02,{spritecols},{spriterows},$attr)($fname)
+)
+
+; Draws a sprite whose rows follow the address of the macro.
+#DEF(#SPRITEDATA()(fname)
+  #LET(spritecols=#PEEK(#PC-$02)&$0F)
+  #LET(spriterows=#PEEK(#PC-$01))
+  #MASKED(#PC,{spritecols},{spriterows},$07)($fname)
+)
+
+[VillageMap]
+<p>
+The map of the village is stored at #R$5E04. It is #N$20 cells wide and
+#N$20 cells high. Each cell holds a tile from #N$00 to #N$23. Tile #N$00
+is open ground, which shows as the black streets in the picture, and
+tile #N$01 is the solid tile that fills the edge of the village and
+much of the rest of it. The other tiles are the trees, graves, walls
+and other things that stand in the village.
+</p>
+<p>
+The picture is drawn from those tiles in the same way as #R$D372, with
+the view not turned round. The colour of each wall is taken from the
+lowest two bits of the tile (see #R$D356): bright green, cyan, yellow
+or white. The picture is four times the size of the Spectrum pixels:
+drag to move, and use the mouse wheel or pinch to zoom.
+</p>
+#HTML(<div class="village-map-viewer" id="village-map-viewer"></div>)
+<p class="village-map-hint">Drag to move. Scroll or pinch to zoom.</p>

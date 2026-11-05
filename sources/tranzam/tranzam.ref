@@ -8,15 +8,16 @@
 
 [Config]
 Expand=#INCLUDE(Expand)
-RefFiles=../analytics.ref;../bases.ref;changelog.ref;pokes.ref;tranzamGraphics.ref
+RefFiles=../analytics.ref;../bases.ref;changelog.ref;data.ref;pokes.ref;tranzamGraphics.ref;sounds.ref
 HtmlWriterClass=sources:linking.UltimateHtmlWriter
 GameDir=ultimate/tranzam
 
 [Game]
 Game=Tranz Am
-Logo=#SCR1,0,0,32,8,$4000,$5800(/images/logo)
+Logo=#SCR$01,$00,$00,$20,$08,$4000,$5800(/images/logo)
 Copyright=&copy; 1983 Ashby Computers &amp; Graphics Ltd<br />&copy; Rare Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/ultimate/tree/main/sources/tranzam/
+StyleSheet=skoolkit.css;skoolkit-dark.css;skoolkit-wide.css;tranzam.css
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
@@ -29,12 +30,14 @@ Graphics
 DataTables
 Reference
 
-[Index:Graphics:Graphics]
+[Index:Graphics:Graphics And Sounds]
 Player
 Sidebar
 Items
 Obstacles
 Graphics
+Map
+Sound
 
 [Links]
 Graphics=[Graphics]
@@ -42,6 +45,7 @@ Items=[Items]
 Obstacles=[Obstacles]
 Player=[Player]
 Sidebar=[Sidebar]
+Map=[Map]
 
 [Paths]
 Credits=reference/credits.html
@@ -50,6 +54,8 @@ Items=graphics/items.html
 Obstacles=graphics/obstacles.html
 Player=graphics/player.html
 Sidebar=graphics/sidebar.html
+Map=graphics/map.html
+Sound=sound/sounds.html
 
 [Page:Credits]
 PageContent=#INCLUDE(Credits)
@@ -69,6 +75,30 @@ SectionPrefix=Player
 [Page:Sidebar]
 SectionPrefix=Sidebar
 
+[Page:Map]
+JavaScript=openseadragon.min.js;usa-map.js
+PageContent=#INCLUDE(UsaMap)
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[UsaMap]
+<p>
+The map is #N($1800, $04, $04) by #N($0C00, $04, $04) units, listed
+at #R$7811 as #N$197 points. Each point is an obstacle, a cup or a
+place. Places have bit 6 set and take their names from #R$722F;
+they are the fuel stops from Los Angeles in the west to New York
+in the east. Cups have sprite ID #N$20. Their X is fixed, and
+#R$6498 picks a new Y from #N$20 to #N$9F each round; the gold
+cups sit in the middle of that band, and the dotted line is the
+range. The red car is the start written to #R$5E05 and #R$5E08. Y
+counts up from the south, as on the sidebar drawn by #R$6949. The
+picture uses the daytime colours from #R$6BE6 on the yellow play
+area. Drag to move, and use the mouse wheel or pinch to zoom.
+</p>
+#HTML(<div class="usa-map-viewer" id="usa-map-viewer"></div>)
+<p class="usa-map-hint">Drag to move. Scroll or pinch to zoom.</p>
+
 [Credits]
 <div class="box box-1">
   This disassembly would have taken a lot longer to finish if it weren't for the
@@ -84,10 +114,10 @@ LIST#
 #DEF(#NOCROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08))($fname))
 #DEF(#CROP(addr,size,attr)(fname) #UDGARRAY($size,attr=$attr,scale=4,step=$size,mask=1,flip=2)(($addr)-($addr + ({height} * $size) - $size)-$01-($size * $08)){$00, $04 * ($08 - ({height} % $08)), $04 * $size * $08, $04 * {height}}($fname))
 
-#DEF(#SPRITE(id,base=$7F06)(fname)
+#DEF(#SPRITE(id,base=$7F06,attr=$07)(fname)
   #LET(offset=$id * $02)
   #LET(addr=#PEEK($base + {offset}) + #PEEK($base + {offset} + $01) * $100)
-  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $07)($fname),#NOCROP({addr} + $01, $02, $07)($fname)))
+  #LET(height=#PEEK({addr}))#IF({height} % $08)(#CROP({addr} + $01, $02, $attr)($fname),#NOCROP({addr} + $01, $02, $attr)($fname)))
 
 #DEF(#SPRITENAME(id)
   #MAP($id)(
@@ -139,8 +169,8 @@ LIST#
   )
 )
 
-#DEF(#CAR(id)(fname)
-  #SPRITE($id,$7F24)($fname)
+#DEF(#CAR(id,attr=$07)(fname)
+  #SPRITE($id,$7F24,$attr)($fname)
 )
 
 #DEF(#CARNAME(id)
