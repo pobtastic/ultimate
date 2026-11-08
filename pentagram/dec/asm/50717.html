@@ -104,10 +104,7 @@ Next: <a href="50794.html">50794</a>
 Used by the routine at <a href="50240.html">HandlePlayerLegs</a>.
 </div>
 <div class="paragraph">
-Moves the legs of the player for a frame, using the controls, gravity and anything that has pushed the player. If the player is walking, or is in the air or has just entered the room, it is given a speed along x or y, and then it is moved as far as it is able to go.
-</div>
-<div class="paragraph">
-Gravity works on the speed along z: it is cut by one for each frame while the player is rising with the jump key held down, and by two otherwise, which makes the player fall faster, and makes a jump that is shorter when the key is let go. When the player lands, the flag for jumping is cleared.
+Moves the player by one frame. The speeds along x and y are only set up while the player walks, is jumping or is entering the room, and they are cleared again afterwards. The speed along z has gravity taken off it, which is more if the player is not rising with the jump control held down. If the player lands the jump is over.
 </div>
 </div>
 <table class="input">
@@ -116,13 +113,23 @@ Gravity works on the speed along z: it is cut by one for each frame while the pl
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Controls</td>
+<td class="register-desc">The controls</td>
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Record of the legs</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="50717"></span>
+<div class="comments">
+<div class="paragraph">
+Set the walk speeds unless the player is turning.
+</div>
+</div>
 </td>
 </tr>
 <tr>
@@ -184,10 +191,20 @@ Gravity works on the speed along z: it is cut by one for each frame while the pl
 <td class="comment-1" rowspan="1">Restore the controls from the stack.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="50739"></span>
+<div class="comments">
+<div class="paragraph">
+Gravity takes one off the speed along z when the player is rising with the jump control held down, and two otherwise.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">MovePlayer_Gravity</td>
 <td class="address-2"><span id="50739"></span>50739</td>
 <td class="instruction">LD A,(IX+11)</td>
-<td class="comment-1" rowspan="1">Fetch the speed along z.</td>
+<td class="comment-1" rowspan="1">Fetch the speed along the z axis.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -215,31 +232,31 @@ Gravity works on the speed along z: it is cut by one for each frame while the pl
 <td class="asm-label">MovePlayer_GravityFalling</td>
 <td class="address-2"><span id="50750"></span>50750</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Take one off the speed along z.</td>
+<td class="comment-1" rowspan="1">Decrement <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">MovePlayer_GravityApply</td>
 <td class="address-2"><span id="50751"></span>50751</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Take one off the speed along z.</td>
+<td class="comment-1" rowspan="1">Decrement <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="50752"></span>50752</td>
 <td class="instruction">LD (IX+11),A</td>
-<td class="comment-1" rowspan="1">Set the speed along z.</td>
+<td class="comment-1" rowspan="1">Store the speed along the z axis.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="50755"></span>50755</td>
 <td class="instruction">LD (42809),A</td>
-<td class="comment-1" rowspan="1">Keep a copy of it in <a href="42809.html">PreviousVerticalSpeed</a>.</td>
+<td class="comment-1" rowspan="1">Set <a href="42809.html">PreviousVerticalSpeed</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="50758"></span>50758</td>
 <td class="instruction">ADD A,2</td>
-<td class="comment-1" rowspan="1">Add two to it, which is not used.</td>
+<td class="comment-1" rowspan="1">Add 2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -251,13 +268,23 @@ Gravity works on the speed along z: it is cut by one for each frame while the pl
 <td class="asm-label"></td>
 <td class="address-1"><span id="50763"></span>50763</td>
 <td class="instruction">CALL <a href="50869.html">DoNothing</a></td>
-<td class="comment-1" rowspan="1">Call <a href="50869.html">DoNothing</a>, which does nothing.</td>
+<td class="comment-1" rowspan="1">Call <a href="50869.html">DoNothing</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="50766"></span>50766</td>
 <td class="instruction">CALL <a href="47481.html#47487">ApplyGravityAndMove_AddSpeeds</a></td>
 <td class="comment-1" rowspan="1">Call <a href="47481.html#47487">ApplyGravityAndMove_AddSpeeds</a> to add the distances that the player moved to the position of the player.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="50769"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the jump flag when the player lands from a fall.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -274,7 +301,7 @@ Gravity works on the speed along z: it is cut by one for each frame while the pl
 <td class="asm-label"></td>
 <td class="address-1"><span id="50775"></span>50775</td>
 <td class="instruction">LD A,(42809)</td>
-<td class="comment-1" rowspan="1">Fetch the speed along z from before the move.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="42809.html">PreviousVerticalSpeed</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -294,10 +321,20 @@ Gravity works on the speed along z: it is cut by one for each frame while the pl
 <td class="comment-1" rowspan="1">Clear the flag for jumping, as the player has landed.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="50786"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the speeds along x and y.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">MovePlayer_Done</td>
 <td class="address-2"><span id="50786"></span>50786</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="3">Set the speeds along x and y to zero.</td>
+<td class="comment-1" rowspan="3">Write 0 to the speeds along x and y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

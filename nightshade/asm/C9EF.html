@@ -104,7 +104,7 @@ Next: <a href="CA1B.html">CA1B</a>
 Used by the routine at <a href="CA2B.html">DisplayMenu</a>.
 </div>
 <div class="paragraph">
-Prints a string in the main font, at a position given in pixels measured from the bottom left of the screen. The string ends with a character that has bit 7 set. The attribute for the whole string is in the shadow <span class="register">AF</span>, unless the string is printed by entering at <a href="C9EF.html#c9fc">PrintStringWithAttribute</a>, which takes the attribute from the first byte of the string.
+Prints a string in the main font, at a position given in pixels measured from the bottom left of the screen. The string ends with a character that has bit 7 set. The attribute for the whole string is in <span class="register">AF'</span>, unless the string is printed by entering at <a href="C9EF.html#c9fc">PrintStringWithAttribute</a>, which takes the attribute from the first byte of the string.
 </div>
 <div class="paragraph">
 <table class="">
@@ -137,15 +137,26 @@ Prints a string in the main font, at a position given in pixels measured from th
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="c9ef"></span>
+<div class="comments">
+<div class="paragraph">
+Set the font and find the screen address.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">PrintString</td>
 <td class="address-2"><span id="c9ef"></span>C9EF</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="4">Set the font to the main font.</td>
+<td class="comment-1" rowspan="1">Stash the position on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c9f0"></span>C9F0</td>
 <td class="instruction">LD HL,$6B5E</td>
+<td class="comment-1" rowspan="2">Write 6B5E to <a href="BBAC.html">FontPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -156,18 +167,19 @@ Prints a string in the main font, at a position given in pixels measured from th
 <td class="asm-label"></td>
 <td class="address-1"><span id="c9f6"></span>C9F6</td>
 <td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the position from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c9f7"></span>C9F7</td>
 <td class="instruction">CALL <a href="E556.html">CalculateScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Work out the screen address of the position.</td>
+<td class="comment-1" rowspan="1">Call <a href="E556.html">CalculateScreenAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c9fa"></span>C9FA</td>
 <td class="instruction">JR <a href="C9EF.html#ca0a">PrintString_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="C9EF.html#ca0a">PrintString_Loop</a> to print the string.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="C9EF.html#ca0a">PrintString_Loop</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -186,12 +198,13 @@ Prints a string that starts with an attribute.
 <td class="asm-label">PrintStringWithAttribute</td>
 <td class="address-2"><span id="c9fc"></span>C9FC</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="4">Set the font to the main font.</td>
+<td class="comment-1" rowspan="1">Stash the position on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c9fd"></span>C9FD</td>
 <td class="instruction">LD HL,$6B5E</td>
+<td class="comment-1" rowspan="2">Write 6B5E to <a href="BBAC.html">FontPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -202,44 +215,59 @@ Prints a string that starts with an attribute.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca03"></span>CA03</td>
 <td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the position from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca04"></span>CA04</td>
 <td class="instruction">CALL <a href="E556.html">CalculateScreenAddress</a></td>
-<td class="comment-1" rowspan="1">Work out the screen address of the position.</td>
+<td class="comment-1" rowspan="1">Call <a href="E556.html">CalculateScreenAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca07"></span>CA07</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="3">Fetch the attribute from the start of the string, and keep it for printing.</td>
+<td class="comment-1" rowspan="1">Fetch the attribute.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca08"></span>CA08</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the string.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca09"></span>CA09</td>
 <td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the attribute in <span class="register">AF'</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ca0a"></span>
+<div class="comments">
+<div class="paragraph">
+Print each character of the string.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PrintString_Loop</td>
 <td class="address-2"><span id="ca0a"></span>CA0A</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="4">Fetch the next character of the string, and jump to <a href="C9EF.html#ca16">PrintString_Last</a> if it is the last one.</td>
+<td class="comment-1" rowspan="1">Fetch the next character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca0b"></span>CA0B</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the next character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca0c"></span>CA0C</td>
 <td class="instruction">BIT 7,A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C9EF.html#ca16">PrintString_Last</a> if it is the last one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -250,28 +278,41 @@ Prints a string that starts with an attribute.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca10"></span>CA10</td>
 <td class="instruction">CALL <a href="CB5B.html">PrintCharacterWithAttribute</a></td>
-<td class="comment-1" rowspan="3">Print the character, move on to the next position and loop back.</td>
+<td class="comment-1" rowspan="1">Call <a href="CB5B.html">PrintCharacterWithAttribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca13"></span>CA13</td>
 <td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Move on to the next position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca14"></span>CA14</td>
 <td class="instruction">JR <a href="C9EF.html#ca0a">PrintString_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C9EF.html#ca0a">PrintString_Loop</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="ca16"></span>
+<div class="comments">
+<div class="paragraph">
+Print the last character.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PrintString_Last</td>
 <td class="address-2"><span id="ca16"></span>CA16</td>
-<td class="instruction">AND $7F</td>
-<td class="comment-1" rowspan="2">Print the last character, after clearing bit 7.</td>
+<td class="instruction">AND %01111111</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 6.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ca18"></span>CA18</td>
 <td class="instruction">JP <a href="CB5B.html">PrintCharacterWithAttribute</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB5B.html">PrintCharacterWithAttribute</a>.</td>
 </tr>
 </table>
 <table class="asm-navigation">

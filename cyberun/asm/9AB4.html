@@ -104,7 +104,7 @@ Next: <a href="9B0C.html">9B0C</a>
 Used by the routines at <a href="9A9A.html">PlayMusic_WaitKey</a> and <a href="9AA9.html">PlayMusic</a>.
 </div>
 <div class="paragraph">
-Plays a single note of a tune. The bottom six bits of the note byte are the number of the note, where zero is a rest, and the top two bits are a multiplier for the length of the note.
+Plays a note of a tune, or a rest if the note number is zero. Bits 0 to 5 select the entry in <a href="9B0C.html">NoteTable</a> that holds the two delays of a cycle and the number of cycles. Bits 6 and 7 are the length less one, which multiplies the number of cycles, so the note is one to four times as long.
 </div>
 </div>
 <table class="input">
@@ -113,11 +113,11 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">Note byte</td>
+<td class="register-desc">The note</td>
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the note byte</td>
+<td class="register-desc">Address of the note</td>
 </tr>
 </table>
 <table class="output">
@@ -126,9 +126,19 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the next note byte</td>
+<td class="register-desc">Address of the next note</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9ab4"></span>
+<div class="comments">
+<div class="paragraph">
+Look up the delays and the number of cycles.
+</div>
+</div>
 </td>
 </tr>
 <tr>
@@ -141,13 +151,13 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ab6"></span>9AB6</td>
 <td class="instruction">JR Z,<a href="9AB4.html#9af6">PlayNote_Rest</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="9AB4.html#9af6">PlayNote_Rest</a> if it is a rest.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="9AB4.html#9af6">PlayNote_Rest</a> if the note is a rest.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ab8"></span>9AB8</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="3">Multiply the note number by three...</td>
+<td class="comment-1" rowspan="2">Set <span class="register">HL</span> to the note number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -158,67 +168,93 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label"></td>
 <td class="address-1"><span id="9abb"></span>9ABB</td>
 <td class="instruction">ADD HL,HL</td>
+<td class="comment-1" rowspan="1">Double the number.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9abc"></span>
+<div class="comments">
+<div class="paragraph">
+Add the address of the table of notes at <a href="9B0C.html">NoteTable</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9abc"></span>9ABC</td>
 <td class="instruction">CALL <a href="9BCF.html">AddAToHL</a></td>
-<td class="comment-1" rowspan="3">...and add the address of the table of notes at <a href="9B0C.html">NoteTable</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="9BCF.html">AddAToHL</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9abf"></span>9ABF</td>
 <td class="instruction">LD BC,$9B0C</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="9B0C.html">NoteTable</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ac2"></span>9AC2</td>
 <td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="1">Find the entry for the note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ac3"></span>9AC3</td>
 <td class="instruction">LD B,(HL)</td>
-<td class="comment-1" rowspan="4">Fetch the half-period from the table into <span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the first delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ac4"></span>9AC4</td>
 <td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ac5"></span>9AC5</td>
 <td class="instruction">LD C,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the second delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ac6"></span>9AC6</td>
 <td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ac7"></span>9AC7</td>
 <td class="instruction">LD L,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the number of cycles into <span class="register">L</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the number of cycles.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ac8"></span>9AC8</td>
 <td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">H</span> to 00.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9aca"></span>
+<div class="comments">
+<div class="paragraph">
+Bits 6 and 7 are the length, less one.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9aca"></span>9ACA</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the note byte again.</td>
+<td class="comment-1" rowspan="1">Fetch the note again.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9acb"></span>9ACB</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2">Move the top two bits to the bottom.</td>
+<td class="comment-1" rowspan="2">Move bits 6 and 7 to bits 0 and 1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -229,13 +265,13 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label"></td>
 <td class="address-1"><span id="9acd"></span>9ACD</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep them.</td>
+<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9acf"></span>9ACF</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">Add one to get a multiplier.</td>
+<td class="comment-1" rowspan="1">Add one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -247,7 +283,7 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ad1"></span>9AD1</td>
 <td class="instruction">LD E,L</td>
-<td class="comment-1" rowspan="2">Copy the number of cycles into <span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="2">Copy the number of cycles to <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -255,10 +291,20 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="instruction">LD D,H</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="9ad3"></span>
+<div class="comments">
+<div class="paragraph">
+Multiply the number of cycles by the length.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">PlayNote_Multiply</td>
 <td class="address-2"><span id="9ad3"></span>9AD3</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Decrease the multiplier by one.</td>
+<td class="comment-1" rowspan="1">Count down the length.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -282,19 +328,29 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label">PlayNote_Play</td>
 <td class="address-2"><span id="9ad9"></span>9AD9</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1">Restore the address of the note.</td>
+<td class="comment-1" rowspan="1">Restore the note address from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="9ada"></span>
+<div class="comments">
+<div class="paragraph">
+Each pass makes one cycle of the note.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PlayNote_Cycle</td>
 <td class="address-2"><span id="9ada"></span>9ADA</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Save the half-period.</td>
+<td class="comment-1" rowspan="1">Stash the delays on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9adb"></span>9ADB</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1">Select the low level.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">A</span> to 00.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -306,13 +362,13 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label">PlayNote_Low</td>
 <td class="address-2"><span id="9ade"></span>9ADE</td>
 <td class="instruction">DJNZ <a href="9AB4.html#9ade">PlayNote_Low</a></td>
-<td class="comment-1" rowspan="1">Delay.</td>
+<td class="comment-1" rowspan="1">Wait for the first half of the cycle.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ae0"></span>9AE0</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrease the outer counter by one.</td>
+<td class="comment-1" rowspan="1">Count down the second delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -324,19 +380,19 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ae3"></span>9AE3</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore the half-period.</td>
+<td class="comment-1" rowspan="1">Restore the delays from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ae4"></span>9AE4</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Save the half-period again.</td>
+<td class="comment-1" rowspan="1">Stash the delays on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9ae5"></span>9AE5</td>
 <td class="instruction">LD A,$10</td>
-<td class="comment-1" rowspan="1">Select the high level.</td>
+<td class="comment-1" rowspan="1">Set bit 4.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -348,13 +404,13 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label">PlayNote_High</td>
 <td class="address-2"><span id="9ae9"></span>9AE9</td>
 <td class="instruction">DJNZ <a href="9AB4.html#9ae9">PlayNote_High</a></td>
-<td class="comment-1" rowspan="1">Delay.</td>
+<td class="comment-1" rowspan="1">Wait for the second half of the cycle.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="9aeb"></span>9AEB</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Decrease the outer counter by one.</td>
+<td class="comment-1" rowspan="1">Count down the second delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -366,7 +422,7 @@ Plays a single note of a tune. The bottom six bits of the note byte are the numb
 <td class="asm-label"></td>
 <td class="address-1"><span id="9aee"></span>9AEE</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore the half-period.</td>
+<td class="comment-1" rowspan="1">Restore the delays from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

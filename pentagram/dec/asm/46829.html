@@ -104,13 +104,7 @@ Next: <a href="46914.html">46914</a>
 Used by the routines at <a href="47481.html">ApplyGravityAndMove</a> and <a href="50717.html">MovePlayer</a>.
 </div>
 <div class="paragraph">
-Moves an object by its speeds along the three axes, which are held in the object, and stops it where it is blocked by a wall or by another object. The speeds are changed to the distances that the object has actually moved. The routine records what blocked the object in its collision flags: bit 0 is set if it was stopped on x, bit 1 if it was stopped on y and bit 2 if it was stopped on z, which also means that the object is standing on the floor or on another object. These flags are cleared first.
-</div>
-<div class="paragraph">
-The object is flagged as being moved while this happens, so that the tests for collisions with other objects ignore it, and so that this routine ignores a second call for it.
-</div>
-<div class="paragraph">
-The z axis is done first, then x, then y. The speed is first cut down to what the walls (or the floor) allow, and then to what the other objects allow.
+Stops an object moving through the walls of the room or through other objects. The speeds along x, y and z of the object are each brought closer to zero until the object can move without hitting anything. Whichever direction is hit is flagged in the low bits of the collision flags: bit 0 for x, bit 1 for y and bit 2 for z. For z that means the object is standing on something. An object that is flagged to be ignored is not adjusted.
 </div>
 </div>
 <table class="input">
@@ -119,7 +113,7 @@ The z axis is done first, then x, then y. The speed is first cut down to what th
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Object record</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
 </td>
@@ -129,7 +123,7 @@ The z axis is done first, then x, then y. The speed is first cut down to what th
 <span id="46829"></span>
 <div class="comments">
 <div class="paragraph">
-Return if the object is already being moved. If not, flag that it is and clear the collision flags of the last move.
+Ignore the object so that it does not hit itself, and clear the blocked flags.
 </div>
 </div>
 </td>
@@ -161,13 +155,13 @@ Return if the object is already being moved. If not, flag that it is and clear t
 <td class="asm-label"></td>
 <td class="address-1"><span id="46841"></span>46841</td>
 <td class="instruction">AND %11111000</td>
-<td class="comment-1" rowspan="1">Clear the flags for x, y and z.</td>
+<td class="comment-1" rowspan="1">Clear the blocked flags of x, y and z.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46843"></span>46843</td>
 <td class="instruction">LD (IX+12),A</td>
-<td class="comment-1" rowspan="1">Write the flags back.</td>
+<td class="comment-1" rowspan="1">Store the collision flags.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -185,7 +179,7 @@ Return if the object is already being moved. If not, flag that it is and clear t
 <span id="46849"></span>
 <div class="comments">
 <div class="paragraph">
-Move along the z axis.
+The new speeds are kept in <span class="register">H</span> for z, <span class="register">C</span> for x and <span class="register">L</span> for y. Test z against the floor, then other objects.
 </div>
 </div>
 </td>
@@ -194,7 +188,7 @@ Move along the z axis.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46849"></span>46849</td>
 <td class="instruction">LD A,(IX+11)</td>
-<td class="comment-1" rowspan="4">Fetch the speed along z into <span class="register">H</span>, and jump to <a href="46829.html#46866">BlockMovement_X</a> if it is zero.</td>
+<td class="comment-1" rowspan="2">Fetch the speed along z and test whether it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -205,11 +199,13 @@ Move along the z axis.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46853"></span>46853</td>
 <td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46854"></span>46854</td>
 <td class="instruction">JR Z,<a href="46829.html#46866">BlockMovement_X</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="46829.html#46866">BlockMovement_X</a> if it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -244,7 +240,7 @@ Move along the z axis.
 <span id="46866"></span>
 <div class="comments">
 <div class="paragraph">
-Move along the x axis.
+Test x against the walls of the room, then other objects.
 </div>
 </div>
 </td>
@@ -253,7 +249,7 @@ Move along the x axis.
 <td class="asm-label">BlockMovement_X</td>
 <td class="address-2"><span id="46866"></span>46866</td>
 <td class="instruction">LD A,(IX+9)</td>
-<td class="comment-1" rowspan="4">Fetch the speed along x into <span class="register">C</span>, and jump to <a href="46829.html#46883">BlockMovement_Y</a> if it is zero.</td>
+<td class="comment-1" rowspan="2">Fetch the speed along x and test whether it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -264,11 +260,13 @@ Move along the x axis.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46870"></span>46870</td>
 <td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46871"></span>46871</td>
 <td class="instruction">JR Z,<a href="46829.html#46883">BlockMovement_Y</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="46829.html#46883">BlockMovement_Y</a> if it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -303,7 +301,7 @@ Move along the x axis.
 <span id="46883"></span>
 <div class="comments">
 <div class="paragraph">
-Move along the y axis.
+Test y against the walls of the room, then other objects.
 </div>
 </div>
 </td>
@@ -312,7 +310,7 @@ Move along the y axis.
 <td class="asm-label">BlockMovement_Y</td>
 <td class="address-2"><span id="46883"></span>46883</td>
 <td class="instruction">LD A,(IX+10)</td>
-<td class="comment-1" rowspan="4">Fetch the speed along y into <span class="register">L</span>, and jump to <a href="46829.html#46900">BlockMovement_Store</a> if it is zero.</td>
+<td class="comment-1" rowspan="2">Fetch the speed along y and test whether it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -323,11 +321,13 @@ Move along the y axis.
 <td class="asm-label"></td>
 <td class="address-1"><span id="46887"></span>46887</td>
 <td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46888"></span>46888</td>
 <td class="instruction">JR Z,<a href="46829.html#46900">BlockMovement_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="46829.html#46900">BlockMovement_Store</a> if it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -362,7 +362,7 @@ Move along the y axis.
 <span id="46900"></span>
 <div class="comments">
 <div class="paragraph">
-Store the distances that the object can move, and finish.
+Store the new speeds and stop ignoring the object.
 </div>
 </div>
 </td>
@@ -371,19 +371,17 @@ Store the distances that the object can move, and finish.
 <td class="asm-label">BlockMovement_Store</td>
 <td class="address-2"><span id="46900"></span>46900</td>
 <td class="instruction">LD (IX+9),C</td>
-<td class="comment-1" rowspan="1">Write the distance along x.</td>
+<td class="comment-1" rowspan="3">Store the new speeds along x, y and z.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46903"></span>46903</td>
 <td class="instruction">LD (IX+10),L</td>
-<td class="comment-1" rowspan="1">Write the distance along y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46906"></span>46906</td>
 <td class="instruction">LD (IX+11),H</td>
-<td class="comment-1" rowspan="1">Write the distance along z.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

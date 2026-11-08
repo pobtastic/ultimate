@@ -110,26 +110,48 @@ Copies the pixels of the screen buffer onto the screen, using the stack to copy 
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="e148"></span>
+<div class="comments">
+<div class="paragraph">
+Keep the stack pointer, and point it at the playfield on the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">CopyPixelsToScreen</td>
 <td class="address-2"><span id="e148"></span>E148</td>
 <td class="instruction">LD ($BBAE),SP</td>
-<td class="comment-1" rowspan="3">Save the stack pointer, point it at the end of the last row of the playing area on the screen, and count 112 rows.</td>
+<td class="comment-1" rowspan="1">Save the stack pointer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e14c"></span>E14C</td>
 <td class="instruction">LD SP,$4FFD</td>
+<td class="comment-1" rowspan="1">Point the stack pointer at the end of the last row of the playing area on the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e14f"></span>E14F</td>
 <td class="instruction">LD B,$70</td>
+<td class="comment-1" rowspan="1">Set a count of 70 rows.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e151"></span>E151</td>
 <td class="instruction">LD HL,$E5DB</td>
 <td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the end of the first row of the buffer.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e154"></span>
+<div class="comments">
+<div class="paragraph">
+Copy a row from the buffer to the screen.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">CopyPixelsToScreen_Row</td>
@@ -407,7 +429,17 @@ Copies the pixels of the screen buffer onto the screen, using the stack to copy 
 <td class="asm-label"></td>
 <td class="address-1"><span id="e18a"></span>E18A</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1">Keep the buffer address in <span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Keep the address in the buffer in <span class="register">DE</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e18b"></span>
+<div class="comments">
+<div class="paragraph">
+Move up one pixel line on the screen.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -421,10 +453,20 @@ Copies the pixels of the screen buffer onto the screen, using the stack to copy 
 <td class="instruction">ADD HL,SP</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="e18f"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="E148.html#e1a1">CopyPixelsToScreen_Next</a> unless that is the last pixel row of a character row.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e18f"></span>E18F</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="4">Jump to <a href="E148.html#e1a1">CopyPixelsToScreen_Next</a> unless that is the last pixel row of a character row.</td>
+<td class="comment-1" rowspan="2">Test whether it has crossed into the previous character row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -434,18 +476,30 @@ Copies the pixels of the screen buffer onto the screen, using the stack to copy 
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e191"></span>E191</td>
-<td class="instruction">AND $07</td>
+<td class="instruction">AND %00000111</td>
+<td class="comment-1" rowspan="1">Keep the bits for the pixel line.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e193"></span>E193</td>
 <td class="instruction">JP NZ,<a href="E148.html#e1a1">CopyPixelsToScreen_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E148.html#e1a1">CopyPixelsToScreen_Next</a> if it has not.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e196"></span>
+<div class="comments">
+<div class="paragraph">
+Move to the previous character row.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e196"></span>E196</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="4">Move up one character row, and jump to <a href="E148.html#e1a1">CopyPixelsToScreen_Next</a> if that is in a different third of the screen.</td>
+<td class="comment-1" rowspan="3">Subtract 20 from the low byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -461,6 +515,7 @@ Copies the pixels of the screen buffer onto the screen, using the stack to copy 
 <td class="asm-label"></td>
 <td class="address-1"><span id="e19a"></span>E19A</td>
 <td class="instruction">JP C,<a href="E148.html#e1a1">CopyPixelsToScreen_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E148.html#e1a1">CopyPixelsToScreen_Next</a> if that is in the previous third.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -477,6 +532,16 @@ Copies the pixels of the screen buffer onto the screen, using the stack to copy 
 <td class="asm-label"></td>
 <td class="address-1"><span id="e1a0"></span>E1A0</td>
 <td class="instruction">LD H,A</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e1a1"></span>
+<div class="comments">
+<div class="paragraph">
+Point at the next row.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">CopyPixelsToScreen_Next</td>
@@ -502,15 +567,26 @@ Copies the pixels of the screen buffer onto the screen, using the stack to copy 
 <td class="comment-1" rowspan="1">Loop back until all of the rows have been copied.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="e1a8"></span>
+<div class="comments">
+<div class="paragraph">
+Restore the stack pointer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e1a8"></span>E1A8</td>
 <td class="instruction">LD SP,($BBAE)</td>
-<td class="comment-1" rowspan="2">Get the stack pointer back and return.</td>
+<td class="comment-1" rowspan="1">Get the stack pointer back.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e1ac"></span>E1AC</td>
 <td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

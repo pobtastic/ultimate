@@ -104,7 +104,7 @@ Next: <a href="CB3E.html">CB3E</a>
 Used by the routine at <a href="CB5B.html">PrintCharacterWithAttribute</a>.
 </div>
 <div class="paragraph">
-Prints a character on the screen, using the font pointed at by <a href="BBAC.html">FontPointer</a>. Both the pixels and the attribute are set.
+Prints a character on the screen, using the font whose address is held in <a href="BBAC.html">FontPointer</a>. A space is drawn as 3C, which is blank in this font. The eight rows are written going down the screen, and the address is left at the top of the character.
 </div>
 <div class="paragraph">
 <table class="">
@@ -123,7 +123,7 @@ Prints a character on the screen, using the font pointed at by <a href="BBAC.htm
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">Character</td>
+<td class="register-desc">The character</td>
 </tr>
 <tr>
 <td class="register">A'</td>
@@ -131,16 +131,35 @@ Prints a character on the screen, using the font pointed at by <a href="BBAC.htm
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Screen address</td>
+<td class="register-desc">Screen address of the top row</td>
 </tr>
 </table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Screen address of the top row</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cb19"></span>
+<div class="comments">
+<div class="paragraph">
+Turn a space into the font space.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrintScreen</td>
 <td class="address-2"><span id="cb19"></span>CB19</td>
 <td class="instruction">CP $20</td>
-<td class="comment-1" rowspan="3">Print the blank character 3C instead of a space (20).</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CB19.html#cb1f">PrintGlyph</a> if it is not a space.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -151,6 +170,7 @@ Prints a character on the screen, using the font pointed at by <a href="BBAC.htm
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb1d"></span>CB1D</td>
 <td class="instruction">LD A,$3C</td>
+<td class="comment-1" rowspan="1">Use the font space (3C).</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -160,7 +180,7 @@ Prints a character on the screen, using the font pointed at by <a href="BBAC.htm
 This entry point is used by the routine at <a href="C489.html">PickUpItem</a>.
 </div>
 <div class="paragraph">
-Draws the eight rows of pixels of a character, without setting the attribute.
+Find the glyph.
 </div>
 </div>
 </td>
@@ -169,7 +189,7 @@ Draws the eight rows of pixels of a character, without setting the attribute.
 <td class="asm-label">PrintGlyph</td>
 <td class="address-2"><span id="cb1f"></span>CB1F</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="3">Keep the registers safe.</td>
+<td class="comment-1" rowspan="3">Stash <span class="register">BC</span>, <span class="register">DE</span> and the screen address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -185,7 +205,7 @@ Draws the eight rows of pixels of a character, without setting the attribute.
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb22"></span>CB22</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="2">Multiply the character code by eight...</td>
+<td class="comment-1" rowspan="2">Set <span class="register">HL</span> to the character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -196,7 +216,7 @@ Draws the eight rows of pixels of a character, without setting the attribute.
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb25"></span>CB25</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="3">... to get the distance to the character in the font.</td>
+<td class="comment-1" rowspan="3">Multiply the character by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -209,64 +229,100 @@ Draws the eight rows of pixels of a character, without setting the attribute.
 <td class="instruction">ADD HL,HL</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="cb28"></span>
+<div class="comments">
+<div class="paragraph">
+Add the font address.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb28"></span>CB28</td>
 <td class="instruction">LD DE,($BBAC)</td>
-<td class="comment-1" rowspan="3">Add the address of the font to get the address of the character.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="BBAC.html">FontPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb2c"></span>CB2C</td>
 <td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="1">Add it to get the glyph address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb2d"></span>CB2D</td>
 <td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the glyph.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb2e"></span>CB2E</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Get the screen address back.</td>
+<td class="comment-1" rowspan="1">Restore the screen address from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cb2f"></span>
+<div class="comments">
+<div class="paragraph">
+Copy eight rows down the screen.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb2f"></span>CB2F</td>
 <td class="instruction">LD B,$08</td>
-<td class="comment-1" rowspan="1">Set a counter for the eight rows of the character.</td>
+<td class="comment-1" rowspan="1">Set a counter of 08 rows.</td>
 </tr>
 <tr>
 <td class="asm-label">PrintGlyph_Loop</td>
 <td class="address-2"><span id="cb31"></span>CB31</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="5">Copy a row of the character to the screen, and loop back until all eight rows have been drawn.</td>
+<td class="comment-1" rowspan="1">Fetch a row of the glyph.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb32"></span>CB32</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the next row of the glyph.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb33"></span>CB33</td>
 <td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Copy it to the screen.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb34"></span>CB34</td>
 <td class="instruction">INC H</td>
+<td class="comment-1" rowspan="1">Move <span class="register">HL</span> down a row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb35"></span>CB35</td>
 <td class="instruction">DJNZ <a href="CB19.html#cb31">PrintGlyph_Loop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CB19.html#cb31">PrintGlyph_Loop</a> until all eight rows have been written.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cb37"></span>
+<div class="comments">
+<div class="paragraph">
+Move back to the top of the character.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb37"></span>CB37</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="2">Get the registers back.</td>
+<td class="comment-1" rowspan="2">Restore <span class="register">DE</span> and <span class="register">BC</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -277,7 +333,7 @@ Draws the eight rows of pixels of a character, without setting the attribute.
 <td class="asm-label"></td>
 <td class="address-1"><span id="cb39"></span>CB39</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="3">Move the screen address back to the top row of the character.</td>
+<td class="comment-1" rowspan="3">Move <span class="register">HL</span> back to the top row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

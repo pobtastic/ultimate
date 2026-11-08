@@ -104,7 +104,7 @@ Next: <a href="BCCA.html">BCCA</a>
 Used by the routines at <a href="BA22.html">GameOver</a>, <a href="BC10.html">PrintPercentageComplete</a>, <a href="BC66.html">PrintDays</a> and <a href="BCA3.html">PrintLives</a>.
 </div>
 <div class="paragraph">
-Prints a BCD number in the screen buffer, using the standard font. Every digit is printed, including leading zeroes.
+Prints a number which is held in BCD, using the font with the digits. Every digit is printed, including leading zeroes.
 </div>
 </div>
 <table class="input">
@@ -113,7 +113,7 @@ Prints a BCD number in the screen buffer, using the standard font. Every digit i
 </tr>
 <tr>
 <td class="register">B</td>
-<td class="register-desc">Number of bytes (pairs of digits) to print</td>
+<td class="register-desc">Number of bytes</td>
 </tr>
 <tr>
 <td class="register">DE</td>
@@ -121,46 +121,65 @@ Prints a BCD number in the screen buffer, using the standard font. Every digit i
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Address in the screen buffer to print at</td>
+<td class="register-desc">Address in the screen buffer</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcae"></span>
+<div class="comments">
+<div class="paragraph">
+Point at the digit font.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrintBCDNumber</td>
 <td class="address-2"><span id="bcae"></span>BCAE</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the address in the screen buffer.</td>
+<td class="comment-1" rowspan="1">Stash the screen buffer address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcaf"></span>BCAF</td>
 <td class="instruction">LD HL,$6108</td>
-<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="6108.html">Font</a>.</td>
+<td class="comment-1" rowspan="2">Set <a href="5BC7.html">FontPointer</a> to <a href="6108.html">Font</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcb2"></span>BCB2</td>
 <td class="instruction">LD ($5BC7),HL</td>
-<td class="comment-1" rowspan="1">Use it to print.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcb5"></span>BCB5</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore the address in the screen buffer.</td>
+<td class="comment-1" rowspan="1">Restore the screen buffer address from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bcb6"></span>
+<div class="comments">
+<div class="paragraph">
+Print the upper digit of the byte.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PrintBCDNumber_NextByte</td>
 <td class="address-2"><span id="bcb6"></span>BCB6</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch two digits.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcb7"></span>BCB7</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="4">Move the first digit into the lowest four bits.</td>
+<td class="comment-1" rowspan="4">Move the upper digit to the lowest four bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -181,13 +200,13 @@ Prints a BCD number in the screen buffer, using the standard font. Every digit i
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcbb"></span>BCBB</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only the first digit.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 3.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcbd"></span>BCBD</td>
 <td class="instruction">CALL <a href="BE7F.html">PrintCharacter</a></td>
-<td class="comment-1" rowspan="1">Print the first digit.</td>
+<td class="comment-1" rowspan="1">Call <a href="BE7F.html">PrintCharacter</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -196,6 +215,9 @@ Prints a BCD number in the screen buffer, using the standard font. Every digit i
 <div class="paragraph">
 This entry point is used by the routine at <a href="BC10.html">PrintPercentageComplete</a>.
 </div>
+<div class="paragraph">
+Print the lower digit and move on.
+</div>
 </div>
 </td>
 </tr>
@@ -203,31 +225,31 @@ This entry point is used by the routine at <a href="BC10.html">PrintPercentageCo
 <td class="asm-label">PrintBCDNumber_SecondDigit</td>
 <td class="address-2"><span id="bcc0"></span>BCC0</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch two digits.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcc1"></span>BCC1</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only the second digit.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 3.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcc3"></span>BCC3</td>
 <td class="instruction">CALL <a href="BE7F.html">PrintCharacter</a></td>
-<td class="comment-1" rowspan="1">Print the second digit.</td>
+<td class="comment-1" rowspan="1">Call <a href="BE7F.html">PrintCharacter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcc6"></span>BCC6</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Move on to the next two digits.</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bcc7"></span>BCC7</td>
 <td class="instruction">DJNZ <a href="BCAE.html#bcb6">PrintBCDNumber_NextByte</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="BCAE.html#bcb6">PrintBCDNumber_NextByte</a> until all of the bytes have been printed.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="BCAE.html#bcb6">PrintBCDNumber_NextByte</a> until all of the bytes have been printed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

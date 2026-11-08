@@ -133,7 +133,7 @@ Prepare the menu.
 <td class="asm-label">GameMenu</td>
 <td class="address-2"><span id="c8ca"></span>C8CA</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="2">Flag that the frame around the screen has not been drawn.</td>
+<td class="comment-1" rowspan="2">Write 00 to *<a href="BBBF.html">MenuFrameDrawnFlag</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -144,64 +144,89 @@ Prepare the menu.
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8ce"></span>C8CE</td>
 <td class="instruction">LD HL,$C962</td>
-<td class="comment-1" rowspan="2">Point at the attributes of the lines of the menu, and set a counter for eight lines.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="C962.html">MenuLineAttributes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8d1"></span>C8D1</td>
 <td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="1">Set the number of lines to 08.</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Unflash</td>
 <td class="address-2"><span id="c8d3"></span>C8D3</td>
 <td class="instruction">RES 7,(HL)</td>
-<td class="comment-1" rowspan="3">Turn off the flashing of the line, and loop back until all of the lines have been done.</td>
+<td class="comment-1" rowspan="1">Stop the line flashing.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8d5"></span>C8D5</td>
 <td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move on to the next line.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8d6"></span>C8D6</td>
 <td class="instruction">DJNZ <a href="C8CA.html#c8d3">GameMenu_Unflash</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C8CA.html#c8d3">GameMenu_Unflash</a> until all of the lines are done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8d8"></span>C8D8</td>
 <td class="instruction">CALL <a href="E200.html#e206">ClearScreenBuffer</a></td>
-<td class="comment-1" rowspan="1">Clear the playing area and the screen buffer.</td>
+<td class="comment-1" rowspan="1">Call <a href="E200.html#e206">ClearScreenBuffer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8db"></span>C8DB</td>
 <td class="instruction">CALL <a href="CA2B.html">DisplayMenu</a></td>
-<td class="comment-1" rowspan="1">Print the lines of the menu.</td>
+<td class="comment-1" rowspan="1">Call <a href="CA2B.html">DisplayMenu</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8de"></span>C8DE</td>
 <td class="instruction">CALL <a href="C949.html">FlashMenuOptions</a></td>
-<td class="comment-1" rowspan="1">Make the lines for the options that have been chosen flash.</td>
+<td class="comment-1" rowspan="1">Call <a href="C949.html">FlashMenuOptions</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c8e1"></span>
+<div class="comments">
+<div class="paragraph">
+Read the keys that choose the control method.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Loop</td>
 <td class="address-2"><span id="c8e1"></span>C8E1</td>
 <td class="instruction">CALL <a href="CA2B.html">DisplayMenu</a></td>
-<td class="comment-1" rowspan="1">Print the lines of the menu.</td>
+<td class="comment-1" rowspan="1">Call <a href="CA2B.html">DisplayMenu</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c8e4"></span>
+<div class="comments">
+<div class="paragraph">
+<audio controls="" src="../audio/main-tune.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/main-tune.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8e4"></span>C8E4</td>
 <td class="instruction">LD DE,$C770</td>
-<td class="comment-1" rowspan="1">Point at the menu tune.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="C770.html">Tune_Menu</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8e7"></span>C8E7</td>
 <td class="instruction">CALL <a href="C63D.html">PlayMusicOnce</a></td>
-<td class="comment-1" rowspan="1">Play the tune until a key is pressed.</td>
+<td class="comment-1" rowspan="1">Call <a href="C63D.html">PlayMusicOnce</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -217,7 +242,27 @@ Read the keys "1" to "5".
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8ea"></span>C8EA</td>
 <td class="instruction">LD A,$F7</td>
-<td class="comment-1" rowspan="2">Read the keys "1" to "5".</td>
+<td class="comment-1" rowspan="2">Read from the keyboard; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">F7</td>
+<td class="centre" colspan="1" rowspan="1">1</td>
+<td class="centre" colspan="1" rowspan="1">2</td>
+<td class="centre" colspan="1" rowspan="1">3</td>
+<td class="centre" colspan="1" rowspan="1">4</td>
+<td class="centre" colspan="1" rowspan="1">5</td>
+</tr>
+</table></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -228,24 +273,25 @@ Read the keys "1" to "5".
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8ef"></span>C8EF</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1">Keep the keys that are being pressed.</td>
+<td class="comment-1" rowspan="1">Keep the keys that are pressed in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8f0"></span>C8F0</td>
 <td class="instruction">LD A,($BBB0)</td>
-<td class="comment-1" rowspan="2">Fetch the control options, and keep a copy to compare with later.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="BBB0.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8f3"></span>C8F3</td>
 <td class="instruction">LD ($BBB1),A</td>
+<td class="comment-1" rowspan="1">Set <a href="BBB1.html">PreviousGameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c8f6"></span>C8F6</td>
 <td class="instruction">BIT 0,E</td>
-<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c8fc">GameMenu_Key2</a> unless "1" (keyboard) is being pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c8fc">GameMenu_Key2</a> if "1" is not pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -259,10 +305,20 @@ Read the keys "1" to "5".
 <td class="comment-1" rowspan="1">Choose the keyboard.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="c8fc"></span>
+<div class="comments">
+<div class="paragraph">
+Choose a joystick if one of those keys is pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">GameMenu_Key2</td>
 <td class="address-2"><span id="c8fc"></span>C8FC</td>
 <td class="instruction">BIT 1,E</td>
-<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c904">GameMenu_Key3</a> unless "2" (Kempston joystick) is being pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c904">GameMenu_Key3</a> if "2" is not pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -272,19 +328,20 @@ Read the keys "1" to "5".
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c900"></span>C900</td>
-<td class="instruction">AND $F9</td>
-<td class="comment-1" rowspan="2">Choose the Kempston joystick.</td>
+<td class="instruction">AND %11111001</td>
+<td class="comment-1" rowspan="1">Clear bits 1 and 2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c902"></span>C902</td>
-<td class="instruction">OR $02</td>
+<td class="instruction">OR %00000010</td>
+<td class="comment-1" rowspan="1">Choose the Kempston joystick.</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Key3</td>
 <td class="address-2"><span id="c904"></span>C904</td>
 <td class="instruction">BIT 2,E</td>
-<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c90c">GameMenu_Key4</a> unless "3" (cursor joystick) is being pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c90c">GameMenu_Key4</a> if "3" is not pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -294,24 +351,25 @@ Read the keys "1" to "5".
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c908"></span>C908</td>
-<td class="instruction">AND $F9</td>
-<td class="comment-1" rowspan="2">Choose the cursor joystick.</td>
+<td class="instruction">AND %11111001</td>
+<td class="comment-1" rowspan="1">Clear bits 1 and 2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c90a"></span>C90A</td>
-<td class="instruction">OR $04</td>
+<td class="instruction">OR %00000100</td>
+<td class="comment-1" rowspan="1">Choose the cursor joystick.</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Key4</td>
 <td class="address-2"><span id="c90c"></span>C90C</td>
 <td class="instruction">BIT 3,E</td>
-<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c912">GameMenu_Key5</a> unless "4" (Interface II) is being pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c912">GameMenu_SetMethod</a> if "4" is not pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c90e"></span>C90E</td>
-<td class="instruction">JR Z,<a href="C8CA.html#c912">GameMenu_Key5</a></td>
+<td class="instruction">JR Z,<a href="C8CA.html#c912">GameMenu_SetMethod</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -320,22 +378,32 @@ Read the keys "1" to "5".
 <td class="comment-1" rowspan="1">Choose Interface II.</td>
 </tr>
 <tr>
-<td class="asm-label">GameMenu_Key5</td>
+<td class="asm-label">GameMenu_SetMethod</td>
 <td class="address-2"><span id="c912"></span>C912</td>
 <td class="instruction">LD ($BBB0),A</td>
-<td class="comment-1" rowspan="1">Store the control options.</td>
+<td class="comment-1" rowspan="1">Set <a href="BBB0.html">GameOptions</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c915"></span>
+<div class="comments">
+<div class="paragraph">
+Toggle directional control once for each press of "5".
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c915"></span>C915</td>
 <td class="instruction">LD HL,$BBBD</td>
-<td class="comment-1" rowspan="1">Point at the flag that says that the "5" key is being held.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="BBBD.html">KeyHeldFlag</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c918"></span>C918</td>
 <td class="instruction">BIT 4,E</td>
-<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c945">GameMenu_Key5Released</a> unless "5" (directional control) is being pressed.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c945">GameMenu_Key5Released</a> if "5" is not pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -346,7 +414,7 @@ Read the keys "1" to "5".
 <td class="asm-label"></td>
 <td class="address-1"><span id="c91c"></span>C91C</td>
 <td class="instruction">BIT 0,(HL)</td>
-<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c92a">GameMenu_Check</a> if the key was already being held.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="C8CA.html#c92a">GameMenu_Check</a> if "5" was pressed last time as well.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -357,54 +425,85 @@ Read the keys "1" to "5".
 <td class="asm-label"></td>
 <td class="address-1"><span id="c920"></span>C920</td>
 <td class="instruction">SET 0,(HL)</td>
-<td class="comment-1" rowspan="1">Flag that the key is being held.</td>
+<td class="comment-1" rowspan="1">Set bit 0 of <a href="BBBD.html">KeyHeldFlag</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c922"></span>C922</td>
 <td class="instruction">LD A,($BBB0)</td>
-<td class="comment-1" rowspan="1">Fetch the control options.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="BBB0.html">GameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c925"></span>C925</td>
 <td class="instruction">XOR %00001000</td>
-<td class="comment-1" rowspan="1">Switch directional control on or off.</td>
+<td class="comment-1" rowspan="1">Toggle directional control.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c927"></span>C927</td>
 <td class="instruction">LD ($BBB0),A</td>
-<td class="comment-1" rowspan="1">Store the control options.</td>
+<td class="comment-1" rowspan="1">Set <a href="BBB0.html">GameOptions</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c92a"></span>
+<div class="comments">
+<div class="paragraph">
+Start the game if "0" is pressed.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Check</td>
 <td class="address-2"><span id="c92a"></span>C92A</td>
 <td class="instruction">LD HL,$BBB1</td>
-<td class="comment-1" rowspan="2">Check whether the control options have changed.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="BBB1.html">PreviousGameOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c92d"></span>C92D</td>
 <td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="1">Compare with the previous options.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c92e"></span>C92E</td>
 <td class="instruction">LD DE,$C7F4</td>
-<td class="comment-1" rowspan="1">Point at the menu selection jingle.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at <a href="C7F4.html">Tune_MenuSelection</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c931"></span>C931</td>
 <td class="instruction">CALL NZ,<a href="C656.html">PlayMusic</a></td>
-<td class="comment-1" rowspan="1">Play the jingle if they have changed.</td>
+<td class="comment-1" rowspan="1">Call <a href="C656.html">PlayMusic</a> if the control method has changed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c934"></span>C934</td>
 <td class="instruction">LD A,$EF</td>
-<td class="comment-1" rowspan="2">Read the keys "0" to "9".</td>
+<td class="comment-1" rowspan="2">Read from the keyboard; <table class="default">
+<tr>
+<th colspan="1" rowspan="2">Port Number</th>
+<th colspan="5" rowspan="1">Bit</th>
+</tr>
+<tr>
+<th colspan="1" rowspan="1">0</th>
+<th colspan="1" rowspan="1">1</th>
+<th colspan="1" rowspan="1">2</th>
+<th colspan="1" rowspan="1">3</th>
+<th colspan="1" rowspan="1">4</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">EF</td>
+<td class="centre" colspan="1" rowspan="1">0</td>
+<td class="centre" colspan="1" rowspan="1">9</td>
+<td class="centre" colspan="1" rowspan="1">8</td>
+<td class="centre" colspan="1" rowspan="1">7</td>
+<td class="centre" colspan="1" rowspan="1">6</td>
+</tr>
+</table></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -415,7 +514,7 @@ Read the keys "1" to "5".
 <td class="asm-label"></td>
 <td class="address-1"><span id="c939"></span>C939</td>
 <td class="instruction">BIT 0,A</td>
-<td class="comment-1" rowspan="2">Return to start the game if "0" is being pressed.</td>
+<td class="comment-1" rowspan="2">Return if "0" is pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -426,25 +525,35 @@ Read the keys "1" to "5".
 <td class="asm-label"></td>
 <td class="address-1"><span id="c93c"></span>C93C</td>
 <td class="instruction">CALL <a href="C5B4.html">IncrementFrameCounter</a></td>
-<td class="comment-1" rowspan="1">Update the random number generator.</td>
+<td class="comment-1" rowspan="1">Call <a href="C5B4.html">IncrementFrameCounter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c93f"></span>C93F</td>
 <td class="instruction">CALL <a href="C949.html">FlashMenuOptions</a></td>
-<td class="comment-1" rowspan="1">Make the lines for the options that have been chosen flash.</td>
+<td class="comment-1" rowspan="1">Call <a href="C949.html">FlashMenuOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c942"></span>C942</td>
 <td class="instruction">JP <a href="C8CA.html#c8e1">GameMenu_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="C8CA.html#c8e1">GameMenu_Loop</a> to read the keys again.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="C8CA.html#c8e1">GameMenu_Loop</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c945"></span>
+<div class="comments">
+<div class="paragraph">
+"5" has been released.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Key5Released</td>
 <td class="address-2"><span id="c945"></span>C945</td>
 <td class="instruction">RES 0,(HL)</td>
-<td class="comment-1" rowspan="1">Flag that the "5" key is not being held.</td>
+<td class="comment-1" rowspan="1">Reset bit 0 of <a href="BBBD.html">KeyHeldFlag</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

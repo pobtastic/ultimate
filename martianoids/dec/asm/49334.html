@@ -104,7 +104,19 @@ Next: <a href="49359.html">49359</a>
 Used by the routine at <a href="47890.html">GameMenu</a>.
 </div>
 <div class="paragraph">
-Plays a tune, but only the first time that it is used, and stops if a key is pressed. The tune is a list of notes that ends with 255. See <a href="49370.html">PlayNote</a> for what the notes are.
+Plays a tune, but only the first time that it is used, and stops if a key is pressed. The tune is a list of notes that ends with 255. See <a href="49370.html">PlayNote</a> for what the notes are. After the tune has been played, nothing happens until <a href="38455.html">TunePlayedFlag</a> is cleared.
+</div>
+<div class="paragraph">
+The tunes played by this routine are: <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Tune</th>
+<th colspan="1" rowspan="1">Sound</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">Title Tune</td>
+<td class="centre" colspan="1" rowspan="1"><audio controls="" src="../../audio/title-tune.wav"> <p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/title-tune.wav">link to the audio</a> instead.</p> </audio></td>
+</tr>
+</table>
 </div>
 </div>
 <table class="input">
@@ -113,16 +125,7 @@ Plays a tune, but only the first time that it is used, and stops if a key is pre
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the tune</td>
-</tr>
-</table>
-<table class="output">
-<tr class="asm-output-header">
-<th colspan="2">Output</th>
-</tr>
-<tr>
-<td class="register">F</td>
-<td class="register-desc">Non-zero flag set if the tune has been played before</td>
+<td class="register-desc">The address of the tune</td>
 </tr>
 </table>
 </td>
@@ -137,12 +140,13 @@ Plays a tune, but only the first time that it is used, and stops if a key is pre
 <td class="asm-label"></td>
 <td class="address-1"><span id="49337"></span>49337</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="3">Return if it has been played before.</td>
+<td class="comment-1" rowspan="1">Fetch the flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49338"></span>49338</td>
 <td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Return if the tune has already been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -156,22 +160,31 @@ Plays a tune, but only the first time that it is used, and stops if a key is pre
 <td class="comment-1" rowspan="1">Set the flag.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="49342"></span>
+<div class="comments">
+<div class="paragraph">
+Select every half row of the keyboard.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">PlayMusic_WaitKey_Loop</td>
 <td class="address-2"><span id="49342"></span>49342</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1">Select every half row of the keyboard.</td>
+<td class="comment-1" rowspan="2">Read every row of the keyboard.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49343"></span>49343</td>
 <td class="instruction">CALL <a href="49323.html">ReadKeys</a></td>
-<td class="comment-1" rowspan="1">Read the keyboard using <a href="49323.html">ReadKeys</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49346"></span>49346</td>
 <td class="instruction">JR Z,<a href="49334.html#49349">PlayMusic_WaitKey_Next</a></td>
-<td class="comment-1" rowspan="1">Jump if no key is pressed.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="49334.html#49349">PlayMusic_WaitKey_Next</a> if no key is pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -180,15 +193,26 @@ Plays a tune, but only the first time that it is used, and stops if a key is pre
 <td class="comment-1" rowspan="1">Return as a key has been pressed.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="49349"></span>
+<div class="comments">
+<div class="paragraph">
+Play the next note.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">PlayMusic_WaitKey_Next</td>
 <td class="address-2"><span id="49349"></span>49349</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="3">Jump to return if the next note is 255, which is the end of the tune.</td>
+<td class="comment-1" rowspan="1">Fetch the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49350"></span>49350</td>
 <td class="instruction">CP 255</td>
+<td class="comment-1" rowspan="2">Jump to <a href="49359.html#49369">PlayMusic_Return</a> if the terminator has been reached.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

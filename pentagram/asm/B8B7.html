@@ -104,7 +104,7 @@ Next: <a href="B8CC.html">B8CC</a>
 Used by the routines at <a href="B742.html">BlockMovementInX</a>, <a href="B791.html">BlockMovementInY</a>, <a href="B7E0.html">BlockMovementInZ</a>, <a href="BF1B.html">TestObjectIntersections</a> and <a href="C0D4.html">TestObjectCanBePickedUp</a>.
 </div>
 <div class="paragraph">
-Tests if two objects overlap along y, once the first one has moved by a distance, in the same way as <a href="B8A2.html">TestOverlapInX</a> does for x.
+Tests whether two objects overlap along y, once the first has moved by its new speed along y. They overlap when the distance between the y positions is smaller than the two depths added together.
 </div>
 </div>
 <table class="input">
@@ -113,15 +113,15 @@ Tests if two objects overlap along y, once the first one has moved by a distance
 </tr>
 <tr>
 <td class="register">L</td>
-<td class="register-desc">Distance that the first object moves along y</td>
+<td class="register-desc">New speed along y of the first object</td>
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Record of the first object</td>
+<td class="register-desc">The address of the first object</td>
 </tr>
 <tr>
 <td class="register">IY</td>
-<td class="register-desc">Record of the second object</td>
+<td class="register-desc">The address of the second object</td>
 </tr>
 </table>
 <table class="output">
@@ -136,36 +136,60 @@ Tests if two objects overlap along y, once the first one has moved by a distance
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="b8b7"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the y distance with the depths.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">TestOverlapInY</td>
 <td class="address-2"><span id="b8b7"></span>B8B7</td>
 <td class="instruction">LD A,(IX+$05)</td>
-<td class="comment-1" rowspan="3">Add the half sizes of the objects along y together, in <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the depth of the first object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8ba"></span>B8BA</td>
 <td class="instruction">ADD A,(IY+$05)</td>
+<td class="comment-1" rowspan="1">Add the depth of the second object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8bd"></span>B8BD</td>
 <td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Copy the total to <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b8be"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the distance between the centres, once the first has moved.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8be"></span>B8BE</td>
 <td class="instruction">LD A,(IX+$02)</td>
-<td class="comment-1" rowspan="3">Work out the distance between the centres, once the first has moved.</td>
+<td class="comment-1" rowspan="1">Fetch the y position of the first object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8c1"></span>B8C1</td>
 <td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8c2"></span>B8C2</td>
 <td class="instruction">SUB (IY+$02)</td>
+<td class="comment-1" rowspan="1">Subtract the y position of the second object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -177,13 +201,13 @@ Tests if two objects overlap along y, once the first one has moved by a distance
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8c8"></span>B8C8</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make the distance positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">TestOverlapInY_Compare</td>
 <td class="address-2"><span id="b8ca"></span>B8CA</td>
 <td class="instruction">SUB D</td>
-<td class="comment-1" rowspan="1">Subtract the sum of the half sizes, which sets the carry flag if they overlap.</td>
+<td class="comment-1" rowspan="1">Subtract <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

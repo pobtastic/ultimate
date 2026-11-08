@@ -104,7 +104,7 @@ Next: <a href="E241.html">E241</a>
 Used by the routines at <a href="C63D.html">PlayMusicOnce</a>, <a href="C8CA.html">GameMenu</a>, <a href="E250.html">ReadInterface2Joystick</a>, <a href="E2AE.html">ReadCursorJoystick</a>, <a href="E2DA.html">ReadKeyboard</a>, <a href="E31C.html">ReadViewKey</a> and <a href="E32C.html">PauseGame</a>.
 </div>
 <div class="paragraph">
-Reads half of the keyboard. The bits of the half-row of keys to read are zero, and more than one half-row can be read at once.
+Reads some rows of the keyboard. The row selector is also written to port FD (with the selector as the high byte of the address), which does nothing on a 48K Spectrum and is not part of any sound; the keyboard is read with the same selector straight afterwards.
 </div>
 </div>
 <table class="input">
@@ -113,7 +113,7 @@ Reads half of the keyboard. The bits of the half-row of keys to read are zero, a
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">Half-rows to read</td>
+<td class="register-desc">Row selector (a bit which is reset selects the row)</td>
 </tr>
 </table>
 <table class="output">
@@ -122,17 +122,23 @@ Reads half of the keyboard. The bits of the half-row of keys to read are zero, a
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">The keys that are pressed (bits 0 to 4, with bit 0 for the key</td>
-</tr>
-<tr>
-<td class="register">nearest</td>
-<td class="register-desc">the edge of the keyboard)</td>
+<td class="register-desc">Keys pressed, in bits 0 to 4 (a bit is set when a key is pressed)</td>
 </tr>
 <tr>
 <td class="register">F</td>
-<td class="register-desc">The zero flag is set if no keys are pressed</td>
+<td class="register-desc">Zero flag set if no key is pressed</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e239"></span>
+<div class="comments">
+<div class="paragraph">
+Write the selector, then read the keys.
+</div>
+</div>
 </td>
 </tr>
 <tr>
@@ -145,23 +151,35 @@ Reads half of the keyboard. The bits of the half-row of keys to read are zero, a
 <td class="asm-label"></td>
 <td class="address-1"><span id="e23b"></span>E23B</td>
 <td class="instruction">IN A,($FE)</td>
-<td class="comment-1" rowspan="1">Read the keyboard.</td>
+<td class="comment-1" rowspan="1">Read the rows of the keyboard.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e23d"></span>
+<div class="comments">
+<div class="paragraph">
+Make the pressed keys into set bits, and return.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e23d"></span>E23D</td>
 <td class="instruction">CPL</td>
-<td class="comment-1" rowspan="3">Make the pressed keys into set bits, and return.</td>
+<td class="comment-1" rowspan="1">Invert the bits, so that a bit is set for a key which is pressed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e23e"></span>E23E</td>
-<td class="instruction">AND $1F</td>
+<td class="instruction">AND %00011111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 4.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e240"></span>E240</td>
 <td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

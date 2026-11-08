@@ -104,7 +104,19 @@ Next: <a href="BAC2.html">BAC2</a>
 Used by the routine at <a href="AF87.html">RunGame</a>.
 </div>
 <div class="paragraph">
-Draws the three icons of the inventory in the bottom left of the screen. The icons are drawn into the buffer, which is copied to the screen, and the colours of the icons are put in the attributes. The temporary object at <a href="BACA.html">TemporaryObject</a> is used to draw them.
+Displays the objects which the player is carrying in the panel. Each of the three places takes three cells across and is 18 pixels apart from the next. The place is cleared, the sprite of the object is printed in the screen buffer and copied to the screen, and the cells are coloured according to the shape of the object (see <a href="BAC2.html">InventoryColours</a>).
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Before</th>
+<th colspan="1" rowspan="1">After <a href="BA3D.html">DisplayObjectsCarried</a> and <a href="B178.html">UpdateScreen</a></th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1"><img alt="objects-carried-before" src="../images/scr/objects-carried-before.png" /></td>
+<td class="centre" colspan="1" rowspan="1"><img alt="objects-carried-after" src="../images/scr/objects-carried-after.png" /></td>
+</tr>
+</table>
 </div>
 </div>
 </td>
@@ -114,7 +126,7 @@ Draws the three icons of the inventory in the bottom left of the screen. The ico
 <span id="ba3d"></span>
 <div class="comments">
 <div class="paragraph">
-Set up for the three entries of the inventory.
+Draw the three places in the panel.
 </div>
 </div>
 </td>
@@ -135,7 +147,7 @@ Set up for the three entries of the inventory.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba43"></span>BA43</td>
 <td class="instruction">LD B,$03</td>
-<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of three entries.</td>
+<td class="comment-1" rowspan="1">Set a counter of 03 places.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -148,7 +160,7 @@ Set up for the three entries of the inventory.
 <span id="ba48"></span>
 <div class="comments">
 <div class="paragraph">
-Work out the x co-ordinate of the icon, which is 10 plus 18 for each icon so far, and clear its place in the buffer.
+Work out the pixel x of this place (18 times the place, plus 10).
 </div>
 </div>
 </td>
@@ -157,24 +169,25 @@ Work out the x co-ordinate of the icon, which is 10 plus 18 for each icon so far
 <td class="asm-label">DisplayObjectsCarried_Next</td>
 <td class="address-2"><span id="ba48"></span>BA48</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="2">Stash the counter and the pointer on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the counter on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba49"></span>BA49</td>
 <td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the address of the object on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba4a"></span>BA4A</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="1">Fetch the counter.</td>
+<td class="comment-1" rowspan="1">Copy the counter to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba4b"></span>BA4B</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Negate it...</td>
+<td class="comment-1" rowspan="1">Make it negative.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -186,25 +199,23 @@ Work out the x co-ordinate of the icon, which is 10 plus 18 for each icon so far
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba4f"></span>BA4F</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1">Multiply it by two...</td>
+<td class="comment-1" rowspan="3">Multiply it by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba51"></span>BA51</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1">...and by two...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba53"></span>BA53</td>
 <td class="instruction">SLA A</td>
-<td class="comment-1" rowspan="1">...and by two.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba55"></span>BA55</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Stash the number times eight in <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -216,7 +227,7 @@ Work out the x co-ordinate of the icon, which is 10 plus 18 for each icon so far
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba58"></span>BA58</td>
 <td class="instruction">ADD A,C</td>
-<td class="comment-1" rowspan="1">Add the earlier value to make it 18 times the number.</td>
+<td class="comment-1" rowspan="1">Add the eight times.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -237,22 +248,32 @@ Work out the x co-ordinate of the icon, which is 10 plus 18 for each icon so far
 <td class="comment-1" rowspan="1">Write 00 as the screen y co-ordinate.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="ba62"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the place and print the sprite.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba62"></span>BA62</td>
 <td class="instruction">LD C,(IX+$1A)</td>
-<td class="comment-1" rowspan="1">Set <span class="register">C</span> to the x co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel x position into <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba65"></span>BA65</td>
 <td class="instruction">LD B,(IX+$1B)</td>
-<td class="comment-1" rowspan="1">Set <span class="register">B</span> to the y co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel y position into <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba68"></span>BA68</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the pointer on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the object on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -275,25 +296,25 @@ Work out the x co-ordinate of the icon, which is 10 plus 18 for each icon so far
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba6e"></span>BA6E</td>
 <td class="instruction">LD BC,$0318</td>
-<td class="comment-1" rowspan="1">Set the size of the area in <span class="register">BC</span> to 03 bytes wide and 18 lines.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 0318.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba71"></span>BA71</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1">Set the fill byte in <span class="register">A</span> to 00.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">A</span> to 00.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba72"></span>BA72</td>
 <td class="instruction">CALL <a href="B6DD.html">FillWindow</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B6DD.html">FillWindow</a> to clear the area.</td>
+<td class="comment-1" rowspan="1">Call <a href="B6DD.html">FillWindow</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba75"></span>BA75</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore the pointer from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the address of the object from the stack.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -339,7 +360,7 @@ Draw the icon, if there is an object in this entry.
 <span id="ba80"></span>
 <div class="comments">
 <div class="paragraph">
-Copy the icon to the screen.
+Copy the place to the screen.
 </div>
 </div>
 </td>
@@ -348,13 +369,13 @@ Copy the icon to the screen.
 <td class="asm-label">DisplayObjectsCarried_Copy</td>
 <td class="address-2"><span id="ba80"></span>BA80</td>
 <td class="instruction">LD C,(IX+$1A)</td>
-<td class="comment-1" rowspan="1">Set <span class="register">C</span> to the x co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel x position into <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba83"></span>BA83</td>
 <td class="instruction">LD B,(IX+$1B)</td>
-<td class="comment-1" rowspan="1">Set <span class="register">B</span> to the y co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel y position into <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -383,7 +404,7 @@ Copy the icon to the screen.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba8e"></span>BA8E</td>
 <td class="instruction">LD BC,$1803</td>
-<td class="comment-1" rowspan="1">Set the size of the area in <span class="register">BC</span> to 18 lines and 03 bytes wide.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 1803.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -396,7 +417,7 @@ Copy the icon to the screen.
 <span id="ba94"></span>
 <div class="comments">
 <div class="paragraph">
-Set the colour of the icon from the type of the object.
+Colour the cells from the shape.
 </div>
 </div>
 </td>
@@ -405,12 +426,13 @@ Set the colour of the icon from the type of the object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba94"></span>BA94</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="4">Restore the pointer and the counter from the stack, and stash them again.</td>
+<td class="comment-1" rowspan="1">Restore the address of the object from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba95"></span>BA95</td>
 <td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="2">Keep the counter on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -421,6 +443,7 @@ Set the colour of the icon from the type of the object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba97"></span>BA97</td>
 <td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the address of the object on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -432,13 +455,13 @@ Set the colour of the icon from the type of the object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba99"></span>BA99</td>
 <td class="instruction">AND %00000111</td>
-<td class="comment-1" rowspan="1">Keep only the three bits that choose the colour.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba9b"></span>BA9B</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="2">Set <span class="register">DE</span> to the offset into the table of colours.</td>
+<td class="comment-1" rowspan="2">Copy the shape into <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -449,13 +472,12 @@ Set the colour of the icon from the type of the object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba9e"></span>BA9E</td>
 <td class="instruction">LD HL,$BAC2</td>
-<td class="comment-1" rowspan="1">Use the table of colours, <a href="BAC2.html">InventoryColours</a>.</td>
+<td class="comment-1" rowspan="2">Point <span class="register">HL</span> at the entry of <a href="BAC2.html">InventoryColours</a> for the shape.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="baa1"></span>BAA1</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1">Add the offset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -467,24 +489,35 @@ Set the colour of the icon from the type of the object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="baa3"></span>BAA3</td>
 <td class="instruction">LD L,(IX+$1A)</td>
-<td class="comment-1" rowspan="1">Set <span class="register">L</span> to the x co-ordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel x position of the place into <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="baa6"></span>
+<div class="comments">
+<div class="paragraph">
+Add 17 to the y co-ordinate to get to the top of the icon.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="baa6"></span>BAA6</td>
 <td class="instruction">LD A,(IX+$1B)</td>
-<td class="comment-1" rowspan="2">Add 17 to the y co-ordinate to get to the top of the icon.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel y position of the place.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="baa9"></span>BAA9</td>
 <td class="instruction">ADD A,$17</td>
+<td class="comment-1" rowspan="1">Add 17.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="baab"></span>BAAB</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1">Set <span class="register">H</span> to it.</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -496,19 +529,19 @@ Set the colour of the icon from the type of the object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="baaf"></span>BAAF</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1">Move it to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Swap it into <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bab0"></span>BAB0</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1">Set the colour in <span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the colour.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bab1"></span>BAB1</td>
 <td class="instruction">LD BC,$0303</td>
-<td class="comment-1" rowspan="1">Set the size of the area in <span class="register">BC</span> to three bytes wide and three lines.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 0303.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -520,7 +553,7 @@ Set the colour of the icon from the type of the object.
 <td class="asm-label"></td>
 <td class="address-1"><span id="bab7"></span>BAB7</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="2">Restore the pointer and the counter from the stack.</td>
+<td class="comment-1" rowspan="2">Restore the address of the object and the counter from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -574,18 +607,6 @@ View the equivalent code in; <ul class="">
 <li><a href="/ultimate/alien8/asm/BC9D.html">Alien 8</a></li>
 <li><a href="/ultimate/knightlore/asm/BF45.html">Knight Lore</a></li>
 </ul>
-</div>
-<div class="paragraph">
-<table class="default">
-<tr>
-<th colspan="1" rowspan="1">Before</th>
-<th colspan="1" rowspan="1">After <a href="BA3D.html">DisplayObjectsCarried</a> and <a href="B178.html">UpdateScreen</a></th>
-</tr>
-<tr>
-<td class="centre" colspan="1" rowspan="1"><img alt="objects-carried-before" src="../images/scr/objects-carried-before.png" /></td>
-<td class="centre" colspan="1" rowspan="1"><img alt="objects-carried-after" src="../images/scr/objects-carried-after.png" /></td>
-</tr>
-</table>
 </div>
 </div>
 </td>

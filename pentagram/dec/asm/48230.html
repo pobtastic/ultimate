@@ -104,7 +104,7 @@ Next: <a href="48250.html">48250</a>
 Used by the routines at <a href="47892.html">PrintScoreLabel</a> and <a href="48308.html">DisplayMenu</a>.
 </div>
 <div class="paragraph">
-Prints a string to the buffer and sets the attributes of its characters to the text colour in <a href="42806.html">TextAttribute</a>. The last character of the string has bit 7 set. The font used is the one at 33621 whose first character is code 48 and which is shifted so that the address of the glyph for a code is found by adding the code times eight to 33237. The attributes are written straight to the screen.
+Prints a line of text in the colour held in <a href="42806.html">TextAttribute</a>, using the ASCII font at <a href="33621.html">Font</a>. The last character of the text has bit 7 set. Each character cell has its attribute set as well.
 </div>
 </div>
 <table class="input">
@@ -113,19 +113,15 @@ Prints a string to the buffer and sets the attributes of its characters to the t
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the string</td>
+<td class="register-desc">Address of the text</td>
 </tr>
 <tr>
 <td class="register">H</td>
-<td class="register-desc">Pixel y co-ordinate of the string, counting up from the bottom of the</td>
-</tr>
-<tr>
-<td class="register">screen</td>
-<td class="register-desc"></td>
+<td class="register-desc">Pixel y position</td>
 </tr>
 <tr>
 <td class="register">L</td>
-<td class="register-desc">Pixel x co-ordinate of the string</td>
+<td class="register-desc">Pixel x position</td>
 </tr>
 </table>
 <table class="output">
@@ -134,45 +130,55 @@ Prints a string to the buffer and sets the attributes of its characters to the t
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address after the string</td>
+<td class="register-desc">Address after the text</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48230"></span>
+<div class="comments">
+<div class="paragraph">
+Point at the ASCII font and keep <a href="42806.html">TextAttribute</a>.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrintTextSingleColour</td>
 <td class="address-2"><span id="48230"></span>48230</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the position on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the pixel position on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48231"></span>48231</td>
 <td class="instruction">LD HL,33237</td>
-<td class="comment-1" rowspan="2">Point the glyph table at 33237.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at 33237.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48234"></span>48234</td>
 <td class="instruction">LD (42802),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="42802.html">FontPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48237"></span>48237</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Fetch the position into <span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="2">Copy the pixel position to <span class="register">BC</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48238"></span>48238</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash the position on the stack again.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48239"></span>48239</td>
 <td class="instruction">CALL <a href="45951.html">CalculateBufferAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="45951.html">CalculateBufferAddress</a> to get the address in the buffer.</td>
+<td class="comment-1" rowspan="1">Call <a href="45951.html">CalculateBufferAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -189,19 +195,19 @@ Prints a string to the buffer and sets the attributes of its characters to the t
 <td class="asm-label"></td>
 <td class="address-1"><span id="48244"></span>48244</td>
 <td class="instruction">LD A,(42806)</td>
-<td class="comment-1" rowspan="1">Fetch the text colour.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="42806.html">TextAttribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48247"></span>48247</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="1">Stash the colour in <span class="register">AF'</span>.</td>
+<td class="comment-1" rowspan="1">Keep the colour in <span class="register">AF'</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48248"></span>48248</td>
 <td class="instruction">JR <a href="48267.html">PrintText</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="48267.html">PrintText</a> to print the string.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="48267.html">PrintText</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

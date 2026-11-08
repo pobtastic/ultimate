@@ -104,10 +104,7 @@ Next: <a href="45688.html">45688</a>
 Used by the routine at <a href="44935.html">RunGame</a>.
 </div>
 <div class="paragraph">
-Redraws the objects that need it. For each object that has moved, this works out the rectangle that covers the old and the new positions of its sprite, clears it in the buffer and queues it on the stack. The objects are then sorted and drawn into the buffer, and finally each queued rectangle is copied to the screen.
-</div>
-<div class="paragraph">
-When the room has just been built the whole room is redrawn instead, so no rectangles are queued.
+Updates the playing area for the objects that have changed. First the sprites of the objects that moved are wiped out of the screen buffer: for each object in the list at <a href="46426.html">DrawList</a> that is flagged to be wiped, the area covered by the old and the new position of its sprite is cleared, and the area is kept on the stack. Then the objects are drawn in order and the objects that the player is carrying are shown. Last, each of the areas that were kept is copied from the buffer to the screen. When the panel is to be drawn again, the whole screen is going to be drawn, so none of the areas are wiped.
 </div>
 </div>
 </td>
@@ -118,6 +115,9 @@ When the room has just been built the whole room is redrawn instead, so no recta
 <div class="comments">
 <div class="paragraph">
 Start with no rectangles queued, unless the whole room needs drawing.
+</div>
+<div class="paragraph">
+Wipe each flagged sprite, unless the panel is to be drawn again.
 </div>
 </div>
 </td>
@@ -140,15 +140,26 @@ Start with no rectangles queued, unless the whole room needs drawing.
 <td class="comment-1" rowspan="1">Stash <span class="register">IX</span> on the stack.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45476"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="45470.html#45650">DrawChangedObjects_Draw</a> if the room has just been built.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45476"></span>45476</td>
 <td class="instruction">LD A,(42769)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="45470.html#45650">DrawChangedObjects_Draw</a> if the room has just been built.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="42769.html">RoomRedrawFlag</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45479"></span>45479</td>
 <td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="45470.html#45650">DrawChangedObjects_Draw</a> if it is not zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -156,15 +167,26 @@ Start with no rectangles queued, unless the whole room needs drawing.
 <td class="instruction">JP NZ,<a href="45470.html#45650">DrawChangedObjects_Draw</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45483"></span>
+<div class="comments">
+<div class="paragraph">
+Point <a href="42770.html">DrawingListPointer</a> at the start of the list of objects to draw, <a href="46426.html">DrawList</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45483"></span>45483</td>
 <td class="instruction">LD HL,46426</td>
-<td class="comment-1" rowspan="2">Point <a href="42770.html">DrawingListPointer</a> at the start of the list of objects to draw, <a href="46426.html">DrawList</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="46426.html">DrawList</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45486"></span>45486</td>
 <td class="instruction">LD (42770),HL</td>
+<td class="comment-1" rowspan="1">Set <a href="42770.html">DrawingListPointer</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -183,20 +205,32 @@ Take the next object from the list and skip it if it has not moved.
 <td class="comment-1" rowspan="1">Fetch the list pointer from <a href="42770.html">DrawingListPointer</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45492"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the object number and move on the list pointer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45492"></span>45492</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="3">Fetch the object number and move on the list pointer.</td>
+<td class="comment-1" rowspan="1">Fetch the index of the object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45493"></span>45493</td>
 <td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Increment the list pointer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45494"></span>45494</td>
 <td class="instruction">LD (42770),HL</td>
+<td class="comment-1" rowspan="1">Update <a href="42770.html">DrawingListPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -210,6 +244,16 @@ Take the next object from the list and skip it if it has not moved.
 <td class="instruction">JP Z,<a href="45470.html#45650">DrawChangedObjects_Draw</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45502"></span>
+<div class="comments">
+<div class="paragraph">
+Get the address of the object record.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45502"></span>45502</td>
 <td class="instruction">CALL <a href="46368.html">FindObjectAddress</a></td>
@@ -219,7 +263,7 @@ Take the next object from the list and skip it if it has not moved.
 <td class="asm-label"></td>
 <td class="address-1"><span id="45505"></span>45505</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="2">Copy it to <span class="register">IX</span> (using the stack).</td>
+<td class="comment-1" rowspan="2">Copy the address of the object record to <span class="register">IX</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -248,7 +292,7 @@ Take the next object from the list and skip it if it has not moved.
 <span id="45518"></span>
 <div class="comments">
 <div class="paragraph">
-Find the left edge of the rectangle: the lower of the old and new x positions.
+The left edge of the area is the lower of the old and the new pixel x position. The width is worked out in bytes of the screen from there to the higher of the old and the new right edge.
 </div>
 </div>
 </td>
@@ -257,7 +301,7 @@ Find the left edge of the rectangle: the lower of the old and new x positions.
 <td class="asm-label"></td>
 <td class="address-1"><span id="45518"></span>45518</td>
 <td class="instruction">LD A,(IX+26)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="45470.html#45640">DrawChangedObjects_NewLeft</a> if the new x position is lower than the previous one.</td>
+<td class="comment-1" rowspan="2">Subtract the old pixel x from the new.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -268,6 +312,7 @@ Find the left edge of the rectangle: the lower of the old and new x positions.
 <td class="asm-label"></td>
 <td class="address-1"><span id="45524"></span>45524</td>
 <td class="instruction">JP C,<a href="45470.html#45640">DrawChangedObjects_NewLeft</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45470.html#45640">DrawChangedObjects_NewLeft</a> if carry is set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -289,12 +334,13 @@ Find the right edge, in bytes: the larger of the old and new right edges.
 <td class="asm-label">DrawChangedObjects_RightEdge</td>
 <td class="address-2"><span id="45530"></span>45530</td>
 <td class="instruction">LD A,(IX+30)</td>
-<td class="comment-1" rowspan="4">Divide the previous x position by eight, to get its byte column.</td>
+<td class="comment-1" rowspan="1">Fetch the old pixel x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45533"></span>45533</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -313,26 +359,48 @@ Find the right edge, in bytes: the larger of the old and new right edges.
 <td class="comment-1" rowspan="1">Keep only the five bits of the column.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45538"></span>
+<div class="comments">
+<div class="paragraph">
+Add the previous width to get the old right edge.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45538"></span>45538</td>
 <td class="instruction">ADD A,(IX+28)</td>
-<td class="comment-1" rowspan="2">Add the previous width to get the old right edge.</td>
+<td class="comment-1" rowspan="1">Add the old width in bytes.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45541"></span>45541</td>
 <td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45542"></span>
+<div class="comments">
+<div class="paragraph">
+Divide the new x position by eight, to get its byte column.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45542"></span>45542</td>
 <td class="instruction">LD A,(IX+26)</td>
-<td class="comment-1" rowspan="4">Divide the new x position by eight, to get its byte column.</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45545"></span>45545</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight to get the byte column.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -357,16 +425,25 @@ Find the right edge, in bytes: the larger of the old and new right edges.
 <td class="comment-1" rowspan="1">Add the new width to get the new right edge.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45553"></span>
+<div class="comments">
+<div class="paragraph">
+Compare it with the old right edge.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45553"></span>45553</td>
 <td class="instruction">CP E</td>
-<td class="comment-1" rowspan="1">Compare it with the old right edge.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="45470.html#45557">DrawChangedObjects_Width</a> if the new right edge is lower.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45554"></span>45554</td>
 <td class="instruction">JR C,<a href="45470.html#45557">DrawChangedObjects_Width</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="45470.html#45557">DrawChangedObjects_Width</a> if the new right edge is lower.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -375,15 +452,26 @@ Find the right edge, in bytes: the larger of the old and new right edges.
 <td class="comment-1" rowspan="1">Use the new right edge.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45557"></span>
+<div class="comments">
+<div class="paragraph">
+Divide the left edge by eight to get its byte column.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">DrawChangedObjects_Width</td>
 <td class="address-2"><span id="45557"></span>45557</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="4">Divide the left edge by eight to get its byte column.</td>
+<td class="comment-1" rowspan="1">Fetch <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45558"></span>45558</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -408,27 +496,39 @@ Find the right edge, in bytes: the larger of the old and new right edges.
 <td class="comment-1" rowspan="1">Stash the left column in <span class="register">B</span>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45564"></span>
+<div class="comments">
+<div class="paragraph">
+Subtract it from the right edge to get the width of the rectangle in bytes, in <span class="register">H</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45564"></span>45564</td>
 <td class="instruction">LD A,E</td>
-<td class="comment-1" rowspan="3">Subtract it from the right edge to get the width of the rectangle in bytes, in <span class="register">H</span>.</td>
+<td class="comment-1" rowspan="1">Fetch <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45565"></span>45565</td>
 <td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="1">Subtract <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45566"></span>45566</td>
 <td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="45567"></span>
 <div class="comments">
 <div class="paragraph">
-Find the bottom edge: the lower of the old and new y positions.
+The bottom edge of the area is the lower of the old and the new pixel y position. The height is worked out from there to the higher of the old and the new top edge.
 </div>
 </div>
 </td>
@@ -437,17 +537,19 @@ Find the bottom edge: the lower of the old and new y positions.
 <td class="asm-label"></td>
 <td class="address-1"><span id="45567"></span>45567</td>
 <td class="instruction">LD A,(IX+27)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="45470.html#45645">DrawChangedObjects_NewBottom</a> if the new y position is lower than the previous one.</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45570"></span>45570</td>
 <td class="instruction">SUB (IX+31)</td>
+<td class="comment-1" rowspan="1">Subtract the old pixel y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45573"></span>45573</td>
 <td class="instruction">JR C,<a href="45470.html#45645">DrawChangedObjects_NewBottom</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45470.html#45645">DrawChangedObjects_NewBottom</a> if carry is set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -469,28 +571,41 @@ Find the top edge: the higher of the old and new tops, and so the height.
 <td class="asm-label">DrawChangedObjects_TopEdge</td>
 <td class="address-2"><span id="45578"></span>45578</td>
 <td class="instruction">LD A,(IX+31)</td>
-<td class="comment-1" rowspan="3">Add the previous height to the previous y position to get the old top.</td>
+<td class="comment-1" rowspan="1">Fetch the old pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45581"></span>45581</td>
 <td class="instruction">ADD A,(IX+29)</td>
+<td class="comment-1" rowspan="1">Add the old height in lines.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45584"></span>45584</td>
 <td class="instruction">LD E,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45585"></span>
+<div class="comments">
+<div class="paragraph">
+Add the new height to the new y position to get the new top.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45585"></span>45585</td>
 <td class="instruction">LD A,(IX+27)</td>
-<td class="comment-1" rowspan="2">Add the new height to the new y position to get the new top.</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45588"></span>45588</td>
 <td class="instruction">ADD A,(IX+25)</td>
+<td class="comment-1" rowspan="1">Add the new height in lines.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -568,27 +683,39 @@ Clip the rectangle to the top of the screen, and ignore it when it is wholly off
 <td class="comment-1" rowspan="1">Jump to <a href="45470.html#45611">DrawChangedObjects_Queue</a> if it is not above the screen.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45607"></span>
+<div class="comments">
+<div class="paragraph">
+Reduce the height by that amount, so the rectangle ends at the top of the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45607"></span>45607</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="3">Reduce the height by that amount, so the rectangle ends at the top of the screen.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45609"></span>45609</td>
 <td class="instruction">ADD A,L</td>
+<td class="comment-1" rowspan="1">Add <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45610"></span>45610</td>
 <td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="45611"></span>
 <div class="comments">
 <div class="paragraph">
-Queue the rectangle on the stack.
+Wipe the area and keep it on the stack.
 </div>
 </div>
 </td>
@@ -606,10 +733,20 @@ Queue the rectangle on the stack.
 <td class="comment-1" rowspan="1">Call <a href="45951.html">CalculateBufferAddress</a> to get the buffer address in <span class="register">BC</span>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45617"></span>
+<div class="comments">
+<div class="paragraph">
+Swap so that <span class="register">HL</span> is the buffer address, <span class="register">B</span> the width and <span class="register">C</span> the height.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45617"></span>45617</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="6">Swap so that <span class="register">HL</span> is the buffer address, <span class="register">B</span> the width and <span class="register">C</span> the height.</td>
+<td class="comment-1" rowspan="3">Exchange <span class="register">L</span> and <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -625,6 +762,7 @@ Queue the rectangle on the stack.
 <td class="asm-label"></td>
 <td class="address-1"><span id="45620"></span>45620</td>
 <td class="instruction">LD A,H</td>
+<td class="comment-1" rowspan="3">Exchange <span class="register">H</span> and <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -637,20 +775,32 @@ Queue the rectangle on the stack.
 <td class="instruction">LD B,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45623"></span>
+<div class="comments">
+<div class="paragraph">
+Count the rectangle in <a href="42768.html">WipedAreaCount</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45623"></span>45623</td>
 <td class="instruction">LD A,(42768)</td>
-<td class="comment-1" rowspan="3">Count the rectangle in <a href="42768.html">WipedAreaCount</a>.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="42768.html">WipedAreaCount</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45626"></span>45626</td>
 <td class="instruction">INC A</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45627"></span>45627</td>
 <td class="instruction">LD (42768),A</td>
+<td class="comment-1" rowspan="1">Set <a href="42768.html">WipedAreaCount</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -684,36 +834,58 @@ Queue the rectangle on the stack.
 <td class="asm-label"></td>
 <td class="address-1"><span id="45637"></span>45637</td>
 <td class="instruction">JP <a href="45470.html#45489">DrawChangedObjects_NextEntry</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="45470.html#45489">DrawChangedObjects_NextEntry</a> to look at the next object.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="45470.html#45489">DrawChangedObjects_NextEntry</a> to look at the next object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45640"></span>
+<div class="comments">
+<div class="paragraph">
+Use the new x position as the left edge, and carry on at <a href="45470.html#45530">DrawChangedObjects_RightEdge</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">DrawChangedObjects_NewLeft</td>
 <td class="address-2"><span id="45640"></span>45640</td>
 <td class="instruction">LD C,(IX+26)</td>
-<td class="comment-1" rowspan="2">Use the new x position as the left edge, and carry on at <a href="45470.html#45530">DrawChangedObjects_RightEdge</a>.</td>
+<td class="comment-1" rowspan="1">Copy the new pixel x to <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45643"></span>45643</td>
 <td class="instruction">JR <a href="45470.html#45530">DrawChangedObjects_RightEdge</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45470.html#45530">DrawChangedObjects_RightEdge</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45645"></span>
+<div class="comments">
+<div class="paragraph">
+Use the new y position as the bottom edge, and carry on at <a href="45470.html#45578">DrawChangedObjects_TopEdge</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">DrawChangedObjects_NewBottom</td>
 <td class="address-2"><span id="45645"></span>45645</td>
 <td class="instruction">LD B,(IX+27)</td>
-<td class="comment-1" rowspan="2">Use the new y position as the bottom edge, and carry on at <a href="45470.html#45578">DrawChangedObjects_TopEdge</a>.</td>
+<td class="comment-1" rowspan="1">Copy the new pixel y to <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45648"></span>45648</td>
 <td class="instruction">JR <a href="45470.html#45578">DrawChangedObjects_TopEdge</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="45470.html#45578">DrawChangedObjects_TopEdge</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="45650"></span>
 <div class="comments">
 <div class="paragraph">
-Draw the objects, then copy the queued rectangles to the screen.
+Draw the objects, then copy the wiped areas to the screen.
 </div>
 </div>
 </td>
@@ -731,36 +903,60 @@ Draw the objects, then copy the queued rectangles to the screen.
 <td class="comment-1" rowspan="1">Call <a href="47668.html">CheckInventory</a> to redraw the inventory if it has changed.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="45656"></span>
+<div class="comments">
+<div class="paragraph">
+Add the number of rectangles queued to the count of objects drawn in <a href="42772.html">DrawingWorkCount</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45656"></span>45656</td>
 <td class="instruction">LD HL,42768</td>
-<td class="comment-1" rowspan="4">Add the number of rectangles queued to the count of objects drawn in <a href="42772.html">DrawingWorkCount</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="42768.html">WipedAreaCount</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45659"></span>45659</td>
 <td class="instruction">LD A,(42772)</td>
+<td class="comment-1" rowspan="1">Fetch <a href="42772.html">DrawingWorkCount</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45662"></span>45662</td>
 <td class="instruction">ADD A,(HL)</td>
+<td class="comment-1" rowspan="1">Add <a href="42768.html">WipedAreaCount</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45663"></span>45663</td>
 <td class="instruction">LD (42772),A</td>
+<td class="comment-1" rowspan="1">Set <a href="42772.html">DrawingWorkCount</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="45666"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="45470.html#45685">DrawChangedObjects_Done</a> if there are no rectangles left on the stack.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">DrawChangedObjects_Copy</td>
 <td class="address-2"><span id="45666"></span>45666</td>
 <td class="instruction">LD HL,42768</td>
-<td class="comment-1" rowspan="4">Jump to <a href="45470.html#45685">DrawChangedObjects_Done</a> if there are no rectangles left on the stack.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="42768.html">WipedAreaCount</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45669"></span>45669</td>
 <td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="45470.html#45685">DrawChangedObjects_Done</a> if it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

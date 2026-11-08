@@ -104,7 +104,7 @@ Next: <a href="46006.html">46006</a>
 Used by the routines at <a href="45381.html">CopyScoreToScreen</a>, <a href="45470.html">DrawChangedObjects</a> and <a href="47677.html">DisplayObjectsCarried</a>.
 </div>
 <div class="paragraph">
-Finds the address in the display file of the byte that holds a pixel. The y co-ordinate counts up from the bottom of the screen, so the first step is to invert it. A y co-ordinate of 192 or more is above the top of the screen, and gives an address below 16384.
+Finds the address in the display file of the byte that holds a pixel. The pixel y position counts up from the bottom of the screen, so the first step is to invert it. A y position of 192 or more is above the top of the screen, and gives an address below 16384.
 </div>
 </div>
 <table class="input">
@@ -113,11 +113,11 @@ Finds the address in the display file of the byte that holds a pixel. The y co-o
 </tr>
 <tr>
 <td class="register">B</td>
-<td class="register-desc">Pixel y co-ordinate, counting up from the bottom of the screen</td>
+<td class="register-desc">The pixel y position</td>
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Pixel x co-ordinate</td>
+<td class="register-desc">The pixel x position</td>
 </tr>
 </table>
 <table class="output">
@@ -126,7 +126,7 @@ Finds the address in the display file of the byte that holds a pixel. The y co-o
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address in the display file</td>
+<td class="register-desc">The address on the screen</td>
 </tr>
 </table>
 </td>
@@ -136,7 +136,7 @@ Finds the address in the display file of the byte that holds a pixel. The y co-o
 <span id="45972"></span>
 <div class="comments">
 <div class="paragraph">
-Start with the column, which is the x co-ordinate divided by eight.
+Work out the byte from the position.
 </div>
 </div>
 </td>
@@ -145,7 +145,7 @@ Start with the column, which is the x co-ordinate divided by eight.
 <td class="asm-label">CalculateScreenAddress</td>
 <td class="address-2"><span id="45972"></span>45972</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="4">Divide the x co-ordinate by eight.</td>
+<td class="comment-1" rowspan="4">Divide <span class="register">C</span> by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -205,7 +205,7 @@ Find the line within the character square.
 <td class="asm-label"></td>
 <td class="address-1"><span id="45983"></span>45983</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="1">Stash that in <span class="register">AF'</span>.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">A'</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -221,7 +221,7 @@ Find the character row within the third of the screen, and merge it with the col
 <td class="asm-label"></td>
 <td class="address-1"><span id="45984"></span>45984</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="4">Invert the y co-ordinate and rotate the three bits of the character row up to the top of <span class="register">A</span>.</td>
+<td class="comment-1" rowspan="2">Fetch <span class="register">B</span> and invert it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -232,6 +232,7 @@ Find the character row within the third of the screen, and merge it with the col
 <td class="asm-label"></td>
 <td class="address-1"><span id="45986"></span>45986</td>
 <td class="instruction">RLCA</td>
+<td class="comment-1" rowspan="2">Move the character row into bits 5 to 7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -242,7 +243,7 @@ Find the character row within the third of the screen, and merge it with the col
 <td class="asm-label"></td>
 <td class="address-1"><span id="45988"></span>45988</td>
 <td class="instruction">AND %11100000</td>
-<td class="comment-1" rowspan="1">Keep only those three bits.</td>
+<td class="comment-1" rowspan="1">Keep bits 5 to 7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -254,7 +255,7 @@ Find the character row within the third of the screen, and merge it with the col
 <td class="asm-label"></td>
 <td class="address-1"><span id="45991"></span>45991</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1">Set <span class="register">E</span> to the low byte of the address.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -270,7 +271,7 @@ Find the third of the screen and merge it with the line to make the high byte of
 <td class="asm-label"></td>
 <td class="address-1"><span id="45992"></span>45992</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="5">Invert the y co-ordinate and rotate the two bits of the third down to bits 3 and 4.</td>
+<td class="comment-1" rowspan="2">Fetch <span class="register">B</span> and invert it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -281,6 +282,7 @@ Find the third of the screen and merge it with the line to make the high byte of
 <td class="asm-label"></td>
 <td class="address-1"><span id="45994"></span>45994</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Move the third into bits 3 and 4.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -296,13 +298,13 @@ Find the third of the screen and merge it with the line to make the high byte of
 <td class="asm-label"></td>
 <td class="address-1"><span id="45997"></span>45997</td>
 <td class="instruction">AND %00011000</td>
-<td class="comment-1" rowspan="1">Keep only those two bits.</td>
+<td class="comment-1" rowspan="1">Keep bits 3 and 4.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="45999"></span>45999</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Set <span class="register">D</span> to the third.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -314,19 +316,19 @@ Find the third of the screen and merge it with the line to make the high byte of
 <td class="asm-label"></td>
 <td class="address-1"><span id="46001"></span>46001</td>
 <td class="instruction">OR D</td>
-<td class="comment-1" rowspan="1">Combine it with the third.</td>
+<td class="comment-1" rowspan="1">Merge <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46002"></span>46002</td>
 <td class="instruction">ADD A,56</td>
-<td class="comment-1" rowspan="1">Add 56 which corrects for the inverted y co-ordinate and adds the display file base of 64.</td>
+<td class="comment-1" rowspan="1">Add 56, which corrects for the inverted y co-ordinate and adds the display file base of 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="46004"></span>46004</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Set <span class="register">D</span> to the high byte of the address.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

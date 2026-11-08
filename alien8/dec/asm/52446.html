@@ -104,7 +104,7 @@ Next: <a href="52742.html">52742</a>
 Used by the routine at <a href="52391.html">RetrieveRoom</a>.
 </div>
 <div class="paragraph">
-Makes the objects of a room from its entry in the room data. The colour of the room is the low three bits of the byte after the length, and the size of the room is the high two bits. The size gives the distance to the walls and the floor level, from the table at <a href="25696.html">RoomSizes</a>. Each type of block is the number of an entry in the table at <a href="29977.html">BlockTypes</a>, which holds the address of a template of one or more objects. These are copied into the objects table, along with the number of the room. The types of block end with a 255, or at the end of the entry if there are no more objects. After the 255 come the groups of other objects, each with a type and a number of places (see <a href="25705.html">RoomData</a>).
+Makes the objects of a room from its entry in the room data. The colour of the room is the low three bits of the byte after the length, and the size of the room is the high two bits. The size gives the distance to the walls and the floor level, from the table at <a href="25696.html">RoomSizes</a>. Each type of block is the number of an entry in the table at <a href="29977.html">BlockTypes</a>, which holds the address of a template of one or more objects that already have their coordinates. These are copied into the objects table, along with the number of the room. The types of block end with a 255, or at the end of the entry if there are no more objects. After the 255 come the groups of other objects, each with a type in bits 3 to 7 and one less than the number of places in bits 0 to 2, followed by that many positions (see <a href="25705.html">RoomData</a>). Type 0 sets the position offset at <a href="23321.html">PositionOffset</a>, and type 31 switches the table of types from <a href="29640.html">ObjectTypes</a> to <a href="29704.html">SecondObjectTypes</a>. The other types are lists of objects that have a sprite, a size and flags, but no coordinates.
 </div>
 </div>
 <table class="input">
@@ -131,7 +131,7 @@ Makes the objects of a room from its entry in the room data. The colour of the r
 <span id="52446"></span>
 <div class="comments">
 <div class="paragraph">
-Set the colour, the size and the floor.
+Set the colour of the room, the size and the floor.
 </div>
 </div>
 </td>
@@ -146,7 +146,7 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52447"></span>52447</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the colour and size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -158,31 +158,31 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52449"></span>52449</td>
 <td class="instruction">AND %00000111</td>
-<td class="comment-1" rowspan="1">Keep bits 0 to 2.</td>
+<td class="comment-1" rowspan="1">Keep the colour.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52451"></span>52451</td>
 <td class="instruction">LD (23309),A</td>
-<td class="comment-1" rowspan="1">Set <a href="23309.html">RoomColour</a>.</td>
+<td class="comment-1" rowspan="1">Store it as the colour of the room at <a href="23309.html">RoomColour</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52454"></span>52454</td>
 <td class="instruction">LD (23348),HL</td>
-<td class="comment-1" rowspan="1">Set <a href="23348.html">ChamberAddress</a>.</td>
+<td class="comment-1" rowspan="1">Store the address of the colour and size at <a href="23348.html">ChamberAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52457"></span>52457</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">DE</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the object to make on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52458"></span>52458</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1">Exchange <span class="register">DE</span> and <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the colour and size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -194,13 +194,13 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52460"></span>52460</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the types of block.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52461"></span>52461</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2">Rotate the size into the low two bits.</td>
+<td class="comment-1" rowspan="2">Move the size into the low two bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -211,13 +211,13 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52463"></span>52463</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52465"></span>52465</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -240,13 +240,13 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52471"></span>52471</td>
 <td class="instruction">CALL <a href="52742.html">AddAToHL</a></td>
-<td class="comment-1" rowspan="1">Call <a href="52742.html">AddAToHL</a>.</td>
+<td class="comment-1" rowspan="1">Add the offset to find the size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52474"></span>52474</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the east and west distance and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the size of the room in X, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -257,13 +257,13 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52476"></span>52476</td>
 <td class="instruction">LD (23307),A</td>
-<td class="comment-1" rowspan="1">Set <a href="23307.html">RoomSize_X</a>.</td>
+<td class="comment-1" rowspan="1">Store it at <a href="23307.html">RoomSize_X</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52479"></span>52479</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the north and south distance and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the size of the room in Y, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -274,25 +274,25 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52481"></span>52481</td>
 <td class="instruction">LD (23308),A</td>
-<td class="comment-1" rowspan="1">Set <a href="23308.html">RoomSize_Y</a>.</td>
+<td class="comment-1" rowspan="1">Store it at <a href="23308.html">RoomSize_Y</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52484"></span>52484</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the floor level.</td>
+<td class="comment-1" rowspan="1">Fetch the floor of the room.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52485"></span>52485</td>
 <td class="instruction">LD (23310),A</td>
-<td class="comment-1" rowspan="1">Set <a href="23310.html">FloorHeight</a>.</td>
+<td class="comment-1" rowspan="1">Store it at <a href="23310.html">FloorHeight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52488"></span>52488</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="2">Subtract 2 from <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="2">Take two off the length that is left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -303,13 +303,13 @@ Set the colour, the size and the floor.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52490"></span>52490</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1">Exchange <span class="register">DE</span> and <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the types of block.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52491"></span>52491</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">DE</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the address of the object to make from the stack.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -325,7 +325,7 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="asm-label">MakeRoomObjects_Background</td>
 <td class="address-2"><span id="52492"></span>52492</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the type and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the type of block, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -336,7 +336,7 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52494"></span>52494</td>
 <td class="instruction">CP 255</td>
-<td class="comment-1" rowspan="2">Jump to <a href="52446.html#52538">MakeRoomObjects_Foreground</a> if it is 255.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="52446.html#52538">MakeRoomObjects_Foreground</a> if it is the end of the types.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -347,7 +347,7 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52498"></span>52498</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="2">Stash <span class="register">BC</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="2">Stash the length that is left and the address of the next type on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -355,22 +355,31 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="instruction">PUSH HL</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="52500"></span>
+<div class="comments">
+<div class="paragraph">
+Look up the list of objects of this type.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52500"></span>52500</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">L</span>.</td>
+<td class="comment-1" rowspan="2">Make the type into an offset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52501"></span>52501</td>
 <td class="instruction">LD H,0</td>
-<td class="comment-1" rowspan="1">Set <span class="register">H</span> to 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52503"></span>52503</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1">Double <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Double it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -382,13 +391,13 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52507"></span>52507</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1">Add <span class="register">BC</span> to <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Add the two.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52508"></span>52508</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="4">Fetch the address of the template.</td>
+<td class="comment-1" rowspan="4">Fetch the address of the list of objects of the block.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -406,16 +415,26 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="instruction">LD L,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="52512"></span>
+<div class="comments">
+<div class="paragraph">
+Copy one block object into the objects table.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">MakeRoomObjects_BackgroundCopy</td>
 <td class="address-2"><span id="52512"></span>52512</td>
 <td class="instruction">LD BC,8</td>
-<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 0008.</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to copy to 8.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52515"></span>52515</td>
 <td class="instruction">LDIR</td>
-<td class="comment-1" rowspan="1">Copy 8 bytes from <span class="register">HL</span> to <span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Copy the graphic number, the coordinates, the size and the flags of the object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -427,31 +446,30 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52520"></span>52520</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1">Set the room number of the object.</td>
+<td class="comment-1" rowspan="2">Set the room number of the object, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52521"></span>52521</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52522"></span>52522</td>
 <td class="instruction">LD B,23</td>
-<td class="comment-1" rowspan="1">Set <span class="register">B</span> to 23.</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to 23.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52524"></span>52524</td>
 <td class="instruction">CALL <a href="52764.html">ClearBytes</a></td>
-<td class="comment-1" rowspan="1">Call <a href="52764.html">ClearBytes</a>.</td>
+<td class="comment-1" rowspan="1">Clear the rest of the object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52527"></span>52527</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="52446.html#52512">MakeRoomObjects_BackgroundCopy</a> if the next byte is not zero.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="52446.html#52512">MakeRoomObjects_BackgroundCopy</a> if the list has not ended.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -467,7 +485,7 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52531"></span>52531</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="2">Restore <span class="register">HL</span> and <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="2">Restore the address of the next type and the length that is left from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -478,13 +496,13 @@ Copy each type of block from <a href="29977.html">BlockTypes</a>.
 <td class="asm-label"></td>
 <td class="address-1"><span id="52533"></span>52533</td>
 <td class="instruction">DJNZ <a href="52446.html#52492">MakeRoomObjects_Background</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="52446.html#52492">MakeRoomObjects_Background</a> until <span class="register">B</span> is zero.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="52446.html#52492">MakeRoomObjects_Background</a> until all of the types have been used.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52535"></span>52535</td>
 <td class="instruction">JP <a href="52432.html">ClearRemainingObjects</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="52432.html">ClearRemainingObjects</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="52432.html">ClearRemainingObjects</a> to clear the rest of the objects table.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -500,7 +518,7 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label">MakeRoomObjects_Foreground</td>
 <td class="address-2"><span id="52538"></span>52538</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="1">Decrement <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Take one off the length that is left, for the end of the types.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -512,12 +530,22 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52541"></span>52541</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="2">Copy <span class="register">DE</span> to <span class="register">IY</span> (using the stack).</td>
+<td class="comment-1" rowspan="2">Point <span class="register">IY</span> at the object to make (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52542"></span>52542</td>
 <td class="instruction">POP IY</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="52544"></span>
+<div class="comments">
+<div class="paragraph">
+Decode the type and the number of places.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">MakeRoomObjects_ForegroundObject</td>
@@ -529,55 +557,53 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52545"></span>52545</td>
 <td class="instruction">AND %00000111</td>
-<td class="comment-1" rowspan="1">Keep bits 0 to 2.</td>
+<td class="comment-1" rowspan="1">Keep the count.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52547"></span>52547</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">A</span>.</td>
+<td class="comment-1" rowspan="1">Add one to get the number of times.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52548"></span>52548</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">C</span>.</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52549"></span>52549</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the type and the number of places again.</td>
+<td class="comment-1" rowspan="2">Fetch the type and the number of places again, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52550"></span>52550</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52551"></span>52551</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="1">Decrement <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Take one off the length that is left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52552"></span>52552</td>
 <td class="instruction">LD D,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the first place.</td>
+<td class="comment-1" rowspan="2">Fetch the first place, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52553"></span>52553</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52554"></span>52554</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the next byte on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -594,19 +620,19 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52557"></span>52557</td>
 <td class="instruction">AND %00111110</td>
-<td class="comment-1" rowspan="1">Keep bits 1 to 5.</td>
+<td class="comment-1" rowspan="1">Keep it, to make it twice the number of the type.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52559"></span>52559</td>
 <td class="instruction">JP Z,<a href="52446.html#52736">MakeRoomObjects_SetOffset</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="52446.html#52736">MakeRoomObjects_SetOffset</a> if it is zero.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="52446.html#52736">MakeRoomObjects_SetOffset</a> if the type is 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52562"></span>52562</td>
 <td class="instruction">CP 62</td>
-<td class="comment-1" rowspan="2">Jump to <a href="52446.html#52720">MakeRoomObjects_SwitchTable</a> if it is 62.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="52446.html#52720">MakeRoomObjects_SwitchTable</a> if the type is 31.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -617,19 +643,19 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52567"></span>52567</td>
 <td class="instruction">LD HL,(23328)</td>
-<td class="comment-1" rowspan="1">Fetch <a href="23328.html">ObjectTypeTableAddress</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the address of the object types from <a href="23328.html">ObjectTypeTableAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52570"></span>52570</td>
 <td class="instruction">CALL <a href="52742.html">AddAToHL</a></td>
-<td class="comment-1" rowspan="1">Call <a href="52742.html">AddAToHL</a>.</td>
+<td class="comment-1" rowspan="1">Add the offset to find the type.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52573"></span>52573</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="4">Fetch the address of the template.</td>
+<td class="comment-1" rowspan="4">Fetch the address of the list of objects of the type.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -650,13 +676,23 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label">MakeRoomObjects_ForegroundPlace</td>
 <td class="address-2"><span id="52577"></span>52577</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the list of objects on the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="52578"></span>
+<div class="comments">
+<div class="paragraph">
+Copy the sprite, the size and the flags from the type.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">MakeRoomObjects_ForegroundSprite</td>
 <td class="address-2"><span id="52578"></span>52578</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the sprite number and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the sprite number, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -673,7 +709,7 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52583"></span>52583</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the width and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the width, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -690,7 +726,7 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52588"></span>52588</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the depth and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the depth, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -707,7 +743,7 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52593"></span>52593</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the height and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the height, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -724,7 +760,7 @@ The other objects. <span class="register">IY</span> points at the object that is
 <td class="asm-label"></td>
 <td class="address-1"><span id="52598"></span>52598</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the flags and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the flags, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -754,7 +790,7 @@ The other objects. <span class="register">IY</span> points at the object that is
 <span id="52609"></span>
 <div class="comments">
 <div class="paragraph">
-The offset has the half step along the x axis in bit 0, the half step along the y axis in bit 1, and the offset up the z axis in bits 2 to 7. The place has the x position in bits 0 to 2, the y position in bits 3 to 5 and the height in bits 6 and 7. The x position of the object is the x position times 16, plus 8 if the half step is set, plus 72.
+The offset at <a href="23321.html">PositionOffset</a> has the half step along the x axis in bit 0, the half step along the y axis in bit 1, and the offset up the z axis in bits 2 to 7. The place has the x position in bits 0 to 2, the y position in bits 3 to 5 and the height in bits 6 and 7. The x position of the object is the x position times 16, plus 8 if the half step is set, plus 72.
 </div>
 </div>
 </td>
@@ -763,7 +799,7 @@ The offset has the half step along the x axis in bit 0, the half step along the 
 <td class="asm-label"></td>
 <td class="address-1"><span id="52609"></span>52609</td>
 <td class="instruction">LD A,(23321)</td>
-<td class="comment-1" rowspan="1">Fetch <a href="23321.html">PositionOffset</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the position offset from <a href="23321.html">PositionOffset</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -785,13 +821,13 @@ The offset has the half step along the x axis in bit 0, the half step along the 
 <td class="asm-label"></td>
 <td class="address-1"><span id="52615"></span>52615</td>
 <td class="instruction">AND %00001000</td>
-<td class="comment-1" rowspan="1">Keep bit 3.</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52617"></span>52617</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -824,13 +860,13 @@ The offset has the half step along the x axis in bit 0, the half step along the 
 <td class="asm-label"></td>
 <td class="address-1"><span id="52623"></span>52623</td>
 <td class="instruction">AND %01110000</td>
-<td class="comment-1" rowspan="1">Keep bits 4 to 6.</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52625"></span>52625</td>
 <td class="instruction">ADD A,E</td>
-<td class="comment-1" rowspan="1">Add <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Add the half step.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -858,7 +894,7 @@ The y position is worked out in the same way from the y position and the half st
 <td class="asm-label"></td>
 <td class="address-1"><span id="52631"></span>52631</td>
 <td class="instruction">LD A,(23321)</td>
-<td class="comment-1" rowspan="1">Fetch <a href="23321.html">PositionOffset</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the position offset from <a href="23321.html">PositionOffset</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -875,13 +911,13 @@ The y position is worked out in the same way from the y position and the half st
 <td class="asm-label"></td>
 <td class="address-1"><span id="52636"></span>52636</td>
 <td class="instruction">AND %00001000</td>
-<td class="comment-1" rowspan="1">Keep bit 3.</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52638"></span>52638</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -899,13 +935,13 @@ The y position is worked out in the same way from the y position and the half st
 <td class="asm-label"></td>
 <td class="address-1"><span id="52641"></span>52641</td>
 <td class="instruction">AND %01110000</td>
-<td class="comment-1" rowspan="1">Keep bits 4 to 6.</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52643"></span>52643</td>
 <td class="instruction">ADD A,E</td>
-<td class="comment-1" rowspan="1">Add <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Add the half step.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -950,7 +986,7 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="asm-label"></td>
 <td class="address-1"><span id="52652"></span>52652</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
+<td class="comment-1" rowspan="1">Keep it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -967,61 +1003,61 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="asm-label"></td>
 <td class="address-1"><span id="52656"></span>52656</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52657"></span>52657</td>
 <td class="instruction">ADD A,A</td>
-<td class="comment-1" rowspan="1">Double it.</td>
+<td class="comment-1" rowspan="1">Multiply it by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52658"></span>52658</td>
 <td class="instruction">ADD A,E</td>
-<td class="comment-1" rowspan="1">Add <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Add the four times to make twelve times.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52659"></span>52659</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52660"></span>52660</td>
 <td class="instruction">LD A,(23321)</td>
-<td class="comment-1" rowspan="1">Fetch <a href="23321.html">PositionOffset</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the position offset from <a href="23321.html">PositionOffset</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52663"></span>52663</td>
 <td class="instruction">ADD A,E</td>
-<td class="comment-1" rowspan="1">Add <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Add the twelve times.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52664"></span>52664</td>
 <td class="instruction">AND %11111100</td>
-<td class="comment-1" rowspan="1">Keep bits 2 to 7.</td>
+<td class="comment-1" rowspan="1">Clear the two bits of the half steps.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52666"></span>52666</td>
 <td class="instruction">LD E,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Stash it in <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52667"></span>52667</td>
 <td class="instruction">LD A,(23310)</td>
-<td class="comment-1" rowspan="1">Fetch <a href="23310.html">FloorHeight</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the floor of the room from <a href="23310.html">FloorHeight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52670"></span>52670</td>
 <td class="instruction">ADD A,E</td>
-<td class="comment-1" rowspan="1">Add <span class="register">E</span>.</td>
+<td class="comment-1" rowspan="1">Add it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1030,58 +1066,78 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="comment-1" rowspan="1">Set the z position of the object.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="52674"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the rest of the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52674"></span>52674</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">BC</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the count on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52675"></span>52675</td>
 <td class="instruction">LD BC,9</td>
-<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 0009.</td>
+<td class="comment-1" rowspan="1">Set the length of the part of the object that has been made to 9.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52678"></span>52678</td>
 <td class="instruction">ADD IY,BC</td>
-<td class="comment-1" rowspan="1">Add <span class="register">BC</span> to <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at the rest of the object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52680"></span>52680</td>
 <td class="instruction">LD B,23</td>
-<td class="comment-1" rowspan="1">Set <span class="register">B</span> to 23.</td>
+<td class="comment-1" rowspan="1">Set the number of bytes to clear to 23.</td>
 </tr>
 <tr>
 <td class="asm-label">MakeRoomObjects_ForegroundClear</td>
 <td class="address-2"><span id="52682"></span>52682</td>
 <td class="instruction">LD (IY+0),0</td>
-<td class="comment-1" rowspan="1">Write 0.</td>
+<td class="comment-1" rowspan="1">Clear a byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52686"></span>52686</td>
 <td class="instruction">INC IY</td>
-<td class="comment-1" rowspan="1">Increment <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="1">Move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52688"></span>52688</td>
 <td class="instruction">DJNZ <a href="52446.html#52682">MakeRoomObjects_ForegroundClear</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="52446.html#52682">MakeRoomObjects_ForegroundClear</a> until <span class="register">B</span> is zero.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="52446.html#52682">MakeRoomObjects_ForegroundClear</a> until the object is clear.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="52690"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next object of the type, or the next place, or the next group.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52690"></span>52690</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the count from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52691"></span>52691</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="52446.html#52578">MakeRoomObjects_ForegroundSprite</a> if the next byte is not zero.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="52446.html#52578">MakeRoomObjects_ForegroundSprite</a> if the type has not ended.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1097,7 +1153,7 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="asm-label"></td>
 <td class="address-1"><span id="52695"></span>52695</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="2">Restore <span class="register">DE</span> and <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="2">Restore the address of the type and the address of the next byte from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1108,19 +1164,18 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="asm-label"></td>
 <td class="address-1"><span id="52697"></span>52697</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="1">Decrement <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="52446.html#52712">MakeRoomObjects_Finish</a> if the entry has ended.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52698"></span>52698</td>
 <td class="instruction">JR Z,<a href="52446.html#52712">MakeRoomObjects_Finish</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="52446.html#52712">MakeRoomObjects_Finish</a> if it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52700"></span>52700</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="2">Jump to <a href="52446.html#52544">MakeRoomObjects_ForegroundObject</a> if <span class="register">C</span> is zero.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="52446.html#52544">MakeRoomObjects_ForegroundObject</a> if the type has been used the number of times.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1131,7 +1186,7 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="asm-label"></td>
 <td class="address-1"><span id="52704"></span>52704</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="2">Fetch the next place and increment <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the next place, and move on.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1142,19 +1197,19 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="asm-label"></td>
 <td class="address-1"><span id="52706"></span>52706</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the next byte on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52707"></span>52707</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1">Exchange <span class="register">DE</span> and <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the list of objects of the type.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52708"></span>52708</td>
 <td class="instruction">LD D,A</td>
-<td class="comment-1" rowspan="1">Copy it to <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Put the place in <span class="register">D</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1163,10 +1218,20 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="comment-1" rowspan="1">Jump to <a href="52446.html#52577">MakeRoomObjects_ForegroundPlace</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="52712"></span>
+<div class="comments">
+<div class="paragraph">
+Finish, and clear any objects that were not made.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">MakeRoomObjects_Finish</td>
 <td class="address-2"><span id="52712"></span>52712</td>
 <td class="instruction">PUSH IY</td>
-<td class="comment-1" rowspan="2">Copy <span class="register">IY</span> to <span class="register">DE</span> (using the stack).</td>
+<td class="comment-1" rowspan="2">Point <span class="register">DE</span> at the next object to make (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1183,14 +1248,14 @@ The z position is the height times 12, plus the offset up the z axis, plus the f
 <td class="asm-label"></td>
 <td class="address-1"><span id="52717"></span>52717</td>
 <td class="instruction">JP <a href="52432.html">ClearRemainingObjects</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="52432.html">ClearRemainingObjects</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="52432.html">ClearRemainingObjects</a> to clear the rest of the objects table.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="52720"></span>
 <div class="comments">
 <div class="paragraph">
-Switch to the second table of object types.
+Type 31 switches to the second table of object types at <a href="29704.html">SecondObjectTypes</a>.
 </div>
 </div>
 </td>
@@ -1199,37 +1264,47 @@ Switch to the second table of object types.
 <td class="asm-label">MakeRoomObjects_SwitchTable</td>
 <td class="address-2"><span id="52720"></span>52720</td>
 <td class="instruction">LD HL,(23328)</td>
-<td class="comment-1" rowspan="1">Fetch <a href="23328.html">ObjectTypeTableAddress</a>.</td>
+<td class="comment-1" rowspan="1">Fetch the address of the object types from <a href="23328.html">ObjectTypeTableAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52723"></span>52723</td>
 <td class="instruction">LD A,64</td>
-<td class="comment-1" rowspan="1">Set <span class="register">A</span> to 64.</td>
+<td class="comment-1" rowspan="1">Set the offset to 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52725"></span>52725</td>
 <td class="instruction">CALL <a href="52742.html">AddAToHL</a></td>
-<td class="comment-1" rowspan="1">Call <a href="52742.html">AddAToHL</a>.</td>
+<td class="comment-1" rowspan="1">Add it to switch to <a href="29704.html">SecondObjectTypes</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52728"></span>52728</td>
 <td class="instruction">LD (23328),HL</td>
-<td class="comment-1" rowspan="1">Set <a href="23328.html">ObjectTypeTableAddress</a>.</td>
+<td class="comment-1" rowspan="1">Store it at <a href="23328.html">ObjectTypeTableAddress</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="52731"></span>
+<div class="comments">
+<div class="paragraph">
+Go on to the next group.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">MakeRoomObjects_Next</td>
 <td class="address-2"><span id="52731"></span>52731</td>
 <td class="instruction">DEC B</td>
-<td class="comment-1" rowspan="1">Decrement <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Take one off the length that is left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52732"></span>52732</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the address of the next byte from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1242,7 +1317,7 @@ Switch to the second table of object types.
 <span id="52736"></span>
 <div class="comments">
 <div class="paragraph">
-Type 0 sets the position offset.
+Type 0 sets the position offset for the groups that follow.
 </div>
 </div>
 </td>
@@ -1251,13 +1326,13 @@ Type 0 sets the position offset.
 <td class="asm-label">MakeRoomObjects_SetOffset</td>
 <td class="address-2"><span id="52736"></span>52736</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="1">Fetch <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Fetch the place, which is the offset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="52737"></span>52737</td>
 <td class="instruction">LD (23321),A</td>
-<td class="comment-1" rowspan="1">Set <a href="23321.html">PositionOffset</a>.</td>
+<td class="comment-1" rowspan="1">Store it at <a href="23321.html">PositionOffset</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1271,6 +1346,7 @@ Type 0 sets the position offset.
 <div class="paragraph">
 View the equivalent code in; <ul class="">
 <li><a href="/ultimate/knightlore/dec/asm/54256.html">Knight Lore</a></li>
+<li><a href="/ultimate/pentagram/dec/asm/51500.html">Pentagram</a></li>
 </ul>
 </div>
 </div>

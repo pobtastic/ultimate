@@ -104,10 +104,7 @@ Next: <a href="C332.html">C332</a>
 Used by the routine at <a href="BF36.html">PrintPercentage</a>.
 </div>
 <div class="paragraph">
-Prints the digits of BCD numbers.
-</div>
-<div class="paragraph">
-Entering at <a href="C314.html">PrintBCDNumber</a> sets the font to the digits first. Entering at <a href="C314.html#c327">PrintBCDNumber_LowerDigit</a> prints only the lower digit of the first byte.
+Prints a number which is held in BCD, using the font with the digits. Entering at <a href="C314.html#c327">PrintBCDNumber_LowerDigit</a> prints only the lower digit of the first byte.
 </div>
 </div>
 <table class="input">
@@ -120,49 +117,69 @@ Entering at <a href="C314.html">PrintBCDNumber</a> sets the font to the digits f
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the BCD number</td>
+<td class="register-desc">Address of the number</td>
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Screen position of the first digit</td>
+<td class="register-desc">Screen address of the first digit</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c314"></span>
+<div class="comments">
+<div class="paragraph">
+Point at the digit font.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrintBCDNumber</td>
 <td class="address-2"><span id="c314"></span>C314</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Keep the screen position.</td>
+<td class="comment-1" rowspan="1">Stash the screen address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c315"></span>C315</td>
 <td class="instruction">LD HL,$6CDE</td>
-<td class="comment-1" rowspan="1">Point at the font of the digits.</td>
+<td class="comment-1" rowspan="2">Set <a href="BBAC.html">FontPointer</a> to <a href="6CDE.html">Font</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c318"></span>C318</td>
 <td class="instruction">LD ($BBAC),HL</td>
-<td class="comment-1" rowspan="1">Set it as the font.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c31b"></span>C31B</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Get the screen position back.</td>
+<td class="comment-1" rowspan="1">Restore the screen address from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c31c"></span>
+<div class="comments">
+<div class="paragraph">
+Print the upper digit of the byte.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PrintBCDNumber_Loop</td>
 <td class="address-2"><span id="c31c"></span>C31C</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="5">Fetch a byte of the number and move its upper digit down to the lower four bits.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c31d"></span>C31D</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="4">Move the upper digit to the lowest four bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -183,13 +200,13 @@ Entering at <a href="C314.html">PrintBCDNumber</a> sets the font to the digits f
 <td class="asm-label"></td>
 <td class="address-1"><span id="c321"></span>C321</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only the digit.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 3.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c323"></span>C323</td>
 <td class="instruction">CALL <a href="CB5B.html">PrintCharacterWithAttribute</a></td>
-<td class="comment-1" rowspan="1">Print the upper digit.</td>
+<td class="comment-1" rowspan="1">Call <a href="CB5B.html">PrintCharacterWithAttribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -204,6 +221,9 @@ Entering at <a href="C314.html">PrintBCDNumber</a> sets the font to the digits f
 <div class="paragraph">
 This entry point is used by the routines at <a href="BF36.html">PrintPercentage</a> and <a href="C2FF.html">PrintScore</a>.
 </div>
+<div class="paragraph">
+Print the lower digit and move on.
+</div>
 </div>
 </td>
 </tr>
@@ -211,18 +231,19 @@ This entry point is used by the routines at <a href="BF36.html">PrintPercentage<
 <td class="asm-label">PrintBCDNumber_LowerDigit</td>
 <td class="address-2"><span id="c327"></span>C327</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="2">Fetch the byte again and keep only its lower digit.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c328"></span>C328</td>
-<td class="instruction">AND $0F</td>
+<td class="instruction">AND %00001111</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 3.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c32a"></span>C32A</td>
 <td class="instruction">CALL <a href="CB5B.html">PrintCharacterWithAttribute</a></td>
-<td class="comment-1" rowspan="1">Print the lower digit.</td>
+<td class="comment-1" rowspan="1">Call <a href="CB5B.html">PrintCharacterWithAttribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -234,13 +255,13 @@ This entry point is used by the routines at <a href="BF36.html">PrintPercentage<
 <td class="asm-label"></td>
 <td class="address-1"><span id="c32e"></span>C32E</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Move on to the next byte of the number.</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c32f"></span>C32F</td>
 <td class="instruction">DJNZ <a href="C314.html#c31c">PrintBCDNumber_Loop</a></td>
-<td class="comment-1" rowspan="1">Loop back until all of the bytes have been printed.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="C314.html#c31c">PrintBCDNumber_Loop</a> until all of the bytes have been printed.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

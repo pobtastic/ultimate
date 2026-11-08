@@ -130,11 +130,7 @@ Tests an object against the walls in a cell, by testing it against each rectangl
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">The depth that the object has gone into the wall along the X axis</td>
-</tr>
-<tr>
-<td class="register">negative</td>
-<td class="register-desc"></td>
+<td class="register-desc">The depth into the wall along the X axis (negative)</td>
 </tr>
 <tr>
 <td class="register">F</td>
@@ -144,27 +140,48 @@ Tests an object against the walls in a cell, by testing it against each rectangl
 </td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="e063"></span>
+<div class="comments">
+<div class="paragraph">
+Find the cell and its rectangle list.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">CheckWallsVerticalFirst</td>
 <td class="address-2"><span id="e063"></span>E063</td>
 <td class="instruction">CALL <a href="E028.html">FindPositionInCell</a></td>
-<td class="comment-1" rowspan="1">Find the position in the cell and the tile.</td>
+<td class="comment-1" rowspan="1">Call <a href="E028.html">FindPositionInCell</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e066"></span>
+<div class="comments">
+<div class="paragraph">
+Find the list of rectangles for the tile.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e066"></span>E066</td>
 <td class="instruction">LD BC,$6334</td>
-<td class="comment-1" rowspan="2">Find the list of rectangles for the tile.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="6334.html">RectangleListTable</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e069"></span>E069</td>
 <td class="instruction">CALL <a href="D589.html">GetTableEntry</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D589.html">GetTableEntry</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e06c"></span>E06C</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="2">Use the list of rectangles.</td>
+<td class="comment-1" rowspan="2">Copy the rectangle list to <span class="register">IY</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -172,10 +189,20 @@ Tests an object against the walls in a cell, by testing it against each rectangl
 <td class="instruction">POP IY</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="e06f"></span>
+<div class="comments">
+<div class="paragraph">
+Test the next rectangle.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">CheckWallsVerticalFirst_Loop</td>
 <td class="address-2"><span id="e06f"></span>E06F</td>
 <td class="instruction">LD A,(IY+$00)</td>
-<td class="comment-1" rowspan="3">Return if there are no more rectangles.</td>
+<td class="comment-1" rowspan="3">Return if this is the end of the list.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -188,26 +215,58 @@ Tests an object against the walls in a cell, by testing it against each rectangl
 <td class="instruction">RET Z</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="e074"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="E063.html#e07d">CheckWallsVerticalFirst_Next</a> if the object is not touching the rectangle.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e074"></span>E074</td>
 <td class="instruction">CALL <a href="E0C4.html">CheckOverlapAlongY</a></td>
-<td class="comment-1" rowspan="2">Jump to <a href="E063.html#e07d">CheckWallsVerticalFirst_Next</a> to try the next rectangle if the object is not touching this one along the Y axis.</td>
+<td class="comment-1" rowspan="1">Call <a href="E0C4.html">CheckOverlapAlongY</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e077"></span>E077</td>
 <td class="instruction">JR NC,<a href="E063.html#e07d">CheckWallsVerticalFirst_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E063.html#e07d">CheckWallsVerticalFirst_Next</a> if the object is not touching the rectangle.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e079"></span>
+<div class="comments">
+<div class="paragraph">
+Return if the object is touching the rectangle.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e079"></span>E079</td>
 <td class="instruction">CALL <a href="E087.html">CheckOverlapAlongX</a></td>
-<td class="comment-1" rowspan="2">Return if it is touching along the X axis as well.</td>
+<td class="comment-1" rowspan="1">Call <a href="E087.html">CheckOverlapAlongX</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e07c"></span>E07C</td>
 <td class="instruction">RET C</td>
+<td class="comment-1" rowspan="1">Return if the object is touching the rectangle.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e07d"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next rectangle.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">CheckWallsVerticalFirst_Next</td>
@@ -234,7 +293,7 @@ Tests an object against the walls in a cell, by testing it against each rectangl
 <td class="asm-label"></td>
 <td class="address-1"><span id="e085"></span>E085</td>
 <td class="instruction">JR <a href="E063.html#e06f">CheckWallsVerticalFirst_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump back to check it.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="E063.html#e06f">CheckWallsVerticalFirst_Loop</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

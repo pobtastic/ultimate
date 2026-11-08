@@ -104,7 +104,7 @@ Next: <a href="51359.html">51359</a>
 Used by the routines at <a href="49166.html">HandlePickupAndDrop</a> and <a href="51243.html">HandlePlayerLegs</a>.
 </div>
 <div class="paragraph">
-Tests whether the player is inside the room. The distance from the middle of the room (128) has to be smaller than the size of the room, less the width of the player in X and less the depth of the player in Y.
+Tests whether the player is inside the room. The distance from the middle of the room (128) has to be smaller than the distance to the wall, less the width of the player along x and less the depth of the player along y.
 </div>
 </div>
 <table class="input">
@@ -113,7 +113,7 @@ Tests whether the player is inside the room. The distance from the middle of the
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Address of the object</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
 <table class="output">
@@ -122,59 +122,104 @@ Tests whether the player is inside the room. The distance from the middle of the
 </tr>
 <tr>
 <td class="register">F</td>
-<td class="register-desc">The carry flag is set if the player is inside the room</td>
+<td class="register-desc">Carry flag set if the player is inside the room</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="51322"></span>
+<div class="comments">
+<div class="paragraph">
+Limits from the wall distances.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">TestPlayerInRoom</td>
 <td class="address-2"><span id="51322"></span>51322</td>
 <td class="instruction">LD HL,(23467)</td>
-<td class="comment-1" rowspan="1">Fetch the size of the room in X and Y.</td>
+<td class="comment-1" rowspan="1">Fetch the size of the room in X and Y from <a href="23467.html">RoomSizeX</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="51325"></span>
+<div class="comments">
+<div class="paragraph">
+Take the width of the player off the size in X.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51325"></span>51325</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="3">Take the width of the player off the size in X.</td>
+<td class="comment-1" rowspan="1">Copy the distance along x to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51326"></span>51326</td>
 <td class="instruction">SUB (IX+4)</td>
+<td class="comment-1" rowspan="1">Subtract the width of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51329"></span>51329</td>
 <td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Store the limit along x in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="51330"></span>
+<div class="comments">
+<div class="paragraph">
+Take the depth of the player off the size in Y.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51330"></span>51330</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="3">Take the depth of the player off the size in Y.</td>
+<td class="comment-1" rowspan="1">Copy the distance along y to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51331"></span>51331</td>
 <td class="instruction">SUB (IX+5)</td>
+<td class="comment-1" rowspan="1">Subtract the depth of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51334"></span>51334</td>
 <td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Store the limit along y in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="51335"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the x distance from the middle.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51335"></span>51335</td>
 <td class="instruction">LD A,(IX+1)</td>
-<td class="comment-1" rowspan="2">Fetch the X coordinate relative to the middle of the room.</td>
+<td class="comment-1" rowspan="1">Fetch the x position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51338"></span>51338</td>
 <td class="instruction">SUB 128</td>
+<td class="comment-1" rowspan="1">Subtract 128.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -186,30 +231,40 @@ Tests whether the player is inside the room. The distance from the middle of the
 <td class="asm-label"></td>
 <td class="address-1"><span id="51343"></span>51343</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make it positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">TestPlayerInRoom_LimitX</td>
 <td class="address-2"><span id="51345"></span>51345</td>
 <td class="instruction">CP L</td>
-<td class="comment-1" rowspan="1">Compare it with the limit in X.</td>
+<td class="comment-1" rowspan="2">Return if the player is outside along x.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51346"></span>51346</td>
 <td class="instruction">RET NC</td>
-<td class="comment-1" rowspan="1">Return with the carry flag reset if the player is outside the room.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="51347"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the y distance from the middle.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51347"></span>51347</td>
 <td class="instruction">LD A,(IX+2)</td>
-<td class="comment-1" rowspan="2">Fetch the Y coordinate relative to the middle of the room.</td>
+<td class="comment-1" rowspan="1">Fetch the y position of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="51350"></span>51350</td>
 <td class="instruction">SUB 128</td>
+<td class="comment-1" rowspan="1">Subtract 128.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -221,7 +276,7 @@ Tests whether the player is inside the room. The distance from the middle of the
 <td class="asm-label"></td>
 <td class="address-1"><span id="51355"></span>51355</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make it positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">TestPlayerInRoom_CompareY</td>

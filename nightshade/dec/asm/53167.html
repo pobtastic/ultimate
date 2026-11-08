@@ -104,7 +104,7 @@ Next: <a href="53234.html">53234</a>
 Used by the routine at <a href="53157.html">DrawCellAndObjects</a>.
 </div>
 <div class="paragraph">
-Makes a list of the objects that are in a cell, at <a href="53597.html">ObjectList</a>, ending with a zero word.
+Makes a list at <a href="53597.html">ObjectList</a> of the addresses of all of the objects which are in a cell. The list ends with a zero word.
 </div>
 </div>
 <table class="input">
@@ -112,37 +112,65 @@ Makes a list of the objects that are in a cell, at <a href="53597.html">ObjectLi
 <th colspan="2">Input</th>
 </tr>
 <tr>
-<td class="register">H</td>
-<td class="register-desc">Row in the view</td>
-</tr>
-<tr>
-<td class="register">L</td>
-<td class="register-desc">Column in the view</td>
+<td class="register">HL</td>
+<td class="register-desc">The cell: the column in <span class="register">L</span> and the row in <span class="register">H</span></td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53167"></span>
+<div class="comments">
+<div class="paragraph">
+Point at the list and the first object slot.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">FindObjectsInCell</td>
 <td class="address-2"><span id="53167"></span>53167</td>
 <td class="instruction">LD IY,53597</td>
-<td class="comment-1" rowspan="2">Point <span class="register">IY</span> at the list and <span class="register">IX</span> at the first object.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IY</span> at <a href="53597.html">ObjectList</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53171"></span>53171</td>
 <td class="instruction">LD IX,48270</td>
+<td class="comment-1" rowspan="1">Point <span class="register">IX</span> at <a href="48270.html">ObjectTable</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53175"></span>
+<div class="comments">
+<div class="paragraph">
+Turn the cell round if the view is rotated.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53175"></span>53175</td>
 <td class="instruction">CALL <a href="53629.html">ConvertCell</a></td>
-<td class="comment-1" rowspan="2">Turn the cell into the column and the row on the map.</td>
+<td class="comment-1" rowspan="1">Call <a href="53629.html">ConvertCell</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53178"></span>53178</td>
 <td class="instruction">EX DE,HL</td>
+<td class="comment-1" rowspan="1">Keep the column in <span class="register">E</span> and the row in <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53179"></span>
+<div class="comments">
+<div class="paragraph">
+Look at this slot.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">FindObjectsInCell_Loop</td>
@@ -196,7 +224,7 @@ Makes a list of the objects that are in a cell, at <a href="53597.html">ObjectLi
 <td class="asm-label"></td>
 <td class="address-1"><span id="53197"></span>53197</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="2">Get the address of the object.</td>
+<td class="comment-1" rowspan="2">Copy the address of the object into <span class="register">HL</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -226,10 +254,20 @@ Makes a list of the objects that are in a cell, at <a href="53597.html">ObjectLi
 <td class="instruction">INC IY</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="53210"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">FindObjectsInCell_Next</td>
 <td class="address-2"><span id="53210"></span>53210</td>
 <td class="instruction">LD BC,16</td>
-<td class="comment-1" rowspan="2">Move on to the next object.</td>
+<td class="comment-1" rowspan="2">Move on to the next object slot.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -240,12 +278,22 @@ Makes a list of the objects that are in a cell, at <a href="53597.html">ObjectLi
 <td class="asm-label"></td>
 <td class="address-1"><span id="53215"></span>53215</td>
 <td class="instruction">PUSH IX</td>
-<td class="comment-1" rowspan="2">Get the address of the object.</td>
+<td class="comment-1" rowspan="2">Copy the address of the object to <span class="register">HL</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53217"></span>53217</td>
 <td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53218"></span>
+<div class="comments">
+<div class="paragraph">
+See whether every slot has been looked at.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -264,16 +312,36 @@ Makes a list of the objects that are in a cell, at <a href="53597.html">ObjectLi
 <td class="instruction">SBC HL,BC</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="53224"></span>
+<div class="comments">
+<div class="paragraph">
+Go back for the next slot.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53224"></span>53224</td>
 <td class="instruction">JR C,<a href="53167.html#53179">FindObjectsInCell_Loop</a></td>
 <td class="comment-1" rowspan="1">Loop back until all 23 objects have been checked.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="53226"></span>
+<div class="comments">
+<div class="paragraph">
+End the list.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53226"></span>53226</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="3">Add the zero word that marks the end of the list.</td>
+<td class="comment-1" rowspan="3">Write a zero word to the end of the list.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

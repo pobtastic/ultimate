@@ -104,7 +104,17 @@ Next: <a href="D0A0.html">D0A0</a>
 Used by the routine at <a href="CFA5.html">DrawCellAndObjects</a>.
 </div>
 <div class="paragraph">
-Draws the objects in the list at <a href="D15D.html">ObjectList</a>, from the furthest away to the nearest. It repeatedly finds the object that has no other object behind it, draws it, and then marks it as drawn by clearing bit 7 of the high byte of its entry in the list.
+Draws the objects in the list at <a href="D15D.html">ObjectList</a>, which are the objects in one cell. The objects are drawn so that the ones further from the viewer come first. Each time it takes the first object in the list which has not been drawn, compares it with each of the rest, and swaps it for any object which should be drawn before it. It then draws the object it is left with, and marks it as drawn by clearing bit 7 of the high byte of its address in the list.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="cff2"></span>
+<div class="comments">
+<div class="paragraph">
+Find the first object in the list which has not been drawn.
 </div>
 </div>
 </td>
@@ -113,13 +123,13 @@ Draws the objects in the list at <a href="D15D.html">ObjectList</a>, from the fu
 <td class="asm-label">DrawObjectsInList</td>
 <td class="address-2"><span id="cff2"></span>CFF2</td>
 <td class="instruction">LD HL,$D15D</td>
-<td class="comment-1" rowspan="1">Point at the list.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="D15D.html">ObjectList</a>.</td>
 </tr>
 <tr>
 <td class="asm-label">DrawObjectsInList_Next</td>
 <td class="address-2"><span id="cff5"></span>CFF5</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="4">Fetch the next entry in the list.</td>
+<td class="comment-1" rowspan="4">Fetch the address of the next object into <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -140,7 +150,7 @@ Draws the objects in the list at <a href="D15D.html">ObjectList</a>, from the fu
 <td class="asm-label"></td>
 <td class="address-1"><span id="cff9"></span>CFF9</td>
 <td class="instruction">LD A,D</td>
-<td class="comment-1" rowspan="3">Return if it is the zero word that marks the end of the list.</td>
+<td class="comment-1" rowspan="3">Return if this is the end of the list.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -164,15 +174,26 @@ Draws the objects in the list at <a href="D15D.html">ObjectList</a>, from the fu
 <td class="instruction">JR Z,<a href="CFF2.html#cff5">DrawObjectsInList_Next</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d000"></span>
+<div class="comments">
+<div class="paragraph">
+Remember where the next place in the list is.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d000"></span>D000</td>
 <td class="instruction">LD ($BBC4),HL</td>
-<td class="comment-1" rowspan="3">Keep the place in the list, and point <span class="register">IX</span> at the object.</td>
+<td class="comment-1" rowspan="1">Set <a href="BBC4.html">ChosenObjectPosition</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d003"></span>D003</td>
 <td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="2">Copy the address of the object into <span class="register">IX</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -184,7 +205,7 @@ Draws the objects in the list at <a href="D15D.html">ObjectList</a>, from the fu
 <span id="d006"></span>
 <div class="comments">
 <div class="paragraph">
-Compare the object at <span class="register">IX</span> with each of the objects after it, and make the object that must be drawn first the one at <span class="register">IX</span>.
+Compare this object with each of the others which have not been drawn.
 </div>
 </div>
 </td>
@@ -193,7 +214,7 @@ Compare the object at <span class="register">IX</span> with each of the objects 
 <td class="asm-label">DrawObjectsInList_Compare</td>
 <td class="address-2"><span id="d006"></span>D006</td>
 <td class="instruction">LD E,(HL)</td>
-<td class="comment-1" rowspan="4">Fetch the next entry in the list.</td>
+<td class="comment-1" rowspan="4">Fetch the address of the next object into <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -209,6 +230,16 @@ Compare the object at <span class="register">IX</span> with each of the objects 
 <td class="asm-label"></td>
 <td class="address-1"><span id="d009"></span>D009</td>
 <td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d00a"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the first object if this is the end of the list.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -238,15 +269,26 @@ Compare the object at <span class="register">IX</span> with each of the objects 
 <td class="instruction">JR Z,<a href="CFF2.html#d006">DrawObjectsInList_Compare</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d013"></span>
+<div class="comments">
+<div class="paragraph">
+Remember where the next place in the list is.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d013"></span>D013</td>
 <td class="instruction">LD ($BBC6),HL</td>
-<td class="comment-1" rowspan="3">Keep the place in the list, and point <span class="register">IY</span> at the object.</td>
+<td class="comment-1" rowspan="1">Set <a href="BBC6.html">ComparedObjectPosition</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d016"></span>D016</td>
 <td class="instruction">PUSH DE</td>
+<td class="comment-1" rowspan="2">Copy the address of the object into <span class="register">IY</span> (using the stack).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -257,14 +299,14 @@ Compare the object at <span class="register">IX</span> with each of the objects 
 <td class="asm-label"></td>
 <td class="address-1"><span id="d019"></span>D019</td>
 <td class="instruction">LD C,$00</td>
-<td class="comment-1" rowspan="1">Start with a relation of zero.</td>
+<td class="comment-1" rowspan="1">Clear the number which says how the objects compare.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="d01b"></span>
 <div class="comments">
 <div class="paragraph">
-Compare the extents of the two objects along the X axis. The relation in <span class="register">C</span> becomes 0 if the object at <span class="register">IX</span> is wholly beyond the object at <span class="register">IY</span>, 1 if they overlap and 2 if it is wholly before it.
+Compare the objects from side to side. The number in <span class="register">C</span> stays at zero if the first object starts after the second ends, becomes two if the second starts after the first ends, and becomes one if they overlap.
 </div>
 </div>
 </td>
@@ -273,7 +315,7 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="asm-label"></td>
 <td class="address-1"><span id="d01b"></span>D01B</td>
 <td class="instruction">LD A,(IY+$01)</td>
-<td class="comment-1" rowspan="5">Work out the largest extent of the object at <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the horizontal position of the second object and add its horizontal size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -284,6 +326,7 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="asm-label"></td>
 <td class="address-1"><span id="d021"></span>D021</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="3">Halve it, add 40 and keep the result in <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -296,10 +339,20 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="instruction">LD B,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d025"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the smallest extent of the object at <span class="register">IX</span>, and subtract the largest extent of the object at <span class="register">IY</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d025"></span>D025</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="5">Work out the smallest extent of the object at <span class="register">IX</span>, and subtract the largest extent of the object at <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the horizontal position of the first object and subtract its horizontal size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -310,6 +363,7 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="asm-label"></td>
 <td class="address-1"><span id="d02b"></span>D02B</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="2">Halve it and add 40.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -320,18 +374,28 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="asm-label"></td>
 <td class="address-1"><span id="d02e"></span>D02E</td>
 <td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CFF2.html#d049">DrawObjectsInList_Y</a> if the first object starts after the second ends.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d02f"></span>D02F</td>
 <td class="instruction">JR NC,<a href="CFF2.html#d049">DrawObjectsInList_Y</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="CFF2.html#d049">DrawObjectsInList_Y</a> if the object at <span class="register">IX</span> is wholly beyond it.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d031"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the largest extent of the object at <span class="register">IX</span>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d031"></span>D031</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="5">Work out the largest extent of the object at <span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the horizontal position of the first object and add its horizontal size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -342,6 +406,7 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="asm-label"></td>
 <td class="address-1"><span id="d037"></span>D037</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="3">Halve it, add 40 and keep the result in <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -354,10 +419,20 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="instruction">LD B,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d03b"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the smallest extent of the object at <span class="register">IY</span>, and subtract the largest extent of the object at <span class="register">IX</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d03b"></span>D03B</td>
 <td class="instruction">LD A,(IY+$01)</td>
-<td class="comment-1" rowspan="5">Work out the smallest extent of the object at <span class="register">IY</span>, and subtract the largest extent of the object at <span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the horizontal position of the second object and subtract its horizontal size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -368,6 +443,7 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="asm-label"></td>
 <td class="address-1"><span id="d041"></span>D041</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="2">Halve it and add 40.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -378,31 +454,31 @@ Compare the extents of the two objects along the X axis. The relation in <span c
 <td class="asm-label"></td>
 <td class="address-1"><span id="d044"></span>D044</td>
 <td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="2">Jump to <a href="CFF2.html#d048">DrawObjectsInList_Overlap</a> if the second object starts before the first ends.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d045"></span>D045</td>
 <td class="instruction">JR C,<a href="CFF2.html#d048">DrawObjectsInList_Overlap</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="CFF2.html#d048">DrawObjectsInList_Overlap</a> if they overlap.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d047"></span>D047</td>
 <td class="instruction">INC C</td>
-<td class="comment-1" rowspan="1">Add one to the relation...</td>
+<td class="comment-1" rowspan="1">Add one.</td>
 </tr>
 <tr>
 <td class="asm-label">DrawObjectsInList_Overlap</td>
 <td class="address-2"><span id="d048"></span>D048</td>
 <td class="instruction">INC C</td>
-<td class="comment-1" rowspan="1">... and add one to the relation.</td>
+<td class="comment-1" rowspan="1">Add one more.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="d049"></span>
 <div class="comments">
 <div class="paragraph">
-Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the relation.
+Compare the objects from front to back in the same way. This time the number in <span class="register">C</span> has zero, three or six added to it.
 </div>
 </div>
 </td>
@@ -411,7 +487,7 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label">DrawObjectsInList_Y</td>
 <td class="address-2"><span id="d049"></span>D049</td>
 <td class="instruction">LD A,(IY+$03)</td>
-<td class="comment-1" rowspan="5">Work out the largest extent of the object at <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the vertical position of the second object and add its vertical size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -422,6 +498,7 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label"></td>
 <td class="address-1"><span id="d04f"></span>D04F</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="3">Halve it, add 40 and keep the result in <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -434,10 +511,20 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="instruction">LD B,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d053"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the smallest extent of the object at <span class="register">IX</span>, and subtract the largest extent of the object at <span class="register">IY</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d053"></span>D053</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-1" rowspan="5">Work out the smallest extent of the object at <span class="register">IX</span>, and subtract the largest extent of the object at <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the vertical position of the first object and subtract its vertical size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -448,6 +535,7 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label"></td>
 <td class="address-1"><span id="d059"></span>D059</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="2">Halve it and add 40.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -458,12 +546,13 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label"></td>
 <td class="address-1"><span id="d05c"></span>D05C</td>
 <td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="1">Subtract the end of the second object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d05d"></span>D05D</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1">Fetch the relation.</td>
+<td class="comment-1" rowspan="1">Fetch the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -472,10 +561,20 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="comment-1" rowspan="1">Jump to <a href="CFF2.html#d07b">DrawObjectsInList_Relation</a> if the object at <span class="register">IX</span> is wholly beyond it.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d060"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the largest extent of the object at <span class="register">IX</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d060"></span>D060</td>
 <td class="instruction">LD A,(IX+$03)</td>
-<td class="comment-1" rowspan="5">Work out the largest extent of the object at <span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the vertical position of the first object and add its vertical size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -486,6 +585,7 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label"></td>
 <td class="address-1"><span id="d066"></span>D066</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="3">Halve it, add 40 and keep the result in <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -498,10 +598,20 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="instruction">LD B,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d06a"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the smallest extent of the object at <span class="register">IY</span>, and subtract the largest extent of the object at <span class="register">IX</span>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d06a"></span>D06A</td>
 <td class="instruction">LD A,(IY+$03)</td>
-<td class="comment-1" rowspan="5">Work out the smallest extent of the object at <span class="register">IY</span>, and subtract the largest extent of the object at <span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="2">Fetch the vertical position of the second object and subtract its vertical size.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -512,6 +622,7 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label"></td>
 <td class="address-1"><span id="d070"></span>D070</td>
 <td class="instruction">RRA</td>
+<td class="comment-1" rowspan="2">Halve it and add 40.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -522,12 +633,13 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label"></td>
 <td class="address-1"><span id="d073"></span>D073</td>
 <td class="instruction">SUB B</td>
+<td class="comment-1" rowspan="1">Subtract the end of the first object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d074"></span>D074</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1">Fetch the relation.</td>
+<td class="comment-1" rowspan="1">Fetch the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -539,41 +651,53 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="asm-label"></td>
 <td class="address-1"><span id="d077"></span>D077</td>
 <td class="instruction">ADD A,$03</td>
-<td class="comment-1" rowspan="1">Add three to the relation...</td>
+<td class="comment-1" rowspan="1">Add three.</td>
 </tr>
 <tr>
 <td class="asm-label">DrawObjectsInList_YOverlap</td>
 <td class="address-2"><span id="d079"></span>D079</td>
 <td class="instruction">ADD A,$03</td>
-<td class="comment-1" rowspan="1">... and add three more to the relation.</td>
+<td class="comment-1" rowspan="1">Add three more.</td>
 </tr>
 <tr>
 <td class="asm-label">DrawObjectsInList_Relation</td>
 <td class="address-2"><span id="d07b"></span>D07B</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Keep the relation.</td>
+<td class="comment-1" rowspan="1">Keep the number in <span class="register">C</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d07c"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the rotation of the view.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d07c"></span>D07C</td>
 <td class="instruction">LD A,($BBBA)</td>
-<td class="comment-1" rowspan="3">Fetch the flag that tells whether the view is turned round.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="BBBA.html">ViewRotatedFlag</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d07f"></span>D07F</td>
-<td class="instruction">AND $01</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Test the lowest bit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d081"></span>D081</td>
 <td class="instruction">JR Z,<a href="CFF2.html#d087">DrawObjectsInList_Choose</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CFF2.html#d087">DrawObjectsInList_Choose</a> if the view is not rotated.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d083"></span>D083</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="3">Add nine to the relation if it is.</td>
+<td class="comment-1" rowspan="3">Add 09 to the number, to use the second half of the table.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -586,31 +710,84 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="instruction">LD C,A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d087"></span>
+<div class="comments">
+<div class="paragraph">
+Run the routine in the table at <a href="D0A0.html">ObjectOrderTable</a> for the relation, which does nothing if the object at <span class="register">IX</span> is to be drawn first, and otherwise makes the object at <span class="register">IY</span> the object at <span class="register">IX</span> (see <a href="D0C5.html">ChooseOtherObject</a>), or compares them further.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">DrawObjectsInList_Choose</td>
 <td class="address-2"><span id="d087"></span>D087</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="3">Run the routine in the table at <a href="D0A0.html">ObjectOrderTable</a> for the relation, which does nothing if the object at <span class="register">IX</span> is to be drawn first, and otherwise makes the object at <span class="register">IY</span> the object at <span class="register">IX</span> (see <a href="D0C5.html">ChooseOtherObject</a>), or compares them further.</td>
+<td class="comment-1" rowspan="1">Fetch the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d088"></span>D088</td>
 <td class="instruction">LD BC,$D0A0</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="D0A0.html">ObjectOrderTable</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d08b"></span>
+<div class="comments">
+<div class="paragraph">
+Run the routine for the number.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d08b"></span>D08B</td>
 <td class="instruction">CALL <a href="D593.html">JumpToTableRoutine</a></td>
+<td class="comment-1" rowspan="1">Call <a href="D593.html">JumpToTableRoutine</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d08e"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the place in the list after the second object.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d08e"></span>D08E</td>
 <td class="instruction">LD HL,($BBC6)</td>
-<td class="comment-1" rowspan="2">Get the place in the list back, and loop back to compare with the next entry.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="BBC6.html">ComparedObjectPosition</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d091"></span>
+<div class="comments">
+<div class="paragraph">
+Go back to compare the next object.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d091"></span>D091</td>
 <td class="instruction">JP <a href="CFF2.html#d006">DrawObjectsInList_Compare</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="CFF2.html#d006">DrawObjectsInList_Compare</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d094"></span>
+<div class="comments">
+<div class="paragraph">
+There are no more objects to compare with, so the first object is the one to draw. Mark it as drawn, using the place kept at <a href="BBC4.html">ChosenObjectPosition</a>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">DrawObjectsInList_Draw</td>
@@ -629,10 +806,30 @@ Compare the extents along the Y axis in the same way, adding 0, 3 or 6 to the re
 <td class="instruction">RES 7,(HL)</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d09a"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d09a"></span>D09A</td>
 <td class="instruction">CALL <a href="E3D9.html">DrawObject</a></td>
 <td class="comment-1" rowspan="1">Draw the object.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d09d"></span>
+<div class="comments">
+<div class="paragraph">
+Go back to find the next object to draw.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

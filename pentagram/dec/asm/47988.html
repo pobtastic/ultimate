@@ -104,10 +104,17 @@ Next: <a href="48088.html">48088</a>
 Used by the routine at <a href="44935.html">RunGame</a>.
 </div>
 <div class="paragraph">
-Shows the title screen with the menu of control methods, and waits for the player to choose a method and start the game. The menu text is drawn again on every pass, so that the line that is chosen flashes. A tune is played while the menu is on the screen.
+Displays the menu and waits for the control method to be chosen and the game to be started. The keys "1" to "4" choose the keyboard, the Kempston joystick, the cursor joystick and Interface II, and "0" starts the game. The menu tune is played once. The choice is held in <a href="42761.html">ControlMethod</a>.
 </div>
 <div class="paragraph">
-Keys 49 to 52 choose the keyboard, a Kempston joystick, a cursor joystick or an Interface II joystick, and key 48 starts the game. The choice is held in <a href="42761.html">ControlMethod</a>.
+<table class="">
+<tr>
+<th colspan="1" rowspan="1">The menu</th>
+</tr>
+<tr>
+<td class="" colspan="1" rowspan="1"><img alt="game-selection-menu" src="../../images/scr/game-selection-menu.png" /></td>
+</tr>
+</table> <div hidden> <img alt="screen-frame" src="../../images/scr/screen-frame.png" /> </div>
 </div>
 </div>
 </td>
@@ -117,7 +124,7 @@ Keys 49 to 52 choose the keyboard, a Kempston joystick, a cursor joystick or an 
 <span id="47988"></span>
 <div class="comments">
 <div class="paragraph">
-Clear the buffer and draw the menu.
+Prepare the menu.
 </div>
 </div>
 </td>
@@ -143,19 +150,19 @@ Clear the buffer and draw the menu.
 <td class="asm-label"></td>
 <td class="address-1"><span id="47995"></span>47995</td>
 <td class="instruction">LD B,8</td>
-<td class="comment-1" rowspan="1">Set a counter in <span class="register">B</span> of eight bytes.</td>
+<td class="comment-1" rowspan="1">Set the number of lines to 8.</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Steady</td>
 <td class="address-2"><span id="47997"></span>47997</td>
 <td class="instruction">RES 7,(HL)</td>
-<td class="comment-1" rowspan="1">Stop the colour from flashing.</td>
+<td class="comment-1" rowspan="1">Stop the line flashing.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47999"></span>47999</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="1">Move on to the next colour.</td>
+<td class="comment-1" rowspan="1">Move on to the next line.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -179,13 +186,35 @@ Clear the buffer and draw the menu.
 <td class="asm-label"></td>
 <td class="address-1"><span id="48008"></span>48008</td>
 <td class="instruction">CALL <a href="48088.html">FlashMenuOptions</a></td>
-<td class="comment-1" rowspan="1">Call <a href="48088.html">FlashMenuOptions</a> to make the chosen line flash.</td>
+<td class="comment-1" rowspan="1">Call <a href="48088.html">FlashMenuOptions</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48011"></span>
+<div class="comments">
+<div class="paragraph">
+Read the keys that choose the control method.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_Loop</td>
 <td class="address-2"><span id="48011"></span>48011</td>
 <td class="instruction">CALL <a href="48308.html">DisplayMenu</a></td>
 <td class="comment-1" rowspan="1">Call <a href="48308.html">DisplayMenu</a> to draw the menu.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48014"></span>
+<div class="comments">
+<div class="paragraph">
+<audio controls="" src="../../audio/main-tune.wav">
+<p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/main-tune.wav">link to the audio</a> instead.</p>
+</audio>
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -213,7 +242,7 @@ Read the keys that choose the control method.
 <td class="asm-label"></td>
 <td class="address-1"><span id="48020"></span>48020</td>
 <td class="instruction">LD A,247</td>
-<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="47442.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<td class="comment-1" rowspan="2">Read from the keyboard; <table class="default">
 <tr>
 <th colspan="1" rowspan="2">Port Number</th>
 <th colspan="5" rowspan="1">Bit</th>
@@ -256,7 +285,7 @@ Read the keys that choose the control method.
 <td class="asm-label"></td>
 <td class="address-1"><span id="48029"></span>48029</td>
 <td class="instruction">LD (42764),A</td>
-<td class="comment-1" rowspan="1">Copy it to <a href="42764.html">PreviousControlMethod</a>.</td>
+<td class="comment-1" rowspan="1">Set <a href="42764.html">PreviousControlMethod</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -274,6 +303,16 @@ Read the keys that choose the control method.
 <td class="address-1"><span id="48036"></span>48036</td>
 <td class="instruction">AND %11111001</td>
 <td class="comment-1" rowspan="1">Choose the keyboard, by clearing the bits of the control method.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48038"></span>
+<div class="comments">
+<div class="paragraph">
+Choose a joystick if one of those keys is pressed.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_TestKempston</td>
@@ -296,7 +335,7 @@ Read the keys that choose the control method.
 <td class="asm-label"></td>
 <td class="address-1"><span id="48044"></span>48044</td>
 <td class="instruction">OR %00000010</td>
-<td class="comment-1" rowspan="1">...and choose the Kempston joystick.</td>
+<td class="comment-1" rowspan="1">Choose the Kempston joystick.</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_TestCursor</td>
@@ -319,7 +358,7 @@ Read the keys that choose the control method.
 <td class="asm-label"></td>
 <td class="address-1"><span id="48052"></span>48052</td>
 <td class="instruction">OR %00000100</td>
-<td class="comment-1" rowspan="1">...and choose the cursor joystick.</td>
+<td class="comment-1" rowspan="1">Choose the cursor joystick.</td>
 </tr>
 <tr>
 <td class="asm-label">GameMenu_TestInterfaceII</td>
@@ -345,10 +384,20 @@ Read the keys that choose the control method.
 <td class="comment-1" rowspan="1">Write the control method to <a href="42761.html">ControlMethod</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="48063"></span>
+<div class="comments">
+<div class="paragraph">
+Start the game if "0" is pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48063"></span>48063</td>
 <td class="instruction">LD HL,42805</td>
-<td class="comment-1" rowspan="1">Address <a href="42805.html">UnusedValue</a>, which is not used.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="42805.html">UnusedValue</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -376,7 +425,7 @@ Start the game if key 48 is pressed.
 <td class="asm-label"></td>
 <td class="address-1"><span id="48070"></span>48070</td>
 <td class="instruction">LD A,239</td>
-<td class="comment-1" rowspan="2">Read from the keyboard, with a call to <a href="47442.html">ReadKeyboardPort</a> that returns the pressed keys as set bits; <table class="default">
+<td class="comment-1" rowspan="2">Read from the keyboard; <table class="default">
 <tr>
 <th colspan="1" rowspan="2">Port Number</th>
 <th colspan="5" rowspan="1">Bit</th>
@@ -418,18 +467,19 @@ Start the game if key 48 is pressed.
 <td class="asm-label"></td>
 <td class="address-1"><span id="48078"></span>48078</td>
 <td class="instruction">LD HL,42762</td>
-<td class="comment-1" rowspan="2">Count the pass in <a href="42762.html">MenuPassCounter</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at <a href="42762.html">MenuPassCounter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48081"></span>48081</td>
 <td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="1">Increment <a href="42762.html">MenuPassCounter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48082"></span>48082</td>
 <td class="instruction">CALL <a href="48088.html">FlashMenuOptions</a></td>
-<td class="comment-1" rowspan="1">Call <a href="48088.html">FlashMenuOptions</a> to make the chosen line flash.</td>
+<td class="comment-1" rowspan="1">Call <a href="48088.html">FlashMenuOptions</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -447,21 +497,6 @@ View the equivalent code in; <ul class="">
 <li><a href="/ultimate/martianoids/dec/asm/47890.html">Martianoids</a></li>
 <li><a href="/ultimate/nightshade/dec/asm/51402.html">Nightshade</a></li>
 </ul>
-</div>
-<div class="paragraph">
-<audio controls="" src="../../audio/main-tune.wav">
-<p>Your browser doesn't support HTML5 audio. Here is a <a href="../../audio/main-tune.wav">link to the audio</a> instead.</p>
-</audio>
-</div>
-<div class="paragraph">
-<table class="">
-<tr>
-<th colspan="1" rowspan="1">The menu</th>
-</tr>
-<tr>
-<td class="" colspan="1" rowspan="1"><img alt="game-selection-menu" src="../../images/scr/game-selection-menu.png" /></td>
-</tr>
-</table> <div hidden> <img alt="screen-frame" src="../../images/scr/screen-frame.png" /> </div>
 </div>
 </div>
 </td>

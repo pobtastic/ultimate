@@ -104,7 +104,7 @@ Next: <a href="C4C8.html">C4C8</a>
 Used by the routines at <a href="BF79.html">HandlePickupAndDrop</a> and <a href="C440.html">HandlePlayerLegs</a>.
 </div>
 <div class="paragraph">
-Tests if an object is clear of the walls of the room, which is to say that the middle of it is nearer to the middle of the room than the wall is, once the half size of the object has been taken off.
+Tests whether the player is inside the room. The distance from the middle of the room (80) has to be smaller than the distance to the wall, less the width of the player along x and less the depth of the player along y.
 </div>
 </div>
 <table class="input">
@@ -113,7 +113,7 @@ Tests if an object is clear of the walls of the room, which is to say that the m
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Record of the object</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
 <table class="output">
@@ -122,9 +122,19 @@ Tests if an object is clear of the walls of the room, which is to say that the m
 </tr>
 <tr>
 <td class="register">F</td>
-<td class="register-desc">Carry flag set if the object is clear of the walls</td>
+<td class="register-desc">Carry flag set if the player is inside the room</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c4a3"></span>
+<div class="comments">
+<div class="paragraph">
+Limits from the wall distances.
+</div>
+</div>
 </td>
 </tr>
 <tr>
@@ -134,36 +144,70 @@ Tests if an object is clear of the walls of the room, which is to say that the m
 <td class="comment-1" rowspan="1">Fetch the limits of the room, <a href="A71D.html">RoomSizeX</a> along x and <a href="A71E.html">RoomSizeY</a> along y.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="c4a6"></span>
+<div class="comments">
+<div class="paragraph">
+Take the half size along x off the limit along x.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4a6"></span>C4A6</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="3">Take the half size along x off the limit along x.</td>
+<td class="comment-1" rowspan="1">Copy the distance along x to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4a7"></span>C4A7</td>
 <td class="instruction">SUB (IX+$04)</td>
+<td class="comment-1" rowspan="1">Subtract the width of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4aa"></span>C4AA</td>
 <td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="1">Store the limit along x in <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c4ab"></span>
+<div class="comments">
+<div class="paragraph">
+Take the half size along y off the limit along y.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4ab"></span>C4AB</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="3">Take the half size along y off the limit along y.</td>
+<td class="comment-1" rowspan="1">Copy the distance along y to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4ac"></span>C4AC</td>
 <td class="instruction">SUB (IX+$05)</td>
+<td class="comment-1" rowspan="1">Subtract the depth of the player.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4af"></span>C4AF</td>
 <td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Store the limit along y in <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c4b0"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the x distance from the middle.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -172,32 +216,53 @@ Tests if an object is clear of the walls of the room, which is to say that the m
 <td class="comment-1" rowspan="1">Fetch the x position of the object.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="c4b3"></span>
+<div class="comments">
+<div class="paragraph">
+Take away the middle of the room, 80, and jump to <a href="C4A3.html#c4ba">TestPlayerInRoom_LimitX</a> if the distance is not negative.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4b3"></span>C4B3</td>
 <td class="instruction">SUB $80</td>
-<td class="comment-1" rowspan="2">Take away the middle of the room, 80 and jump to <a href="C4A3.html#c4ba">TestPlayerInRoom_LimitX</a> if the distance is not negative.</td>
+<td class="comment-1" rowspan="1">Subtract 80.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4b5"></span>C4B5</td>
 <td class="instruction">JP P,<a href="C4A3.html#c4ba">TestPlayerInRoom_LimitX</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4A3.html#c4ba">TestPlayerInRoom_LimitX</a> if the sign flag is clear.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4b8"></span>C4B8</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make the distance positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">TestPlayerInRoom_LimitX</td>
 <td class="address-2"><span id="c4ba"></span>C4BA</td>
 <td class="instruction">CP L</td>
-<td class="comment-1" rowspan="2">Return with the carry flag clear if the distance is not less than the limit along x.</td>
+<td class="comment-1" rowspan="2">Return if the player is outside along x.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4bb"></span>C4BB</td>
 <td class="instruction">RET NC</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="c4bc"></span>
+<div class="comments">
+<div class="paragraph">
+Compare the y distance from the middle.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -206,33 +271,44 @@ Tests if an object is clear of the walls of the room, which is to say that the m
 <td class="comment-1" rowspan="1">Fetch the y position of the object.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="c4bf"></span>
+<div class="comments">
+<div class="paragraph">
+Take away the middle of the room, 80, and jump to <a href="C4A3.html#c4c6">TestPlayerInRoom_LimitY</a> if the distance is not negative.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4bf"></span>C4BF</td>
 <td class="instruction">SUB $80</td>
-<td class="comment-1" rowspan="2">Take away the middle of the room, 80 and jump to <a href="C4A3.html#c4c6">TestPlayerInRoom_LimitY</a> if the distance is not negative.</td>
+<td class="comment-1" rowspan="1">Subtract 80.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4c1"></span>C4C1</td>
 <td class="instruction">JP P,<a href="C4A3.html#c4c6">TestPlayerInRoom_LimitY</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="C4A3.html#c4c6">TestPlayerInRoom_LimitY</a> if the sign flag is clear.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4c4"></span>C4C4</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make the distance positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">TestPlayerInRoom_LimitY</td>
 <td class="address-2"><span id="c4c6"></span>C4C6</td>
 <td class="instruction">CP H</td>
-<td class="comment-1" rowspan="1">Test the distance against the limit along y.</td>
+<td class="comment-1" rowspan="1">Compare it with the limit along y.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="c4c7"></span>C4C7</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1">Return with the carry flag set if it is less than that.</td>
+<td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

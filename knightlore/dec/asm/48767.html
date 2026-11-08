@@ -104,7 +104,7 @@ Next: <a href="48803.html">48803</a>
 Used by the routines at <a href="48302.html">PrintBCDNumber</a> and <a href="48716.html">PrintText</a>.
 </div>
 <div class="paragraph">
-Prints one character in the screen buffer. A character is eight bytes, one for each row from the top. The rows of the screen buffer run from the bottom up, so the rows are stored 32 bytes apart and going down. The font is the one that <a href="23495.html">FontPointer</a> points to.
+Prints a character in the screen buffer, using the font whose address is held in <a href="23495.html">FontPointer</a>. The eight rows are written going down the buffer (see <a href="55539.html">ScreenBuffer</a>), 32 bytes apart, and the address is left at the top of the next character.
 </div>
 </div>
 <table class="input">
@@ -113,7 +113,7 @@ Prints one character in the screen buffer. A character is eight bytes, one for e
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">Number of the character</td>
+<td class="register-desc">The character</td>
 </tr>
 <tr>
 <td class="register">HL</td>
@@ -126,46 +126,53 @@ Prints one character in the screen buffer. A character is eight bytes, one for e
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Address in the screen buffer of the top row of the next character</td>
+<td class="register-desc">Address of the top row of the next character</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48767"></span>
+<div class="comments">
+<div class="paragraph">
+Find the glyph.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrintCharacter</td>
 <td class="address-2"><span id="48767"></span>48767</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="3">Stash <span class="register">BC</span>, <span class="register">DE</span> and the screen buffer address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48768"></span>48768</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48769"></span>48769</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the address in the screen buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48770"></span>48770</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Copy the number of the character into <span class="register">L</span>.</td>
+<td class="comment-1" rowspan="2">Set <span class="register">HL</span> to the character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48771"></span>48771</td>
 <td class="instruction">LD H,0</td>
-<td class="comment-1" rowspan="1">Clear <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48773"></span>48773</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="3">Multiply it by eight.</td>
+<td class="comment-1" rowspan="3">Multiply the character by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -178,106 +185,133 @@ Prints one character in the screen buffer. A character is eight bytes, one for e
 <td class="instruction">ADD HL,HL</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="48776"></span>
+<div class="comments">
+<div class="paragraph">
+Add the font address.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48776"></span>48776</td>
 <td class="instruction">LD DE,(23495)</td>
-<td class="comment-1" rowspan="1">Fetch the address of the font.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="23495.html">FontPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48780"></span>48780</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1">Find the data of the character.</td>
+<td class="comment-1" rowspan="1">Add it to get the glyph address.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48781"></span>48781</td>
 <td class="instruction">EX DE,HL</td>
-<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at it.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">DE</span> at the glyph.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48782"></span>48782</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore the address in the screen buffer.</td>
+<td class="comment-1" rowspan="1">Restore the screen buffer address from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48783"></span>
+<div class="comments">
+<div class="paragraph">
+Copy eight rows down the buffer.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48783"></span>48783</td>
 <td class="instruction">LD B,8</td>
-<td class="comment-1" rowspan="1">Set the number of rows to 8.</td>
+<td class="comment-1" rowspan="1">Set a counter of 8 rows.</td>
 </tr>
 <tr>
 <td class="asm-label">PrintCharacter_NextRow</td>
 <td class="address-2"><span id="48785"></span>48785</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch a row of the character.</td>
+<td class="comment-1" rowspan="2">Copy a row of the glyph to the buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48786"></span>48786</td>
 <td class="instruction">LD (HL),A</td>
-<td class="comment-1" rowspan="1">Put it in the screen buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48787"></span>48787</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Move on to the next row of the character.</td>
+<td class="comment-1" rowspan="1">Move on to the next row of the glyph.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48788"></span>48788</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash the counter.</td>
+<td class="comment-1" rowspan="1">Stash the row counter on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48789"></span>48789</td>
 <td class="instruction">LD BC,65504</td>
-<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 65504 which is minus the length of a line of the screen buffer.</td>
+<td class="comment-1" rowspan="2">Move <span class="register">HL</span> down a row.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48792"></span>48792</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1">Move down a row in the screen buffer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48793"></span>48793</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore the counter.</td>
+<td class="comment-1" rowspan="1">Restore the row counter from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48794"></span>48794</td>
 <td class="instruction">DJNZ <a href="48767.html#48785">PrintCharacter_NextRow</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="48767.html#48785">PrintCharacter_NextRow</a> until all of the rows have been done.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="48767.html#48785">PrintCharacter_NextRow</a> until all eight rows have been written.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48796"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next character, eight lines up and one byte to the right.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48796"></span>48796</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">DE</span>.</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">DE</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48797"></span>48797</td>
 <td class="instruction">LD BC,257</td>
-<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to eight lines up and one byte along.</td>
+<td class="comment-1" rowspan="2">Move <span class="register">HL</span> on by 0257.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48800"></span>48800</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1">Move to the top row of the next character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48801"></span>48801</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="1">Restore <span class="register">BC</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

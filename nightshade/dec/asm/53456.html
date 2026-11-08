@@ -101,7 +101,7 @@ Next: <a href="53597.html">53597</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Decides which of two objects that overlap along both axes is drawn first, by working out a value for each from the corners of the object, in units of half a cell, that measures how far it is along the diagonal of the view. The object at <span class="register">IX</span> is kept if its value is not less than that of the object at <span class="register">IY</span>, otherwise the object at <span class="register">IY</span> is chosen.
+Decides which of two objects that overlap along both axes is drawn first, by working out a value for each from the corners of the object, in units of half a cell, that measures how far it is along the diagonal of the view. The object at <span class="register">IX</span> is kept if its value is not less than that of the object at <span class="register">IY</span>, otherwise the object at <span class="register">IY</span> is chosen. The edges which it uses are different when the view is rotated.
 </div>
 </div>
 <table class="input">
@@ -110,45 +110,58 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">First object</td>
+<td class="register-desc">The address of the first object</td>
 </tr>
 <tr>
 <td class="register">IY</td>
-<td class="register-desc">Second object</td>
+<td class="register-desc">The address of the second object</td>
 </tr>
 </table>
-<table class="output">
-<tr class="asm-output-header">
-<th colspan="2">Output</th>
+</td>
 </tr>
 <tr>
-<td class="register">IX</td>
-<td class="register-desc">The object to draw first</td>
-</tr>
-</table>
+<td class="routine-comment" colspan="5">
+<span id="53456"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="53456.html#53541">CompareObjectDepths_Rotated</a> if the view is turned round.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">CompareObjectDepths</td>
 <td class="address-2"><span id="53456"></span>53456</td>
 <td class="instruction">LD A,(48058)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="53456.html#53541">CompareObjectDepths_Rotated</a> if the view is turned round.</td>
+<td class="comment-1" rowspan="1">Fetch the rotation of the view.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53459"></span>53459</td>
-<td class="instruction">AND 1</td>
+<td class="instruction">AND %00000001</td>
+<td class="comment-1" rowspan="1">Test the lowest bit.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53461"></span>53461</td>
 <td class="instruction">JR NZ,<a href="53456.html#53541">CompareObjectDepths_Rotated</a></td>
+<td class="comment-1" rowspan="1">Jump if the view is rotated.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53463"></span>
+<div class="comments">
+<div class="paragraph">
+Find the number for the second object, in <span class="register">DE</span>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53463"></span>53463</td>
 <td class="instruction">LD A,(IY+1)</td>
-<td class="comment-1" rowspan="5">Work out the largest X extent of the object at <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="4">Fetch the horizontal position, add the horizontal size, halve it and add 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -169,18 +182,28 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53472"></span>53472</td>
 <td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="2">Keep it in <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53473"></span>53473</td>
 <td class="instruction">LD B,0</td>
-<td class="comment-1" rowspan="1">Clear the high byte of the extent.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53475"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the smallest Y extent of the object at <span class="register">IY</span>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53475"></span>53475</td>
 <td class="instruction">LD A,(IY+3)</td>
-<td class="comment-1" rowspan="5">Work out the smallest Y extent of the object at <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="4">Fetch the vertical position, subtract the vertical size, halve it and add 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -201,12 +224,12 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53484"></span>53484</td>
 <td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="2">Make the top edge a sixteen bit number in <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53485"></span>53485</td>
 <td class="instruction">LD H,0</td>
-<td class="comment-1" rowspan="1">Clear the high byte of the extent.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -223,7 +246,7 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53490"></span>53490</td>
 <td class="instruction">LD BC,256</td>
-<td class="comment-1" rowspan="2">Add 256 to keep the result positive.</td>
+<td class="comment-1" rowspan="2">Add 256.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -234,7 +257,7 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53494"></span>53494</td>
 <td class="instruction">SRL H</td>
-<td class="comment-1" rowspan="2">Halve it.</td>
+<td class="comment-1" rowspan="2">Divide the result by two...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -248,10 +271,20 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="comment-1" rowspan="1">Keep the result for the object at <span class="register">IY</span>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="53499"></span>
+<div class="comments">
+<div class="paragraph">
+Find the number for the first object, in <span class="register">HL</span>, in the same way.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53499"></span>53499</td>
 <td class="instruction">LD A,(IX+1)</td>
-<td class="comment-1" rowspan="5">Work out the largest X extent of the object at <span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="4">Fetch the horizontal position, add the horizontal size, halve it and add 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -272,12 +305,12 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53508"></span>53508</td>
 <td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="2">Keep it in <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53509"></span>53509</td>
 <td class="instruction">LD B,0</td>
-<td class="comment-1" rowspan="1">Clear the high byte of the extent.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -294,7 +327,7 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label">CompareObjectDepths_Second</td>
 <td class="address-2"><span id="53517"></span>53517</td>
 <td class="instruction">RRA</td>
-<td class="comment-1" rowspan="3">Convert it into the same units.</td>
+<td class="comment-1" rowspan="2">Halve it and add 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -305,18 +338,18 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53520"></span>53520</td>
 <td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="2">Make the top edge a sixteen bit number in <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53521"></span>53521</td>
 <td class="instruction">LD H,0</td>
-<td class="comment-1" rowspan="1">Clear the high byte of the extent.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53523"></span>53523</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">Subtract the X extent from the Y extent.</td>
+<td class="comment-1" rowspan="2">Subtract the horizontal edge.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -327,7 +360,7 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53526"></span>53526</td>
 <td class="instruction">LD BC,256</td>
-<td class="comment-1" rowspan="2">Add 256 to keep the result positive.</td>
+<td class="comment-1" rowspan="2">Add 256.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -338,7 +371,7 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <td class="asm-label"></td>
 <td class="address-1"><span id="53530"></span>53530</td>
 <td class="instruction">SRL H</td>
-<td class="comment-1" rowspan="2">Halve it.</td>
+<td class="comment-1" rowspan="2">Divide the result by two.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -373,7 +406,7 @@ Decides which of two objects that overlap along both axes is drawn first, by wor
 <span id="53541"></span>
 <div class="comments">
 <div class="paragraph">
-The view is rotated, so the other corners of the objects are compared.
+Find the numbers when the view is rotated. The number for the first object goes in <span class="register">DE</span>...
 </div>
 </div>
 </td>
@@ -382,7 +415,7 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="asm-label">CompareObjectDepths_Rotated</td>
 <td class="address-2"><span id="53541"></span>53541</td>
 <td class="instruction">LD A,(IX+1)</td>
-<td class="comment-1" rowspan="5">Work out the smallest X extent of the object at <span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="4">Fetch the horizontal position, subtract the horizontal size, halve it and add 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -403,18 +436,28 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="asm-label"></td>
 <td class="address-1"><span id="53550"></span>53550</td>
 <td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="2">Keep it in <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53551"></span>53551</td>
 <td class="instruction">LD B,0</td>
-<td class="comment-1" rowspan="1">Clear the high byte of the extent.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53553"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the largest Y extent of the object at <span class="register">IX</span>.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53553"></span>53553</td>
 <td class="instruction">LD A,(IX+3)</td>
-<td class="comment-1" rowspan="5">Work out the largest Y extent of the object at <span class="register">IX</span>.</td>
+<td class="comment-1" rowspan="4">Fetch the vertical position, add the vertical size, halve it and add 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -435,18 +478,18 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="asm-label"></td>
 <td class="address-1"><span id="53562"></span>53562</td>
 <td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="2">Make the lower edge a sixteen bit number in <span class="register">HL</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53563"></span>53563</td>
 <td class="instruction">LD H,0</td>
-<td class="comment-1" rowspan="1">Clear the high byte of the extent.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53565"></span>53565</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">Subtract the X extent from the Y extent.</td>
+<td class="comment-1" rowspan="2">Subtract the horizontal edge.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -457,7 +500,7 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="asm-label"></td>
 <td class="address-1"><span id="53568"></span>53568</td>
 <td class="instruction">LD BC,256</td>
-<td class="comment-1" rowspan="2">Add 256 to keep the result positive.</td>
+<td class="comment-1" rowspan="2">Add 256.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -468,7 +511,7 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="asm-label"></td>
 <td class="address-1"><span id="53572"></span>53572</td>
 <td class="instruction">SRL H</td>
-<td class="comment-1" rowspan="2">Halve it.</td>
+<td class="comment-1" rowspan="2">Divide the result by two...</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -482,10 +525,20 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="comment-1" rowspan="1">Keep the result for the object at <span class="register">IX</span>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="53577"></span>
+<div class="comments">
+<div class="paragraph">
+...and the number for the second object is found in <span class="register">HL</span> by the end of the routine above.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53577"></span>53577</td>
 <td class="instruction">LD A,(IY+1)</td>
-<td class="comment-1" rowspan="5">Work out the smallest X extent of the object at <span class="register">IY</span>.</td>
+<td class="comment-1" rowspan="4">Fetch the horizontal position, subtract the horizontal size, halve it and add 64.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -506,12 +559,12 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="asm-label"></td>
 <td class="address-1"><span id="53586"></span>53586</td>
 <td class="instruction">LD C,A</td>
+<td class="comment-1" rowspan="2">Keep it in <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="53587"></span>53587</td>
 <td class="instruction">LD B,0</td>
-<td class="comment-1" rowspan="1">Clear the high byte of the extent.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -523,6 +576,16 @@ The view is rotated, so the other corners of the objects are compared.
 <td class="asm-label"></td>
 <td class="address-1"><span id="53592"></span>53592</td>
 <td class="instruction">ADD A,(IY+9)</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="53595"></span>
+<div class="comments">
+<div class="paragraph">
+Go to find the number.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

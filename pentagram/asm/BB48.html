@@ -117,30 +117,36 @@ Draws the digits of binary coded decimal bytes, two to a byte, into the buffer, 
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the first byte</td>
+<td class="register-desc">Address of the number</td>
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Address in the buffer of the top line of the place for the first</td>
-</tr>
-<tr>
-<td class="register">digit</td>
-<td class="register-desc"></td>
+<td class="register-desc">Address in the screen buffer</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bb48"></span>
+<div class="comments">
+<div class="paragraph">
+Point at the digit font.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PrintBCDNumber</td>
 <td class="address-2"><span id="bb48"></span>BB48</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the buffer address on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the screen buffer address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb49"></span>BB49</td>
 <td class="instruction">LD HL,$8355</td>
-<td class="comment-1" rowspan="2">Set the glyph table to the start of the font, 8355 where the digits are.</td>
+<td class="comment-1" rowspan="2">Set <a href="A732.html">FontPointer</a> to <a href="8355.html">Font</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -151,19 +157,29 @@ Draws the digits of binary coded decimal bytes, two to a byte, into the buffer, 
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb4f"></span>BB4F</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore the buffer address from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the screen buffer address from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bb50"></span>
+<div class="comments">
+<div class="paragraph">
+Print the upper digit of the byte.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb50"></span>BB50</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the byte.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb51"></span>BB51</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="4">Move the upper digit down to the bottom four bits.</td>
+<td class="comment-1" rowspan="4">Move the upper digit to the lowest four bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -184,13 +200,13 @@ Draws the digits of binary coded decimal bytes, two to a byte, into the buffer, 
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb55"></span>BB55</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only the digit.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 3.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb57"></span>BB57</td>
 <td class="instruction">CALL <a href="BAEA.html">PrintCharacter</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BAEA.html">PrintCharacter</a> to print it.</td>
+<td class="comment-1" rowspan="1">Call <a href="BAEA.html">PrintCharacter</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -199,6 +215,9 @@ Draws the digits of binary coded decimal bytes, two to a byte, into the buffer, 
 <div class="paragraph">
 This entry point is used by the routine at <a href="C6EA.html">PrintQuestPercentage</a>.
 </div>
+<div class="paragraph">
+Print the lower digit and move on.
+</div>
 </div>
 </td>
 </tr>
@@ -206,19 +225,19 @@ This entry point is used by the routine at <a href="C6EA.html">PrintQuestPercent
 <td class="asm-label">PrintBCDNumber_Lower</td>
 <td class="address-2"><span id="bb5a"></span>BB5A</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the byte again.</td>
+<td class="comment-1" rowspan="1">Fetch a byte of the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb5b"></span>BB5B</td>
 <td class="instruction">AND %00001111</td>
-<td class="comment-1" rowspan="1">Keep only the lower digit.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 3.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb5d"></span>BB5D</td>
 <td class="instruction">CALL <a href="BAEA.html">PrintCharacter</a></td>
-<td class="comment-1" rowspan="1">Call <a href="BAEA.html">PrintCharacter</a> to print it.</td>
+<td class="comment-1" rowspan="1">Call <a href="BAEA.html">PrintCharacter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -230,7 +249,7 @@ This entry point is used by the routine at <a href="C6EA.html">PrintQuestPercent
 <td class="asm-label"></td>
 <td class="address-1"><span id="bb61"></span>BB61</td>
 <td class="instruction">DJNZ <a href="BB48.html#bb48">PrintBCDNumber</a></td>
-<td class="comment-1" rowspan="1">Decrease the counter and loop until all the bytes have been done.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="BB48.html">PrintBCDNumber</a> until all of the bytes have been done.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

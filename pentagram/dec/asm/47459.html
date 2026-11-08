@@ -104,7 +104,7 @@ Next: <a href="47481.html">47481</a>
 Used by the routine at <a href="46829.html">BlockMovement</a>.
 </div>
 <div class="paragraph">
-Cuts down the distance that an object moves along z until it stays above the floor of the room, whose height is in <a href="42783.html">FloorHeight</a>. Sets the flag in the collision flags that says the object is on the ground if it had to.
+Stops an object from going through the floor. If the z position of the object after it has moved is below the floor of the room, the object is flagged as blocked along z, and its speed along z is brought closer to zero until the object no longer goes through the floor.
 </div>
 </div>
 <table class="input">
@@ -113,11 +113,11 @@ Cuts down the distance that an object moves along z until it stays above the flo
 </tr>
 <tr>
 <td class="register">H</td>
-<td class="register-desc">Distance to move along z</td>
+<td class="register-desc">Speed along the z axis</td>
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Object record</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
 <table class="output">
@@ -126,38 +126,59 @@ Cuts down the distance that an object moves along z until it stays above the flo
 </tr>
 <tr>
 <td class="register">H</td>
-<td class="register-desc">Distance that can be moved</td>
+<td class="register-desc">The new speed along the z axis</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="47459"></span>
+<div class="comments">
+<div class="paragraph">
+Test the floor and slow z.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">StopObjectAtFloor</td>
 <td class="address-2"><span id="47459"></span>47459</td>
 <td class="instruction">LD A,(42783)</td>
-<td class="comment-1" rowspan="2">Fetch the height of the floor in <span class="register">D</span>.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="42783.html">FloorHeight</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47462"></span>47462</td>
 <td class="instruction">LD D,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">D</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="47463"></span>
+<div class="comments">
+<div class="paragraph">
+Slow z until the object stays above the floor.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">StopObjectAtFloor_Test</td>
 <td class="address-2"><span id="47463"></span>47463</td>
 <td class="instruction">LD A,(IX+3)</td>
-<td class="comment-1" rowspan="2">Work out the height of the bottom of the object, once it has moved.</td>
+<td class="comment-1" rowspan="1">Fetch the z position of the object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47466"></span>47466</td>
 <td class="instruction">ADD A,H</td>
+<td class="comment-1" rowspan="3">Return if the object does not end up below the floor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47467"></span>47467</td>
 <td class="instruction">CP D</td>
-<td class="comment-1" rowspan="2">Return if it is not below the floor.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -174,19 +195,19 @@ Cuts down the distance that an object moves along z until it stays above the flo
 <td class="asm-label"></td>
 <td class="address-1"><span id="47473"></span>47473</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1">Fetch the distance to move.</td>
+<td class="comment-1" rowspan="1">Copy <span class="register">H</span> to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47474"></span>47474</td>
 <td class="instruction">CALL <a href="47450.html">BringSpeedCloserToZero</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47450.html">BringSpeedCloserToZero</a> to step it one closer to zero.</td>
+<td class="comment-1" rowspan="1">Call <a href="47450.html">BringSpeedCloserToZero</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="47477"></span>47477</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1">Set the distance.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">H</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

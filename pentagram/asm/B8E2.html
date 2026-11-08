@@ -104,10 +104,7 @@ Next: <a href="B90D.html">B90D</a>
 Used by the routine at <a href="B6ED.html">BlockMovement</a>.
 </div>
 <div class="paragraph">
-Cuts down the distance that an object moves along x until it stays inside the walls of the room, and flags a hit on x in the collision flags if it had to. Nothing is done if the object is allowed to ignore the walls, or has only just entered the room (which is when the top four bits of its collision flags are not zero), as it would be outside them.
-</div>
-<div class="paragraph">
-The limit is in <a href="A71D.html">RoomSizeX</a>, and the walls are placed an equal distance either side of position 80.
+Brings the speed along x of an object closer to zero until the object stays within the walls of the room. Nothing is done while the object is entering the room, or while it is near an arch, as it can then go out through the wall.
 </div>
 </div>
 <table class="input">
@@ -116,11 +113,11 @@ The limit is in <a href="A71D.html">RoomSizeX</a>, and the walls are placed an e
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Distance to move along x</td>
+<td class="register-desc">Speed along x</td>
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Object record</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
 <table class="output">
@@ -129,9 +126,19 @@ The limit is in <a href="A71D.html">RoomSizeX</a>, and the walls are placed an e
 </tr>
 <tr>
 <td class="register">C</td>
-<td class="register-desc">Distance that can be moved</td>
+<td class="register-desc">The new speed along x</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b8e2"></span>
+<div class="comments">
+<div class="paragraph">
+Return while entering or near an arch.
+</div>
+</div>
 </td>
 </tr>
 <tr>
@@ -167,29 +174,41 @@ The limit is in <a href="A71D.html">RoomSizeX</a>, and the walls are placed an e
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8ed"></span>B8ED</td>
 <td class="instruction">LD A,($A71D)</td>
-<td class="comment-1" rowspan="2">Fetch the limit along x in <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Fetch <a href="A71D.html">RoomSizeX</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8f0"></span>B8F0</td>
 <td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b8f1"></span>
+<div class="comments">
+<div class="paragraph">
+Slow x until the object stays in the room.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">KeepObjectInRoomInX_Test</td>
 <td class="address-2"><span id="b8f1"></span>B8F1</td>
 <td class="instruction">LD A,(IX+$01)</td>
-<td class="comment-1" rowspan="2">Work out the position of the object along x, once it has moved.</td>
+<td class="comment-1" rowspan="1">Fetch the x position of the object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8f4"></span>B8F4</td>
 <td class="instruction">ADD A,C</td>
+<td class="comment-1" rowspan="1">Add <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8f5"></span>B8F5</td>
 <td class="instruction">SUB $80</td>
-<td class="comment-1" rowspan="1">Subtract 80 to get its distance from the middle.</td>
+<td class="comment-1" rowspan="1">Subtract 80.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -201,7 +220,7 @@ The limit is in <a href="A71D.html">RoomSizeX</a>, and the walls are placed an e
 <td class="asm-label"></td>
 <td class="address-1"><span id="b8f9"></span>B8F9</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make the distance positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">KeepObjectInRoomInX_Compare</td>
@@ -230,19 +249,19 @@ The limit is in <a href="A71D.html">RoomSizeX</a>, and the walls are placed an e
 <td class="asm-label"></td>
 <td class="address-1"><span id="b905"></span>B905</td>
 <td class="instruction">LD A,C</td>
-<td class="comment-1" rowspan="1">Fetch the distance to move.</td>
+<td class="comment-1" rowspan="1">Copy <span class="register">C</span> to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b906"></span>B906</td>
 <td class="instruction">CALL <a href="B95A.html">BringSpeedCloserToZero</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B95A.html">BringSpeedCloserToZero</a> to step it one closer to zero.</td>
+<td class="comment-1" rowspan="1">Call <a href="B95A.html">BringSpeedCloserToZero</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b909"></span>B909</td>
 <td class="instruction">LD C,A</td>
-<td class="comment-1" rowspan="1">Set the distance.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">C</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

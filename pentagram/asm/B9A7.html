@@ -104,10 +104,7 @@ Next: <a href="BA34.html">BA34</a>
 Used by the routines at <a href="C5D3.html">HandlePlayerTop</a> and <a href="CCDE.html">SetWipeAndDrawFlags</a>.
 </div>
 <div class="paragraph">
-Flags every object whose sprite overlaps the area that an object has just moved through, so that they are redrawn as well, otherwise they would be left with a piece cut out of them when the area was cleared. The area is the rectangle that covers both the old and the new places of the sprite of the object, which is in whole bytes, so only the columns are compared in bytes.
-</div>
-<div class="paragraph">
-An object is flagged by setting bit 4 of its flags.
+Flags every object that overlaps the area of the screen covered by an object to be drawn again. The area is the one that is covered by the old and the new position of the sprite of the object together, so that the whole of it is redrawn.
 </div>
 </div>
 <table class="input">
@@ -116,7 +113,7 @@ An object is flagged by setting bit 4 of its flags.
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Object record</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
 </td>
@@ -126,7 +123,7 @@ An object is flagged by setting bit 4 of its flags.
 <span id="b9a7"></span>
 <div class="comments">
 <div class="paragraph">
-Work out the size of the new sprite, which is stored in the object.
+The left edge, in bytes, is the lower of the old and new positions. It is kept in <span class="register">E</span>.
 </div>
 </div>
 </td>
@@ -163,12 +160,13 @@ Work out the first column of the area, which is the lower of the new and the old
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9b0"></span>B9B0</td>
 <td class="instruction">LD A,(IX+$1A)</td>
-<td class="comment-1" rowspan="4">Divide the new x co-ordinate by eight...</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9b3"></span>B9B3</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -196,12 +194,13 @@ Work out the first column of the area, which is the lower of the new and the old
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9b9"></span>B9B9</td>
 <td class="instruction">LD A,(IX+$1E)</td>
-<td class="comment-1" rowspan="4">Divide the old x co-ordinate by eight...</td>
+<td class="comment-1" rowspan="1">Fetch the old pixel x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9bc"></span>B9BC</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -253,7 +252,7 @@ Work out the first column of the area, which is the lower of the new and the old
 <span id="b9c7"></span>
 <div class="comments">
 <div class="paragraph">
-Work out the width of the area, which is up to the higher of the new and the old last columns.
+The width is the higher right edge less the left edge. It is kept in <span class="register">D</span>.
 </div>
 </div>
 </td>
@@ -262,29 +261,41 @@ Work out the width of the area, which is up to the higher of the new and the old
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9c7"></span>B9C7</td>
 <td class="instruction">LD A,L</td>
-<td class="comment-1" rowspan="2">Add the new width to the new first column to get the new last column.</td>
+<td class="comment-1" rowspan="1">Copy <span class="register">L</span> to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9c8"></span>B9C8</td>
 <td class="instruction">ADD A,(IX+$18)</td>
+<td class="comment-1" rowspan="1">Add the new width.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9cb"></span>B9CB</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Set <span class="register">L</span> to it.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">L</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b9cc"></span>
+<div class="comments">
+<div class="paragraph">
+Add the old width to the old first column to get the old last column.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9cc"></span>B9CC</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="2">Add the old width to the old first column to get the old last column.</td>
+<td class="comment-1" rowspan="1">Copy <span class="register">H</span> to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9cd"></span>B9CD</td>
 <td class="instruction">ADD A,(IX+$1C)</td>
+<td class="comment-1" rowspan="1">Add the old width.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -320,7 +331,7 @@ Work out the width of the area, which is up to the higher of the new and the old
 <span id="b9d6"></span>
 <div class="comments">
 <div class="paragraph">
-Work out the bottom of the area, which is the lower of the new and the old bottoms.
+The bottom edge is the lower of the old and new pixel y. It is kept in <span class="register">L</span>.
 </div>
 </div>
 </td>
@@ -329,12 +340,13 @@ Work out the bottom of the area, which is the lower of the new and the old botto
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9d6"></span>B9D6</td>
 <td class="instruction">LD A,(IX+$1B)</td>
-<td class="comment-1" rowspan="2">Fetch the new y co-ordinate and compare it with the old one.</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9d9"></span>B9D9</td>
 <td class="instruction">CP (IX+$1F)</td>
+<td class="comment-1" rowspan="1">Compare it with the old one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -346,20 +358,20 @@ Work out the bottom of the area, which is the lower of the new and the old botto
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9de"></span>B9DE</td>
 <td class="instruction">LD A,(IX+$1F)</td>
-<td class="comment-1" rowspan="1">Use the old one.</td>
+<td class="comment-1" rowspan="1">Fetch the old pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label">FlagOverlappingObjects_Height</td>
 <td class="address-2"><span id="b9e1"></span>B9E1</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Set <span class="register">L</span> to the bottom of the area.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="b9e2"></span>
 <div class="comments">
 <div class="paragraph">
-Work out the height of the area, which is up to the higher of the new and the old tops.
+The height is the higher top edge less the bottom edge. It is kept in <span class="register">H</span>.
 </div>
 </div>
 </td>
@@ -368,29 +380,41 @@ Work out the height of the area, which is up to the higher of the new and the ol
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9e2"></span>B9E2</td>
 <td class="instruction">LD A,(IX+$1B)</td>
-<td class="comment-1" rowspan="2">Add the new height to the new y co-ordinate to get the new top.</td>
+<td class="comment-1" rowspan="1">Fetch the new pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9e5"></span>B9E5</td>
 <td class="instruction">ADD A,(IX+$19)</td>
+<td class="comment-1" rowspan="1">Add the new height.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9e8"></span>B9E8</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1">Set <span class="register">H</span> to it.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="b9e9"></span>
+<div class="comments">
+<div class="paragraph">
+Add the old height to the old y co-ordinate to get the old top.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9e9"></span>B9E9</td>
 <td class="instruction">LD A,(IX+$1F)</td>
-<td class="comment-1" rowspan="2">Add the old height to the old y co-ordinate to get the old top.</td>
+<td class="comment-1" rowspan="1">Fetch the old pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9ec"></span>B9EC</td>
 <td class="instruction">ADD A,(IX+$1D)</td>
+<td class="comment-1" rowspan="1">Add the old height.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -407,7 +431,7 @@ Work out the height of the area, which is up to the higher of the new and the ol
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9f2"></span>B9F2</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="1">Use the new top.</td>
+<td class="comment-1" rowspan="1">Copy <span class="register">H</span> to <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label">FlagOverlappingObjects_Loop</td>
@@ -426,7 +450,7 @@ Work out the height of the area, which is up to the higher of the new and the ol
 <span id="b9f5"></span>
 <div class="comments">
 <div class="paragraph">
-Test each of the other objects against the area.
+Flag any object that overlaps the area.
 </div>
 </div>
 </td>
@@ -435,12 +459,13 @@ Test each of the other objects against the area.
 <td class="asm-label">FlagOverlappingObjects_Next</td>
 <td class="address-2"><span id="b9f5"></span>B9F5</td>
 <td class="instruction">LD A,(IY+$00)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="B9A7.html#ba1c">FlagOverlappingObjects_Skip</a> if the other object is free.</td>
+<td class="comment-1" rowspan="1">Fetch the sprite number of the other object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="b9f8"></span>B9F8</td>
 <td class="instruction">AND A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="B9A7.html#ba1c">FlagOverlappingObjects_Skip</a> if it is zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -459,15 +484,26 @@ Test each of the other objects against the area.
 <td class="instruction">JR NZ,<a href="B9A7.html#ba1c">FlagOverlappingObjects_Skip</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="ba01"></span>
+<div class="comments">
+<div class="paragraph">
+Divide the screen x co-ordinate of the other object by eight...
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba01"></span>BA01</td>
 <td class="instruction">LD A,(IY+$1A)</td>
-<td class="comment-1" rowspan="4">Divide the screen x co-ordinate of the other object by eight...</td>
+<td class="comment-1" rowspan="1">Fetch the pixel x position of the other object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba04"></span>BA04</td>
 <td class="instruction">RRCA</td>
+<td class="comment-1" rowspan="3">Divide it by eight.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -510,15 +546,26 @@ Test each of the other objects against the area.
 <td class="comment-1" rowspan="1">Jump to <a href="B9A7.html#ba1c">FlagOverlappingObjects_Skip</a> if it starts after the area.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="ba0f"></span>
+<div class="comments">
+<div class="paragraph">
+Subtract the bottom of the area from the screen y co-ordinate of the other object.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba0f"></span>BA0F</td>
 <td class="instruction">LD A,(IY+$1B)</td>
-<td class="comment-1" rowspan="2">Subtract the bottom of the area from the screen y co-ordinate of the other object.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel y position of the other object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba12"></span>BA12</td>
 <td class="instruction">SUB L</td>
+<td class="comment-1" rowspan="1">Subtract <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -545,25 +592,38 @@ Test each of the other objects against the area.
 <td class="comment-1" rowspan="1">Flag the other object as needing to be drawn.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="ba1c"></span>
+<div class="comments">
+<div class="paragraph">
+Move <span class="register">IY</span> on to the next object record, using the alternate registers so that the area is kept.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">FlagOverlappingObjects_Skip</td>
 <td class="address-2"><span id="ba1c"></span>BA1C</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="4">Move <span class="register">IY</span> on to the next object record, using the alternate registers so that the area is kept.</td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba1d"></span>BA1D</td>
 <td class="instruction">LD DE,$0020</td>
+<td class="comment-1" rowspan="1">Set <span class="register">DE'</span> to 0020.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba20"></span>BA20</td>
 <td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Add <span class="register">DE'</span> to <span class="register">IY</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="ba22"></span>BA22</td>
 <td class="instruction">EXX</td>
+<td class="comment-1" rowspan="1">Switch to the main registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -582,7 +642,7 @@ Test each of the other objects against the area.
 <span id="ba26"></span>
 <div class="comments">
 <div class="paragraph">
-The other object starts before the area, so it only overlaps it if it is wide enough to reach it.
+The object starts to the left of the area, so it overlaps only if it is wide enough to reach the area.
 </div>
 </div>
 </td>
@@ -591,7 +651,7 @@ The other object starts before the area, so it only overlaps it if it is wide en
 <td class="asm-label">FlagOverlappingObjects_StartsBefore</td>
 <td class="address-2"><span id="ba26"></span>BA26</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make the distance positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -610,7 +670,7 @@ The other object starts before the area, so it only overlaps it if it is wide en
 <span id="ba2d"></span>
 <div class="comments">
 <div class="paragraph">
-The other object starts below the area, so it only overlaps it if it is tall enough to reach it.
+The object starts below the area, so it overlaps only if it is tall enough to reach the area.
 </div>
 </div>
 </td>
@@ -619,7 +679,7 @@ The other object starts below the area, so it only overlaps it if it is tall eno
 <td class="asm-label">FlagOverlappingObjects_StartsBelow</td>
 <td class="address-2"><span id="ba2d"></span>BA2D</td>
 <td class="instruction">NEG</td>
-<td class="comment-1" rowspan="1">Make the distance positive.</td>
+<td class="comment-1" rowspan="1">Negate <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

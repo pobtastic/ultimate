@@ -104,7 +104,19 @@ Next: <a href="D6B5.html">D6B5</a>
 Used by the routine at <a href="BB74.html">GameMenu</a>.
 </div>
 <div class="paragraph">
-Plays the tune of the menu, until a key is pressed or the tune ends. The tune is only started once in a game, as the flag at <a href="A747.html">TunePlayedFlag</a> is set when it is, and it is only cleared when the game starts.
+Plays a tune once, and stops early if a key is pressed. After the tune has been played, nothing happens until <a href="A747.html">TunePlayedFlag</a> is cleared.
+</div>
+<div class="paragraph">
+The tunes played by this routine are: <table class="default">
+<tr>
+<th colspan="1" rowspan="1">Tune</th>
+<th colspan="1" rowspan="1">Sound</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">Main Tune</td>
+<td class="centre" colspan="1" rowspan="1"><audio controls="" src="../audio/main-tune.wav"> <p>Your browser doesn't support HTML5 audio. Here is a <a href="../audio/main-tune.wav">link to the audio</a> instead.</p> </audio></td>
+</tr>
+</table>
 </div>
 </div>
 <table class="input">
@@ -113,28 +125,38 @@ Plays the tune of the menu, until a key is pressed or the tune ends. The tune is
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the tune</td>
+<td class="register-desc">The address of the tune</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d69c"></span>
+<div class="comments">
+<div class="paragraph">
+Play only if <a href="A747.html">TunePlayedFlag</a> is clear.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PlayMusicOnce</td>
 <td class="address-2"><span id="d69c"></span>D69C</td>
 <td class="instruction">LD HL,$A747</td>
-<td class="comment-1" rowspan="1">Take the flag for the tune having been played, <a href="A747.html">TunePlayedFlag</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the flag which says whether the tune has been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d69f"></span>D69F</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch it.</td>
+<td class="comment-1" rowspan="1">Fetch the flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6a0"></span>D6A0</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="2">Return if the tune has been played already.</td>
+<td class="comment-1" rowspan="2">Return if the tune has already been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -148,16 +170,25 @@ Plays the tune of the menu, until a key is pressed or the tune ends. The tune is
 <td class="comment-1" rowspan="1">Set the flag.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d6a4"></span>
+<div class="comments">
+<div class="paragraph">
+Stop if a key is pressed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">PlayMusicOnce_Loop</td>
 <td class="address-2"><span id="d6a4"></span>D6A4</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1">Clear <span class="register">A</span> to read all of the rows of the keyboard.</td>
+<td class="comment-1" rowspan="2">Read every row of the keyboard.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6a5"></span>D6A5</td>
 <td class="instruction">CALL <a href="B952.html">ReadKeyboardPort</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B952.html">ReadKeyboardPort</a> to read the keyboard.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -169,7 +200,17 @@ Plays the tune of the menu, until a key is pressed or the tune ends. The tune is
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6aa"></span>D6AA</td>
 <td class="instruction">RET</td>
-<td class="comment-1" rowspan="1">Return, as a key is pressed.</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d6ab"></span>
+<div class="comments">
+<div class="paragraph">
+Play the next note.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PlayMusicOnce_Note</td>
@@ -181,7 +222,7 @@ Plays the tune of the menu, until a key is pressed or the tune ends. The tune is
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6ac"></span>D6AC</td>
 <td class="instruction">CP $FF</td>
-<td class="comment-1" rowspan="2">Return if it is the end of the tune.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="D6B5.html#d6bf">PlayMusic_Done</a> if the terminator has been reached.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -192,13 +233,13 @@ Plays the tune of the menu, until a key is pressed or the tune ends. The tune is
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6b0"></span>D6B0</td>
 <td class="instruction">CALL <a href="D6C0.html">PlayNote</a></td>
-<td class="comment-1" rowspan="1">Call <a href="D6C0.html">PlayNote</a> to play it.</td>
+<td class="comment-1" rowspan="1">Play the note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6b3"></span>D6B3</td>
 <td class="instruction">JR <a href="D69C.html#d6a4">PlayMusicOnce_Loop</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="D69C.html#d6a4">PlayMusicOnce_Loop</a> to play the next.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="D69C.html#d6a4">PlayMusicOnce_Loop</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

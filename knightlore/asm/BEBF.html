@@ -104,7 +104,7 @@ Next: <a href="BEE4.html">BEE4</a>
 Used by the routines at <a href="BA22.html">GameOver</a> and <a href="BAAB.html">GameCompleted</a>.
 </div>
 <div class="paragraph">
-Prints a list of lines of text in the screen buffer, each in its own colour. If the border has not been drawn yet, it is drawn and the screen buffer is copied to the display.
+Prints a list of lines of text in the screen buffer, each in its own colour. <span class="register">DE'</span> points at the attributes, <span class="register">HL</span> at pairs of pixel x and y positions, and <span class="register">DE</span> at the text. After the lines have been printed the border is drawn and the buffer is copied to the screen, unless <a href="5BB8.html">BorderDrawnFlag</a> is already set.
 </div>
 </div>
 <table class="input">
@@ -121,20 +121,30 @@ Prints a list of lines of text in the screen buffer, each in its own colour. If 
 </tr>
 <tr>
 <td class="register">HL</td>
-<td class="register-desc">Address of the coordinates of the lines (X and Y for each line)</td>
+<td class="register-desc">Address of the list of positions</td>
 </tr>
 <tr>
 <td class="register">DE'</td>
-<td class="register-desc">Address of the attributes of the lines</td>
+<td class="register-desc">Address of the list of attributes</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bebf"></span>
+<div class="comments">
+<div class="paragraph">
+Print one line from the three lists.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">DisplayTextList</td>
 <td class="address-2"><span id="bebf"></span>BEBF</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1">Switch to the registers that hold the attributes.</td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -146,7 +156,7 @@ Prints a list of lines of text in the screen buffer, each in its own colour. If 
 <td class="asm-label"></td>
 <td class="address-1"><span id="bec1"></span>BEC1</td>
 <td class="instruction">LD ($5BB6),A</td>
-<td class="comment-1" rowspan="1">Store it as the attribute to print with.</td>
+<td class="comment-1" rowspan="1">Set <a href="5BB6.html">TextAttribute</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -158,25 +168,25 @@ Prints a list of lines of text in the screen buffer, each in its own colour. If 
 <td class="asm-label"></td>
 <td class="address-1"><span id="bec5"></span>BEC5</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1">Switch back.</td>
+<td class="comment-1" rowspan="1">Switch back to the main registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bec6"></span>BEC6</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Stash the number of lines.</td>
+<td class="comment-1" rowspan="1">Stash the number of lines on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bec7"></span>BEC7</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the X coordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bec8"></span>BEC8</td>
 <td class="instruction">INC HL</td>
-<td class="comment-1" rowspan="2">Move on to the next pair of coordinates.</td>
+<td class="comment-1" rowspan="2">Move on to the next pair of positions.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -187,91 +197,98 @@ Prints a list of lines of text in the screen buffer, each in its own colour. If 
 <td class="asm-label"></td>
 <td class="address-1"><span id="beca"></span>BECA</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the address of the next pair.</td>
+<td class="comment-1" rowspan="1">Stash the address of the next pair on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="becb"></span>BECB</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the Y coordinate.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">HL</span> at the y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="becc"></span>BECC</td>
 <td class="instruction">LD H,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the Y coordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="becd"></span>BECD</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Set the X coordinate.</td>
+<td class="comment-1" rowspan="1">Set the x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bece"></span>BECE</td>
 <td class="instruction">CALL <a href="BE31.html">PrintTextSingleColour</a></td>
-<td class="comment-1" rowspan="1">Print the line.</td>
+<td class="comment-1" rowspan="1">Call <a href="BE31.html">PrintTextSingleColour</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bed1"></span>BED1</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore the address of the next pair.</td>
+<td class="comment-1" rowspan="1">Restore the address of the next pair from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bed2"></span>BED2</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore the number of lines.</td>
+<td class="comment-1" rowspan="1">Restore the number of lines from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bed3"></span>BED3</td>
 <td class="instruction">DJNZ <a href="BEBF.html#bebf">DisplayTextList</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="BEBF.html">DisplayTextList</a> until all of the lines have been printed.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="BEBF.html">DisplayTextList</a> until all of the lines have been printed.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="bed5"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the border the first time.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bed5"></span>BED5</td>
 <td class="instruction">LD A,($5BB8)</td>
-<td class="comment-1" rowspan="1">Fetch the flag that says the border has been drawn.</td>
+<td class="comment-1" rowspan="3">Return if <a href="5BB8.html">BorderDrawnFlag</a> is set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bed8"></span>BED8</td>
 <td class="instruction">AND A</td>
-<td class="comment-1" rowspan="1">Test it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bed9"></span>BED9</td>
 <td class="instruction">RET NZ</td>
-<td class="comment-1" rowspan="1">Return if it has.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="beda"></span>BEDA</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">Set the flag.</td>
+<td class="comment-1" rowspan="2">Write 01 to *<a href="5BB8.html">BorderDrawnFlag</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bedb"></span>BEDB</td>
 <td class="instruction">LD ($5BB8),A</td>
-<td class="comment-1" rowspan="1">Store it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bede"></span>BEDE</td>
 <td class="instruction">CALL <a href="D296.html">PrintBorder</a></td>
-<td class="comment-1" rowspan="1">Draw the border.</td>
+<td class="comment-1" rowspan="1">Call <a href="D296.html">PrintBorder</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="bee1"></span>BEE1</td>
 <td class="instruction">JP <a href="D56F.html">UpdateScreen</a></td>
-<td class="comment-1" rowspan="1">Copy the screen buffer to the display.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="D56F.html">UpdateScreen</a>.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">

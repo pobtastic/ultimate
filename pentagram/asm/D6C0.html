@@ -104,7 +104,7 @@ Next: <a href="D718.html">D718</a>
 Used by the routines at <a href="D69C.html">PlayMusicOnce</a> and <a href="D6B5.html">PlayMusic</a>.
 </div>
 <div class="paragraph">
-Plays a note of a tune, or lets the time of a rest go by. The note is a byte in which the lowest six bits are the number of the note, with a rest if it is zero, and the highest two bits are one less than the length of the note, which is that number of times the length of the shortest note. The pitch and the number of cycles of the note come from the table at <a href="D718.html">NoteTable</a>. A note is made of the same number of cycles for each of its lengths, so that the notes are all as long, whatever their pitch.
+Plays a note of a tune, or a rest if the note number is zero. Bits 0 to 5 select the entry in <a href="D718.html">NoteTable</a> that holds the two delays of a cycle and the number of cycles. Bits 6 and 7 are the length less one, which multiplies the number of cycles, so the note is one to four times as long.
 </div>
 </div>
 <table class="input">
@@ -113,11 +113,11 @@ Plays a note of a tune, or lets the time of a rest go by. The note is a byte in 
 </tr>
 <tr>
 <td class="register">A</td>
-<td class="register-desc">Note</td>
+<td class="register-desc">The note</td>
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the note in the tune</td>
+<td class="register-desc">Address of the note</td>
 </tr>
 </table>
 <table class="output">
@@ -132,32 +132,32 @@ Plays a note of a tune, or lets the time of a rest go by. The note is a byte in 
 </td>
 </tr>
 <tr>
-<td class="asm-label">PlayNote</td>
-<td class="address-2"><span id="d6c0"></span>D6C0</td>
-<td class="instruction">AND %00111111</td>
-<td class="comment-1" rowspan="1">Keep the number of the note.</td>
-</tr>
-<tr>
-<td class="asm-label"></td>
-<td class="address-1"><span id="d6c2"></span>D6C2</td>
-<td class="instruction">JR Z,<a href="D6C0.html#d702">PlayNote_Rest</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d702">PlayNote_Rest</a> if it is a rest.</td>
-</tr>
-<tr>
 <td class="routine-comment" colspan="5">
-<span id="d6c4"></span>
+<span id="d6c0"></span>
 <div class="comments">
 <div class="paragraph">
-Look up the delays and the number of cycles in the table at <a href="D718.html">NoteTable</a>.
+Look up the delays and the number of cycles.
 </div>
 </div>
 </td>
 </tr>
 <tr>
+<td class="asm-label">PlayNote</td>
+<td class="address-2"><span id="d6c0"></span>D6C0</td>
+<td class="instruction">AND %00111111</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 5.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="d6c2"></span>D6C2</td>
+<td class="instruction">JR Z,<a href="D6C0.html#d702">PlayNote_Rest</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d702">PlayNote_Rest</a> if the note is a rest.</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6c4"></span>D6C4</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="2">Put the number in <span class="register">HL</span>.</td>
+<td class="comment-1" rowspan="2">Set <span class="register">HL</span> to the note number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -168,31 +168,31 @@ Look up the delays and the number of cycles in the table at <a href="D718.html">
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6c7"></span>D6C7</td>
 <td class="instruction">ADD HL,HL</td>
-<td class="comment-1" rowspan="1">Double it.</td>
+<td class="comment-1" rowspan="1">Double the number.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6c8"></span>D6C8</td>
 <td class="instruction">CALL <a href="B519.html">AddAToHL</a></td>
-<td class="comment-1" rowspan="1">Call <a href="B519.html">AddAToHL</a> to add the number, to make three times it.</td>
+<td class="comment-1" rowspan="1">Call <a href="B519.html">AddAToHL</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6cb"></span>D6CB</td>
 <td class="instruction">LD BC,$D718</td>
-<td class="comment-1" rowspan="1">Find the note in the table at <a href="D718.html">NoteTable</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">BC</span> at <a href="D718.html">NoteTable</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6ce"></span>D6CE</td>
 <td class="instruction">ADD HL,BC</td>
-<td class="comment-1" rowspan="1">Add it to find the entry of the note.</td>
+<td class="comment-1" rowspan="1">Find the entry for the note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6cf"></span>D6CF</td>
 <td class="instruction">LD B,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the count for the first run of the delay loop for half a cycle.</td>
+<td class="comment-1" rowspan="1">Fetch the first delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -204,7 +204,7 @@ Look up the delays and the number of cycles in the table at <a href="D718.html">
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6d1"></span>D6D1</td>
 <td class="instruction">LD C,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the number of times that the delay loop is run on from there.</td>
+<td class="comment-1" rowspan="1">Fetch the second delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -216,20 +216,20 @@ Look up the delays and the number of cycles in the table at <a href="D718.html">
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6d3"></span>D6D3</td>
 <td class="instruction">LD L,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the number of cycles for a note of the shortest length.</td>
+<td class="comment-1" rowspan="1">Fetch the number of cycles.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6d4"></span>D6D4</td>
 <td class="instruction">LD H,$00</td>
-<td class="comment-1" rowspan="1">Clear the high byte.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">H</span> to 00.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="d6d6"></span>
 <div class="comments">
 <div class="paragraph">
-Bits 6 and 7 of the note are the length, less one.
+Bits 6 and 7 are the length, less one.
 </div>
 </div>
 </td>
@@ -244,7 +244,7 @@ Bits 6 and 7 of the note are the length, less one.
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6d7"></span>D6D7</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2">Move the highest two bits to the lowest.</td>
+<td class="comment-1" rowspan="2">Move bits 6 and 7 to bits 0 and 1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -255,19 +255,19 @@ Bits 6 and 7 of the note are the length, less one.
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6d9"></span>D6D9</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep them.</td>
+<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6db"></span>D6DB</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">Add one to get the length of the note.</td>
+<td class="comment-1" rowspan="1">Add one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6dc"></span>D6DC</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1">Save the address in the tune.</td>
+<td class="comment-1" rowspan="1">Stash the note address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -285,7 +285,7 @@ Bits 6 and 7 of the note are the length, less one.
 <span id="d6df"></span>
 <div class="comments">
 <div class="paragraph">
-Multiply the number of cycles by the length of the note.
+Multiply the number of cycles by the length.
 </div>
 </div>
 </td>
@@ -294,38 +294,38 @@ Multiply the number of cycles by the length of the note.
 <td class="asm-label">PlayNote_Multiply</td>
 <td class="address-2"><span id="d6df"></span>D6DF</td>
 <td class="instruction">DEC A</td>
-<td class="comment-1" rowspan="1">Take one off the length.</td>
+<td class="comment-1" rowspan="1">Count down the length.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6e0"></span>D6E0</td>
 <td class="instruction">JR Z,<a href="D6C0.html#d6e5">PlayNote_Start</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d6e5">PlayNote_Start</a> if it is the last.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d6e5">PlayNote_Start</a> if the length has been used up.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6e2"></span>D6E2</td>
 <td class="instruction">ADD HL,DE</td>
-<td class="comment-1" rowspan="1">Add the number of cycles for the shortest note.</td>
+<td class="comment-1" rowspan="1">Add the number of cycles again.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6e3"></span>D6E3</td>
 <td class="instruction">JR <a href="D6C0.html#d6df">PlayNote_Multiply</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="D6C0.html#d6df">PlayNote_Multiply</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d6df">PlayNote_Multiply</a>.</td>
 </tr>
 <tr>
 <td class="asm-label">PlayNote_Start</td>
 <td class="address-2"><span id="d6e5"></span>D6E5</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1">Get the address in the tune back.</td>
+<td class="comment-1" rowspan="1">Restore the note address from the stack.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
 <span id="d6e6"></span>
 <div class="comments">
 <div class="paragraph">
-Each pass of this loop makes one cycle of the note, so the length of the note is the number of cycles.
+Each pass makes one cycle of the note.
 </div>
 </div>
 </td>
@@ -334,97 +334,97 @@ Each pass of this loop makes one cycle of the note, so the length of the note is
 <td class="asm-label">PlayNote_Cycle</td>
 <td class="address-2"><span id="d6e6"></span>D6E6</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Save the half length of a cycle.</td>
+<td class="comment-1" rowspan="1">Stash the delays on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6e7"></span>D6E7</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="1">Set the speaker to off.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">A</span> to 00.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6e8"></span>D6E8</td>
 <td class="instruction">OUT ($FE),A</td>
-<td class="comment-1" rowspan="1">Write it to the ULA.</td>
+<td class="comment-1" rowspan="1">Turn the speaker off.</td>
 </tr>
 <tr>
 <td class="asm-label">PlayNote_LowWait</td>
 <td class="address-2"><span id="d6ea"></span>D6EA</td>
 <td class="instruction">DJNZ <a href="D6C0.html#d6ea">PlayNote_LowWait</a></td>
-<td class="comment-1" rowspan="1">Wait while the speaker is off.</td>
+<td class="comment-1" rowspan="1">Wait for the first half of the cycle.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6ec"></span>D6EC</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Count a loop of the high byte.</td>
+<td class="comment-1" rowspan="1">Count down the second delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6ed"></span>D6ED</td>
 <td class="instruction">JR NZ,<a href="D6C0.html#d6ea">PlayNote_LowWait</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="D6C0.html#d6ea">PlayNote_LowWait</a> until the half cycle is over.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d6ea">PlayNote_LowWait</a> until it has finished.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6ef"></span>D6EF</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Get the half length back.</td>
+<td class="comment-1" rowspan="1">Restore the delays from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6f0"></span>D6F0</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Save it again.</td>
+<td class="comment-1" rowspan="1">Stash the delays on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6f1"></span>D6F1</td>
 <td class="instruction">LD A,$10</td>
-<td class="comment-1" rowspan="1">Set bit 4 to turn the speaker on.</td>
+<td class="comment-1" rowspan="1">Set bit 4.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6f3"></span>D6F3</td>
 <td class="instruction">OUT ($FE),A</td>
-<td class="comment-1" rowspan="1">Write it to the ULA.</td>
+<td class="comment-1" rowspan="1">Turn the speaker on.</td>
 </tr>
 <tr>
 <td class="asm-label">PlayNote_HighWait</td>
 <td class="address-2"><span id="d6f5"></span>D6F5</td>
 <td class="instruction">DJNZ <a href="D6C0.html#d6f5">PlayNote_HighWait</a></td>
-<td class="comment-1" rowspan="1">Wait while the speaker is on.</td>
+<td class="comment-1" rowspan="1">Wait for the second half of the cycle.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6f7"></span>D6F7</td>
 <td class="instruction">DEC C</td>
-<td class="comment-1" rowspan="1">Count a loop of the high byte.</td>
+<td class="comment-1" rowspan="1">Count down the second delay.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6f8"></span>D6F8</td>
 <td class="instruction">JR NZ,<a href="D6C0.html#d6f5">PlayNote_HighWait</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="D6C0.html#d6f5">PlayNote_HighWait</a> until the half cycle is over.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d6f5">PlayNote_HighWait</a> until it has finished.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6fa"></span>D6FA</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Get the half length back.</td>
+<td class="comment-1" rowspan="1">Restore the delays from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6fb"></span>D6FB</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Count the cycle.</td>
+<td class="comment-1" rowspan="1">Count down the cycles.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6fc"></span>D6FC</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="2">Test whether there are any left.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="D6C0.html#d6e6">PlayNote_Cycle</a> until all of the cycles have been played.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -435,13 +435,12 @@ Each pass of this loop makes one cycle of the note, so the length of the note is
 <td class="asm-label"></td>
 <td class="address-1"><span id="d6fe"></span>D6FE</td>
 <td class="instruction">JR NZ,<a href="D6C0.html#d6e6">PlayNote_Cycle</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="D6C0.html#d6e6">PlayNote_Cycle</a> until all of the cycles have been made.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d700"></span>D700</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Move on to the next note of the tune.</td>
+<td class="comment-1" rowspan="1">Move on to the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -454,7 +453,7 @@ Each pass of this loop makes one cycle of the note, so the length of the note is
 <span id="d702"></span>
 <div class="comments">
 <div class="paragraph">
-A rest is a silent pause, which is made by waiting one to four times.
+A rest is a silent pause of one to four units.
 </div>
 </div>
 </td>
@@ -463,19 +462,19 @@ A rest is a silent pause, which is made by waiting one to four times.
 <td class="asm-label">PlayNote_Rest</td>
 <td class="address-2"><span id="d702"></span>D702</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the rest.</td>
+<td class="comment-1" rowspan="1">Fetch the length of the rest.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d703"></span>D703</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Move on to the next note of the tune.</td>
+<td class="comment-1" rowspan="1">Move on to the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d704"></span>D704</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2">Move the highest two bits to the lowest.</td>
+<td class="comment-1" rowspan="2">Move bits 6 and 7 to bits 0 and 1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -486,43 +485,43 @@ A rest is a silent pause, which is made by waiting one to four times.
 <td class="asm-label"></td>
 <td class="address-1"><span id="d706"></span>D706</td>
 <td class="instruction">AND %00000011</td>
-<td class="comment-1" rowspan="1">Keep them.</td>
+<td class="comment-1" rowspan="1">Keep bits 0 and 1.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d708"></span>D708</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">Add one to get the length of the rest.</td>
+<td class="comment-1" rowspan="1">Add one.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d709"></span>D709</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Put it in <span class="register">L</span>.</td>
+<td class="comment-1" rowspan="1">Keep it in <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d70a"></span>D70A</td>
 <td class="instruction">LD BC,$430B</td>
-<td class="comment-1" rowspan="1">Set the count of the delay.</td>
+<td class="comment-1" rowspan="1">Set <span class="register">BC</span> to 430B.</td>
 </tr>
 <tr>
 <td class="asm-label">PlayNote_RestOuter</td>
 <td class="address-2"><span id="d70d"></span>D70D</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Save it.</td>
+<td class="comment-1" rowspan="1">Stash the pause length on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label">PlayNote_RestWait</td>
 <td class="address-2"><span id="d70e"></span>D70E</td>
 <td class="instruction">DEC BC</td>
-<td class="comment-1" rowspan="1">Count down.</td>
+<td class="comment-1" rowspan="1">Count down the pause.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d70f"></span>D70F</td>
 <td class="instruction">LD A,B</td>
-<td class="comment-1" rowspan="2">Test whether it is zero.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="D6C0.html#d70e">PlayNote_RestWait</a> until the delay is over.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -533,25 +532,24 @@ A rest is a silent pause, which is made by waiting one to four times.
 <td class="asm-label"></td>
 <td class="address-1"><span id="d711"></span>D711</td>
 <td class="instruction">JR NZ,<a href="D6C0.html#d70e">PlayNote_RestWait</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="D6C0.html#d70e">PlayNote_RestWait</a> until the delay is over.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d713"></span>D713</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Get the count back.</td>
+<td class="comment-1" rowspan="1">Restore the pause length from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d714"></span>D714</td>
 <td class="instruction">DEC L</td>
-<td class="comment-1" rowspan="1">Take one off the length.</td>
+<td class="comment-1" rowspan="1">Count down the units of the rest.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d715"></span>D715</td>
 <td class="instruction">JR NZ,<a href="D6C0.html#d70d">PlayNote_RestOuter</a></td>
-<td class="comment-1" rowspan="1">Jump back to <a href="D6C0.html#d70d">PlayNote_RestOuter</a> until the rest is over.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="D6C0.html#d70d">PlayNote_RestOuter</a> until the rest is over.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

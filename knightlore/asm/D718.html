@@ -104,7 +104,7 @@ Next: <a href="D780.html">D780</a>
 Used by the routines at <a href="BC7A.html">PrintLivesGraphic</a>, <a href="BEE4.html">PrintSprites</a>, <a href="BF45.html">DisplayObjectsCarried</a>, <a href="C3A4.html">DisplaySunMoonFrame</a> and <a href="D24C.html">PrintTableSprite</a>.
 </div>
 <div class="paragraph">
-Draws the sprite of an object into the screen buffer, at the pixel coordinates of the object. The sprite is made of pairs of bytes, a mask byte and then a data byte, which are put on the buffer with the mask clearing the background. A sprite that does not start on a byte boundary has each pair shifted across two bytes, with the tables built by <a href="D69E.html">BuildLookupTables</a>. The routine copies the sprite with unrolled code, which it enters part of the way along, so that it does as many columns as the sprite has. To do this it changes the code, and it uses the stack pointer to read the data of the sprite, so the interrupts have to be off.
+Draws the sprite of an object into <a href="D8F3.html">ScreenBuffer</a>, at the pixel position of the object. A sprite has a width byte (the vertical flip in bit 7, the horizontal flip in bit 6 and the width in columns in the low bits), a height byte, and then the data for each line from the top. Each column of a line is a pair of bytes: a mask byte, then a data byte. The mask clears the bits of the background and the data sets bits. A sprite that does not start on a byte boundary has each pair shifted across two bytes of the buffer, with the tables built by <a href="D69E.html">BuildLookupTables</a>. The routine copies the sprite with unrolled code, which it enters part of the way along, so that it does as many columns as the sprite has. To do this it changes the code, and it uses the stack pointer to read the data of the sprite.
 </div>
 </div>
 <table class="input">
@@ -113,9 +113,19 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Address of the object</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d718"></span>
+<div class="comments">
+<div class="paragraph">
+Find the sprite and choose the draw path.
+</div>
+</div>
 </td>
 </tr>
 <tr>
@@ -128,7 +138,7 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d71b"></span>D71B</td>
 <td class="instruction">LD A,(IX+$1A)</td>
-<td class="comment-1" rowspan="1">Fetch the pixel X coordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -143,16 +153,26 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="comment-1" rowspan="1">Jump to <a href="D718.html#d76f">PrintSprite_Aligned</a> if the sprite is on a byte boundary.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d722"></span>
+<div class="comments">
+<div class="paragraph">
+Choose the page of the shift table.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d722"></span>D722</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="1">Double the number of bits.</td>
+<td class="comment-1" rowspan="1">Double it.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d723"></span>D723</td>
 <td class="instruction">AND %00001110</td>
-<td class="comment-1" rowspan="1">Keep it.</td>
+<td class="comment-1" rowspan="1">Keep bits 1 to 3.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -164,18 +184,29 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d727"></span>D727</td>
 <td class="instruction">LD H,A</td>
-<td class="comment-1" rowspan="1">Stash the page in <span class="register">H</span>.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">H</span>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d728"></span>
+<div class="comments">
+<div class="paragraph">
+Fetch the width of the sprite, and move on to the height.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d728"></span>D728</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="2">Fetch the width of the sprite, and move on to the height.</td>
+<td class="comment-1" rowspan="1">Fetch the width byte of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d729"></span>D729</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -193,7 +224,7 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d72d"></span>D72D</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1">Stash it in <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -211,7 +242,7 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d732"></span>D732</td>
 <td class="instruction">AND %00000111</td>
-<td class="comment-1" rowspan="1">Keep it in the low three bits.</td>
+<td class="comment-1" rowspan="1">Keep bits 0 to 2.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -244,7 +275,17 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d73a"></span>D73A</td>
 <td class="instruction">ADD A,$50</td>
-<td class="comment-1" rowspan="1">Add 50 to get the offset from the end of the unrolled code.</td>
+<td class="comment-1" rowspan="1">Add 50.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d73c"></span>
+<div class="comments">
+<div class="paragraph">
+Change the jump and the step.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PrintSprite_Patch</td>
@@ -268,24 +309,35 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d741"></span>D741</td>
 <td class="instruction">ADD A,$22</td>
-<td class="comment-1" rowspan="1">Add 22 to get the step from the end of one line to the start of the next.</td>
+<td class="comment-1" rowspan="1">Add 22.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d743"></span>D743</td>
 <td class="instruction">LD ($D801),A</td>
-<td class="comment-1" rowspan="1">Change the step in the code.</td>
+<td class="comment-1" rowspan="1">Write it to <a href="D7AA.html#d7ff">D801</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="d746"></span>
+<div class="comments">
+<div class="paragraph">
+Clip the sprite to the top of the screen.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d746"></span>D746</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="2">Fetch the height of the sprite, and move on to the data.</td>
+<td class="comment-1" rowspan="1">Fetch the height of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d747"></span>D747</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -297,7 +349,7 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d74b"></span>D74B</td>
 <td class="instruction">ADD A,(IX+$1B)</td>
-<td class="comment-1" rowspan="1">Add the pixel Y coordinate.</td>
+<td class="comment-1" rowspan="1">Add the pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -330,16 +382,26 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="comment-1" rowspan="1">Set the height in lines of the object.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="d75a"></span>
+<div class="comments">
+<div class="paragraph">
+Draw the rows that are on the screen.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">PrintSprite_Draw</td>
 <td class="address-2"><span id="d75a"></span>D75A</td>
 <td class="instruction">LD C,(IX+$1A)</td>
-<td class="comment-1" rowspan="1">Fetch the pixel X coordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel x position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d75d"></span>D75D</td>
 <td class="instruction">LD B,(IX+$1B)</td>
-<td class="comment-1" rowspan="1">Fetch the pixel Y coordinate.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel y position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -351,7 +413,7 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <td class="asm-label"></td>
 <td class="address-1"><span id="d763"></span>D763</td>
 <td class="instruction">LD ($5BA9),SP</td>
-<td class="comment-1" rowspan="1">Keep the stack pointer.</td>
+<td class="comment-1" rowspan="1">Set <a href="5BA9.html">SavedStackPointer</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -386,7 +448,7 @@ Draws the sprite of an object into the screen buffer, at the pixel coordinates o
 <span id="d76f"></span>
 <div class="comments">
 <div class="paragraph">
-The sprite is on a byte boundary, so the bytes do not need to be shifted.
+The sprite is aligned, so the bytes do not need to be shifted.
 </div>
 </div>
 </td>
@@ -395,12 +457,13 @@ The sprite is on a byte boundary, so the bytes do not need to be shifted.
 <td class="asm-label">PrintSprite_Aligned</td>
 <td class="address-2"><span id="d76f"></span>D76F</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="2">Fetch the width of the sprite, and move on to the height.</td>
+<td class="comment-1" rowspan="1">Fetch the width byte of the sprite.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="d770"></span>D770</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Increment <span class="register">DE</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -418,7 +481,7 @@ The sprite is on a byte boundary, so the bytes do not need to be shifted.
 <td class="asm-label"></td>
 <td class="address-1"><span id="d776"></span>D776</td>
 <td class="instruction">LD B,A</td>
-<td class="comment-1" rowspan="1">Stash it in <span class="register">B</span>.</td>
+<td class="comment-1" rowspan="1">Copy it to <span class="register">B</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

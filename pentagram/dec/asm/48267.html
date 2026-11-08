@@ -104,7 +104,17 @@ Next: <a href="48308.html">48308</a>
 Used by the routine at <a href="48230.html">PrintTextSingleColour</a>.
 </div>
 <div class="paragraph">
-The part of <a href="48230.html">PrintTextSingleColour</a> that prints the characters and their attributes. The alternate registers hold the address in the attribute file, and the main registers hold the address in the buffer.
+Prints each character of a line of text and sets the attribute of its cell. <span class="register">DE'</span> holds the colour, <span class="register">HL'</span> holds the address in the attribute file, and <span class="register">HL</span> holds the address in the screen buffer.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48267"></span>
+<div class="comments">
+<div class="paragraph">
+Find the attribute address.
 </div>
 </div>
 </td>
@@ -113,25 +123,25 @@ The part of <a href="48230.html">PrintTextSingleColour</a> that prints the chara
 <td class="asm-label">PrintText</td>
 <td class="address-2"><span id="48267"></span>48267</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48268"></span>48268</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Fetch the position from the stack.</td>
+<td class="comment-1" rowspan="1">Fetch the pixel position.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48269"></span>48269</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the text on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48270"></span>48270</td>
 <td class="instruction">CALL <a href="46006.html">CalculateAttributeAddress</a></td>
-<td class="comment-1" rowspan="1">Call <a href="46006.html">CalculateAttributeAddress</a> to get the address in the attribute file.</td>
+<td class="comment-1" rowspan="1">Call <a href="46006.html">CalculateAttributeAddress</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -148,25 +158,35 @@ The part of <a href="48230.html">PrintTextSingleColour</a> that prints the chara
 <td class="asm-label"></td>
 <td class="address-1"><span id="48275"></span>48275</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1">Restore the string pointer.</td>
+<td class="comment-1" rowspan="1">Restore the address of the text from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48276"></span>
+<div class="comments">
+<div class="paragraph">
+Print each character and set its attribute.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PrintText_Next</td>
 <td class="address-2"><span id="48276"></span>48276</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1">Switch to the main registers.</td>
+<td class="comment-1" rowspan="1">Switch back to the main registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48277"></span>48277</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="1">Fetch the next character.</td>
+<td class="comment-1" rowspan="1">Fetch a character of the text.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48278"></span>48278</td>
 <td class="instruction">BIT 7,A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="48267.html#48295">PrintText_Last</a> if it is the last character.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="48267.html#48295">PrintText_Last</a> if it is the last.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -177,19 +197,19 @@ The part of <a href="48230.html">PrintTextSingleColour</a> that prints the chara
 <td class="asm-label"></td>
 <td class="address-1"><span id="48282"></span>48282</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the address of the text on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48283"></span>48283</td>
 <td class="instruction">CALL <a href="47850.html">PrintCharacter</a></td>
-<td class="comment-1" rowspan="1">Call <a href="47850.html">PrintCharacter</a> to print the character.</td>
+<td class="comment-1" rowspan="1">Call <a href="47850.html">PrintCharacter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48286"></span>48286</td>
 <td class="instruction">POP DE</td>
-<td class="comment-1" rowspan="1">Restore the string pointer.</td>
+<td class="comment-1" rowspan="1">Restore the address of the text from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -201,78 +221,95 @@ The part of <a href="48230.html">PrintTextSingleColour</a> that prints the chara
 <td class="asm-label"></td>
 <td class="address-1"><span id="48288"></span>48288</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48289"></span>48289</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="4">Write the colour to the attribute file and move on to the next attribute.</td>
+<td class="comment-1" rowspan="1">Fetch the attribute.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48290"></span>48290</td>
 <td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Set the attribute of the cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48291"></span>48291</td>
 <td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Move on to the next cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48292"></span>48292</td>
 <td class="instruction">EX AF,AF'</td>
+<td class="comment-1" rowspan="1">Keep the attribute in <span class="register">AF'</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48293"></span>48293</td>
 <td class="instruction">JR <a href="48267.html#48276">PrintText_Next</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="48267.html#48276">PrintText_Next</a> to print the next character.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="48267.html#48276">PrintText_Next</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48295"></span>
+<div class="comments">
+<div class="paragraph">
+Print the last character.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PrintText_Last</td>
 <td class="address-2"><span id="48295"></span>48295</td>
 <td class="instruction">AND %01111111</td>
-<td class="comment-1" rowspan="1">Clear bit 7 of the character.</td>
+<td class="comment-1" rowspan="1">Keep only bits 0 to 6.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48297"></span>48297</td>
 <td class="instruction">PUSH DE</td>
-<td class="comment-1" rowspan="4">Print it, and move on to the end of the string.</td>
+<td class="comment-1" rowspan="1">Stash the address of the text on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48298"></span>48298</td>
 <td class="instruction">CALL <a href="47850.html">PrintCharacter</a></td>
+<td class="comment-1" rowspan="1">Call <a href="47850.html">PrintCharacter</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48301"></span>48301</td>
 <td class="instruction">POP DE</td>
+<td class="comment-1" rowspan="1">Restore the address of the text from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48302"></span>48302</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on past the text.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48303"></span>48303</td>
 <td class="instruction">EXX</td>
-<td class="comment-1" rowspan="1">Switch to the alternate registers.</td>
+<td class="comment-1" rowspan="1">Switch to the shadow registers.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48304"></span>48304</td>
 <td class="instruction">EX AF,AF'</td>
-<td class="comment-1" rowspan="2">Write the colour to the attribute file.</td>
+<td class="comment-1" rowspan="1">Fetch the attribute.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48305"></span>48305</td>
 <td class="instruction">LD (HL),A</td>
+<td class="comment-1" rowspan="1">Set the attribute of the last cell.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

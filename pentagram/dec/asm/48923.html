@@ -104,7 +104,7 @@ Next: <a href="48982.html">48982</a>
 Used by the routines at <a href="45207.html">LoadRoomObjects</a>, <a href="49017.html">HandlePickupAndDrop</a> and <a href="52139.html">CreateCreature</a>.
 </div>
 <div class="paragraph">
-Tests if an object is overlapping any other object, where it is at the moment. This is used to find out if there is room to put the object somewhere, once its position has been changed.
+Tests whether an object overlaps any other solid object in the table that starts at <a href="42863.html">ObjectsTable</a>, without moving. The object itself is ignored while the table is searched.
 </div>
 </div>
 <table class="input">
@@ -113,7 +113,7 @@ Tests if an object is overlapping any other object, where it is at the moment. T
 </tr>
 <tr>
 <td class="register">IX</td>
-<td class="register-desc">Record of the object</td>
+<td class="register-desc">The address of the object</td>
 </tr>
 </table>
 <table class="output">
@@ -122,16 +122,26 @@ Tests if an object is overlapping any other object, where it is at the moment. T
 </tr>
 <tr>
 <td class="register">F</td>
-<td class="register-desc">Carry flag set if the object overlaps another object</td>
+<td class="register-desc">Carry flag set if the object intersects another object</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48923"></span>
+<div class="comments">
+<div class="paragraph">
+Start at the first object with no movement.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">TestObjectIntersections</td>
 <td class="address-2"><span id="48923"></span>48923</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="3">Stash <span class="register">BC</span>, <span class="register">DE</span> and <span class="register">HL</span> on the stack.</td>
+<td class="comment-1" rowspan="4">Stash the registers on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -147,7 +157,6 @@ Tests if an object is overlapping any other object, where it is at the moment. T
 <td class="asm-label"></td>
 <td class="address-1"><span id="48926"></span>48926</td>
 <td class="instruction">PUSH IY</td>
-<td class="comment-1" rowspan="1">Stash <span class="register">IY</span> on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -165,13 +174,13 @@ Tests if an object is overlapping any other object, where it is at the moment. T
 <td class="asm-label"></td>
 <td class="address-1"><span id="48934"></span>48934</td>
 <td class="instruction">LD C,0</td>
-<td class="comment-1" rowspan="1">Set the distance moved along x to zero.</td>
+<td class="comment-1" rowspan="1">Set the x speed to 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48936"></span>48936</td>
 <td class="instruction">LD L,C</td>
-<td class="comment-1" rowspan="2">Set the distances moved along y and z to zero.</td>
+<td class="comment-1" rowspan="2">Set the y and z speeds to 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -198,45 +207,79 @@ Test whether this object overlaps on all three axes.
 <td class="asm-label">TestObjectIntersections_Loop</td>
 <td class="address-2"><span id="48942"></span>48942</td>
 <td class="instruction">CALL <a href="47515.html">TestObjectSolid</a></td>
-<td class="comment-1" rowspan="2">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> to try the next object if this one is free, or is the object that is being tested.</td>
+<td class="comment-1" rowspan="1">Call <a href="47515.html">TestObjectSolid</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48945"></span>48945</td>
 <td class="instruction">JR Z,<a href="48923.html#48972">TestObjectIntersections_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> if the object is not used or is ignored.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48947"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> to try the next object if they do not overlap along x.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48947"></span>48947</td>
 <td class="instruction">CALL <a href="47266.html">TestOverlapInX</a></td>
-<td class="comment-1" rowspan="2">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> to try the next object if they do not overlap along x.</td>
+<td class="comment-1" rowspan="1">Call <a href="47266.html">TestOverlapInX</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48950"></span>48950</td>
 <td class="instruction">JR NC,<a href="48923.html#48972">TestObjectIntersections_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> if they do not overlap along x.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48952"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> to try the next object if they do not overlap along y.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48952"></span>48952</td>
 <td class="instruction">CALL <a href="47287.html">TestOverlapInY</a></td>
-<td class="comment-1" rowspan="2">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> to try the next object if they do not overlap along y.</td>
+<td class="comment-1" rowspan="1">Call <a href="47287.html">TestOverlapInY</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48955"></span>48955</td>
 <td class="instruction">JR NC,<a href="48923.html#48972">TestObjectIntersections_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> if they do not overlap along y.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="48957"></span>
+<div class="comments">
+<div class="paragraph">
+Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> to try the next object if they do not overlap along z.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48957"></span>48957</td>
 <td class="instruction">CALL <a href="47308.html">TestOverlapInZ</a></td>
-<td class="comment-1" rowspan="2">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> to try the next object if they do not overlap along z.</td>
+<td class="comment-1" rowspan="1">Call <a href="47308.html">TestOverlapInZ</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48960"></span>48960</td>
 <td class="instruction">JR NC,<a href="48923.html#48972">TestObjectIntersections_Next</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="48923.html#48972">TestObjectIntersections_Next</a> if they do not overlap along z.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -252,13 +295,12 @@ The objects overlap on all three axes (and the carry flag is set), or there are 
 <td class="asm-label">TestObjectIntersections_Done</td>
 <td class="address-2"><span id="48962"></span>48962</td>
 <td class="instruction">POP IY</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">IY</span> from the stack.</td>
+<td class="comment-1" rowspan="4">Restore <span class="register">IY</span>, <span class="register">HL</span>, <span class="register">DE</span> and <span class="register">BC</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48964"></span>48964</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="3">Restore <span class="register">HL</span>, <span class="register">DE</span> and <span class="register">BC</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -296,12 +338,13 @@ Move on to the next object.
 <td class="asm-label">TestObjectIntersections_Next</td>
 <td class="address-2"><span id="48972"></span>48972</td>
 <td class="instruction">LD DE,32</td>
-<td class="comment-1" rowspan="2">Move on to the next object record.</td>
+<td class="comment-1" rowspan="1">Set the size of an object record to 32.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="48975"></span>48975</td>
 <td class="instruction">ADD IY,DE</td>
+<td class="comment-1" rowspan="1">Move on to the next object.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

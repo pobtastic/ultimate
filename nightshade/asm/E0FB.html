@@ -107,7 +107,17 @@ Used by the routine at <a href="BDFE.html">StartGame</a>.
 Builds the tables that the sprite drawing routines use to shift graphics sideways, and the table that reverses the bits in a byte.
 </div>
 <div class="paragraph">
-There are three pairs of 256-byte pages for shifting a byte by two, four and six pixels (the low byte of the shifted result is in the first page of each pair, counting down from FF and the high byte is in the second). FA to FF hold the shifts of the bytes as they are, and F2 to F7 hold the shifts of the bytes with their bits reversed. The page at F900 holds the bytes with their bits reversed.
+There are three pairs of 256-byte pages for shifting a byte by two, four and six pixels (the low byte of the shifted result is in the first page of each pair, counting down from FF, and the high byte is in the second). FA to FF hold the shifts of the bytes as they are, and F2 to F7 hold the shifts of the bytes with their bits reversed. The page at <a href="F900.html">ReverseBitsTable</a> holds the bytes with their bits reversed.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e0fb"></span>
+<div class="comments">
+<div class="paragraph">
+Build the tables for the bytes as they are.
 </div>
 </div>
 </td>
@@ -116,13 +126,23 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label">BuildShiftTables</td>
 <td class="address-2"><span id="e0fb"></span>E0FB</td>
 <td class="instruction">LD L,$00</td>
-<td class="comment-1" rowspan="1">Start with the byte 00.</td>
+<td class="comment-1" rowspan="1">Start with the byte at 00.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e0fd"></span>
+<div class="comments">
+<div class="paragraph">
+Start with the byte as a 16-bit number, and point <span class="register">HL</span> at the first page of the tables.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">BuildShiftTables_Normal</td>
 <td class="address-2"><span id="e0fd"></span>E0FD</td>
 <td class="instruction">LD D,$00</td>
-<td class="comment-1" rowspan="4">Start with the byte as a 16-bit number, and point <span class="register">HL</span> at the first page of the tables.</td>
+<td class="comment-1" rowspan="2">Make the word the byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -133,17 +153,29 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label"></td>
 <td class="address-1"><span id="e100"></span>E100</td>
 <td class="instruction">LD H,$FF</td>
+<td class="comment-1" rowspan="1">Start at page FF.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e102"></span>E102</td>
 <td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Set a count of 03 pairs.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e104"></span>
+<div class="comments">
+<div class="paragraph">
+Shift the word left by two bits and store it.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">BuildShiftTables_NormalLoop</td>
 <td class="address-2"><span id="e104"></span>E104</td>
 <td class="instruction">SLA E</td>
-<td class="comment-1" rowspan="9">Shift the number left by two pixels, and store it in the next pair of pages.</td>
+<td class="comment-1" rowspan="4">Shift the word left by two bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -164,6 +196,7 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label"></td>
 <td class="address-1"><span id="e10c"></span>E10C</td>
 <td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="4">Store the pair in the next two pages.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -184,34 +217,57 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label"></td>
 <td class="address-1"><span id="e110"></span>E110</td>
 <td class="instruction">DJNZ <a href="E0FB.html#e104">BuildShiftTables_NormalLoop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E0FB.html#e104">BuildShiftTables_NormalLoop</a> if there are any left.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e112"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next byte, and loop back until all 256 have been done.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e112"></span>E112</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="2">Move on to the next byte, and loop back until all 256 have been done.</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e113"></span>E113</td>
 <td class="instruction">JR NZ,<a href="E0FB.html#e0fd">BuildShiftTables_Normal</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E0FB.html#e0fd">BuildShiftTables_Normal</a> if there are any left.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e115"></span>
+<div class="comments">
+<div class="paragraph">
+Build the tables for the bytes with their bits reversed.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e115"></span>E115</td>
 <td class="instruction">LD L,$00</td>
-<td class="comment-1" rowspan="1">Start with the byte 00 again.</td>
+<td class="comment-1" rowspan="1">Start with the byte at 00.</td>
 </tr>
 <tr>
 <td class="asm-label">BuildShiftTables_Reversed</td>
 <td class="address-2"><span id="e117"></span>E117</td>
 <td class="instruction">LD D,$00</td>
-<td class="comment-1" rowspan="3">Count eight bits, and get the byte.</td>
+<td class="comment-1" rowspan="1">Clear the high byte of the word.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e119"></span>E119</td>
 <td class="instruction">LD B,$08</td>
+<td class="comment-1" rowspan="2">Set a count of 08 bits, and copy the byte into <span class="register">A</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -219,10 +275,20 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="instruction">LD A,L</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="e11c"></span>
+<div class="comments">
+<div class="paragraph">
+Turn the bits of the byte round.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">BuildShiftTables_Reverse</td>
 <td class="address-2"><span id="e11c"></span>E11C</td>
 <td class="instruction">RRCA</td>
-<td class="comment-1" rowspan="3">Reverse the bits of the byte.</td>
+<td class="comment-1" rowspan="2">Move the next bit into <span class="register">C</span> from the other end.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -233,28 +299,51 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label"></td>
 <td class="address-1"><span id="e11f"></span>E11F</td>
 <td class="instruction">DJNZ <a href="E0FB.html#e11c">BuildShiftTables_Reverse</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E0FB.html#e11c">BuildShiftTables_Reverse</a> if there are any left.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e121"></span>
+<div class="comments">
+<div class="paragraph">
+Start with the reversed byte as a 16-bit number, and point <span class="register">HL</span> at the first page of the reversed tables.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e121"></span>E121</td>
 <td class="instruction">LD E,C</td>
-<td class="comment-1" rowspan="3">Start with the reversed byte as a 16-bit number, and point <span class="register">HL</span> at the first page of the reversed tables.</td>
+<td class="comment-1" rowspan="1">Make the low byte the reversed byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e122"></span>E122</td>
 <td class="instruction">LD H,$F7</td>
+<td class="comment-1" rowspan="1">Start at page F7.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e124"></span>E124</td>
 <td class="instruction">LD B,$03</td>
+<td class="comment-1" rowspan="1">Set a count of 03 pairs.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e126"></span>
+<div class="comments">
+<div class="paragraph">
+Shift the word left by two bits and store it.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">BuildShiftTables_ReversedLoop</td>
 <td class="address-2"><span id="e126"></span>E126</td>
 <td class="instruction">SLA E</td>
-<td class="comment-1" rowspan="9">Shift the number left by two pixels, and store it in the next pair of pages.</td>
+<td class="comment-1" rowspan="4">Shift the word left by two bits.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -275,6 +364,7 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label"></td>
 <td class="address-1"><span id="e12e"></span>E12E</td>
 <td class="instruction">LD (HL),E</td>
+<td class="comment-1" rowspan="4">Store the pair in the next two pages.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -295,17 +385,39 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label"></td>
 <td class="address-1"><span id="e132"></span>E132</td>
 <td class="instruction">DJNZ <a href="E0FB.html#e126">BuildShiftTables_ReversedLoop</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E0FB.html#e126">BuildShiftTables_ReversedLoop</a> if there are any left.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e134"></span>
+<div class="comments">
+<div class="paragraph">
+Move on to the next byte, and loop back until all 256 have been done.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e134"></span>E134</td>
 <td class="instruction">INC L</td>
-<td class="comment-1" rowspan="2">Move on to the next byte, and loop back until all 256 have been done.</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e135"></span>E135</td>
 <td class="instruction">JR NZ,<a href="E0FB.html#e117">BuildShiftTables_Reversed</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E0FB.html#e117">BuildShiftTables_Reversed</a> if there are any left.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="e137"></span>
+<div class="comments">
+<div class="paragraph">
+Build the table of reversed bytes.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -328,7 +440,7 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label">BuildShiftTables_ReverseBits</td>
 <td class="address-2"><span id="e13d"></span>E13D</td>
 <td class="instruction">SRL D</td>
-<td class="comment-1" rowspan="3">Reverse the bits of the byte.</td>
+<td class="comment-1" rowspan="2">Move the lowest bit of the byte into the other end of <span class="register">E</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -339,22 +451,25 @@ There are three pairs of 256-byte pages for shifting a byte by two, four and six
 <td class="asm-label"></td>
 <td class="address-1"><span id="e141"></span>E141</td>
 <td class="instruction">DJNZ <a href="E0FB.html#e13d">BuildShiftTables_ReverseBits</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E0FB.html#e13d">BuildShiftTables_ReverseBits</a> if there are any left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e143"></span>E143</td>
 <td class="instruction">LD (HL),E</td>
-<td class="comment-1" rowspan="3">Store the reversed byte, and loop back until all 256 have been done.</td>
+<td class="comment-1" rowspan="1">Store the byte turned round.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e144"></span>E144</td>
 <td class="instruction">INC L</td>
+<td class="comment-1" rowspan="1">Move on to the next byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="e145"></span>E145</td>
 <td class="instruction">JR NZ,<a href="E0FB.html#e13a">BuildShiftTables_ReverseTable</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="E0FB.html#e13a">BuildShiftTables_ReverseTable</a> if there are any left.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>

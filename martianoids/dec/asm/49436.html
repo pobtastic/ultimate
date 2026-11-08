@@ -113,7 +113,7 @@ Waits for the length of a rest, which is one to four times as long as the shorte
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the note</td>
+<td class="register-desc">The address of the rest</td>
 </tr>
 </table>
 <table class="output">
@@ -122,27 +122,38 @@ Waits for the length of a rest, which is one to four times as long as the shorte
 </tr>
 <tr>
 <td class="register">DE</td>
-<td class="register-desc">Address of the next note</td>
+<td class="register-desc">The address after the rest</td>
 </tr>
 </table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49436"></span>
+<div class="comments">
+<div class="paragraph">
+Work out the length of the rest in beats.
+</div>
+</div>
 </td>
 </tr>
 <tr>
 <td class="asm-label">PlayRest</td>
 <td class="address-2"><span id="49436"></span>49436</td>
 <td class="instruction">LD A,(DE)</td>
-<td class="comment-1" rowspan="2">Fetch the note and move on to the next one.</td>
+<td class="comment-1" rowspan="1">Fetch the rest.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49437"></span>49437</td>
 <td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move on to the next note.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49438"></span>49438</td>
 <td class="instruction">RLCA</td>
-<td class="comment-1" rowspan="2">Rotate the bits of the length to the bottom.</td>
+<td class="comment-1" rowspan="2">Rotate the length bits into the bottom of the byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -152,43 +163,54 @@ Waits for the length of a rest, which is one to four times as long as the shorte
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49440"></span>49440</td>
-<td class="instruction">AND 3</td>
-<td class="comment-1" rowspan="1">Keep them...</td>
+<td class="instruction">AND %00000011</td>
+<td class="comment-1" rowspan="1">Keep them.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49442"></span>49442</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="1">...and add one to give the length.</td>
+<td class="comment-1" rowspan="1">Add one to get the length in beats.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49443"></span>49443</td>
 <td class="instruction">LD L,A</td>
-<td class="comment-1" rowspan="1">Keep the length.</td>
+<td class="comment-1" rowspan="1">Copy the length into <span class="register">L</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49444"></span>49444</td>
 <td class="instruction">LD BC,17163</td>
-<td class="comment-1" rowspan="1">Set the time of the shortest rest.</td>
+<td class="comment-1" rowspan="1">Set the length of a beat.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49447"></span>
+<div class="comments">
+<div class="paragraph">
+Wait for each beat.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label">PlayRest_Loop</td>
 <td class="address-2"><span id="49447"></span>49447</td>
 <td class="instruction">PUSH BC</td>
-<td class="comment-1" rowspan="1">Save it.</td>
+<td class="comment-1" rowspan="1">Stash the length of a beat on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label">PlayRest_Wait</td>
 <td class="address-2"><span id="49448"></span>49448</td>
 <td class="instruction">DEC BC</td>
-<td class="comment-1" rowspan="4">Count it down to zero.</td>
+<td class="comment-1" rowspan="1">Count down.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49449"></span>49449</td>
 <td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="3">Jump to <a href="49436.html#49448">PlayRest_Wait</a> if the count is not zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -204,18 +226,29 @@ Waits for the length of a rest, which is one to four times as long as the shorte
 <td class="asm-label"></td>
 <td class="address-1"><span id="49453"></span>49453</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore it.</td>
+<td class="comment-1" rowspan="1">Retrieve the length of a beat.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="49454"></span>
+<div class="comments">
+<div class="paragraph">
+Loop back until the length has been counted down.
+</div>
+</div>
+</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49454"></span>49454</td>
 <td class="instruction">DEC L</td>
-<td class="comment-1" rowspan="2">Loop back until the length has been counted down.</td>
+<td class="comment-1" rowspan="1">Count down the beats.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="49455"></span>49455</td>
 <td class="instruction">JR NZ,<a href="49436.html#49447">PlayRest_Loop</a></td>
+<td class="comment-1" rowspan="1">Loop back until the rest is over.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
