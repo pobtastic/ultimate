@@ -274,8 +274,8 @@ W $5BC7,$02
 g $5BC9 Percent Complete
 @ $5BC9 label=PercentComplete
 D $5BC9 The percentage of the game that has been completed. It is stored as four
-. binary coded decimal digits, with the digits of hundreds at #N$5BC9 and the
-. digits of tens and units at #N$5BCA.
+. binary coded decimal digits, with the digits of hundreds at #R$5BC9 and the
+. digits of tens and units at #R$5BC9(#N$5BCA).
 B $5BC9,$02,$01
 
 g $5BCB Drawing List Pointer
@@ -338,7 +338,7 @@ B $5BE4,$04,$04 The object that has been carried for the longest time.
 
 g $5BE8 Rooms Visited Bitmap
 @ $5BE8 label=RoomsVisitedBitmap
-D $5BE8 A bit for each of the #N$100 rooms of the game, which is set when the
+D $5BE8 A bit for each of the #N$0100 rooms of the game, which is set when the
 . player has been in the room. The room number is split in two, with the top
 . five bits choosing the byte and the low three bits choosing the bit in the
 . byte. The bits are counted by #R$BC10 for the results screen.
@@ -394,14 +394,14 @@ S $60E8,$18,$18 The first part of the last object in the table.
 c $6100 Game Entry Point
 @ $6100 label=GameEntry
 D $6100 The first instruction run by the tape loader once the game has been
-. loaded. The game uses #N$5BA0 as the top of its stack, so the stack grows down
+. loaded. The game uses #R$5BA0 as the top of its stack, so the stack grows down
 . into the printer buffer, and then it jumps to #R$AF6C to start a new game.
 E $6100 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$6300 }
 . LIST#
   $6100,$01 Disable interrupts.
-  $6101,$03 Set the stack pointer to #N$5BA0.
+  $6101,$03 Set the stack pointer to #R$5BA0.
   $6104,$01 No operation.
   $6105,$03 Jump to #R$AF6C.
 
@@ -458,10 +458,10 @@ D $6251 The objects of each of the #N$80 rooms of the game, in a table of
 . (see #R$6BD1) and the number of times it is used, less one, in bits 0-2,
 . followed by a position for each time. A position has the X coordinate in bits
 . 0-2, the Y coordinate in bits 3-5 and the Z coordinate in bits 6-7, where each
-. step of X and Y is #N$10 from #N$48, and each step of Z is #N$0C above the
+. step of X and Y is #N$10 from #N($48), and each step of Z is #N$0C above the
 . floor.
 N $6251 Room #N$00.
-B $6251,$02,$01 Room #N$00, and the length of the entry.
+B $6251,$02,$01 Room #N($00), and the length of the entry.
 B $6253,$01 The colour is magenta and the size is #N$00.
 B $6254,$03,$01 Background objects: Arch North, Arch East, Walls Size 0.
 B $6257,$01 The end of the background objects.
@@ -471,7 +471,7 @@ B $6261,$08,$01 Block at (2,1,2), (2,0,0), (2,0,1), (2,0,2), (0,1,3), (1,0,3),
 . (0,0,3).
 B $6269,$02,$01 Dropping Block at (1,1,3).
 N $626B Room #N$01.
-B $626B,$02,$01 Room #N$01, and the length of the entry.
+B $626B,$02,$01 Room #N($01), and the length of the entry.
 B $626D,$01 The colour is green and the size is #N$02.
 B $626E,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $6271,$01 The end of the background objects.
@@ -480,12 +480,12 @@ B $6277,$05,$01 Gargoyle at (3,5,1), (4,5,1), (3,2,1), (4,2,1).
 B $627C,$02,$01 Guard East West at (4,3,0).
 B $627E,$02,$01 Ghost at (0,5,0).
 N $6280 Room #N$02.
-B $6280,$02,$01 Room #N$02, and the length of the entry.
+B $6280,$02,$01 Room #N($02), and the length of the entry.
 B $6282,$01 The colour is magenta and the size is #N$00.
 B $6283,$04,$01 Background objects: Arch North, Arch East, Arch West, Walls Size
 . 0.
 N $6287 Room #N$03.
-B $6287,$02,$01 Room #N$03, and the length of the entry.
+B $6287,$02,$01 Room #N($03), and the length of the entry.
 B $6289,$01 The colour is yellow and the size is #N$02.
 B $628A,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $628D,$01 The end of the background objects.
@@ -494,7 +494,7 @@ B $6293,$05,$01 Spikes at (3,4,0), (3,3,0), (4,4,0), (4,3,0).
 B $6298,$05,$01 Spiked Ball at (3,5,0), (4,5,0), (3,2,0), (4,2,0).
 B $629D,$05,$01 Collapsing Block at (3,4,1), (4,4,1), (3,3,1), (4,3,1).
 N $62A2 Room #N$04.
-B $62A2,$02,$01 Room #N$04, and the length of the entry.
+B $62A2,$02,$01 Room #N($04), and the length of the entry.
 B $62A4,$01 The colour is cyan and the size is #N$00.
 B $62A5,$03,$01 Background objects: Arch North, Arch West, Walls Size 0.
 B $62A8,$01 The end of the background objects.
@@ -502,7 +502,7 @@ B $62A9,$05,$01 Spikes at (3,4,0), (2,3,0), (4,3,0), (3,2,0).
 B $62AE,$04,$01 Collapsing Block at (2,3,1), (4,3,1), (3,2,1).
 B $62B2,$04,$01 Block at (3,4,1), (3,3,2), (3,3,3).
 N $62B6 Room #N$08.
-B $62B6,$02,$01 Room #N$08, and the length of the entry.
+B $62B6,$02,$01 Room #N($08), and the length of the entry.
 B $62B8,$01 The colour is magenta and the size is #N$00.
 B $62B9,$04,$01 Background objects: Tree Arch North, Tree Arch East, Trees Size
 . 0, Trees Size 1.
@@ -513,14 +513,14 @@ B $62C8,$05,$01 Spiked Ball at (3,4,1), (2,3,1), (4,3,1), (3,2,1).
 B $62CD,$02,$01 Bouncing Ball at (1,1,0).
 B $62CF,$02,$01 Moveable Block at (1,1,1).
 N $62D1 Room #N$09.
-B $62D1,$02,$01 Room #N$09, and the length of the entry.
+B $62D1,$02,$01 Room #N($09), and the length of the entry.
 B $62D3,$01 The colour is yellow and the size is #N$00.
 B $62D4,$06,$01 Background objects: Tree Arch East, Tree Arch West, Trees Size
 . 0, Trees Size 2, Gate East, Gate West.
 B $62DA,$01 The end of the background objects.
 B $62DB,$02,$01 Ghost at (3,4,0).
 N $62DD Room #N$0A.
-B $62DD,$02,$01 Room #N$0A, and the length of the entry.
+B $62DD,$02,$01 Room #N($0A), and the length of the entry.
 B $62DF,$01 The colour is magenta and the size is #N$00.
 B $62E0,$04,$01 Background objects: Tree Arch East, Tree Arch West, Trees Size
 . 0, Trees Size 2.
@@ -530,12 +530,12 @@ B $62EC,$09,$01 Spikes at (2,5,0), (3,5,0), (3,5,1), (4,5,0), (2,3,0), (3,3,0),
 . (3,3,1), (4,3,0).
 B $62F5,$02,$01 Table at (6,1,0).
 N $62F7 Room #N$0B.
-B $62F7,$02,$01 Room #N$0B, and the length of the entry.
+B $62F7,$02,$01 Room #N($0B), and the length of the entry.
 B $62F9,$01 The colour is yellow and the size is #N$00.
 B $62FA,$04,$01 Background objects: Tree Arch East, Tree Arch West, Trees Size
 . 0, Trees Size 2.
 N $62FE Room #N$0C.
-B $62FE,$02,$01 Room #N$0C, and the length of the entry.
+B $62FE,$02,$01 Room #N($0C), and the length of the entry.
 B $6300,$01 The colour is magenta and the size is #N$00.
 B $6301,$04,$01 Background objects: Tree Arch East, Tree Arch West, Trees Size
 . 0, Trees Size 2.
@@ -545,18 +545,18 @@ B $6306,$09,$01 Spikes at (5,7,0), (2,6,0), (0,5,0), (4,5,0), (7,5,0), (2,4,0),
 B $630F,$05,$01 Spikes at (2,2,0), (7,2,0), (5,1,0), (4,0,0).
 B $6314,$02,$01 Bouncing Ball at (4,4,0).
 N $6316 Room #N$0D.
-B $6316,$02,$01 Room #N$0D, and the length of the entry.
+B $6316,$02,$01 Room #N($0D), and the length of the entry.
 B $6318,$01 The colour is green and the size is #N$00.
 B $6319,$04,$01 Background objects: Arch North, Arch East, Arch West, Walls Size
 . 0.
 N $631D Room #N$0E.
-B $631D,$02,$01 Room #N$0E, and the length of the entry.
+B $631D,$02,$01 Room #N($0E), and the length of the entry.
 B $631F,$01 The colour is cyan and the size is #N$02.
 B $6320,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $6323,$01 The end of the background objects.
 B $6324,$05,$01 Fire North South at (2,2,0), (5,3,0), (4,5,0), (3,4,0).
 N $6329 Room #N$0F.
-B $6329,$02,$01 Room #N$0F, and the length of the entry.
+B $6329,$02,$01 Room #N($0F), and the length of the entry.
 B $632B,$01 The colour is green and the size is #N$00.
 B $632C,$03,$01 Background objects: Arch North, Arch West, Walls Size 0.
 B $632F,$01 The end of the background objects.
@@ -566,7 +566,7 @@ B $6339,$06,$01 Block at (5,3,1), (3,2,1), (4,2,1), (5,2,1), (4,3,0).
 B $633F,$05,$01 High Spiked Ball at (4,4,2), (3,3,2), (5,3,2), (4,2,2).
 B $6344,$02,$01 Collapsing Block at (4,3,2).
 N $6346 Room #N$10.
-B $6346,$02,$01 Room #N$10, and the length of the entry.
+B $6346,$02,$01 Room #N($10), and the length of the entry.
 B $6348,$01 The colour is cyan and the size is #N$01.
 B $6349,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -577,7 +577,7 @@ B $6356,$05,$01 High Spiked Ball at (5,0,1), (4,1,1), (3,1,1), (2,1,1).
 B $635B,$02,$01 Dropping Block at (2,0,3).
 B $635D,$02,$01 Fire North South at (2,3,1).
 N $635F Room #N$12.
-B $635F,$02,$01 Room #N$12, and the length of the entry.
+B $635F,$02,$01 Room #N($12), and the length of the entry.
 B $6361,$01 The colour is green and the size is #N$01.
 B $6362,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6365,$01 The end of the background objects.
@@ -586,7 +586,7 @@ B $6366,$09,$01 Spiked Ball at (2,7,3), (5,7,3), (3,6,3), (4,6,3), (3,5,3),
 B $636F,$09,$01 Spiked Ball at (3,3,3), (4,3,3), (3,2,3), (4,2,3), (3,1,3),
 . (4,1,3), (2,0,3), (5,0,3).
 N $6378 Room #N$14.
-B $6378,$02,$01 Room #N$14, and the length of the entry.
+B $6378,$02,$01 Room #N($14), and the length of the entry.
 B $637A,$01 The colour is yellow and the size is #N$01.
 B $637B,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -597,7 +597,7 @@ B $6383,$07,$01 Dropping Block at (2,0,3), (2,1,3), (2,2,3), (2,3,3), (3,3,3),
 B $638A,$06,$01 Dropping Block at (5,3,3), (5,4,3), (5,5,2), (5,6,1), (5,7,0).
 B $6390,$03,$01 Spikes at (3,1,0), (4,1,0).
 N $6393 Room #N$18.
-B $6393,$02,$01 Room #N$18, and the length of the entry.
+B $6393,$02,$01 Room #N($18), and the length of the entry.
 B $6395,$01 The colour is cyan and the size is #N$01.
 B $6396,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6399,$01 The end of the background objects.
@@ -605,7 +605,7 @@ B $639A,$09,$01 Spikes at (2,5,0), (3,5,0), (4,5,0), (5,5,0), (2,2,0), (3,2,0),
 . (4,2,0), (5,2,0).
 B $63A3,$02,$01 Bouncing Ball at (3,3,0).
 N $63A5 Room #N$1D.
-B $63A5,$02,$01 Room #N$1D, and the length of the entry.
+B $63A5,$02,$01 Room #N($1D), and the length of the entry.
 B $63A7,$01 The colour is yellow and the size is #N$01.
 B $63A8,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -617,7 +617,7 @@ B $63BA,$03,$01 Spikes at (4,2,0), (4,3,0).
 B $63BD,$02,$01 High Block at (4,1,0).
 B $63BF,$02,$01 Block North South at (4,2,1).
 N $63C1 Room #N$1F.
-B $63C1,$02,$01 Room #N$1F, and the length of the entry.
+B $63C1,$02,$01 Room #N($1F), and the length of the entry.
 B $63C3,$01 The colour is magenta and the size is #N$01.
 B $63C4,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $63C7,$01 The end of the background objects.
@@ -626,7 +626,7 @@ B $63CD,$09,$01 Spikes at (2,2,1), (3,2,0), (4,2,0), (5,2,1), (2,5,1), (3,5,0),
 . (4,5,0), (5,5,1).
 B $63D6,$03,$01 Ball Offset X at (3,2,2), (3,5,1).
 N $63D9 Room #N$20.
-B $63D9,$02,$01 Room #N$20, and the length of the entry.
+B $63D9,$02,$01 Room #N($20), and the length of the entry.
 B $63DB,$01 The colour is magenta and the size is #N$00.
 B $63DC,$05,$01 Background objects: Arch North, Arch East, High Arch South, High
 . Arch South Base, Walls Size 0.
@@ -635,7 +635,7 @@ B $63E2,$04,$01 Block at (0,3,0), (3,0,3), (4,0,3).
 B $63E6,$04,$01 Dropping Block at (0,2,1), (0,1,2), (0,0,3).
 B $63EA,$02,$01 Spikes at (2,0,0).
 N $63EC Room #N$21.
-B $63EC,$02,$01 Room #N$21, and the length of the entry.
+B $63EC,$02,$01 Room #N($21), and the length of the entry.
 B $63EE,$01 The colour is yellow and the size is #N$02.
 B $63EF,$04,$01 Background objects: High Arch East, High Arch East Base, Arch
 . West, Walls Size 1.
@@ -647,7 +647,7 @@ B $6402,$03,$01 Spikes at (4,4,2), (6,4,2).
 B $6405,$02,$01 Chest at (2,4,3).
 B $6407,$02,$01 Ball at (5,4,2).
 N $6409 Room #N$22.
-B $6409,$02,$01 Room #N$22, and the length of the entry.
+B $6409,$02,$01 Room #N($22), and the length of the entry.
 B $640B,$01 The colour is magenta and the size is #N$00.
 B $640C,$03,$01 Background objects: Arch South, Arch West, Walls Size 0.
 B $640F,$01 The end of the background objects.
@@ -657,7 +657,7 @@ B $6415,$09,$01 Spikes at (1,7,0), (2,7,0), (5,7,0), (6,7,0), (7,7,0), (3,6,0),
 B $641E,$04,$01 Spikes at (4,6,0), (4,5,0), (4,4,0).
 B $6422,$02,$01 Dropping Block at (3,7,3).
 N $6424 Room #N$24.
-B $6424,$02,$01 Room #N$24, and the length of the entry.
+B $6424,$02,$01 Room #N($24), and the length of the entry.
 B $6426,$01 The colour is magenta and the size is #N$00.
 B $6427,$03,$01 Background objects: Arch North, Arch South, Walls Size 0.
 B $642A,$01 The end of the background objects.
@@ -666,14 +666,14 @@ B $642B,$09,$01 Spikes at (2,0,0), (5,0,0), (2,1,0), (7,1,0), (0,2,0), (5,2,0),
 B $6434,$09,$01 Spikes at (4,3,0), (7,3,0), (0,5,0), (2,5,0), (4,5,0), (6,5,0),
 . (2,7,0), (5,7,0).
 N $643D Room #N$27.
-B $643D,$02,$01 Room #N$27, and the length of the entry.
+B $643D,$02,$01 Room #N($27), and the length of the entry.
 B $643F,$01 The colour is yellow and the size is #N$00.
 B $6440,$02,$01 Background objects: Arch North, Walls Size 0.
 B $6442,$01 The end of the background objects.
 B $6443,$05,$01 Block at (3,3,0), (4,3,0), (3,4,0), (4,4,0).
 B $6448,$05,$01 Ghost at (2,2,0), (5,2,0), (2,5,0), (5,5,0).
 N $644D Room #N$28.
-B $644D,$02,$01 Room #N$28, and the length of the entry.
+B $644D,$02,$01 Room #N($28), and the length of the entry.
 B $644F,$01 The colour is yellow and the size is #N$01.
 B $6450,$04,$01 Background objects: Arch North, High Arch South, Walls Size 2,
 . High Arch South Base.
@@ -682,7 +682,7 @@ B $6455,$03,$01 Table at (3,4,0), (3,4,1).
 B $6458,$03,$01 Spikes at (3,1,0), (4,1,0).
 B $645B,$03,$01 Block at (3,0,3), (4,0,3).
 N $645E Room #N$2D.
-B $645E,$02,$01 Room #N$2D, and the length of the entry.
+B $645E,$02,$01 Room #N($2D), and the length of the entry.
 B $6460,$01 The colour is green and the size is #N$00.
 B $6461,$04,$01 Background objects: High Arch East, Arch South, High Arch East
 . Base, Walls Size 0.
@@ -692,7 +692,7 @@ B $6466,$09,$01 Block at (7,3,3), (7,4,3), (3,2,0), (3,3,0), (3,4,0), (3,3,1),
 B $646F,$05,$01 Spikes at (6,3,0), (6,4,0), (2,4,0), (4,4,0).
 B $6474,$02,$01 Block East West at (3,4,3).
 N $6476 Room #N$2E.
-B $6476,$02,$01 Room #N$2E, and the length of the entry.
+B $6476,$02,$01 Room #N($2E), and the length of the entry.
 B $6478,$01 The colour is cyan and the size is #N$02.
 B $6479,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $647C,$01 The end of the background objects.
@@ -700,12 +700,12 @@ B $647D,$09,$01 Spikes at (3,5,0), (4,5,0), (2,4,0), (5,4,0), (2,3,0), (5,3,0),
 . (3,2,0), (4,2,0).
 B $6486,$02,$01 Guard Square at (3,4,0).
 N $6488 Room #N$2F.
-B $6488,$02,$01 Room #N$2F, and the length of the entry.
+B $6488,$02,$01 Room #N($2F), and the length of the entry.
 B $648A,$01 The colour is green and the size is #N$00.
 B $648B,$04,$01 Background objects: Arch North, Arch South, Arch West, Walls
 . Size 0.
 N $648F Room #N$30.
-B $648F,$02,$01 Room #N$30, and the length of the entry.
+B $648F,$02,$01 Room #N($30), and the length of the entry.
 B $6491,$01 The colour is cyan and the size is #N$01.
 B $6492,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6495,$01 The end of the background objects.
@@ -714,7 +714,7 @@ B $6496,$09,$01 Spikes at (3,6,0), (4,6,0), (2,5,0), (5,5,0), (2,4,0), (5,4,0),
 B $649F,$05,$01 Spikes at (2,2,0), (5,2,0), (3,1,0), (4,1,0).
 B $64A4,$02,$01 Bouncing Ball at (3,3,0).
 N $64A6 Room #N$34.
-B $64A6,$02,$01 Room #N$34, and the length of the entry.
+B $64A6,$02,$01 Room #N($34), and the length of the entry.
 B $64A8,$01 The colour is yellow and the size is #N$01.
 B $64A9,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $64AC,$01 The end of the background objects.
@@ -723,7 +723,7 @@ B $64AD,$09,$01 Table at (2,3,0), (3,3,0), (4,3,0), (5,3,0), (2,3,1), (3,3,1),
 B $64B6,$09,$01 Spiked Ball at (2,3,2), (3,3,2), (4,3,2), (5,3,2), (2,3,3),
 . (3,3,3), (4,3,3), (5,3,3).
 N $64BF Room #N$37.
-B $64BF,$02,$01 Room #N$37, and the length of the entry.
+B $64BF,$02,$01 Room #N($37), and the length of the entry.
 B $64C1,$01 The colour is cyan and the size is #N$01.
 B $64C2,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $64C5,$01 The end of the background objects.
@@ -731,7 +731,7 @@ B $64C6,$02,$01 Block North South at (4,2,0).
 B $64C8,$02,$01 Block at (4,5,0).
 B $64CA,$03,$01 Ghost at (5,4,0), (2,3,0).
 N $64CD Room #N$38.
-B $64CD,$02,$01 Room #N$38, and the length of the entry.
+B $64CD,$02,$01 Room #N($38), and the length of the entry.
 B $64CF,$01 The colour is magenta and the size is #N$01.
 B $64D0,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -740,7 +740,7 @@ B $64D5,$07,$01 Block at (2,7,1), (2,6,3), (2,3,3), (2,0,3), (3,0,3), (4,0,3).
 B $64DC,$05,$01 Collapsing Block at (2,5,3), (2,4,3), (2,2,3), (2,1,3).
 B $64E1,$06,$01 Spikes at (2,5,0), (2,4,0), (2,3,0), (2,2,0), (2,1,0).
 N $64E7 Room #N$3F.
-B $64E7,$02,$01 Room #N$3F, and the length of the entry.
+B $64E7,$02,$01 Room #N($3F), and the length of the entry.
 B $64E9,$01 The colour is magenta and the size is #N$00.
 B $64EA,$04,$01 Background objects: Tree Arch North, Tree Arch South, Trees Size
 . 0, Trees Size 1.
@@ -750,7 +750,7 @@ B $64EF,$09,$01 Rock at (0,3,0), (1,3,0), (2,3,0), (2,3,1), (5,3,0), (5,3,1),
 B $64F8,$07,$01 Spikes at (0,3,1), (1,3,1), (2,3,2), (5,3,2), (6,3,1), (7,3,1).
 B $64FF,$02,$01 Portcullis Along X at (3,3,0).
 N $6501 Room #N$40.
-B $6501,$02,$01 Room #N$40, and the length of the entry.
+B $6501,$02,$01 Room #N($40), and the length of the entry.
 B $6503,$01 The colour is yellow and the size is #N$00.
 B $6504,$05,$01 Background objects: High Arch East, High Arch South, High Arch
 . East Base, High Arch South Base, Walls Size 0.
@@ -759,7 +759,7 @@ B $650A,$07,$01 Block at (7,7,0), (6,0,0), (3,0,3), (4,0,3), (7,3,3), (7,4,3).
 B $6511,$02,$01 Guard Square at (0,7,0).
 B $6513,$02,$01 Moveable Block at (0,7,2).
 N $6515 Room #N$41.
-B $6515,$02,$01 Room #N$41, and the length of the entry.
+B $6515,$02,$01 Room #N($41), and the length of the entry.
 B $6517,$01 The colour is green and the size is #N$02.
 B $6518,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $651B,$01 The end of the background objects.
@@ -768,7 +768,7 @@ B $6523,$07,$01 Gargoyle at (2,2,1), (4,2,1), (6,2,1), (2,5,1), (4,5,1),
 . (6,5,1).
 B $652A,$03,$01 Fire North South at (5,2,0), (3,5,0).
 N $652D Room #N$42.
-B $652D,$02,$01 Room #N$42, and the length of the entry.
+B $652D,$02,$01 Room #N($42), and the length of the entry.
 B $652F,$01 The colour is cyan and the size is #N$00.
 B $6530,$03,$01 Background objects: Arch East, Arch West, Walls Size 0.
 B $6533,$01 The end of the background objects.
@@ -777,7 +777,7 @@ B $6537,$03,$01 Dropping Block at (3,4,1), (4,4,2).
 B $653A,$09,$01 Spikes at (2,2,0), (2,3,0), (2,4,0), (3,5,0), (4,5,0), (5,4,0),
 . (5,3,0), (4,2,0).
 N $6543 Room #N$43.
-B $6543,$02,$01 Room #N$43, and the length of the entry.
+B $6543,$02,$01 Room #N($43), and the length of the entry.
 B $6545,$01 The colour is yellow and the size is #N$02.
 B $6546,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $6549,$01 The end of the background objects.
@@ -787,12 +787,12 @@ B $6553,$05,$01 Block at (3,5,0), (4,5,0), (3,2,0), (4,2,0).
 B $6558,$05,$01 Spikes at (3,5,1), (4,5,1), (3,2,1), (4,2,1).
 B $655D,$02,$01 Ball Offset XY at (3,3,0).
 N $655F Room #N$44.
-B $655F,$02,$01 Room #N$44, and the length of the entry.
+B $655F,$02,$01 Room #N($44), and the length of the entry.
 B $6561,$01 The colour is green and the size is #N$00.
 B $6562,$05,$01 Background objects: Arch North, Arch East, Arch South, Arch
 . West, Walls Size 0.
 N $6567 Room #N$45.
-B $6567,$02,$01 Room #N$45, and the length of the entry.
+B $6567,$02,$01 Room #N($45), and the length of the entry.
 B $6569,$01 The colour is cyan and the size is #N$00.
 B $656A,$03,$01 Background objects: Arch East, Arch West, Walls Size 0.
 B $656D,$01 The end of the background objects.
@@ -803,7 +803,7 @@ B $657C,$05,$01 High Spiked Ball at (4,4,2), (3,3,2), (5,3,2), (4,2,2).
 B $6581,$02,$01 Collapsing Block at (4,3,2).
 B $6583,$02,$01 Spikes at (4,3,0).
 N $6585 Room #N$46.
-B $6585,$02,$01 Room #N$46, and the length of the entry.
+B $6585,$02,$01 Room #N($46), and the length of the entry.
 B $6587,$01 The colour is yellow and the size is #N$02.
 B $6588,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $658B,$01 The end of the background objects.
@@ -813,12 +813,12 @@ B $6595,$05,$01 Gargoyle at (5,4,1), (5,3,1), (3,4,1), (3,3,1).
 B $659A,$03,$01 Spiked Ball at (4,4,0), (4,3,0).
 B $659D,$05,$01 Collapsing Block at (4,4,2), (4,4,3), (4,3,2), (4,3,3).
 N $65A2 Room #N$47.
-B $65A2,$02,$01 Room #N$47, and the length of the entry.
+B $65A2,$02,$01 Room #N($47), and the length of the entry.
 B $65A4,$01 The colour is magenta and the size is #N$00.
 B $65A5,$04,$01 Background objects: Arch North, Arch South, Arch West, Walls
 . Size 0.
 N $65A9 Room #N$48.
-B $65A9,$02,$01 Room #N$48, and the length of the entry.
+B $65A9,$02,$01 Room #N($48), and the length of the entry.
 B $65AB,$01 The colour is yellow and the size is #N$01.
 B $65AC,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -829,7 +829,7 @@ B $65BA,$02,$01 Block at (4,5,2).
 B $65BC,$03,$01 Spikes at (3,1,0), (4,2,0).
 B $65BF,$02,$01 Block North South at (4,1,2).
 N $65C1 Room #N$4F.
-B $65C1,$02,$01 Room #N$4F, and the length of the entry.
+B $65C1,$02,$01 Room #N($4F), and the length of the entry.
 B $65C3,$01 The colour is yellow and the size is #N$00.
 B $65C4,$04,$01 Background objects: Tree Arch North, Tree Arch South, Trees Size
 . 0, Trees Size 1.
@@ -838,7 +838,7 @@ B $65C9,$09,$01 High Spiked Ball at (0,3,3), (1,3,3), (2,3,3), (3,3,3), (4,3,3),
 . (5,3,3), (6,3,3), (7,3,3).
 B $65D2,$05,$01 High Spiked Ball at (3,0,3), (4,0,3), (3,7,3), (4,7,3).
 N $65D7 Room #N$54.
-B $65D7,$02,$01 Room #N$54, and the length of the entry.
+B $65D7,$02,$01 Room #N($54), and the length of the entry.
 B $65D9,$01 The colour is cyan and the size is #N$01.
 B $65DA,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $65DD,$01 The end of the background objects.
@@ -847,7 +847,7 @@ B $65E1,$05,$01 Spikes at (2,3,0), (2,3,1), (5,4,0), (5,4,1).
 B $65E6,$05,$01 Spiked Ball at (3,2,0), (3,1,0), (4,5,0), (4,4,0).
 B $65EB,$03,$01 Block North South at (4,2,0), (3,4,0).
 N $65EE Room #N$57.
-B $65EE,$02,$01 Room #N$57, and the length of the entry.
+B $65EE,$02,$01 Room #N($57), and the length of the entry.
 B $65F0,$01 The colour is cyan and the size is #N$01.
 B $65F1,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $65F4,$01 The end of the background objects.
@@ -855,7 +855,7 @@ B $65F5,$09,$01 Block at (5,5,0), (5,5,1), (5,5,2), (4,4,0), (4,4,1), (4,4,2),
 . (3,3,0), (3,3,1).
 B $65FE,$05,$01 Block at (3,3,2), (2,2,0), (2,2,1), (2,2,2).
 N $6603 Room #N$58.
-B $6603,$02,$01 Room #N$58, and the length of the entry.
+B $6603,$02,$01 Room #N($58), and the length of the entry.
 B $6605,$01 The colour is cyan and the size is #N$01.
 B $6606,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -863,7 +863,7 @@ B $660A,$01 The end of the background objects.
 B $660B,$02,$01 Ghost at (5,3,0).
 B $660D,$02,$01 Moveable Block at (5,3,1).
 N $660F Room #N$5E.
-B $660F,$02,$01 Room #N$5E, and the length of the entry.
+B $660F,$02,$01 Room #N($5E), and the length of the entry.
 B $6611,$01 The colour is yellow and the size is #N$00.
 B $6612,$04,$01 Background objects: Tree Arch North, Tree Arch East, Trees Size
 . 0, Trees Size 1.
@@ -872,12 +872,12 @@ B $6617,$09,$01 Rock at (2,6,0), (5,6,0), (1,5,0), (6,5,0), (1,2,0), (6,2,0),
 . (2,1,0), (5,1,0).
 B $6620,$02,$01 Repel Spell at (5,5,0).
 N $6622 Room #N$5F.
-B $6622,$02,$01 Room #N$5F, and the length of the entry.
+B $6622,$02,$01 Room #N($5F), and the length of the entry.
 B $6624,$01 The colour is magenta and the size is #N$00.
 B $6625,$04,$01 Background objects: Tree Arch North, Tree Arch South, Tree Arch
 . West, Trees Size 0.
 N $6629 Room #N$64.
-B $6629,$02,$01 Room #N$64, and the length of the entry.
+B $6629,$02,$01 Room #N($64), and the length of the entry.
 B $662B,$01 The colour is yellow and the size is #N$01.
 B $662C,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -886,7 +886,7 @@ B $6631,$09,$01 Block at (3,0,0), (4,0,0), (3,1,0), (4,1,0), (3,4,0), (4,4,0),
 . (3,5,0), (4,5,0).
 B $663A,$02,$01 Chest at (3,4,1).
 N $663C Room #N$67.
-B $663C,$02,$01 Room #N$67, and the length of the entry.
+B $663C,$02,$01 Room #N($67), and the length of the entry.
 B $663E,$01 The colour is green and the size is #N$01.
 B $663F,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6642,$01 The end of the background objects.
@@ -895,7 +895,7 @@ B $6646,$05,$01 Spikes at (2,5,1), (5,5,1), (2,3,0), (5,3,0).
 B $664B,$02,$01 Portcullis Along X at (3,5,0).
 B $664D,$02,$01 Guard Square at (5,4,0).
 N $664F Room #N$68.
-B $664F,$02,$01 Room #N$68, and the length of the entry.
+B $664F,$02,$01 Room #N($68), and the length of the entry.
 B $6651,$01 The colour is magenta and the size is #N$01.
 B $6652,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6655,$01 The end of the background objects.
@@ -905,11 +905,11 @@ B $665F,$05,$01 Block at (2,6,0), (3,6,0), (4,6,0), (5,6,0).
 B $6664,$03,$01 Spikes at (2,6,1), (5,6,1).
 B $6667,$02,$01 Ball Offset XY at (3,4,2).
 N $6669 Room #N$6A.
-B $6669,$02,$01 Room #N$6A, and the length of the entry.
+B $6669,$02,$01 Room #N($6A), and the length of the entry.
 B $666B,$01 The colour is yellow and the size is #N$00.
 B $666C,$03,$01 Background objects: Arch North, Arch East, Walls Size 0.
 N $666F Room #N$6B.
-B $666F,$02,$01 Room #N$6B, and the length of the entry.
+B $666F,$02,$01 Room #N($6B), and the length of the entry.
 B $6671,$01 The colour is green and the size is #N$02.
 B $6672,$04,$01 Background objects: High Arch East, Arch West, High Arch East
 . Base, Walls Size 1.
@@ -917,7 +917,7 @@ B $6676,$01 The end of the background objects.
 B $6677,$07,$01 Block at (4,4,0), (4,3,0), (4,4,1), (4,3,1), (7,4,3), (7,3,3).
 B $667E,$03,$01 Fire North South at (6,2,3), (5,5,3).
 N $6681 Room #N$6C.
-B $6681,$02,$01 Room #N$6C, and the length of the entry.
+B $6681,$02,$01 Room #N($6C), and the length of the entry.
 B $6683,$01 The colour is magenta and the size is #N$02.
 B $6684,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $6687,$01 The end of the background objects.
@@ -926,7 +926,7 @@ B $6688,$09,$01 Chest at (3,5,0), (3,4,0), (3,3,0), (3,2,0), (3,5,1), (3,4,1),
 B $6691,$09,$01 High Spiked Ball at (3,5,2), (3,4,2), (3,3,2), (3,2,2), (3,5,3),
 . (3,4,3), (3,3,3), (3,2,3).
 N $669A Room #N$6D.
-B $669A,$02,$01 Room #N$6D, and the length of the entry.
+B $669A,$02,$01 Room #N($6D), and the length of the entry.
 B $669C,$01 The colour is yellow and the size is #N$00.
 B $669D,$04,$01 Background objects: Tree Arch East, Tree Arch West, Trees Size
 . 0, Trees Size 2.
@@ -937,12 +937,12 @@ B $66AB,$03,$01 Gargoyle at (4,2,3), (4,5,3).
 B $66AE,$02,$01 Table at (1,1,0).
 B $66B0,$02,$01 Guard East West at (6,3,0).
 N $66B2 Room #N$6E.
-B $66B2,$02,$01 Room #N$6E, and the length of the entry.
+B $66B2,$02,$01 Room #N($6E), and the length of the entry.
 B $66B4,$01 The colour is magenta and the size is #N$00.
 B $66B5,$05,$01 Background objects: Tree Arch East, Tree Arch South, Tree Arch
 . West, Trees Size 0, Trees Size 2.
 N $66BA Room #N$6F.
-B $66BA,$02,$01 Room #N$6F, and the length of the entry.
+B $66BA,$02,$01 Room #N($6F), and the length of the entry.
 B $66BC,$01 The colour is yellow and the size is #N$00.
 B $66BD,$04,$01 Background objects: Tree Arch South, Tree Arch West, Trees Size
 . 0, Trees Size 2.
@@ -951,7 +951,7 @@ B $66C2,$04,$01 Rock at (5,5,0), (6,5,0), (7,5,0).
 B $66C6,$04,$01 Gargoyle at (5,5,1), (6,5,1), (7,5,1).
 B $66CA,$05,$01 High Spiked Ball at (5,7,0), (5,6,0), (5,7,1), (5,6,1).
 N $66CF Room #N$74.
-B $66CF,$02,$01 Room #N$74, and the length of the entry.
+B $66CF,$02,$01 Room #N($74), and the length of the entry.
 B $66D1,$01 The colour is green and the size is #N$00.
 B $66D2,$03,$01 Background objects: Arch East, Arch South, Walls Size 0.
 B $66D5,$01 The end of the background objects.
@@ -960,7 +960,7 @@ B $66DA,$09,$01 Block at (2,7,0), (2,7,1), (2,6,0), (2,6,1), (0,5,0), (0,5,1),
 . (1,5,0), (1,5,1).
 B $66E3,$05,$01 Collapsing Block at (0,7,2), (1,7,2), (0,6,2), (1,6,2).
 N $66E8 Room #N$75.
-B $66E8,$02,$01 Room #N$75, and the length of the entry.
+B $66E8,$02,$01 Room #N($75), and the length of the entry.
 B $66EA,$01 The colour is magenta and the size is #N$02.
 B $66EB,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $66EE,$01 The end of the background objects.
@@ -968,7 +968,7 @@ B $66EF,$03,$01 Block at (3,4,0), (4,3,0).
 B $66F2,$03,$01 Spikes at (4,4,0), (3,3,0).
 B $66F5,$02,$01 Repel Spell at (3,5,0).
 N $66F7 Room #N$76.
-B $66F7,$02,$01 Room #N$76, and the length of the entry.
+B $66F7,$02,$01 Room #N($76), and the length of the entry.
 B $66F9,$01 The colour is yellow and the size is #N$02.
 B $66FA,$04,$01 Background objects: High Arch East, Arch West, High Arch East
 . Base, Walls Size 1.
@@ -977,12 +977,12 @@ B $66FF,$08,$01 Block at (7,3,3), (7,4,3), (7,5,3), (6,5,2), (5,5,1), (4,5,0),
 . (7,2,3).
 B $6707,$07,$01 Spikes at (6,2,0), (6,3,0), (6,4,0), (5,2,0), (5,3,0), (5,4,0).
 N $670E Room #N$77.
-B $670E,$02,$01 Room #N$77, and the length of the entry.
+B $670E,$02,$01 Room #N($77), and the length of the entry.
 B $6710,$01 The colour is magenta and the size is #N$00.
 B $6711,$05,$01 Background objects: Arch North, Arch East, Arch South, Arch
 . West, Walls Size 0.
 N $6716 Room #N$78.
-B $6716,$02,$01 Room #N$78, and the length of the entry.
+B $6716,$02,$01 Room #N($78), and the length of the entry.
 B $6718,$01 The colour is green and the size is #N$00.
 B $6719,$05,$01 Background objects: Arch North, Arch East, Arch South, Arch
 . West, Walls Size 0.
@@ -992,7 +992,7 @@ B $671F,$09,$01 Spikes at (1,7,0), (7,7,0), (5,6,0), (0,5,0), (4,5,0), (7,5,0),
 B $6728,$06,$01 Spikes at (1,2,0), (3,2,0), (2,1,0), (5,1,0), (6,1,0).
 B $672E,$02,$01 Guard Square at (7,2,0).
 N $6730 Room #N$79.
-B $6730,$02,$01 Room #N$79, and the length of the entry.
+B $6730,$02,$01 Room #N($79), and the length of the entry.
 B $6732,$01 The colour is magenta and the size is #N$02.
 B $6733,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $6736,$01 The end of the background objects.
@@ -1001,7 +1001,7 @@ B $673C,$09,$01 Spikes at (3,5,0), (4,5,0), (3,4,0), (4,4,0), (3,3,0), (4,3,0),
 . (3,2,0), (4,2,0).
 B $6745,$02,$01 Ball Offset XY at (3,3,3).
 N $6747 Room #N$7A.
-B $6747,$02,$01 Room #N$7A, and the length of the entry.
+B $6747,$02,$01 Room #N($7A), and the length of the entry.
 B $6749,$01 The colour is cyan and the size is #N$00.
 B $674A,$03,$01 Background objects: Arch South, Arch West, Walls Size 0.
 B $674D,$01 The end of the background objects.
@@ -1009,11 +1009,11 @@ B $674E,$06,$01 Block at (0,5,0), (0,6,1), (0,7,2), (1,7,2), (7,7,3).
 B $6754,$07,$01 Spikes at (2,7,2), (4,7,2), (6,7,2), (7,6,0), (7,5,0), (7,4,0).
 B $675B,$03,$01 Dropping Block at (3,7,3), (5,7,3).
 N $675E Room #N$83.
-B $675E,$02,$01 Room #N$83, and the length of the entry.
+B $675E,$02,$01 Room #N($83), and the length of the entry.
 B $6760,$01 The colour is yellow and the size is #N$00.
 B $6761,$03,$01 Background objects: Arch North, Arch East, Walls Size 0.
 N $6764 Room #N$84.
-B $6764,$02,$01 Room #N$84, and the length of the entry.
+B $6764,$02,$01 Room #N($84), and the length of the entry.
 B $6766,$01 The colour is cyan and the size is #N$02.
 B $6767,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $676A,$01 The end of the background objects.
@@ -1022,7 +1022,7 @@ B $676B,$09,$01 Block at (2,5,0), (2,5,1), (5,5,0), (5,5,1), (2,2,0), (2,2,1),
 B $6774,$05,$01 Gargoyle at (2,5,2), (5,5,2), (2,2,2), (5,2,2).
 B $6779,$03,$01 Ball Offset Y at (5,3,0), (2,3,2).
 N $677C Room #N$85.
-B $677C,$02,$01 Room #N$85, and the length of the entry.
+B $677C,$02,$01 Room #N($85), and the length of the entry.
 B $677E,$01 The colour is green and the size is #N$02.
 B $677F,$04,$01 Background objects: High Arch East, Arch West, High Arch East
 . Base, Walls Size 1.
@@ -1032,7 +1032,7 @@ B $678B,$09,$01 Spikes at (3,3,0), (3,4,0), (4,3,0), (4,4,0), (5,3,0), (5,4,0),
 . (6,3,0), (6,4,0).
 B $6794,$02,$01 Block North South at (3,3,3).
 N $6796 Room #N$86.
-B $6796,$02,$01 Room #N$86, and the length of the entry.
+B $6796,$02,$01 Room #N($86), and the length of the entry.
 B $6798,$01 The colour is magenta and the size is #N$02.
 B $6799,$04,$01 Background objects: High Arch East, Arch West, High Arch East
 . Base, Walls Size 1.
@@ -1040,7 +1040,7 @@ B $679D,$01 The end of the background objects.
 B $679E,$02,$01 Moveable Block at (3,4,1).
 B $67A0,$02,$01 Bouncing Ball at (3,4,0).
 N $67A2 Room #N$87.
-B $67A2,$02,$01 Room #N$87, and the length of the entry.
+B $67A2,$02,$01 Room #N($87), and the length of the entry.
 B $67A4,$01 The colour is cyan and the size is #N$00.
 B $67A5,$05,$01 Background objects: Arch North, Arch East, Arch South, Arch
 . West, Walls Size 0.
@@ -1050,7 +1050,7 @@ B $67B0,$05,$01 Spikes at (2,5,1), (5,5,1), (2,2,1), (5,2,1).
 B $67B5,$03,$01 Portcullis Along X at (3,5,0), (3,2,0).
 B $67B8,$03,$01 Portcullis Along Y at (2,3,0), (5,3,0).
 N $67BB Room #N$88.
-B $67BB,$02,$01 Room #N$88, and the length of the entry.
+B $67BB,$02,$01 Room #N($88), and the length of the entry.
 B $67BD,$01 The colour is yellow and the size is #N$00.
 B $67BE,$07,$01 Background objects: Arch North, Arch East, Arch South, Arch
 . West, Wizard, Cauldron, Walls Size 0.
@@ -1058,7 +1058,7 @@ B $67C5,$01 The end of the background objects.
 B $67C6,$09,$01 Block at (2,6,0), (1,5,0), (5,6,0), (6,5,0), (6,2,0), (5,1,0),
 . (1,2,0), (2,1,0).
 N $67CF Room #N$89.
-B $67CF,$02,$01 Room #N$89, and the length of the entry.
+B $67CF,$02,$01 Room #N($89), and the length of the entry.
 B $67D1,$01 The colour is cyan and the size is #N$02.
 B $67D2,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $67D5,$01 The end of the background objects.
@@ -1067,7 +1067,7 @@ B $67D6,$09,$01 Block at (4,5,0), (4,5,1), (4,5,2), (4,4,0), (4,3,0), (4,2,0),
 B $67DF,$03,$01 Gargoyle at (4,5,3), (4,2,3).
 B $67E2,$02,$01 Fire North South at (4,4,1).
 N $67E4 Room #N$8A.
-B $67E4,$02,$01 Room #N$8A, and the length of the entry.
+B $67E4,$02,$01 Room #N($8A), and the length of the entry.
 B $67E6,$01 The colour is magenta and the size is #N$02.
 B $67E7,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $67EA,$01 The end of the background objects.
@@ -1076,12 +1076,12 @@ B $67EB,$09,$01 High Block at (2,5,0), (2,4,0), (2,3,0), (2,2,0), (5,5,0),
 B $67F4,$09,$01 Spiked Ball at (2,5,3), (2,4,3), (2,3,3), (2,2,3), (5,5,3),
 . (5,4,3), (5,3,3), (5,2,3).
 N $67FD Room #N$8B.
-B $67FD,$02,$01 Room #N$8B, and the length of the entry.
+B $67FD,$02,$01 Room #N($8B), and the length of the entry.
 B $67FF,$01 The colour is cyan and the size is #N$00.
 B $6800,$04,$01 Background objects: Arch North, Arch East, Arch West, Walls Size
 . 0.
 N $6804 Room #N$8C.
-B $6804,$02,$01 Room #N$8C, and the length of the entry.
+B $6804,$02,$01 Room #N($8C), and the length of the entry.
 B $6806,$01 The colour is green and the size is #N$02.
 B $6807,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $680A,$01 The end of the background objects.
@@ -1091,7 +1091,7 @@ B $6814,$05,$01 Spikes at (2,5,2), (5,5,2), (2,2,2), (5,2,2).
 B $6819,$03,$01 Portcullis Along Y at (2,3,0), (5,3,0).
 B $681C,$02,$01 Guard East West at (3,3,0).
 N $681E Room #N$8D.
-B $681E,$02,$01 Room #N$8D, and the length of the entry.
+B $681E,$02,$01 Room #N($8D), and the length of the entry.
 B $6820,$01 The colour is cyan and the size is #N$00.
 B $6821,$03,$01 Background objects: Arch East, Arch West, Walls Size 0.
 B $6824,$01 The end of the background objects.
@@ -1102,7 +1102,7 @@ B $6833,$02,$01 High Block at (4,7,0).
 B $6835,$02,$01 Spikes at (4,4,0).
 B $6837,$02,$01 Ball Offset Y at (4,4,3).
 N $6839 Room #N$8E.
-B $6839,$02,$01 Room #N$8E, and the length of the entry.
+B $6839,$02,$01 Room #N($8E), and the length of the entry.
 B $683B,$01 The colour is magenta and the size is #N$02.
 B $683C,$04,$01 Background objects: High Arch East, Arch West, High Arch East
 . Base, Walls Size 1.
@@ -1110,11 +1110,11 @@ B $6840,$01 The end of the background objects.
 B $6841,$03,$01 Table at (3,4,0), (3,4,1).
 B $6844,$02,$01 Ghost at (3,5,0).
 N $6846 Room #N$8F.
-B $6846,$02,$01 Room #N$8F, and the length of the entry.
+B $6846,$02,$01 Room #N($8F), and the length of the entry.
 B $6848,$01 The colour is yellow and the size is #N$00.
 B $6849,$03,$01 Background objects: Arch North, Arch West, Walls Size 0.
 N $684C Room #N$93.
-B $684C,$02,$01 Room #N$93, and the length of the entry.
+B $684C,$02,$01 Room #N($93), and the length of the entry.
 B $684E,$01 The colour is green and the size is #N$01.
 B $684F,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6852,$01 The end of the background objects.
@@ -1123,14 +1123,14 @@ B $6853,$09,$01 Block at (2,3,0), (3,3,0), (4,3,0), (5,3,0), (2,3,1), (2,3,2),
 B $685C,$03,$01 Gargoyle at (2,3,3), (5,3,3).
 B $685F,$02,$01 Fire East West at (3,3,1).
 N $6861 Room #N$97.
-B $6861,$02,$01 Room #N$97, and the length of the entry.
+B $6861,$02,$01 Room #N($97), and the length of the entry.
 B $6863,$01 The colour is green and the size is #N$01.
 B $6864,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6867,$01 The end of the background objects.
 B $6868,$05,$01 Block at (2,3,0), (3,3,0), (4,3,0), (5,3,0).
 B $686D,$05,$01 Gargoyle at (2,3,1), (3,3,1), (4,3,1), (5,3,1).
 N $6872 Room #N$98.
-B $6872,$02,$01 Room #N$98, and the length of the entry.
+B $6872,$02,$01 Room #N($98), and the length of the entry.
 B $6874,$01 The colour is magenta and the size is #N$01.
 B $6875,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6878,$01 The end of the background objects.
@@ -1140,7 +1140,7 @@ B $687F,$09,$01 Spikes at (2,4,0), (3,4,0), (4,4,0), (5,4,0), (2,3,0), (3,3,0),
 . (4,3,0), (5,3,0).
 B $6888,$05,$01 Collapsing Block at (3,4,2), (4,4,2), (3,3,2), (4,3,2).
 N $688D Room #N$9B.
-B $688D,$02,$01 Room #N$9B, and the length of the entry.
+B $688D,$02,$01 Room #N($9B), and the length of the entry.
 B $688F,$01 The colour is magenta and the size is #N$01.
 B $6890,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -1151,7 +1151,7 @@ B $689E,$02,$01 Block North South at (5,3,3).
 B $68A0,$02,$01 Block East West at (3,3,3).
 B $68A2,$03,$01 Spikes at (4,3,0), (5,3,0).
 N $68A5 Room #N$9F.
-B $68A5,$02,$01 Room #N$9F, and the length of the entry.
+B $68A5,$02,$01 Room #N($9F), and the length of the entry.
 B $68A7,$01 The colour is cyan and the size is #N$01.
 B $68A8,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $68AB,$01 The end of the background objects.
@@ -1160,7 +1160,7 @@ B $68AC,$09,$01 Block at (2,3,0), (3,3,0), (4,3,0), (5,3,0), (2,3,1), (3,3,1),
 B $68B5,$05,$01 Block at (2,3,2), (3,3,2), (4,3,2), (5,3,2).
 B $68BA,$04,$01 Spikes at (3,3,3), (4,3,3), (5,3,3).
 N $68BE Room #N$A3.
-B $68BE,$02,$01 Room #N$A3, and the length of the entry.
+B $68BE,$02,$01 Room #N($A3), and the length of the entry.
 B $68C0,$01 The colour is magenta and the size is #N$01.
 B $68C1,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -1171,11 +1171,11 @@ B $68D2,$05,$01 Spiked Ball at (2,2,1), (4,2,1), (3,4,1), (5,4,1).
 B $68D7,$02,$01 Bouncing Ball at (5,6,0).
 B $68D9,$02,$01 Moveable Block at (5,6,1).
 N $68DB Room #N$A7.
-B $68DB,$02,$01 Room #N$A7, and the length of the entry.
+B $68DB,$02,$01 Room #N($A7), and the length of the entry.
 B $68DD,$01 The colour is magenta and the size is #N$00.
 B $68DE,$03,$01 Background objects: Arch North, Arch South, Walls Size 0.
 N $68E1 Room #N$A8.
-B $68E1,$02,$01 Room #N$A8, and the length of the entry.
+B $68E1,$02,$01 Room #N($A8), and the length of the entry.
 B $68E3,$01 The colour is yellow and the size is #N$00.
 B $68E4,$02,$01 Background objects: Arch South, Walls Size 0.
 B $68E6,$01 The end of the background objects.
@@ -1184,7 +1184,7 @@ B $68E7,$09,$01 Block at (2,5,0), (2,5,1), (2,6,0), (2,6,1), (2,6,2), (2,6,3),
 B $68F0,$07,$01 Block at (6,6,2), (6,6,3), (6,2,0), (6,2,1), (6,2,2), (6,2,3).
 B $68F7,$03,$01 Spikes at (5,6,0), (6,3,0).
 N $68FA Room #N$AA.
-B $68FA,$02,$01 Room #N$AA, and the length of the entry.
+B $68FA,$02,$01 Room #N($AA), and the length of the entry.
 B $68FC,$01 The colour is magenta and the size is #N$00.
 B $68FD,$03,$01 Background objects: Arch North, Arch East, Walls Size 0.
 B $6900,$01 The end of the background objects.
@@ -1194,12 +1194,12 @@ B $690A,$04,$01 Block at (1,4,1), (0,5,0), (0,5,1).
 B $690E,$03,$01 Spikes at (0,5,2), (1,4,2).
 B $6911,$02,$01 Dropping Block at (0,4,3).
 N $6913 Room #N$AB.
-B $6913,$02,$01 Room #N$AB, and the length of the entry.
+B $6913,$02,$01 Room #N($AB), and the length of the entry.
 B $6915,$01 The colour is green and the size is #N$00.
 B $6916,$04,$01 Background objects: Arch North, Arch South, Arch West, Walls
 . Size 0.
 N $691A Room #N$AF.
-B $691A,$02,$01 Room #N$AF, and the length of the entry.
+B $691A,$02,$01 Room #N($AF), and the length of the entry.
 B $691C,$01 The colour is green and the size is #N$01.
 B $691D,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 2.
@@ -1207,12 +1207,12 @@ B $6921,$01 The end of the background objects.
 B $6922,$05,$01 Block at (3,3,0), (4,3,0), (3,6,0), (4,6,0).
 B $6927,$02,$01 Chest at (4,6,1).
 N $6929 Room #N$B3.
-B $6929,$02,$01 Room #N$B3, and the length of the entry.
+B $6929,$02,$01 Room #N($B3), and the length of the entry.
 B $692B,$01 The colour is yellow and the size is #N$00.
 B $692C,$04,$01 Background objects: Arch North, Arch East, Arch South, Walls
 . Size 0.
 N $6930 Room #N$B4.
-B $6930,$02,$01 Room #N$B4, and the length of the entry.
+B $6930,$02,$01 Room #N($B4), and the length of the entry.
 B $6932,$01 The colour is green and the size is #N$00.
 B $6933,$02,$01 Background objects: Arch West, Walls Size 0.
 B $6935,$01 The end of the background objects.
@@ -1221,14 +1221,14 @@ B $6936,$09,$01 Block at (3,2,0), (4,2,0), (5,2,0), (3,3,0), (3,4,0), (3,4,1),
 B $693F,$02,$01 Chest at (5,2,1).
 B $6941,$03,$01 Table at (6,5,0), (6,5,1).
 N $6944 Room #N$B7.
-B $6944,$02,$01 Room #N$B7, and the length of the entry.
+B $6944,$02,$01 Room #N($B7), and the length of the entry.
 B $6946,$01 The colour is green and the size is #N$01.
 B $6947,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $694A,$01 The end of the background objects.
 B $694B,$05,$01 Block at (3,6,0), (4,6,0), (3,1,0), (4,1,0).
 B $6950,$03,$01 Ghost at (3,4,0), (4,3,0).
 N $6953 Room #N$BA.
-B $6953,$02,$01 Room #N$BA, and the length of the entry.
+B $6953,$02,$01 Room #N($BA), and the length of the entry.
 B $6955,$01 The colour is cyan and the size is #N$00.
 B $6956,$03,$01 Background objects: Arch East, Arch South, Walls Size 0.
 B $6959,$01 The end of the background objects.
@@ -1237,14 +1237,14 @@ B $6961,$09,$01 Spikes at (2,5,0), (2,4,0), (2,4,1), (2,4,2), (2,3,0), (4,5,0),
 . (4,4,0), (4,4,1).
 B $696A,$03,$01 Spikes at (4,4,2), (4,3,0).
 N $696D Room #N$BB.
-B $696D,$02,$01 Room #N$BB, and the length of the entry.
+B $696D,$02,$01 Room #N($BB), and the length of the entry.
 B $696F,$01 The colour is yellow and the size is #N$00.
 B $6970,$03,$01 Background objects: Arch South, Arch West, Walls Size 0.
 B $6973,$01 The end of the background objects.
 B $6974,$02,$01 Ghost at (4,4,0).
 B $6976,$03,$01 Moveable Block at (4,4,1), (4,4,2).
 N $6979 Room #N$BF.
-B $6979,$02,$01 Room #N$BF, and the length of the entry.
+B $6979,$02,$01 Room #N($BF), and the length of the entry.
 B $697B,$01 The colour is magenta and the size is #N$00.
 B $697C,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 0.
@@ -1256,7 +1256,7 @@ B $6990,$03,$01 Spikes at (4,2,0), (4,1,0).
 B $6993,$02,$01 Bouncing Ball at (7,7,1).
 B $6995,$02,$01 Moveable Block at (7,7,2).
 N $6997 Room #N$C3.
-B $6997,$02,$01 Room #N$C3, and the length of the entry.
+B $6997,$02,$01 Room #N($C3), and the length of the entry.
 B $6999,$01 The colour is magenta and the size is #N$01.
 B $699A,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $699D,$01 The end of the background objects.
@@ -1264,7 +1264,7 @@ B $699E,$09,$01 Block at (2,3,0), (3,3,0), (4,3,0), (5,3,0), (2,3,1), (3,3,1),
 . (4,3,1), (5,3,1).
 B $69A7,$05,$01 Block at (2,3,2), (3,3,2), (4,3,2), (5,3,2).
 N $69AC Room #N$C7.
-B $69AC,$02,$01 Room #N$C7, and the length of the entry.
+B $69AC,$02,$01 Room #N($C7), and the length of the entry.
 B $69AE,$01 The colour is cyan and the size is #N$00.
 B $69AF,$04,$01 Background objects: Arch North, High Arch South, High Arch South
 . Base, Walls Size 0.
@@ -1272,14 +1272,14 @@ B $69B3,$01 The end of the background objects.
 B $69B4,$02,$01 Moveable Block at (3,3,1).
 B $69B6,$02,$01 Ghost at (3,3,0).
 N $69B8 Room #N$CF.
-B $69B8,$02,$01 Room #N$CF, and the length of the entry.
+B $69B8,$02,$01 Room #N($CF), and the length of the entry.
 B $69BA,$01 The colour is green and the size is #N$01.
 B $69BB,$05,$01 Background objects: Arch North, Arch South, Gate North, Gate
 . South, Walls Size 2.
 B $69C0,$01 The end of the background objects.
 B $69C1,$02,$01 Ghost at (4,3,0).
 N $69C3 Room #N$D0.
-B $69C3,$02,$01 Room #N$D0, and the length of the entry.
+B $69C3,$02,$01 Room #N($D0), and the length of the entry.
 B $69C5,$01 The colour is cyan and the size is #N$00.
 B $69C6,$03,$01 Background objects: Arch North, Arch East, Walls Size 0.
 B $69C9,$01 The end of the background objects.
@@ -1288,7 +1288,7 @@ B $69CA,$09,$01 Block at (3,0,0), (2,0,1), (1,0,2), (0,0,3), (0,1,3), (0,2,3),
 B $69D3,$05,$01 Block at (4,3,0), (4,3,1), (4,3,2), (4,3,3).
 B $69D8,$05,$01 Spikes at (3,3,0), (4,4,0), (5,3,0), (4,2,0).
 N $69DD Room #N$D1.
-B $69DD,$02,$01 Room #N$D1, and the length of the entry.
+B $69DD,$02,$01 Room #N($D1), and the length of the entry.
 B $69DF,$01 The colour is green and the size is #N$02.
 B $69E0,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $69E3,$01 The end of the background objects.
@@ -1296,7 +1296,7 @@ B $69E4,$02,$01 Guard Square at (6,2,0).
 B $69E6,$09,$01 Spikes at (6,3,0), (6,4,0), (3,3,0), (4,3,0), (3,4,0), (4,4,0),
 . (1,3,0), (1,4,0).
 N $69EF Room #N$D2.
-B $69EF,$02,$01 Room #N$D2, and the length of the entry.
+B $69EF,$02,$01 Room #N($D2), and the length of the entry.
 B $69F1,$01 The colour is cyan and the size is #N$00.
 B $69F2,$03,$01 Background objects: Arch North, Arch West, Walls Size 0.
 B $69F5,$01 The end of the background objects.
@@ -1305,7 +1305,7 @@ B $69F6,$09,$01 Block at (3,0,0), (7,4,0), (4,0,1), (7,3,1), (5,0,2), (7,2,2),
 B $69FF,$03,$01 Block at (6,1,3), (7,0,3).
 B $6A02,$03,$01 High Spiked Ball at (7,1,0), (6,0,0).
 N $6A05 Room #N$D3.
-B $6A05,$02,$01 Room #N$D3, and the length of the entry.
+B $6A05,$02,$01 Room #N($D3), and the length of the entry.
 B $6A07,$01 The colour is cyan and the size is #N$01.
 B $6A08,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6A0B,$01 The end of the background objects.
@@ -1314,7 +1314,7 @@ B $6A0F,$05,$01 Spikes at (2,5,1), (5,5,1), (2,3,0), (5,3,0).
 B $6A14,$02,$01 Portcullis Along X at (3,5,0).
 B $6A16,$02,$01 Guard Square at (5,4,0).
 N $6A18 Room #N$D6.
-B $6A18,$02,$01 Room #N$D6, and the length of the entry.
+B $6A18,$02,$01 Room #N($D6), and the length of the entry.
 B $6A1A,$01 The colour is yellow and the size is #N$00.
 B $6A1B,$04,$01 Background objects: Tree Arch North, Tree Arch East, Trees Size
 . 0, Trees Size 1.
@@ -1324,7 +1324,7 @@ B $6A20,$09,$01 Rock at (4,5,0), (4,5,1), (4,5,2), (4,5,3), (4,4,0), (4,3,0),
 B $6A29,$02,$01 Rock at (4,2,2).
 B $6A2B,$03,$01 Ball Offset Y at (5,3,1), (3,3,0).
 N $6A2E Room #N$D7.
-B $6A2E,$02,$01 Room #N$D7, and the length of the entry.
+B $6A2E,$02,$01 Room #N($D7), and the length of the entry.
 B $6A30,$01 The colour is magenta and the size is #N$00.
 B $6A31,$05,$01 Background objects: Tree Arch North, Tree Arch East, Tree Arch
 . South, Tree Arch West, Trees Size 0.
@@ -1332,17 +1332,17 @@ B $6A36,$01 The end of the background objects.
 B $6A37,$03,$01 Fire North South at (3,3,0), (4,4,0).
 B $6A3A,$03,$01 Fire East West at (3,4,0), (4,3,0).
 N $6A3D Room #N$D8.
-B $6A3D,$02,$01 Room #N$D8, and the length of the entry.
+B $6A3D,$02,$01 Room #N($D8), and the length of the entry.
 B $6A3F,$01 The colour is magenta and the size is #N$00.
 B $6A40,$04,$01 Background objects: Tree Arch North, Tree Arch East, Tree Arch
 . West, Trees Size 0.
 N $6A44 Room #N$D9.
-B $6A44,$02,$01 Room #N$D9, and the length of the entry.
+B $6A44,$02,$01 Room #N($D9), and the length of the entry.
 B $6A46,$01 The colour is yellow and the size is #N$00.
 B $6A47,$03,$01 Background objects: Tree Arch North, Tree Arch West, Trees Size
 . 0.
 N $6A4A Room #N$DD.
-B $6A4A,$02,$01 Room #N$DD, and the length of the entry.
+B $6A4A,$02,$01 Room #N($DD), and the length of the entry.
 B $6A4C,$01 The colour is yellow and the size is #N$00.
 B $6A4D,$04,$01 Background objects: Arch North, High Arch East, High Arch East
 . Base, Walls Size 0.
@@ -1351,11 +1351,11 @@ B $6A52,$03,$01 Block at (7,4,3), (7,3,3).
 B $6A55,$05,$01 High Block at (7,5,0), (6,4,0), (6,3,0), (7,2,0).
 B $6A5A,$05,$01 Table at (2,3,0), (2,3,1), (2,3,2), (2,3,3).
 N $6A5F Room #N$DE.
-B $6A5F,$02,$01 Room #N$DE, and the length of the entry.
+B $6A5F,$02,$01 Room #N($DE), and the length of the entry.
 B $6A61,$01 The colour is magenta and the size is #N$02.
 B $6A62,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 N $6A65 Room #N$DF.
-B $6A65,$02,$01 Room #N$DF, and the length of the entry.
+B $6A65,$02,$01 Room #N($DF), and the length of the entry.
 B $6A67,$01 The colour is yellow and the size is #N$00.
 B $6A68,$04,$01 Background objects: Arch North, Arch South, Arch West, Walls
 . Size 0.
@@ -1364,7 +1364,7 @@ B $6A6D,$06,$01 Block at (3,3,0), (3,3,1), (3,3,2), (3,3,3), (2,4,3).
 B $6A73,$05,$01 Spikes at (3,2,0), (4,3,0), (3,4,0), (2,3,0).
 B $6A78,$04,$01 Collapsing Block at (2,2,0), (4,2,1), (4,4,2).
 N $6A7C Room #N$E0.
-B $6A7C,$02,$01 Room #N$E0, and the length of the entry.
+B $6A7C,$02,$01 Room #N($E0), and the length of the entry.
 B $6A7E,$01 The colour is yellow and the size is #N$01.
 B $6A7F,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6A82,$01 The end of the background objects.
@@ -1372,7 +1372,7 @@ B $6A83,$09,$01 Spikes at (2,7,0), (5,7,0), (3,5,0), (4,5,0), (3,2,0), (4,2,0),
 . (2,0,0), (5,0,0).
 B $6A8C,$02,$01 Repel Spell at (4,4,0).
 N $6A8E Room #N$E2.
-B $6A8E,$02,$01 Room #N$E2, and the length of the entry.
+B $6A8E,$02,$01 Room #N($E2), and the length of the entry.
 B $6A90,$01 The colour is yellow and the size is #N$01.
 B $6A91,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6A94,$01 The end of the background objects.
@@ -1381,7 +1381,7 @@ B $6A95,$09,$01 Spiked Ball at (5,0,0), (2,1,0), (4,1,0), (3,2,0), (5,2,0),
 B $6A9E,$07,$01 Spiked Ball at (5,4,0), (2,5,0), (4,5,0), (3,6,0), (5,6,0),
 . (2,7,0).
 N $6AA5 Room #N$E3.
-B $6AA5,$02,$01 Room #N$E3, and the length of the entry.
+B $6AA5,$02,$01 Room #N($E3), and the length of the entry.
 B $6AA7,$01 The colour is yellow and the size is #N$01.
 B $6AA8,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6AAB,$01 The end of the background objects.
@@ -1391,12 +1391,12 @@ B $6AB5,$05,$01 Dropping Block at (2,6,1), (5,6,1), (2,7,0), (5,7,0).
 B $6ABA,$05,$01 Collapsing Block at (2,3,3), (5,3,3), (2,4,3), (5,4,3).
 B $6ABF,$02,$01 Ball Offset XY at (3,3,0).
 N $6AC1 Room #N$E6.
-B $6AC1,$02,$01 Room #N$E6, and the length of the entry.
+B $6AC1,$02,$01 Room #N($E6), and the length of the entry.
 B $6AC3,$01 The colour is magenta and the size is #N$00.
 B $6AC4,$05,$01 Background objects: Tree Arch North, Tree Arch East, Tree Arch
 . South, Trees Size 0, Trees Size 1.
 N $6AC9 Room #N$E7.
-B $6AC9,$02,$01 Room #N$E7, and the length of the entry.
+B $6AC9,$02,$01 Room #N($E7), and the length of the entry.
 B $6ACB,$01 The colour is yellow and the size is #N$00.
 B $6ACC,$05,$01 Background objects: Tree Arch North, Tree Arch East, Tree Arch
 . South, Tree Arch West, Trees Size 0.
@@ -1404,7 +1404,7 @@ B $6AD1,$01 The end of the background objects.
 B $6AD2,$09,$01 Spikes at (3,6,0), (4,6,0), (1,4,0), (1,3,0), (6,4,0), (6,3,0),
 . (3,1,0), (4,1,0).
 N $6ADB Room #N$E8.
-B $6ADB,$02,$01 Room #N$E8, and the length of the entry.
+B $6ADB,$02,$01 Room #N($E8), and the length of the entry.
 B $6ADD,$01 The colour is yellow and the size is #N$00.
 B $6ADE,$05,$01 Background objects: Tree Arch North, Tree Arch East, Tree Arch
 . South, Tree Arch West, Trees Size 0.
@@ -1413,12 +1413,12 @@ B $6AE4,$09,$01 Rock at (3,6,0), (1,4,0), (3,4,0), (3,4,1), (3,4,2), (3,4,3),
 . (5,4,0), (3,2,0).
 B $6AED,$05,$01 Spikes at (3,5,0), (4,4,0), (3,3,0), (2,4,0).
 N $6AF2 Room #N$E9.
-B $6AF2,$02,$01 Room #N$E9, and the length of the entry.
+B $6AF2,$02,$01 Room #N($E9), and the length of the entry.
 B $6AF4,$01 The colour is magenta and the size is #N$00.
 B $6AF5,$04,$01 Background objects: Tree Arch North, Tree Arch South, Tree Arch
 . West, Trees Size 0.
 N $6AF9 Room #N$ED.
-B $6AF9,$02,$01 Room #N$ED, and the length of the entry.
+B $6AF9,$02,$01 Room #N($ED), and the length of the entry.
 B $6AFB,$01 The colour is green and the size is #N$01.
 B $6AFC,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 B $6AFF,$01 The end of the background objects.
@@ -1426,11 +1426,11 @@ B $6B00,$09,$01 Block at (2,3,0), (3,3,0), (4,3,0), (5,3,0), (2,3,1), (3,3,1),
 . (4,3,1), (5,3,1).
 B $6B09,$05,$01 Block at (2,3,2), (3,3,2), (4,3,2), (5,3,2).
 N $6B0E Room #N$EF.
-B $6B0E,$02,$01 Room #N$EF, and the length of the entry.
+B $6B0E,$02,$01 Room #N($EF), and the length of the entry.
 B $6B10,$01 The colour is cyan and the size is #N$01.
 B $6B11,$03,$01 Background objects: Arch North, Arch South, Walls Size 2.
 N $6B14 Room #N$F0.
-B $6B14,$02,$01 Room #N$F0, and the length of the entry.
+B $6B14,$02,$01 Room #N($F0), and the length of the entry.
 B $6B16,$01 The colour is cyan and the size is #N$00.
 B $6B17,$05,$01 Background objects: High Arch East, High Arch South, High Arch
 . East Base, High Arch South Base, Walls Size 0.
@@ -1441,19 +1441,19 @@ B $6B26,$05,$01 Block at (1,0,3), (2,0,3), (3,0,3), (4,0,3).
 B $6B2B,$03,$01 Spikes at (1,7,0), (3,7,0).
 B $6B2E,$02,$01 Block East West at (3,7,3).
 N $6B30 Room #N$F1.
-B $6B30,$02,$01 Room #N$F1, and the length of the entry.
+B $6B30,$02,$01 Room #N($F1), and the length of the entry.
 B $6B32,$01 The colour is magenta and the size is #N$02.
 B $6B33,$05,$01 Background objects: Arch East, Arch West, Gate East, Gate West,
 . Walls Size 1.
 B $6B38,$01 The end of the background objects.
 B $6B39,$02,$01 Bouncing Ball at (3,4,0).
 N $6B3B Room #N$F2.
-B $6B3B,$02,$01 Room #N$F2, and the length of the entry.
+B $6B3B,$02,$01 Room #N($F2), and the length of the entry.
 B $6B3D,$01 The colour is cyan and the size is #N$00.
 B $6B3E,$04,$01 Background objects: Arch East, Arch South, Arch West, Walls Size
 . 0.
 N $6B42 Room #N$F3.
-B $6B42,$02,$01 Room #N$F3, and the length of the entry.
+B $6B42,$02,$01 Room #N($F3), and the length of the entry.
 B $6B44,$01 The colour is magenta and the size is #N$00.
 B $6B45,$03,$01 Background objects: Arch South, Arch West, Walls Size 0.
 B $6B48,$01 The end of the background objects.
@@ -1463,7 +1463,7 @@ B $6B52,$03,$01 Block at (3,6,2), (3,7,2).
 B $6B55,$02,$01 Ghost at (3,6,0).
 B $6B57,$03,$01 Chest at (3,5,0), (3,5,1).
 N $6B5A Room #N$F6.
-B $6B5A,$02,$01 Room #N$F6, and the length of the entry.
+B $6B5A,$02,$01 Room #N($F6), and the length of the entry.
 B $6B5C,$01 The colour is yellow and the size is #N$00.
 B $6B5D,$05,$01 Background objects: Tree Arch East, Tree Arch South, Trees Size
 . 0, Trees Size 1, Trees Size 2.
@@ -1473,7 +1473,7 @@ B $6B68,$02,$01 Collapsing Block at (4,3,0).
 B $6B6A,$02,$01 Chest at (2,2,0).
 B $6B6C,$02,$01 Table at (4,6,0).
 N $6B6E Room #N$F7.
-B $6B6E,$02,$01 Room #N$F7, and the length of the entry.
+B $6B6E,$02,$01 Room #N($F7), and the length of the entry.
 B $6B70,$01 The colour is magenta and the size is #N$00.
 B $6B71,$05,$01 Background objects: Tree Arch East, Tree Arch South, Tree Arch
 . West, Trees Size 0, Trees Size 2.
@@ -1483,12 +1483,12 @@ B $6B77,$09,$01 Rock at (2,4,0), (3,4,0), (4,4,0), (2,3,0), (4,3,0), (2,2,0),
 B $6B80,$02,$01 Bouncing Ball at (3,3,0).
 B $6B82,$02,$01 Chest at (3,3,1).
 N $6B84 Room #N$F8.
-B $6B84,$02,$01 Room #N$F8, and the length of the entry.
+B $6B84,$02,$01 Room #N($F8), and the length of the entry.
 B $6B86,$01 The colour is magenta and the size is #N$00.
 B $6B87,$05,$01 Background objects: Tree Arch East, Tree Arch South, Tree Arch
 . West, Trees Size 0, Trees Size 2.
 N $6B8C Room #N$F9.
-B $6B8C,$02,$01 Room #N$F9, and the length of the entry.
+B $6B8C,$02,$01 Room #N($F9), and the length of the entry.
 B $6B8E,$01 The colour is yellow and the size is #N$00.
 B $6B8F,$04,$01 Background objects: Tree Arch South, Tree Arch West, Trees Size
 . 0, Trees Size 2.
@@ -1497,7 +1497,7 @@ B $6B94,$09,$01 High Spiked Ball at (7,7,3), (6,7,3), (6,6,3), (7,6,3), (5,7,3),
 . (7,5,3), (3,0,3), (4,0,3).
 B $6B9D,$03,$01 High Spiked Ball at (0,3,3), (0,4,3).
 N $6BA0 Room #N$FD.
-B $6BA0,$02,$01 Room #N$FD, and the length of the entry.
+B $6BA0,$02,$01 Room #N($FD), and the length of the entry.
 B $6BA2,$01 The colour is yellow and the size is #N$00.
 B $6BA3,$03,$01 Background objects: Arch East, Arch South, Walls Size 0.
 B $6BA6,$01 The end of the background objects.
@@ -1505,7 +1505,7 @@ B $6BA7,$09,$01 Block at (0,5,0), (1,5,0), (2,5,0), (2,6,0), (2,7,0), (0,6,1),
 . (1,6,1), (1,7,1).
 B $6BB0,$02,$01 Block at (0,7,2).
 N $6BB2 Room #N$FE.
-B $6BB2,$02,$01 Room #N$FE, and the length of the entry.
+B $6BB2,$02,$01 Room #N($FE), and the length of the entry.
 B $6BB4,$01 The colour is magenta and the size is #N$02.
 B $6BB5,$03,$01 Background objects: Arch East, Arch West, Walls Size 1.
 B $6BB8,$01 The end of the background objects.
@@ -1513,7 +1513,7 @@ B $6BB9,$05,$01 Spikes at (5,4,0), (5,3,0), (2,4,0), (2,3,0).
 B $6BBE,$05,$01 Gargoyle at (3,5,0), (4,5,0), (3,2,0), (4,2,0).
 B $6BC3,$02,$01 Ball Offset XY at (3,3,1).
 N $6BC5 Room #N$FF.
-B $6BC5,$02,$01 Room #N$FF, and the length of the entry.
+B $6BC5,$02,$01 Room #N($FF), and the length of the entry.
 B $6BC7,$01 The colour is yellow and the size is #N$00.
 B $6BC8,$03,$01 Background objects: Arch South, Arch West, Walls Size 0.
 B $6BCB,$01 The end of the background objects.
@@ -1569,137 +1569,139 @@ D $6C0B The objects that make up each type of block, which are in the table at
 . TABLE#
 @ $6C0B label=BlockType_Block
 N $6C0B Block.
-B $6C0B,$06,$06 Graphic #N$07 (block), #N$08 by #N$08 by #N$0C, flags: drawn.
+B $6C0B,$06,$06 Graphic #N$07 (block), #N$08 by #N$08 by #N($0C), flags: drawn.
 B $6C11,$01 Terminator.
 @ $6C12 label=BlockType_High_Block
 N $6C12 High Block.
-B $6C12,$06,$06 Graphic #N$07 (block), #N$08 by #N$08 by #N$0C, flags: drawn,
+B $6C12,$06,$06 Graphic #N$07 (block), #N$08 by #N$08 by #N($0C), flags: drawn,
 . offsets #N$30.
 B $6C18,$01 Terminator.
 @ $6C19 label=BlockType_Block_East_West
 N $6C19 Block East West.
-B $6C19,$06,$06 Graphic #N$36 (block), #N$08 by #N$08 by #N$0C, flags: drawn.
+B $6C19,$06,$06 Graphic #N$36 (block), #N$08 by #N$08 by #N($0C), flags: drawn.
 B $6C1F,$01 Terminator.
 @ $6C20 label=BlockType_Block_North_South
 N $6C20 Block North South.
-B $6C20,$06,$06 Graphic #N$37 (block), #N$08 by #N$08 by #N$0C, flags: drawn.
+B $6C20,$06,$06 Graphic #N$37 (block), #N$08 by #N$08 by #N($0C), flags: drawn.
 B $6C26,$01 Terminator.
 @ $6C27 label=BlockType_Moveable_Block
 N $6C27 Moveable Block.
-B $6C27,$06,$06 Graphic #N$3E (block), #N$08 by #N$08 by #N$0C, flags: drawn,
+B $6C27,$06,$06 Graphic #N$3E (block), #N$08 by #N$08 by #N($0C), flags: drawn,
 . moveable.
 B $6C2D,$01 Terminator.
 @ $6C2E label=BlockType_Dropping_Block
 N $6C2E Dropping Block.
-B $6C2E,$06,$06 Graphic #N$5B (block), #N$08 by #N$08 by #N$0C, flags: drawn.
+B $6C2E,$06,$06 Graphic #N$5B (block), #N$08 by #N$08 by #N($0C), flags: drawn.
 B $6C34,$01 Terminator.
 @ $6C35 label=BlockType_Collapsing_Block
 N $6C35 Collapsing Block.
-B $6C35,$06,$06 Graphic #N$8F (block), #N$08 by #N$08 by #N$0C, flags: drawn.
+B $6C35,$06,$06 Graphic #N$8F (block), #N$08 by #N$08 by #N($0C), flags: drawn.
 B $6C3B,$01 Terminator.
 @ $6C3C label=BlockType_Fire
 N $6C3C Fire.
-B $6C3C,$06,$06 Graphic #N$B0 (fire), #N$06 by #N$06 by #N$0C, flags: drawn.
+B $6C3C,$06,$06 Graphic #N$B0 (fire), #N$06 by #N$06 by #N($0C), flags: drawn.
 B $6C42,$01 Terminator.
 @ $6C43 label=BlockType_Ball_Offset_Y
 N $6C43 Ball Offset Y.
-B $6C43,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N$0C, flags: drawn,
+B $6C43,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N($0C), flags: drawn,
 . offsets #N$02.
 B $6C49,$01 Terminator.
 @ $6C4A label=BlockType_Ball_Offset_XY
 N $6C4A Ball Offset XY.
-B $6C4A,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N$0C, flags: drawn,
+B $6C4A,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N($0C), flags: drawn,
 . offsets #N$03.
 B $6C50,$01 Terminator.
 @ $6C51 label=BlockType_Ball
 N $6C51 Ball.
-B $6C51,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N$0C, flags: drawn.
+B $6C51,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N($0C), flags: drawn.
 B $6C57,$01 Terminator.
 @ $6C58 label=BlockType_Ball_Offset_X
 N $6C58 Ball Offset X.
-B $6C58,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N$0C, flags: drawn,
+B $6C58,$06,$06 Graphic #N$B2 (ball), #N$07 by #N$07 by #N($0C), flags: drawn,
 . offsets #N$01.
 B $6C5E,$01 Terminator.
 @ $6C5F label=BlockType_Bouncing_Ball
 N $6C5F Bouncing Ball.
-B $6C5F,$06,$06 Graphic #N$B6 (ball), #N$07 by #N$07 by #N$0C, flags: drawn.
+B $6C5F,$06,$06 Graphic #N$B6 (ball), #N$07 by #N$07 by #N($0C), flags: drawn.
 B $6C65,$01 Terminator.
 @ $6C66 label=BlockType_Rock
 N $6C66 Rock.
-B $6C66,$06,$06 Graphic #N$06 (rock), #N$08 by #N$08 by #N$0C, flags: drawn.
+B $6C66,$06,$06 Graphic #N$06 (rock), #N$08 by #N$08 by #N($0C), flags: drawn.
 B $6C6C,$01 Terminator.
 @ $6C6D label=BlockType_Gargoyle
 N $6C6D Gargoyle.
-B $6C6D,$06,$06 Graphic #N$16 (gargoyle), #N$06 by #N$06 by #N$0C, flags: drawn.
+B $6C6D,$06,$06 Graphic #N$16 (gargoyle), #N$06 by #N$06 by #N($0C), flags:
+. drawn.
 B $6C73,$01 Terminator.
 @ $6C74 label=BlockType_Spikes
 N $6C74 Spikes.
-B $6C74,$06,$06 Graphic #N$17 (spikes), #N$06 by #N$06 by #N$0C, flags: drawn,
+B $6C74,$06,$06 Graphic #N$17 (spikes), #N$06 by #N$06 by #N($0C), flags: drawn,
 . flipped.
 B $6C7A,$01 Terminator.
 @ $6C7B label=BlockType_High_Spikes
 N $6C7B High Spikes.
-B $6C7B,$06,$06 Graphic #N$17 (spikes), #N$06 by #N$06 by #N$0C, flags: drawn,
+B $6C7B,$06,$06 Graphic #N$17 (spikes), #N$06 by #N$06 by #N($0C), flags: drawn,
 . flipped, offsets #N$30.
 B $6C81,$01 Terminator.
 @ $6C82 label=BlockType_Spiked_Ball
 N $6C82 Spiked Ball.
-B $6C82,$06,$06 Graphic #N$3F (spiked ball), #N$06 by #N$06 by #N$0C, flags:
+B $6C82,$06,$06 Graphic #N$3F (spiked ball), #N$06 by #N$06 by #N($0C), flags:
 . drawn.
 B $6C88,$01 Terminator.
 @ $6C89 label=BlockType_High_Spiked_Ball
 N $6C89 High Spiked Ball.
-B $6C89,$06,$06 Graphic #N$3F (spiked ball), #N$06 by #N$06 by #N$0C, flags:
+B $6C89,$06,$06 Graphic #N$3F (spiked ball), #N$06 by #N$06 by #N($0C), flags:
 . drawn, offsets #N$30.
 B $6C8F,$01 Terminator.
 @ $6C90 label=BlockType_Chest
 N $6C90 Chest.
-B $6C90,$06,$06 Graphic #N$55 (chest), #N$09 by #N$06 by #N$0C, flags: drawn,
+B $6C90,$06,$06 Graphic #N$55 (chest), #N$09 by #N$06 by #N($0C), flags: drawn,
 . moveable.
 B $6C96,$01 Terminator.
 @ $6C97 label=BlockType_Table
 N $6C97 Table.
-B $6C97,$06,$06 Graphic #N$54 (table), #N$06 by #N$0A by #N$0C, flags: drawn,
+B $6C97,$06,$06 Graphic #N$54 (table), #N$06 by #N$0A by #N($0C), flags: drawn,
 . moveable.
 B $6C9D,$01 Terminator.
 @ $6C9E label=BlockType_Guard_East_West
 N $6C9E Guard East West.
-B $6C9E,$06,$06 Graphic #N$96 (guard top half), #N$06 by #N$06 by #N$18, flags:
-. drawn, offsets #N$02.
-B $6CA4,$06,$06 Graphic #N$90 (human legs west), #N$06 by #N$06 by #N$00, flags:
-. drawn, ignored in 3D, offsets #N$02.
+B $6C9E,$06,$06 Graphic #N$96 (guard top half), #N$06 by #N$06 by #N($18),
+. flags: drawn, offsets #N$02.
+B $6CA4,$06,$06 Graphic #N$90 (human legs west), #N$06 by #N$06 by #N($00),
+. flags: drawn, ignored in 3D, offsets #N$02.
 B $6CAA,$01 Terminator.
 @ $6CAB label=BlockType_Guard_Square
 N $6CAB Guard Square.
-B $6CAB,$06,$06 Graphic #N$1E (guard top half), #N$06 by #N$06 by #N$18, flags:
-. drawn.
-B $6CB1,$06,$06 Graphic #N$90 (human legs west), #N$06 by #N$06 by #N$00, flags:
-. drawn, ignored in 3D.
+B $6CAB,$06,$06 Graphic #N$1E (guard top half), #N$06 by #N$06 by #N($18),
+. flags: drawn.
+B $6CB1,$06,$06 Graphic #N$90 (human legs west), #N$06 by #N$06 by #N($00),
+. flags: drawn, ignored in 3D.
 B $6CB7,$01 Terminator.
 @ $6CB8 label=BlockType_Ghost
 N $6CB8 Ghost.
-B $6CB8,$06,$06 Graphic #N$52 (ghost), #N$06 by #N$06 by #N$0C, flags: drawn.
+B $6CB8,$06,$06 Graphic #N$52 (ghost), #N$06 by #N$06 by #N($0C), flags: drawn.
 B $6CBE,$01 Terminator.
 @ $6CBF label=BlockType_Fire_North_South
 N $6CBF Fire North South.
-B $6CBF,$06,$06 Graphic #N$B5 (fire), #N$06 by #N$06 by #N$0C, flags: drawn.
+B $6CBF,$06,$06 Graphic #N$B5 (fire), #N$06 by #N$06 by #N($0C), flags: drawn.
 B $6CC5,$01 Terminator.
 @ $6CC6 label=BlockType_Fire_East_West
 N $6CC6 Fire East West.
-B $6CC6,$06,$06 Graphic #N$56 (fire), #N$06 by #N$06 by #N$0C, flags: drawn.
+B $6CC6,$06,$06 Graphic #N$56 (fire), #N$06 by #N$06 by #N($0C), flags: drawn.
 B $6CCC,$01 Terminator.
 @ $6CCD label=BlockType_Repel_Spell
 N $6CCD Repel Spell.
-B $6CCD,$06,$06 Graphic #N$A4 (sparkle), #N$05 by #N$05 by #N$0C, flags: drawn.
+B $6CCD,$06,$06 Graphic #N$A4 (sparkle), #N$05 by #N$05 by #N($0C), flags:
+. drawn.
 B $6CD3,$01 Terminator.
 @ $6CD4 label=BlockType_Portcullis_Along_X
 N $6CD4 Portcullis Along X.
-B $6CD4,$06,$06 Graphic #N$08 (portcullis), #N$0C by #N$01 by #N$20, flags:
+B $6CD4,$06,$06 Graphic #N$08 (portcullis), #N$0C by #N$01 by #N($20), flags:
 . drawn, flipped, offsets #N$01.
 B $6CDA,$01 Terminator.
 @ $6CDB label=BlockType_Portcullis_Along_Y
 N $6CDB Portcullis Along Y.
-B $6CDB,$06,$06 Graphic #N$08 (portcullis), #N$01 by #N$0C by #N$20, flags:
+B $6CDB,$06,$06 Graphic #N$08 (portcullis), #N$01 by #N$0C by #N($20), flags:
 . drawn, offsets #N$02.
 B $6CE1,$01 Terminator.
 
@@ -1748,253 +1750,253 @@ D $6D12 The objects that make up each type of background object, which are in
 . TABLE#
 @ $6D12 label=BackgroundType_Arch_North
 N $6D12 Arch North.
-B $6D12,$08,$08 Graphic #N$02 (stone arch near) at (#N$8D,#N$C4,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
-B $6D1A,$08,$08 Graphic #N$03 (stone arch far) at (#N$73,#N$C4,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
+B $6D12,$08,$08 Graphic #N$02 (stone arch near) at (#N($8D),#N($C4),#N$80),
+. #N$03 by #N$05 by #N($28), flags: drawn, flipped.
+B $6D1A,$08,$08 Graphic #N$03 (stone arch far) at (#N($73),#N($C4),#N$80), #N$03
+. by #N$05 by #N($28), flags: drawn, flipped.
 B $6D22,$01 Terminator.
 @ $6D23 label=BackgroundType_Arch_East
 N $6D23 Arch East.
-B $6D23,$08,$08 Graphic #N$02 (stone arch near) at (#N$C4,#N$73,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
-B $6D2B,$08,$08 Graphic #N$03 (stone arch far) at (#N$C4,#N$8D,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
+B $6D23,$08,$08 Graphic #N$02 (stone arch near) at (#N($C4),#N($73),#N$80),
+. #N$05 by #N$03 by #N($28), flags: drawn.
+B $6D2B,$08,$08 Graphic #N$03 (stone arch far) at (#N($C4),#N($8D),#N$80), #N$05
+. by #N$03 by #N($28), flags: drawn.
 B $6D33,$01 Terminator.
 @ $6D34 label=BackgroundType_High_Arch_East
 N $6D34 High Arch East.
-B $6D34,$08,$08 Graphic #N$02 (stone arch near) at (#N$C4,#N$73,#N$B0), #N$05 by
-. #N$03 by #N$28, flags: drawn.
-B $6D3C,$08,$08 Graphic #N$03 (stone arch far) at (#N$C4,#N$8D,#N$B0), #N$05 by
-. #N$03 by #N$28, flags: drawn.
+B $6D34,$08,$08 Graphic #N$02 (stone arch near) at (#N($C4),#N($73),#N$B0),
+. #N$05 by #N$03 by #N($28), flags: drawn.
+B $6D3C,$08,$08 Graphic #N$03 (stone arch far) at (#N($C4),#N($8D),#N$B0), #N$05
+. by #N$03 by #N($28), flags: drawn.
 B $6D44,$01 Terminator.
 @ $6D45 label=BackgroundType_Arch_South
 N $6D45 Arch South.
-B $6D45,$08,$08 Graphic #N$02 (stone arch near) at (#N$8D,#N$3B,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
-B $6D4D,$08,$08 Graphic #N$03 (stone arch far) at (#N$73,#N$3B,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
+B $6D45,$08,$08 Graphic #N$02 (stone arch near) at (#N($8D),#N($3B),#N$80),
+. #N$03 by #N$05 by #N($28), flags: drawn, flipped.
+B $6D4D,$08,$08 Graphic #N$03 (stone arch far) at (#N($73),#N($3B),#N$80), #N$03
+. by #N$05 by #N($28), flags: drawn, flipped.
 B $6D55,$01 Terminator.
 @ $6D56 label=BackgroundType_High_Arch_South
 N $6D56 High Arch South.
-B $6D56,$08,$08 Graphic #N$02 (stone arch near) at (#N$8D,#N$3B,#N$B0), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
-B $6D5E,$08,$08 Graphic #N$03 (stone arch far) at (#N$73,#N$3B,#N$B0), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
+B $6D56,$08,$08 Graphic #N$02 (stone arch near) at (#N($8D),#N($3B),#N$B0),
+. #N$03 by #N$05 by #N($28), flags: drawn, flipped.
+B $6D5E,$08,$08 Graphic #N$03 (stone arch far) at (#N($73),#N($3B),#N$B0), #N$03
+. by #N$05 by #N($28), flags: drawn, flipped.
 B $6D66,$01 Terminator.
 @ $6D67 label=BackgroundType_Arch_West
 N $6D67 Arch West.
-B $6D67,$08,$08 Graphic #N$02 (stone arch near) at (#N$3B,#N$73,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
-B $6D6F,$08,$08 Graphic #N$03 (stone arch far) at (#N$3B,#N$8D,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
+B $6D67,$08,$08 Graphic #N$02 (stone arch near) at (#N($3B),#N($73),#N$80),
+. #N$05 by #N$03 by #N($28), flags: drawn.
+B $6D6F,$08,$08 Graphic #N$03 (stone arch far) at (#N($3B),#N($8D),#N$80), #N$05
+. by #N$03 by #N($28), flags: drawn.
 B $6D77,$01 Terminator.
 @ $6D78 label=BackgroundType_Tree_Arch_North
 N $6D78 Tree Arch North.
-B $6D78,$08,$08 Graphic #N$04 (tree arch near) at (#N$8D,#N$C4,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
-B $6D80,$08,$08 Graphic #N$05 (tree arch far) at (#N$73,#N$C4,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
+B $6D78,$08,$08 Graphic #N$04 (tree arch near) at (#N($8D),#N($C4),#N$80), #N$03
+. by #N$05 by #N($28), flags: drawn, flipped.
+B $6D80,$08,$08 Graphic #N$05 (tree arch far) at (#N($73),#N($C4),#N$80), #N$03
+. by #N$05 by #N($28), flags: drawn, flipped.
 B $6D88,$01 Terminator.
 @ $6D89 label=BackgroundType_Tree_Arch_East
 N $6D89 Tree Arch East.
-B $6D89,$08,$08 Graphic #N$04 (tree arch near) at (#N$C4,#N$73,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
-B $6D91,$08,$08 Graphic #N$05 (tree arch far) at (#N$C4,#N$8D,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
+B $6D89,$08,$08 Graphic #N$04 (tree arch near) at (#N($C4),#N($73),#N$80), #N$05
+. by #N$03 by #N($28), flags: drawn.
+B $6D91,$08,$08 Graphic #N$05 (tree arch far) at (#N($C4),#N($8D),#N$80), #N$05
+. by #N$03 by #N($28), flags: drawn.
 B $6D99,$01 Terminator.
 @ $6D9A label=BackgroundType_Tree_Arch_South
 N $6D9A Tree Arch South.
-B $6D9A,$08,$08 Graphic #N$04 (tree arch near) at (#N$8D,#N$3B,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
-B $6DA2,$08,$08 Graphic #N$05 (tree arch far) at (#N$73,#N$3B,#N$80), #N$03 by
-. #N$05 by #N$28, flags: drawn, flipped.
+B $6D9A,$08,$08 Graphic #N$04 (tree arch near) at (#N($8D),#N($3B),#N$80), #N$03
+. by #N$05 by #N($28), flags: drawn, flipped.
+B $6DA2,$08,$08 Graphic #N$05 (tree arch far) at (#N($73),#N($3B),#N$80), #N$03
+. by #N$05 by #N($28), flags: drawn, flipped.
 B $6DAA,$01 Terminator.
 @ $6DAB label=BackgroundType_Tree_Arch_West
 N $6DAB Tree Arch West.
-B $6DAB,$08,$08 Graphic #N$04 (tree arch near) at (#N$3B,#N$73,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
-B $6DB3,$08,$08 Graphic #N$05 (tree arch far) at (#N$3B,#N$8D,#N$80), #N$05 by
-. #N$03 by #N$28, flags: drawn.
+B $6DAB,$08,$08 Graphic #N$04 (tree arch near) at (#N($3B),#N($73),#N$80), #N$05
+. by #N$03 by #N($28), flags: drawn.
+B $6DB3,$08,$08 Graphic #N$05 (tree arch far) at (#N($3B),#N($8D),#N$80), #N$05
+. by #N$03 by #N($28), flags: drawn.
 B $6DBB,$01 Terminator.
 @ $6DBC label=BackgroundType_Gate_North
 N $6DBC Gate North.
-B $6DBC,$08,$08 Graphic #N$08 (portcullis) at (#N$80,#N$BE,#N$A0), #N$0C by
-. #N$01 by #N$20, flags: drawn, flipped.
+B $6DBC,$08,$08 Graphic #N$08 (portcullis) at (#N($80),#N($BE),#N$A0), #N$0C by
+. #N$01 by #N($20), flags: drawn, flipped.
 B $6DC4,$01 Terminator.
 @ $6DC5 label=BackgroundType_Gate_East
 N $6DC5 Gate East.
-B $6DC5,$08,$08 Graphic #N$08 (portcullis) at (#N$BE,#N$80,#N$A0), #N$01 by
-. #N$0C by #N$20, flags: drawn.
+B $6DC5,$08,$08 Graphic #N$08 (portcullis) at (#N($BE),#N($80),#N$A0), #N$01 by
+. #N$0C by #N($20), flags: drawn.
 B $6DCD,$01 Terminator.
 @ $6DCE label=BackgroundType_Gate_South
 N $6DCE Gate South.
-B $6DCE,$08,$08 Graphic #N$08 (portcullis) at (#N$80,#N$41,#N$A0), #N$0C by
-. #N$01 by #N$20, flags: drawn, flipped.
+B $6DCE,$08,$08 Graphic #N$08 (portcullis) at (#N($80),#N($41),#N$A0), #N$0C by
+. #N$01 by #N($20), flags: drawn, flipped.
 B $6DD6,$01 Terminator.
 @ $6DD7 label=BackgroundType_Gate_West
 N $6DD7 Gate West.
-B $6DD7,$08,$08 Graphic #N$08 (portcullis) at (#N$41,#N$80,#N$A0), #N$01 by
-. #N$0C by #N$20, flags: drawn.
+B $6DD7,$08,$08 Graphic #N$08 (portcullis) at (#N($41),#N($80),#N$A0), #N$01 by
+. #N$0C by #N($20), flags: drawn.
 B $6DDF,$01 Terminator.
 @ $6DE0 label=BackgroundType_Walls_Size_0
 N $6DE0 Walls Size 0.
-B $6DE0,$08,$08 Graphic #N$0D (wall bricks) at (#N$3F,#N$B8,#N$80), #N$00 by
-. #N$08 by #N$28, flags: drawn.
-B $6DE8,$08,$08 Graphic #N$0E (wall bricks) at (#N$47,#N$C0,#N$80), #N$08 by
-. #N$00 by #N$28, flags: drawn.
-B $6DF0,$08,$08 Graphic #N$0F (wall bricks) at (#N$3F,#N$49,#N$80), #N$00 by
-. #N$08 by #N$2C, flags: drawn.
-B $6DF8,$08,$08 Graphic #N$0F (wall bricks) at (#N$B8,#N$C0,#N$80), #N$08 by
-. #N$00 by #N$2C, flags: drawn, flipped.
-B $6E00,$08,$08 Graphic #N$0F (wall bricks) at (#N$3F,#N$49,#N$AC), #N$00 by
-. #N$08 by #N$2C, flags: drawn.
-B $6E08,$08,$08 Graphic #N$0F (wall bricks) at (#N$B8,#N$C0,#N$AC), #N$08 by
-. #N$00 by #N$2C, flags: drawn, flipped.
-B $6E10,$08,$08 Graphic #N$0A (wall bricks) at (#N$5C,#N$C0,#N$80), #N$14 by
-. #N$00 by #N$14, flags: drawn, flipped.
-B $6E18,$08,$08 Graphic #N$0B (wall bricks) at (#N$3F,#N$5C,#N$98), #N$00 by
-. #N$0C by #N$14, flags: drawn.
-B $6E20,$08,$08 Graphic #N$0C (wall bricks) at (#N$3F,#N$A0,#N$98), #N$00 by
-. #N$0C by #N$0C, flags: drawn.
-B $6E28,$08,$08 Graphic #N$0B (wall bricks) at (#N$A4,#N$C0,#N$98), #N$0C by
-. #N$00 by #N$14, flags: drawn, flipped.
-B $6E30,$08,$08 Graphic #N$0A (wall bricks) at (#N$3F,#N$6D,#N$B1), #N$00 by
-. #N$14 by #N$14, flags: drawn.
-B $6E38,$08,$08 Graphic #N$0C (wall bricks) at (#N$60,#N$C0,#N$A0), #N$0C by
-. #N$00 by #N$0C, flags: drawn, flipped.
-B $6E40,$08,$08 Graphic #N$0A (wall bricks) at (#N$90,#N$C0,#N$B0), #N$14 by
-. #N$00 by #N$14, flags: drawn, flipped.
+B $6DE0,$08,$08 Graphic #N$0D (wall bricks) at (#N($3F),#N($B8),#N$80), #N$00 by
+. #N$08 by #N($28), flags: drawn.
+B $6DE8,$08,$08 Graphic #N$0E (wall bricks) at (#N($47),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($28), flags: drawn.
+B $6DF0,$08,$08 Graphic #N$0F (wall bricks) at (#N($3F),#N($49),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6DF8,$08,$08 Graphic #N$0F (wall bricks) at (#N($B8),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6E00,$08,$08 Graphic #N$0F (wall bricks) at (#N($3F),#N($49),#N$AC), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6E08,$08,$08 Graphic #N$0F (wall bricks) at (#N($B8),#N($C0),#N$AC), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6E10,$08,$08 Graphic #N$0A (wall bricks) at (#N($5C),#N($C0),#N$80), #N$14 by
+. #N$00 by #N($14), flags: drawn, flipped.
+B $6E18,$08,$08 Graphic #N$0B (wall bricks) at (#N($3F),#N($5C),#N$98), #N$00 by
+. #N$0C by #N($14), flags: drawn.
+B $6E20,$08,$08 Graphic #N$0C (wall bricks) at (#N($3F),#N($A0),#N$98), #N$00 by
+. #N$0C by #N($0C), flags: drawn.
+B $6E28,$08,$08 Graphic #N$0B (wall bricks) at (#N($A4),#N($C0),#N$98), #N$0C by
+. #N$00 by #N($14), flags: drawn, flipped.
+B $6E30,$08,$08 Graphic #N$0A (wall bricks) at (#N($3F),#N($6D),#N$B1), #N$00 by
+. #N$14 by #N($14), flags: drawn.
+B $6E38,$08,$08 Graphic #N$0C (wall bricks) at (#N($60),#N($C0),#N$A0), #N$0C by
+. #N$00 by #N($0C), flags: drawn, flipped.
+B $6E40,$08,$08 Graphic #N$0A (wall bricks) at (#N($90),#N($C0),#N$B0), #N$14 by
+. #N$00 by #N($14), flags: drawn, flipped.
 B $6E48,$01 Terminator.
 @ $6E49 label=BackgroundType_Walls_Size_1
 N $6E49 Walls Size 1.
-B $6E49,$08,$08 Graphic #N$0D (wall bricks) at (#N$3F,#N$98,#N$80), #N$00 by
-. #N$08 by #N$28, flags: drawn.
-B $6E51,$08,$08 Graphic #N$0E (wall bricks) at (#N$47,#N$A0,#N$80), #N$08 by
-. #N$00 by #N$28, flags: drawn.
-B $6E59,$08,$08 Graphic #N$0F (wall bricks) at (#N$3F,#N$63,#N$80), #N$00 by
-. #N$08 by #N$2C, flags: drawn.
-B $6E61,$08,$08 Graphic #N$0F (wall bricks) at (#N$B8,#N$A0,#N$80), #N$08 by
-. #N$00 by #N$2C, flags: drawn, flipped.
-B $6E69,$08,$08 Graphic #N$0F (wall bricks) at (#N$3F,#N$63,#N$AC), #N$00 by
-. #N$08 by #N$2C, flags: drawn.
-B $6E71,$08,$08 Graphic #N$0F (wall bricks) at (#N$B8,#N$A0,#N$AC), #N$08 by
-. #N$00 by #N$2C, flags: drawn, flipped.
-B $6E79,$08,$08 Graphic #N$0D (wall bricks) at (#N$3F,#N$98,#N$A8), #N$00 by
-. #N$08 by #N$28, flags: drawn.
-B $6E81,$08,$08 Graphic #N$0E (wall bricks) at (#N$47,#N$A0,#N$A8), #N$08 by
-. #N$00 by #N$28, flags: drawn.
-B $6E89,$08,$08 Graphic #N$0F (wall bricks) at (#N$B8,#N$A0,#N$D0), #N$08 by
-. #N$00 by #N$2C, flags: drawn, flipped.
-B $6E91,$08,$08 Graphic #N$0A (wall bricks) at (#N$80,#N$A0,#N$80), #N$14 by
-. #N$00 by #N$14, flags: drawn, flipped.
-B $6E99,$08,$08 Graphic #N$0A (wall bricks) at (#N$3F,#N$7E,#N$B0), #N$00 by
-. #N$14 by #N$14, flags: drawn.
-B $6EA1,$08,$08 Graphic #N$0B (wall bricks) at (#N$60,#N$A0,#N$90), #N$0C by
-. #N$00 by #N$14, flags: drawn, flipped.
-B $6EA9,$08,$08 Graphic #N$0A (wall bricks) at (#N$60,#N$A0,#N$B8), #N$14 by
-. #N$00 by #N$14, flags: drawn, flipped.
-B $6EB1,$08,$08 Graphic #N$0C (wall bricks) at (#N$A0,#N$A0,#N$B0), #N$0C by
-. #N$00 by #N$0C, flags: drawn, flipped.
+B $6E49,$08,$08 Graphic #N$0D (wall bricks) at (#N($3F),#N($98),#N$80), #N$00 by
+. #N$08 by #N($28), flags: drawn.
+B $6E51,$08,$08 Graphic #N$0E (wall bricks) at (#N($47),#N($A0),#N$80), #N$08 by
+. #N$00 by #N($28), flags: drawn.
+B $6E59,$08,$08 Graphic #N$0F (wall bricks) at (#N($3F),#N($63),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6E61,$08,$08 Graphic #N$0F (wall bricks) at (#N($B8),#N($A0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6E69,$08,$08 Graphic #N$0F (wall bricks) at (#N($3F),#N($63),#N$AC), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6E71,$08,$08 Graphic #N$0F (wall bricks) at (#N($B8),#N($A0),#N$AC), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6E79,$08,$08 Graphic #N$0D (wall bricks) at (#N($3F),#N($98),#N$A8), #N$00 by
+. #N$08 by #N($28), flags: drawn.
+B $6E81,$08,$08 Graphic #N$0E (wall bricks) at (#N($47),#N($A0),#N$A8), #N$08 by
+. #N$00 by #N($28), flags: drawn.
+B $6E89,$08,$08 Graphic #N$0F (wall bricks) at (#N($B8),#N($A0),#N$D0), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6E91,$08,$08 Graphic #N$0A (wall bricks) at (#N($80),#N($A0),#N$80), #N$14 by
+. #N$00 by #N($14), flags: drawn, flipped.
+B $6E99,$08,$08 Graphic #N$0A (wall bricks) at (#N($3F),#N($7E),#N$B0), #N$00 by
+. #N$14 by #N($14), flags: drawn.
+B $6EA1,$08,$08 Graphic #N$0B (wall bricks) at (#N($60),#N($A0),#N$90), #N$0C by
+. #N$00 by #N($14), flags: drawn, flipped.
+B $6EA9,$08,$08 Graphic #N$0A (wall bricks) at (#N($60),#N($A0),#N$B8), #N$14 by
+. #N$00 by #N($14), flags: drawn, flipped.
+B $6EB1,$08,$08 Graphic #N$0C (wall bricks) at (#N($A0),#N($A0),#N$B0), #N$0C by
+. #N$00 by #N($0C), flags: drawn, flipped.
 B $6EB9,$01 Terminator.
 @ $6EBA label=BackgroundType_Walls_Size_2
 N $6EBA Walls Size 2.
-B $6EBA,$08,$08 Graphic #N$0D (wall bricks) at (#N$5F,#N$B8,#N$80), #N$00 by
-. #N$08 by #N$28, flags: drawn.
-B $6EC2,$08,$08 Graphic #N$0E (wall bricks) at (#N$67,#N$C0,#N$80), #N$08 by
-. #N$00 by #N$28, flags: drawn.
-B $6ECA,$08,$08 Graphic #N$0F (wall bricks) at (#N$5F,#N$48,#N$80), #N$00 by
-. #N$08 by #N$2C, flags: drawn.
-B $6ED2,$08,$08 Graphic #N$0F (wall bricks) at (#N$9D,#N$C0,#N$80), #N$08 by
-. #N$00 by #N$2C, flags: drawn, flipped.
-B $6EDA,$08,$08 Graphic #N$0D (wall bricks) at (#N$5F,#N$B8,#N$A8), #N$00 by
-. #N$08 by #N$28, flags: drawn.
-B $6EE2,$08,$08 Graphic #N$0E (wall bricks) at (#N$67,#N$C0,#N$A8), #N$08 by
-. #N$00 by #N$28, flags: drawn.
-B $6EEA,$08,$08 Graphic #N$0F (wall bricks) at (#N$5F,#N$48,#N$AC), #N$00 by
-. #N$08 by #N$2C, flags: drawn.
-B $6EF2,$08,$08 Graphic #N$0F (wall bricks) at (#N$9D,#N$C0,#N$AC), #N$08 by
-. #N$00 by #N$2C, flags: drawn, flipped.
-B $6EFA,$08,$08 Graphic #N$0F (wall bricks) at (#N$5F,#N$48,#N$D0), #N$00 by
-. #N$08 by #N$2C, flags: drawn.
-B $6F02,$08,$08 Graphic #N$0A (wall bricks) at (#N$5F,#N$90,#N$80), #N$00 by
-. #N$14 by #N$14, flags: drawn.
-B $6F0A,$08,$08 Graphic #N$0A (wall bricks) at (#N$84,#N$C0,#N$B0), #N$14 by
-. #N$00 by #N$14, flags: drawn, flipped.
-B $6F12,$08,$08 Graphic #N$0B (wall bricks) at (#N$5F,#N$60,#N$90), #N$00 by
-. #N$0C by #N$14, flags: drawn.
-B $6F1A,$08,$08 Graphic #N$0A (wall bricks) at (#N$5F,#N$68,#N$B8), #N$00 by
-. #N$14 by #N$14, flags: drawn.
-B $6F22,$08,$08 Graphic #N$0C (wall bricks) at (#N$5F,#N$A0,#N$B0), #N$00 by
-. #N$0C by #N$0C, flags: drawn.
+B $6EBA,$08,$08 Graphic #N$0D (wall bricks) at (#N($5F),#N($B8),#N$80), #N$00 by
+. #N$08 by #N($28), flags: drawn.
+B $6EC2,$08,$08 Graphic #N$0E (wall bricks) at (#N($67),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($28), flags: drawn.
+B $6ECA,$08,$08 Graphic #N$0F (wall bricks) at (#N($5F),#N($48),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6ED2,$08,$08 Graphic #N$0F (wall bricks) at (#N($9D),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6EDA,$08,$08 Graphic #N$0D (wall bricks) at (#N($5F),#N($B8),#N$A8), #N$00 by
+. #N$08 by #N($28), flags: drawn.
+B $6EE2,$08,$08 Graphic #N$0E (wall bricks) at (#N($67),#N($C0),#N$A8), #N$08 by
+. #N$00 by #N($28), flags: drawn.
+B $6EEA,$08,$08 Graphic #N$0F (wall bricks) at (#N($5F),#N($48),#N$AC), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6EF2,$08,$08 Graphic #N$0F (wall bricks) at (#N($9D),#N($C0),#N$AC), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6EFA,$08,$08 Graphic #N$0F (wall bricks) at (#N($5F),#N($48),#N$D0), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F02,$08,$08 Graphic #N$0A (wall bricks) at (#N($5F),#N($90),#N$80), #N$00 by
+. #N$14 by #N($14), flags: drawn.
+B $6F0A,$08,$08 Graphic #N$0A (wall bricks) at (#N($84),#N($C0),#N$B0), #N$14 by
+. #N$00 by #N($14), flags: drawn, flipped.
+B $6F12,$08,$08 Graphic #N$0B (wall bricks) at (#N($5F),#N($60),#N$90), #N$00 by
+. #N$0C by #N($14), flags: drawn.
+B $6F1A,$08,$08 Graphic #N$0A (wall bricks) at (#N($5F),#N($68),#N$B8), #N$00 by
+. #N$14 by #N($14), flags: drawn.
+B $6F22,$08,$08 Graphic #N$0C (wall bricks) at (#N($5F),#N($A0),#N$B0), #N$00 by
+. #N$0C by #N($0C), flags: drawn.
 B $6F2A,$01 Terminator.
 @ $6F2B label=BackgroundType_Trees_Size_0
 N $6F2B Trees Size 0.
-B $6F2B,$08,$08 Graphic #N$80 (tree wall) at (#N$3F,#N$49,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
-B $6F33,$08,$08 Graphic #N$81 (tree wall) at (#N$3F,#N$58,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
-B $6F3B,$08,$08 Graphic #N$82 (tree wall) at (#N$3F,#N$68,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
-B $6F43,$08,$08 Graphic #N$80 (tree wall) at (#N$3F,#N$98,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
-B $6F4B,$08,$08 Graphic #N$81 (tree wall) at (#N$3F,#N$A8,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
-B $6F53,$08,$08 Graphic #N$82 (tree wall) at (#N$3F,#N$B8,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
-B $6F5B,$08,$08 Graphic #N$80 (tree wall) at (#N$48,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
-B $6F63,$08,$08 Graphic #N$81 (tree wall) at (#N$58,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
-B $6F6B,$08,$08 Graphic #N$82 (tree wall) at (#N$68,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
-B $6F73,$08,$08 Graphic #N$80 (tree wall) at (#N$98,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
-B $6F7B,$08,$08 Graphic #N$81 (tree wall) at (#N$A8,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
-B $6F83,$08,$08 Graphic #N$82 (tree wall) at (#N$B8,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
+B $6F2B,$08,$08 Graphic #N$80 (tree wall) at (#N($3F),#N($49),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F33,$08,$08 Graphic #N$81 (tree wall) at (#N($3F),#N($58),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F3B,$08,$08 Graphic #N$82 (tree wall) at (#N($3F),#N($68),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F43,$08,$08 Graphic #N$80 (tree wall) at (#N($3F),#N($98),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F4B,$08,$08 Graphic #N$81 (tree wall) at (#N($3F),#N($A8),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F53,$08,$08 Graphic #N$82 (tree wall) at (#N($3F),#N($B8),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F5B,$08,$08 Graphic #N$80 (tree wall) at (#N($48),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6F63,$08,$08 Graphic #N$81 (tree wall) at (#N($58),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6F6B,$08,$08 Graphic #N$82 (tree wall) at (#N($68),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6F73,$08,$08 Graphic #N$80 (tree wall) at (#N($98),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6F7B,$08,$08 Graphic #N$81 (tree wall) at (#N($A8),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6F83,$08,$08 Graphic #N$82 (tree wall) at (#N($B8),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
 B $6F8B,$01 Terminator.
 @ $6F8C label=BackgroundType_Trees_Size_1
 N $6F8C Trees Size 1.
-B $6F8C,$08,$08 Graphic #N$80 (tree wall) at (#N$3F,#N$78,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
-B $6F94,$08,$08 Graphic #N$81 (tree wall) at (#N$3F,#N$88,#N$80), #N$00 by #N$08
-. by #N$2C, flags: drawn.
+B $6F8C,$08,$08 Graphic #N$80 (tree wall) at (#N($3F),#N($78),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
+B $6F94,$08,$08 Graphic #N$81 (tree wall) at (#N($3F),#N($88),#N$80), #N$00 by
+. #N$08 by #N($2C), flags: drawn.
 B $6F9C,$01 Terminator.
 @ $6F9D label=BackgroundType_Trees_Size_2
 N $6F9D Trees Size 2.
-B $6F9D,$08,$08 Graphic #N$80 (tree wall) at (#N$78,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
-B $6FA5,$08,$08 Graphic #N$81 (tree wall) at (#N$88,#N$C0,#N$80), #N$08 by #N$00
-. by #N$2C, flags: drawn, flipped.
+B $6F9D,$08,$08 Graphic #N$80 (tree wall) at (#N($78),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
+B $6FA5,$08,$08 Graphic #N$81 (tree wall) at (#N($88),#N($C0),#N$80), #N$08 by
+. #N$00 by #N($2C), flags: drawn, flipped.
 B $6FAD,$01 Terminator.
 @ $6FAE label=BackgroundType_Wizard
 N $6FAE Wizard.
-B $6FAE,$08,$08 Graphic #N$9E (wizard top half) at (#N$98,#N$68,#N$80), #N$05 by
-. #N$05 by #N$18, flags: drawn.
-B $6FB6,$08,$08 Graphic #N$90 (human legs west) at (#N$A0,#N$60,#N$80), #N$05 by
-. #N$05 by #N$00, flags: drawn, ignored in 3D.
+B $6FAE,$08,$08 Graphic #N$9E (wizard top half) at (#N($98),#N($68),#N$80),
+. #N$05 by #N$05 by #N($18), flags: drawn.
+B $6FB6,$08,$08 Graphic #N$90 (human legs west) at (#N($A0),#N($60),#N$80),
+. #N$05 by #N$05 by #N($00), flags: drawn, ignored in 3D.
 B $6FBE,$01 Terminator.
 @ $6FBF label=BackgroundType_Cauldron
 N $6FBF Cauldron.
-B $6FBF,$08,$08 Graphic #N$8D (cauldron bottom) at (#N$80,#N$80,#N$80), #N$0A by
-. #N$0A by #N$18, flags: drawn.
-B $6FC7,$08,$08 Graphic #N$8E (cauldron top) at (#N$80,#N$88,#N$80), #N$00 by
-. #N$00 by #N$00, flags: drawn, ignored in 3D.
+B $6FBF,$08,$08 Graphic #N$8D (cauldron bottom) at (#N($80),#N($80),#N$80),
+. #N$0A by #N$0A by #N($18), flags: drawn.
+B $6FC7,$08,$08 Graphic #N$8E (cauldron top) at (#N($80),#N($88),#N$80), #N$00
+. by #N$00 by #N($00), flags: drawn, ignored in 3D.
 B $6FCF,$01 Terminator.
 @ $6FD0 label=BackgroundType_High_Arch_East_Base
 N $6FD0 High Arch East Base.
-B $6FD0,$08,$08 Graphic #N$07 (block) at (#N$C8,#N$78,#N$A4), #N$08 by #N$08 by
-. #N$0C, flags: drawn.
-B $6FD8,$08,$08 Graphic #N$07 (block) at (#N$C8,#N$88,#N$A4), #N$08 by #N$08 by
-. #N$0C, flags: drawn.
+B $6FD0,$08,$08 Graphic #N$07 (block) at (#N($C8),#N($78),#N$A4), #N$08 by #N$08
+. by #N($0C), flags: drawn.
+B $6FD8,$08,$08 Graphic #N$07 (block) at (#N($C8),#N($88),#N$A4), #N$08 by #N$08
+. by #N($0C), flags: drawn.
 B $6FE0,$01 Terminator.
 @ $6FE1 label=BackgroundType_High_Arch_South_Base
 N $6FE1 High Arch South Base.
-B $6FE1,$08,$08 Graphic #N$07 (block) at (#N$78,#N$38,#N$A4), #N$08 by #N$08 by
-. #N$0C, flags: drawn.
-B $6FE9,$08,$08 Graphic #N$07 (block) at (#N$88,#N$38,#N$A4), #N$08 by #N$08 by
-. #N$0C, flags: drawn.
+B $6FE1,$08,$08 Graphic #N$07 (block) at (#N($78),#N($38),#N$A4), #N$08 by #N$08
+. by #N($0C), flags: drawn.
+B $6FE9,$08,$08 Graphic #N$07 (block) at (#N($88),#N($38),#N$A4), #N$08 by #N$08
+. by #N($0C), flags: drawn.
 B $6FF1,$01 Terminator.
 
 g $6FF2 Special Objects Table
@@ -2014,44 +2016,44 @@ D $6FF2 The special objects of the game, which are the seven objects that the
 . { #N$05-#N$08 | The X, Y and Z coordinates and the room number where the
 . object is now }
 . TABLE#
-B $6FF2,$09,$01 Starts at (#N$88,#N$80,#N$A4) in room #N$6D.
-B $6FFB,$09,$01 Starts at (#N$80,#N$80,#N$8C) in room #N$27.
-B $7004,$09,$01 Starts at (#N$88,#N$78,#N$B0) in room #N$D0.
-B $700D,$09,$01 Starts at (#N$78,#N$88,#N$80) in room #N$0A.
-B $7016,$09,$01 Starts at (#N$78,#N$88,#N$80) in room #N$BA.
-B $701F,$09,$01 Starts at (#N$88,#N$78,#N$B0) in room #N$42.
-B $7028,$09,$01 Starts at (#N$88,#N$B8,#N$BC) in room #N$8D.
-B $7031,$09,$01 Starts at (#N$A8,#N$A8,#N$80) in room #N$FF.
-B $703A,$09,$01 Starts at (#N$80,#N$80,#N$80) in room #N$87.
-B $7043,$09,$01 Starts at (#N$78,#N$B8,#N$80) in room #N$F3.
-B $704C,$09,$01 Starts at (#N$A8,#N$68,#N$B0) in room #N$A8.
-B $7055,$09,$01 Starts at (#N$B8,#N$48,#N$B0) in room #N$D2.
-B $705E,$09,$01 Starts at (#N$48,#N$48,#N$80) in room #N$00.
-B $7067,$09,$01 Starts at (#N$88,#N$B8,#N$80) in room #N$22.
-B $7070,$09,$01 Starts at (#N$B8,#N$B8,#N$B0) in room #N$7A.
-B $7079,$09,$01 Starts at (#N$B8,#N$B8,#N$80) in room #N$F9.
-B $7082,$09,$01 Starts at (#N$88,#N$98,#N$B0) in room #N$D6.
-B $708B,$09,$01 Starts at (#N$78,#N$88,#N$B0) in room #N$E8.
-B $7094,$09,$01 Starts at (#N$78,#N$78,#N$B0) in room #N$F6.
-B $709D,$09,$01 Starts at (#N$88,#N$78,#N$8C) in room #N$0F.
-B $70A6,$09,$01 Starts at (#N$B8,#N$B8,#N$80) in room #N$6F.
-B $70AF,$09,$01 Starts at (#N$48,#N$B8,#N$A4) in room #N$FD.
-B $70B8,$09,$01 Starts at (#N$78,#N$78,#N$B0) in room #N$08.
-B $70C1,$09,$01 Starts at (#N$88,#N$88,#N$A4) in room #N$BB.
-B $70CA,$09,$01 Starts at (#N$78,#N$78,#N$B0) in room #N$DF.
-B $70D3,$09,$01 Starts at (#N$80,#N$80,#N$80) in room #N$5E.
-B $70DC,$09,$01 Starts at (#N$78,#N$88,#N$B0) in room #N$B4.
-B $70E5,$09,$01 Starts at (#N$78,#N$78,#N$B0) in room #N$04.
-B $70EE,$09,$01 Starts at (#N$48,#N$B8,#N$80) in room #N$74.
-B $70F7,$09,$01 Starts at (#N$80,#N$80,#N$80) in room #N$40.
-B $7100,$09,$01 Starts at (#N$68,#N$78,#N$B0) in room #N$38.
-B $7109,$09,$01 Starts at (#N$48,#N$B8,#N$98) in room #N$F0.
+B $6FF2,$09,$01 Starts at (#N($88),#N($80),#N$A4) in room #N$6D.
+B $6FFB,$09,$01 Starts at (#N($80),#N($80),#N$8C) in room #N$27.
+B $7004,$09,$01 Starts at (#N($88),#N($78),#N$B0) in room #N$D0.
+B $700D,$09,$01 Starts at (#N($78),#N($88),#N$80) in room #N$0A.
+B $7016,$09,$01 Starts at (#N($78),#N($88),#N$80) in room #N$BA.
+B $701F,$09,$01 Starts at (#N($88),#N($78),#N$B0) in room #N$42.
+B $7028,$09,$01 Starts at (#N($88),#N($B8),#N$BC) in room #N$8D.
+B $7031,$09,$01 Starts at (#N($A8),#N($A8),#N$80) in room #N$FF.
+B $703A,$09,$01 Starts at (#N($80),#N($80),#N$80) in room #N$87.
+B $7043,$09,$01 Starts at (#N($78),#N($B8),#N$80) in room #N$F3.
+B $704C,$09,$01 Starts at (#N($A8),#N($68),#N$B0) in room #N$A8.
+B $7055,$09,$01 Starts at (#N($B8),#N($48),#N$B0) in room #N$D2.
+B $705E,$09,$01 Starts at (#N($48),#N($48),#N$80) in room #N$00.
+B $7067,$09,$01 Starts at (#N($88),#N($B8),#N$80) in room #N$22.
+B $7070,$09,$01 Starts at (#N($B8),#N($B8),#N$B0) in room #N$7A.
+B $7079,$09,$01 Starts at (#N($B8),#N($B8),#N$80) in room #N$F9.
+B $7082,$09,$01 Starts at (#N($88),#N($98),#N$B0) in room #N$D6.
+B $708B,$09,$01 Starts at (#N($78),#N($88),#N$B0) in room #N$E8.
+B $7094,$09,$01 Starts at (#N($78),#N($78),#N$B0) in room #N$F6.
+B $709D,$09,$01 Starts at (#N($88),#N($78),#N$8C) in room #N$0F.
+B $70A6,$09,$01 Starts at (#N($B8),#N($B8),#N$80) in room #N$6F.
+B $70AF,$09,$01 Starts at (#N($48),#N($B8),#N$A4) in room #N$FD.
+B $70B8,$09,$01 Starts at (#N($78),#N($78),#N$B0) in room #N$08.
+B $70C1,$09,$01 Starts at (#N($88),#N($88),#N$A4) in room #N$BB.
+B $70CA,$09,$01 Starts at (#N($78),#N($78),#N$B0) in room #N$DF.
+B $70D3,$09,$01 Starts at (#N($80),#N($80),#N$80) in room #N$5E.
+B $70DC,$09,$01 Starts at (#N($78),#N($88),#N$B0) in room #N$B4.
+B $70E5,$09,$01 Starts at (#N($78),#N($78),#N$B0) in room #N$04.
+B $70EE,$09,$01 Starts at (#N($48),#N($B8),#N$80) in room #N$74.
+B $70F7,$09,$01 Starts at (#N($80),#N($80),#N$80) in room #N$40.
+B $7100,$09,$01 Starts at (#N($68),#N($78),#N$B0) in room #N$38.
+B $7109,$09,$01 Starts at (#N($48),#N($B8),#N$98) in room #N$F0.
 
 w $7112 Sprite Table
 @ $7112 label=SpriteTable
-D $7112 The address of the sprite of each of the graphic numbers #N$00 to #N$BB,
-. which is found by #R$D6EF. Graphic numbers that use the same sprite have the
-. same address.
+D $7112 The address of the sprite of each of the graphic numbers #N$00 to
+. #N($BB), which is found by #R$D6EF. Graphic numbers that use the same
+. sprite have the same address.
 W $7112,$04,$02 #N$00-#N$01: Null sprites, for an object that is not there and
 . for one that is being removed.
 W $7116,$02,$02 #N$02: Stone arch, near side.
@@ -2184,7 +2186,7 @@ b $75B0 Sprite: Guard Top Half
 @ $75B0 label=Sprite_Guard_Top_Half_2
 D $75B0 The two frames of the top half of a guard, which is the head and the
 . shoulders. The guard that walks east and west uses the graphic numbers #N$96
-. and #N$97, and the guard that walks in a square uses #N$1E and #N$1F. The
+. and #N($97), and the guard that walks in a square uses #N$1E and #N$1F. The
 . bottom half is made of the legs of the human form of the player.
 N $75B0 Guard Top Half frame 2.
 B $75B0,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
@@ -2228,8 +2230,8 @@ B $7896,$90,$02 #SPRITEDATA(gargoyle-01*)
 b $7926 Sprite: Fire
 @ $7926 label=Sprite_Fire_1
 D $7926 The two frames of the fire. The fire that moves east and west uses the
-. graphic numbers #N$56 and #N$57, the one that stays where it is uses #N$B0 and
-. #N$B1 and the one that moves north and south uses #N$B4 and #N$B5.
+. graphic numbers #N$56 and #N($57), the one that stays where it is uses #N$B0
+. and #N$B1 and the one that moves north and south uses #N$B4 and #N$B5.
 N $7926 Fire frame 1.
 B $7926,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $7927,$01 Height = #N(#PEEK(#PC)) lines.
@@ -2305,7 +2307,8 @@ b $7E08 Sprite: Block
 @ $7E08 label=Sprite_Block
 D $7E08 The block, which is the graphic number #N$07. The same sprite is also
 . used for the blocks that move, the blocks that drop and the blocks that
-. collapse, which are the graphic numbers #N$36, #N$37, #N$3E, #N$5B and #N$8F.
+. collapse, which are the graphic numbers #N($36), #N($37), #N($3E), #N$5B and
+. #N$8F.
 B $7E08,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $7E09,$01 Height = #N(#PEEK(#PC)) lines.
 B $7E0A,$E0,$02 #SPRITEDATA(block-01*)
@@ -2347,7 +2350,7 @@ b $8164 Sprite: Sparkle
 D $8164 The six sprites of the sparkles, from the smallest to the biggest. The
 . sparkles are used when the player appears, when the player dies, for the
 . bubbles of the cauldron and for the spell that repels the player. The sparkles
-. that grow are made of the graphic numbers #N$78 to #N$7E, and the ones that
+. that grow are made of the graphic numbers #N$78 to #N($7E), and the ones that
 . shrink of #N$70 to #N$76.
 N $8164 Sparkle frame 1.
 B $8164,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
@@ -2829,20 +2832,21 @@ B $AE9A,$D2,$02 #SPRITEDATA(transformation-04*)
 c $AF6C Start Game
 @ $AF6C label=StartGame
 D $AF6C Clears the whole game variables area (from #R$5BA0 up to the end of the
-. objects table at #N$6108) and then carries on to set up a new game. The low
+. objects table at #R$6108) and then carries on to set up a new game. The low
 . byte of the system FRAMES counter is kept across the clear and used as the
 . first random seed, so that every game plays differently.
 E $AF6C View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$A631 }
 . LIST#
-  $AF6C,$03 Set #REGhl to the start of the game variables.
-  $AF6F,$03 Set #REGbc to the number of bytes to clear.
-  $AF72,$03 Read the low byte of the FRAMES system variable.
-  $AF75,$01 Stash it on the stack.
-  $AF76,$03 Clear the game variables.
-  $AF79,$01 Restore the FRAMES value.
-  $AF7A,$03 Store it in #R$5BA0 as the first random seed.
+N $AF6C Clear the variables and keep the seed.
+  $AF6C,$03 Point #REGhl at #R$5BA0.
+  $AF6F,$03 Set the number of bytes to #N$0568.
+  $AF72,$03 Fetch the low byte of #SKOOLKID$5C78(FRAMES).
+  $AF75,$01 Stash the seed on the stack.
+  $AF76,$03 Call #R$D53A.
+  $AF79,$01 Restore the seed from the stack.
+  $AF7A,$03 Write it to #R$5BA0.
   $AF7D,$02 Jump to #R$AF88.
 
 c $AF7F Restart Game
@@ -2851,9 +2855,10 @@ D $AF7F Clears the variables that belong to a single game, leaving the random
 . seeds and the chosen control method alone. This is used to go back to the
 . game selection menu after a game has finished.
 E $AF7F Continue on to #R$AF88.
-  $AF7F,$03 Set #REGhl to the first of the variables that are cleared each game.
-  $AF82,$03 Set #REGbc to the number of bytes to clear.
-  $AF85,$03 Clear the variables.
+N $AF7F Clear the variables of the last game.
+  $AF7F,$03 Point #REGhl at #R$5BA8.
+  $AF82,$03 Set the number of bytes to #N$0560.
+  $AF85,$03 Call #R$D53A.
 
 c $AF88 Initialise Game
 @ $AF88 label=InitialiseGame
@@ -2861,26 +2866,28 @@ D $AF88 Sets up everything needed to start a new game: builds the lookup tables,
 . gives the player five lives, lets the player choose the control method on the
 . menu, plays the start tune and then picks the random start location of the
 . player and of the special objects.
-.
-. #HTML(#AUDIO0(start-up-tune.wav)(#INCLUDE(StartUpTune)))
 E $AF88 Continue on to #R$AFB7.
-  $AF88,$03 Build the bit-reversal and bit-shifting lookup tables.
-  $AF8B,$04 Write #N$00 to *#R$5BB2 (so the next room is drawn as the first
-. one).
-  $AF8F,$03 Clear the counter and flags byte of the player's scratchpad.
-  $AF92,$05 Set the number of lives to #N$05.
+N $AF88 Build the tables and set the starting state.
+  $AF88,$03 Call #R$D69E.
+  $AF8B,$04 Write #N$00 to #R$5BB2.
+  $AF8F,$03 Write #N$00 to the counter and flags byte of the player copy
+. at #R$D161(#N$D16D).
+  $AF92,$05 Set #R$5BBA to #N$05.
+N $AF97 Stir #R$5BA0 with #R$5BA2.
   $AF97,$03 Point #REGhl at #R$5BA0.
-  $AF9A,$03 Fetch the low byte of the frame counter.
-  $AF9D,$02 Add it to the first random seed, to stir the seed up before the menu
-. is shown.
-  $AF9F,$03 Clear the screen to bright yellow on black.
-  $AFA2,$03 Show the game selection menu and wait for the player's choice.
+  $AF9A,$03 Fetch the low byte of #R$5BA2.
+  $AF9D,$02 Add it to #R$5BA0.
+N $AF9F Show the menu and wait for the player to start.
+  $AF9F,$03 Call #R$D55F.
+  $AFA2,$03 Call #R$BD0C.
+N $AFA5 #HTML(#AUDIO0(start-up-tune.wav)(#INCLUDE(StartUpTune)))
   $AFA5,$03 Point #REGde at #R$B20E.
-  $AFA8,$03 Play the tune.
-  $AFAB,$03 Shuffle the order in which the special objects are asked for.
-  $AFAE,$03 Pick a random starting location for the player.
-  $AFB1,$03 Initialise the sun and moon animation.
-  $AFB4,$03 Place the special objects at random locations.
+  $AFA8,$03 Call #R$B2CF.
+N $AFAB Place the player and set up the rooms.
+  $AFAB,$03 Call #R$B544.
+  $AFAE,$03 Call #R$D1B1.
+  $AFB1,$03 Call #R$C46D.
+  $AFB4,$03 Call #R$C47E.
 
 c $AFB7 Start Life
 @ $AFB7 label=StartLife
@@ -2919,13 +2926,14 @@ E $AFBA View the equivalent code in;
 @ $AFBD label=RunGame_Frame
 N $AFBD Every pass of the main loop starts here. The random seed used by the
 . fire is refreshed, then each object in the table is updated in turn.
-  $AFBD,$03 Fetch the frame counter.
-  $AFC0,$03 Store it as the seed for the fire (it is stepped for every object).
+  $AFBD,$03 Fetch the frame counter from #R$5BA2.
+  $AFC0,$03 Store it as the seed for the fire at #R$5BBC (it is stepped for
+. every object).
   $AFC3,$04 Point #REGix at #R$5C08.
 @ $AFC7 label=RunGame_NextObject
 N $AFC7 Update the object that #REGix points at.
-  $AFC7,$03 Reset the stack pointer, as the update routines do not have to tidy
-. up the stack.
+  $AFC7,$03 Reset the stack pointer to #R$5BA0, as the update routines do not
+. have to tidy up the stack.
   $AFCA,$03 Point #REGhl at #R$5BBC.
   $AFCD,$01 Step the fire seed on.
   $AFCE,$03 Point #REGhl at #R$AFE4.
@@ -2950,26 +2958,26 @@ N $AFDB Jump to the routine whose address is held in word #REGl of the table
 N $AFE4 The update routine of each object returns here.
   $AFE4,$02 Read the refresh register, which is as good as random.
   $AFE6,$01 Move it into #REGc.
-  $AFE7,$03 Fetch the second random seed.
+  $AFE7,$03 Fetch the second random seed from #R$5BA5.
   $AFEA,$01 Add the random value to it.
-  $AFEB,$03 Store it back as the new second seed.
+  $AFEB,$03 Store it back as the new second seed at #R$5BA5.
   $AFEE,$03 Set #REGbc to the size of an object.
   $AFF1,$02 Move #REGix on to the next object.
   $AFF3,$03 Copy #REGix to #REGhl (using the stack).
-  $AFF6,$03 Set #REGbc to the address just beyond the objects table.
+  $AFF6,$03 Set #REGbc to the address just beyond the objects table, #R$6108.
   $AFF9,$03 Subtract it from #REGhl, to see if #REGix is past the end of the
 . table.
   $AFFC,$02 Jump to #R$B000 if every object has been updated.
-  $AFFE,$02 Jump back to #R$AFC7 for the next object.
+  $AFFE,$02 Jump to #R$AFC7 for the next object.
 @ $B000 label=RunGame_FinishFrame
 N $B000 Every object has been updated; now finish the frame.
-  $B000,$03 Fetch the frame counter.
+  $B000,$03 Fetch the frame counter from #R$5BA2.
   $B003,$01 Increase it.
-  $B004,$03 Store it again.
-  $B007,$03 Fetch the second random seed.
+  $B004,$03 Store it again at #R$5BA2.
+  $B007,$03 Fetch the second random seed from #R$5BA5.
   $B00A,$03 Add the byte of the ROM that the frame counter points at, and the
 . frame counter itself, to it.
-  $B00D,$03 Store it as the new second seed.
+  $B00D,$03 Store it as the new second seed at #R$5BA5.
   $B010,$03 Point #REGhl at #R$5BB2.
   $B013,$02 Set bit 0, so that the special objects table gets updated the next
 . time round.
@@ -2978,13 +2986,13 @@ N $B000 Every object has been updated; now finish the frame.
 . room.
   $B01B,$03 Make a list of the objects that need to be drawn.
   $B01E,$03 Draw the objects of the list into the screen buffer.
-  $B021,$03 Fetch the rising blocks flag.
+  $B021,$03 Fetch the rising blocks flag from #R$5BC5.
   $B024,$01 Test it.
   $B025,$03 Play the sound of rising blocks if there are any.
 N $B028 Slow the game down when few objects were drawn this frame: the delay is
 . made up of as many short delay loops as the number of objects drawn is below
 . #N$06.
-  $B028,$03 Fetch the number of objects that were drawn.
+  $B028,$03 Fetch the number of objects that were drawn from #R$5BBE.
   $B02B,$02 Negate it.
   $B02D,$02 Add #N$06 to it, to get the number of delay loops.
   $B02F,$01 Copy it into #REGb.
@@ -2996,14 +3004,15 @@ N $B028 Slow the game down when few objects were drawn this frame: the delay is
 @ $B038 label=RunGame_DelayLoop
   $B038,$01 Decrement the counter.
   $B039,$02 Check whether the counter has reached zero.
-  $B03B,$02 Jump back to #R$B038 until the counter is zero.
-  $B03D,$02 Jump back to #R$B035 until all of the delay loops are done.
+  $B03B,$02 Jump to #R$B038 until the counter is zero.
+  $B03D,$02 Jump to #R$B035 until all of the delay loops are done.
 @ $B03F label=RunGame_UpdateDisplay
 N $B03F If a new room has just been entered, draw the panel and the scenery.
-  $B03F,$03 Fetch the flag which says that the room has just been drawn.
+  $B03F,$03 Fetch the flag which says that the room has just been drawn from
+. #R$5BB7.
   $B042,$03 Jump to #R$B074 if it is zero.
-  $B045,$04 Reset the flag.
-  $B049,$03 Fetch the attribute of the room.
+  $B045,$04 Reset the flag at #R$5BB7.
+  $B049,$03 Fetch the attribute of the room from #R$5BAD.
   $B04C,$03 Colour the whole screen with it.
   $B04F,$03 Draw the objects the player is carrying.
   $B052,$03 Colour the panel.
@@ -3025,7 +3034,7 @@ N $B074 Start another frame, or lose a life if the player is gone.
   $B07F,$03 Combine it with the graphic number of the top half of the player.
   $B082,$03 Jump to #R$AFB7 if neither half is present, as the player has been
 . killed.
-  $B085,$03 Jump back to #R$AFBD for another pass of the game loop.
+  $B085,$03 Jump to #R$AFBD for another pass of the game loop.
 
 c $B088 Reset Wipe Flags
 @ $B088 label=ResetWipeFlags
@@ -3149,9 +3158,16 @@ B $B253,$63,$08
 
 c $B2B6 Play Music Once
 @ $B2B6 label=PlayMusicOnce
-D $B2B6 Plays the tune that #REGde points at, but only if no tune has been
-. played since the flag was last cleared. The flag is set at the same time, so
-. that the tune is only ever played once.
+D $B2B6 Plays a tune, but only if this routine has not played one before. Bit 0
+. of #R$5BD1 is set the first time and nothing clears it. The tune stops when a
+. key is pressed (see #R$B2BE).
+.
+. The tunes played by this routine are:
+. #TABLE(default,centre,centre)
+. { =h Tune | =h Sound }
+. { Menu Tune |
+. #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune))) }
+. TABLE#
 E $B2B6 Continue on to #R$B2BE.
 E $B2B6 View the equivalent code in;
 . #LIST
@@ -3161,42 +3177,52 @@ E $B2B6 View the equivalent code in;
 . { #PENTAGRAM$D69C }
 . LIST#
 R $B2B6 DE Address of the tune
-  $B2B6,$03 Point #REGhl at the flag that says a tune has been played.
-  $B2B9,$03 Return if the flag is already set.
-  $B2BC,$02 Set the flag and carry on to play the tune.
+N $B2B6 Play only if #R$5BD1 is clear.
+  $B2B6,$03 Point #REGhl at #R$5BD1.
+  $B2B9,$03 Return if #R$5BD1 is set.
+  $B2BC,$02 Set bit 0 of #R$5BD1.
 
 c $B2BE Play Music Until Key Pressed
 @ $B2BE label=PlayMusic_WaitKey
-D $B2BE Plays the tune that #REGde points at, one note at a time, and stops as
-. soon as any key is pressed. The keyboard is only checked between notes.
+D $B2BE Plays a tune, which stops when a
+. key is pressed. A tune is a list of
+. notes (see #R$B2DA) which ends with
+. #N$FF.
 E $B2BE View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B4A9 }
 . LIST#
 R $B2BE DE Address of the tune
-  $B2BE,$01 Select every row of the keyboard.
-  $B2BF,$03 Read the keyboard.
-  $B2C2,$02 Jump to #R$B2C5 if no key is being pressed.
-  $B2C4,$01 Return, as a key has been pressed.
+N $B2BE Stop if a key is pressed.
+  $B2BE,$01 Select all of the keyboard rows.
+  $B2BF,$03 Call #R$B5F7.
+  $B2C2,$02 Jump to #R$B2C5 if no key is
+. pressed.
+  $B2C4,$01 Return.
+N $B2C5 Play the next note.
 @ $B2C5 label=PlayMusic_WaitKey_Process
-  $B2C5,$01 Fetch the next note of the tune.
-  $B2C6,$04 Jump to #R$B2D9 if it is the end marker.
-  $B2CA,$03 Play the note.
-  $B2CD,$02 Jump back to #R$B2BE for the next note.
+  $B2C5,$01 Fetch the next note.
+  $B2C6,$04 Jump to #R$B2D9 if it is #N$FF.
+  $B2CA,$03 Call #R$B2DA.
+  $B2CD,$02 Jump to #R$B2BE.
 
 c $B2CF Play Music
 @ $B2CF label=PlayMusic
-D $B2CF Plays the tune that #REGde points at, from beginning to end.
+D $B2CF Plays a tune, which cannot be
+. stopped. A tune is a list of notes (see
+. #R$B2DA) which ends with #N$FF.
 .
 . The tunes played by this routine are:
 . #TABLE(default,centre,centre)
 . { =h Tune | =h Sound }
-. { Start-up Tune | #HTML(#AUDIO0(start-up-tune.wav)(#INCLUDE(StartUpTune))) }
-. { Game Over Tune | #HTML(#AUDIO0(game-over-tune.wav)(#INCLUDE(GameOverTune)))
-. }
+. { Start-up Tune |
+. #HTML(#AUDIO0(start-up-tune.wav)(#INCLUDE(StartUpTune))) }
+. { Game Over Tune |
+. #HTML(#AUDIO0(game-over-tune.wav)(#INCLUDE(GameOverTune))) }
 . { Game Complete Tune |
 . #HTML(#AUDIO0(game-complete-tune.wav)(#INCLUDE(GameCompleteTune))) }
-. { Main Tune | #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune))) }
+. { Main Tune |
+. #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune))) }
 . TABLE#
 E $B2CF View the equivalent code in;
 . #LIST
@@ -3209,20 +3235,20 @@ E $B2CF View the equivalent code in;
 . { #COOKIE$6568 }
 . LIST#
 R $B2CF DE Address of the tune
-  $B2CF,$01 Fetch the next note of the tune.
-  $B2D0,$04 Jump to #R$B2D9 if it is the end marker.
-  $B2D4,$03 Play the note.
-  $B2D7,$02 Jump back to #R$B2CF for the next note.
+N $B2CF Play each note until #N$FF.
+  $B2CF,$01 Fetch the next note.
+  $B2D0,$04 Jump to #R$B2D9 if it is #N$FF.
+  $B2D4,$03 Call #R$B2DA.
+  $B2D7,$02 Jump to #R$B2CF.
 @ $B2D9 label=PlayMusic_Return
   $B2D9,$01 Return.
 
 c $B2DA Play Note
 @ $B2DA label=PlayNote
-D $B2DA Plays one note of a tune, or pauses for the length of the note if it is
-. a rest. The note is a square wave made by switching the speaker on and off, so
-. the game is stopped while it plays. Bits 0-5 of the note are the number of the
-. note (see #R$B332), and bits 6-7 are the length of the note, which is one to
-. four times the basic length of the note.
+D $B2DA Plays a note of a tune, or a rest if the note number is zero.
+. Bits 0 to 5 select the entry in #R$B332 that holds the two delays of a cycle
+. and the number of cycles. Bits 6 and 7 are the length less one, which
+. multiplies the number of cycles, so the note is one to four times as long.
 E $B2DA View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B4C5 }
@@ -3235,65 +3261,81 @@ E $B2DA View the equivalent code in;
 R $B2DA A The note
 R $B2DA DE Address of the note
 R $B2DA O:DE Address of the next note
+N $B2DA Look up the delays and the number of cycles.
   $B2DA,$02,b$01 Isolate the number of the note.
-  $B2DC,$02 Jump to #R$B31C if it is a rest.
-N $B2DE Look up the delays and the number of cycles in the table at #R$B332.
-  $B2DE,$07 Multiply the number of the note by three.
-  $B2E5,$04 Point #REGhl at the entry of the note in the table.
-  $B2E9,$02 Fetch the first byte of the delay between the clicks of the speaker.
-  $B2EB,$02 Fetch the second byte of the delay.
-  $B2ED,$03 Fetch the basic length of the note.
-N $B2F0 Bits 6 and 7 of the note are the length, less one.
-  $B2F0,$03 Fetch the note again and rotate bits 6-7 of it into the low bits.
+  $B2DC,$02 Jump to #R$B31C if the note is a rest.
+  $B2DE,$03 Set #REGhl to the note number.
+  $B2E1,$01 Double the number.
+  $B2E2,$03 Call #R$D4F2.
+N $B2E5 Point #REGhl at the entry of the note in the table, #R$B332.
+  $B2E5,$03 Point #REGbc at #R$B332.
+  $B2E8,$01 Find the entry for the note.
+N $B2E9 Fetch the first byte of the delay between the clicks of the speaker.
+  $B2E9,$01 Fetch the first delay.
+  $B2EA,$01 Move on.
+N $B2EB Fetch the second byte of the delay.
+  $B2EB,$01 Fetch the second delay.
+  $B2EC,$01 Move on.
+N $B2ED Fetch the basic length of the note.
+  $B2ED,$01 Fetch the number of cycles.
+  $B2EE,$02 Set #REGh to #N$00.
+N $B2F0 Bits 6 and 7 are the length, less one.
+  $B2F0,$01 Fetch the note again.
+  $B2F1,$02 Move bits 6 and 7 to bits 0 and 1.
+N $B2F3 Isolate the length of the note.
   $B2F3,$02,b$01 Isolate the length of the note.
-  $B2F5,$01 Make it one to four.
-  $B2F6,$01 Save the address of the note.
-  $B2F7,$02 Copy the basic length into #REGde.
-N $B2F9 Multiply the number of cycles by the length of the note.
+N $B2F5 Make it #N$01 to #N$04.
+  $B2F5,$01 Add one.
+  $B2F6,$01 Stash the note address on the stack.
+  $B2F7,$02 Copy the number of cycles to #REGde.
+N $B2F9 Multiply the number of cycles by the length.
 @ $B2F9 label=PlayNote_Multiply
-  $B2F9,$03 Jump to #R$B2FF when the basic length has been added enough times.
-  $B2FC,$01 Add the basic length to the total.
-  $B2FD,$02 Jump back to #R$B2F9.
+  $B2F9,$01 Count down the length.
+  $B2FA,$02 Jump to #R$B2FF if the length has been used up.
+  $B2FC,$01 Add the number of cycles again.
+  $B2FD,$02 Jump to #R$B2F9.
 @ $B2FF label=PlayNote_MultiplyDone
-  $B2FF,$01 Restore the address of the note.
+  $B2FF,$01 Restore the note address from the stack.
+N $B300 Each pass makes one cycle of the note.
 @ $B300 label=PlayNote_Cycle
-N $B300 Each pass of this loop makes one cycle of the note, so the length of the
-. note is the number of cycles.
-  $B300,$01 Save the delay.
-  $B301,$03 Switch the speaker off.
+  $B300,$01 Stash the delays on the stack.
+  $B301,$01 Set #REGa to #N$00.
+  $B302,$02 Turn the speaker off.
 @ $B304 label=PlayNote_OffDelay
   $B304,$02 Wait with the speaker off, using the first byte of the delay for the
 . first pass and #N$0100 for each pass after it.
-  $B306,$03 Decrease the second byte of the delay and jump back to #R$B304 until
-. it is zero.
-  $B309,$02 Restore the delay, and save it again.
-  $B30B,$04 Switch the speaker on.
+  $B306,$01 Count down the second delay.
+  $B307,$02 Jump to #R$B304 until it has finished.
+  $B309,$01 Restore the delays from the stack.
+  $B30A,$01 Stash the delays on the stack.
+  $B30B,$02 Set bit 4.
+  $B30D,$02 Turn the speaker on.
 @ $B30F label=PlayNote_OnDelay
   $B30F,$02 Wait with the speaker on for the same length of time.
-  $B311,$03 Decrease the second byte of the delay and jump back to #R$B30F until
-. it is zero.
-  $B314,$01 Restore the delay.
+  $B311,$01 Count down the second delay.
+  $B312,$02 Jump to #R$B30F until it has finished.
+  $B314,$01 Restore the delays from the stack.
   $B315,$01 Decrease the number of cycles left to play.
-  $B316,$04 Jump back to #R$B300 until there are none left.
+  $B316,$04 Jump to #R$B300 until there are none left.
   $B31A,$01 Point at the next note.
   $B31B,$01 Return.
+N $B31C A rest is a silent pause of one to four units.
 @ $B31C label=PlayNote_Rest
-N $B31C A rest is a silent pause, which is made by waiting one to four times.
   $B31C,$01 Fetch the length of the rest.
   $B31D,$01 Point at the next note.
   $B31E,$02 Rotate bits 6-7 of the note into the low bits.
-  $B320,$02,b$01 Isolate the length of the rest.
-  $B322,$01 Make it one to four.
-  $B323,$01 Set the number of times to wait in #REGl.
-  $B324,$03 Set the length of the wait.
+  $B320,$02,b$01 Keep bits 0 and 1.
+  $B322,$01 Add one.
+  $B323,$01 Keep it in #REGl.
+  $B324,$03 Set #REGbc to #N$430B.
 @ $B327 label=PlayNote_RestUnit
-  $B327,$01 Save the length of the wait.
+  $B327,$01 Stash the pause length on the stack.
 @ $B328 label=PlayNote_RestDelay
-  $B328,$01 Decrease the length of the wait.
-  $B329,$04 Jump back to #R$B328 until the length of the wait is zero.
-  $B32D,$01 Restore the length of the wait.
-  $B32E,$01 Decrease the number of times to wait.
-  $B32F,$02 Jump back to #R$B327 until it is zero.
+  $B328,$01 Count down the pause.
+  $B329,$04 Jump to #R$B328 until the length of the wait is zero.
+  $B32D,$01 Restore the pause length from the stack.
+  $B32E,$01 Count down the units of the rest.
+  $B32F,$02 Jump to #R$B327 until it is zero.
   $B331,$01 Return.
 
 b $B332 Music Note Table
@@ -3314,16 +3356,16 @@ E $B3E9 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B5D4 }
 . LIST#
-.
-. #HTML(#AUDIO0(block-sound.wav)(#INCLUDE(BlockSound)))
-  $B3E9,$03 Fetch the frame counter.
-  $B3EC,$02,b$01 Keep the lowest three bits.
-  $B3EE,$03 Set #REGhl to the number of the entry in the table.
+N $B3E9 Choose a pitch from the table.
+N $B3E9 #HTML(#AUDIO0(block-sound.wav)(#INCLUDE(BlockSound)))
+  $B3E9,$03 Fetch #R$5BA2.
+  $B3EC,$02,b$01 Keep bits 0 to 2.
+  $B3EE,$03 Set #REGhl to the entry number.
   $B3F1,$03 Point #REGbc at #R$B3FB.
   $B3F4,$01 Add the entry number to the address of the table.
   $B3F5,$01 Fetch the pitch.
-  $B3F6,$02 Set the number of cycles to play.
-  $B3F8,$03 Play the tone.
+  $B3F6,$02 Set the number of cycles to #N$04.
+  $B3F8,$03 Jump to #R$B4E6.
 
 b $B3FB Pitch Table
 @ $B3FB label=PitchTable
@@ -3333,16 +3375,16 @@ B $B3FB,$08,$08
 c $B403 Play Sparkle Sound
 @ $B403 label=PlaySparkleSound
 D $B403 Plays a burst of noise for the sparkles of a dying player. The pitch of
-. each cycle comes from the bytes of the ROM, starting at #N$1234, and the
+. each cycle comes from the bytes of the ROM, starting at #N($1234), and the
 . number of cycles depends on the sprite number of the sparkle, so each stage of
 . the sparkles sounds different.
 E $B403 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B5EE }
 . LIST#
-.
-. #HTML(#AUDIO0(sparkles-sound.wav)(#INCLUDE(SparklesSound)))
 R $B403 IX Address of the sparkle object
+N $B403 Play a beep for each remaining frame.
+N $B403 #HTML(#AUDIO0(sparkles-sound.wav)(#INCLUDE(SparklesSound)))
   $B403,$03 Fetch the graphic number of the sparkle.
   $B406,$01 Invert it.
   $B407,$02,b$01 Keep the lowest five bits to get the number of notes to play.
@@ -3366,9 +3408,9 @@ E $B419 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B604 }
 . LIST#
-.
-. #HTML(#AUDIO0(appearing-sound.wav)(#INCLUDE(AppearingSound)))
 R $B419 IX Address of the sparkle object
+N $B419 Make a beep for each remaining frame.
+N $B419 #HTML(#AUDIO0(appearing-sound.wav)(#INCLUDE(AppearingSound)))
   $B419,$03 Fetch the graphic number of the sparkle.
   $B41C,$02 Rotate it left twice.
   $B41E,$02,b$01 Keep the lowest five bits.
@@ -3391,8 +3433,8 @@ E $B42E View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B619 }
 . LIST#
-.
-. #HTML(#AUDIO0(bounce-sound.wav)(#INCLUDE(BounceSound)))
+N $B42E Play four bursts of three beeps.
+N $B42E #HTML(#AUDIO0(bounce-sound.wav)(#INCLUDE(BounceSound)))
   $B42E,$03 Point #REGhl at the start of the ROM.
   $B431,$02 Set the number of bursts to play.
 @ $B433 label=PlayBumpSound_NextBurst
@@ -3408,21 +3450,23 @@ E $B42E View the equivalent code in;
 
 c $B441 Play Jump Sound
 @ $B441 label=PlayJumpSound
-D $B441 Plays a sweep of single cycles for the player jumping.
+D $B441 Plays the sound of the player jumping, which goes through a series of
+. pitches.
 E $B441 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B62C }
 . LIST#
-.
-. #HTML(#AUDIO0(jump-sound.wav)(#INCLUDE(JumpSound)))
+N $B441 Play #N$20 beeps of falling pitch.
+N $B441 #HTML(#AUDIO0(jump-sound.wav)(#INCLUDE(JumpSound)))
   $B441,$02 Set the number of cycles.
 @ $B443 label=PlayJumpSound_NextBeep
   $B443,$01 Fetch the cycle counter.
   $B444,$05 Rotate it to get the pitch.
   $B449,$01 Set #REGb to the pitch.
   $B44A,$03 Play a single cycle of the tone.
-  $B44D,$03 Decrease the cycle counter and loop back to #R$B443 until it is
-. zero.
+N $B44D Decrease the cycle counter and loop back to #R$B443 until it is zero.
+  $B44D,$01 Count down.
+  $B44E,$02 Jump to #R$B443 until all of the beeps have been played.
   $B450,$01 Return.
 
 c $B451 Play Sound From Height
@@ -3434,9 +3478,9 @@ E $B451 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B63C }
 . LIST#
-.
-. #HTML(#AUDIO0(falling-sound.wav)(#INCLUDE(FallingSound)))
 R $B451 IX Address of the object
+N $B451 Use the height as the pitch source.
+N $B451 #HTML(#AUDIO0(falling-sound.wav)(#INCLUDE(FallingSound)))
   $B451,$03 Fetch the Z coordinate of the object.
 
 c $B454 Play Sound From Value
@@ -3447,9 +3491,9 @@ E $B454 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B63F }
 . LIST#
-.
-. #HTML(#AUDIO0(rising-sound.wav)(#INCLUDE(RisingSound)))
 R $B454 A Value that the pitch is made from
+N $B454 Turn the value into a pitch and play six beeps.
+N $B454 #HTML(#AUDIO0(rising-sound.wav)(#INCLUDE(RisingSound)))
   $B454,$01 Invert the value.
   $B455,$02 Multiply it by four to get the pitch.
   $B457,$01 Set #REGb to the pitch.
@@ -3460,9 +3504,9 @@ c $B45D Play Sound From X Position
 @ $B45D label=PlaySoundFromXPosition
 D $B45D Plays the tone for an object that is moving east or west, with a pitch
 . taken from its X coordinate.
-.
-. #HTML(#AUDIO0(block-east-west-sound.wav)(#INCLUDE(BlockEastWestSound)))
 R $B45D IX Address of the object
+N $B45D Use the X coordinate as the pitch source.
+N $B45D #HTML(#AUDIO0(block-east-west-sound.wav)(#INCLUDE(BlockEastWestSound)))
   $B45D,$03 Fetch the X coordinate of the object.
   $B460,$02 Jump to #R$B454.
 
@@ -3470,9 +3514,9 @@ c $B462 Play Sound From Y Position
 @ $B462 label=PlaySoundFromYPosition
 D $B462 Plays the tone for an object that is moving north or south, with a pitch
 . taken from its Y coordinate.
-.
-. #HTML(#AUDIO0(block-north-south-sound.wav)(#INCLUDE(BlockNorthSouthSound)))
 R $B462 IX Address of the object
+N $B462 Use the Y coordinate as the pitch source.
+. #HTML(#AUDIO0(block-north-south-sound.wav)(#INCLUDE(BlockNorthSouthSound)))
   $B462,$03 Fetch the Y coordinate of the object.
   $B465,$02 Jump to #R$B454.
 
@@ -3484,9 +3528,9 @@ E $B467 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B654 }
 . LIST#
-.
-. #HTML(#AUDIO0(moving-sound.wav)(#INCLUDE(MovingSound)))
 R $B467 IX Address of the object
+N $B467 Sum the three coordinates for the pitch.
+N $B467 #HTML(#AUDIO0(moving-sound.wav)(#INCLUDE(MovingSound)))
   $B467,$03 Fetch the X coordinate of the object.
   $B46A,$03 Add the Y coordinate.
   $B46D,$03 Add the Z coordinate.
@@ -3501,9 +3545,9 @@ E $B472 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B65F }
 . LIST#
-.
-. #HTML(#AUDIO0(transform-sound.wav)(#INCLUDE(TransformSound)))
 R $B472 IX Address of the object
+N $B472 Work the number of cycles from the sprite number.
+N $B472 #HTML(#AUDIO0(transform-sound.wav)(#INCLUDE(TransformSound)))
   $B472,$03 Fetch the graphic number of the object.
   $B475,$03 Rotate it left three times.
   $B478,$02,b$01 Keep bits 3 and 4.
@@ -3523,16 +3567,16 @@ c $B489 Play Random Noise
 @ $B489 label=PlayRandomNoise
 D $B489 Plays sixteen short bursts of a tone for the portcullis coming to rest.
 . The pitches come from a random place in the first #N$2000 bytes of the ROM.
-.
-. #HTML(#AUDIO0(explosion.wav)(#INCLUDE(Explosion)))
 E $B489 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B676 }
 . { #SABREWULF$BEEE }
 . LIST#
-  $B489,$03 Fetch the second random seed.
+N $B489 Pick a random ROM address and play sixteen bursts.
+N $B489 #HTML(#AUDIO0(explosion.wav)(#INCLUDE(Explosion)))
+  $B489,$03 Fetch the second random seed from #R$5BA5.
   $B48C,$01 Use it as the low byte of a ROM address.
-  $B48D,$03 Fetch the frame counter.
+  $B48D,$03 Fetch the frame counter from #R$5BA2.
   $B490,$02,b$01 Keep the lowest five bits.
   $B492,$01 Use it as the high byte of the ROM address.
   $B493,$02 Set the number of bursts to play.
@@ -3551,8 +3595,8 @@ c $B4A3 Play Low Beep
 @ $B4A3 label=PlayLowBeep
 D $B4A3 Plays a low beep, which is sixteen cycles of a low tone. It tells the
 . player that something has happened.
-.
-. #HTML(#AUDIO0(beep-sound.wav)(#INCLUDE(BeepSound)))
+N $B4A3 Play sixteen cycles of a low tone.
+N $B4A3 #HTML(#AUDIO0(beep-sound.wav)(#INCLUDE(BeepSound)))
   $B4A3,$03 Set the pitch and the number of cycles.
   $B4A6,$02 Play the tone.
 
@@ -3560,8 +3604,8 @@ c $B4A8 Play Middle Beep
 @ $B4A8 label=PlayMiddleBeep
 D $B4A8 Plays a beep of twenty-four cycles, with a higher pitch than #R$B4A3. It
 . is the sound of the game being paused and of it carrying on again.
-.
-. #HTML(#AUDIO0(pause-sound.wav)(#INCLUDE(PauseSound)))
+N $B4A8 Play twenty-four cycles of a middle tone.
+N $B4A8 #HTML(#AUDIO0(pause-sound.wav)(#INCLUDE(PauseSound)))
   $B4A8,$03 Set the pitch and the number of cycles.
   $B4AB,$02 Play the tone.
 
@@ -3573,14 +3617,14 @@ E $B4AD View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B6C0 }
 . LIST#
-.
-. #HTML(#AUDIO0(guard-footstep-sound.wav)(#INCLUDE(GuardFootstepSound)))
 R $B4AD IX Address of the object
+N $B4AD Play on even frames of the walking animation.
+N $B4AD #HTML(#AUDIO0(guard-footstep-sound.wav)(#INCLUDE(GuardFootstepSound)))
   $B4AD,$03 Fetch the graphic number of the object.
   $B4B0,$02,b$01 Test whether it is an odd frame of the animation.
   $B4B2,$01 Return if it is.
   $B4B3,$02 Set the pitch.
-  $B4B5,$03 Fetch the frame counter.
+  $B4B5,$03 Fetch the frame counter from #R$5BA2.
   $B4B8,$01 Invert it.
   $B4B9,$02 Jump to #R$B4C6.
 
@@ -3593,15 +3637,15 @@ E $B4BB View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B6CE }
 . LIST#
-.
-. #HTML(#AUDIO0(footstep-sound.wav)(#INCLUDE(FootstepSound)))
 R $B4BB IX Address of the object
+N $B4BB Play on even frames of the walking animation.
+N $B4BB #HTML(#AUDIO0(footstep-sound.wav)(#INCLUDE(FootstepSound)))
   $B4BB,$03 Fetch the graphic number of the object.
   $B4BE,$02,b$01 Test whether it is an odd frame of the animation.
   $B4C0,$01 Return if it is.
 @ $B4C1 label=PlayFootstepsSound_EveryFrame
   $B4C1,$02 Set the pitch.
-  $B4C3,$03 Fetch the frame counter.
+  $B4C3,$03 Fetch the frame counter from #R$5BA2.
 @ $B4C6 label=PlayFootstepsSound_Position
 N $B4C6 One time in two the pitch is made from the height of the object instead.
   $B4C6,$04 Jump to #R$B4D1 if a random bit of the seed is not set.
@@ -3642,8 +3686,8 @@ R $B4E6 C Number of cycles
 
 c $B4ED Play Square Wave
 @ $B4ED label=PlaySquareWave
-D $B4ED Plays one cycle of a tone by setting the speaker output high, waiting,
-. setting it low and waiting again.
+D $B4ED Plays a single beep by switching the speaker on, waiting, switching it
+. off and waiting again. The bigger the pitch, the longer the beep.
 E $B4ED View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B702 }
@@ -3654,6 +3698,7 @@ E $B4ED View the equivalent code in;
 . { #SABREWULF$BF74 }
 . LIST#
 R $B4ED B Pitch of the tone (smaller values are higher)
+N $B4ED Hold the speaker on, then off.
   $B4ED,$04 Set the speaker output high.
   $B4F1,$01 Keep the pitch in #REGa.
 @ $B4F2 label=PlaySquareWave_FirstDelay
@@ -3714,17 +3759,20 @@ N $B52E Move on to the next object.
 c $B538 Test Object Solid
 @ $B538 label=TestObjectSolid
 D $B538 Tests whether the object that #REGiy points at is present and is not
-. flagged to be ignored in the 3D calculations.
+. flagged to be ignored in the 3D calculations. The zero flag is set if the slot
+. is unused or bit 1 of the flags is set.
 E $B538 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B74D }
 . { #PENTAGRAM$B99B }
 . LIST#
-R $B538 IY Address of the object
-R $B538 O:F Zero flag set if the object is empty or ignored
+R $B538 IY The address of the object
+R $B538 O:F Zero flag set if the slot is not used or the object is ignored
+N $B538 Return if the slot is empty.
   $B538,$03 Fetch the graphic number of the object.
-  $B53B,$01 Test it, as zero means that there is no object.
-  $B53C,$01 Return if there is no object.
+N $B53B Test it, as zero means that there is no object.
+  $B53B,$02 Return if the slot is not used.
+N $B53D After invert, bit 1 is set when the object is not ignored.
   $B53D,$03 Fetch the flags of the object.
   $B540,$01 Invert them.
   $B541,$02,b$01 Keep the ignore flag, which is now clear if the object is
@@ -3736,10 +3784,12 @@ c $B544 Shuffle Required Objects
 D $B544 Changes the order in which the special objects have to be taken to the
 . cauldron. The list of #N$0E objects at #R$C27D is rotated by four to seven
 . places, depending on the first random seed.
-  $B544,$03 Fetch the first random seed.
+N $B544 Work out how many times to rotate the list.
+  $B544,$03 Fetch #R$5BA0.
   $B547,$02,b$01 Keep the lowest two bits.
   $B549,$02,b$01 Make it four to seven.
   $B54B,$01 Use it as the number of times to rotate the list.
+N $B54C Rotate the list one place.
 @ $B54C label=ShuffleRequiredObjects_Loop
   $B54C,$02 Set the number of objects to move.
   $B54E,$04 Point #REGiy at #R$C27D.
@@ -3762,9 +3812,11 @@ D $B566 Handles one of the sparkles that fly off the blocks when the cauldron
 . in one of four diagonal directions that depend on the part of the room it is
 . in, and then flies at the player.
 R $B566 IX Address of the sparkle object
+N $B566 Rise until the sparkle is high enough, then fly at the player.
   $B566,$03 Set the pixel adjustments for a sparkle.
   $B569,$03 Fetch the height of the sparkle.
   $B56C,$04 Jump to #R$B5C4 if it has reached the top.
+N $B570 Pick a diagonal from the part of the room the sparkle is in.
   $B570,$04 Make the sparkle rise at a speed of #N$03.
   $B574,$03 Fetch the X coordinate of the sparkle.
   $B577,$01 Rotate bit 7 into bit 0.
@@ -3784,12 +3836,12 @@ w $B58B Sparkle Direction Table
 D $B58B The routines that give a sparkle its speeds in X and Y, chosen by the
 . part of the room that the sparkle is in (bit 7 of the X coordinate and bit 7
 . of the Y coordinate).
-W $B58B,$02,$02 X below #N$80 and Y below #N$80: X speed #N$FC, Y speed #N$04.
-W $B58D,$02,$02 X below #N$80 and Y at least #N$80: X speed #N$04, Y speed
+W $B58B,$02,$02 X below #N$80 and Y below #N$80: X speed #N($FC), Y speed #N$04.
+W $B58D,$02,$02 X below #N$80 and Y at least #N$80: X speed #N($04), Y speed
 . #N$04.
-W $B58F,$02,$02 X at least #N$80 and Y below #N$80: X speed #N$FC, Y speed
+W $B58F,$02,$02 X at least #N$80 and Y below #N$80: X speed #N($FC), Y speed
 . #N$FC.
-W $B591,$02,$02 X and Y both at least #N$80: X speed #N$04, Y speed #N$FC.
+W $B591,$02,$02 X and Y both at least #N$80: X speed #N($04), Y speed #N$FC.
 
 c $B593 Set Sparkle Speed
 @ $B593 label=SetSparkleSpeed
@@ -3803,7 +3855,7 @@ R $B593 IX Address of the sparkle object
 N $B596 Store the speeds and pick the graphic.
   $B596,$03 Store the X speed in the object.
   $B599,$03 Store the Y speed in the object.
-  $B59C,$03 Fetch the second random seed.
+  $B59C,$03 Fetch the second random seed from #R$5BA5.
   $B59F,$02,b$01 Keep the lowest two bits to get a random number from #N$00 to
 . #N$03.
   $B5A1,$02 Jump to #R$B5A4 if it is not zero.
@@ -3813,7 +3865,7 @@ N $B596 Store the speeds and pick the graphic.
   $B5A6,$03 Store it as the graphic number of the object.
 @ $B5A9 label=SetSparkleSpeed_Move
   $B5A9,$03 Fetch the height of the sparkle.
-  $B5AC,$03 Store it, so that the sound of rising blocks can use it.
+  $B5AC,$03 Store it, so that the sound of rising blocks can use it at #R$5BC5.
 @ $B5AF label=MoveAndDrawObject
 N $B5AF Move the object by its speeds, applying gravity, and flag it to be
 . redrawn.
@@ -3835,6 +3887,7 @@ D $B5C4 Handles a sparkle that has risen to the top. If the sparkle is close to
 . the player the game ends, otherwise the sparkle is made deadly and set off
 . towards the player.
 R $B5C4 IX Address of the sparkle object
+N $B5C4 End the game if the sparkle is close to the player.
   $B5C4,$03 Fetch the X coordinate of the player.
   $B5C7,$03 Subtract the X coordinate of the sparkle.
   $B5CA,$03 Jump to #R$B5CF if the result is positive.
@@ -3850,6 +3903,7 @@ R $B5C4 IX Address of the sparkle object
   $B5DE,$05 Jump to #R$BA22 if the sparkle is less than #N$06 away from the
 . player in Y too, as the sparkle has caught the player.
 @ $B5E3 label=SendSparkleAtPlayer_Fly
+N $B5E3 Make the sparkle deadly and send it towards the player.
   $B5E3,$04 Flag the sparkle as fatal if it hits the player.
   $B5E7,$04 Flag the sparkle as ignored in the 3D calculations.
   $B5EB,$04 Make the sparkle drop at a speed of #N$01.
@@ -3859,9 +3913,10 @@ R $B5C4 IX Address of the sparkle object
 
 c $B5F7 Read Keyboard Port
 @ $B5F7 label=ReadKeyboardPort
-D $B5F7 Reads one half-row of the keyboard (or several of them together, if more
-. than one bit of the selector is zero). The bits of the result are set for the
-. keys that are pressed.
+D $B5F7 Reads some rows of the keyboard. The row selector is also written to
+. port #N$FD (with the selector as the high byte of the address), which does
+. nothing on a 48K Spectrum and is not part of any sound; the keyboard is read
+. with the same selector straight afterwards.
 E $B5F7 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B759 }
@@ -3870,12 +3925,14 @@ E $B5F7 View the equivalent code in;
 . { #NIGHTSHADE$E239 }
 . { #PENTAGRAM$B952 }
 . LIST#
-R $B5F7 A High byte of the port address, which selects the half-rows
-R $B5F7 O:A The keys of the half-rows (bits 0-4, set when pressed)
+R $B5F7 A Row selector (a bit which is reset selects the row)
+R $B5F7 O:A Keys pressed, in bits 0 to 4 (a bit is set when a key is pressed)
+R $B5F7 O:F Zero flag set if no key is pressed
+N $B5F7 Write the selector, then read the keys.
   $B5F7,$02 Put the half-row selector on the high byte of the address bus.
-  $B5F9,$02 Read the keyboard.
+  $B5F9,$02 Read the rows of the keyboard.
   $B5FB,$01 Invert the bits so that the pressed keys are set.
-  $B5FC,$02,b$01 Keep only the five bits of the keys.
+  $B5FC,$02,b$01 Keep only bits 0 to 4.
   $B5FE,$01 Return.
 
 c $B5FF Handle Bouncing Ball
@@ -3894,15 +3951,16 @@ R $B5FF IX Address of the ball object
   $B605,$03 Fetch the speed in Y of the ball.
   $B608,$01 Stash the speeds on the stack.
   $B609,$03 Fetch the speed in Z of the ball.
-  $B60C,$03 Keep it, so that the bounce can be told from the ball rising.
+  $B60C,$03 Keep it, so that the bounce can be told from the ball rising at
+. #R$5BC2.
   $B60F,$03 Apply gravity to the ball and move it.
-  $B612,$01 Restore the speeds in X and Y.
+  $B612,$01 Restore the speeds in X and Y from the stack.
   $B613,$03 Put the speed in X back.
   $B616,$03 Put the speed in Y back.
 N $B619 Work out which way the ball should go from the form the player is in.
-  $B619,$03 Fetch the graphic number of the player's legs.
+  $B619,$03 Fetch the graphic number of the player's legs from #R$5C08.
   $B61C,$02 Take off the first graphic number of the legs.
-  $B61E,$02 Compare the result with #N$20, which is where the legs of the wulf
+  $B61E,$02 Compare the result with #N($20), which is where the legs of the wulf
 . start. The carry flag is set if the player is a human.
   $B620,$02 Get the opcode of JR NC.
   $B622,$02 Jump to #R$B626 if the player is the wulf.
@@ -3916,13 +3974,13 @@ N $B62C Work out how fast the ball bounces up.
   $B631,$02 Set the speed to #N$04.
   $B633,$02 Jump to #R$B63C if it is even.
   $B635,$01 Stash the minimum speed in #REGb.
-  $B636,$03 Fetch the second random seed.
+  $B636,$03 Fetch the second random seed from #R$5BA5.
   $B639,$02,b$01 Keep the lowest two bits.
   $B63B,$01 Add them to the minimum speed.
 @ $B63C label=HandleBouncingBall_TestFloor
   $B63C,$06 Jump to #R$B668 if the ball has not hit the floor.
   $B642,$03 Make the ball bounce up.
-  $B645,$03 Fetch the old speed in Z of the ball.
+  $B645,$03 Fetch the old speed in Z of the ball from #R$5BC2.
   $B648,$01 Test whether it was rising.
   $B649,$03 Jump to #R$B64F if it was.
   $B64C,$03 Play the sound of the ball bouncing.
@@ -4028,7 +4086,7 @@ N $B6CA Work out where the block should be: a position from #N$00 to #N$0F that
   $B6CE,$01 Rotate it right.
   $B6CF,$02,b$01 Keep the bit which is different for the neighbouring objects.
   $B6D1,$01 Stash it in #REGc.
-  $B6D2,$03 Fetch the frame counter.
+  $B6D2,$03 Fetch the frame counter from #R$5BA2.
   $B6D5,$01 Add the offset of this block.
   $B6D6,$04 Jump to #R$B6DB if bit 4, which is the direction of the wave, is
 . clear.
@@ -4053,7 +4111,7 @@ N $B6EF Set that speed, hold the block up, and move it.
 @ $B6EF label=HandleMovingBlock_Speed
   $B6EF,$03 Set the speed of the block. This is the instruction that is
 . modified.
-  $B6F2,$04 Set the speed in Z to #N$01, so that the block does not fall.
+  $B6F2,$04 Set the speed in Z to #N($01), so that the block does not fall.
   $B6F6,$03 Move the block and flag it to be drawn again.
 
 c $B6F9 Handle Guard Or Wizard Bottom Half
@@ -4065,6 +4123,7 @@ D $B6F9 Handles the bottom half of a guard that moves in any direction or of the
 . or away from the player, and the horizontal flip flag of the object is set for
 . the directions that mirror the sprites.
 R $B6F9 IX Address of the bottom half of the guard
+N $B6F9 Face the legs in the direction the guard is moving.
   $B6F9,$03 Set the pixel adjustments of a guard.
   $B6FC,$03 Fetch the speed in X.
   $B6FF,$03 Combine it with the speed in Y.
@@ -4099,6 +4158,7 @@ D $B73C Handles the top half of a guard that patrols east and west. The guard
 . walks at a speed of #N$02 and turns round when it hits something. The bottom
 . half of the guard, which is the next object in the table, is kept in step.
 R $B73C IX Address of the top half of the guard
+N $B73C Walk east or west and turn when the guard hits something.
   $B73C,$03 Set the pixel adjustments of a guard.
   $B73F,$04 Test whether the guard is heading east.
   $B743,$02 Set the speed to #N$02.
@@ -4114,6 +4174,7 @@ R $B73C IX Address of the top half of the guard
   $B75E,$02,b$01 Turn the guard round.
   $B760,$03 Store them.
 @ $B763 label=HandleGuardMovingEastWest_BottomHalf
+N $B763 Keep the bottom half in step and make the guard deadly.
   $B763,$03 Fetch the X coordinate of the guard.
   $B766,$03 Give it to the bottom half of the guard.
   $B769,$03 Make the guard deadly and flag it to be drawn again.
@@ -4128,6 +4189,7 @@ E $B76C View the equivalent code in;
 . { #ALIENEIGHT$B1AE }
 . LIST#
 R $B76C IX Address of the object
+N $B76C Choose the graphic from the larger of the X and Y speeds.
   $B76C,$03 Fetch the speed in X.
   $B76F,$03 Combine it with the speed in Y.
   $B772,$01 Return if the guard is not moving.
@@ -4173,7 +4235,7 @@ R $B7A9 IX Address of the spiked ball object
   $B7A9,$03 Make the spiked ball deadly.
   $B7AC,$03 Set the pixel adjustments of a spiked ball.
 N $B7AF Hang in the air until this ball is chosen to drop.
-  $B7AF,$03 Fetch the flag that stops the balls from dropping.
+  $B7AF,$03 Fetch the flag that stops the balls from dropping from #R$5BC0.
   $B7B2,$01 Test it.
   $B7B3,$01 Return if the balls may not drop.
   $B7B4,$06 Jump to #R$B7CD if this ball is dropping.
@@ -4181,7 +4243,7 @@ N $B7AF Hang in the air until this ball is chosen to drop.
   $B7BD,$01 Fetch it.
   $B7BE,$01 Test it.
   $B7BF,$01 Return if another ball is dropping.
-  $B7C0,$03 Fetch the second random seed.
+  $B7C0,$03 Fetch the second random seed from #R$5BA5.
   $B7C3,$02 Compare it with #N$10 for a one in sixteen chance.
   $B7C5,$01 Return if it is not that time.
   $B7C6,$04 Flag this ball as dropping.
@@ -4210,10 +4272,11 @@ R $B7E7 IX Address of the spikes object
 c $B7ED Handle Fire Moving East West
 @ $B7ED label=HandleFireMovingEastWest
 D $B7ED Handles a fire that moves to and fro along the X axis at a speed of
-. #N$02, turning round when it hits something.
+. #N($02), turning round when it hits something.
 R $B7ED IX Address of the fire object
+N $B7ED Move along X and turn if the fire hits something.
   $B7ED,$03 Set the pixel adjustments of a ball.
-  $B7F0,$04 Set the speed in Z to #N$01, so that the fire does not fall.
+  $B7F0,$04 Set the speed in Z to #N($01), so that the fire does not fall.
   $B7F4,$04 Test whether the fire is heading east.
   $B7F8,$02 Set the speed to #N$02.
   $B7FA,$02 Jump to #R$B7FE if it is.
@@ -4229,10 +4292,10 @@ R $B7ED IX Address of the fire object
 c $B80F Handle Fire Moving North South
 @ $B80F label=HandleFireMovingNorthSouth
 D $B80F Handles a fire that moves to and fro along the Y axis at a speed of
-. #N$02, turning round when it hits something.
+. #N($02), turning round when it hits something.
 R $B80F IX Address of the fire object
   $B80F,$03 Set the pixel adjustments of a ball.
-  $B812,$04 Set the speed in Z to #N$01, so that the fire does not fall.
+  $B812,$04 Set the speed in Z to #N($01), so that the fire does not fall.
   $B816,$04 Test whether the fire is heading north.
   $B81A,$02 Set the speed to #N$02.
   $B81C,$02 Jump to #R$B820 if it is.
@@ -4258,11 +4321,12 @@ c $B83F Handle Stationary Fire
 D $B83F Handles a fire that stays where it is, flickering by changing frame and
 . mirroring itself on every other pass. No fire like this appears in the game.
 R $B83F IX Address of the fire object
+N $B83F Flicker the fire on every other pass.
   $B83F,$03 Set the pixel adjustments of a ball.
-  $B842,$03 Fetch the fire seed.
+  $B842,$03 Fetch the fire seed from #R$5BBC.
   $B845,$02,b$01 Test the lowest bit.
   $B847,$01 Return on every other pass.
-  $B848,$03 Fetch the second random seed.
+  $B848,$03 Fetch the second random seed from #R$5BA5.
   $B84B,$02,b$01 Keep the bit that flips the sprite.
   $B84D,$03 Combine it with the flags of the object.
   $B850,$03 Store the flags, which makes the fire flip at random.
@@ -4298,14 +4362,16 @@ D $B865 Handles a ball that bounces straight up and down. It falls until it hits
 . bounce, which is #N$20 above the height at which it was first seen, and starts
 . to fall again.
 R $B865 IX Address of the ball object
+N $B865 Work out the top of the bounce if it is not already stored.
   $B865,$03 Set the pixel adjustments of a ball.
-  $B868,$03 Fetch the height of the bounce.
+  $B868,$03 Fetch the height of the bounce from #R$5BBD.
   $B86B,$01 Test whether it has been worked out.
   $B86C,$02 Jump to #R$B876 if it has.
   $B86E,$03 Fetch the height of the ball.
   $B871,$02 Add #N$20 to get the height of the bounce.
-  $B873,$03 Store it.
+  $B873,$03 Store it at #R$5BBD.
 @ $B876 label=HandleBallUpDown_Frame
+N $B876 Fall until the ball hits the floor, then rise.
   $B876,$03 Toggle the graphic of the ball between its two frames.
   $B879,$03 Play the sound of a falling object.
   $B87C,$06 Jump to #R$B894 if the ball is rising.
@@ -4318,7 +4384,7 @@ R $B865 IX Address of the ball object
 @ $B894 label=HandleBallUpDown_Rise
   $B894,$04 Set the speed in Z to #N$03.
   $B898,$03 Move the ball.
-  $B89B,$03 Fetch the height of the bounce.
+  $B89B,$03 Fetch the height of the bounce from #R$5BBD.
   $B89E,$03 Compare it with the height of the ball.
   $B8A1,$02 Jump to #R$B892 if the ball is still below the top of the bounce.
   $B8A3,$04 Flag the ball as falling.
@@ -4330,6 +4396,7 @@ D $B8A9 Starts the bubbles that rise out of the cauldron. Nothing happens unless
 . the player is in the cauldron room, the second slot for special objects is
 . empty and the final animation is not under way. The bubbles are copied into
 . the slot from #R$B8C8.
+N $B8A9 Copy the bubbles into the empty special-object slot.
   $B8A9,$03 Fetch the room that the player is in.
   $B8AC,$02 Compare it with the number of the cauldron room.
   $B8AE,$01 Return if the player is in another room.
@@ -4337,7 +4404,8 @@ D $B8A9 Starts the bubbles that rise out of the cauldron. Nothing happens unless
   $B8B2,$01 Fetch the graphic number of the object.
   $B8B3,$01 Test whether the slot is empty.
   $B8B4,$01 Return if it is in use.
-  $B8B5,$03 Fetch the flag that is set when the final animation starts.
+  $B8B5,$03 Fetch the flag that is set when the final animation starts from
+. #R$5BC3.
   $B8B8,$01 Test it.
   $B8B9,$01 Return if the final animation has started.
   $B8BA,$03 Point #REGhl at #R$B8C8.
@@ -4371,8 +4439,10 @@ D $B8DA Handles the bubbles that rise from the cauldron. They are replaced by
 . the top, unless the player is Wulf, when they turn into the spell that repels
 . him. The bubbles vanish once a special object appears in the first slot.
 R $B8DA IX Address of the bubbles object
+N $B8DA Rise and show the next required object, or the repel spell.
   $B8DA,$03 Set the pixel adjustments of a sparkle.
-  $B8DD,$03 Fetch the graphic number of the first special object of the room.
+  $B8DD,$03 Fetch the graphic number of the first special object of the room
+. from #R$5C48.
   $B8E0,$01 Test whether the slot is empty.
   $B8E1,$03 Jump to #R$B95E if the slot is in use, to remove the bubbles.
   $B8E4,$04 Flag the bubbles to be ignored in the 3D calculations.
@@ -4383,7 +4453,7 @@ R $B8DA IX Address of the bubbles object
   $B8F3,$04 Set the speed in Z to #N$02.
   $B8F7,$02 Jump to #R$B916 if the bubbles have not reached the top.
   $B8F9,$04 Set the speed in Z to #N$01.
-  $B8FD,$03 Fetch the graphic number of the legs of the player.
+  $B8FD,$03 Fetch the graphic number of the legs of the player from #R$5C08.
   $B900,$02 Take off the first graphic number of Wulf.
   $B902,$04 Jump to #R$B919 if the player is Wulf.
   $B906,$03 Fetch the graphic number of the bubbles.
@@ -4395,15 +4465,17 @@ R $B8DA IX Address of the bubbles object
 . bubbles.
   $B913,$03 Store the graphic number.
 @ $B916 label=HandleCauldronBubbles_Draw
+N $B916 Flag the bubbles to be redrawn.
   $B916,$03 Flag the bubbles to be drawn again.
 @ $B919 label=HandleCauldronBubbles_Repel
+N $B919 Turn the bubbles into the spell that repels Wulf.
   $B919,$04 Turn the bubbles into the spell that repels Wulf.
   $B91D,$04 Make the spell take part in the 3D calculations.
   $B921,$02 Jump to #R$B916.
 
 c $B923 Handle Special Object In Cauldron
 @ $B923 label=HandleSpecialObjectInCauldron
-D $B923 Handles the graphics #N$A8 to #N$AF, which show the object that is
+D $B923 Handles the graphics #N$A8 to #N($AF), which show the object that is
 . needed next above the cauldron. The object lasts for a single frame, as it is
 . changed back to the bubbles.
 R $B923 IX Address of the object
@@ -4433,7 +4505,7 @@ R $B92C IX Address of the spell object
   $B94B,$03 Change to the next graphic of the spell.
   $B94E,$03 Fetch the room that the spell is in.
   $B951,$04 Jump to #R$B962 if the spell is not in the cauldron room.
-  $B955,$03 Fetch the graphic number of the legs of the player.
+  $B955,$03 Fetch the graphic number of the legs of the player from #R$5C08.
   $B958,$02 Take off #N$10.
   $B95A,$04 Jump to #R$B962 if the graphic number of the player is in the range.
 @ $B95E label=HandleRepelSpell_Vanish
@@ -4452,6 +4524,7 @@ E $B965 View the equivalent code in;
 R $B965 B Speed in Y
 R $B965 C Speed in X
 R $B965 IX Address of the object
+N $B965 Set the X speed towards the player, then the Y speed.
   $B965,$03 Point #REGhl at the X coordinate of the player.
   $B968,$03 Fetch the X coordinate of the object.
   $B96B,$01 Subtract the X coordinate of the player.
@@ -4492,6 +4565,7 @@ E $B98C View the equivalent code in;
 . { #NIGHTSHADE$CEF8 }
 . LIST#
 R $B98C IX Address of the object
+N $B98C Advance the lowest two bits of the graphic number.
   $B98C,$03 Fetch the graphic number.
   $B98F,$01 Stash it in #REGc.
   $B990,$02,b$01 Keep the highest six bits.
@@ -4524,6 +4598,7 @@ D $B9A5 Handles the top half of a guard or of the wizard, who patrol round the
 . room, following the walls. The bottom half is the next object in the table and
 . it is moved with the top half.
 R $B9A5 IX Address of the top half of the guard
+N $B9A5 Move the guard and keep the bottom half in step.
   $B9A5,$03 Set the pixel adjustments of a guard.
   $B9A8,$03 Apply gravity to the guard and move it.
   $B9AB,$03 Work out the speeds of the guard from its direction.
@@ -4546,7 +4621,7 @@ D $B9CC Works out the speeds that make a guard follow the wall of the room,
 R $B9CC IX Address of the guard
 R $B9CC O:H Speed in Y
 R $B9CC O:L Speed in X
-  $B9CC,$03 Point #REGbc at the table of routines.
+  $B9CC,$03 Point #REGbc at the table of routines, #R$B9D8.
   $B9CF,$03 Fetch the direction flags of the guard.
   $B9D2,$02,b$01 Keep the direction.
   $B9D4,$01 Use it as the number of the routine.
@@ -4562,7 +4637,7 @@ W $B9DE,$02,$02 South: #R$BA15.
 
 c $B9E0 Guard Heading West
 @ $B9E0 label=GuardHeadingWest
-D $B9E0 Keeps a guard heading west, at a speed of #N$02, until it hits
+D $B9E0 Keeps a guard heading west, at a speed of #N($02), until it hits
 . something. It then turns north.
 R $B9E0 IX Address of the guard
 R $B9E0 O:H Speed in Y
@@ -4586,7 +4661,7 @@ N $B9EB Turn the guard, to follow the wall.
 
 c $B9FB Guard Heading North
 @ $B9FB label=GuardHeadingNorth
-D $B9FB Keeps a guard heading north, at a speed of #N$02, until it hits
+D $B9FB Keeps a guard heading north, at a speed of #N($02), until it hits
 . something. It then turns east.
 R $B9FB IX Address of the guard
 R $B9FB O:H Speed in Y
@@ -4599,7 +4674,7 @@ R $B9FB O:L Speed in X
 
 c $BA08 Guard Heading East
 @ $BA08 label=GuardHeadingEast
-D $BA08 Keeps a guard heading east, at a speed of #N$02, until it hits
+D $BA08 Keeps a guard heading east, at a speed of #N($02), until it hits
 . something. It then turns south.
 R $BA08 IX Address of the guard
 R $BA08 O:H Speed in Y
@@ -4612,7 +4687,7 @@ R $BA08 O:L Speed in X
 
 c $BA15 Guard Heading South
 @ $BA15 label=GuardHeadingSouth
-D $BA15 Keeps a guard heading south, at a speed of #N$02, until it hits
+D $BA15 Keeps a guard heading south, at a speed of #N($02), until it hits
 . something. It then turns west.
 R $BA15 IX Address of the guard
 R $BA15 O:H Speed in Y
@@ -4641,7 +4716,8 @@ D $BA22 Ends the game, whether the player has run out of lives, the forty days
 . #SIM(start=$B03F,stop=$B06E)
 . #SIM(start=$BA22,stop=$BA87,sp=$5BA0)
 . #SCR$02(game-over) } UDGTABLE# #POPS
-  $BA22,$03 Fetch the flag that is set when the game has been completed.
+  $BA22,$03 Fetch the flag that is set when the game has been completed from
+. #R$5BC3.
   $BA25,$01 Test it.
   $BA26,$03 Show the message of the potion first if the game has been completed.
 @ $BA29 label=GameOver_ShowResults
@@ -4661,12 +4737,13 @@ N $BA29 Show the results screen.
   $BA49,$03 Print the percentage of the quest that was completed.
 N $BA4C Work out the rating from the number of rooms visited and from whether
 . the game was completed.
-  $BA4C,$03 Fetch the number of rooms visited, less one.
+  $BA4C,$03 Fetch the number of rooms visited, less one from #R$5BC6.
   $BA4F,$01 Rotate the highest bit round to the lowest.
   $BA50,$02,b$01 Keep the next two highest bits (the number of rooms divided by
 . #N$20).
   $BA52,$01 Stash them in #REGc.
-  $BA53,$03 Fetch the flag that is set when the game has been completed.
+  $BA53,$03 Fetch the flag that is set when the game has been completed from
+. #R$5BC3.
   $BA56,$02,b$01 Keep only the lowest bit.
   $BA58,$01 Combine it with the number of rooms.
   $BA59,$03 Rotate the bits into place to make the number of a word.
@@ -4688,7 +4765,8 @@ N $BA6E Print the number of charms collected, which is the number of objects
   $BA76,$02,b$01 Convert it to a BCD number between #N$10 and #N$14.
   $BA78,$01 Store the BCD number.
 @ $BA79 label=GameOver_PrintCharms
-  $BA79,$03 Point #REGhl at the position of the charms in the screen buffer.
+  $BA79,$03 Point #REGhl at the position of the charms in the screen buffer,
+. #R$E2EA.
   $BA7C,$02 Set the number of bytes to print to #N$01.
   $BA7E,$03 Print the number of charms collected.
   $BA81,$03 Draw the border.
@@ -4698,7 +4776,7 @@ N $BA87 Play the tune, wait for a key to be pressed and then go back to the
 . menu.
   $BA87,$01 Select all the half-rows of the keyboard.
   $BA88,$03 Read the keyboard.
-  $BA8B,$02 Jump back to #R$BA87 until all the keys are released.
+  $BA8B,$02 Jump to #R$BA87 until all the keys are released.
   $BA8D,$03 Point #REGde at #R$B218.
   $BA90,$03 Play the tune, until a key is pressed.
   $BA93,$02 Set the number of times to wait to #N$08.
@@ -4715,6 +4793,7 @@ E $BA9B View the equivalent code in;
 . LIST#
 R $BA9B B Number of times to count down
 R $BA9B O:F Zero flag clear if a key was pressed
+N $BA9B Wait for a key, or count down #N$10000 times.
   $BA9B,$03 Set the counter to zero, to count #N$10000 times.
 @ $BA9E label=WaitForKeyPress_Wait
   $BA9E,$01 Select all the half-rows of the keyboard.
@@ -4722,8 +4801,8 @@ R $BA9B O:F Zero flag clear if a key was pressed
   $BAA2,$01 Return if a key is pressed.
   $BAA3,$01 Decrease the counter.
   $BAA4,$02 Check whether the counter has reached zero.
-  $BAA6,$02 Jump back to #R$BA9E until the counter is zero.
-  $BAA8,$02 Jump back to #R$BA9E until the time limit has passed.
+  $BAA6,$02 Jump to #R$BA9E until the counter is zero.
+  $BAA8,$02 Jump to #R$BA9E until the time limit has passed.
   $BAAA,$01 Return.
 
 c $BAAB Game Completed
@@ -4752,7 +4831,7 @@ N $BAAB Show the game completed message.
   $BAB8,$03 Point #REGde at #R$BAE4.
   $BABB,$02 Set the number of lines of text to #N$06.
   $BABD,$01 Clear #REGa.
-  $BABE,$03 Flag that the border has to be drawn.
+  $BABE,$03 Flag that the border has to be drawn at #R$5BB8.
   $BAC1,$03 Print the lines of text.
 N $BAC4 Play the tune and wait for a key to be pressed.
   $BAC4,$03 Point #REGde at #R$B239.
@@ -4858,9 +4937,10 @@ D $BC10 Works out how much of the quest has been completed and prints the
   $BC10,$02 Set the count of rooms to zero.
   $BC12,$03 Set #REGb to the number of bits in a byte and #REGc to the number of
 . bytes of flags.
-  $BC15,$03 Point #REGhl at the flags for the rooms that have been visited.
+  $BC15,$03 Point #REGhl at the flags for the rooms that have been visited,
+. #R$5BE8.
 @ $BC18 label=PrintPercentageComplete_CountByte
-  $BC18,$01 Stash the counters.
+  $BC18,$01 Stash the counters on the stack.
   $BC19,$01 Fetch a byte of flags.
   $BC1A,$01 Move on to the next byte.
 @ $BC1B label=PrintPercentageComplete_CountBit
@@ -4868,22 +4948,22 @@ D $BC10 Works out how much of the quest has been completed and prints the
   $BC1C,$02 Jump to #R$BC1F if the room has not been visited.
   $BC1E,$01 Count the room.
 @ $BC1F label=PrintPercentageComplete_NextBit
-  $BC1F,$02 Jump back to #R$BC1B until the whole byte has been counted.
-  $BC21,$01 Restore the counters.
+  $BC1F,$02 Jump to #R$BC1B until the whole byte has been counted.
+  $BC21,$01 Restore the counters from the stack.
   $BC22,$01 Decrease the number of bytes left.
-  $BC23,$02 Jump back to #R$BC18 until all of the bytes have been counted.
+  $BC23,$02 Jump to #R$BC18 until all of the bytes have been counted.
 N $BC25 Keep the number of rooms visited for the rating, and work out the number
 . of points.
   $BC25,$01 Fetch the number of rooms visited.
   $BC26,$01 Take off one, so that the first room does not count towards the
 . rating.
-  $BC27,$03 Store it for the rating.
-  $BC2A,$03 Fetch the number of charms collected.
+  $BC27,$03 Store it for the rating at #R$5BC6.
+  $BC2A,$03 Fetch the number of charms collected from #R$5BBB.
   $BC2D,$02 Double it.
   $BC2F,$01 Add the number of rooms visited.
   $BC30,$01 Stash the number of points in #REGe.
 N $BC31 Add up the percentage as a BCD number. The percentage that each point is
-. worth is #N$A41A divided by #N$10000.
+. worth is the 16-bit fraction #N$A41A (about 0.64 percent).
   $BC31,$03 Set #REGbc to the percentage that each point is worth.
   $BC34,$03 Clear the fraction of the percentage.
   $BC37,$01 Clear the whole percentage.
@@ -4892,9 +4972,10 @@ N $BC31 Add up the percentage as a BCD number. The percentage that each point is
   $BC39,$02 Carry into the whole percentage.
   $BC3B,$01 Keep the whole percentage as a BCD number.
   $BC3C,$01 Decrease the number of points left.
-  $BC3D,$02 Jump back to #R$BC38 until every point has been added.
-  $BC3F,$03 Set #REGbc to the amount that makes up for the rounding. The total
-. for all of the points is #N$63FFD8, and this takes it up to #N$640000.
+  $BC3D,$02 Jump to #R$BC38 until every point has been added.
+  $BC3F,$03 Set #REGbc to the amount that makes up for the rounding. The 24-bit
+. total for all of the points is #N$63FF in the high word and #N$D8 in
+. the low byte, and this takes it up to #N$6400 in the high word.
   $BC42,$01 Add it to the fraction.
   $BC43,$02 Carry into the whole percentage.
   $BC45,$01 Keep the whole percentage as a BCD number.
@@ -4902,7 +4983,7 @@ N $BC31 Add up the percentage as a BCD number. The percentage that each point is
   $BC49,$02 Clear #REGa without changing the carry flag.
   $BC4B,$02 Carry into the hundreds digit.
   $BC4D,$01 Keep the hundreds digit as a BCD number.
-  $BC4E,$03 Store the hundreds digit.
+  $BC4E,$03 Store the hundreds digit at #R$5BC9.
 N $BC51 Print the digits.
   $BC51,$03 Point #REGhl at #R$E4E6.
   $BC54,$03 Point #REGde at #R$5BC9.
@@ -4921,7 +5002,9 @@ c $BC66 Print Days
 @ $BC66 label=PrintDays
 D $BC66 Prints the number of days that have passed on the panel, and makes the
 . attributes there bright white.
-  $BC66,$03 Point #REGhl at the position of the days in the screen buffer.
+N $BC66 Print the days and make their attributes bright white.
+  $BC66,$03 Point #REGhl at the position of the days in the screen buffer,
+. #R$D9E2.
   $BC69,$03 Point #REGde at #R$5BB9.
   $BC6C,$02 Set the number of bytes to print to #N$01.
   $BC6E,$03 Print the number of days.
@@ -4935,7 +5018,8 @@ c $BC7A Print Lives Graphic
 @ $BC7A label=PrintLivesGraphic
 D $BC7A Draws the graphic that goes next to the number of lives on the panel,
 . and makes the attributes there bright white.
-  $BC7A,$04 Point #REGix at the object that is used to draw the panel.
+N $BC7A Draw the lives graphic and colour its attributes.
+  $BC7A,$04 Point #REGix at the object that is used to draw the panel, #R$BFDB.
   $BC7E,$04 Set the graphic number to #N$8C.
   $BC82,$04 Clear the flags.
   $BC86,$04 Set the pixel X coordinate to #N$10.
@@ -4956,57 +5040,68 @@ E $BCA3 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BA57 }
 . LIST#
-  $BCA3,$03 Point #REGde at the number of lives.
+  $BCA3,$03 Point #REGde at the number of lives, #R$5BBA.
   $BCA6,$02 Set the number of bytes to print to #N$01.
   $BCA8,$03 Point #REGhl at #R$DDD7.
   $BCAB,$03 Print the number of lives.
 
 c $BCAE Print BCD Number
 @ $BCAE label=PrintBCDNumber
-D $BCAE Prints a BCD number in the screen buffer, using the standard font. Every
-. digit is printed, including leading zeroes.
+D $BCAE Prints a number which is held in
+. BCD, using the font with the digits.
+. Every digit is printed, including
+. leading zeroes.
 E $BCAE View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BA62 }
 . { #NIGHTSHADE$C314 }
 . { #PENTAGRAM$BB48 }
 . LIST#
-R $BCAE B Number of bytes (pairs of digits) to print
+R $BCAE B Number of bytes
 R $BCAE DE Address of the number
-R $BCAE HL Address in the screen buffer to print at
-  $BCAE,$01 Stash the address in the screen buffer.
-  $BCAF,$03 Point #REGhl at #R$6108.
-  $BCB2,$03 Use it to print.
-  $BCB5,$01 Restore the address in the screen buffer.
+R $BCAE HL Address in the screen buffer
+N $BCAE Point at the digit font.
+  $BCAE,$01 Stash the screen buffer address on
+. the stack.
+  $BCAF,$06 Set #R$5BC7 to #R$6108.
+  $BCB5,$01 Restore the screen buffer address from the stack.
+N $BCB6 Print the upper digit of the byte.
 @ $BCB6 label=PrintBCDNumber_NextByte
-  $BCB6,$01 Fetch two digits.
-  $BCB7,$04 Move the first digit into the lowest four bits.
-  $BCBB,$02,b$01 Keep only the first digit.
-  $BCBD,$03 Print the first digit.
+  $BCB6,$01 Fetch a byte of the number.
+  $BCB7,$04 Move the upper digit to the lowest
+. four bits.
+  $BCBB,$02,b$01 Keep only bits 0 to 3.
+  $BCBD,$03 Call #R$BE7F.
+N $BCC0 Print the lower digit and move on.
 @ $BCC0 label=PrintBCDNumber_SecondDigit
-  $BCC0,$01 Fetch two digits.
-  $BCC1,$02,b$01 Keep only the second digit.
-  $BCC3,$03 Print the second digit.
-  $BCC6,$01 Move on to the next two digits.
-  $BCC7,$02 Jump back to #R$BCB6 until all of the bytes have been printed.
+  $BCC0,$01 Fetch a byte of the number.
+  $BCC1,$02,b$01 Keep only bits 0 to 3.
+  $BCC3,$03 Call #R$BE7F.
+  $BCC6,$01 Move on to the next byte.
+  $BCC7,$02 Jump to #R$BCB6 until all of the
+. bytes have been printed.
   $BCC9,$01 Return.
 
 c $BCCA Print Day Caption
 @ $BCCA label=PrintDayCaption
 D $BCCA Prints the caption "DAY" on the panel. The colour of the caption is made
 . to stand out against the colour of the room.
-  $BCCA,$03 Fetch the attribute of the room.
+N $BCCA Choose a colour that stands out, then print "DAY".
+  $BCCA,$03 Fetch the attribute of the room from #R$5BAD.
   $BCCD,$01 Invert it.
   $BCCE,$02 Add #N$02 to it.
   $BCD0,$02,b$01 Keep the ink colour.
   $BCD2,$02,b$01 Make it bright.
-  $BCD4,$03 Store it as the attribute of the caption.
+  $BCD4,$03 Store the caption attribute at #R$BCE7.
   $BCD7,$03 Point #REGhl at #R$BCEC.
-  $BCDA,$03 Use it to print.
+  $BCDA,$03 Set #R$5BC7.
   $BCDD,$03 Point #REGde at #R$BCE7.
-  $BCE0,$03 Set the X coordinate to #N$70 and the Y coordinate to #N$0F.
-  $BCE3,$01 Stash the coordinates, as #R$BE4C expects to find them there.
-  $BCE4,$03 Print the caption.
+  $BCE0,$03 Set the pixel position to
+. (#N($70), #N$0F).
+  $BCE3,$01 Stash the coordinates on the
+. stack, as #R$BE4C expects to find them
+. there.
+  $BCE4,$03 Call #R$BE4C.
 
 b $BCE7 Day Caption
 @ $BCE7 label=DayCaption
@@ -5022,14 +5117,21 @@ B $BCEC,$20,$08
 
 c $BD0C Game Selection Menu
 @ $BD0C label=GameMenu
-D $BD0C Shows the menu on which the player chooses the keyboard or one of the
-. joysticks, and waits until the player starts the game. Keys 1 to 4 choose the
-. control method, key 5 turns the directional control on or off and key 0 starts
-. the game. The menu tune plays while this is going on, and the choices that are
-. in force are shown by flashing. The control method is kept in #R$5BA4 in these
-. bits: bits 1 and 2 are #N$00 for the keyboard, #N$01 for the Kempston
-. joystick, #N$02 for the Cursor joystick and #N$03 for the Interface 2
-. joystick, and bit 3 is set if the directional control is on.
+D $BD0C Displays the menu and waits for
+. the control method to be chosen and the
+. game to be started. The keys "1" to "4"
+. choose the keyboard, the Kempston
+. joystick, the cursor joystick and
+. Interface II, "5" turns directional
+. control on or off, and "0" starts the
+. game. A low beep sounds when the choice
+. changes. The menu tune is played once.
+. The choice is held in #R$5BA4.
+.
+. #PUSHS #UDGTABLE
+. { #SIM(start=$AF6C,stop=$AFA2,sp=$5BA0,clear=1)
+. #SIM(start=$BD0C,stop=$BD23)
+. #SCR$02(game-selection-menu) } UDGTABLE# #POPS
 E $BD0C View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BA7E }
@@ -5037,94 +5139,114 @@ E $BD0C View the equivalent code in;
 . { #NIGHTSHADE$C8CA }
 . { #PENTAGRAM$BB74 }
 . LIST#
-.
-. #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune)))
-.
-. #PUSHS #UDGTABLE
-. { #SIM(start=$AF6C,stop=$AFA2,sp=$5BA0,clear=1)
-. #SIM(start=$BD0C,stop=$BD23)
-. #SCR$02(game-selection-menu) } UDGTABLE# #POPS
-  $BD0C,$01 Get a zero.
-  $BD0D,$03 Flag that the border has to be drawn.
+N $BD0C Prepare the menu.
+  $BD0C,$04 Write #N$00 to #R$5BB8.
   $BD10,$03 Point #REGhl at #R$BDA2.
   $BD13,$02 Set the number of lines to #N$08.
 @ $BD15 label=GameMenu_StopFlashing
-  $BD15,$02 Switch off the flashing of the line.
+  $BD15,$02 Stop the line flashing.
   $BD17,$01 Move on to the next line.
-  $BD18,$02 Jump back to #R$BD15 until all of the lines have been done.
-  $BD1A,$03 Clear the screen buffer.
-  $BD1D,$03 Draw the menu.
-  $BD20,$03 Flash the options that have been chosen.
+  $BD18,$02 Jump to #R$BD15 until all of the
+. lines are done.
+  $BD1A,$03 Call #R$D567.
+  $BD1D,$03 Call #R$BEB3.
+  $BD20,$03 Call #R$BD89.
+N $BD23 Read the keys that choose the
+. control method.
 @ $BD23 label=GameMenu_MenuLoop
-N $BD23 Check which keys are pressed.
-  $BD23,$03 Draw the menu again.
+  $BD23,$03 Call #R$BEB3.
+N $BD26 #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune)))
   $BD26,$03 Point #REGde at #R$B253.
-  $BD29,$03 Play the tune if it has not been played yet.
-  $BD2C,$02 Select the half-row of the keyboard with the keys 1 to 5.
-  $BD2E,$03 Read the keyboard.
-  $BD31,$01 Stash the keys that are pressed in #REGe.
-  $BD32,$03 Fetch the control method.
-  $BD35,$03 Keep it, to see if it changes.
-  $BD38,$04 Jump to #R$BD3E if key 1 is not pressed.
+  $BD29,$03 Call #R$B2B6.
+  $BD2C,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+  $BD31,$01 Keep the keys that are pressed in
+. #REGe.
+  $BD32,$03 Fetch #R$5BA4.
+  $BD35,$03 Set #R$5BA6.
+  $BD38,$04 Jump to #R$BD3E if "1" is not
+. pressed.
   $BD3C,$02,b$01 Choose the keyboard.
+N $BD3E Choose a joystick if one of those
+. keys is pressed.
 @ $BD3E label=GameMenu_TestKempston
-  $BD3E,$04 Jump to #R$BD46 if key 2 is not pressed.
-  $BD42,$02,b$01 Clear the choice of control method.
+  $BD3E,$04 Jump to #R$BD46 if "2" is not
+. pressed.
+  $BD42,$02,b$01 Clear bits 1 and 2.
   $BD44,$02,b$01 Choose the Kempston joystick.
 @ $BD46 label=GameMenu_TestCursor
-  $BD46,$04 Jump to #R$BD4E if key 3 is not pressed.
-  $BD4A,$02,b$01 Clear the choice of control method.
-  $BD4C,$02,b$01 Choose the Cursor joystick.
+  $BD46,$04 Jump to #R$BD4E if "3" is not
+. pressed.
+  $BD4A,$02,b$01 Clear bits 1 and 2.
+  $BD4C,$02,b$01 Choose the cursor joystick.
 @ $BD4E label=GameMenu_TestInterface
-  $BD4E,$04 Jump to #R$BD54 if key 4 is not pressed.
-  $BD52,$02,b$01 Choose the Interface 2 joystick.
+  $BD4E,$04 Jump to #R$BD54 if "4" is not
+. pressed.
+  $BD52,$02,b$01 Choose Interface II.
 @ $BD54 label=GameMenu_SetMethod
-  $BD54,$03 Store the control method.
-  $BD57,$03 Point #REGhl at the flag that says key 5 was pressed last time.
-  $BD5A,$04 Jump to #R$BD85 if key 5 is not pressed.
-  $BD5E,$04 Jump to #R$BD6C if key 5 was pressed last time.
-  $BD62,$02 Flag that key 5 is pressed.
-  $BD64,$03 Fetch the control method.
-  $BD67,$02,b$01 Turn the directional control on or off.
-  $BD69,$03 Store the control method.
+  $BD54,$03 Set #R$5BA4.
+N $BD57 Toggle directional control once for
+. each press of "5".
+  $BD57,$03 Point #REGhl at #R$5BD2.
+  $BD5A,$04 Jump to #R$BD85 if "5" is not
+. pressed.
+  $BD5E,$04 Jump to #R$BD6C if "5" was
+. pressed last time as well.
+  $BD62,$02 Set bit 0 of #R$5BD2.
+  $BD64,$03 Fetch #R$5BA4.
+  $BD67,$02,b$01 Toggle directional control.
+  $BD69,$03 Set #R$5BA4.
+N $BD6C Start the game if "0" is pressed.
 @ $BD6C label=GameMenu_TestStart
-  $BD6C,$03 Point #REGhl at the previous control method.
-  $BD6F,$01 Compare it with the control method.
-  $BD70,$03 Play a beep if the control method has changed.
-  $BD73,$02 Select the half-row of the keyboard with the keys 6 to 0.
-  $BD75,$03 Read the keyboard.
-  $BD78,$02 Test whether key 0 is pressed.
-  $BD7A,$01 Return if it is, to start the game.
+  $BD6C,$03 Point #REGhl at #R$5BA6.
+  $BD6F,$04 Call #R$B4A3 if the control
+. method has changed.
+  $BD73,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
+  $BD78,$03 Return if "0" is pressed.
   $BD7B,$03 Point #REGhl at #R$5BA0.
-  $BD7E,$01 Change the seed.
-  $BD7F,$03 Flash the options that have been chosen.
-  $BD82,$03 Jump back to #R$BD23.
+  $BD7E,$01 Increment #R$5BA0.
+  $BD7F,$03 Call #R$BD89.
+  $BD82,$03 Jump to #R$BD23.
+N $BD85 "5" has been released.
 @ $BD85 label=GameMenu_ReleaseKey5
-  $BD85,$02 Flag that key 5 is not pressed.
+  $BD85,$02 Reset bit 0 of #R$5BD2.
   $BD87,$02 Jump to #R$BD6C.
 
 c $BD89 Flash Menu Options
 @ $BD89 label=FlashMenuOptions
-D $BD89 Makes the line for the chosen control method flash, and does the same to
-. the line for the directional control if it is on. The flashing of all of the
-. other lines is switched off.
+D $BD89 Makes the line of the menu for
+. the selected control method flash, and
+. the line for directional control if that
+. is on.
 E $BD89 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BAFB }
 . { #NIGHTSHADE$C949 }
 . { #PENTAGRAM$BBD8 }
 . LIST#
-  $BD89,$03 Point #REGhl at the colour of the line for the keyboard.
-  $BD8C,$03 Fetch the control method.
-  $BD8F,$01 Move the choice of control method into the lowest two bits.
-  $BD90,$02,b$01 Keep only the choice.
-  $BD92,$02 Set the number of control methods to #N$04.
-  $BD94,$03 Make the chosen line flash and stop the rest from flashing.
-  $BD97,$02 Stop the line for the directional control from flashing.
-  $BD99,$03 Fetch the control method.
-  $BD9C,$02,b$01 Keep the bit for the directional control.
-  $BD9E,$01 Return if the directional control is off.
-  $BD9F,$02 Make the line for the directional control flash.
+N $BD89 Flash the chosen control method.
+  $BD89,$03 Point #REGhl at #R$BDA3.
+  $BD8C,$03 Fetch #R$5BA4.
+  $BD8F,$01 Move the method to bits 0 and 1.
+  $BD90,$02,b$01 Keep only bits 0 and 1.
+  $BD92,$02 Set a counter of #N$04 lines.
+  $BD94,$03 Call #R$BEA3.
+N $BD97 Flash directional control if it is
+. on.
+  $BD97,$02 Reset bit 7 of the attribute.
+  $BD99,$03 Fetch #R$5BA4.
+  $BD9C,$02,b$01 Keep only bit 3.
+  $BD9E,$01 Return if it is off.
+  $BD9F,$02 Set bit 7 of the attribute.
   $BDA1,$01 Return.
 
 b $BDA2 Menu Colours
@@ -5159,270 +5281,331 @@ B $BE24,$0D,$08 "(c) 1984 A.C.G."
 
 c $BE31 Print Text Single Colour
 @ $BE31 label=PrintTextSingleColour
-D $BE31 Prints a line of text in the screen buffer, using the standard font and
-. the attribute that is held in #R$5BB6 for every character. The text is in the
-. format that is described at #R$BAE4.
+D $BE31 Prints a line of text in the
+. colour held in #R$5BB6, using the font
+. at #R$6108. The last character of the
+. text has bit 7 set.
 E $BE31 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BB9D }
 . { #PENTAGRAM$BC66 }
 . LIST#
 R $BE31 DE Address of the text
-R $BE31 H Y coordinate
-R $BE31 L X coordinate
-  $BE31,$01 Stash the coordinates.
+R $BE31 HL Pixel position
+N $BE31 Point at the standard font and keep
+. #R$5BB6.
+  $BE31,$01 Stash the pixel position on the
+. stack.
   $BE32,$03 Point #REGhl at #R$6108.
-  $BE35,$03 Use it to print.
-  $BE38,$01 Fetch the coordinates in #REGbc.
-  $BE39,$01 Stash them again.
-  $BE3A,$03 Find the address in the screen buffer.
+  $BE35,$03 Set #R$5BC7.
+  $BE38,$02 Copy the pixel position to #REGbc
+. (using the stack).
+  $BE3A,$03 Call #R$D811.
   $BE3D,$02 Copy it to #REGhl.
-  $BE3F,$04 Fetch the attribute and keep it in #REGaf'.
+  $BE3F,$03 Fetch #R$5BB6.
+  $BE42,$01 Keep the colour in #REGaf'.
   $BE43,$02 Jump to #R$BE56.
 
 c $BE45 Print Text Standard Font
 @ $BE45 label=PrintTextStandardFont
-D $BE45 Prints a line of text in the screen buffer, using the standard font. The
-. first byte of the text is the attribute of the line.
+D $BE45 Prints a line of text, which
+. starts with its attribute, using the
+. font at #R$6108. The last character of
+. the text has bit 7 set.
+E $BE45 Continue on to #R$BE4C.
 E $BE45 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BBB1 }
 . { #PENTAGRAM$BC7A }
 . LIST#
 R $BE45 DE Address of the text
-R $BE45 H Y coordinate
-R $BE45 L X coordinate
-  $BE45,$01 Stash the coordinates.
+R $BE45 HL Pixel position
+N $BE45 Point at the standard font.
+  $BE45,$01 Stash the pixel position on the
+. stack.
   $BE46,$03 Point #REGhl at #R$6108.
-  $BE49,$03 Use it to print.
+  $BE49,$03 Set #R$5BC7.
 
 c $BE4C Print Text
 @ $BE4C label=PrintText
-D $BE4C Prints a line of text in the screen buffer, using the font that is
-. pointed to by #R$5BC7. The first byte of the text is the attribute of the
-. line. The attribute of each character is set on the screen at once. The
-. coordinates are the Y coordinate (in the high byte) and the X coordinate,
-. which are expected to be on the stack. The Y coordinate is at the top of the
-. character.
+D $BE4C Prints a line of text, which
+. starts with its attribute, using the
+. font whose address is held in #R$5BC7.
+. The last character of the text has bit
+. 7 set. Each character cell has its
+. attribute set as well. The pixel
+. position is on the stack.
 R $BE4C DE Address of the text
-  $BE4C,$01 Fetch the coordinates.
-  $BE4D,$01 Stash them again.
-  $BE4E,$03 Find the address in the screen buffer.
+N $BE4C Fetch the attribute from the text.
+  $BE4C,$02 Copy the pixel position to #REGbc
+. (using the stack).
+  $BE4E,$03 Call #R$D811.
   $BE51,$02 Copy it to #REGhl.
-  $BE53,$01 Fetch the attribute.
-  $BE54,$01 Keep it in #REGaf'.
-  $BE55,$01 Point #REGde at the first character.
+  $BE53,$01 Fetch the attribute of the text.
+  $BE54,$01 Keep the attribute in #REGaf'.
+  $BE55,$01 Move on to the first character.
+N $BE56 Find the attribute address.
 @ $BE56 label=PrintText_Setup
-N $BE56 Work out the address in the attribute file, using the other registers.
-  $BE56,$01 Switch to the other registers.
-  $BE57,$01 Fetch the coordinates.
-  $BE58,$01 Stash the address of the text.
-  $BE59,$03 Find the address in the attribute file.
+  $BE56,$01 Switch to the shadow registers.
+  $BE57,$01 Fetch the pixel position.
+  $BE58,$01 Stash the address of the text on
+. the stack.
+  $BE59,$03 Call #R$D848.
   $BE5C,$02 Copy it to #REGhl.
-  $BE5E,$01 Restore the address of the text.
+  $BE5E,$01 Restore the address of the text from the stack.
+N $BE5F Print each character and set its
+. attribute.
 @ $BE5F label=PrintText_NextCharacter
-  $BE5F,$01 Switch to the registers that hold the address in the screen buffer
-. and the address of the text.
-  $BE60,$01 Fetch the next character.
-  $BE61,$04 Jump to #R$BE72 if it is the last one.
-  $BE65,$01 Stash the address of the text.
-  $BE66,$03 Print the character.
-  $BE69,$01 Restore the address of the text.
+  $BE5F,$01 Switch back to the main registers.
+  $BE60,$01 Fetch a character of the text.
+  $BE61,$04 Jump to #R$BE72 if it is the last.
+  $BE65,$01 Stash the address of the text on
+. the stack.
+  $BE66,$03 Call #R$BE7F.
+  $BE69,$01 Restore the address of the text from the stack.
   $BE6A,$01 Move on to the next character.
-  $BE6B,$01 Switch to the registers that hold the address in the attribute file.
+  $BE6B,$01 Switch to the shadow registers.
   $BE6C,$01 Fetch the attribute.
-  $BE6D,$01 Set the attribute of the character.
-  $BE6E,$01 Move on to the next attribute.
+  $BE6D,$01 Set the attribute of the cell.
+  $BE6E,$01 Move on to the next cell.
   $BE6F,$01 Keep the attribute in #REGaf'.
-  $BE70,$02 Jump back to #R$BE5F.
+  $BE70,$02 Jump to #R$BE5F.
+N $BE72 Print the last character.
 @ $BE72 label=PrintText_LastCharacter
-  $BE72,$02,b$01 Clear bit 7 of the last character.
-  $BE74,$01 Stash the address of the text.
-  $BE75,$03 Print the character.
-  $BE78,$01 Restore the address of the text.
-  $BE79,$01 Point #REGde at what follows the text.
-  $BE7A,$01 Switch to the registers that hold the address in the attribute file.
+  $BE72,$02,b$01 Keep only bits 0 to 6.
+  $BE74,$01 Stash the address of the text on
+. the stack.
+  $BE75,$03 Call #R$BE7F.
+  $BE78,$01 Restore the address of the text from the stack.
+  $BE79,$01 Move on past the text.
+  $BE7A,$01 Switch to the shadow registers.
   $BE7B,$01 Fetch the attribute.
-  $BE7C,$01 Set the attribute of the character.
-  $BE7D,$01 Switch back to the other registers.
+  $BE7C,$01 Set the attribute of the last
+. cell.
+  $BE7D,$01 Switch back to the main registers.
   $BE7E,$01 Return.
 
 c $BE7F Print Character
 @ $BE7F label=PrintCharacter
-D $BE7F Prints one character in the screen buffer. A character is eight bytes,
-. one for each row from the top. The rows of the screen buffer run from the
-. bottom up, so the rows are stored #N$20 bytes apart and going down. The font
-. is the one that #R$5BC7 points to.
+D $BE7F Prints a character in the screen
+. buffer, using the font whose address is
+. held in #R$5BC7. The eight rows are
+. written going down the buffer (see
+. #R$D8F3), #N$20 bytes apart, and the
+. address is left at the top of the next
+. character.
 E $BE7F View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BBEB }
 . { #PENTAGRAM$BAEA }
 . LIST#
-R $BE7F A Number of the character
+R $BE7F A The character
 R $BE7F HL Address in the screen buffer of the top row
-R $BE7F O:HL Address in the screen buffer of the top row of the next character
-  $BE7F,$01 Stash #REGbc.
-  $BE80,$01 Stash #REGde.
-  $BE81,$01 Stash the address in the screen buffer.
-  $BE82,$01 Copy the number of the character into #REGl.
-  $BE83,$02 Clear #REGh.
-  $BE85,$03 Multiply it by eight.
-  $BE88,$04 Fetch the address of the font.
-  $BE8C,$01 Find the data of the character.
-  $BE8D,$01 Point #REGde at it.
-  $BE8E,$01 Restore the address in the screen buffer.
-  $BE8F,$02 Set the number of rows to #N$08.
+R $BE7F O:HL Address of the top row of the next character
+N $BE7F Find the glyph.
+  $BE7F,$03 Stash #REGbc, #REGde and the
+. screen buffer address on the stack.
+  $BE82,$03 Set #REGhl to the character.
+  $BE85,$03 Multiply the character by eight.
+N $BE88 Add the font address.
+  $BE88,$04 Fetch #R$5BC7.
+  $BE8C,$01 Add it to get the glyph address.
+  $BE8D,$01 Point #REGde at the glyph.
+  $BE8E,$01 Restore the screen buffer address from the stack.
+N $BE8F Copy eight rows down the buffer.
+  $BE8F,$02 Set a counter of #N$08 rows.
 @ $BE91 label=PrintCharacter_NextRow
-  $BE91,$01 Fetch a row of the character.
-  $BE92,$01 Put it in the screen buffer.
-  $BE93,$01 Move on to the next row of the character.
-  $BE94,$01 Stash the counter.
-  $BE95,$03 Set #REGbc to #N$FFE0, which is minus the length of a line of the
-. screen buffer.
-  $BE98,$01 Move down a row in the screen buffer.
-  $BE99,$01 Restore the counter.
-  $BE9A,$02 Jump back to #R$BE91 until all of the rows have been done.
-  $BE9C,$01 Restore #REGde.
-  $BE9D,$03 Set #REGbc to eight lines up and one byte along.
-  $BEA0,$01 Move to the top row of the next character.
-  $BEA1,$01 Restore #REGbc.
+  $BE91,$02 Copy a row of the glyph to the
+. buffer.
+  $BE93,$01 Move on to the next row of the
+. glyph.
+  $BE94,$01 Stash the row counter on the
+. stack.
+  $BE95,$04 Move #REGhl down a row.
+  $BE99,$01 Restore the row counter from the stack.
+  $BE9A,$02 Jump to #R$BE91 until all eight
+. rows have been written.
+N $BE9C Move on to the next character, eight
+. lines up and one byte to the right.
+  $BE9C,$01 Restore #REGde from the stack.
+  $BE9D,$04 Move #REGhl on by #N($0101,$04,$04).
+  $BEA1,$01 Restore #REGbc from the stack.
   $BEA2,$01 Return.
 
 c $BEA3 Set Flashing Attribute
 @ $BEA3 label=SetFlashingAttribute
-D $BEA3 Switches on the flashing (bit 7) of one in a list of attributes and
-. switches it off for all of the others.
+D $BEA3 Sets bit 7 of the attribute of
+. one line of text in a list of lines, and
+. resets it for the other lines.
 E $BEA3 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BC15 }
 . { #PENTAGRAM$BB64 }
 . LIST#
-R $BEA3 A Position in the list of the attribute that is to flash
-R $BEA3 B Number of attributes in the list
-R $BEA3 HL Address of the list
-R $BEA3 O:HL Address just beyond the list
-  $BEA3,$01 Test the position.
-  $BEA4,$02 Jump to #R$BEAD if it is not the first.
+R $BEA3 A The number of the line
+R $BEA3 B Number of lines
+R $BEA3 HL Address of the attributes
+N $BEA3 Flash one line and steady the rest.
+  $BEA3,$03 Jump to #R$BEAD if the line is not
+. the first.
 @ $BEA6 label=SetFlashingAttribute_Flash
-  $BEA6,$02 Switch on the flashing of the attribute.
+  $BEA6,$02 Set bit 7 of the attribute.
   $BEA8,$02 Jump to #R$BEAF.
 @ $BEAA label=SetFlashingAttribute_NextLine
-  $BEAA,$01 Count down to the attribute that flashes.
-  $BEAB,$02 Jump to #R$BEA6 if this is it.
+  $BEAA,$03 Jump to #R$BEA6 if this is the
+. line.
 @ $BEAD label=SetFlashingAttribute_Steady
-  $BEAD,$02 Switch off the flashing of the attribute.
+  $BEAD,$02 Reset bit 7 of the attribute.
 @ $BEAF label=SetFlashingAttribute_Advance
-  $BEAF,$01 Move on to the next attribute.
-  $BEB0,$02 Jump back to #R$BEAA until the whole list has been done.
+  $BEAF,$01 Move on to the next line.
+  $BEB0,$02 Jump to #R$BEAA until all of the
+. lines have been done.
   $BEB2,$01 Return.
 
 c $BEB3 Display Menu
 @ $BEB3 label=DisplayMenu
-D $BEB3 Prints the lines of the menu.
+D $BEB3 Displays the menu, which is a
+. list of eight lines of text (see
+. #R$BEBF).
+E $BEB3 Continue on to #R$BEBF.
 E $BEB3 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BC25 }
 . { #NIGHTSHADE$CA2B }
 . { #PENTAGRAM$BCB4 }
 . LIST#
-  $BEB3,$03 Point #REGde at the colours of the lines.
-  $BEB6,$01 Switch to the other registers to keep it there.
+N $BEB3 Point at the menu colours,
+. positions and text.
+  $BEB3,$03 Point #REGde at #R$BDA2.
+  $BEB6,$01 Switch to the shadow registers.
   $BEB7,$03 Point #REGhl at #R$BDAA.
   $BEBA,$03 Point #REGde at #R$BDBA.
   $BEBD,$02 Set the number of lines to #N$08.
 
 c $BEBF Display Text List
 @ $BEBF label=DisplayTextList
-D $BEBF Prints a list of lines of text in the screen buffer, each in its own
-. colour. If the border has not been drawn yet, it is drawn and the screen
-. buffer is copied to the display.
+D $BEBF Prints a list of lines of text
+. in the screen buffer, each in its own
+. colour. #REGde' points at the
+. attributes, #REGhl at pairs of pixel x
+. and y positions, and #REGde at the text.
+. After the lines have been printed the
+. border is drawn and the buffer is copied
+. to the screen, unless #R$5BB8 is already
+. set.
 E $BEBF View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BC31 }
 . LIST#
 R $BEBF B Number of lines
 R $BEBF DE Address of the text
-R $BEBF HL Address of the coordinates of the lines (X and Y for each line)
-R $BEBF DE' Address of the attributes of the lines
-  $BEBF,$01 Switch to the registers that hold the attributes.
+R $BEBF HL Address of the list of positions
+R $BEBF DE' Address of the list of attributes
+N $BEBF Print one line from the three lists.
+  $BEBF,$01 Switch to the shadow registers.
   $BEC0,$01 Fetch the attribute of the line.
-  $BEC1,$03 Store it as the attribute to print with.
+  $BEC1,$03 Set #R$5BB6.
   $BEC4,$01 Move on to the next attribute.
-  $BEC5,$01 Switch back.
-  $BEC6,$01 Stash the number of lines.
-  $BEC7,$01 Fetch the X coordinate.
-  $BEC8,$02 Move on to the next pair of coordinates.
-  $BECA,$01 Stash the address of the next pair.
-  $BECB,$01 Point #REGhl at the Y coordinate.
-  $BECC,$01 Fetch the Y coordinate.
-  $BECD,$01 Set the X coordinate.
-  $BECE,$03 Print the line.
-  $BED1,$01 Restore the address of the next pair.
-  $BED2,$01 Restore the number of lines.
-  $BED3,$02 Jump back to #R$BEBF until all of the lines have been printed.
-  $BED5,$03 Fetch the flag that says the border has been drawn.
-  $BED8,$01 Test it.
-  $BED9,$01 Return if it has.
-  $BEDA,$01 Set the flag.
-  $BEDB,$03 Store it.
-  $BEDE,$03 Draw the border.
-  $BEE1,$03 Copy the screen buffer to the display.
+  $BEC5,$01 Switch back to the main registers.
+  $BEC6,$01 Stash the number of lines on the
+. stack.
+  $BEC7,$01 Fetch the x position.
+  $BEC8,$02 Move on to the next pair of
+. positions.
+  $BECA,$01 Stash the address of the next pair
+. on the stack.
+  $BECB,$01 Point #REGhl at the y position.
+  $BECC,$01 Fetch the y position.
+  $BECD,$01 Set the x position.
+  $BECE,$03 Call #R$BE31.
+  $BED1,$01 Restore the address of the next pair from the stack.
+  $BED2,$01 Restore the number of lines from the stack.
+  $BED3,$02 Jump to #R$BEBF until all of the
+. lines have been printed.
+N $BED5 Draw the border the first time.
+  $BED5,$05 Return if #R$5BB8 is set.
+  $BEDA,$04 Write #N$01 to *#R$5BB8.
+  $BEDE,$03 Call #R$D296.
+  $BEE1,$03 Jump to #R$D56F.
 
 c $BEE4 Print Sprites
 @ $BEE4 label=PrintSprites
-D $BEE4 Draws a sprite a number of times, moving it along by a fixed amount each
-. time.
+D $BEE4 Prints the sprite of an object a
+. number of times, moving the pixel
+. position of the object by a step each
+. time, so that it makes a row of sprites.
+. #REGbc, #REGde and #REGhl are preserved
+. while each sprite is printed.
 E $BEE4 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BC56 }
 . { #PENTAGRAM$BDDE }
 . LIST#
-R $BEE4 B Number of times to draw the sprite
-R $BEE4 D Amount to add to the pixel Y coordinate each time
-R $BEE4 E Amount to add to the pixel X coordinate each time
-R $BEE4 IX Address of the object that holds the sprite
-  $BEE4,$03 Stash the registers.
-  $BEE7,$03 Draw the sprite.
-  $BEEA,$03 Restore the registers.
-  $BEED,$03 Fetch the pixel X coordinate.
-  $BEF0,$01 Add the offset.
-  $BEF1,$03 Store the new pixel X coordinate.
-  $BEF4,$03 Fetch the pixel Y coordinate.
-  $BEF7,$01 Add the offset.
-  $BEF8,$03 Store the new pixel Y coordinate.
-  $BEFB,$02 Jump back to #R$BEE4 until all of the sprites have been drawn.
+R $BEE4 B Number of times
+R $BEE4 D Step along the y axis in pixels
+R $BEE4 E Step along the x axis in pixels
+R $BEE4 IX The address of the object
+N $BEE4 Print one sprite and step the
+. position.
+  $BEE4,$03 Stash #REGbc, #REGde and #REGhl on
+. the stack.
+  $BEE7,$03 Call #R$D718.
+  $BEEA,$03 Restore #REGhl, #REGde and #REGbc from the stack.
+  $BEED,$03 Fetch the pixel x position of the
+. object.
+  $BEF0,$01 Add the step along the x axis.
+  $BEF1,$03 Set the pixel x position of the
+. object.
+  $BEF4,$03 Fetch the pixel y position of the
+. object.
+  $BEF7,$01 Add the step along the y axis.
+  $BEF8,$03 Set the pixel y position of the
+. object.
+  $BEFB,$02 Jump to #R$BEE4 until all of the
+. sprites have been printed.
   $BEFD,$01 Return.
 
 c $BEFE Handle Player Appearing
 @ $BEFE label=HandlePlayerAppearing
-D $BEFE Handles the sparkles that show the player appearing, which go through
-. the graphic numbers #N$78 to #N$7E. The graphic changes on every other frame,
-. and each change makes a sound. The last sparkle is handled by #R$BF11.
+D $BEFE The handler for the sparkles in
+. which the player appears at the start of
+. a life (graphics #N$78 to #N$7E). On
+. every other frame it moves on to the
+. next of the animation frames and plays a
+. sound.
 E $BEFE View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BC70 }
 . LIST#
-R $BEFE IX Address of the sparkle object
-  $BEFE,$03 Set the pixel adjustments of a sparkle.
-  $BF01,$03 Fetch the frame counter.
+R $BEFE IX The address of the object
+N $BEFE Advance the sparkle on every other
+. frame.
+  $BEFE,$03 Call #R$C4D8.
+  $BF01,$03 Fetch #R$5BA2.
   $BF04,$01 Invert it.
-  $BF05,$02,b$01 Keep the lowest bit.
+  $BF05,$02,b$01 Keep only bit 0.
   $BF07,$01 Return on every other frame.
-  $BF08,$03 Change to the next graphic.
-  $BF0B,$03 Play the sound of the player appearing.
-  $BF0E,$03 Flag the object to be drawn again.
+  $BF08,$03 Move on to the next sprite number.
+  $BF0B,$03 Call #R$B419.
+  $BF0E,$03 Jump to #R$C692.
 
 c $BF11 Handle Last Appearing Sparkle
 @ $BF11 label=HandleLastAppearingSparkle
-D $BF11 Handles the last of the sparkles that show the player appearing. The
-. object turns into the player, who is no longer dead, and is updated as the
+D $BF11 The handler for the last of the
+. sparkles in which the player appears.
+. The object turns into the player, who is
+. no longer dead, and is updated as the
 . player right away.
-R $BF11 IX Address of the sparkle object
-  $BF11,$03 Set the pixel adjustments of a sparkle.
-  $BF14,$04 Clear the flag that says the player is dead.
-  $BF18,$03 Fetch the graphic number of the player.
-  $BF1B,$03 Make it the graphic number of the object.
-  $BF1E,$03 Update the object as the player.
+R $BF11 IX The address of the object
+N $BF11 Stop the sparkle and restore the
+. player.
+  $BF11,$03 Call #R$C4D8.
+  $BF14,$04 Reset bit 6 of the flags.
+  $BF18,$03 Fetch the sprite number which was
+. kept.
+  $BF1B,$03 Restore the sprite number of the
+. object.
+  $BF1E,$03 Jump to #R$AFD5.
 
 c $BF21 Start Death Sparkles
 @ $BF21 label=StartDeathSparkles
@@ -5447,8 +5630,8 @@ R $BF2B IX Address of the sparkle object
 
 c $BF37 Handle Vanishing Object Sparkles
 @ $BF37 label=HandleVanishingObjectSparkles
-D $BF37 Handles the graphic numbers #N$B9 to #N$BB, which are for sparkles of an
-. object that is going away for good. The entry in the table that the object
+D $BF37 Handles the graphic numbers #N$B9 to #N($BB), which are for sparkles of
+. an object that is going away for good. The entry in the table that the object
 . points to is cleared, and then the object is removed in the same way as the
 . last of the death sparkles.
 R $BF37 IX Address of the sparkle object
@@ -5480,24 +5663,25 @@ E $BF45 View the equivalent code in;
 . #POKES$5BDC,$60;$5BE0,$63;$5BE4,$61;$5BB4,$01
 . #SIM(start=$BF45,stop=$0000,sp=$5B80)
 . #SCR$02,$00,$14,$10,$04(display-objects-carried) } UDGTABLE# #POPS
-  $BF45,$03 Fetch the flag that says the objects carried have changed.
+  $BF45,$03 Fetch the flag that says the objects carried have changed from
+. #R$5BB4.
   $BF48,$01 Test it.
   $BF49,$01 Return if they have not changed.
   $BF4A,$01 Clear #REGa.
-  $BF4B,$03 Clear the flag.
+  $BF4B,$03 Clear the flag at #R$5BB4.
 @ $BF4E label=DisplayObjects
 N $BF4E The objects are drawn using an object that is kept just for drawing the
 . panel.
-  $BF4E,$02 Stash #REGix.
+  $BF4E,$02 Stash #REGix on the stack.
   $BF50,$04 Point #REGix at #R$BFDB.
   $BF54,$02 Set the number of objects to #N$03.
   $BF56,$03 Point #REGhl at #R$5BDC.
 @ $BF59 label=DisplayObjects_Next
-  $BF59,$01 Stash the number of objects left.
-  $BF5A,$01 Stash the address of the object carried.
+  $BF59,$01 Stash the number of objects left on the stack.
+  $BF5A,$01 Stash the address of the object carried on the stack.
   $BF5B,$01 Copy the number of objects left into #REGa.
   $BF5C,$02 Negate it.
-  $BF5E,$02 Add #N$03, to get the number of objects done.
+  $BF5E,$02 Add #N($03), to get the number of objects done.
   $BF60,$06 Multiply it by eight.
   $BF66,$01 Stash it in #REGc.
   $BF67,$02 Multiply it by two.
@@ -5507,13 +5691,13 @@ N $BF4E The objects are drawn using an object that is kept just for drawing the
   $BF6F,$04 Set the pixel Y coordinate to #N$00.
   $BF73,$03 Fetch the pixel X coordinate into #REGc.
   $BF76,$03 Fetch the pixel Y coordinate into #REGb.
-  $BF79,$01 Stash the address of the object carried.
+  $BF79,$01 Stash the address of the object carried on the stack.
   $BF7A,$03 Find the address in the screen buffer.
   $BF7D,$02 Copy it to #REGhl.
   $BF7F,$03 Set the width to #N$03 bytes and the height to #N$18 lines.
   $BF82,$01 Set the fill byte to #N$00.
   $BF83,$03 Clear the area.
-  $BF86,$01 Restore the address of the object carried.
+  $BF86,$01 Restore the address of the object carried from the stack.
   $BF87,$01 Fetch the graphic number of the object.
   $BF88,$01 Test it.
   $BF89,$02 Jump to #R$BF91 if there is no object.
@@ -5529,10 +5713,10 @@ N $BF91 Copy the area from the screen buffer to the display.
   $BF9F,$03 Set the number of lines to #N$18 and the number of bytes to #N$03.
   $BFA2,$03 Copy the area to the display.
 N $BFA5 Colour the area.
-  $BFA5,$01 Restore the address of the object carried.
-  $BFA6,$01 Restore the number of objects left.
-  $BFA7,$01 Stash the number of objects left.
-  $BFA8,$01 Stash the address of the object carried.
+  $BFA5,$01 Restore the address of the object carried from the stack.
+  $BFA6,$01 Restore the number of objects left from the stack.
+  $BFA7,$01 Stash the number of objects left on the stack.
+  $BFA8,$01 Stash the address of the object carried on the stack.
   $BFA9,$01 Fetch the graphic number of the object.
   $BFAA,$02,b$01 Keep the number of the object.
   $BFAC,$01 Copy it into #REGe.
@@ -5542,18 +5726,18 @@ N $BFA5 Colour the area.
   $BFB3,$01 Fetch it into #REGc.
   $BFB4,$03 Set #REGl to the pixel X coordinate.
   $BFB7,$03 Fetch the pixel Y coordinate.
-  $BFBA,$02 Add #N$17, to get the top of the area.
+  $BFBA,$02 Add #N($17), to get the top of the area.
   $BFBC,$01 Use it as the Y coordinate of the position.
   $BFBD,$03 Find the address in the attribute file.
   $BFC0,$01 Copy it to #REGhl.
   $BFC1,$01 Fetch the attribute.
   $BFC2,$03 Set the width to #N$03 and the height to #N$03.
   $BFC5,$03 Colour the area.
-  $BFC8,$01 Restore the address of the object carried.
-  $BFC9,$01 Restore the number of objects left.
+  $BFC8,$01 Restore the address of the object carried from the stack.
+  $BFC9,$01 Restore the number of objects left from the stack.
   $BFCA,$04 Move on to the next object carried.
-  $BFCE,$02 Jump back to #R$BF59 until all of the objects have been drawn.
-  $BFD0,$02 Restore #REGix.
+  $BFCE,$02 Jump to #R$BF59 until all of the objects have been drawn.
+  $BFD0,$02 Restore #REGix from the stack.
   $BFD2,$01 Return.
 
 b $BFD3 Object Attributes
@@ -5581,10 +5765,11 @@ E $BFFB View the equivalent code in;
 . { #PENTAGRAM$BF66 }
 . LIST#
 R $BFFB O:F Zero flag set if the control is not pressed
-  $BFFB,$03 Point #REGhl at the control method.
+N $BFFB Choose the pickup bit, then test whether it is pressed.
+  $BFFB,$03 Point #REGhl at the control method, #R$5BA4.
   $BFFE,$01 Fetch it.
   $BFFF,$02,b$01 Keep the choice of joystick.
-  $C001,$03 Fetch the controls that are pressed.
+  $C001,$03 Fetch the controls that are pressed from #R$5BB5.
   $C004,$02 Jump to #R$C00B if the keyboard is in use.
   $C006,$04 Jump to #R$C00B if the directional control is not on.
   $C00A,$01 Move the bit for the directional control into place.
@@ -5611,7 +5796,7 @@ E $C00E View the equivalent code in;
 . LIST#
 R $C00E IX Address of the bottom half of the player
   $C00E,$03 Fetch the flag that says the control has been pressed and not yet
-. released.
+. released from #R$5BB3.
   $C011,$01 Test it.
   $C012,$03 Jump to #R$C0A9 if it was pressed on a frame before.
   $C015,$03 Test whether the control is pressed.
@@ -5625,7 +5810,7 @@ R $C00E IX Address of the bottom half of the player
 N $C027 Find out whether there is room to drop an object, by raising the player
 . by #N$0C to see if it hits anything.
   $C027,$01 Clear #REGa.
-  $C028,$03 Flag that an object can be dropped.
+  $C028,$03 Flag that an object can be dropped at #R$5BD3.
   $C02B,$03 Fetch the Z coordinate of the player.
   $C02E,$01 Stash it in #REGb.
   $C02F,$02 Add #N$0C to it.
@@ -5634,12 +5819,12 @@ N $C027 Find out whether there is room to drop an object, by raising the player
   $C037,$03 Restore the Z coordinate of the player.
   $C03A,$02 Jump to #R$C041 if there is room.
   $C03C,$02 Get the value that sets a flag.
-  $C03E,$03 Flag that no object can be dropped.
+  $C03E,$03 Flag that no object can be dropped at #R$5BD3.
 @ $C041 label=HandlePickupAndDrop_Pressed
   $C041,$03 Play a beep.
   $C044,$02 Get the value that sets a flag.
-  $C046,$03 Flag that the control has been pressed.
-  $C049,$03 Flag that the objects carried have changed.
+  $C046,$03 Flag that the control has been pressed at #R$5BB3.
+  $C049,$03 Flag that the objects carried have changed at #R$5BB4.
 N $C04C Make the player wider, deeper and taller, to find an object to pick up.
   $C04C,$02 Set the number of special objects in the room to #N$02.
   $C04E,$03 Fetch the width of the player.
@@ -5650,19 +5835,19 @@ N $C04C Make the player wider, deeper and taller, to find an object to pick up.
   $C05A,$01 Copy it into #REGa.
   $C05B,$02 Add #N$04 to it.
   $C05D,$03 Set the new depth.
-  $C060,$01 Stash the old width and depth.
+  $C060,$01 Stash the old width and depth on the stack.
   $C061,$03 Fetch the height of the player.
   $C064,$01 Copy it into #REGa.
   $C065,$02 Add #N$04 to it.
   $C067,$03 Set the new height.
-  $C06A,$01 Stash the old height.
+  $C06A,$01 Stash the old height on the stack.
   $C06B,$04 Point #REGiy at #R$5C48.
 @ $C06F label=HandlePickupAndDrop_LookForObject
   $C06F,$03 Test whether the object can be picked up.
   $C072,$03 Pick it up if it can.
   $C075,$03 Set #REGde to the size of an object.
   $C078,$02 Point #REGiy at the next special object.
-  $C07A,$02 Jump back to #R$C06F until both have been tried.
+  $C07A,$02 Jump to #R$C06F until both have been tried.
 N $C07C There is nothing to pick up. Look for a free place to drop an object.
   $C07C,$03 Test whether the control is still pressed.
   $C07F,$02 Finish if it is not.
@@ -5671,19 +5856,19 @@ N $C07C There is nothing to pick up. Look for a free place to drop an object.
   $C086,$04 Jump to #R$C08C if it is another room.
   $C08A,$02 Set the number of special objects to look at to #N$01.
 @ $C08C label=HandlePickupAndDrop_LookForSpace
-  $C08C,$04 Point #REGiy at the first special object of the room.
+  $C08C,$04 Point #REGiy at the first special object of the room, #R$5C48.
   $C090,$03 Set #REGde to the size of an object.
 @ $C093 label=HandlePickupAndDrop_TestSlot
   $C093,$03 Fetch the graphic number of the special object.
   $C096,$01 Test whether it is zero.
   $C097,$02 Jump to #R$C0B2 if the place is free.
   $C099,$02 Point #REGiy at the next special object.
-  $C09B,$02 Jump back to #R$C093 until all of them have been tried.
+  $C09B,$02 Jump to #R$C093 until all of them have been tried.
 @ $C09D label=HandlePickupAndDrop_Done
 N $C09D Put the size of the player back.
-  $C09D,$01 Restore the old height.
+  $C09D,$01 Restore the old height from the stack.
   $C09E,$03 Set the height of the player.
-  $C0A1,$01 Restore the old width and depth.
+  $C0A1,$01 Restore the old width and depth from the stack.
   $C0A2,$03 Set the width of the player.
   $C0A5,$03 Set the depth of the player.
   $C0A8,$01 Return.
@@ -5692,16 +5877,16 @@ N $C0A9 The control was pressed on a frame before: wait until it is let go.
   $C0A9,$03 Test whether the control is still pressed.
   $C0AC,$01 Return if it is.
   $C0AD,$01 Clear #REGa.
-  $C0AE,$03 Flag that the control is not pressed.
+  $C0AE,$03 Flag that the control is not pressed at #R$5BB3.
   $C0B1,$01 Return.
 @ $C0B2 label=HandlePickupAndDrop_Drop
 N $C0B2 Drop the object that has been carried longest in the free place.
-  $C0B2,$03 Point #REGhl at the object that has been carried longest.
+  $C0B2,$03 Point #REGhl at the object that has been carried longest, #R$5BE4.
   $C0B5,$01 Fetch its graphic number.
   $C0B6,$01 Move on to the flags.
   $C0B7,$01 Test whether there is an object.
   $C0B8,$02 Jump to #R$C12B if there is not.
-  $C0BA,$03 Fetch the flag that says no object can be dropped.
+  $C0BA,$03 Fetch the flag that says no object can be dropped from #R$5BD3.
   $C0BD,$01 Test it.
   $C0BE,$02 Finish if there is no room.
   $C0C0,$01 Point #REGhl at the graphic number.
@@ -5714,10 +5899,10 @@ N $C0B2 Drop the object that has been carried longest in the free place.
   $C0D0,$04 Jump to #R$C0DD if the player is below that.
   $C0D4,$04 Make the object drop into the cauldron.
   $C0D8,$02 Get the value that sets a flag.
-  $C0DA,$03 Flag that an object is being put into the cauldron.
+  $C0DA,$03 Flag that an object is being put into the cauldron at #R$5BC4.
 @ $C0DD label=HandlePickupAndDrop_Place
 N $C0DD Put the object where the player is, and lift the player on top of it.
-  $C0DD,$01 Stash the address of the flags of the object carried.
+  $C0DD,$01 Stash the address of the flags of the object carried on the stack.
   $C0DE,$03 Set the number of bytes to copy to #N$03.
   $C0E1,$03 Copy #REGix to #REGhl (using the stack).
   $C0E4,$03 Copy #REGiy to #REGde (using the stack).
@@ -5730,16 +5915,17 @@ N $C0DD Put the object where the player is, and lift the player on top of it.
   $C0F3,$03 Fetch the Z coordinate of the top half of the player.
   $C0F6,$02 Add #N$0C to it.
   $C0F8,$03 Set the new Z coordinate of the top half of the player.
-  $C0FB,$02 Stash #REGix.
+  $C0FB,$02 Stash #REGix on the stack.
   $C0FD,$04 Copy #REGiy to #REGix (using the stack), to point at the object.
   $C101,$03 Work out the pixel coordinates of the object.
-  $C104,$02 Restore #REGix.
+  $C104,$02 Restore #REGix from the stack.
 @ $C106 label=HandlePickupAndDrop_SetObject
 N $C106 Set up the rest of the object.
   $C106,$04 Set the width of the object to #N$05.
   $C10A,$04 Set the depth of the object to #N$05.
   $C10E,$04 Set the height of the object to #N$0C.
-  $C112,$01 Restore the address of the flags of the object carried.
+  $C112,$01 Restore the address of the flags
+. of the object carried from the stack.
   $C113,$01 Fetch the flags.
   $C114,$01 Move on to the address of the table entry.
   $C115,$03 Set the flags of the object.
@@ -5764,9 +5950,9 @@ N $C12B Remove the object that was carried longest from the list, by moving the
   $C13E,$03 Jump to #R$C09D to finish.
 @ $C141 label=HandlePickupAndDrop_PickUp
 N $C141 Pick up the object that #REGiy points at.
-  $C141,$03 Point #REGhl at the space for a new object carried.
+  $C141,$03 Point #REGhl at the space for a new object carried, #R$5BD8.
   $C144,$01 Clear #REGa.
-  $C145,$03 Allow the spiked balls to drop again.
+  $C145,$03 Allow the spiked balls to drop again at #R$5BC0.
   $C148,$03 Fetch the graphic number of the object.
   $C14B,$01 Store it.
   $C14C,$01 Move on to the flags.
@@ -5789,7 +5975,7 @@ N $C141 Pick up the object that #REGiy points at.
   $C169,$01 Test whether there is an object.
   $C16A,$02 Jump to #R$C12B if there is not.
   $C16C,$03 Make it the graphic of the object that was picked up.
-  $C16F,$01 Stash the address of the flags.
+  $C16F,$01 Stash the address of the flags on the stack.
   $C170,$02 Jump to #R$C106 to drop it where the other object was.
 
 c $C172 Test Object Can Be Picked Up
@@ -5810,7 +5996,7 @@ R $C172 O:F Carry flag set if the object can be picked up
   $C179,$01 Return if the object is not a special object.
 @ $C17A label=TestNearObject
 N $C17A Test whether the player is standing on, or next to, the object.
-  $C17A,$01 Stash #REGbc.
+  $C17A,$01 Stash #REGbc on the stack.
   $C17B,$03 Set the offset in X to zero.
   $C17E,$02 Set the offsets in Y and Z to zero.
   $C180,$03 Test whether the objects overlap in X.
@@ -5821,13 +6007,13 @@ N $C17A Test whether the player is standing on, or next to, the object.
   $C18D,$02 Take off #N$04.
   $C18F,$03 Set the new Z coordinate.
   $C192,$03 Test whether the objects overlap in Z.
-  $C195,$01 Stash the result.
+  $C195,$01 Stash the result on the stack.
   $C196,$03 Fetch the Z coordinate of the player.
   $C199,$02 Add #N$04 to it.
   $C19B,$03 Set the old Z coordinate.
-  $C19E,$01 Restore the result.
+  $C19E,$01 Restore the result from the stack.
 @ $C19F label=TestNearObject_Done
-  $C19F,$01 Restore #REGbc.
+  $C19F,$01 Restore #REGbc from the stack.
   $C1A0,$01 Return.
 
 c $C1A1 Test Object Moving
@@ -5852,6 +6038,7 @@ D $C1AB Handles an extra life, which is an object that the player gets by
 . it, the table entry that it came from is cleared so that the object does not
 . come back, and the player gets an extra life.
 R $C1AB IX Address of the extra life object
+N $C1AB Test whether the player is touching the extra life.
   $C1AB,$03 Set the pixel adjustments of an extra life.
   $C1AE,$04 Copy #REGix to #REGiy (using the stack).
   $C1B2,$04 Point #REGix at #R$5C08.
@@ -5862,6 +6049,7 @@ R $C1AB IX Address of the extra life object
   $C1C2,$03 Put the depth of the player right.
   $C1C5,$04 Copy #REGiy to #REGix (using the stack).
   $C1C9,$02 Jump to #R$C1EE if the player is not touching the extra life.
+N $C1CB Award the extra life and remove the object.
   $C1CB,$04 Change the graphic of the object to the one that removes it.
   $C1CF,$03 Set the pixel adjustments of a sparkle.
   $C1D2,$03 Fetch the low byte of the address of the table entry that the object
@@ -5871,7 +6059,7 @@ R $C1AB IX Address of the extra life object
   $C1DA,$03 Point #REGhl at #R$5BBA.
   $C1DD,$01 Give the player an extra life.
   $C1DE,$01 Clear #REGa.
-  $C1DF,$03 Allow the spiked balls to drop again.
+  $C1DF,$03 Allow the spiked balls to drop again at #R$5BC0.
   $C1E2,$03 Play a beep.
   $C1E5,$03 Print the number of lives.
   $C1E8,$03 Set the position of the number of lives on the panel.
@@ -5881,13 +6069,14 @@ R $C1AB IX Address of the extra life object
 
 c $C1F1 Handle Object Dropped In Cauldron
 @ $C1F1 label=HandleObjectDroppedInCauldron
-D $C1F1 Handles the graphic numbers #N$68 to #N$6E, which are the special
+D $C1F1 Handles the graphic numbers #N$68 to #N($6E), which are the special
 . objects once the player has dropped them above the cauldron. The object moves
 . towards the centre of the room in X and Y at a speed of one. While it does so
 . it is kept at a height of about #N$98: it is lifted if it is below that, and
 . it hangs there if it is not. Once it is at the centre of the room, it falls
 . into the cauldron.
 R $C1F1 IX Address of the object
+N $C1F1 Move the object towards the centre of the room.
   $C1F1,$03 Set the pixel adjustments of a sparkle.
   $C1F4,$03 Fetch the X coordinate of the object.
   $C1F7,$02 Subtract the X coordinate of the centre of the room.
@@ -5953,13 +6142,13 @@ N $C245 The object is in the cauldron. If it is the one that is needed next,
   $C254,$03 Point #REGhl at #R$5BBB.
   $C257,$01 Count one more.
   $C258,$03 Make the colours of the screen cycle.
-  $C25B,$03 Fetch the number of charms in the cauldron.
+  $C25B,$03 Fetch the number of charms in the cauldron from #R$5BBB.
   $C25E,$04 Jump to #R$C265 if there are more to come.
   $C262,$03 Start the final animation.
 @ $C265 label=AddObjectToCauldron_Remove
 N $C265 Remove the object.
   $C265,$01 Clear #REGa.
-  $C266,$03 Flag that no object is being put into the cauldron.
+  $C266,$03 Flag that no object is being put into the cauldron at #R$5BC4.
   $C269,$03 Fetch the low byte of the address of the table entry that the object
 . comes from.
   $C26C,$03 Fetch the high byte.
@@ -5971,7 +6160,7 @@ c $C274 Find Next Object Required
 D $C274 Finds the number of the object that the player has to put into the
 . cauldron next.
 R $C274 O:HL Address of the number of the object in the list at #R$C27D
-  $C274,$03 Fetch the number of charms in the cauldron.
+  $C274,$03 Fetch the number of charms in the cauldron from #R$5BBB.
   $C277,$03 Point #REGhl at #R$C27D.
   $C27A,$03 Find the address of the object that is needed.
 
@@ -5984,11 +6173,12 @@ B $C27D,$0E,$07
 
 c $C28B Handle Special Object
 @ $C28B label=HandleSpecialObject
-D $C28B Handles the graphic numbers #N$60 to #N$66, which are the special
+D $C28B Handles the graphic numbers #N$60 to #N($66), which are the special
 . objects that the player has to carry to the cauldron. An object that has just
 . been dropped, or is moving, has its speed in X and Y cleared so that it falls
 . straight down.
 R $C28B IX Address of the object
+N $C28B Fall straight down if the object was dropped or is moving.
   $C28B,$03 Set the pixel adjustments of a sparkle.
   $C28E,$03 Apply gravity to the object and move it.
   $C291,$06 Jump to #R$C29B if the object has just been dropped.
@@ -6004,6 +6194,7 @@ c $C2A5 Cycle Colours With Sound
 @ $C2A5 label=CycleColoursWithSound
 D $C2A5 Changes the ink colour of every attribute on the screen to the next
 . colour, sixteen times, with a sound and a short delay each time.
+N $C2A5 Cycle every attribute, then play a sound and wait.
   $C2A5,$02 Set the number of times to cycle to #N$10.
 @ $C2A7 label=CycleColoursWithSound_Cycle
   $C2A7,$03 Point #REGhl at the attribute file.
@@ -6020,15 +6211,15 @@ D $C2A5 Changes the ink colour of every attribute on the screen to the next
   $C2B7,$01 Move on to the next attribute.
   $C2B8,$01 Decrease the number of attributes left.
   $C2B9,$02 Check whether any attributes are left to change.
-  $C2BB,$02 Jump back to #R$C2AD until all of the attributes have been changed.
+  $C2BB,$02 Jump to #R$C2AD until all of the attributes have been changed.
   $C2BD,$03 Play the sound of sparkles.
   $C2C0,$03 Set the delay counter to #N$2000.
 @ $C2C3 label=CycleColoursWithSound_Delay
   $C2C3,$01 Decrease the delay counter.
   $C2C4,$02 Check whether the delay counter has reached zero.
-  $C2C6,$02 Jump back to #R$C2C3 until the delay is over.
+  $C2C6,$02 Jump to #R$C2C3 until the delay is over.
   $C2C8,$01 Decrease the number of times left.
-  $C2C9,$02 Jump back to #R$C2A7 until all of the cycles are done.
+  $C2C9,$02 Jump to #R$C2A7 until all of the cycles are done.
 @ $C2CB label=DoNothing
   $C2CB,$01 Return.
 
@@ -6039,22 +6230,24 @@ D $C2CC Gets the cauldron room ready for the final animation, once the last of
 . room, the background objects and the foreground objects (eleven objects in
 . all) are removed, and every block that is left in the objects table is changed
 . into a sparkle.
+N $C2CC Remove the extra objects of the cauldron room.
   $C2CC,$02 Get the value that sets a flag.
-  $C2CE,$03 Flag that the final animation has started.
-  $C2D1,$02 Stash #REGix.
+  $C2CE,$03 Flag that the final animation has started at #R$5BC3.
+  $C2D1,$02 Stash #REGix on the stack.
   $C2D3,$04 Point #REGix at #R$5C68.
   $C2D7,$03 Set #REGde to the size of an object.
   $C2DA,$02 Set the number of objects to #N$0B.
 @ $C2DC label=PrepareFinalAnimation_Remove
-  $C2DC,$01 Stash the number of objects left.
-  $C2DD,$01 Stash the size of an object.
+  $C2DC,$01 Stash the number of objects left on the stack.
+  $C2DD,$01 Stash the size of an object on the stack.
   $C2DE,$03 Flag the object to be wiped and drawn.
-  $C2E1,$01 Restore the size of an object.
-  $C2E2,$01 Restore the number of objects left.
-  $C2E3,$04 Set the graphic number of the object to #N$01, so it is not shown.
+  $C2E1,$01 Restore the size of an object from the stack.
+  $C2E2,$01 Restore the number of objects left from the stack.
+  $C2E3,$04 Set the graphic number of the object to #N($01), so it is not shown.
   $C2E7,$02 Move on to the next object.
-  $C2E9,$02 Jump back to #R$C2DC until all of the objects have been removed.
-  $C2EB,$03 Point #REGbc at the end of the objects table.
+  $C2E9,$02 Jump to #R$C2DC until all of the objects have been removed.
+  $C2EB,$03 Point #REGbc at the end of the objects table, #R$6108.
+N $C2EE Change every remaining block into a sparkle.
 @ $C2EE label=PrepareFinalAnimation_Next
   $C2EE,$03 Fetch the graphic number of the object.
   $C2F1,$04 Jump to #R$C2F9 if it is not a block.
@@ -6063,8 +6256,8 @@ D $C2CC Gets the cauldron room ready for the final animation, once the last of
   $C2F9,$02 Move on to the next object.
   $C2FB,$03 Copy #REGix to #REGhl (using the stack).
   $C2FE,$03 Subtract the address of the end of the table.
-  $C301,$02 Jump back to #R$C2EE until every object has been looked at.
-  $C303,$02 Restore #REGix.
+  $C301,$02 Jump to #R$C2EE until every object has been looked at.
+  $C303,$02 Restore #REGix from the stack.
   $C305,$01 Return.
 
 c $C306 Start Transformation
@@ -6077,7 +6270,8 @@ D $C306 Starts the transformation of the player from human to wulf, or the other
 . the update of the player. The legs of the player are changed into the sparkles
 . of #R$C337 and the top half is hidden.
 R $C306 IX Address of the legs of the player
-  $C306,$03 Fetch the flag that says the player has to transform.
+N $C306 Return unless the change is due and the player is ready.
+  $C306,$03 Fetch the flag that says the player has to transform from #R$5BB1.
   $C309,$01 Test it.
   $C30A,$01 Return if the player does not have to transform.
   $C30B,$03 Fetch the counter and flags of the player.
@@ -6085,22 +6279,23 @@ R $C306 IX Address of the legs of the player
   $C310,$01 Return if the player has only just entered the room.
   $C311,$04 Test whether the player is jumping.
   $C315,$01 Return if so.
+N $C316 Hide the top half and start the sparkle transformation.
   $C316,$02 Drop the return address from the stack.
   $C318,$03 Fetch the graphic number of the player.
-  $C31B,$03 Keep it, as the flag that the player is transforming.
+  $C31B,$03 Keep it, as the flag that the player is transforming at #R$5BB1.
   $C31E,$04 Set the number of steps of the transformation to #N$08.
-  $C322,$02 Stash #REGix.
+  $C322,$02 Stash #REGix on the stack.
   $C324,$03 Set #REGde to the size of an object.
   $C327,$02 Point #REGix at the top half of the player.
   $C329,$04 Change the graphic of the top half to one that is not shown.
   $C32D,$03 Flag the top half to be wiped and drawn.
-  $C330,$02 Restore #REGix.
+  $C330,$02 Restore #REGix from the stack.
   $C332,$03 Set the pixel adjustments of a transforming player.
   $C335,$02 Jump to #R$C357.
 
 c $C337 Handle Transformation
 @ $C337 label=HandleTransformation
-D $C337 Handles the graphic numbers #N$5C to #N$5F, which are the legs of the
+D $C337 Handles the graphic numbers #N$5C to #N($5F), which are the legs of the
 . player while the player transforms. Every fourth frame a different one of
 . these graphics is chosen at random, and the sound of a transformation is
 . played. When the number of steps has run out the player becomes human or wulf.
@@ -6108,12 +6303,12 @@ D $C337 Handles the graphic numbers #N$5C to #N$5F, which are the legs of the
 R $C337 IX Address of the legs of the player
   $C337,$03 Set the pixel adjustments of a transforming player.
   $C33A,$06 Jump to #R$C349 if not.
-  $C340,$03 Fetch the flag that says the game has been completed.
+  $C340,$03 Fetch the flag that says the game has been completed from #R$5BC3.
   $C343,$01 Test it.
   $C344,$02 Jump to #R$C349 if it has been.
   $C346,$03 Start the death sparkles.
 @ $C349 label=HandleTransformation_Step
-  $C349,$03 Fetch the frame counter.
+  $C349,$03 Fetch the frame counter from #R$5BA2.
   $C34C,$02,b$01 Keep the lowest two bits.
   $C34E,$01 Return unless it is one frame in four.
   $C34F,$03 Play the sound of a transformation.
@@ -6123,7 +6318,7 @@ R $C337 IX Address of the legs of the player
 N $C357 Choose a graphic for the legs at random, and turn it round.
   $C357,$02 Fetch a random number from the refresh register.
   $C359,$01 Stash it in #REGc.
-  $C35A,$03 Fetch the second random seed.
+  $C35A,$03 Fetch the second random seed from #R$5BA5.
   $C35D,$01 Add the random number.
   $C35E,$02,b$01 Keep the lowest two bits.
   $C360,$02,b$01 Make it one of the graphic numbers #N$5C to #N$5F.
@@ -6139,14 +6334,14 @@ N $C357 Choose a graphic for the legs at random, and turn it round.
 @ $C377 label=HandleTransformation_Finish
 N $C377 The transformation is over. Change the player from human to wulf, or
 . from wulf to human.
-  $C377,$03 Fetch the graphic number that the legs had before the
-. transformation.
+  $C377,$03 Fetch the graphic number that the legs had before the transformation
+. from #R$5BB1.
   $C37A,$02,b$01 Change it from human to wulf, or back.
   $C37C,$03 Set the graphic number of the legs.
   $C37F,$02 Work out the graphic number of the top half.
   $C381,$03 Set the graphic number of the top half.
   $C384,$01 Clear #REGa.
-  $C385,$03 Flag that the player is not transforming.
+  $C385,$03 Flag that the player is not transforming at #R$5BB1.
   $C388,$03 Set the pixel adjustments of the legs.
   $C38B,$06 Jump to #R$C394 if not.
   $C391,$03 Lower the pixel adjustment in Y by one.
@@ -6157,7 +6352,7 @@ c $C397 Move Sun Moon
 @ $C397 label=MoveSunMoon
 D $C397 Moves the sun or moon along the arc in the window of the panel by one
 . pixel, on one frame in eight, and shows it.
-  $C397,$03 Fetch the frame counter.
+  $C397,$03 Fetch the frame counter from #R$5BA2.
   $C39A,$02,b$01 Keep the lowest three bits.
   $C39C,$01 Return unless it is one frame in eight.
   $C39D,$04 Point #REGix at #R$C44D.
@@ -6167,13 +6362,15 @@ c $C3A4 Display Sun Moon Frame
 @ $C3A4 label=DisplaySunMoonFrame
 D $C3A4 Shows the window of the panel that holds the sun or the moon, and the
 . sun or moon in it. The sun and the moon go along an arc from pixel X
-. coordinate #N$B0 to #N$E0, which is the height from the table at #R$C440. When
-. one of them gets to the end the other takes over, the player transforms, and
-. each time the sun comes back a day is added and the day is shown on the panel.
+. coordinate #N$B0 to #N($E0), which is the height from the table at #R$C440.
+. When one of them gets to the end the other takes over, the player
+. transforms, and each time the sun comes back a day is added and the day is
+. shown on the panel.
 . When #N$40 days have passed the game is over. Nothing is done when the final
 . animation is under way.
 R $C3A4 IX Address of the sun/moon object
-  $C3A4,$03 Fetch the flag that says the final animation has started.
+  $C3A4,$03 Fetch the flag that says the final animation has started from
+. #R$5BC3.
   $C3A7,$01 Test it.
   $C3A8,$01 Return if the final animation has started.
   $C3A9,$03 Fetch the pixel X coordinate of the sun/moon.
@@ -6190,8 +6387,8 @@ R $C3A4 IX Address of the sun/moon object
 N $C3C3 Draw the window in the screen buffer, wiping what was there first.
   $C3C3,$03 Set the number of lines to #N$1F and the number of bytes to #N$06.
   $C3C6,$03 Point #REGhl at #R$D90A.
-  $C3C9,$01 Stash the size of the window.
-  $C3CA,$01 Stash the position of the window.
+  $C3C9,$01 Stash the size of the window on the stack.
+  $C3CA,$01 Stash the position of the window on the stack.
   $C3CB,$03 Swap #REGb and #REGc, so that #REGb is the width and #REGc is the
 . height.
   $C3CE,$01 Clear #REGa.
@@ -6206,8 +6403,8 @@ N $C3C3 Draw the window in the screen buffer, wiping what was there first.
   $C3EC,$04 Set the pixel X coordinate to #N$D0.
   $C3F0,$04 Set the graphic number to the right of the frame.
   $C3F4,$03 Draw the right of the frame.
-  $C3F7,$01 Restore the position of the window.
-  $C3F8,$01 Restore the size of the window.
+  $C3F7,$01 Restore the position of the window from the stack.
+  $C3F8,$01 Restore the size of the window from the stack.
   $C3F9,$03 Point #REGde at the position of the window on the display.
   $C3FC,$03 Copy the window from the screen buffer to the display.
 @ $C3FF label=DisplaySunMoonFrame_Toggle
@@ -6219,8 +6416,8 @@ N $C3FF The sun or the moon has gone round: change to the other one, which makes
   $C407,$03 Colour the sun/moon.
   $C40A,$04 Set the pixel X coordinate of the sun/moon back to the start.
   $C40E,$02 Get the value that sets a flag.
-  $C410,$03 Flag that the player has to transform.
-  $C413,$03 Fetch the graphic number of the sun/moon.
+  $C410,$03 Flag that the player has to transform at #R$5BB1.
+  $C413,$03 Fetch the graphic number of the sun/moon from #R$C44D.
   $C416,$02,b$01 Keep the lowest bit.
   $C418,$01 Return if it is the moon.
 @ $C419 label=DisplaySunMoonFrame_AddDay
@@ -6265,55 +6462,55 @@ B $C44D,$20,$08
 c $C46D Initialise Sun
 @ $C46D label=InitialiseSun
 D $C46D Sets the sun/moon object to the sun at the start of the arc.
-  $C46D,$04 Point #REGix at the sun/moon object.
-  $C471,$04 Set the graphic number to #N$58, which is the sun.
+  $C46D,$04 Point #REGix at the sun/moon object, #R$C44D.
+  $C471,$04 Set the graphic number to #N($58), which is the sun.
   $C475,$04 Set the pixel X coordinate to #N$B0.
   $C479,$04 Set the pixel Y coordinate to #N$09.
   $C47D,$01 Return.
 
 c $C47E Initialise Special Objects
 @ $C47E label=InitialiseSpecialObjects
-D $C47E Chooses which objects are placed where, at the start of each game. Every
-. entry in the table of special objects gets a graphic number from #N$60 to
-. #N$67, one after another from a number that comes from the first random seed
-. and the refresh register, and the place that the object starts in is copied to
-. the place that it is in now.
+D $C47E Chooses the objects in #R$6FF2 at the start of a game. Each is given a
+. graphic number from #N$60 to #N$67, taken from a number made from the random
+. number seed and the refresh register. The starting position of each entry is
+. copied to the current position.
 E $C47E View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$AF3F }
 . LIST#
-  $C47E,$03 Point #REGhl at the first special object.
-  $C481,$03 Fetch the first random seed.
-  $C484,$01 Stash it in #REGe.
-  $C485,$02 Fetch a random number from the refresh register.
-  $C487,$01 Add the seed.
-  $C488,$01 Stash the result in #REGe.
+N $C47E Stir the seed and fill the table.
+  $C47E,$03 Point #REGhl at the first special object, #R$6FF2.
+  $C481,$03 Fetch the first random seed from #R$5BA0.
+  $C484,$01 Keep it in #REGe.
+  $C485,$02 Fetch the refresh register.
+  $C487,$01 Add the seed to it.
+  $C488,$01 Keep the result in #REGe.
 @ $C489 label=InitialiseSpecialObjects_Next
-  $C489,$01 Copy the number into #REGa.
-  $C48A,$02,b$01 Keep the lowest three bits.
+  $C489,$01 Copy the number to #REGa.
+  $C48A,$02,b$01 Keep bits 0 to 2.
   $C48C,$02,b$01 Make it a graphic number from #N$60 to #N$67.
   $C48E,$01 Set the graphic number of the object.
   $C48F,$01 Move on to the starting position.
   $C490,$01 Change the number, for the next object.
-  $C491,$01 Stash it.
-  $C492,$01 Point #REGde at the starting position.
-  $C493,$03 Set #REGhl to the offset of the current position.
-  $C496,$01 Point #REGhl at the current position.
-  $C497,$01 Point #REGde at the current position.
-  $C498,$03 Set the number of bytes to copy to #N$04.
-  $C49B,$02 Copy the starting position to the current position.
+  $C491,$01 Stash the number on the stack.
+  $C492,$01 Swap the entry pointer into #REGde.
+  $C493,$03 Set #REGhl to #N($0004,$04,$04).
+  $C496,$01 Add it to the starting position.
+  $C497,$01 Swap the pointers back.
+  $C498,$03 Set #REGbc to #N($0004,$04,$04).
+  $C49B,$02 Copy the starting position and room.
   $C49D,$01 Point #REGhl at the next object.
-  $C49E,$01 Stash it.
-  $C49F,$03 Point #REGbc at the end of the table.
-  $C4A2,$03 Subtract the address of the end of the table.
-  $C4A5,$01 Restore the address of the next object.
-  $C4A6,$01 Restore the number.
-  $C4A7,$02 Jump back to #R$C489 until every object has been done.
+  $C49E,$01 Stash the next entry on the stack.
+  $C49F,$03 Point #REGbc at #R$7112.
+  $C4A2,$03 Subtract #R$7112 from #REGhl.
+  $C4A5,$01 Restore the address of the next object from the stack.
+  $C4A6,$01 Restore the number from the stack.
+  $C4A7,$02 Jump to #R$C489 until every object has been done.
   $C4A9,$01 Return.
 
 c $C4AA Handle Block
 @ $C4AA label=HandleBlock
-D $C4AA Handles the graphic number #N$3E, which is a block that can fall. Its
+D $C4AA Handles the graphic number #N($3E), which is a block that can fall. Its
 . speeds in X and Y are cleared, so that it only falls, and the sound of a block
 . is played.
 R $C4AA IX Address of the block object
@@ -6386,7 +6583,7 @@ N $C4ED The adjustments of the bricks of graphic number #N$0B and of a
   $C4ED,$03 Set the adjustments.
   $C4F0,$02 Jump to #R$C4E0.
 @ $C4F2 label=SetPixelAdjustments_Ball
-N $C4F2 The adjustments of bricks of graphic numbers #N$0C to #N$0F, balls and
+N $C4F2 The adjustments of bricks of graphic numbers #N$0C to #N($0F), balls and
 . fire: #N$F8 in X and #N$FC in Y.
   $C4F2,$03 Set the adjustments.
   $C4F5,$02 Jump to #R$C4E0.
@@ -6430,19 +6627,20 @@ R $C515 A Byte to fill the rectangle with
 R $C515 B Width of the rectangle in bytes
 R $C515 C Height of the rectangle in lines
 R $C515 HL Address of the first byte
+N $C515 Fill each line of the rectangle, then move down a row.
   $C515,$03 Set #REGde to the length of a line.
 @ $C518 label=FillWindow_Line
-  $C518,$01 Stash the width and height.
-  $C519,$01 Stash the address of the start of the line.
+  $C518,$01 Stash the width and height on the stack.
+  $C519,$01 Stash the address of the start of the line on the stack.
 @ $C51A label=FillWindow_Byte
   $C51A,$01 Fill a byte.
   $C51B,$01 Move on to the next byte.
-  $C51C,$02 Jump back to #R$C51A until the line is filled.
-  $C51E,$01 Restore the address of the start of the line.
+  $C51C,$02 Jump to #R$C51A until the line is filled.
+  $C51E,$01 Restore the address of the start of the line from the stack.
   $C51F,$01 Move on to the next line.
-  $C520,$01 Restore the width and height.
+  $C520,$01 Restore the width and height from the stack.
   $C521,$01 Decrease the number of lines left.
-  $C522,$02 Jump back to #R$C518 until all of the lines have been filled.
+  $C522,$02 Jump to #R$C518 until all of the lines have been filled.
   $C524,$01 Return.
 
 c $C525 Place Special Objects In Room
@@ -6450,7 +6648,7 @@ c $C525 Place Special Objects In Room
 D $C525 Makes the list of the special objects that are in the room that the
 . player is in, ready to be updated like any other object. Every entry of the
 . table of special objects at #R$6FF2 that is in the room is copied to the
-. objects table (up to two of them), with the width and depth of #N$05, the
+. objects table (up to two of them), with the width and depth of #N($05), the
 . height of #N$0C and the flags for drawing and for being able to move. The
 . address of the entry is kept at #N$10 bytes into the object, so that it can be
 . updated by #R$C591. The rest of the objects table for the special objects is
@@ -6460,7 +6658,7 @@ E $C525 View the equivalent code in;
 . { #ALIENEIGHT$AE99 }
 . LIST#
 R $C525 IX Address of the player
-  $C525,$03 Point #REGde at the first special object of the room.
+  $C525,$03 Point #REGde at the first special object of the room, #R$5C48.
   $C528,$01 Switch to the alternate registers to keep it there.
   $C529,$04 Point #REGiy at #R$6FF2.
   $C52D,$03 Fetch the room that the player is in.
@@ -6471,11 +6669,11 @@ R $C525 IX Address of the player
   $C536,$03 Fetch the room that the object is in.
   $C539,$01 Compare it with the room that the player is in.
   $C53A,$02 Jump to #R$C572 if they are different.
-  $C53C,$02 Stash the address of the entry.
+  $C53C,$02 Stash the address of the entry on the stack.
   $C53E,$01 Switch back to the registers that hold the address of the special
 . object of the room.
-  $C53F,$01 Restore the address of the entry.
-  $C540,$01 Stash it again.
+  $C53F,$01 Restore the address of the entry from the stack.
+  $C540,$01 Stash it again on the stack.
   $C541,$01 Fetch the graphic number.
   $C542,$01 Move on to the starting position.
   $C543,$01 Set the graphic number of the special object of the room.
@@ -6500,7 +6698,7 @@ R $C525 IX Address of the player
   $C55F,$01 Move on to the speeds.
   $C560,$02 Set the number of bytes to clear to #N$07.
   $C562,$03 Clear them.
-  $C565,$01 Restore the address of the entry.
+  $C565,$01 Restore the address of the entry from the stack.
   $C566,$01 Fetch the low byte.
   $C567,$01 Store it.
   $C568,$01 Move on to the high byte.
@@ -6514,19 +6712,19 @@ R $C525 IX Address of the player
   $C572,$03 Set #REGde to the size of an entry.
   $C575,$02 Point #REGiy at the next entry.
   $C577,$03 Copy #REGiy to #REGhl (using the stack).
-  $C57A,$03 Point #REGde at the end of the table.
+  $C57A,$03 Point #REGde at the end of the table, #R$7112.
   $C57D,$03 Subtract the address of the end of the table.
-  $C580,$02 Jump back to #R$C530 until all of the entries have been done.
+  $C580,$02 Jump to #R$C530 until all of the entries have been done.
   $C582,$01 Switch to the registers that hold the address of the special object
 . of the room.
 @ $C583 label=PlaceSpecialObjectsInRoom_ClearSlots
 N $C583 Clear what is left of the special objects of the room.
-  $C583,$03 Point #REGhl at the end of the special objects of the room.
+  $C583,$03 Point #REGhl at the end of the special objects of the room, #R$5C88.
   $C586,$03 Subtract the address of the object that is next.
   $C589,$01 Return if there is no more room.
   $C58A,$02 Set the number of bytes to clear to #N$20.
   $C58C,$03 Clear them.
-  $C58F,$02 Jump back to #R$C583.
+  $C58F,$02 Jump to #R$C583.
 
 c $C591 Update Special Objects
 @ $C591 label=UpdateSpecialObjects
@@ -6537,7 +6735,8 @@ E $C591 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$AF05 }
 . LIST#
-  $C591,$04 Point #REGiy at the first special object of the room.
+N $C591 Copy each special object of the room back to the table.
+  $C591,$04 Point #REGiy at the first special object of the room, #R$5C48.
 @ $C595 label=UpdateSpecialObjects_Next
   $C595,$03 Fetch the graphic number of the object.
   $C598,$01 Test whether there is an object.
@@ -6558,18 +6757,19 @@ E $C591 View the equivalent code in;
   $C5B7,$03 Set #REGbc to the size of an object.
   $C5BA,$02 Point #REGiy at the next object.
   $C5BC,$03 Copy #REGiy to #REGhl (using the stack).
-  $C5BF,$03 Point #REGbc at the end of the special objects of the room.
+  $C5BF,$03 Point #REGbc at the end of the special objects of the room, #R$5C88.
   $C5C2,$03 Subtract the address of the end.
-  $C5C5,$02 Jump back to #R$C595 until both of the objects have been done.
+  $C5C5,$02 Jump to #R$C595 until both of the objects have been done.
   $C5C7,$01 Return.
 
 c $C5C8 Handle Ghost
 @ $C5C8 label=HandleGhost
-D $C5C8 Handles the graphic numbers #N$50 to #N$53, which are a ghost. The ghost
-. moves in a straight line until it hits something, or does not move at all, and
-. then it picks a new direction at random: its speed in X and in Y is #N$03 or
-. #N$04, in either direction. The graphic of the ghost shows the way it moves,
-. and is changed between its two frames each time. The ghost is deadly.
+D $C5C8 Handles the graphic numbers #N$50 to #N($53), which are a ghost. The
+. ghost moves in a straight line until it hits something, or does not move at
+. all, and then it picks a new direction at random: its speed in X and in Y
+. is #N$03 or #N($04), in either direction. The graphic of the ghost shows
+. the way it moves, and is changed between its two frames each time. The
+. ghost is deadly.
 R $C5C8 IX Address of the ghost object
   $C5C8,$03 Set the pixel adjustments of the bottom half of a guard.
   $C5CB,$03 Apply gravity to the ghost and move it.
@@ -6581,14 +6781,14 @@ R $C5C8 IX Address of the ghost object
   $C5DB,$02 Jump to #R$C5FD if the ghost has not hit anything.
 @ $C5DD label=HandleGhost_NewDirection
 N $C5DD Choose a new direction.
-  $C5DD,$03 Fetch the second random seed.
+  $C5DD,$03 Fetch the second random seed from #R$5BA5.
   $C5E0,$02,b$01 Keep the lowest two bits.
-  $C5E2,$02 Add #N$04, to get a number from #N$04 to #N$07.
+  $C5E2,$02 Add #N($04), to get a number from #N$04 to #N$07.
   $C5E4,$03 Look up the speed.
   $C5E7,$03 Set the speed in X.
-  $C5EA,$03 Fetch the frame counter.
+  $C5EA,$03 Fetch the frame counter from #R$5BA2.
   $C5ED,$02,b$01 Keep the lowest two bits.
-  $C5EF,$02 Add #N$04, to get a number from #N$04 to #N$07.
+  $C5EF,$02 Add #N($04), to get a number from #N$04 to #N$07.
   $C5F1,$03 Look up the speed.
   $C5F4,$03 Set the speed in Y.
   $C5F7,$03 Choose the graphic of the ghost from its direction.
@@ -6603,6 +6803,7 @@ D $C603 Chooses the graphic of the ghost from the direction in which it moves,
 . by setting bit 1 of the graphic number and the flag that flips the sprite. Of
 . the two speeds the larger decides it.
 R $C603 IX Address of the ghost object
+N $C603 Choose the graphic from the larger of the two speeds.
   $C603,$03 Fetch the speed in X.
   $C606,$01 Test it.
   $C607,$03 Jump to #R$C60C if it is positive.
@@ -6647,7 +6848,7 @@ E $C645 View the equivalent code in;
 . LIST#
 R $C645 A Number of the entry
 R $C645 O:A Speed
-  $C645,$03 Point #REGbc at the table of speeds.
+  $C645,$03 Point #REGbc at the table of speeds, #R$C64E.
   $C648,$01 Use the number of the entry as the low byte of the offset.
   $C649,$02 Clear the high byte of the offset.
   $C64B,$01 Point #REGhl at the entry.
@@ -6657,7 +6858,7 @@ R $C645 O:A Speed
 b $C64E Ghost Speeds
 @ $C64E label=GhostSpeeds
 D $C64E The speeds that a ghost can be given, from #N$FF and #N$01 to #N$F8 and
-. #N$08, in pairs. Only the entries #N$04 to #N$07 are used.
+. #N($08), in pairs. Only the entries #N$04 to #N$07 are used.
 B $C64E,$10,$08
 
 c $C65E Handle Portcullis
@@ -6669,27 +6870,29 @@ D $C65E Handles a portcullis that is not moving. Nothing happens while another
 . first four times that a portcullis comes down, and after that on one frame in
 . thirty-two.
 R $C65E IX Address of the portcullis object
+N $C65E Start the portcullis rising or lowering when it is time.
   $C65E,$03 Set the pixel adjustments of the bottom half of a guard.
   $C661,$03 Point #REGhl at #R$5BAF.
   $C664,$01 Fetch it.
   $C665,$01 Test it.
   $C666,$01 Return if a portcullis is moving.
-  $C667,$03 Fetch the Z coordinate of the floor of the room.
+  $C667,$03 Fetch the Z coordinate of the floor of the room from #R$5BAE.
   $C66A,$03 Compare it with the Z coordinate of the portcullis.
   $C66D,$02 Jump to #R$C6AD if the portcullis is on the floor.
   $C66F,$02 Add #N$1F to the height.
   $C671,$03 Compare it with the Z coordinate of the portcullis.
   $C674,$02 Jump to #R$C6AD if the portcullis is no more than #N$1F above the
 . floor of the room.
-  $C676,$03 Fetch the number of times that a portcullis has come down.
+  $C676,$03 Fetch the number of times that a portcullis has come down from
+. #R$5BB0.
   $C679,$04 Jump to #R$C685 if it is fewer, to set off at once.
-  $C67D,$03 Fetch the second random seed.
+  $C67D,$03 Fetch the second random seed from #R$5BA5.
   $C680,$02,b$01 Keep the lowest five bits.
   $C682,$01 Return unless it is the time to set off.
   $C683,$02,b$01 Set #REGa to a large number, so that it stays above four.
 @ $C685 label=HandlePortcullis_Lower
   $C685,$01 Add one to the number of times that a portcullis has come down.
-  $C686,$03 Store it.
+  $C686,$03 Store it at #R$5BB0.
   $C689,$04 Change the graphic of the portcullis to the moving one.
   $C68D,$04 Set the speed in Z to move it down.
 @ $C691 label=HandlePortcullis_Flag
@@ -6720,19 +6923,19 @@ E $C69D View the equivalent code in;
 . { #PENTAGRAM$BF56 }
 . LIST#
 R $C69D IY Address of the object
-  $C69D,$02 Stash #REGiy.
-  $C69F,$02 Stash #REGix.
+  $C69D,$02 Stash #REGiy on the stack.
+  $C69F,$02 Stash #REGix on the stack.
   $C6A1,$04 Copy #REGiy to #REGix (using the stack).
   $C6A5,$03 Flag the object to be wiped and drawn.
-  $C6A8,$02 Restore #REGix.
-  $C6AA,$02 Restore #REGiy.
+  $C6A8,$02 Restore #REGix from the stack.
+  $C6AA,$02 Restore #REGiy from the stack.
   $C6AC,$01 Return.
 
 c $C6AD Start Portcullis Rising
 @ $C6AD label=StartPortcullisRising
 D $C6AD Starts a portcullis rising, on one frame in thirty-two.
 R $C6AD IX Address of the portcullis object
-  $C6AD,$03 Fetch the second random seed.
+  $C6AD,$03 Fetch the second random seed from #R$5BA5.
   $C6B0,$02,b$01 Keep the lowest five bits.
   $C6B2,$01 Return unless it is the time to set off.
   $C6B3,$04 Change the graphic of the portcullis to the moving one.
@@ -6747,6 +6950,7 @@ D $C6BD Handles a portcullis that is moving. A portcullis that is coming down is
 . is #N$1F above the floor of the room. When it is done the portcullis stops,
 . and the next one is free to start.
 R $C6BD IX Address of the portcullis object
+N $C6BD Fall and speed up, or rise, until the portcullis is done.
   $C6BD,$03 Set the pixel adjustments of the bottom half of a guard.
   $C6C0,$04 Make the portcullis deadly.
   $C6C4,$03 Fetch the counter and flags of the player.
@@ -6760,15 +6964,17 @@ R $C6BD IX Address of the portcullis object
   $C6D7,$06 Jump to #R$C692 if the portcullis has not hit the floor.
   $C6DD,$03 Play the sound of a portcullis.
 @ $C6E0 label=HandleMovingPortcullis_Stop
+N $C6E0 Stop the portcullis and free the next one to start.
   $C6E0,$01 Clear #REGa.
-  $C6E1,$03 Flag that no portcullis is moving.
+  $C6E1,$03 Flag that no portcullis is moving at #R$5BAF.
   $C6E4,$04 Change the graphic of the portcullis to the stationary one.
   $C6E8,$02 Jump to #R$C692.
 @ $C6EA label=HandleMovingPortcullis_Rise
+N $C6EA Rise until the portcullis is #N$1F above the floor.
   $C6EA,$04 Set the speed in Z to #N$02.
   $C6EE,$03 Play the sound of a moving object.
   $C6F1,$03 Apply gravity to the portcullis and move it.
-  $C6F4,$03 Fetch the Z coordinate of the floor of the room.
+  $C6F4,$03 Fetch the Z coordinate of the floor of the room from #R$5BAE.
   $C6F7,$02 Add #N$1F to it.
   $C6F9,$03 Compare it with the Z coordinate of the portcullis.
   $C6FC,$02 Jump to #R$C692 if the portcullis has not yet reached the top.
@@ -6776,27 +6982,34 @@ R $C6BD IX Address of the portcullis object
 
 c $C700 Apply Gravity And Move
 @ $C700 label=ApplyGravityAndMove
-D $C700 Makes an object fall faster, then moves it. The entry point at #R$C706
-. only moves the object.
+D $C700 Makes an object fall faster, then moves it. #R$C706 only moves the
+. object.
 E $C700 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BFB6 }
 . { #PENTAGRAM$B979 }
 . LIST#
-R $C700 IX Address of the object
-  $C700,$03 Take one off the speed in Z of the object.
+R $C700 IX The address of the object
+N $C700 Speed the fall, then stay clear of walls and other objects.
+  $C700,$03 Take one off the z speed of the object.
   $C703,$03 Stop the object moving through other objects and the walls of the
 . room.
+N $C706 Add the speeds to the position.
 @ $C706 label=MoveObject
-N $C706 Adds the speeds in X, Y and Z of the object to its position.
-  $C706,$09 Add the speed in X to the X coordinate.
-  $C70F,$09 Add the speed in Y to the Y coordinate.
-  $C718,$09 Add the speed in Z to the Z coordinate.
+  $C706,$03 Fetch the x position of the object.
+  $C709,$03 Add the speed along the x axis.
+  $C70C,$03 Set the new x position.
+  $C70F,$03 Fetch the y position of the object.
+  $C712,$03 Add the speed along the y axis.
+  $C715,$03 Set the new y position.
+  $C718,$03 Fetch the z position of the object.
+  $C71B,$03 Add the speed along the z axis.
+  $C71E,$03 Set the new z position.
   $C721,$01 Return.
 
 c $C722 Handle Far Arch
 @ $C722 label=HandleFarArch
-D $C722 Handles the graphic numbers #N$03 and #N$05, which are the far side of
+D $C722 Handles the graphic numbers #N$03 and #N($05), which are the far side of
 . an arch. They only need the pixel adjustments of the sprite, which are not the
 . same when the sprite is flipped.
 R $C722 IX Address of the arch object
@@ -6835,34 +7048,35 @@ R $C737 IX Address of the arch object
 
 c $C73C Handle Near Arch
 @ $C73C label=HandleNearArch
-D $C73C Handles the graphic numbers #N$02 and #N$04, which are the near side of
-. an arch and of a tree arch. The speeds in X, Y and Z of the arch are not used
-. to move it, so they are used to keep the position of the middle of the
-. doorway. The player, and any special object, that gets close enough to the
-. arch is flagged as near it, and is nudged towards the middle line of the
-. doorway, so that it goes through the middle.
+D $C73C The handler for the near side of an arch (objects #N$02 and #N$04). As
+. an arch does not move, its speeds are used to keep the position of the middle
+. of the doorway: the middle is #N$0D further along the y axis than the arch, or
+. #N$0D further back along the x axis if the sprite is flipped. The player, and
+. any special object, is flagged if near the arch, and is nudged towards the
+. middle of the doorway.
 E $C73C View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BFEA }
 . { #PENTAGRAM$C7AD }
 . LIST#
-R $C73C IX Address of the arch object
+R $C73C IX The address of the object
+N $C73C Unflipped: doorway #N$0D along y.
   $C73C,$06 Jump to #R$C76C if the arch is flipped horizontally.
   $C742,$03 Fetch the graphic number of the arch.
   $C745,$04 Jump to #R$C737 if it is a tree arch.
-  $C749,$03 Set #REGhl to the adjustments of #N$F9 in X and #N$FD in Y.
-@ $C74C label=HandleNearArch_Position
+  $C749,$03 Set #REGhl to #N$FDF9.
 N $C74C The doorway is thirteen units further along the Y axis than the arch.
-  $C74C,$03 Set the adjustments.
-  $C74F,$03 Fetch the Y coordinate of the arch.
-  $C752,$02 Add #N$0D to it.
+@ $C74C label=HandleNearArch_Position
+  $C74C,$03 Call #R$C72B.
+  $C74F,$03 Fetch the y position of the arch.
+  $C752,$02 Add #N$0D.
   $C754,$03 Keep it as the Y coordinate of the middle of the doorway.
-  $C757,$03 Fetch the X coordinate of the arch.
+  $C757,$03 Fetch the x position of the arch.
   $C75A,$03 Keep it as the X coordinate of the middle of the doorway.
-  $C75D,$03 Set #REGh to the distance in Y that counts as near and #REGl to the
-. distance in X.
+  $C75D,$03 Set #REGhl to #N$060F.
+N $C760 Keep z and flag or nudge the player.
 @ $C760 label=HandleNearArch_Near
-  $C760,$03 Fetch the Z coordinate of the arch.
+  $C760,$03 Fetch the z position of the arch.
   $C763,$03 Keep it as the Z coordinate of the middle of the doorway.
   $C766,$03 Flag the objects that are near the arch.
   $C769,$03 Jump to #R$C785.
@@ -6872,6 +7086,7 @@ c $C76C Handle Flipped Near Arch
 D $C76C Sets up the near side of an arch whose sprite is flipped. The middle of
 . the doorway is thirteen units back along the X axis.
 R $C76C IX Address of the arch object
+N $C76C Set the doorway middle and the distances that count as near.
   $C76C,$03 Set #REGhl to the adjustments of #N$EF in X and #N$FE in Y.
   $C76F,$03 Set the adjustments.
   $C772,$03 Fetch the X coordinate of the arch.
@@ -6890,10 +7105,11 @@ D $C785 Nudges the player and the special objects towards the middle of a
 . The way in which they are nudged is picked from the table at #R$C7A9, by the
 . direction in which the arch faces.
 R $C785 IX Address of the arch object
+N $C785 Nudge each nearby object towards the middle of the doorway.
   $C785,$03 Set the distances that count as near to #N$0F in X and in Y.
   $C788,$04 Point #REGiy at #R$5C08.
   $C78C,$03 Set #REGde to the size of an object.
-  $C78F,$02 Set the number of objects to #N$04, which is the player and the
+  $C78F,$02 Set the number of objects to #N($04), which is the player and the
 . special objects.
 @ $C791 label=NudgeObjectsToArch_Next
   $C791,$03 Fetch the graphic number of the object.
@@ -6903,7 +7119,7 @@ R $C785 IX Address of the arch object
 . arches.
   $C79D,$03 Test whether the object is near the arch.
   $C7A0,$02 Jump to #R$C7D6 if it is not.
-  $C7A2,$01 Stash the number of objects left.
+  $C7A2,$01 Stash the number of objects left on the stack.
   $C7A3,$03 Point #REGbc at #R$C7A9.
   $C7A6,$03 Jump to the routine for the direction of the arch.
 
@@ -6926,6 +7142,7 @@ E $C7B1 View the equivalent code in;
 . LIST#
 R $C7B1 IX Address of the arch object
 R $C7B1 IY Address of the object
+N $C7B1 Step the object towards the east-west middle line.
   $C7B1,$03 Fetch the Y coordinate of the middle of the doorway.
   $C7B4,$03 Compare it with the Y coordinate of the object.
   $C7B7,$02 Jump to #R$C7D5 if the object is in the middle.
@@ -6942,6 +7159,7 @@ D $C7C4 Sets the adjustment of the speed in X of an object, to bring it a step
 . closer to the middle line of an arch that goes north and south.
 R $C7C4 IX Address of the arch object
 R $C7C4 IY Address of the object
+N $C7C4 Step the object towards the north-south middle line.
   $C7C4,$03 Fetch the X coordinate of the middle of the doorway.
   $C7C7,$03 Compare it with the X coordinate of the object.
   $C7CA,$02 Jump to #R$C7D5 if the object is in the middle.
@@ -6951,10 +7169,10 @@ R $C7C4 IY Address of the object
 @ $C7D2 label=NudgeObjectNorthSouth_Set
   $C7D2,$03 Set the adjustment of the speed in X of the object.
 @ $C7D5 label=NudgeObjectsToArch_Restore
-  $C7D5,$01 Restore the number of objects left.
+  $C7D5,$01 Restore the number of objects left from the stack.
 @ $C7D6 label=NudgeObjectsToArch_Advance
   $C7D6,$02 Point #REGiy at the next object.
-  $C7D8,$02 Jump back to #R$C791 until all of the objects have been done.
+  $C7D8,$02 Jump to #R$C791 until all of the objects have been done.
   $C7DA,$01 Return.
 
 c $C7DB Flag Objects Near Arch
@@ -6964,9 +7182,10 @@ D $C7DB Flags the player and the special objects that are close to an arch, and
 R $C7DB H Distance in Y that counts as near
 R $C7DB L Distance in X that counts as near
 R $C7DB IX Address of the arch object
-  $C7DB,$04 Point #REGiy at the player.
+N $C7DB Flag each nearby object as being near an arch.
+  $C7DB,$04 Point #REGiy at the player, #R$5C08.
   $C7DF,$03 Set #REGde to the size of an object.
-  $C7E2,$02 Set the number of objects to #N$04, which is the player and the
+  $C7E2,$02 Set the number of objects to #N($04), which is the player and the
 . special objects.
 @ $C7E4 label=FlagObjectsNearArch_Next
   $C7E4,$03 Fetch the graphic number of the object.
@@ -6979,7 +7198,7 @@ R $C7DB IX Address of the arch object
   $C7F5,$04 Flag the object as being near an arch.
 @ $C7F9 label=FlagObjectsNearArch_Advance
   $C7F9,$02 Point #REGiy at the next object.
-  $C7FB,$02 Jump back to #R$C7E4 until all of the objects have been done.
+  $C7FB,$02 Jump to #R$C7E4 until all of the objects have been done.
   $C7FD,$01 Return.
 
 c $C7FE Test Near To
@@ -6997,6 +7216,7 @@ R $C7FE L Distance in X that counts as near
 R $C7FE IX Address of the arch object
 R $C7FE IY Address of the object
 R $C7FE O:F Carry flag set if the object is near
+N $C7FE Test the distance in X, then in Y, then in Z.
   $C7FE,$03 Fetch the X coordinate of the middle of the doorway.
   $C801,$03 Subtract the X coordinate of the object.
   $C804,$02 Jump to #R$C808 if it is positive.
@@ -7043,7 +7263,7 @@ D $C82B Does all of the work for the player, as the top half of the player is
 . then moves the player.
 R $C82B IX Address of the object
   $C82B,$06 Jump to #R$C83E if the player is alive.
-  $C831,$04 Fetch the final animation flag.
+  $C831,$04 Fetch the final animation flag from #R$5BC3.
   $C835,$02 Jump to #R$C83E if it is set, as the player is not killed during the
 . final animation.
   $C837,$04 Flag the top half of the player as dead too.
@@ -7089,27 +7309,37 @@ R $C86D IX Address of the object
 c $C87A Test Player In Room
 @ $C87A label=TestPlayerInRoom
 D $C87A Tests whether the player is inside the room. The distance from the
-. middle of the room (#N$80) has to be smaller than the size of the room, less
-. the width of the player in X and less the depth of the player in Y.
+. middle of the room (#N$80) has to be smaller than the distance to the wall,
+. less the width of the player along x and less the depth of the player along y.
 E $C87A View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C117 }
 . { #PENTAGRAM$C4A3 }
 . LIST#
-R $C87A IX Address of the object
-R $C87A O:F The carry flag is set if the player is inside the room
-  $C87A,$03 Fetch the size of the room in X and Y.
-  $C87D,$05 Take the width of the player off the size in X.
-  $C882,$05 Take the depth of the player off the size in Y.
-  $C887,$05 Fetch the X coordinate relative to the middle of the room.
+R $C87A IX The address of the object
+R $C87A O:F Carry flag set if the player is inside the room
+N $C87A Limits from the wall distances.
+  $C87A,$03 Fetch the size of the room in X and Y from #R$5BAB.
+N $C87D Take the width of the player off the size in X.
+  $C87D,$01 Copy the distance along x to #REGa.
+  $C87E,$03 Subtract the width of the player.
+  $C881,$01 Store the limit along x in #REGl.
+N $C882 Take the depth of the player off the size in Y.
+  $C882,$01 Copy the distance along y to #REGa.
+  $C883,$03 Subtract the depth of the player.
+  $C886,$01 Store the limit along y in #REGh.
+N $C887 Compare the x distance from the middle.
+  $C887,$03 Fetch the x position of the player.
+  $C88A,$02 Subtract #N$80.
   $C88C,$03 Jump to #R$C891 if it is not negative.
-  $C88F,$02 Make it positive.
+  $C88F,$02 Negate #REGa.
 @ $C891 label=TestPlayerInRoom_LimitX
-  $C891,$01 Compare it with the limit in X.
-  $C892,$01 Return with the carry flag reset if the player is outside the room.
-  $C893,$05 Fetch the Y coordinate relative to the middle of the room.
+  $C891,$02 Return if the player is outside along x.
+N $C893 Compare the y distance from the middle.
+  $C893,$03 Fetch the y position of the player.
+  $C896,$02 Subtract #N$80.
   $C898,$03 Jump to #R$C89D if it is not negative.
-  $C89B,$02 Make it positive.
+  $C89B,$02 Negate #REGa.
 @ $C89D label=TestPlayerInRoom_CompareY
   $C89D,$01 Compare it with the limit in Y, which sets the carry flag if the
 . player is inside.
@@ -7130,9 +7360,8 @@ E $C89F View the equivalent code in;
 . LIST#
 R $C89F C The controls
 R $C89F IX Address of the object
-R $C89F O:C The controls, with the walk control changed if directional control
-. is in use
-  $C89F,$04 Fetch the control method.
+R $C89F O:C The controls, with the walk control changed if directional control is in use
+  $C89F,$04 Fetch the control method, #R$5BA4.
   $C8A3,$02,b$01 Keep the joystick bits.
   $C8A5,$02 Jump to #R$C8F2 if the keyboard is in use.
   $C8A7,$04 Jump to #R$C8F2 if directional control is not in use.
@@ -7199,9 +7428,9 @@ N $C8F2 Rotational control. After each turn the player has to wait before it can
   $C907,$04 Test whether the player is jumping.
   $C90B,$01 Return if it is.
   $C90C,$04 Jump to #R$C915 if it is pressed.
-  $C910,$01 Stash the controls.
+  $C910,$01 Stash the controls on the stack.
   $C911,$03 Play the sound of the footsteps.
-  $C914,$01 Restore the controls.
+  $C914,$01 Restore the controls from the stack.
 @ $C915 label=HandleTurning_Rotate_Reset
   $C915,$03 Fetch the flags.
   $C918,$02,b$01 Set the turning delay counter, which has run out, to #N$02.
@@ -7235,6 +7464,7 @@ E $C948 View the equivalent code in;
 . LIST#
 R $C948 C The controls
 R $C948 IX Address of the object
+N $C948 Start a jump if the control is pressed and the player is ready.
   $C948,$02 Test the jump control.
   $C94A,$01 Return if it is not pressed.
   $C94B,$03 Fetch the flags of the player.
@@ -7243,12 +7473,12 @@ R $C948 IX Address of the object
   $C951,$04 Test whether the player is already jumping.
   $C955,$01 Return if it is.
   $C956,$04 Fetch the speed in Z and add one to it.
-  $C95A,$01 Return if it was lower than #N$FF, as the player is falling.
+  $C95A,$01 Return if it was lower than #N($FF), as the player is falling.
   $C95B,$04 Flag the player as jumping.
   $C95F,$04 Set the speed in Z to #N$08.
-  $C963,$01 Stash the controls.
+  $C963,$01 Stash the controls on the stack.
   $C964,$03 Play the sound of a jump.
-  $C967,$01 Restore the controls.
+  $C967,$01 Restore the controls from the stack.
   $C968,$01 Return.
 
 c $C969 Handle Walking
@@ -7268,9 +7498,9 @@ R $C969 IX Address of the object
   $C970,$06 Jump to #R$C97A if the player is jumping.
   $C976,$04 Jump to #R$C994 if it is not pressed.
 @ $C97A label=HandleWalking_Step
-  $C97A,$01 Stash the controls.
+  $C97A,$01 Stash the controls on the stack.
   $C97B,$03 Play the sound of the footsteps.
-  $C97E,$01 Restore the controls.
+  $C97E,$01 Restore the controls from the stack.
 @ $C97F label=HandleWalking_Animate
 N $C97F The frame of the animation is in the low three bits of the graphic
 . number and goes from #N$00 to #N$05.
@@ -7308,7 +7538,8 @@ E $C9A1 View the equivalent code in;
 . LIST#
 R $C9A1 C The controls
 R $C9A1 IX Address of the object
-  $C9A1,$04 Fetch the flag that is set while an object is put into the cauldron.
+  $C9A1,$04 Fetch the flag that is set while an object is put into the cauldron
+. from #R$5BC4.
   $C9A5,$02 Jump to #R$C9AB if it is not set.
   $C9A7,$04 Set the speed in Z to #N$02.
 @ $C9AB label=MovePlayer_Speed
@@ -7318,9 +7549,9 @@ R $C9A1 IX Address of the object
   $C9B6,$02 Jump to #R$C9BC if it is.
   $C9B8,$04 Jump to #R$C9C1 if it is not pressed.
 @ $C9BC label=MovePlayer_Forward
-  $C9BC,$01 Stash the controls.
+  $C9BC,$01 Stash the controls on the stack.
   $C9BD,$03 Set the speeds in X and Y from the direction of the player.
-  $C9C0,$01 Restore the controls.
+  $C9C0,$01 Restore the controls from the stack.
 @ $C9C1 label=MovePlayer_Gravity
 N $C9C1 Gravity takes one off the speed in Z when the player is rising with the
 . jump control held down, and two otherwise.
@@ -7332,7 +7563,7 @@ N $C9C1 Gravity takes one off the speed in Z when the player is rising with the
 @ $C9CD label=MovePlayer_Store
   $C9CD,$01 Take one off the speed in Z.
   $C9CE,$03 Store the new speed in Z.
-  $C9D1,$03 Store it as the last speed in Z of the player too.
+  $C9D1,$03 Store it as the last speed in Z of the player too at #R$5BC1.
   $C9D4,$02 Add two to it.
   $C9D6,$03 Play the sound of falling if the player is falling fast enough.
   $C9D9,$03 Stop the player moving through other objects and the walls of the
@@ -7340,7 +7571,7 @@ N $C9C1 Gravity takes one off the speed in Z when the player is rising with the
   $C9DC,$03 Change room if the player has gone through an arch.
   $C9DF,$03 Add the speeds to the position of the player.
   $C9E2,$06 Jump to #R$C9F3 if the player is not blocked in Z.
-  $C9E8,$04 Fetch the last speed in Z and test it.
+  $C9E8,$04 Fetch the last speed in Z and test it from #R$5BC1.
   $C9EC,$03 Jump to #R$C9F3 if the player was rising.
   $C9EF,$04 Flag the player as no longer jumping, as it has landed.
 @ $C9F3 label=MovePlayer_Stop
@@ -7349,45 +7580,54 @@ N $C9C1 Gravity takes one off the speed in Z when the player is rising with the
 
 c $C9FB Set Player Speed
 @ $C9FB label=SetPlayerSpeed
-D $C9FB Sets the speeds in X and Y of the player to walk forward. The
+D $C9FB Sets the speeds along x and y of the player to walk forward. The
 . adjustments of the speeds that arches make to nudge the player into doorways
-. are added first, then the speed of #N$03 in the direction the player is
+. are added first, then the speed of #N$03 in the direction that the player is
 . facing.
 E $C9FB View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C2F6 }
 . { #PENTAGRAM$C66A }
 . LIST#
-R $C9FB IX Address of the object
-  $C9FB,$09 Add the adjustment of the speed in X to the speed in X.
-  $CA04,$09 Add the adjustment of the speed in Y to the speed in Y.
-  $CA0D,$07 Clear the adjustments of the speeds.
+R $C9FB IX The address of the object
+N $C9FB Add the doorway nudges.
+  $C9FB,$03 Fetch the speed along the x axis.
+  $C9FE,$03 Add the adjustment along x.
+  $CA01,$03 Store the speed along the x axis.
+  $CA04,$03 Fetch the speed along the y axis.
+  $CA07,$03 Add the adjustment along y.
+  $CA0A,$03 Store the speed along the y axis.
+  $CA0D,$07 Write #N$00 to the adjustments along x and y.
+N $CA14 Jump by the facing direction.
   $CA14,$03 Point #REGbc at #R$CA32.
 @ $CA17 label=SetPlayerSpeed_Direction
   $CA17,$03 Fetch the direction the player is facing.
-  $CA1A,$01 Use it as the index into the table.
+  $CA1A,$01 Copy it to #REGl.
   $CA1B,$03 Jump to the routine for the direction.
 
 c $CA1E Get Facing Direction
 @ $CA1E label=GetFacingDirection
-D $CA1E Works out the direction an object is facing from the horizontal flip
-. flag and bit 3 of the graphic number.
+D $CA1E Works out the direction that an object is facing from the horizontal
+. flip flag and bit 3 of the graphic number: bit 6 of the flags of the object is
+. made into bit 1 of the direction, and bit 3 of the graphic number into bit 0.
+. The direction is #N($00) west, #N($01) east, #N$02 north and #N$03 south.
 E $CA1E View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C319 }
 . LIST#
-R $CA1E IX Address of the object
-R $CA1E O:A The direction: #N$00 for west, #N$01 for east, #N$02 for north and
-. #N$03 for south
+R $CA1E IX The address of the object
+R $CA1E O:A The direction
+N $CA1E Bit 6 of the flags to bit 1.
   $CA1E,$03 Fetch the flags of the object.
-  $CA21,$02 Move the horizontal flip flag to bit 4.
-  $CA23,$02,b$01 Keep it.
-  $CA25,$01 Stash it in #REGl.
-  $CA26,$03 Fetch the graphic number.
-  $CA29,$02,b$01 Keep bit 3.
-  $CA2B,$01 Combine it with the flip flag.
-  $CA2C,$03 Move the two bits into the low end.
-  $CA2F,$02,b$01 Keep them.
+  $CA21,$02 Rotate bit 6 into bit 4.
+  $CA23,$02,b$01 Keep only bit 4.
+  $CA25,$01 Copy it to #REGl.
+N $CA26 Bit 3 of the graphic number to bit 0.
+  $CA26,$03 Fetch the graphic number of the object.
+  $CA29,$02,b$01 Keep only bit 3.
+  $CA2B,$01 Merge #REGl.
+  $CA2C,$03 Rotate the two bits into place.
+  $CA2F,$02,b$01 Keep only bits 0 and 1.
   $CA31,$01 Return.
 
 w $CA32 Player Movement Table
@@ -7401,80 +7641,86 @@ W $CA38,$02,$02 Facing south: #R$CA53.
 
 c $CA3A Move Player West
 @ $CA3A label=MovePlayerWest
-D $CA3A Takes #N$03 off the speed in X of the object.
+D $CA3A Takes #N$03 off the speed along the x axis of the object.
 E $CA3A View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C337 }
 . { #PENTAGRAM$C695 }
 . LIST#
-R $CA3A IX Address of the object
-  $CA3A,$05 Fetch the speed in X and take #N$03 off it.
+R $CA3A IX The address of the object
+  $CA3A,$03 Fetch the speed along the x axis.
+  $CA3D,$02 Add #N$FD.
 @ $CA3F label=MovePlayer_SetX
-  $CA3F,$03 Store the speed in X.
+  $CA3F,$03 Store the speed along the x axis.
   $CA42,$01 Return.
 
 c $CA43 Move Player East
 @ $CA43 label=MovePlayerEast
-D $CA43 Adds #N$03 to the speed in X of the object.
+D $CA43 Adds #N$03 to the speed along the x axis of the object.
 E $CA43 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C340 }
 . { #PENTAGRAM$C69E }
 . LIST#
-R $CA43 IX Address of the object
-  $CA43,$05 Fetch the speed in X and add #N$03 to it.
+R $CA43 IX The address of the object
+  $CA43,$03 Fetch the speed along the x axis.
+  $CA46,$02 Add #N$03.
   $CA48,$02 Jump to #R$CA3F.
 
 c $CA4A Move Player North
 @ $CA4A label=MovePlayerNorth
-D $CA4A Adds #N$03 to the speed in Y of the object.
+D $CA4A Adds #N$03 to the speed along the y axis of the object.
 E $CA4A View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C347 }
 . { #PENTAGRAM$C6A5 }
 . LIST#
-R $CA4A IX Address of the object
-  $CA4A,$05 Fetch the speed in Y and add #N$03 to it.
+R $CA4A IX The address of the object
+  $CA4A,$03 Fetch the speed along the y axis.
+  $CA4D,$02 Add #N$03.
 @ $CA4F label=MovePlayer_SetY
-  $CA4F,$03 Store the speed in Y.
+  $CA4F,$03 Store the speed along the y axis.
   $CA52,$01 Return.
 
 c $CA53 Move Player South
 @ $CA53 label=MovePlayerSouth
-D $CA53 Takes #N$03 off the speed in Y of the object.
+D $CA53 Takes #N$03 off the speed along the y axis of the object.
 E $CA53 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C350 }
 . { #PENTAGRAM$C6AE }
 . LIST#
-R $CA53 IX Address of the object
-  $CA53,$05 Fetch the speed in Y and take #N$03 off it.
+R $CA53 IX The address of the object
+  $CA53,$03 Fetch the speed along the y axis.
+  $CA56,$02 Add #N$FD.
   $CA58,$02 Jump to #R$CA4F.
 
 c $CA5A Stop Object At Floor
 @ $CA5A label=StopObjectAtFloor
-D $CA5A Stops an object from going through the floor. If the Z coordinate of the
+D $CA5A Stops an object from going through the floor. If the z position of the
 . object after it has moved is below the floor of the room, the object is
-. flagged as blocked in Z, and its speed in Z is brought closer to zero until
-. the object no longer goes through the floor.
+. flagged as blocked along z, and its speed along z is brought closer to zero
+. until the object no longer goes through the floor.
 E $CA5A View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C357 }
 . { #PENTAGRAM$B963 }
 . LIST#
-R $CA5A H Speed in Z of the object
-R $CA5A IX Address of the object
-R $CA5A O:H The new speed in Z of the object
-  $CA5A,$04 Fetch the Z coordinate of the floor of the room and stash it in
-. #REGd.
+R $CA5A H Speed along the z axis
+R $CA5A IX The address of the object
+R $CA5A O:H The new speed along the z axis
+N $CA5A Test the floor and slow z.
+  $CA5A,$03 Fetch #R$5BAE.
+  $CA5D,$01 Copy it to #REGd.
+N $CA5E Test whether the object ends up below the floor.
 @ $CA5E label=StopObjectAtFloor_Test
-  $CA5E,$05 Test whether the object ends up below the floor.
-  $CA63,$01 Return if it does not.
+  $CA5E,$03 Fetch the z position of the object.
+  $CA61,$03 Return if the object does not end up below the floor.
   $CA64,$04 Flag the object as blocked in Z.
-  $CA68,$01 Fetch the speed in Z.
-  $CA69,$03 Bring it closer to zero.
-  $CA6C,$01 Store it.
-  $CA6D,$02 Jump back to #R$CA5E if it is not yet zero.
+  $CA68,$01 Copy #REGh to #REGa.
+  $CA69,$03 Call #R$CA89.
+  $CA6C,$01 Copy it to #REGh.
+  $CA6D,$02 Jump to #R$CA5E if it is not yet zero.
   $CA6F,$01 Return.
 
 c $CA70 Handle Room Exit
@@ -7488,6 +7734,7 @@ E $CA70 View the equivalent code in;
 . { #ALIENEIGHT$C36D }
 . LIST#
 R $CA70 IX Address of the object
+N $CA70 Leave through the arch the player is facing, if it is near one.
   $CA70,$03 Fetch the flags of the player.
   $CA73,$02,b$01 Keep the counter of the player entering the room.
   $CA75,$01 Return if the player is entering the room.
@@ -7495,7 +7742,7 @@ R $CA70 IX Address of the object
   $CA7A,$01 Return if it is not.
   $CA7B,$04 Clear the flag.
   $CA7F,$03 Point #REGbc at #R$CA92.
-  $CA82,$03 Fetch the size of the room in X and Y.
+  $CA82,$03 Fetch the size of the room in X and Y from #R$5BAB.
   $CA85,$01 Stack it for the routine to take off.
   $CA86,$03 Jump to the routine for the direction the player is facing.
 
@@ -7530,123 +7777,163 @@ W $CA98,$02,$02 Facing south: #R$CB29.
 c $CA9A Leave Room To The West
 @ $CA9A label=LeaveRoomToWest
 D $CA9A Sends the player to the room to the west if it has gone past the west
-. edge of the room. The X coordinate is set to #N$00, which #R$D320 takes as the
-. sign that the player has come out of the west, and so puts it at the east side
-. of the new room.
+. edge of the room. The x position is set to #N($00), which #R$D320 takes as the
+. sign that the player has come out of the west and puts it at the east side of
+. the new room.
 E $CA9A View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C397 }
 . LIST#
-R $CA9A HL The size of the room in X and Y
-R $CA9A IX Address of the object
+R $CA9A HL Distances to the walls along x and y
+R $CA9A IX The address of the object
+N $CA9A Leave if past the west edge.
   $CA9A,$01 Unstack the size of the room in X and Y.
-  $CA9B,$04 Work out the coordinate of the west edge of the room.
-  $CA9F,$09 Add the speed in X and the width of the player to the X coordinate.
-  $CAA8,$01 Compare it with the west edge.
-  $CAA9,$01 Return if the player is still in the room.
-  $CAAA,$04 Set the X coordinate to #N$00.
-  $CAAE,$04 Fetch the room number and stash it in #REGl.
+N $CA9B Work out the coordinate of the west edge of the room.
+  $CA9B,$02 Set #REGa to #N$80.
+  $CA9D,$01 Subtract #REGl.
+  $CA9E,$01 Copy it to #REGl.
+N $CA9F Add the speed in X and the width of the player to the X coordinate.
+  $CA9F,$03 Fetch the x position of the player.
+  $CAA2,$03 Add the speed along the x axis.
+  $CAA5,$03 Add the width of the player.
+N $CAA8 Compare it with the west edge.
+  $CAA8,$02 Return if the player is still in the room.
+  $CAAA,$04 Write #N$00 to the x position.
+N $CAAE Fetch the room number and stash it in #REGl.
+  $CAAE,$03 Fetch the room number.
+  $CAB1,$01 Copy it to #REGl.
   $CAB2,$01 Go to the room to the west.
+N $CAB3 Change the column. The room number has the row in the high nibble and
+. the column in the low nibble.
 @ $CAB3 label=ChangeRoomEastWest
-N $CAB3 Changes the column of the room number. The room number is the row in the
-. high nibble and the column in the low nibble, and going past the last column
-. wraps round to the first.
   $CAB3,$02,b$01 Keep the column of the new room number.
-  $CAB5,$01 Stash it in #REGh.
+  $CAB5,$01 Copy it to #REGh.
   $CAB6,$01 Fetch the old room number.
-  $CAB7,$02,b$01 Keep the row.
+  $CAB7,$02,b$01 Keep only bits 4-7.
   $CAB9,$01 Combine the row with the new column.
+N $CABA Change the room of the player. Bits 4 and 5 of the collision flags start
+. the entering-room counter at #N$03. If the object is the player then it is
+. copied and replaced by sparkles, and the game loop is started again.
 @ $CABA label=ChangeRoom
-N $CABA Changes the room of the player. The player is flagged as entering the
-. room, which gives the counter a start value of #N$03.
   $CABA,$03 Store the new room number.
-  $CABD,$03 Fetch the flags.
+  $CABD,$03 Fetch the collision flags.
   $CAC0,$02,b$01 Set the counter of the player entering the room to #N$03.
-  $CAC2,$03 Store the flags.
-  $CAC5,$05 Fetch the graphic number and take #N$10 off it.
+  $CAC2,$03 Store the collision flags.
+N $CAC5 Fetch the graphic number and take #N$10 off it.
+  $CAC5,$03 Fetch the graphic number of the object.
+  $CAC8,$02 Subtract #N$10.
   $CACA,$02 Compare it with #N$40.
   $CACC,$01 Return if it is not one of the graphics of the human or the wulf.
   $CACD,$04 Drop the two return addresses on the stack, as the game loop starts
 . again.
-  $CAD1,$03 Point #REGhl at the player.
+  $CAD1,$03 Point #REGhl at the player (using the stack).
   $CAD4,$03 Point #REGde at #R$D161.
-  $CAD7,$03 Set the length to #N$40, for the two halves of the player.
+  $CAD7,$03 Set the length to #N($40), for the two halves of the player.
   $CADA,$02 Copy the player.
-  $CADC,$06 Copy the graphic number of the bottom half into the field that holds
-. the graphic the player has to have when it appears.
-  $CAE2,$06 Copy the graphic number of the top half into the same field of the
-. top half.
-  $CAE8,$02 Fetch the graphic number of the first of the sparkles that show the
+N $CADC Remember the sprites, then turn the copy into sparkles.
+  $CADC,$03 Fetch the sprite of the bottom half.
+  $CADF,$03 Keep it as the sprite that the bottom half will appear as.
+N $CAE2 Copy the graphic number of the top half into the same field of the top
+. half from #R$D181.
+  $CAE2,$03 Fetch the sprite of the top half.
+  $CAE5,$03 Keep it as the sprite that the top half will appear as.
+N $CAE8 Fetch the graphic number of the first of the sparkles that show the
 . player appearing.
-  $CAEA,$03 Set the graphic number of the bottom half of the copy.
-  $CAED,$03 Set the graphic number of the top half of the copy.
+  $CAE8,$08 Write #N$78 to #R$D161 and #R$D181.
   $CAF0,$03 Start the game loop again, which builds the new room.
 
 c $CAF3 Leave Room To The East
 @ $CAF3 label=LeaveRoomToEast
 D $CAF3 Sends the player to the room to the east if it has gone past the east
-. edge of the room. The X coordinate is set to #N$FF, which #R$D320 takes as the
-. sign that the player has come out of the east, and so puts it at the west side
-. of the new room.
+. edge of the room. The x position is set to #N($FF), which #R$D320 takes as the
+. sign that the player has come out of the east and puts it at the west side of
+. the new room.
 E $CAF3 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C3F0 }
 . LIST#
-R $CAF3 HL The size of the room in X and Y
-R $CAF3 IX Address of the object
+R $CAF3 HL Distances to the walls along x and y
+R $CAF3 IX The address of the object
+N $CAF3 Leave if past the east edge.
   $CAF3,$01 Unstack the size of the room in X and Y.
-  $CAF4,$04 Work out the coordinate of the east edge of the room.
-  $CAF8,$09 Add the speed in X to the X coordinate, and take the width of the
-. player off it.
-  $CB01,$01 Compare it with the east edge.
-  $CB02,$01 Return if the player is still in the room.
-  $CB03,$04 Set the X coordinate to #N$FF.
-  $CB07,$04 Fetch the room number and stash it in #REGl.
+N $CAF4 Work out the coordinate of the east edge of the room.
+  $CAF4,$01 Copy #REGl to #REGa.
+  $CAF5,$02 Add #N$80.
+  $CAF7,$01 Copy it to #REGl.
+N $CAF8 Add the speed in X to the X coordinate, and take the width of the player
+. off it.
+  $CAF8,$03 Fetch the x position of the player.
+  $CAFB,$03 Add the speed along the x axis.
+  $CAFE,$03 Subtract the width of the player.
+N $CB01 Compare it with the east edge.
+  $CB01,$02 Return if the player is still in the room.
+  $CB03,$04 Write #N$FF to the x position.
+N $CB07 Fetch the room number and stash it in #REGl.
+  $CB07,$03 Fetch the room number.
+  $CB0A,$01 Copy it to #REGl.
   $CB0B,$01 Go to the room to the east.
   $CB0C,$02 Jump to #R$CAB3.
 
 c $CB0E Leave Room To The North
 @ $CB0E label=LeaveRoomToNorth
 D $CB0E Sends the player to the room to the north if it has gone past the north
-. edge of the room. The Y coordinate is set to #N$FF, which #R$D320 takes as the
-. sign that the player has come out of the north, and so puts it at the south
-. side of the new room.
+. edge of the room. The y position is set to #N($FF), which #R$D320 takes as the
+. sign that the player has come out of the north and puts it at the south side
+. of the new room.
 E $CB0E View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C40B }
 . LIST#
-R $CB0E HL The size of the room in X and Y
-R $CB0E IX Address of the object
+R $CB0E HL Distances to the walls along x and y
+R $CB0E IX The address of the object
+N $CB0E Leave if past the north edge.
   $CB0E,$01 Unstack the size of the room in X and Y.
-  $CB0F,$04 Work out the coordinate of the north edge of the room.
-  $CB13,$09 Add the speed in Y to the Y coordinate, and take the depth of the
-. player off it.
-  $CB1C,$01 Compare it with the north edge.
-  $CB1D,$01 Return if the player is still in the room.
-  $CB1E,$04 Set the Y coordinate to #N$FF.
-  $CB22,$05 Fetch the room number and add #N$10 to go to the room to the north.
+N $CB0F Work out the coordinate of the north edge of the room.
+  $CB0F,$01 Copy #REGh to #REGa.
+  $CB10,$02 Add #N$80.
+  $CB12,$01 Copy it to #REGh.
+N $CB13 Add the speed in Y to the Y coordinate, and take the depth of the player
+. off it.
+  $CB13,$03 Fetch the y position of the player.
+  $CB16,$03 Add the speed along the y axis.
+  $CB19,$03 Subtract the depth of the player.
+N $CB1C Compare it with the north edge.
+  $CB1C,$02 Return if the player is still in the room.
+  $CB1E,$04 Write #N$FF to the y position.
+N $CB22 Fetch the room number and add #N$10 to go to the room to the north.
+  $CB22,$03 Fetch the room number.
+  $CB25,$02 Add #N$10.
   $CB27,$02 Jump to #R$CABA.
 
 c $CB29 Leave Room To The South
 @ $CB29 label=LeaveRoomToSouth
 D $CB29 Sends the player to the room to the south if it has gone past the south
-. edge of the room. The Y coordinate is set to #N$00, which #R$D320 takes as the
-. sign that the player has come out of the south, and so puts it at the north
-. side of the new room.
+. edge of the room. The y position is set to #N($00), which #R$D320 takes as the
+. sign that the player has come out of the south and puts it at the north side
+. of the new room.
 E $CB29 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C426 }
 . LIST#
-R $CB29 HL The size of the room in X and Y
-R $CB29 IX Address of the object
+R $CB29 HL Distances to the walls along x and y
+R $CB29 IX The address of the object
+N $CB29 Leave if past the south edge.
   $CB29,$01 Unstack the size of the room in X and Y.
-  $CB2A,$04 Work out the coordinate of the south edge of the room.
-  $CB2E,$09 Add the speed in Y and the depth of the player to the Y coordinate.
-  $CB37,$01 Compare it with the south edge.
-  $CB38,$01 Return if the player is still in the room.
-  $CB39,$04 Set the Y coordinate to #N$00.
-  $CB3D,$05 Fetch the room number and take #N$10 off it to go to the room to the
+N $CB2A Work out the coordinate of the south edge of the room.
+  $CB2A,$02 Set #REGa to #N$80.
+  $CB2C,$01 Subtract #REGh.
+  $CB2D,$01 Copy it to #REGh.
+N $CB2E Add the speed in Y and the depth of the player to the Y coordinate.
+  $CB2E,$03 Fetch the y position of the player.
+  $CB31,$03 Add the speed along the y axis.
+  $CB34,$03 Add the depth of the player.
+N $CB37 Compare it with the south edge.
+  $CB37,$02 Return if the player is still in the room.
+  $CB39,$04 Write #N$00 to the y position.
+N $CB3D Fetch the room number and take #N$10 off it to go to the room to the
 . south.
+  $CB3D,$03 Fetch the room number.
+  $CB40,$02 Subtract #N$10.
   $CB42,$03 Jump to #R$CABA.
 
 c $CB45 Block Movement
@@ -7723,7 +8010,8 @@ R $CB9A L Speed in Y
 R $CB9A H Speed in Z
 R $CB9A IX Address of the object
 R $CB9A O:C The new speed in X
-  $CB9A,$04 Point #REGiy at the first object in the table.
+N $CB9A Test each object, then slow the X speed if they overlap.
+  $CB9A,$04 Point #REGiy at the first object in the table, #R$5C08.
   $CB9E,$02 Set the number of objects to #N$28.
 @ $CBA0 label=BlockMovementInX_Next
   $CBA0,$03 Test whether the object is present and not ignored.
@@ -7753,11 +8041,11 @@ R $CB9A O:C The new speed in X
   $CBDA,$03 Bring it closer to zero.
   $CBDD,$01 Store it.
   $CBDE,$01 Return if it is zero.
-  $CBDF,$02 Jump back to #R$CBAF to test it again.
+  $CBDF,$02 Jump to #R$CBAF to test it again.
 @ $CBE1 label=BlockMovementInX_Advance
   $CBE1,$03 Set #REGde to the size of an object.
   $CBE4,$02 Point #REGiy at the next object.
-  $CBE6,$02 Jump back to #R$CBA0 until all of the objects have been tested.
+  $CBE6,$02 Jump to #R$CBA0 until all of the objects have been tested.
   $CBE8,$01 Return.
 
 c $CBE9 Block Movement In Y
@@ -7774,7 +8062,8 @@ R $CBE9 L Speed in Y
 R $CBE9 H Speed in Z
 R $CBE9 IX Address of the object
 R $CBE9 O:L The new speed in Y
-  $CBE9,$04 Point #REGiy at the first object in the table.
+N $CBE9 Test each object, then slow the Y speed if they overlap.
+  $CBE9,$04 Point #REGiy at the first object in the table, #R$5C08.
   $CBED,$02 Set the number of objects to #N$28.
 @ $CBEF label=BlockMovementInY_Next
   $CBEF,$03 Test whether the object is present and not ignored.
@@ -7804,11 +8093,11 @@ R $CBE9 O:L The new speed in Y
   $CC29,$03 Bring it closer to zero.
   $CC2C,$01 Store it.
   $CC2D,$01 Return if it is zero.
-  $CC2E,$02 Jump back to #R$CBFE to test it again.
+  $CC2E,$02 Jump to #R$CBFE to test it again.
 @ $CC30 label=BlockMovementInY_Advance
   $CC30,$03 Set #REGde to the size of an object.
   $CC33,$02 Point #REGiy at the next object.
-  $CC35,$02 Jump back to #R$CBEF until all of the objects have been tested.
+  $CC35,$02 Jump to #R$CBEF until all of the objects have been tested.
   $CC37,$01 Return.
 
 c $CC38 Block Movement In Z
@@ -7827,7 +8116,8 @@ R $CC38 L Speed in Y
 R $CC38 H Speed in Z
 R $CC38 IX Address of the object
 R $CC38 O:H The new speed in Z
-  $CC38,$04 Point #REGiy at the first object in the table.
+N $CC38 Test each object, then slow the Z speed if they overlap.
+  $CC38,$04 Point #REGiy at the first object in the table, #R$5C08.
   $CC3C,$02 Set the number of objects to #N$28.
 @ $CC3E label=BlockMovementInZ_Next
   $CC3E,$03 Test whether the object is present and not ignored.
@@ -7863,33 +8153,38 @@ R $CC38 O:H The new speed in Z
   $CC8E,$03 Bring it closer to zero.
   $CC91,$01 Store it.
   $CC92,$01 Return if it is zero.
-  $CC93,$02 Jump back to #R$CC4D to test it again.
+  $CC93,$02 Jump to #R$CC4D to test it again.
 @ $CC95 label=BlockMovementInZ_Advance
   $CC95,$03 Set #REGde to the size of an object.
   $CC98,$02 Point #REGiy at the next object.
-  $CC9A,$02 Jump back to #R$CC3E until all of the objects have been tested.
+  $CC9A,$02 Jump to #R$CC3E until all of the objects have been tested.
   $CC9C,$01 Return.
 
 c $CC9D Test Overlap In X
 @ $CC9D label=TestOverlapInX
-D $CC9D Tests whether two objects overlap in X, once the first has moved by its
-. new speed in X. They overlap when the distance between the X coordinates is
-. smaller than the two widths added together.
+D $CC9D Tests whether two objects overlap along x, once the first has moved by
+. its new speed along x. They overlap when the distance between the x positions
+. is smaller than the two widths added together.
 E $CC9D View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C5A9 }
 . { #PENTAGRAM$B8A2 }
 . LIST#
-R $CC9D C New speed in X of the first object
-R $CC9D IX Address of the first object
-R $CC9D IY Address of the second object
-R $CC9D O:F The carry flag is set if the objects overlap
-  $CC9D,$06 Add the width of the first object to the width of the second object.
-  $CCA3,$01 Stash the total in #REGd.
-  $CCA4,$07 Take the X coordinate of the second object off the X coordinate of
-. the first object plus the new speed.
+R $CC9D C New speed along x of the first object
+R $CC9D IX The address of the first object
+R $CC9D IY The address of the second object
+R $CC9D O:F Carry flag set if the objects overlap
+N $CC9D Compare the x distance with the widths.
+  $CC9D,$03 Fetch the width of the first object.
+  $CCA0,$03 Add the width of the second object.
+  $CCA3,$01 Copy the total to #REGd.
+N $CCA4 Take the X coordinate of the second object off the X coordinate of the
+. first object plus the new speed.
+  $CCA4,$03 Fetch the x position of the first object.
+  $CCA7,$01 Add #REGc.
+  $CCA8,$03 Subtract the x position of the second object.
   $CCAB,$03 Jump to #R$CCB0 if it is not negative.
-  $CCAE,$02 Make it positive.
+  $CCAE,$02 Negate #REGa.
 @ $CCB0 label=TestOverlapInX_TakeWidths
   $CCB0,$01 Take the total widths off it, which sets the carry flag if the
 . objects overlap.
@@ -7897,24 +8192,29 @@ R $CC9D O:F The carry flag is set if the objects overlap
 
 c $CCB2 Test Overlap In Y
 @ $CCB2 label=TestOverlapInY
-D $CCB2 Tests whether two objects overlap in Y, once the first has moved by its
-. new speed in Y. They overlap when the distance between the Y coordinates is
-. smaller than the two depths added together.
+D $CCB2 Tests whether two objects overlap along y, once the first has moved by
+. its new speed along y. They overlap when the distance between the y positions
+. is smaller than the two depths added together.
 E $CCB2 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C5BE }
 . { #PENTAGRAM$B8B7 }
 . LIST#
-R $CCB2 L New speed in Y of the first object
-R $CCB2 IX Address of the first object
-R $CCB2 IY Address of the second object
-R $CCB2 O:F The carry flag is set if the objects overlap
-  $CCB2,$06 Add the depth of the first object to the depth of the second object.
-  $CCB8,$01 Stash the total in #REGd.
-  $CCB9,$07 Take the Y coordinate of the second object off the Y coordinate of
-. the first object plus the new speed.
+R $CCB2 L New speed along y of the first object
+R $CCB2 IX The address of the first object
+R $CCB2 IY The address of the second object
+R $CCB2 O:F Carry flag set if the objects overlap
+N $CCB2 Compare the y distance with the depths.
+  $CCB2,$03 Fetch the depth of the first object.
+  $CCB5,$03 Add the depth of the second object.
+  $CCB8,$01 Copy the total to #REGd.
+N $CCB9 Take the Y coordinate of the second object off the Y coordinate of the
+. first object plus the new speed.
+  $CCB9,$03 Fetch the y position of the first object.
+  $CCBC,$01 Add #REGl.
+  $CCBD,$03 Subtract the y position of the second object.
   $CCC0,$03 Jump to #R$CCC5 if it is not negative.
-  $CCC3,$02 Make it positive.
+  $CCC3,$02 Negate #REGa.
 @ $CCC5 label=TestOverlapInY_TakeDepths
   $CCC5,$01 Take the total depths off it, which sets the carry flag if the
 . objects overlap.
@@ -7922,22 +8222,24 @@ R $CCB2 O:F The carry flag is set if the objects overlap
 
 c $CCC7 Test Overlap In Z
 @ $CCC7 label=TestOverlapInZ
-D $CCC7 Tests whether two objects overlap in Z, once the first has moved by its
-. new speed in Z. They overlap when the distance between the Z coordinates is
-. smaller than the height of whichever of the objects is lower.
+D $CCC7 Tests whether two objects overlap along z, once the first has moved by
+. its new speed along z. They overlap when the distance between the z positions
+. is smaller than the height of whichever of the objects is lower.
 E $CCC7 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C5D3 }
 . { #PENTAGRAM$B8CC }
 . LIST#
-R $CCC7 H New speed in Z of the first object
-R $CCC7 IX Address of the first object
-R $CCC7 IY Address of the second object
-R $CCC7 O:F The carry flag is set if the objects overlap
-  $CCC7,$07 Take the Z coordinate of the second object off the Z coordinate of
-. the first object plus the new speed.
+R $CCC7 H New speed along z of the first object
+R $CCC7 IX The address of the first object
+R $CCC7 IY The address of the second object
+R $CCC7 O:F Carry flag set if the objects overlap
+N $CCC7 Use the height of the lower object.
+  $CCC7,$03 Fetch the z position of the first object.
+  $CCCA,$01 Add #REGh.
+  $CCCB,$03 Subtract the z position of the second object.
   $CCCE,$03 Jump to #R$CCD8 if it is not negative.
-  $CCD1,$02 Make it positive.
+  $CCD1,$02 Negate #REGa.
   $CCD3,$03 Fetch the height of the first object, which is the lower.
 @ $CCD6 label=TestOverlapInZ_Compare
   $CCD6,$01 Take the height off it, which sets the carry flag if the objects
@@ -7960,12 +8262,13 @@ E $CCDD View the equivalent code in;
 R $CCDD C Speed in X
 R $CCDD IX Address of the object
 R $CCDD O:C The new speed in X
+N $CCDD Slow the X speed until the object stays inside the walls.
   $CCDD,$03 Fetch the flags of the object.
   $CCE0,$02,b$01 Keep the counter of the object entering the room.
   $CCE2,$01 Return if the object is entering the room.
   $CCE3,$04 Test whether the object is near an arch.
   $CCE7,$01 Return if it is.
-  $CCE8,$04 Fetch the size of the room in X and stash it in #REGb.
+  $CCE8,$04 Fetch the size of the room in X and stash it in #REGb from #R$5BAB.
 @ $CCEC label=KeepObjectInRoomInX_Test
   $CCEC,$06 Work out where the X coordinate would be, with the speed added.
   $CCF2,$02 Jump to #R$CCF6 if it is not negative.
@@ -7978,7 +8281,7 @@ R $CCDD O:C The new speed in X
   $CD00,$01 Fetch the speed in X.
   $CD01,$03 Bring it closer to zero.
   $CD04,$01 Store it.
-  $CD05,$02 Jump back to #R$CCEC if it is not zero yet.
+  $CD05,$02 Jump to #R$CCEC if it is not zero yet.
 @ $CD07 label=KeepObjectInRoomInX_Test_Return
   $CD07,$01 Return.
 
@@ -7995,12 +8298,13 @@ E $CD08 View the equivalent code in;
 R $CD08 L Speed in Y
 R $CD08 IX Address of the object
 R $CD08 O:L The new speed in Y
+N $CD08 Slow the Y speed until the object stays inside the walls.
   $CD08,$03 Fetch the flags of the object.
   $CD0B,$02,b$01 Keep the counter of the object entering the room.
   $CD0D,$01 Return if the object is entering the room.
   $CD0E,$04 Test whether the object is near an arch.
   $CD12,$01 Return if it is.
-  $CD13,$04 Fetch the size of the room in Y and stash it in #REGb.
+  $CD13,$04 Fetch the size of the room in Y and stash it in #REGb from #R$5BAC.
 @ $CD17 label=KeepObjectInRoomInY_Test
   $CD17,$06 Work out where the Y coordinate would be, with the speed added.
   $CD1D,$02 Jump to #R$CD21 if it is not negative.
@@ -8013,7 +8317,7 @@ R $CD08 O:L The new speed in Y
   $CD2B,$01 Fetch the speed in Y.
   $CD2C,$03 Bring it closer to zero.
   $CD2F,$01 Store it.
-  $CD30,$02 Jump back to #R$CD17 if it is not zero yet.
+  $CD30,$02 Jump to #R$CD17 if it is not zero yet.
 @ $CD32 label=KeepObjectInRoomInY_Test_Return
   $CD32,$01 Return.
 
@@ -8029,6 +8333,7 @@ E $CD33 View the equivalent code in;
 . { #PENTAGRAM$B938 }
 . LIST#
 R $CD33 IX Address of the object
+N $CD33 Work out the pixel position, then the width and height of the sprite.
   $CD33,$03 Work out the pixel coordinates of the object.
   $CD36,$03 Find the sprite of the object, and flip it if it needs it.
   $CD39,$03 Fetch the pixel X coordinate.
@@ -8056,7 +8361,7 @@ E $CD4D View the equivalent code in;
 . { #PENTAGRAM$B9A7 }
 . LIST#
 R $CD4D IX Address of the object
-  $CD4D,$04 Point #REGiy at the first object in the table.
+  $CD4D,$04 Point #REGiy at the first object in the table, #R$5C08.
   $CD51,$03 Work out where the object is on the screen, and how big it is.
   $CD54,$02 Set the number of objects to #N$28.
 N $CD56 The left edge of the area, in bytes of the screen, is the lower of the
@@ -8135,7 +8440,7 @@ N $CD88 The height of the area is the higher of the top edge of the old and of
   $CDC3,$03 Set #REGde to the size of an object.
   $CDC6,$02 Point #REGiy at the next object.
   $CDC8,$01 Switch back to the main registers.
-  $CDC9,$02 Jump back to #R$CD9B until all of the objects have been tested.
+  $CDC9,$02 Jump to #R$CD9B until all of the objects have been tested.
   $CDCB,$01 Return.
 @ $CDCC label=FlagOverlappingObjects_Left
 N $CDCC The object starts to the left of the area, so it overlaps only if it is
@@ -8177,14 +8482,16 @@ D $CDE2 Does all of the work for the top half of the player, which is a copy of
 . the death sparkles. Every so often the player looks to one side or the other:
 . this picks a head that looks that way and keeps it for eight frames.
 R $CDE2 IX Address of the object
-  $CDE2,$04 Fetch the final animation flag.
+N $CDE2 Start the death sparkles if the top half is flagged as dead.
+  $CDE2,$04 Fetch the final animation flag from #R$5BC3.
   $CDE6,$02 Jump to #R$CDEF if it is set.
   $CDE8,$07 Jump to #R$BF21 to start the death sparkles if the top half is
 . flagged as dead.
 @ $CDEF label=HandlePlayerTop_Copy
-  $CDEF,$03 Point #REGde at the top half.
+N $CDEF Copy the bottom half and place the top half #N$0C above it.
+  $CDEF,$03 Point #REGde at the top half (using the stack).
   $CDF2,$04 Point #REGhl at the bottom half, which is #N$20 bytes before.
-  $CDF6,$03 Point #REGiy at the bottom half.
+  $CDF6,$03 Point #REGiy at the bottom half (using the stack).
   $CDF9,$01 Point #REGde at the X coordinate of the top half.
   $CDFA,$01 Point #REGhl at the X coordinate of the bottom half.
   $CDFB,$03 Set the number of bytes to #N$07.
@@ -8197,7 +8504,8 @@ R $CDE2 IX Address of the object
   $CE0F,$03 Count it down.
   $CE12,$02 Jump to #R$CE27.
 @ $CE14 label=HandlePlayerTop_Look
-  $CE14,$03 Fetch a random number.
+N $CE14 Pick a head that looks to one side, or keep the current one.
+  $CE14,$03 Fetch a random number from #R$5BA5.
   $CE17,$04 Jump to #R$CE33 if it is less than #N$02.
   $CE1B,$04 Jump to #R$CE40 if it is at least #N$FE.
   $CE1F,$03 Fetch the graphic number of the bottom half.
@@ -8244,7 +8552,8 @@ E $CE62 View the equivalent code in;
 . { #ALIENEIGHT$C71C }
 . { #PENTAGRAM$B531 }
 . LIST#
-  $CE62,$02 Stash #REGix.
+N $CE62 Add each object that is present and flagged to be drawn.
+  $CE62,$02 Stash #REGix on the stack.
   $CE64,$02 Set the number of objects to #N$28.
   $CE66,$03 Set #REGde to the size of an object.
   $CE69,$04 Point #REGix at #R$5C08.
@@ -8259,10 +8568,10 @@ E $CE62 View the equivalent code in;
 @ $CE80 label=ListObjectsToDraw_Advance
   $CE80,$01 Go to the next index.
   $CE81,$02 Point #REGix at the next object.
-  $CE83,$02 Jump back to #R$CE72 until all of the objects have been tested.
+  $CE83,$02 Jump to #R$CE72 until all of the objects have been tested.
   $CE85,$02 Fetch the end marker.
   $CE87,$01 Store it at the end of the list.
-  $CE88,$02 Restore #REGix.
+  $CE88,$02 Restore #REGix from the stack.
   $CE8A,$01 Return.
 
 b $CE8B List Of Objects To Draw
@@ -8286,31 +8595,32 @@ E $CEBB View the equivalent code in;
 . { #ALIENEIGHT$C785 }
 . { #PENTAGRAM$B58A }
 . LIST#
-  $CEBB,$04 Set the number of objects drawn to zero.
-  $CEBF,$04 Stash #REGix and #REGiy.
+  $CEBB,$04 Set the number of objects drawn to zero at #R$5BBE.
+  $CEBF,$04 Stash #REGix and #REGiy on the stack.
 @ $CEC3 label=DrawObjectsInOrder_First
-  $CEC3,$03 Point #REGde at the list.
+  $CEC3,$03 Point #REGde at the list, #R$CE8B.
 @ $CEC6 label=DrawObjectsInOrder_FindFirst
   $CEC6,$01 Fetch the index of an object from the list.
   $CEC7,$01 Move on to the next entry.
   $CEC8,$05 Jump to #R$D015 if it is the end of the list.
-  $CECD,$04 Jump back to #R$CEC6 if the object has been drawn.
+  $CECD,$04 Jump to #R$CEC6 if the object has been drawn.
   $CED1,$03 Find the address of the object.
-  $CED4,$04 Remember the place in the list.
-  $CED8,$03 Point #REGix at the object.
+  $CED4,$04 Remember the place in the list at #R$5BCD.
+  $CED8,$03 Point #REGix at the object (using the stack).
 @ $CEDB label=DrawObjectsInOrder_FindSecond
   $CEDB,$01 Fetch the index of another object from the list.
   $CEDC,$01 Move on to the next entry.
   $CEDD,$05 Jump to #R$D000 if it is, as nothing has to be drawn before the
 . first object.
-  $CEE2,$04 Jump back to #R$CEDB if the object has been drawn.
+  $CEE2,$04 Jump to #R$CEDB if the object has been drawn.
   $CEE6,$03 Find the address of the object.
-  $CEE9,$04 Remember the place in the list.
-  $CEED,$03 Point #REGiy at the other object.
-  $CEF0,$03 Stash the address of the first object in #REGbc.
+  $CEE9,$04 Remember the place in the list at #R$5BCF.
+  $CEED,$03 Point #REGiy at the other object (using the stack).
+  $CEF0,$03 Copy the address of the first object to #REGbc (using the
+. stack).
   $CEF3,$01 Clear the carry flag.
   $CEF4,$02 Test whether the other object is the first object.
-  $CEF6,$02 Jump back to #R$CEDB if it is.
+  $CEF6,$02 Jump to #R$CEDB if it is.
 N $CEF8 Each of the three directions gives a number. The number in Z is #N$00 if
 . the first object is above the other, #N$01 if the objects overlap in Z and
 . #N$02 if the first object is below. The number in Y is #N$00 if the first
@@ -8405,7 +8715,9 @@ E $CFA5 View the equivalent code in;
 . { #ALIENEIGHT$C86F }
 . LIST#
 R $CFA5 IY Address of the other object
-  $CFA5,$03 Fetch the place in the list after the other object.
+N $CFA5 Draw the other object first, or break a loop if it is already
+. in the chain.
+  $CFA5,$03 Fetch the place in the list after the other object from #R$5BCF.
   $CFA8,$01 Point #REGhl at the entry of the other object.
   $CFA9,$01 Fetch the index of the other object.
   $CFAA,$03 Point #REGde at #R$D01A.
@@ -8415,26 +8727,26 @@ R $CFA5 IY Address of the other object
   $CFB2,$01 Test whether it is the other object.
   $CFB3,$02 Jump to #R$CFCE if it is.
   $CFB5,$01 Move on to the next entry.
-  $CFB6,$02 Jump back to #R$CFAD.
+  $CFB6,$02 Jump to #R$CFAD.
 @ $CFB8 label=CompareWithOtherObject_Add
   $CFB8,$01 Fetch the index of the other object.
   $CFB9,$01 Add it to the list.
   $CFBA,$01 Move on to the next entry.
   $CFBB,$03 Mark the end of the list.
-  $CFBE,$04 Make the other object the first object.
-  $CFC2,$03 Fetch the place in the list after the other object.
-  $CFC5,$03 Make it the place in the list after the first object.
+  $CFBE,$04 Make the other object the first object (using the stack).
+  $CFC2,$03 Fetch the place in the list after the other object from #R$5BCF.
+  $CFC5,$03 Make it the place in the list after the first object at #R$5BCD.
   $CFC8,$03 Point #REGde at #R$CE8B.
   $CFCB,$03 Jump to #R$CEDB.
 @ $CFCE label=CompareWithOtherObject_Loop
-  $CFCE,$03 Point #REGhl at the list of objects to draw.
+  $CFCE,$03 Point #REGhl at the list of objects to draw, #R$CE8B.
 @ $CFD1 label=CompareWithOtherObject_Search
   $CFD1,$01 Fetch an entry.
   $CFD2,$01 Move on to the next entry.
   $CFD3,$05 Jump to #R$CEC3 if it is the end of the list.
   $CFD8,$01 Test whether it is the other object.
-  $CFD9,$02 Jump back to #R$CFD1 if it is not.
-  $CFDB,$04 Make the other object the first object.
+  $CFD9,$02 Jump to #R$CFD1 if it is not.
+  $CFDB,$04 Make the other object the first object (using the stack).
   $CFDF,$02 Jump to #R$D003 to draw it.
 
 c $CFE1 Replace Overlapping Special Object
@@ -8443,6 +8755,8 @@ D $CFE1 Handles two objects that fill the same space. If one of them is a
 . special object, it is replaced by a twinkling sprite.
 R $CFE1 IX Address of the first object
 R $CFE1 IY Address of the other object
+N $CFE1 Replace a special object that fills the same space with a
+. twinkling sprite.
   $CFE1,$03 Fetch the graphic number of the first object.
   $CFE4,$02 Take #N$60 off it, to get the number of the special object.
   $CFE6,$04 Jump to #R$CFF0 if it is not a special object.
@@ -8465,19 +8779,19 @@ E $D000 View the equivalent code in;
 . { #ALIENEIGHT$C8D5 }
 . LIST#
 R $D000 IX Address of the object
-  $D000,$03 Fetch the place in the list after the first object.
+  $D000,$03 Fetch the place in the list after the first object from #R$5BCD.
 @ $D003 label=DrawNextObject_Flag
   $D003,$01 Point #REGhl at the entry of the object.
   $D004,$02 Flag the object as drawn.
   $D006,$05 Mark the end of the list of objects that have taken the place of the
-. first object.
+. first object at #R$D01A.
   $D00B,$03 Point #REGhl at #R$5BBE.
   $D00E,$01 Add one to it.
   $D00F,$03 Draw the object into the buffer.
   $D012,$03 Jump to #R$CEC3 to find the next object.
 @ $D015 label=DrawNextObject_Finish
 N $D015 There are no objects left to draw.
-  $D015,$04 Restore #REGiy and #REGix.
+  $D015,$04 Restore #REGiy and #REGix from the stack.
   $D019,$01 Return.
 
 b $D01A Chain Of Objects
@@ -8488,13 +8802,18 @@ B $D01A,$08,$08
 
 c $D022 Read Controls
 @ $D022 label=ReadControls
-D $D022 Reads the controls that the player is using. The controls are made into
-. a byte in #REGc, with bit 0 for left, bit 1 for right, bit 2 for walking
-. forward, bit 3 for jumping, bit 4 for picking up and dropping an object (or
-. for down, if a joystick with directional control is in use) and bit 5 for
-. picking up and dropping an object with directional control. The byte is stored
-. at #R$5BB5. No control is read during the final animation or while an object
-. is being put into the cauldron.
+D $D022 Reads the controls that the player is using and stores them in #R$5BB5.
+. #TABLE(default,centre,centre)
+. { =h Bit | =h Meaning }
+. { #N$00 | Left }
+. { #N$01 | Right }
+. { #N$02 | Walk }
+. { #N$03 | Jump }
+. { #N$04 | Pick up (or down on a directional stick) }
+. { #N$05 | Directional pick up }
+. TABLE#
+. No control is read during the final animation or while an object is being put
+. into the cauldron.
 E $D022 Continue on to #R$D03E.
 E $D022 View the equivalent code in;
 . #LIST
@@ -8503,13 +8822,15 @@ E $D022 View the equivalent code in;
 . { #NIGHTSHADE$E241 }
 . LIST#
 R $D022 O:C The controls
-  $D022,$03 Fetch the final animation flag.
+N $D022 Jump to the reader for the chosen control method.
+  $D022,$03 Fetch the final animation flag from #R$5BC3.
   $D025,$01 Stash it in #REGc.
-  $D026,$03 Fetch the flag for an object being put into the cauldron.
+  $D026,$03 Fetch the flag for an object being put into the cauldron from
+. #R$5BC4.
   $D029,$01 Combine the two flags.
   $D02A,$02 Set the controls to none.
   $D02C,$03 Jump to #R$D111 if either flag is set.
-  $D02F,$03 Fetch the control method.
+  $D02F,$03 Fetch the control method from #R$5BA4.
   $D032,$01 Move the keyboard and joystick choice into bits 0 and 1.
   $D033,$02,b$01 Keep it.
   $D035,$03 Jump to #R$D0C8 if the keyboard is in use.
@@ -8523,7 +8844,8 @@ c $D03E Read Interface 2 Joystick
 D $D03E Reads the controls from the Interface 2 joysticks, which are the keys 1
 . to 5 for the first joystick and 6 to 0 for the second joystick. The joysticks
 . use the keys left, right, down, up and fire in that order, so the keys of the
-. first joystick are read in the reverse order and the two are combined.
+. first joystick are reversed to put them in the same order as the keys of the
+. second joystick.
 E $D03E View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C91B }
@@ -8531,15 +8853,31 @@ E $D03E View the equivalent code in;
 . { #NIGHTSHADE$E250 }
 . LIST#
 R $D03E O:C The controls
-  $D03E,$02 Select the row of the keys 1 to 5.
-  $D040,$03 Read the keys.
-  $D043,$01 Stash #REGbc.
+N $D03E Reverse the keys 1 to 5.
+  $D03E,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+  $D043,$01 Stash #REGbc on the stack.
   $D044,$02 Set the number of keys to #N$05.
+N $D046 Reverse the order of the five keys into #REGc.
 @ $D046 label=ReadInterface2Joystick_Reverse
-  $D046,$05 Reverse the order of the five keys into #REGc.
-  $D04B,$03 Take the reversed keys and restore #REGbc.
-  $D04E,$02 Select the row of the keys 0 to 6.
-  $D050,$03 Read the keys.
+  $D046,$01 Rotate #REGa right.
+  $D047,$02 Rotate #REGc left.
+  $D049,$02 Jump to #R$D046 until #REGb is zero.
+N $D04B Take the reversed keys and restore #REGbc.
+  $D04B,$01 Copy #REGc to #REGa.
+  $D04C,$01 Restore #REGbc from the stack.
+  $D04D,$01 Copy it to #REGc.
+N $D04E Merge the keys 6 to 0.
+  $D04E,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
   $D053,$01 Combine the keys of the two joysticks.
   $D054,$02 Set the controls to none.
   $D056,$06 Set the jump control if the fire key is pressed.
@@ -8564,6 +8902,7 @@ E $D077 View the equivalent code in;
 . { #NIGHTSHADE$E289 }
 . LIST#
 R $D077 O:C The controls
+N $D077 Set each control bit from the Kempston port.
   $D077,$02 Read the joystick.
   $D079,$02 Set the controls to none.
   $D07B,$06 Set the right control if the joystick is pushed right.
@@ -8589,11 +8928,23 @@ E $D09C View the equivalent code in;
 . { #NIGHTSHADE$E2AE }
 . LIST#
 R $D09C O:C The controls
+N $D09C Left from the 1-5 row.
   $D09C,$02 Set the controls to none.
-  $D09E,$05 Read the keys 1 to 5.
+  $D09E,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
   $D0A3,$06 Set the left control if 5 is pressed.
+N $D0A9 Fire, up, right and down from the 0-9 row.
 @ $D0A9 label=ReadCursorJoystick_SecondRow
-  $D0A9,$05 Read the keys 0 to 6.
+  $D0A9,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
   $D0AE,$06 Set the jump control if 0 is pressed.
 @ $D0B4 label=ReadCursorJoystick_TestUp
   $D0B4,$06 Set the walk control if 7 is pressed.
@@ -8615,7 +8966,13 @@ E $D0C8 View the equivalent code in;
 . { #ALIENEIGHT$C9A5 }
 . LIST#
 R $D0C8 O:C The controls
-  $D0C8,$05 Read the keys SHIFT, Z, X, C and V.
+N $D0C8 Left and right from the bottom row.
+  $D0C8,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$FE | SHIFT | Z | X | C | V }
+. TABLE#
   $D0CD,$01 Move Z into bit 0.
   $D0CE,$01 Stash the keys in #REGc.
   $D0CF,$02,b$01 Keep Z and X.
@@ -8623,7 +8980,12 @@ R $D0C8 O:C The controls
   $D0D5,$01 Combine them with Z and X.
   $D0D6,$02,b$01 Keep the left and right bits.
   $D0D8,$01 Stash them in #REGc.
-  $D0D9,$05 Read the keys SPACE, symbol shift, M, N and B.
+  $D0D9,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7F | SPACE | SYMBOL SHIFT | M | N | B }
+. TABLE#
   $D0DE,$06 Set the right control if symbol shift is pressed.
 @ $D0E4 label=ReadKeyboard_TestM
   $D0E4,$06 Set the left control if M is pressed.
@@ -8632,30 +8994,50 @@ R $D0C8 O:C The controls
 @ $D0F0 label=ReadKeyboard_TestB
   $D0F0,$06 Set the left control if B is pressed.
 @ $D0F6 label=ReadKeyboard_WalkKeys
-  $D0F6,$05 Read the keys A to G and H to ENTER.
+  $D0F6,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$BD | A / ENTER | S / L | D / K | F / J | G / H }
+. TABLE#
   $D0FB,$04 Set the walk control if any of them is pressed.
 @ $D0FF label=ReadKeyboard_JumpKeys
-  $D0FF,$05 Read the keys Q to T and Y to P.
+  $D0FF,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$DB | Q / P | W / O | E / I | R / U | T / Y }
+. TABLE#
   $D104,$04 Set the jump control if any of them is pressed.
 @ $D108 label=ReadKeyboard_PickUpKeys
-  $D108,$05 Read the keys 1 to 5 and 6 to 0.
+  $D108,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$E7 | 1 / 0 | 2 / 9 | 3 / 8 | 4 / 7 | 5 / 6 }
+. TABLE#
   $D10D,$04 Set the pick up control if any of them is pressed.
 @ $D111 label=ReadControls_Finish
 N $D111 Reads the keys that pick up and drop an object when a joystick with
-. directional control is in use. The keys that count are SHIFT, Z, X, C, V, 1 to
-. 5, 6 to 0, SPACE, symbol shift, M, N and B.
-  $D111,$05 Read the keys SHIFT to V and SPACE to B.
+. directional control is in use. The keys that count are Z, X, C, V, A to G, H
+. to ENTER, Q to T and Y to P.
+  $D111,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
   $D116,$02,b$01 Keep the keys Z, X, C, V, symbol shift, M, N and B.
-  $D118,$01 Stash #REGbc.
+  $D118,$01 Stash #REGbc on the stack.
   $D119,$01 Stash the keys in #REGb.
   $D11A,$05 Read the keys SHIFT to V, 1 to 5, 6 to 0 and SPACE to B.
   $D11F,$01 Combine the keys.
-  $D120,$01 Restore #REGbc.
+  $D120,$01 Restore #REGbc from the stack.
   $D121,$02 Jump to #R$D125 if no key is pressed.
   $D123,$02 Set the directional pick up control.
 @ $D125 label=ReadControls_Store
   $D125,$01 Fetch the controls.
-  $D126,$03 Store them.
+  $D126,$03 Store them at #R$5BB5.
   $D129,$01 Return.
 
 c $D12A Lose Life
@@ -8663,17 +9045,16 @@ c $D12A Lose Life
 D $D12A Puts the player back as it was when it entered the room, and takes a
 . life off. If there are no lives left the game is over. The player is a human
 . if the sun is out, or a wulf if the moon is out.
-  $D12A,$03 Point #REGhl at the copy of the player.
+  $D12A,$03 Point #REGhl at the copy of the player, #R$D161.
   $D12D,$03 Point #REGde at #R$5C08.
-  $D130,$03 Point #REGix at the objects table.
-  $D133,$03 Set the length to #N$40, for the two halves of the player.
+  $D130,$03 Point #REGix at the objects table (using the stack).
+  $D133,$03 Set the length to #N($40), for the two halves of the player.
   $D136,$02 Copy the player back.
-  $D138,$04 Clear the flag that says the player has to transform.
+  $D138,$04 Clear the flag that says the player has to transform, #R$5BB1.
 N $D13C See #POKE(infinite_lives,Infinite Lives).
-  $D13C,$03 Point #REGhl at #R$5BBA.
-  $D13F,$01 Take a life off.
+  $D13C,$04 Take a life off #R$5BBA.
   $D140,$03 Jump to #R$BA22 if there are none left.
-  $D143,$03 Fetch the graphic number of the sun/moon.
+  $D143,$03 Fetch the graphic number of the sun/moon from #R$C44D.
   $D146,$03 Move bit 0 into bit 5.
   $D149,$02,b$01 Keep it, which is #N$20 if the moon is out.
   $D14B,$01 Stash it in #REGc.
@@ -8727,7 +9108,8 @@ E $D1B1 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CA6D }
 . LIST#
-  $D1B1,$03 Point #REGhl at the initial data of the player.
+N $D1B1 Copy the initial player and pick a start room.
+  $D1B1,$03 Point #REGhl at the initial data of the player, #R$D1A1.
   $D1B4,$03 Point #REGde at #R$D161.
   $D1B7,$03 Set the number of bytes to #N$08.
   $D1BA,$02 Copy the initial data of the legs.
@@ -8739,14 +9121,14 @@ E $D1B1 View the equivalent code in;
   $D1C9,$02 Fetch the graphic number of the top half of a human.
   $D1CB,$03 Store it as the graphic that the top half has when the player
 . appears.
-  $D1CE,$03 Fetch the first random seed.
+  $D1CE,$03 Fetch the first random seed from #R$5BA0.
   $D1D1,$02,b$01 Keep two bits.
   $D1D3,$03 Make it an offset.
   $D1D6,$03 Point #REGbc at #R$D1E2.
   $D1D9,$01 Add the offset.
   $D1DA,$01 Fetch the start room.
-  $D1DB,$03 Set the room of the legs.
-  $D1DE,$03 Set the room of the top half.
+  $D1DB,$03 Set the room of the legs at #R$D169.
+  $D1DE,$03 Set the room of the top half at #R$D189.
   $D1E1,$01 Return.
 
 b $D1E2 Start Rooms
@@ -8758,7 +9140,9 @@ c $D1E6 Build Room Objects
 @ $D1E6 label=BuildRoomObjects
 D $D1E6 Builds the objects of the room that the player is in, and sets the game
 . up to start again in it.
-  $D1E6,$04 Fetch the flag that says it is not the first room of the game.
+N $D1E6 Build the room, place the player, and reset the room flags.
+  $D1E6,$04 Fetch the flag that says it is not the first room of the game from
+. #R$5BB2.
   $D1EA,$02 Jump to #R$D1EF if it is the first room.
   $D1EC,$03 Store the special objects of the room that the player has left.
 @ $D1EF label=BuildRoomObjects_Clear
@@ -8767,15 +9151,15 @@ D $D1E6 Builds the objects of the room that the player is in, and sets the game
   $D1F5,$03 Find the special objects that are in the room.
   $D1F8,$03 Move the player to the right place for the way it came in.
   $D1FB,$01 Get a zero to clear the flags with.
-  $D1FC,$03 Clear the flag that says a portcullis is moving.
-  $D1FF,$03 Clear the number of times a portcullis has come down.
-  $D202,$03 Clear the height of the bounce of a ball.
-  $D205,$03 Clear the flag that says a spiked ball is dropping.
+  $D1FC,$03 Clear the flag that says a portcullis is moving at #R$5BAF.
+  $D1FF,$03 Clear the number of times a portcullis has come down at #R$5BB0.
+  $D202,$03 Clear the height of the bounce of a ball at #R$5BBD.
+  $D205,$03 Clear the flag that says a spiked ball is dropping at #R$5BBF.
   $D208,$02 Get the value that sets a flag.
-  $D20A,$03 Flag the panel to be drawn again.
+  $D20A,$03 Flag the panel to be drawn again at #R$5BB7.
   $D20D,$03 Fetch the room number.
   $D210,$02,b$01 Keep bit 0.
-  $D212,$03 Set the flag that stops the spiked balls from dropping.
+  $D212,$03 Set the flag that stops the spiked balls from dropping at #R$5BC0.
   $D215,$03 Flag the room as visited.
   $D218,$01 Return.
 
@@ -8789,6 +9173,7 @@ E $D219 View the equivalent code in;
 . { #ALIENEIGHT$B863 }
 . { #SABREWULF$9D23 }
 . LIST#
+N $D219 Set the bit of this room in #R$5BE8.
   $D219,$03 Fetch the room number.
   $D21C,$01 Stash it in #REGc.
   $D21D,$03 Divide it by eight.
@@ -8819,6 +9204,7 @@ E $D237 View the equivalent code in;
 R $D237 HL Address of the data
 R $D237 IX Address of the object
 R $D237 O:HL Address of the byte after the data
+N $D237 Copy the graphic, flags and pixel coordinates from the data.
   $D237,$02 Fetch the graphic number and move on.
   $D239,$03 Set the graphic number of the object.
   $D23C,$02 Fetch the flags and move on.
@@ -8841,9 +9227,9 @@ R $D24C HL Address of the data
 R $D24C IX Address of the object
 R $D24C O:HL Address of the byte after the data
   $D24C,$03 Set the details of the object.
-  $D24F,$01 Stash the address of the data.
+  $D24F,$01 Stash the address of the data on the stack.
   $D250,$03 Draw the sprite.
-  $D253,$01 Restore the address of the data.
+  $D253,$01 Restore the address of the data from the stack.
   $D254,$01 Return.
 
 c $D255 Draw Panel
@@ -8859,8 +9245,9 @@ D $D255 Draws the shapes of the panel at the bottom of the screen, using the
 . #SIM(start=$D255,stop=$0000,sp=$5B80)
 . #SIM(start=$D56F,stop=$0000,sp=$5B80)
 . #SCR$02,$00,$10,$20,$08(draw-panel) } UDGTABLE# #POPS
+N $D255 Draw the left side of the panel, then the flipped right side.
   $D255,$04 Point #REGix at the object that holds the details of the sprites of
-. the panel.
+. the panel, #R$BFDB.
   $D259,$03 Point #REGhl at #R$D27E.
   $D25C,$03 Set the details of the first sprite.
   $D25F,$03 Set the offsets to #N$10 in X and #N$F8 in Y, which is #N$08 down.
@@ -8904,8 +9291,9 @@ E $D296 View the equivalent code in;
 . #SIM(start=$D296,stop=$0000,sp=$5B80)
 . #SIM(start=$D56F,stop=$0000,sp=$5B80)
 . #SCR$02(print-border) } UDGTABLE# #POPS
+N $D296 Draw the four corners, then the edges.
   $D296,$04 Point #REGix at the object that holds the details of the sprites of
-. the panel.
+. the panel, #R$BFDB.
   $D29A,$03 Point #REGhl at #R$D2CF.
   $D29D,$03 Draw the top left corner.
   $D2A0,$03 Draw the top right corner.
@@ -8948,6 +9336,7 @@ E $D2EF View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CBE3 }
 . LIST#
+N $D2EF Colour the sides black and the sun/moon window bright red.
   $D2EF,$01 Set #REGa to the attribute for black on black.
   $D2F0,$03 Point #REGhl at the attributes of the left side.
   $D2F3,$03 Set the width to #N$01 and the height to #N$03.
@@ -8964,7 +9353,8 @@ c $D30D Colour Sun Moon
 @ $D30D label=ColourSunMoon
 D $D30D Sets the colour of the sun or the moon in its window: bright yellow for
 . the sun, or bright white for the moon.
-  $D30D,$03 Fetch the graphic number of the sun/moon.
+N $D30D Colour the window yellow for the sun, or white for the moon.
+  $D30D,$03 Fetch the graphic number of the sun/moon from #R$C44D.
   $D310,$02,b$01 Keep bit 0, which is set for the moon.
   $D312,$02 Set #REGa to the attribute for bright yellow on black.
   $D314,$02 Jump to #R$D317 if it is the sun.
@@ -8978,71 +9368,75 @@ c $D320 Place Player At Door
 @ $D320 label=PlacePlayerAtDoor
 D $D320 Puts the player in the right place when it has come into a room through
 . an arch. The routine that moved the player out of the last room set one of its
-. coordinates to #N$00 or #N$FF, which tells which way the player came. The
+. positions to #N$00 or #N($FF), which tells which way the player came. The
 . player is put at the opposite edge of the room, just outside the wall, and at
-. the height of the arch. If the coordinates are not one of these, as when the
-. player starts the game or starts a new life, nothing is done.
+. the height of the arch. If the positions are not one of these, as when the
+. player starts the game or starts again after losing a life, nothing is
+. changed.
 E $D320 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CC01 }
 . { #PENTAGRAM$CA82 }
 . LIST#
 R $D320 IX Address of the player
-  $D320,$06 Fetch the size of the room in X and take #N$02 off it.
-  $D326,$06 Fetch the size of the room in Y and take #N$02 off it.
-  $D32C,$04 Fetch the X coordinate and test whether it is zero.
-  $D330,$02 Jump to #R$D37F if it is, as the player came out of the west.
-  $D332,$01 Add one to it.
-  $D333,$02 Jump to #R$D36F if it was #N$FF, as the player came out of the east.
-  $D335,$04 Fetch the Y coordinate and test whether it is zero.
-  $D339,$02 Jump to #R$D362 if it is, as the player came out of the south.
-  $D33B,$01 Add one to it.
-  $D33C,$02 Jump to #R$D33F if it was #N$FF, as the player came out of the
-. north.
+N $D320 Fetch the wall distances, then see which way the player came.
+  $D320,$03 Fetch #R$5BAB.
+  $D323,$02 Subtract #N$02.
+  $D325,$01 Copy it to #REGl.
+N $D326 Fetch the size of the room in Y and take #N$02 off it from #R$5BAC.
+  $D326,$03 Fetch #R$5BAC.
+  $D329,$02 Subtract #N$02.
+  $D32B,$01 Copy it to #REGh.
+  $D32C,$03 Fetch the x position of the player.
+  $D32F,$03 Jump to #R$D37F if it is zero.
+  $D332,$03 Jump to #R$D36F if it is #N$FF.
+  $D335,$03 Fetch the y position of the player.
+  $D338,$03 Jump to #R$D362 if it is zero.
+  $D33B,$03 Jump to #R$D33F if it is #N$FF.
   $D33E,$01 Return.
 @ $D33F label=PlacePlayerAtDoor_South
-N $D33F The player came out of the north, so it goes to the south side of the
-. room.
+N $D33F The player came from the north.
   $D33F,$02 Set the sum of the coordinates of the arch to look for.
   $D341,$03 Find the arch and set the height of the player to it.
-  $D344,$02 Start with #N$80.
+  $D344,$02 Set #REGa to #N$80.
   $D346,$01 Take the size of the room in Y off it.
   $D347,$03 Take the depth of the player off it.
 @ $D34A label=PlacePlayerAtDoor_SetY
-  $D34A,$03 Set the Y coordinate of the player.
+  $D34A,$03 Set the y position of the player.
 @ $D34D label=PlacePlayerAtDoor_Draw
   $D34D,$04 Flag the legs of the player to be drawn.
   $D351,$04 Flag the top half of the player to be drawn.
-  $D355,$06 Give the top half the X coordinate of the legs.
-  $D35B,$06 Give the top half the Y coordinate of the legs.
+N $D355 Give the top half the X coordinate of the legs.
+  $D355,$03 Fetch the x position of the player.
+  $D358,$03 Set the x position of the top half.
+N $D35B Give the top half the Y coordinate of the legs.
+  $D35B,$03 Fetch the y position of the player.
+  $D35E,$03 Set the y position of the top half.
   $D361,$01 Return.
 @ $D362 label=PlacePlayerAtDoor_North
-N $D362 The player came out of the south, so it goes to the north side of the
-. room.
+N $D362 The player came from the south.
   $D362,$02 Set the sum of the coordinates of the arch to look for.
   $D364,$03 Find the arch and set the height of the player to it.
   $D367,$01 Fetch the size of the room in Y.
-  $D368,$02 Add #N$80 to it.
+  $D368,$02 Add #N$80.
   $D36A,$03 Add the depth of the player.
   $D36D,$02 Jump to #R$D34A.
 @ $D36F label=PlacePlayerAtDoor_West
-N $D36F The player came out of the east, so it goes to the west side of the
-. room.
+N $D36F The player came from the east.
   $D36F,$02 Set the sum of the coordinates of the arch to look for.
   $D371,$03 Find the arch and set the height of the player to it.
-  $D374,$02 Start with #N$80.
+  $D374,$02 Set #REGa to #N$80.
   $D376,$01 Take the size of the room in X off it.
   $D377,$03 Take the width of the player off it.
 @ $D37A label=PlacePlayerAtDoor_SetX
-  $D37A,$03 Set the X coordinate of the player.
+  $D37A,$03 Set the x position of the player.
   $D37D,$02 Jump to #R$D34D.
 @ $D37F label=PlacePlayerAtDoor_East
-N $D37F The player came out of the west, so it goes to the east side of the
-. room.
+N $D37F The player came from the west.
   $D37F,$02 Set the sum of the coordinates of the arch to look for.
   $D381,$03 Find the arch and set the height of the player to it.
   $D384,$01 Fetch the size of the room in X.
-  $D385,$02 Add #N$80 to it.
+  $D385,$02 Add #N$80.
   $D387,$03 Add the width of the player.
   $D38A,$02 Jump to #R$D37A.
 
@@ -9057,7 +9451,8 @@ E $D38C View the equivalent code in;
 . LIST#
 R $D38C C Sum of the X and Y coordinates of the arch
 R $D38C IX Address of the player
-  $D38C,$04 Point #REGiy at the first object of the room.
+N $D38C Find the matching arch and copy its height to the player.
+  $D38C,$04 Point #REGiy at the first object of the room, #R$5C88.
   $D390,$03 Set the distance between pairs of objects to #N$40.
   $D393,$02 Set the number of pairs to #N$04.
 @ $D395 label=FindDoorHeight_Next
@@ -9068,7 +9463,7 @@ R $D38C IX Address of the player
   $D3A1,$01 Compare the sum with the one that is wanted.
   $D3A2,$02 Jump to #R$D3A9 if it matches.
   $D3A4,$02 Point #REGiy at the next pair.
-  $D3A6,$02 Jump back to #R$D395 until all of the pairs have been tried.
+  $D3A6,$02 Jump to #R$D395 until all of the pairs have been tried.
   $D3A8,$01 Return.
 @ $D3A9 label=FindDoorHeight_Found
   $D3A9,$03 Fetch the Z coordinate of the arch.
@@ -9087,13 +9482,15 @@ E $D3B5 View the equivalent code in;
 . LIST#
 R $D3B5 A Index of the object (bit 7 is ignored)
 R $D3B5 O:HL Address of the object
-  $D3B5,$01 Stash #REGbc.
-  $D3B6,$02,b$01 Ignore bit 7.
-  $D3B8,$03 Make the index into a 16-bit number.
-  $D3BB,$05 Multiply it by #N$20.
+N $D3B5 Multiply the index by #N$20 and add it to #R$5C08.
+  $D3B5,$01 Stash #REGbc on the stack.
+  $D3B6,$02,b$01 Keep bits 0 to 6.
+  $D3B8,$01 Copy it to #REGl.
+  $D3B9,$02 Set #REGh to #N$00.
+  $D3BB,$05 Multiply #REGhl by #N$20.
   $D3C0,$03 Point #REGbc at #R$5C08.
-  $D3C3,$01 Add the two to get the address.
-  $D3C4,$01 Restore #REGbc.
+  $D3C3,$01 Add #REGbc to #REGhl.
+  $D3C4,$01 Restore #REGbc from the stack.
   $D3C5,$01 Return.
 
 c $D3C6 Retrieve Room
@@ -9104,25 +9501,28 @@ D $D3C6 Builds the objects of the room that the player is in from the room data.
 . of the rest of the entry, the colour and size of the room, the types of
 . background object that it has (which end with a #N$FF if there are groups of
 . foreground objects after them) and the groups of foreground objects. The
-. objects are put in the objects table from the first one after the player and
-. the special objects. If the room is not in the table, none are made.
+. objects are put in the objects table from #R$5C88, which is the first one after
+. the player and the special objects. If the room is not in the table, none are
+. made.
 E $D3C6 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CCA7 }
+. { #PENTAGRAM$C92C }
 . LIST#
 R $D3C6 IX Address of the player
-  $D3C6,$03 Point #REGde at the first object of the room in the objects table.
-  $D3C9,$03 Point #REGbc at the end of the table of rooms.
+N $D3C6 Point at the room data, then find the entry for this room.
+  $D3C6,$03 Point #REGde at the first object of the room in the objects table,
+. #R$5C88.
+  $D3C9,$03 Point #REGbc at the end of the table of rooms, #R$6BD1.
   $D3CC,$03 Point #REGhl at #R$6251.
 @ $D3CF label=RetrieveRoom_Find
   $D3CF,$05 Test whether the entry is the room of the player.
-  $D3D4,$02 Jump to #R$D3F0 if it is.
+  $D3D4,$02 Jump to #R$D3F0 if they match.
   $D3D6,$01 Fetch the length of the entry.
-  $D3D7,$03 Move on to the next entry.
-  $D3DA,$03 Compare the address with the end of the table.
-  $D3DD,$02 Jump to #R$D3E2 if the end has been reached.
-  $D3DF,$01 Restore the address.
-  $D3E0,$02 Jump back to #R$D3CF.
+  $D3D7,$03 Call #R$D4F2.
+  $D3DA,$05 Jump to #R$D3E2 if #REGhl has reached #REGbc.
+  $D3DF,$01 Add #REGbc to #REGhl.
+  $D3E0,$02 Jump to #R$D3CF.
 
 c $D3E2 Clear Remaining Objects
 @ $D3E2 label=ClearRemainingObjects
@@ -9133,12 +9533,12 @@ E $D3E2 View the equivalent code in;
 . { #ALIENEIGHT$CCD0 }
 . LIST#
 R $D3E2 DE Address of the first object to clear
-  $D3E2,$03 Point #REGhl at the end of the objects table.
+  $D3E2,$03 Point #REGhl at the end of the objects table, #R$6108.
   $D3E5,$03 Compare it with the address.
   $D3E8,$01 Return if the end has been reached.
   $D3E9,$02 Set the number of bytes to the size of an object.
   $D3EB,$03 Clear the object.
-  $D3EE,$02 Jump back to #R$D3E2.
+  $D3EE,$02 Jump to #R$D3E2.
 
 c $D3F0 Make Room Objects
 @ $D3F0 label=MakeRoomObjects
@@ -9147,31 +9547,34 @@ D $D3F0 Makes the objects of a room from its entry in the table of rooms. The
 . bright added, and the size of the room is the high five bits. The size gives
 . the size of the room in X, Y and Z, from the table at #R$6248. Each type of
 . background object is the number of an entry in the table at #R$6CE2, which
-. holds the address of a list of objects. Each of these is copied into the
-. objects table, along with the number of the room. The background objects end
-. at a #N$FF, or at the end of the entry if there are no foreground objects.
-. Each group of foreground objects starts with a byte that has the number of a
-. block in bits 3 to 7 and one less than the number of times it is used in bits
-. 0 to 2, followed by that many positions. A block is a list of objects, from
-. the table at #R$6BD1. A position has the X coordinate in bits 0 to 2, the Y
-. coordinate in bits 3 to 5 and the Z coordinate in bits 6 and 7.
+. holds the address of a list of objects that already have their coordinates.
+. Each of these is copied into the objects table, along with the number of the
+. room. The background objects end at a #N($FF), or at the end of the entry if
+. there are no foreground objects. Each group of foreground objects starts with
+. a byte that has the number of a block in bits 3 to 7 and one less than the
+. number of times it is used in bits 0 to 2, followed by that many positions. A
+. block is a list of objects from the table at #R$6BD1, each with a graphic, a
+. size, flags and an offset, but no coordinates. A position has the X coordinate
+. in bits 0 to 2, the Y coordinate in bits 3 to 5 and the Z coordinate in bits
+. 6 and 7.
 E $D3F0 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CCDE }
+. { #PENTAGRAM$C92C }
 . LIST#
 R $D3F0 DE Address of the first object to make
-R $D3F0 HL Address of the entry of the room (the byte after the number of the
-. room)
+R $D3F0 HL Address of the entry of the room (the byte after the number of the room)
 R $D3F0 IX Address of the player
+N $D3F0 Set the colour of the room, the size and the floor.
   $D3F0,$01 Fetch the length of the entry.
   $D3F1,$01 Point #REGhl at the colour and size.
-  $D3F2,$01 Fetch it.
+  $D3F2,$01 Fetch the colour and size.
   $D3F3,$02,b$01 Keep the colour.
   $D3F5,$02,b$01 Make it bright.
-  $D3F7,$03 Store it as the colour of the room.
-  $D3FA,$01 Stash the address of the object to make.
+  $D3F7,$03 Store it as the colour of the room at #R$5BAD.
+  $D3FA,$01 Stash the address of the object to make on the stack.
   $D3FB,$01 Point #REGde at the colour and size.
-  $D3FC,$01 Fetch it.
+  $D3FC,$01 Fetch the colour and size.
   $D3FD,$01 Point #REGde at the types of background object.
   $D3FE,$03 Move the size into the low five bits.
   $D401,$02,b$01 Keep it.
@@ -9179,69 +9582,64 @@ R $D3F0 IX Address of the player
   $D404,$02 Multiply it by three.
   $D406,$03 Point #REGhl at #R$6248.
   $D409,$03 Add the offset to find the size.
-  $D40C,$01 Fetch the size of the room in X.
-  $D40D,$01 Move on.
-  $D40E,$03 Store it.
-  $D411,$01 Fetch the size of the room in Y.
-  $D412,$01 Move on.
-  $D413,$03 Store it.
+  $D40C,$02 Fetch the size of the room in X, and move on.
+  $D40E,$03 Store it at #R$5BAB.
+  $D411,$02 Fetch the size of the room in Y, and move on.
+  $D413,$03 Store it at #R$5BAC.
   $D416,$01 Fetch the size of the room in Z, which is the floor of the room.
-  $D417,$03 Store it.
+  $D417,$03 Store it at #R$5BAE.
   $D41A,$02 Take two off the length that is left.
   $D41C,$01 Point #REGhl at the types of background object.
-  $D41D,$01 Restore the address of the object to make.
+  $D41D,$01 Restore the address of the object to make from the stack.
+N $D41E Copy each type of background object from #R$6CE2.
 @ $D41E label=MakeRoomObjects_Background
-  $D41E,$01 Fetch the type of background object.
-  $D41F,$01 Move on.
+  $D41E,$02 Fetch the type of background object, and move on.
   $D420,$04 Jump to #R$D44C if it is the end of the types.
-  $D424,$01 Stash the length that is left.
-  $D425,$01 Stash the address of the next type.
+  $D424,$02 Stash the length that is left and the address of the next type on
+. the stack.
+N $D426 Look up the list of objects of this type.
   $D426,$03 Make the type into an offset.
   $D429,$01 Double it.
   $D42A,$03 Point #REGbc at #R$6CE2.
   $D42D,$01 Add the two.
-  $D42E,$02 Fetch the address of the list of objects of the background.
-  $D430,$02 Make it the address.
+  $D42E,$04 Fetch the address of the list of objects of the background.
+N $D432 Copy one background object into the objects table.
 @ $D432 label=MakeRoomObjects_Background_Copy
   $D432,$03 Set the number of bytes to copy to #N$08.
   $D435,$02 Copy the graphic number, the coordinates, the size and the flags of
 . the object.
   $D437,$03 Fetch the room number of the player.
-  $D43A,$01 Set the room number of the object.
-  $D43B,$01 Move on.
+  $D43A,$02 Set the room number of the object, and move on.
   $D43C,$02 Set the number of bytes to #N$17.
   $D43E,$03 Clear the rest of the object.
-  $D441,$01 Fetch the first byte of the next object in the list.
-  $D442,$01 Test whether the list has ended.
-  $D443,$02 Jump back to #R$D432 if not.
-  $D445,$01 Restore the address of the next type.
-  $D446,$01 Restore the length that is left.
-  $D447,$02 Jump back to #R$D41E until all of the entry has been used.
-  $D449,$03 Clear the rest of the objects table.
-@ $D44C label=MakeRoomObjects_Foreground
+  $D441,$04 Jump to #R$D432 if the list has not ended.
+  $D445,$02 Restore the address of the next type and the length that is left
+. from the stack.
+  $D447,$02 Jump to #R$D41E until all of the types have been used.
+  $D449,$03 Jump to #R$D3E2 to clear the rest of the objects table.
 N $D44C The foreground objects. #REGiy points at the object that is being made.
+@ $D44C label=MakeRoomObjects_Foreground
   $D44C,$01 Take one off the length that is left, for the end of the types.
-  $D44D,$02 Stash #REGiy.
-  $D44F,$03 Point #REGiy at the object to make.
+  $D44D,$02 Stash #REGiy on the stack.
+  $D44F,$03 Point #REGiy at the object to make (using the stack).
+N $D452 Decode the block type and the number of places.
 @ $D452 label=MakeRoomObjects_Block
   $D452,$01 Fetch the block and the count.
   $D453,$02,b$01 Keep the count.
   $D455,$01 Add one to get the number of times.
   $D456,$01 Stash it in #REGc.
-  $D457,$01 Fetch the block and the count again.
-  $D458,$01 Move on.
+  $D457,$02 Fetch the block and the count again, and move on.
   $D459,$01 Take one off the length that is left.
-  $D45A,$01 Fetch the position of the first block.
-  $D45B,$01 Move on.
-  $D45C,$01 Stash the address of the next byte.
+  $D45A,$02 Fetch the position of the first block, and move on.
+  $D45C,$01 Stash the address of the next byte on the stack.
   $D45D,$02 Move the block into bits 1 to 5.
   $D45F,$02,b$01 Keep it, to make it twice the number of the block.
   $D461,$03 Point #REGhl at #R$6BD1.
-  $D464,$03 Add the offset.
-  $D467,$02 Fetch the address of the list of objects of the block.
-  $D469,$02 Make it the address.
+  $D464,$03 Add the offset to find the block.
+  $D467,$04 Fetch the address of the list of objects of the block.
 @ $D46B label=MakeRoomObjects_Block_Object
-  $D46B,$01 Stash the address of the list of objects.
+  $D46B,$01 Stash the address of the list of objects on the stack.
+N $D46C Copy the graphic, the size and the flags from the block.
 @ $D46C label=MakeRoomObjects_Object
   $D46C,$02 Fetch the graphic number, and move on.
   $D46E,$03 Set the graphic number of the object.
@@ -9257,7 +9655,7 @@ N $D44C The foreground objects. #REGiy points at the object that is being made.
   $D488,$03 Set the room number of the object.
 N $D48B The byte of offsets has the half step in X in bit 0, the half step in Y
 . in bit 1, and the offset in Z in bits 2 to 7. The X coordinate is the X
-. position times #N$10, plus eight if the half step is set, plus #N$48.
+. position times #N($10), plus eight if the half step is set, plus #N$48.
   $D48B,$01 Fetch the offsets.
   $D48C,$03 Move the half step in X into bit 3.
   $D48F,$02,b$01 Keep it.
@@ -9280,7 +9678,7 @@ N $D49F The Y coordinate is worked out in the same way from the Y position and
   $D4A9,$01 Add the half step.
   $D4AA,$02 Add #N$48.
   $D4AC,$03 Set the Y coordinate of the object.
-N $D4AF The Z coordinate is the Z position times #N$0C, plus the offset in Z,
+N $D4AF The Z coordinate is the Z position times #N($0C), plus the offset in Z,
 . plus the floor of the room.
   $D4AF,$01 Fetch the position.
   $D4B0,$02 Move the Z position into the low two bits.
@@ -9293,10 +9691,11 @@ N $D4AF The Z coordinate is the Z position times #N$0C, plus the offset in Z,
   $D4BA,$01 Move on.
   $D4BB,$02,b$01 Clear the two bits of the half steps.
   $D4BD,$01 Stash it in #REGe.
-  $D4BE,$03 Fetch the floor of the room.
+  $D4BE,$03 Fetch the floor of the room from #R$5BAE.
   $D4C1,$01 Add it.
   $D4C2,$03 Set the Z coordinate of the object.
-  $D4C5,$01 Stash the count.
+N $D4C5 Clear the rest of the object.
+  $D4C5,$01 Stash the count on the stack.
   $D4C6,$03 Set the length of the part of the object that has been made to
 . #N$09.
   $D4C9,$02 Point #REGiy at the rest of the object.
@@ -9304,26 +9703,25 @@ N $D4AF The Z coordinate is the Z position times #N$0C, plus the offset in Z,
 @ $D4CD label=MakeRoomObjects_Clear
   $D4CD,$04 Clear a byte.
   $D4D1,$02 Move on.
-  $D4D3,$02 Jump back to #R$D4CD until the object is clear.
-  $D4D5,$01 Restore the count.
-  $D4D6,$01 Fetch the first byte of the next object in the block.
-  $D4D7,$01 Test whether the block has ended.
-  $D4D8,$02 Jump back to #R$D46C if it has not.
-  $D4DA,$01 Restore the address of the block.
-  $D4DB,$01 Restore the address of the next byte.
-  $D4DC,$01 Take one off the length that is left.
-  $D4DD,$02 Jump to #R$D4EA if the entry has ended.
-  $D4DF,$01 Count down the number of times the block is used.
-  $D4E0,$03 Jump to #R$D452 if it has all been used, to go on to the next group.
+  $D4D3,$02 Jump to #R$D4CD until the object is clear.
+N $D4D5 Move on to the next object of the block, or the next place, or the next
+. group.
+  $D4D5,$01 Restore the count from the stack.
+  $D4D6,$04 Jump to #R$D46C if the block has not ended.
+  $D4DA,$02 Restore the address of the block and the address of the next byte
+. from the stack.
+  $D4DC,$03 Jump to #R$D4EA if the entry has ended.
+  $D4DF,$04 Jump to #R$D452 if the block has been used the number of times.
   $D4E3,$02 Fetch the position for the next use of the block, and move on.
-  $D4E5,$01 Stash the address of the next byte.
+  $D4E5,$01 Stash the address of the next byte on the stack.
   $D4E6,$01 Point #REGhl at the list of objects of the block.
   $D4E7,$01 Put the position in #REGd.
   $D4E8,$02 Jump to #R$D46B.
+N $D4EA Finish, and clear any objects that were not made.
 @ $D4EA label=MakeRoomObjects_Finish
-  $D4EA,$03 Point #REGde at the next object to make.
-  $D4ED,$02 Restore #REGiy.
-  $D4EF,$03 Clear the rest of the objects table.
+  $D4EA,$03 Point #REGde at the next object to make (using the stack).
+  $D4ED,$02 Restore #REGiy from the stack.
+  $D4EF,$03 Jump to #R$D3E2 to clear the rest of the objects table.
 
 c $D4F2 Add A To HL
 @ $D4F2 label=AddAToHL
@@ -9339,11 +9737,11 @@ E $D4F2 View the equivalent code in;
 R $D4F2 A The number
 R $D4F2 HL The address
 R $D4F2 O:HL The new address
-  $D4F2,$01 Add the low byte.
-  $D4F3,$01 Store it.
-  $D4F4,$01 Fetch the high byte.
-  $D4F5,$02 Add the carry.
-  $D4F7,$01 Store it.
+  $D4F2,$01 Add #REGa to #REGl.
+  $D4F3,$01 Copy it to #REGl.
+  $D4F4,$01 Fetch #REGh.
+  $D4F5,$02 Add #N$00 with carry.
+  $D4F7,$01 Copy it to #REGh.
   $D4F8,$01 Return.
 
 c $D4F9 Multiply A By DE
@@ -9358,10 +9756,11 @@ E $D4F9 View the equivalent code in;
 . { #TRANZAM$6F2F }
 . { #UNDERWURLDE$AC68 }
 . LIST#
-R $D4F9 A The multiplier
-R $D4F9 DE The multiplicand
+R $D4F9 A The first number
+R $D4F9 DE The second number
 R $D4F9 O:HL The product
-  $D4F9,$01 Stash #REGbc.
+N $D4F9 Shift and add for each of the eight bits.
+  $D4F9,$01 Stash #REGbc on the stack.
   $D4FA,$03 Set the product to zero.
   $D4FD,$02 Set the number of bits to #N$08.
 @ $D4FF label=MultiplyAByDE_Loop
@@ -9370,14 +9769,14 @@ R $D4F9 O:HL The product
   $D501,$02 Jump to #R$D504 if it is not set.
   $D503,$01 Add the second number.
 @ $D504 label=MultiplyAByDE_Next
-  $D504,$02 Jump back to #R$D4FF until all of the bits are done.
-  $D506,$01 Restore #REGbc.
+  $D504,$02 Jump to #R$D4FF until all of the bits are done.
+  $D506,$01 Restore #REGbc from the stack.
   $D507,$01 Return.
 
 c $D508 Clear Bytes
 @ $D508 label=ClearBytes
 D $D508 Fills a number of bytes with zero. The entry point at #R$D509 fills them
-. with another byte.
+. with the byte in #REGa.
 E $D508 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE1C }
@@ -9385,39 +9784,62 @@ E $D508 View the equivalent code in;
 . LIST#
 R $D508 B Number of bytes
 R $D508 DE Address of the first byte
-  $D508,$01 Set the byte to zero.
+  $D508,$01 Set #REGa to #N$00.
 @ $D509 label=FillBytes
-  $D509,$01 Fill a byte.
-  $D50A,$01 Move on.
-  $D50B,$02 Jump back to #R$D509 until all of the bytes are filled.
+  $D509,$01 Write #REGa.
+  $D50A,$01 Increment #REGde.
+  $D50B,$02 Jump to #R$D509 until all of the bytes are filled.
   $D50D,$01 Return.
 
 c $D50E Pause Game
 @ $D50E label=PauseGame
-D $D50E Pauses the game if the SPACE key is pressed on its own. The game waits
-. for the key to be let go of, then for it to be pressed again and let go of
-. again. There is a sound for the start and for the end of the pause.
+D $D50E Pauses the game if CAPS SHIFT or SPACE is pressed on its own. The game
+. waits for the key to be let go of, then for it to be pressed again and let go
+. of again. There is a beep for the start and for the end of the pause.
 E $D50E View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE22 }
 . { #GUNFRIGHT$D206 }
 . { #NIGHTSHADE$E32C }
 . LIST#
-  $D50E,$05 Read the keys SPACE, symbol shift, M, N and B.
-  $D513,$02 Test the SPACE key.
-  $D515,$01 Return if it is not pressed.
-  $D516,$02,b$01 Keep the other keys.
+N $D50E Return unless CAPS SHIFT or SPACE is pressed on its own.
+  $D50E,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
+  $D513,$03 Return if neither CAPS SHIFT nor SPACE is pressed.
+  $D516,$02,b$01 Keep bits 1 to 4.
   $D518,$01 Return if any of them is pressed.
+N $D519 Wait for the key to be released.
 @ $D519 label=PauseGame_Release
-  $D519,$05 Read the keys.
-  $D51E,$04 Jump back to #R$D519 while it is pressed.
+  $D519,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
+  $D51E,$04 Jump to #R$D519 while CAPS SHIFT or SPACE is pressed.
   $D522,$03 Play the sound of the pause.
+N $D525 Wait for the key to be pressed.
 @ $D525 label=PauseGame_Wait
-  $D525,$05 Read the keys.
-  $D52A,$04 Jump back to #R$D525 until it is pressed.
+  $D525,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
+  $D52A,$04 Jump to #R$D525 until CAPS SHIFT or SPACE is pressed.
+N $D52E Wait for the key to be released.
 @ $D52E label=PauseGame_Finish
-  $D52E,$05 Read the keys.
-  $D533,$04 Jump back to #R$D52E while it is pressed.
+  $D52E,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
+  $D533,$04 Jump to #R$D52E while CAPS SHIFT or SPACE is pressed.
   $D537,$03 Jump to #R$B4A8.
 
 c $D53A Fill Memory
@@ -9435,13 +9857,12 @@ E $D53A View the equivalent code in;
 . LIST#
 R $D53A BC Number of bytes
 R $D53A HL Address of the first byte
-  $D53A,$02 Set the byte to zero.
+  $D53A,$02 Set #REGe to #N$00.
 @ $D53C label=FillMemory_WithValue
-  $D53C,$01 Fill a byte.
-  $D53D,$01 Move on.
-  $D53E,$01 Count down the number of bytes.
-  $D53F,$02 Test whether it is zero.
-  $D541,$02 Jump back to #R$D53C if not.
+  $D53C,$01 Write #REGe.
+  $D53D,$01 Increment #REGhl.
+  $D53E,$01 Decrement #REGbc.
+  $D53F,$04 Jump to #R$D53C if #REGbc is not zero.
   $D543,$01 Return.
 
 c $D544 Clear Screen Bitmap
@@ -9461,7 +9882,7 @@ E $D544 View the equivalent code in;
 . { #SABREWULF$BB81 }
 . { #TRANZAM$7211 }
 . LIST#
-  $D544,$03 Point #REGhl at the bitmap of the screen.
+  $D544,$03 Point #REGhl at the bitmap of the screen, #R$4000.
   $D547,$03 Set the number of bytes to #N$1800.
   $D54A,$02 Jump to #R$D53A.
 
@@ -9526,24 +9947,25 @@ D $D56F Copies the screen buffer to the screen, and clears the buffer as it
 . #SIM(start=$B03F,stop=$B06E)
 . #SIM(start=$D56F,stop=$0000,sp=$5B80)
 . #SCR$02(update-screen-after) } UDGTABLE# #POPS
-  $D56F,$03 Point #REGhl at the screen buffer.
+N $D56F Copy each line from the buffer to the display, then clear the buffer.
+  $D56F,$03 Point #REGhl at the screen buffer, #R$D8F3.
   $D572,$03 Point #REGde at the last line of the bitmap of the screen.
   $D575,$03 Set the width to #N$20 bytes and the number of lines to #N$C0.
 @ $D578 label=UpdateScreen_Line
-  $D578,$01 Stash the counters.
-  $D579,$01 Stash the address of the line on the screen.
-  $D57A,$01 Stash the address of the line in the buffer.
+  $D578,$01 Stash the counters on the stack.
+  $D579,$01 Stash the address of the line on the screen on the stack.
+  $D57A,$01 Stash the address of the line in the buffer on the stack.
 @ $D57B label=UpdateScreen_Byte
   $D57B,$01 Fetch a byte from the buffer.
   $D57C,$01 Copy it to the screen.
   $D57D,$02 Clear the byte in the buffer.
   $D57F,$01 Move on in the buffer.
   $D580,$01 Move on in the screen.
-  $D581,$02 Jump back to #R$D57B until the line is copied.
-  $D583,$01 Restore the address of the line in the buffer.
+  $D581,$02 Jump to #R$D57B until the line is copied.
+  $D583,$01 Restore the address of the line in the buffer from the stack.
   $D584,$03 Set #REGbc to the length of a line.
   $D587,$01 Move on to the next line in the buffer.
-  $D588,$01 Restore the address of the line on the screen.
+  $D588,$01 Restore the address of the line on the screen from the stack.
   $D589,$01 Go up one line on the screen.
   $D58A,$02 Test whether that has gone into the character row above.
   $D58C,$02,b$01 Keep the bits of the line within the character row.
@@ -9554,9 +9976,9 @@ D $D56F Copies the screen buffer to the screen, and clears the buffer as it
   $D596,$03 Put the line at the bottom of the character row.
   $D599,$01 Store it.
 @ $D59A label=UpdateScreen_Next
-  $D59A,$01 Restore the counters.
+  $D59A,$01 Restore the counters from the stack.
   $D59B,$01 Count down the lines.
-  $D59C,$02 Jump back to #R$D578 until all of the lines are copied.
+  $D59C,$02 Jump to #R$D578 until all of the lines are copied.
   $D59E,$01 Return.
 
 c $D59F Draw Changed Objects
@@ -9575,21 +9997,22 @@ E $D59F View the equivalent code in;
 . { #PENTAGRAM$B19E }
 . LIST#
   $D59F,$01 Get a zero.
-  $D5A0,$03 Set the number of areas wiped to zero.
-  $D5A3,$02 Stash #REGix.
-  $D5A5,$04 Fetch the flag that says the whole screen is to be drawn.
+  $D5A0,$03 Set the number of areas wiped to zero at #R$5BA8.
+  $D5A3,$02 Stash #REGix on the stack.
+  $D5A5,$04 Fetch the flag that says the whole screen is to be drawn from
+. #R$5BB7.
   $D5A9,$03 Jump to #R$D653 if it is set.
   $D5AC,$03 Point #REGhl at #R$CE8B.
-  $D5AF,$03 Keep it as the place in the list.
+  $D5AF,$03 Keep it as the place in the list at #R$5BCB.
 @ $D5B2 label=DrawChangedObjects_Wipe
-  $D5B2,$03 Fetch the place in the list.
+  $D5B2,$03 Fetch the place in the list from #R$5BCB.
   $D5B5,$01 Fetch the index of the object.
   $D5B6,$01 Move on.
-  $D5B7,$03 Store the place in the list.
+  $D5B7,$03 Store the place in the list at #R$5BCB.
   $D5BA,$05 Jump to #R$D653 if it is the end of the list.
   $D5BF,$03 Find the address of the object.
-  $D5C2,$03 Point #REGix at the object.
-  $D5C5,$06 Jump back to #R$D5B2 if the object is not flagged to be wiped.
+  $D5C2,$03 Point #REGix at the object (using the stack).
+  $D5C5,$06 Jump to #R$D5B2 if the object is not flagged to be wiped.
   $D5CB,$04 Clear the flag.
 N $D5CF The left edge of the area is the lower of the old and the new pixel X
 . coordinate. The width is worked out in bytes of the screen from there to the
@@ -9638,7 +10061,7 @@ N $D600 The bottom edge of the area is the lower of the old and the new pixel Y
   $D61C,$01 Take the bottom edge off it.
   $D61D,$01 Stash the height in lines in #REGl.
   $D61E,$01 Fetch the bottom edge.
-  $D61F,$04 Jump back to #R$D5B2 if it is off the screen.
+  $D61F,$04 Jump to #R$D5B2 if it is off the screen.
   $D623,$01 Add the height to get the top edge.
   $D624,$02 Take the number of lines on the screen off it.
   $D626,$02 Jump to #R$D62C if the area does not go off the top of the screen.
@@ -9651,14 +10074,14 @@ N $D600 The bottom edge of the area is the lower of the old and the new pixel Y
   $D632,$03 Swap the address of the area in the buffer with the size in #REGhl,
 . so that #REGhl is the address and #REGbc is the width and height.
   $D635,$03 Swap the rest.
-  $D638,$04 Fetch the number of areas wiped and add one to it.
-  $D63C,$03 Store it.
-  $D63F,$01 Stash the width and height.
-  $D640,$01 Stash the address on the screen.
-  $D641,$01 Stash the address in the buffer.
+  $D638,$04 Fetch the number of areas wiped and add one to it from #R$5BA8.
+  $D63C,$03 Store it at #R$5BA8.
+  $D63F,$01 Stash the width and height on the stack.
+  $D640,$01 Stash the address on the screen on the stack.
+  $D641,$01 Stash the address in the buffer on the stack.
   $D642,$01 Get a zero to wipe the area with.
   $D643,$03 Wipe the area.
-  $D646,$03 Jump back to #R$D5B2 for the next object.
+  $D646,$03 Jump to #R$D5B2 for the next object.
 @ $D649 label=DrawChangedObjects_Left
   $D649,$03 Take the new pixel X coordinate as the left edge.
   $D64C,$02 Jump to #R$D5DB.
@@ -9671,22 +10094,22 @@ N $D653 Draw the objects, and then copy the areas that were wiped to the screen.
   $D656,$03 Move the sun or moon.
   $D659,$03 Show the objects the player is carrying.
   $D65C,$03 Point #REGhl at #R$5BA8.
-  $D65F,$03 Fetch the number of objects drawn.
+  $D65F,$03 Fetch the number of objects drawn from #R$5BBE.
   $D662,$01 Add the number of areas wiped to it.
-  $D663,$03 Store it.
+  $D663,$03 Store it at #R$5BBE.
 @ $D666 label=DrawChangedObjects_Copy
-  $D666,$03 Point #REGhl at the number of areas wiped.
+  $D666,$03 Point #REGhl at the number of areas wiped, #R$5BA8.
   $D669,$02 Fetch it and test whether it is zero.
   $D66B,$02 Jump to #R$D679 if it is.
   $D66D,$01 Count it down.
-  $D66E,$01 Restore the address in the buffer.
-  $D66F,$01 Restore the address on the screen.
-  $D670,$01 Restore the width and height.
+  $D66E,$01 Restore the address in the buffer from the stack.
+  $D66F,$01 Restore the address on the screen from the stack.
+  $D670,$01 Restore the width and height from the stack.
   $D671,$03 Swap the width and the height.
   $D674,$03 Copy the area to the screen.
-  $D677,$02 Jump back to #R$D666.
+  $D677,$02 Jump to #R$D666.
 @ $D679 label=DrawChangedObjects_Copy_RestoreIX
-  $D679,$02 Restore #REGix.
+  $D679,$02 Restore #REGix from the stack.
   $D67B,$01 Return.
 
 c $D67C Copy Block To Screen
@@ -9701,15 +10124,16 @@ R $D67C B Number of lines
 R $D67C C Number of bytes in a line
 R $D67C DE Address of the first line on the screen
 R $D67C HL Address of the first line in the buffer
-  $D67C,$01 Stash the number of lines and the number of bytes.
-  $D67D,$01 Stash the address on the screen.
-  $D67E,$01 Stash the address in the buffer.
+N $D67C Copy one line, then step up a pixel line on the display.
+  $D67C,$01 Stash the number of lines and the number of bytes on the stack.
+  $D67D,$01 Stash the address on the screen on the stack.
+  $D67E,$01 Stash the address in the buffer on the stack.
   $D67F,$02 Clear #REGb.
   $D681,$02 Copy the line.
-  $D683,$01 Restore the address in the buffer.
+  $D683,$01 Restore the address in the buffer from the stack.
   $D684,$03 Set #REGde to the length of a line.
   $D687,$01 Move on to the next line in the buffer.
-  $D688,$01 Restore the address on the screen.
+  $D688,$01 Restore the address on the screen from the stack.
   $D689,$01 Go up one line on the screen.
   $D68A,$02 Test whether that has gone into the character row above.
   $D68C,$02,b$01 Keep the bits of the line within the character row.
@@ -9720,8 +10144,8 @@ R $D67C HL Address of the first line in the buffer
   $D696,$03 Put the line at the bottom of the character row.
   $D699,$01 Store it.
 @ $D69A label=CopyBlockToScreen_Next
-  $D69A,$01 Restore the number of lines and the number of bytes.
-  $D69B,$02 Jump back to #R$D67C until all of the lines are copied.
+  $D69A,$01 Restore the number of lines and the number of bytes from the stack.
+  $D69B,$02 Jump to #R$D67C until all of the lines are copied.
   $D69D,$01 Return.
 
 c $D69E Build Lookup Tables
@@ -9737,6 +10161,7 @@ E $D69E View the equivalent code in;
 . { #ALIENEIGHT$CFA7 }
 . { #PENTAGRAM$B29A }
 . LIST#
+N $D69E Build the shifted-byte tables, then the reversed-byte table.
   $D69E,$02 Start with the byte zero.
 @ $D6A0 label=BuildLookupTables_Shift
   $D6A0,$02 Clear the high byte of the shifted value.
@@ -9754,47 +10179,51 @@ E $D69E View the equivalent code in;
   $D6B0,$01 Invert it.
   $D6B1,$01 Store it in the table.
   $D6B2,$01 Go to the page before.
-  $D6B3,$02 Jump back to #R$D6A7 until all of the shifts are done.
+  $D6B3,$02 Jump to #R$D6A7 until all of the shifts are done.
   $D6B5,$01 Go on to the next byte.
-  $D6B6,$02 Jump back to #R$D6A0 until all of the bytes are done.
+  $D6B6,$02 Jump to #R$D6A0 until all of the bytes are done.
   $D6B8,$03 Point #REGhl at #R$F100.
+N $D6BB Reverse the bits of every byte into #R$F100.
 @ $D6BB label=BuildLookupTables_Reverse
   $D6BB,$01 Take the byte that is to be reversed.
   $D6BC,$02 Set the number of bits to #N$08.
 @ $D6BE label=BuildLookupTables_Reverse_Bit
   $D6BE,$02 Shift a bit out of the byte.
   $D6C0,$02 Shift it into the reversed byte.
-  $D6C2,$02 Jump back to #R$D6BE until all of the bits are done.
+  $D6C2,$02 Jump to #R$D6BE until all of the bits are done.
   $D6C4,$01 Store the reversed byte in the table.
   $D6C5,$01 Go on to the next byte.
-  $D6C6,$02 Jump back to #R$D6BB until all of the bytes are done.
+  $D6C6,$02 Jump to #R$D6BB until all of the bytes are done.
   $D6C8,$01 Return.
 
 c $D6C9 Calculate Pixel Coordinates
 @ $D6C9 label=CalculatePixelCoordinates
-D $D6C9 Works out the pixel coordinates of an object on the screen from its X, Y
-. and Z coordinates. The pixel X coordinate is X + Y - #N$80 and the pixel Y
-. coordinate (from the bottom of the screen) is half of Y - X + #N$80, plus Z,
-. less #N$68, each with the adjustments of the object added.
+D $D6C9 Works out the pixel position of an object on the screen from its x, y
+. and z positions. The pixel x position is x + y - #N$80 and the pixel y
+. position (from the bottom of the screen) is half of y - x + #N($80), plus z,
+. less #N($68), each with the adjustments of the object added.
 E $D6C9 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CFD2 }
 . { #PENTAGRAM$B2C5 }
 . LIST#
-R $D6C9 IX Address of the object
-R $D6C9 O:F The carry flag is set if the sprite is on the screen, and reset if
-. it is off the top
-  $D6C9,$06 Add the Y coordinate to the X coordinate.
-  $D6CF,$02 Take #N$80 off it.
-  $D6D1,$03 Add the adjustment of the pixel X coordinate.
-  $D6D4,$03 Set the pixel X coordinate.
-  $D6D7,$06 Take the X coordinate off the Y coordinate.
+R $D6C9 IX The address of the object
+R $D6C9 O:F The carry flag is set if the sprite is on the screen
+N $D6C9 Work out the pixel x position.
+  $D6C9,$03 Fetch the x position of the object.
+  $D6CC,$03 Add the y position.
+  $D6CF,$02 Subtract #N$80.
+  $D6D1,$03 Add the pixel x adjustment.
+  $D6D4,$03 Set the pixel x position.
+N $D6D7 Work out the pixel y position.
+  $D6D7,$03 Fetch the y position of the object.
+  $D6DA,$03 Subtract the x position.
   $D6DD,$02 Add #N$80.
   $D6DF,$02 Halve it.
-  $D6E1,$03 Add the Z coordinate.
-  $D6E4,$02 Take #N$68 off it.
-  $D6E6,$03 Add the adjustment of the pixel Y coordinate.
-  $D6E9,$03 Set the pixel Y coordinate.
+  $D6E1,$03 Add the z position.
+  $D6E4,$02 Subtract #N$68.
+  $D6E6,$03 Add the pixel y adjustment.
+  $D6E9,$03 Set the pixel y position.
   $D6EC,$02 Compare it with the number of lines of the screen.
   $D6EE,$01 Return.
 
@@ -9809,13 +10238,16 @@ E $D6EF View the equivalent code in;
 . { #ALIENEIGHT$CFFE }
 . { #PENTAGRAM$B2EE }
 . LIST#
-R $D6EF IX Address of the object
-R $D6EF O:DE Address of the sprite
-  $D6EF,$05 Make the graphic number into a 16-bit number.
-  $D6F4,$01 Double it.
+R $D6EF IX The address of the object
+R $D6EF O:DE The address of the sprite
+N $D6EF Find the address of the sprite.
+  $D6EF,$03 Fetch the sprite number.
+  $D6F2,$02 Set #REGh to #N$00.
+  $D6F4,$01 Double #REGhl.
   $D6F5,$03 Point #REGbc at #R$7112.
-  $D6F8,$01 Add the two.
+  $D6F8,$01 Add #REGbc to #REGhl.
   $D6F9,$03 Fetch the address of the sprite.
+N $D6FC Flip it if there is a sprite.
   $D6FC,$02 Fetch the width of the sprite and test it.
   $D6FE,$03 Jump to #R$D865 if there is a sprite, to flip it if needed.
   $D701,$02 Drop the return address.
@@ -9844,68 +10276,77 @@ R $D704 IX Address of the object
 
 c $D718 Print Sprite
 @ $D718 label=PrintSprite
-D $D718 Draws the sprite of an object into the screen buffer, at the pixel
-. coordinates of the object. The sprite is made of pairs of bytes, a mask byte
-. and then a data byte, which are put on the buffer with the mask clearing the
-. background. A sprite that does not start on a byte boundary has each pair
-. shifted across two bytes, with the tables built by #R$D69E. The routine copies
-. the sprite with unrolled code, which it enters part of the way along, so that
-. it does as many columns as the sprite has. To do this it changes the code, and
-. it uses the stack pointer to read the data of the sprite, so the interrupts
-. have to be off.
+D $D718 Draws the sprite of an object into #R$D8F3, at the pixel position of the
+. object. A sprite has a width byte (the vertical flip in bit 7, the horizontal
+. flip in bit 6 and the width in columns in the low bits), a height byte, and
+. then the data for each line from the top. Each column of a line is a pair of
+. bytes: a mask byte, then a data byte. The mask clears the bits of the
+. background and the data sets bits. A sprite that does not start on a byte
+. boundary has each pair shifted across two bytes of the buffer, with the tables
+. built by #R$D69E. The routine copies the sprite with unrolled code, which it
+. enters part of the way along, so that it does as many columns as the sprite
+. has. To do this it changes the code, and it uses the stack pointer to read the
+. data of the sprite.
 E $D718 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$D027 }
 . LIST#
-R $D718 IX Address of the object
+R $D718 IX The address of the object
+N $D718 Find the sprite and choose the draw path.
   $D718,$03 Find the sprite.
-  $D71B,$03 Fetch the pixel X coordinate.
+  $D71B,$03 Fetch the pixel x position.
   $D71E,$02,b$01 Keep the bits of the position in the byte.
   $D720,$02 Jump to #R$D76F if the sprite is on a byte boundary.
-  $D722,$01 Double the number of bits.
-  $D723,$02,b$01 Keep it.
+N $D722 Choose the page of the shift table.
+  $D722,$01 Double it.
+  $D723,$02,b$01 Keep bits 1 to 3.
   $D725,$02,b$01 Make it the page of the table of shifted bytes.
-  $D727,$01 Stash the page in #REGh.
-  $D728,$02 Fetch the width of the sprite, and move on to the height.
+  $D727,$01 Copy it to #REGh.
+N $D728 Fetch the width of the sprite, and move on to the height.
+  $D728,$01 Fetch the width byte of the sprite.
+  $D729,$01 Increment #REGde.
   $D72A,$02,b$01 Keep the width.
   $D72C,$01 Add one for the byte that the shifted sprite spills into.
-  $D72D,$01 Stash it in #REGb.
+  $D72D,$01 Copy it to #REGb.
   $D72E,$03 Set the width in bytes of the object.
   $D731,$01 Take one off it to work out the number of pairs, less one.
-  $D732,$02,b$01 Keep it in the low three bits.
+  $D732,$02,b$01 Keep bits 0 to 2.
   $D734,$04 Multiply it by sixteen, which is the size of the code for a pair.
   $D738,$02 Negate it.
-  $D73A,$02 Add #N$50 to get the offset from the end of the unrolled code.
+  $D73A,$02 Add #N$50.
+N $D73C Change the jump and the step.
 @ $D73C label=PrintSprite_Patch
   $D73C,$03 Change the offset of the jump into the unrolled code.
   $D73F,$01 Fetch the width in bytes.
   $D740,$01 Invert it.
-  $D741,$02 Add #N$22 to get the step from the end of one line to the start of
-. the next.
-  $D743,$03 Change the step in the code.
-  $D746,$02 Fetch the height of the sprite, and move on to the data.
+  $D741,$02 Add #N$22.
+  $D743,$03 Write it to #R$D7FF(#N$D801).
+N $D746 Clip the sprite to the top of the screen.
+  $D746,$01 Fetch the height of the sprite.
+  $D747,$01 Increment #REGde.
   $D748,$03 Set the height in lines of the object.
-  $D74B,$03 Add the pixel Y coordinate.
+  $D74B,$03 Add the pixel y position.
   $D74E,$02 Take the number of lines on the screen off it.
   $D750,$02 Jump to #R$D75A if the sprite does not go off the top of the screen.
   $D752,$02 Make the number of lines that are off the screen positive.
   $D754,$03 Take it off the height.
   $D757,$03 Set the height in lines of the object.
+N $D75A Draw the rows that are on the screen.
 @ $D75A label=PrintSprite_Draw
-  $D75A,$03 Fetch the pixel X coordinate.
-  $D75D,$03 Fetch the pixel Y coordinate.
+  $D75A,$03 Fetch the pixel x position.
+  $D75D,$03 Fetch the pixel y position.
   $D760,$03 Find the address in the screen buffer.
-  $D763,$04 Keep the stack pointer.
+  $D763,$04 Set #R$5BA9.
   $D767,$03 Point the stack pointer at the data of the sprite.
   $D76A,$03 Fetch the number of lines.
   $D76D,$02 Jump to #R$D7AA.
+N $D76F The sprite is aligned, so the bytes do not need to be shifted.
 @ $D76F label=PrintSprite_Aligned
-N $D76F The sprite is on a byte boundary, so the bytes do not need to be
-. shifted.
-  $D76F,$02 Fetch the width of the sprite, and move on to the height.
+  $D76F,$01 Fetch the width byte of the sprite.
+  $D770,$01 Increment #REGde.
   $D771,$02,b$01 Keep the width.
   $D773,$03 Set the width in bytes of the object.
-  $D776,$01 Stash it in #REGb.
+  $D776,$01 Copy it to #REGb.
   $D777,$03 Multiply it by eight, which is the size of the code for a column.
   $D77A,$02 Negate it.
   $D77C,$02 Take #N$06 off it to get the offset from the end of the unrolled
@@ -10029,8 +10470,8 @@ N $D7EE The last pair.
   $D806,$01 Store it.
   $D807,$01 Restore the number of lines left.
   $D808,$01 Count down the lines.
-  $D809,$03 Jump back to #R$D7AA until all of the lines are drawn.
-  $D80C,$04 Restore the stack pointer.
+  $D809,$03 Jump to #R$D7AA until all of the lines are drawn.
+  $D80C,$04 Restore the stack pointer from #R$5BA9.
   $D810,$01 Return.
 
 c $D811 Calculate Buffer Address
@@ -10045,15 +10486,15 @@ E $D811 View the equivalent code in;
 R $D811 B Pixel Y coordinate
 R $D811 C Pixel X coordinate
 R $D811 O:BC Address in the buffer
-  $D811,$01 Stash #REGhl.
+N $D811 Divide the pixel position by eight and add it to #R$D8F3.
+  $D811,$01 Stash #REGhl on the stack.
   $D812,$04 Divide #REGbc by two.
   $D816,$04 Divide #REGbc by four.
   $D81A,$04 Divide #REGbc by eight, to make the number of the byte.
   $D81E,$03 Point #REGhl at #R$D8F3.
   $D821,$01 Add the two.
-  $D822,$02 Put the address in #REGbc.
-  $D824,$01 Restore #REGhl.
-  $D825,$01 Return.
+  $D822,$02 Copy #REGhl to #REGbc.
+  $D824,$02 Restore #REGhl from the stack and return.
 
 c $D826 Calculate Screen Address
 @ $D826 label=CalculateScreenAddress
@@ -10066,6 +10507,7 @@ E $D826 View the equivalent code in;
 R $D826 B Pixel Y coordinate (from the bottom of the screen)
 R $D826 C Pixel X coordinate
 R $D826 O:DE Address on the screen
+N $D826 Build the display-file address from the pixel X and Y.
   $D826,$04 Fetch the pixel X coordinate and move it right by three bits.
   $D82A,$02,b$01 Keep the byte of the line.
   $D82C,$01 Stash it in #REGe.
@@ -10082,7 +10524,7 @@ R $D826 O:DE Address on the screen
   $D841,$01 Stash it in #REGd.
   $D842,$01 Fetch the line within the character row.
   $D843,$01 Add the third of the screen.
-  $D844,$02 Add #N$38, to make the high byte of the address.
+  $D844,$02 Add #N($38), to make the high byte of the address.
   $D846,$01 Store the high byte of the address in #REGd.
   $D847,$01 Return.
 
@@ -10098,7 +10540,8 @@ E $D848 View the equivalent code in;
 R $D848 H Pixel Y coordinate (from the bottom of the screen)
 R $D848 L Pixel X coordinate
 R $D848 O:DE Address of the attribute
-  $D848,$01 Stash #REGhl.
+N $D848 Convert the pixel position into a character-square address.
+  $D848,$01 Stash #REGhl on the stack.
   $D849,$03 Invert the pixel Y coordinate, to get the line from the top.
   $D84C,$08 Move the line into the low bits of the high byte.
   $D854,$02 Move the lowest bit of the line into the low byte.
@@ -10107,7 +10550,7 @@ R $D848 O:DE Address of the attribute
   $D85E,$03 Point #REGde at the attributes of the screen, less one page.
   $D861,$01 Add the two.
   $D862,$01 Put the address in #REGde.
-  $D863,$01 Restore #REGhl.
+  $D863,$01 Restore #REGhl from the stack.
   $D864,$01 Return.
 
 c $D865 Flip Sprite
@@ -10126,7 +10569,8 @@ E $D865 View the equivalent code in;
 R $D865 DE Address of the sprite
 R $D865 IX Address of the object
 R $D865 O:DE Address of the sprite
-  $D865,$01 Stash the address of the sprite.
+N $D865 Flip the sprite vertically if the object's flags say so.
+  $D865,$01 Stash the address of the sprite on the stack.
   $D866,$01 Fetch the width of the sprite.
   $D867,$03 Compare the vertical flip with the one of the object.
   $D86A,$02,b$01 Keep it.
@@ -10138,20 +10582,25 @@ R $D865 O:DE Address of the sprite
   $D873,$02,b$01 Keep the doubled width and drop the flags.
   $D875,$01 Stash it in #REGb.
   $D876,$01 Point #REGde at the height of the sprite.
-  $D877,$02 Fetch the height and stash it in #REGc.
+N $D877 Fetch the height and stash it in #REGc.
+  $D877,$01 Fetch the height.
+  $D878,$01 Copy it to #REGc.
   $D879,$01 Point #REGde at the data.
-  $D87A,$01 Stash the address of the data.
+  $D87A,$01 Stash the address of the data on the stack.
   $D87B,$03 Set #REGde to the number of bytes in a line.
   $D87E,$03 Multiply it by the height.
-  $D881,$01 Restore the address of the data.
+  $D881,$01 Restore the address of the data from the stack.
   $D882,$01 Add the number of bytes of data.
   $D883,$01 Point #REGde at the end of the data, and #REGhl at the start.
-  $D884,$04 Add the number of bytes in a line to #REGhl.
+  $D884,$01 Fetch #REGb.
+  $D885,$03 Call #R$D4F2.
   $D888,$01 Point #REGde at the last byte of the last line.
   $D889,$01 Point #REGhl at the last byte of the first line.
   $D88A,$02 Halve the height to get the number of pairs of lines.
 @ $D88C label=FlipSprite_Lines
-  $D88C,$01 Stash the number of bytes in a line and the number of pairs.
+  $D88C,$01 Stash the number of bytes in a
+. line and the number of pairs on the
+. stack.
 @ $D88D label=FlipSprite_Bytes
   $D88D,$01 Fetch a byte of the last line.
   $D88E,$01 Fetch a byte of the first line.
@@ -10160,13 +10609,17 @@ R $D865 O:DE Address of the sprite
   $D891,$01 Store it in the last line.
   $D892,$01 Go back a byte in the first line.
   $D893,$01 Go back a byte in the last line.
-  $D894,$02 Jump back to #R$D88D until the lines are swapped.
-  $D896,$01 Restore the number of bytes in a line and the number of pairs.
-  $D897,$04 Add the number of bytes in a line to the address in #REGhl.
+  $D894,$02 Jump to #R$D88D until the lines are swapped.
+  $D896,$01 Restore the number of bytes in a
+. line and the number of pairs from the
+. stack.
+  $D897,$01 Fetch #REGb.
+  $D898,$03 Call #R$D4F2.
   $D89B,$04 Add it again, to go to the end of the next line.
   $D89F,$01 Count down the pairs of lines.
-  $D8A0,$02 Jump back to #R$D88C until all of the pairs are swapped.
+  $D8A0,$02 Jump to #R$D88C until all of the pairs are swapped.
 @ $D8A2 label=FlipSprite_Horizontal
+N $D8A2 Flip the sprite horizontally if the object's flags say so.
   $D8A2,$02 Fetch the address of the sprite and keep it on the stack.
   $D8A4,$01 Fetch the width of the sprite.
   $D8A5,$03 Compare the horizontal flip with the one of the object.
@@ -10176,18 +10629,20 @@ R $D865 O:DE Address of the sprite
   $D8AD,$02,b$01 Toggle the horizontal flip.
   $D8AF,$01 Store the width.
   $D8B0,$02,b$01 Keep the width.
-  $D8B2,$02 Stash it in #REGb and #REGc.
+  $D8B2,$01 Copy it to #REGb.
+  $D8B3,$01 Copy it to #REGc.
   $D8B4,$01 Point #REGde at the height of the sprite.
   $D8B5,$01 Fetch the height.
   $D8B6,$01 Stash it in the alternate #REGa.
   $D8B7,$01 Point #REGde at the data.
   $D8B8,$01 Point #REGhl at the data.
-  $D8B9,$01 Stash the address of the data.
+  $D8B9,$01 Stash the address of the data on the stack.
   $D8BA,$01 Switch to the alternate registers.
-  $D8BB,$01 Restore the address of the data.
+  $D8BB,$01 Restore the address of the data from the stack.
   $D8BC,$02 Point #REGbc at the table of reversed bytes.
   $D8BE,$01 Switch back to the main registers.
 @ $D8BF label=FlipSprite_Line
+N $D8BF Reverse the bits of each pair and store the line back in reverse order.
   $D8BF,$01 Switch to the alternate registers.
   $D8C0,$01 Fetch the mask byte of a pair.
   $D8C1,$01 Find the reversed byte.
@@ -10199,22 +10654,27 @@ R $D865 O:DE Address of the sprite
   $D8C7,$01 Move on.
   $D8C8,$01 Stash the reversed pair on the stack.
   $D8C9,$01 Switch back to the main registers.
-  $D8CA,$02 Jump back to #R$D8BF until all of the pairs of the line are on the
+  $D8CA,$02 Jump to #R$D8BF until all of the pairs of the line are on the
 . stack.
   $D8CC,$01 Set the number of pairs.
 @ $D8CD label=FlipSprite_Store
-  $D8CD,$01 Restore a reversed pair, which comes off in the opposite order.
-  $D8CE,$02 Store the mask byte, and move on.
-  $D8D0,$02 Store the data byte, and move on.
-  $D8D2,$02 Jump back to #R$D8CD until the line is stored.
+  $D8CD,$01 Restore a reversed pair from the
+. stack, which comes off in the opposite
+. order.
+N $D8CE Store the mask byte, and move on.
+  $D8CE,$01 Store the mask byte.
+  $D8CF,$01 Move on.
+  $D8D0,$01 Store the data byte.
+  $D8D1,$01 Move on.
+  $D8D2,$02 Jump to #R$D8CD until the line is stored.
   $D8D4,$01 Fetch the number of lines left.
   $D8D5,$01 Count down the lines.
   $D8D6,$02 Jump to #R$D8DC if all of the lines are done.
   $D8D8,$01 Stash the number of lines left.
   $D8D9,$01 Set the number of pairs.
-  $D8DA,$02 Jump back to #R$D8BF.
+  $D8DA,$02 Jump to #R$D8BF.
 @ $D8DC label=FlipSprite_Done
-  $D8DC,$01 Restore the address of the sprite.
+  $D8DC,$01 Restore the address of the sprite from the stack.
   $D8DD,$01 Return.
 
 t $D8DE Messaging: Copyright
@@ -10261,8 +10721,9 @@ D $F200 The tables of shifted bytes that are built by #R$D69E and used to draw a
 . sprite that does not start on a byte boundary. There are two pages for each
 . shift of one to seven bits to the right, with the first page of the pair at
 . #N$F0 plus twice the shift, so the table for a shift of one bit starts at
-. #N$F200 and the table for a shift of seven bits starts at #N$FE00. The first
-. page of a pair has the inverse of the byte after it has been shifted to the
+. #R$F200 and the table for a shift of seven bits starts at
+. #R$F200(#N$FE00). The first page of a pair has the inverse of the byte
+. after it has been shifted to the
 . right, and the second has the inverse of the bits that were pushed out of the
 . byte, which go into the next byte of the line.
 S $F200,$0E00,$0200 Two pages for each of the seven shifts, from one bit to

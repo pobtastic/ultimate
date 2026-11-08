@@ -1187,8 +1187,13 @@ c $70F9 Add Points To Score
 E $70F9 View the equivalent code in;
 . #LIST
 . { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
 . { #COOKIE$7415 }
+. { #CYBERUN$925E }
 . { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #PSSST$737A }
 . { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }

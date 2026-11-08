@@ -4280,9 +4280,14 @@ D $737A Adds a number of points to the score of the active player. The points
 E $737A View the equivalent code in;
 . #LIST
 . { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
 . { #COOKIE$7415 }
+. { #CYBERUN$925E }
 . { #JETPAC$70F9 }
 . { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }
 . { #UNDERWURLDE$A045 }

@@ -4281,14 +4281,14 @@ c$9AA5 LD A,($9659)  ; Fetch the number of sectors that have been destroyed.
  $9AF7 JP $9A5F      ; Play the victory tune and start the next round using
                      ; #R$9A5F.
 
-; Round Result Text
+; Messaging: Round Result Text
 ;
 ; The attributes, coordinates and text that are used by the screens shown
 ; at the end of a round. The attributes and coordinates are passed to #R$B8CE,
 ; which takes the coordinates as pairs of an X position and a Y position in
 ; pixels. Every string has bit 7 of its last character set.
 @label=RoundResult_Attributes
-b$9AFA DEFB $44                          ; {Attributes: #COLOUR(#PEEK(#PC)) and
+t$9AFA DEFB $44                          ; {Attributes: #COLOUR(#PEEK(#PC)) and
  $9AFB DEFB $43                          ; #COLOUR(#PEEK(#PC+1)).}
 @label=RoundResult_Coordinates
  $9AFC DEFB $18,$28                      ; {Coordinates of the two lines of
@@ -4695,7 +4695,7 @@ w$9D34 DEFW $0000
  $9D42 DEFW $9D8F
  $9D44 DEFW $9D97
 
-; Message Text
+; Messaging: Message Text
 @label=Message_Sector
 t$9D46 DEFM "SECTOR "," "+$80          ; Message number #N$01. The sector number is written into the
                                        ; last character, which is a space until a message with a sector number is
@@ -5235,11 +5235,11 @@ c$A091 LD A,$74      ; Set the level of the battery to the maximum of #N$74...
  $A0C6 JP $B52E      ; Print the number in double height characters using
                      ; #R$B52E.
 
-; Lives Text
+; Messaging: Lives Text
 ;
 ; The attribute and the digit of the number of lives that are left.
 @label=Text_Lives
-b$A0C9 DEFM $46,$00  ; Attribute: #COLOUR(#PEEK(#PC)) + the number of lives.
+t$A0C9 DEFM $46,$00  ; Attribute: #COLOUR(#PEEK(#PC)) + the number of lives.
 
 ; Draw Icon
 ;
@@ -8636,9 +8636,16 @@ c$B063 PUSH BC       ; Save #REGbc.
 ; .
 ; Reads the controls, using the method that has been chosen in the menu:
 ; keyboard, Kempston joystick, cursor keys or Sinclair interface 2. The controls
-; are kept as bits that stay set until the robot has used them: bit 0 is turn
-; right, bit 1 is turn left, bit 2 is move forward, bit 3 is fire the second
-; weapon, bit 4 is fire the first weapon and bit 6 is use the action key.
+; are kept as bits that stay set until the robot has used them.
+; #TABLE(default,centre,centre)
+; { =h Bit | =h Meaning }
+; { #N$00 | Turn right }
+; { #N$01 | Turn left }
+; { #N$02 | Move forward }
+; { #N$03 | Fire the second weapon }
+; { #N$04 | Fire the first weapon }
+; { #N$06 | Use the action key }
+; TABLE#
 ;
 ; O:A The controls
 ; O:C The controls
@@ -8658,12 +8665,20 @@ c$B075 PUSH BC       ; Save #REGbc.
 ; Reads the Sinclair interface 2 joysticks. The keys #N$06 to #N$00 are
 ; one joystick and the keys #N$01 to #N$05 are the other; both are used at once.
 @label=ReadInterface2
-c$B085 LD A,$EF      ; Read the half row for the keys #N$00 to #N$06...
- $B087 CALL $C0AB    ; Read the keyboard.
- $B08A LD C,A        ; ...and keep it in #REGc.
- $B08B LD A,$F7      ; Read the half row for the keys #N$01 to #N$05...
- $B08D CALL $C0AB    ; Read the keyboard.
- $B090 OR C          ; ...and combine the keys of both.
+c$B085 LD A,$EF      ; {Read from the keyboard;
+ $B087 CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$EF | 0 | 9 | 8 | 7 | 6 }
+                     ; TABLE#}
+ $B08A LD C,A        ; Keep the keys in #REGc.
+ $B08B LD A,$F7      ; {Read from the keyboard;
+ $B08D CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+                     ; TABLE#}
+ $B090 OR C          ; Combine the keys of both.
  $B091 LD C,$00      ; Clear the controls.
  $B093 BIT 0,A       ; {Jump if the first key is not pressed (#N$00 or #N$01).
  $B095 JR Z,$B099    ; }
@@ -8730,14 +8745,22 @@ c$B0B4 IN A,($1F)    ; Read the joystick.
 ; keys are not being pressed.
 @label=ReadCursorKeys
 c$B0D9 LD C,$00      ; Clear the controls.
- $B0DB LD A,$F7      ; Read the half row for the keys #N$01 to #N$05...
- $B0DD CALL $C0AB    ; Read the keyboard.
+ $B0DB LD A,$F7      ; {Read from the keyboard;
+ $B0DD CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+                     ; TABLE#}
  $B0E0 BIT 4,A       ; {Jump if the key #N$05 (left) is not pressed.
  $B0E2 JR Z,$B0E6    ; }
  $B0E4 SET 1,C       ; Set the bit for turning left.
 @label=ReadCursorKeys_Digits
-*$B0E6 LD A,$EF      ; Read the half row for the keys #N$06 to #N$00...
- $B0E8 CALL $C0AB    ; Read the keyboard.
+*$B0E6 LD A,$EF      ; {Read from the keyboard;
+ $B0E8 CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$EF | 0 | 9 | 8 | 7 | 6 }
+                     ; TABLE#}
  $B0EB BIT 4,A       ; {Jump if the key #N$06 (down) is not pressed.
  $B0ED JR Z,$B0F1    ; }
  $B0EF SET 6,C       ; Set the bit for the action key.
@@ -8768,9 +8791,12 @@ c$B103 LD A,($9625)  ; Fetch the controls that have not been used yet...
  $B106 AND $BF       ; ...clear the bit for the action key...
  $B108 OR C          ; ...and add the controls that were read.
  $B109 LD C,A        ; Keep the controls.
- $B10A LD A,$7E      ; Read the half rows for the first and last rows of
-                     ; keys...
- $B10C CALL $C0AB    ; Read the keyboard.
+ $B10A LD A,$7E      ; {Read from the keyboard;
+ $B10C CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+                     ; TABLE#}
  $B10F AND $1E       ; {Jump if none of the keys Z, X, C, V, Symbol Shift, M, N and B is
  $B111 JR Z,$B115    ; pressed.}
  $B113 SET 4,C       ; Set the bit for firing the first weapon.
@@ -8793,8 +8819,12 @@ c$B103 LD A,($9625)  ; Fetch the controls that have not been used yet...
 ; O:A The controls
 ; O:C The controls
 @label=ReadKeyboard
-c$B11C LD A,$FE      ; Read the half row for Caps Shift to V...
- $B11E CALL $C0AB    ; Read the keyboard.
+c$B11C LD A,$FE      ; {Read from the keyboard;
+ $B11E CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$FE | SHIFT | Z | X | C | V }
+                     ; TABLE#}
  $B121 PUSH BC       ; Save #REGbc.
  $B122 RRCA          ; Move the keys Z, X, C and V into the lowest bits...
  $B123 AND $0E       ; ...and keep X, C and V.
@@ -8807,8 +8837,12 @@ c$B11C LD A,$FE      ; Read the half row for Caps Shift to V...
                      ; left...
  $B12D AND $03       ; {...and keep just the bits for turning.
  $B12F LD C,A        ; }
- $B130 LD A,$7F      ; Read the half row for Space to B...
- $B132 CALL $C0AB    ; Read the keyboard.
+ $B130 LD A,$7F      ; {Read from the keyboard;
+ $B132 CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$7F | SPACE | SYMBOL SHIFT | M | N | B }
+                     ; TABLE#}
  $B135 RRA           ; Move the keys Symbol Shift, M, N and B into the lowest
                      ; bits...
  $B136 AND $0E       ; ...and keep M, N and B.
@@ -8830,14 +8864,22 @@ c$B11C LD A,$FE      ; Read the half row for Caps Shift to V...
  $B14B OR C          ; the others.}
  $B14C POP BC        ; Restore #REGbc.
  $B14D LD C,A        ; Keep the bits for turning.
- $B14E LD A,$BD      ; Read the half rows for A to G and Enter to H...
- $B150 CALL $C0AB    ; Read the keyboard.
+ $B14E LD A,$BD      ; {Read from the keyboard;
+ $B150 CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$BD | A / ENTER | S / L | D / K | F / J | G / H }
+                     ; TABLE#}
  $B153 AND $1F       ; {Jump if none of them is pressed.
  $B155 JR Z,$B159    ; }
  $B157 SET 2,C       ; Set the bit for moving forward.
 @label=ReadKeyboard_ReadPToY
-*$B159 LD A,$DF      ; Read the half row for P to Y...
- $B15B CALL $C0AB    ; Read the keyboard.
+*$B159 LD A,$DF      ; {Read from the keyboard;
+ $B15B CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$DF | P | O | I | U | Y }
+                     ; TABLE#}
  $B15E LD B,A        ; Keep the keys P to Y.
  $B15F AND $0A       ; {Jump if neither O nor U is pressed.
  $B161 JR Z,$B165    ; }
@@ -8848,8 +8890,12 @@ c$B11C LD A,$FE      ; Read the half row for Caps Shift to V...
  $B168 JR Z,$B16C    ; }
  $B16A SET 4,C       ; Set the bit for firing the first weapon.
 @label=ReadKeyboard_ReadQToT
-*$B16C LD A,$FB      ; Read the half row for Q to T...
- $B16E CALL $C0AB    ; Read the keyboard.
+*$B16C LD A,$FB      ; {Read from the keyboard;
+ $B16E CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$FB | Q | W | E | R | T }
+                     ; TABLE#}
  $B171 LD B,A        ; Keep the keys Q to T.
  $B172 AND $15       ; {Jump if none of Q, E and T is pressed.
  $B174 JR Z,$B178    ; }
@@ -8864,15 +8910,22 @@ c$B11C LD A,$FE      ; Read the half row for Caps Shift to V...
  $B182 OR C          ; ...and add the new ones.
  $B183 LD C,A        ; Keep the controls.
  $B184 RES 6,C       ; Clear the bit for the action key.
- $B186 LD A,$7E      ; Read the half rows for Caps Shift to V and Space to B...
- $B188 CALL $C0AB    ; Read the keyboard.
+ $B186 LD A,$7E      ; {Read from the keyboard;
+ $B188 CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+                     ; TABLE#}
  $B18B AND $02       ; {Jump if neither Z nor Symbol Shift is pressed.
  $B18D JR Z,$B191    ; }
  $B18F SET 6,C       ; Set the bit for the action key.
 @label=ReadKeyboard_ReadNumbers
-*$B191 LD A,$E7      ; Read the half rows for the keys #N$01 to #N$05 and #N$06
-                     ; to #N$00...
- $B193 CALL $C0AB    ; Read the keyboard.
+*$B191 LD A,$E7      ; {Read from the keyboard;
+ $B193 CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$E7 | 1 / 0 | 2 / 9 | 3 / 8 | 4 / 7 | 5 / 6 }
+                     ; TABLE#}
  $B196 AND $1F       ; {Jump if none of the number keys is pressed.
  $B198 JR Z,$B19C    ; }
  $B19A SET 6,C       ; Set the bit for the action key.
@@ -8887,38 +8940,18 @@ c$B11C LD A,$FE      ; Read the half row for Caps Shift to V...
 ;
 ; Used by the routines at #R$98D0, #R$9A4B and #R$B1AD.
 ; .
-; Writes #N$00 to every byte of a block of memory. The entry point at
-; #R$B1A5 fills it with the byte in #REGe.
+; Fills an area of memory with zero. The entry point at #R$B1A5 fills it
+; with the byte in #REGe.
 ;
-; HL Start address
 ; BC Number of bytes
+; HL Address of the first byte
 @label=FillMemory
-c$B1A3 LD E,$00      ; Set the fill value to #N$00.
-; Continue on to #R$B1A5.
-; .
-; View the equivalent code in;
-; #LIST
-; { #ALIENEIGHT$CE56 }
-; { #GUNFRIGHT$D6E1 }
-; { #KNIGHTLORE$D53A }
-; { #NIGHTSHADE$E5BA }
-; { #PENTAGRAM$CB77 }
-; { #UNDERWURLDE$9569 }
-; LIST#
-
-; Fill Memory With Value
-;
-; Used by the routine at #R$B1B8.
-; .
-; Writes a value to every byte of a block of memory.
-;
-; E Value to write
-; HL Start address
-; BC Number of bytes
+c$B1A3 LD E,$00      ; Set #REGe to #N$00.
+; This entry point is used by the routine at #R$B1B8.
 @label=FillMemory_WithValue
-c$B1A5 LD (HL),E     ; Write the fill value to the current address.
- $B1A6 INC HL        ; Move on to the next address.
- $B1A7 DEC BC        ; Decrease the byte counter by one.
+*$B1A5 LD (HL),E     ; Write #REGe.
+ $B1A6 INC HL        ; Increment #REGhl.
+ $B1A7 DEC BC        ; Decrement #REGbc.
  $B1A8 LD A,B        ; {Loop back until the byte counter is zero.
  $B1A9 OR C          ;
  $B1AA JR NZ,$B1A5   ; }
@@ -9825,13 +9858,15 @@ c$B48E PUSH HL       ; Save #REGhl.
 ;
 ; Negates #REGhl. This routine is not used.
 ;
-;   HL Number
-; O:HL Number negated
+;   HL The word
+; O:HL The negative of the word
+;
+; Invert both bytes, then add one.
 @label=NegateHL
-c$B4B1 LD A,L        ; {Flip the bits of the low byte.
+c$B4B1 LD A,L        ; {Invert the low byte.
  $B4B2 CPL           ;
  $B4B3 LD L,A        ; }
- $B4B4 LD A,H        ; {Flip the bits of the high byte.
+ $B4B4 LD A,H        ; {Invert the high byte.
  $B4B5 CPL           ;
  $B4B6 LD H,A        ; }
  $B4B7 INC HL        ; Add one.
@@ -10574,7 +10609,7 @@ c$B6FD CALL $B6D2    ; Show the game over message using #R$B6D2.
 @label=GameOver_Title
 *$B714 JP $98EF      ; Jump to #R$98EF to go back to the title screen.
 
-; Game Over Messages
+; Messaging: Game Over
 ;
 ; The text of the game over message. Each message starts with an attribute
 ; byte and its last character has bit 7 set. The number of the player in the
@@ -10764,11 +10799,11 @@ g$B7C6 DEFB $10,$22,$75,$55,$4C,$54 ; {Score and name.
 @label=HallOfFameWork
  $B7F6 DEFB $00,$00,$00,$20,$20,$20 ; Work area.
 
-; Hall Of Fame Text
+; Messaging: Hall Of Fame Text
 ;
 ; The attributes, coordinates and text of the hall of fame, for #R$B8CE.
 @label=HallOfFame_Attributes
-b$B7FC DEFB $47                         ; #COLOUR(#PEEK(#PC)).
+t$B7FC DEFB $47                         ; #COLOUR(#PEEK(#PC)).
  $B7FD DEFB $47                         ; #COLOUR(#PEEK(#PC)).
  $B7FE DEFB $47                         ; #COLOUR(#PEEK(#PC)).
  $B7FF DEFB $46                         ; #COLOUR(#PEEK(#PC)).
@@ -10870,11 +10905,11 @@ c$B8CE EXX           ; Switch to the attributes.
  $B8E2 DJNZ $B8CE    ; Loop back until all of the lines have been printed.
  $B8E4 RET           ; Return.
 
-; Menu Text
+; Messaging: Menu Text
 ;
 ; The attributes, coordinates and text of the menu.
 @label=Menu_Attributes
-b$B8E5 DEFB $C5                       ; #COLOUR(#PEEK(#PC)).
+t$B8E5 DEFB $C5                       ; #COLOUR(#PEEK(#PC)).
  $B8E6 DEFB $45                       ; #COLOUR(#PEEK(#PC)).
  $B8E7 DEFB $45                       ; #COLOUR(#PEEK(#PC)).
  $B8E8 DEFB $45                       ; #COLOUR(#PEEK(#PC)).
@@ -11065,12 +11100,12 @@ c$B9EE PUSH BC       ; {Save the registers.
 ; { #SABREWULF$B6B2 }
 ; LIST#
 
-; Place Names
+; Messaging: Place Names
 ;
 ; The names of the places of the hall of fame, starting with the lowest.
 ; The name of the highest place is blank.
 @label=PlaceNames
-b$BA01 DEFM "8TH"    ; {"8TH", "7TH", "6TH", "5TH", "4TH", "3RD", "2ND" and "
+t$BA01 DEFM "8TH"    ; {"8TH", "7TH", "6TH", "5TH", "4TH", "3RD", "2ND" and "
  $BA04 DEFM "7TH"    ; ".
  $BA07 DEFM "6TH"    ;
  $BA0A DEFM "5TH"    ;
@@ -11191,13 +11226,13 @@ c$BA93 PUSH AF       ; Save the letter...
 ; { #SABREWULF$B743 }
 ; LIST#
 
-; Initials Message
+; Messaging: Initials
 ;
 ; The attributes, coordinates and text of the message that asks for the
 ; initials. The three characters of the third line, after "TODAYS", are replaced
 ; with the name of the place.
 @label=InitialsMessage_Attributes
-b$BAA5 DEFB $45                        ; #COLOUR(#PEEK(#PC)).
+t$BAA5 DEFB $45                        ; #COLOUR(#PEEK(#PC)).
  $BAA6 DEFB $45                        ; #COLOUR(#PEEK(#PC)).
  $BAA7 DEFB $45                        ; #COLOUR(#PEEK(#PC)).
  $BAA8 DEFB $45                        ; #COLOUR(#PEEK(#PC)).
@@ -11228,59 +11263,71 @@ b$BAA5 DEFB $45                        ; #COLOUR(#PEEK(#PC)).
 ;
 ; Used by the routines at #R$98D0 and #R$BB83.
 ; .
-; Shows the title and the menu, and waits for the player to choose a
-; method of control with the keys #N$01 to #N($04), or to start the game with
-; the key #N$00. The tune is played the first time through. The line of the
-; menu for the method that has been chosen flashes. If nothing is done for a
-; while then
-; the hall of fame is shown.
+; Displays the menu and waits for the control method to be chosen and the
+; game to be started. The keys "1" to "4" choose the keyboard, the Kempston
+; joystick, the cursor joystick and Interface II, and "0" starts the game. The
+; menu tune is played once. The choice is held in #R$961A. If nothing is done
+; for a while then the hall of fame is shown.
 @label=GameMenu
 c$BB12 LD A,$FF      ; {Set the last method of control that was seen to an
  $BB14 LD ($9632),A  ; impossible value.}
  $BB17 XOR A         ; Clear the attribute.
- $BB18 CALL $B212    ; Clear the large window using #R$B212.
+ $BB18 CALL $B212    ; Call #R$B212.
+; Read the keys that choose the control method.
 @label=GameMenu_Loop
 *$BB1B CALL $B8B3    ; Draw the menu using #R$B8B3.
+; #HTML(#AUDIO0(title-tune.wav)(#INCLUDE(TitleTune)))
  $BB1E LD DE,$C1E9   ; Point #REGde at #R$C1E9.
  $BB21 CALL $C0B6    ; Play it using #R$C0B6, if it has not been played yet.
- $BB24 LD A,$F7      ; Read the half row of keys for the keys #N$01 to #N$05...
- $BB26 CALL $C0AB    ; Read the keyboard.
- $BB29 LD E,A        ; ...and keep it in #REGe.
+ $BB24 LD A,$F7      ; {Read from the keyboard;
+ $BB26 CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+                     ; TABLE#}
+ $BB29 LD E,A        ; Keep the keys that are pressed in #REGe.
  $BB2A LD A,($961A)  ; Fetch the method of control.
  $BB2D BIT 0,E       ; {Jump if the key #N$01 is not pressed.
  $BB2F JR Z,$BB33    ; }
- $BB31 AND $F9       ; Use method zero (keyboard).
+ $BB31 AND %11111001 ; Use method zero (keyboard).
+; Choose a joystick if one of those keys is pressed.
 @label=GameMenu_CheckKey2
 *$BB33 BIT 1,E       ; {Jump if the key #N$02 is not pressed.
  $BB35 JR Z,$BB3B    ; }
- $BB37 AND $F9       ; Use method one (Kempston joystick)...
- $BB39 OR $02        ; Set the method to the Kempston joystick.
+ $BB37 AND %11111001 ; Use method one (Kempston joystick)...
+ $BB39 OR %00000010  ; Set the method to the Kempston joystick.
 @label=GameMenu_CheckKey3
 *$BB3B BIT 2,E       ; {Jump if the key #N$03 is not pressed.
  $BB3D JR Z,$BB43    ; }
- $BB3F AND $F9       ; Use method two (cursor keys)...
- $BB41 OR $04        ; Set the method to the cursor keys.
+ $BB3F AND %11111001 ; Use method two (cursor keys)...
+ $BB41 OR %00000100  ; Set the method to the cursor keys.
 @label=GameMenu_CheckKey4
 *$BB43 BIT 3,E       ; {Jump if the key #N$04 is not pressed.
  $BB45 JR Z,$BB49    ; }
- $BB47 OR $06        ; Use method three (interface 2).
+ $BB47 OR %00000110  ; Choose Interface II.
 @label=GameMenu_StoreControl
 *$BB49 LD ($961A),A  ; Store the method of control.
- $BB4C LD A,$EF      ; Read the half row of keys for the keys #N$06 to #N$00...
- $BB4E CALL $C0AB    ; Read the keyboard.
- $BB51 AND $01       ; ...and keep the key #N$00.
+; Start the game if "0" is pressed.
+ $BB4C LD A,$EF      ; {Read from the keyboard;
+ $BB4E CALL $C0AB    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
+                     ; { =h,r2 Port Number | =h,c5 Bit }
+                     ; { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+                     ; { #N$EF | 0 | 9 | 8 | 7 | 6 }
+                     ; TABLE#}
+ $BB51 AND %00000001 ; ...and keep the key #N$00.
  $BB53 JR NZ,$BB86   ; Jump to start the game if it is pressed.
  $BB55 LD HL,$9632   ; Point #REGhl at the last method of control that was
                      ; seen.
  $BB58 LD A,($961A)  ; Fetch the method of control...
- $BB5B CP (HL)       ; ...and compare it with the last one...
- $BB5C LD ($9632),A  ; ...and store it.
+ $BB5B CP (HL)       ; Compare it with the last method.
+ $BB5C LD ($9632),A  ; Set #R$9632.
  $BB5F CALL $B760    ; Reset the idle timer if the method has changed, or count it down,
                      ; using #R$B760.
+; Flash the chosen control method.
  $BB62 LD HL,$B8E5   ; Point #REGhl at #R$B8E5.
  $BB65 LD A,($961A)  ; Fetch the method of control...
- $BB68 RRCA          ; Move the method into the lowest bits.
- $BB69 AND $03       ; ...and keep the bits that choose it.
+ $BB68 RRCA          ; Move the method to bits 0 and 1.
+ $BB69 AND %00000011 ; Keep only bits 0 and 1.
  $BB6B LD B,$04      ; There are four lines for the methods of control.
  $BB6D CALL $BB73    ; Make the line for the method flash using #R$BB73.
  $BB70 JP $BB1B      ; Jump back to draw the menu again.
@@ -12455,19 +12502,27 @@ c$C048 LD BC,$4030   ; Set the pitch to #N$40 and the number of cycles to
 ; .
 ; Makes the sound of a shot. Plays #N$28 tones, each with a pitch worked
 ; out from a counter that counts down, so the sound falls in pitch.
+; .
 ; #HTML(#AUDIO0(shot-sound.wav)(#INCLUDE(ShotSound)))
+;
+; .
+;
+; Play #N$28 pulses of different lengths.
 @label=PlayNoiseSound
 c$C04E LD C,$28      ; Use #N$28 cycles.
 ; This entry point is used by the routine at #R$BA19.
 ; .
-; This entry point takes the number of cycles in #REGc.
+; This entry point takes the number of pulses in #REGc.
+; .
+; Play the next pulse.
 @label=PlayNoiseSound_Counter
-*$C050 LD A,C        ; {Find the pitch from the number of cycles that are left.
- $C051 XOR $3F       ;
- $C053 LD B,A        ; }
+*$C050 LD A,C        ; Fetch the number of the pulse.
+ $C051 XOR %00111111 ; Change it.
+ $C053 LD B,A        ; Use it as the length of the pulse.
  $C054 CALL $C062    ; Make a single cycle using #R$C062.
- $C057 DEC C         ; {Loop back until all of the cycles have been made.
- $C058 JR NZ,$C050   ; }
+; Loop back until all of the cycles have been made.
+ $C057 DEC C         ; Count down the pulses.
+ $C058 JR NZ,$C050   ; Loop back until all of the pulses have been played.
  $C05A RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
@@ -12501,23 +12556,25 @@ c$C05B CALL $C062    ; Make a single cycle using #R$C062.
 ;
 ; Used by the routines at #R$C04E and #R$C05B.
 ; .
-; Makes a single cycle of a tone, by switching the speaker on and then off
-; again. The length of each half of the cycle is set by the pitch. The border is
-; set to black.
+; Plays a single beep by switching the speaker on, waiting, switching it
+; off and waiting again. The bigger the pitch, the longer the beep. The border
+; is set to black.
 ;
 ; B Pitch
+;
+; Hold the speaker on, then off.
 @label=PlaySquareWave
 c$C062 LD A,$10      ; {Switch the speaker on.
  $C064 OUT ($FE),A   ; }
- $C066 LD A,B        ; Keep the pitch.
+ $C066 LD A,B        ; Keep the pitch in #REGa.
 @label=PlaySquareWave_FirstWait
 *$C067 DJNZ $C067    ; Wait for a time that depends on the pitch.
  $C069 LD B,A        ; Restore the pitch.
  $C06A XOR A         ; {Switch the speaker off.
  $C06B OUT ($FE),A   ; }
- $C06D LD A,B        ; Keep the pitch.
+ $C06D LD A,B        ; Keep the pitch in #REGa.
 @label=PlaySquareWave_SecondWait
-*$C06E DJNZ $C06E    ; Wait for the same time.
+*$C06E DJNZ $C06E    ; Wait for the second half of the beep.
  $C070 LD B,A        ; Restore the pitch.
  $C071 RET           ; Return.
 ; View the equivalent code in;
@@ -12611,25 +12668,34 @@ c$C0AB PUSH BC       ; Save #REGbc.
 ; .
 ; Plays a tune, but only the first time that it is used, and stops if a
 ; key is pressed. The tune is a list of notes that ends with #N$FF. See #R$C0DA
-; for what the notes are.
+; for what the notes are. After the tune has been played, nothing happens until
+; #R$9637 is cleared.
+; .
+; The tunes played by this routine are:
+; #TABLE(default,centre,centre)
+; { =h Tune | =h Sound }
+; { Title Tune |
+; #HTML(#AUDIO0(title-tune.wav)(#INCLUDE(TitleTune))) }
+; TABLE#
 ;
-;   DE Address of the tune
-; O:F Non-zero flag set if the tune has been played before
+; DE The address of the tune
 @label=PlayMusic_WaitKey
 c$C0B6 LD HL,$9637   ; Point #REGhl at the flag that records that a tune has
                      ; been played.
- $C0B9 LD A,(HL)     ; {Return if it has been played before.
- $C0BA AND A         ;
+ $C0B9 LD A,(HL)     ; Fetch the flag.
+ $C0BA AND A         ; {Return if the tune has already been played.
  $C0BB RET NZ        ; }
  $C0BC SET 0,(HL)    ; Set the flag.
+; Select every half row of the keyboard.
 @label=PlayMusic_WaitKey_Loop
-*$C0BE XOR A         ; Select every half row of the keyboard.
- $C0BF CALL $C0AB    ; Read the keyboard using #R$C0AB.
- $C0C2 JR Z,$C0C5    ; Jump if no key is pressed.
+*$C0BE XOR A         ; {Read every row of the keyboard.
+ $C0BF CALL $C0AB    ; }
+ $C0C2 JR Z,$C0C5    ; Jump to #R$C0C5 if no key is pressed.
  $C0C4 RET           ; Return as a key has been pressed.
+; Play the next note.
 @label=PlayMusic_WaitKey_Next
-*$C0C5 LD A,(DE)     ; {Jump to return if the next note is #N($FF), which is the end of the
- $C0C6 CP $FF        ; tune.
+*$C0C5 LD A,(DE)     ; Fetch the next note.
+ $C0C6 CP $FF        ; {Jump to #R$C0D9 if the terminator has been reached.
  $C0C8 JR Z,$C0D9    ; }
  $C0CA CALL $C0DA    ; Play the note using #R$C0DA.
  $C0CD JR $C0BE      ; Loop back for the next note.
@@ -12644,13 +12710,26 @@ c$C0B6 LD HL,$9637   ; Point #REGhl at the flag that records that a tune has
 ;
 ; Used by the routines at #R$9A22, #R$9A4B, #R$9AA5 and #R$BB86.
 ; .
-; Plays a tune from start to finish. The tune is a list of notes that ends
-; with #N$FF. See #R$C0DA for what the notes are.
+; Plays a tune, which cannot be stopped. A tune is a list of notes (see
+; #R$C0DA) which ends with #N$FF.
+; .
+; The tunes played by this routine are:
+; #TABLE(default,centre,centre)
+; { =h Tune | =h Sound }
+; { Start Tune |
+; #HTML(#AUDIO0(start-tune.wav)(#INCLUDE(StartTune))) }
+; { Level Complete Tune |
+; #HTML(#AUDIO0(level-complete-tune.wav)(#INCLUDE(LevelCompleteTune))) }
+; { Game Over Tune |
+; #HTML(#AUDIO0(game-over-tune.wav)(#INCLUDE(GameOverTune))) }
+; TABLE#
 ;
 ; DE Address of the tune
+;
+; Play each note until #N$FF.
 @label=PlayMusic
-c$C0CF LD A,(DE)     ; {Jump to return if the next note is #N($FF), which is the end of the
- $C0D0 CP $FF        ; tune.
+c$C0CF LD A,(DE)     ; Fetch the next note.
+ $C0D0 CP $FF        ; {Jump to #R$C0D9 if it is #N$FF.
  $C0D2 JR Z,$C0D9    ; }
  $C0D4 CALL $C0DA    ; Play the note using #R$C0DA.
  $C0D7 JR $C0CF      ; Loop back for the next note.
@@ -12671,73 +12750,73 @@ c$C0CF LD A,(DE)     ; {Jump to return if the next note is #N($FF), which is the
 ;
 ; Used by the routines at #R$C0B6 and #R$C0CF.
 ; .
-; Plays one note of a tune, by making a tone, or by waiting if it is a
-; rest. The bottom six bits of the note byte are the number of the note (zero is
-; a rest) and the top two bits are one less than the length. The pitch and the
-; duration of the note are found from a table of three bytes for each note: the
-; delay for each half cycle (as two bytes), then the number of cycles that last
-; for the shortest note. The length multiplies it.
+; Plays a note of a tune, or a rest if the note number is zero.
+; Bits 0 to 5 select the entry in #R$C132 that holds the two delays of a cycle
+; and the number of cycles. Bits 6 and 7 are the length less one, which
+; multiplies the number of cycles, so the note is one to four times as long.
 ;
-;   A Note byte
+;   A The note
 ;   DE Address of the note
 ; O:DE Address of the next note
 @label=PlayNote
-c$C0DA AND $3F       ; Keep the note number.
+c$C0DA AND %00111111 ; Keep the note number.
  $C0DC JR Z,$C11C    ; Jump to make a rest if the note number is zero.
-; Look up the delays and the number of cycles in the table at #R$C132.
- $C0DE LD L,A        ; {Put the note number in #REGhl...
+; Look up the delays and the number of cycles.
+ $C0DE LD L,A        ; {Set #REGhl to the note number.
  $C0DF LD H,$00      ; }
- $C0E1 ADD HL,HL     ; ...double it...
+ $C0E1 ADD HL,HL     ; Double the number.
  $C0E2 CALL $BF92    ; ...and add the note number to give three times it, using
                      ; #R$BF92.
  $C0E5 LD BC,$C132   ; {Add the address of the table of notes.
  $C0E8 ADD HL,BC     ; }
- $C0E9 LD B,(HL)     ; {Fetch the first byte of the delay into #REGb...
- $C0EA INC HL        ; }
- $C0EB LD C,(HL)     ; {...and the second into #REGc.
- $C0EC INC HL        ; }
+ $C0E9 LD B,(HL)     ; Fetch the first delay.
+ $C0EA INC HL        ; Move on.
+ $C0EB LD C,(HL)     ; Fetch the second delay.
+ $C0EC INC HL        ; Move on.
  $C0ED LD L,(HL)     ; Fetch the number of cycles of the shortest note.
- $C0EE LD H,$00      ; Make it a 16-bit number.
-; Bits 6 and 7 of the note are the length, less one.
- $C0F0 LD A,(DE)     ; {Fetch the note byte again and rotate the bits of the length to the
- $C0F1 RLCA          ; bottom.
+ $C0EE LD H,$00      ; Set #REGh to #N$00.
+; Bits 6 and 7 are the length, less one.
+ $C0F0 LD A,(DE)     ; Fetch the note again.
+ $C0F1 RLCA          ; {Move bits 6 and 7 to bits 0 and 1.
  $C0F2 RLCA          ; }
- $C0F3 AND $03       ; Keep them...
- $C0F5 INC A         ; ...and add one to give the length.
+ $C0F3 AND %00000011 ; Keep bits 0 and 1.
+ $C0F5 INC A         ; Add one.
  $C0F6 PUSH DE       ; Save the address of the note.
  $C0F7 LD E,L        ; {Copy the number of cycles of the shortest note into
  $C0F8 LD D,H        ; #REGde.}
-; Multiply the number of cycles by the length of the note.
+; Multiply the number of cycles by the length.
 @label=PlayMusic_Process_Multiply
-*$C0F9 DEC A         ; {Jump if the length has been counted down.
- $C0FA JR Z,$C0FF    ; }
+*$C0F9 DEC A         ; Count down the length.
+ $C0FA JR Z,$C0FF    ; Jump to #R$C0FF if the length has been used up.
  $C0FC ADD HL,DE     ; Otherwise add on the number of cycles of the shortest
                      ; note again...
- $C0FD JR $C0F9      ; ...and loop back.
+ $C0FD JR $C0F9      ; Jump to #R$C0F9.
 @label=PlayMusic_Process_Finished
-*$C0FF POP DE        ; Restore the address of the note.
-; Each pass of this loop makes one cycle of the note, so the length of
-; the note is the number of cycles.
+*$C0FF POP DE        ; Restore the note address from the stack.
+; Each pass makes one cycle of the note.
 @label=PlayMusic_Process_Cycle
-*$C100 PUSH BC       ; Save the delay.
- $C101 XOR A         ; {Switch the speaker off (and set the border to black).
- $C102 OUT ($FE),A   ; }
+*$C100 PUSH BC       ; Stash the delays on the stack.
+ $C101 XOR A         ; Set #REGa to #N$00.
+ $C102 OUT ($FE),A   ; Turn the speaker off.
 @label=PlayMusic_Process_LowWait
 *$C104 DJNZ $C104    ; Wait for the time of the low half of a cycle...
- $C106 DEC C         ; {Count down the rest of the delay.
- $C107 JR NZ,$C104   ; }
- $C109 POP BC        ; Restore the delay.
- $C10A PUSH BC       ; Save the delay again.
- $C10B LD A,$10      ; {Switch the speaker on.
- $C10D OUT ($FE),A   ; }
+; Count down the rest of the delay.
+ $C106 DEC C         ; Count down the second delay.
+ $C107 JR NZ,$C104   ; Jump to #R$C104 until it has finished.
+ $C109 POP BC        ; Restore the delays from the stack.
+ $C10A PUSH BC       ; Stash the delays on the stack.
+ $C10B LD A,$10      ; Set bit 4.
+ $C10D OUT ($FE),A   ; Turn the speaker on.
 @label=PlayMusic_Process_HighWait
 *$C10F DJNZ $C10F    ; Wait for the time of the high half of a cycle...
- $C111 DEC C         ; {Count down the rest of the delay.
- $C112 JR NZ,$C10F   ; }
- $C114 POP BC        ; Restore the delay.
- $C115 DEC HL        ; {Count down the number of cycles, and loop back until it reaches
- $C116 LD A,H        ; zero.
- $C117 OR L          ;
+; Count down the rest of the delay.
+ $C111 DEC C         ; Count down the second delay.
+ $C112 JR NZ,$C10F   ; Jump to #R$C10F until it has finished.
+ $C114 POP BC        ; Restore the delays from the stack.
+; Count down the number of cycles, and loop back until it reaches zero.
+ $C115 DEC HL        ; Count down the cycles.
+ $C116 LD A,H        ; {Jump to #R$C100 until all of the cycles have been
+ $C117 OR L          ; played.
  $C118 JR NZ,$C100   ; }
  $C11A INC DE        ; Move on to the next note.
  $C11B RET           ; Return.
@@ -12758,27 +12837,31 @@ c$C0DA AND $3F       ; Keep the note number.
 ; Waits for the length of a rest, which is one to four times as long as
 ; the shortest. It is used by #R$C0DA.
 ;
-;   DE Address of the note
-; O:DE Address of the next note
+;   DE The address of the rest
+; O:DE The address after the rest
+;
+; Work out the length of the rest in beats.
 @label=PlayRest
-c$C11C LD A,(DE)     ; {Fetch the note and move on to the next one.
- $C11D INC DE        ; }
- $C11E RLCA          ; {Rotate the bits of the length to the bottom.
+c$C11C LD A,(DE)     ; Fetch the rest.
+ $C11D INC DE        ; Move on to the next note.
+ $C11E RLCA          ; {Rotate the length bits into the bottom of the byte.
  $C11F RLCA          ; }
- $C120 AND $03       ; Keep them...
- $C122 INC A         ; ...and add one to give the length.
- $C123 LD L,A        ; Keep the length.
- $C124 LD BC,$430B   ; Set the time of the shortest rest.
+ $C120 AND %00000011 ; Keep them.
+ $C122 INC A         ; Add one to get the length in beats.
+ $C123 LD L,A        ; Copy the length into #REGl.
+ $C124 LD BC,$430B   ; Set the length of a beat.
+; Wait for each beat.
 @label=PlayRest_Loop
-*$C127 PUSH BC       ; Save it.
+*$C127 PUSH BC       ; Stash the length of a beat on the stack.
 @label=PlayRest_Wait
-*$C128 DEC BC        ; {Count it down to zero.
- $C129 LD A,B        ;
+*$C128 DEC BC        ; Count down.
+ $C129 LD A,B        ; {Jump to #R$C128 if the count is not zero.
  $C12A OR C          ;
  $C12B JR NZ,$C128   ; }
- $C12D POP BC        ; Restore it.
- $C12E DEC L         ; {Loop back until the length has been counted down.
- $C12F JR NZ,$C127   ; }
+ $C12D POP BC        ; Retrieve the length of a beat.
+; Loop back until the length has been counted down.
+ $C12E DEC L         ; Count down the beats.
+ $C12F JR NZ,$C127   ; Loop back until the rest is over.
  $C131 RET           ; Return.
 ; View the equivalent code in;
 ; #LIST

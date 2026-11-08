@@ -4047,8 +4047,13 @@ D $7415 Adds points to the score of the active player, and then prints that
 E $7415 View the equivalent code in;
 . #LIST
 . { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
+. { #CYBERUN$925E }
 . { #JETPAC$70F9 }
 . { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #PSSST$737A }
 . { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }

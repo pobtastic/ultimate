@@ -1279,8 +1279,9 @@ E $9563 Continue on to #R$9569.
 
 c $9569 Fill Memory
 @ $9569 label=FillMemory
-D $9569 Writes a value to a block of memory. Entering at #R$9569 writes #N$00;
-. entering at #R$956B writes the value in #REGe.
+D $9569 Fills an area of memory with
+. zero. The entry point at #R$956B fills
+. it with the byte in #REGe.
 E $9569 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE56 }
@@ -1290,15 +1291,16 @@ E $9569 View the equivalent code in;
 . { #NIGHTSHADE$E5BA }
 . { #PENTAGRAM$CB77 }
 . LIST#
-R $9569 HL Start address
 R $9569 BC Number of bytes
-R $9569 E Value to write (entry point #R$956B only)
+R $9569 HL Address of the first byte
   $9569,$02 Set the value to write to #N$00.
 @ $956B label=FillMemory_WithValue
   $956B,$01 Write the value to the address.
   $956C,$01 Move on to the next address.
-  $956D,$05 Decrease the byte counter and loop back to #R$956B until all of the
+N $956D Decrease the byte counter and loop back to #R$956B until all of the
 . bytes have been written.
+  $956D,$01 Decrement the byte counter.
+  $956E,$04 Jump back to #R$956B until all of the bytes have been written.
   $9572,$01 Return.
 
 c $9573 Clear Attributes
@@ -3723,9 +3725,14 @@ D $A045 Adds to the score (see #R$8EF3) and prints the new score at the top of
 E $A045 View the equivalent code in;
 . #LIST
 . { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
 . { #COOKIE$7415 }
+. { #CYBERUN$925E }
 . { #JETPAC$70F9 }
 . { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #PSSST$737A }
 . { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }
@@ -5706,19 +5713,19 @@ E $AC68 View the equivalent code in;
 . { #SABREWULF$BC5A }
 . { #TRANZAM$6F2F }
 . LIST#
-R $AC68 A Multiplier
-R $AC68 DE Multiplicand
+R $AC68 A The first number
+R $AC68 DE The second number
 R $AC68 O:HL Product
   $AC68,$03 Set the product so far to #N$0000.
   $AC6B,$02 Set the number of bits to #N$08.
 @ $AC6D label=MultiplyAByDE_Loop
   $AC6D,$01 Double the product.
-  $AC6E,$01 Move the next bit of the multiplier into the carry.
+  $AC6E,$01 Move the next bit of the first number into the carry.
   $AC6F,$02 Jump to #R$AC72 if the bit is clear.
-  $AC71,$01 Add the multiplicand to the product.
+  $AC71,$01 Add the second number to the product.
 @ $AC72 label=MultiplyAByDE_Next
   $AC72,$02 Decrease the bit counter and loop back until all eight bits of the
-. multiplier have been used.
+. first number have been used.
   $AC74,$01 Return.
 
 c $AC75 Divide
@@ -9059,8 +9066,7 @@ D $E1B4 Checks whether an object is touching one of the four bubbles (the object
 . the y position #N$B8, and the new room is drawn.
 R $E1B4 IX Object record
 R $E1B4 E Flags of the room (see #R$98CC)
-R $E1B4 O:B #N$A0 less the y position of the object (valid when there is
-. contact)
+R $E1B4 O:B #N$A0 less the y position of the object (valid when there is contact)
 R $E1B4 O:C Contact result
 R $E1B4 O:E Flags of the room, with bit 4 set if the object stands on a bubble
   $E1B4,$02 Set the contact result to zero.

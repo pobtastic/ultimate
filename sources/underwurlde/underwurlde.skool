@@ -3121,7 +3121,7 @@ b$911F DEFB $28      ; {Lines 1 to 5.
 ; { #TRANZAM$5FAC }
 ; LIST#
 
-; Game Selection Screen Text
+; Messaging: Game Selection Screen Text
 ;
 ; The text of each of the five menu lines. Each string ends with a
 ; character that has bit 7 set, which tells #R$9C3C where it finishes.
@@ -3140,7 +3140,7 @@ t$9125 DEFM "1  KEYBOAR","D"+$80          ; "1  KEYBOARD"
 ; { #TRANZAM$5FB1 }
 ; LIST#
 
-; Copyright Messaging
+; Messaging: Copyright
 ;
 ; The first byte is the attribute used for the whole message, followed by
 ; the text, which ends with a character that has bit 7 set. The character
@@ -3158,7 +3158,7 @@ t$9174 DEFB $47                                       ; Attribute:
 ; { #PSSST$5EF5 }
 ; LIST#
 
-; Game Selection Title Text
+; Messaging: Game Selection Title Text
 ;
 ; The first byte is the attribute used for the whole title, followed by
 ; the text, which ends with a character that has bit 7 set.
@@ -3626,21 +3626,23 @@ c$9563 LD BC,$0019   ; Set the number of bytes of the workspace to clear to
 ;
 ; Used by the routines at #R$9052 and #R$957D.
 ; .
-; Writes a value to a block of memory. Entering at #R$9569 writes #N$00;
-; entering at #R$956B writes the value in #REGe.
+; Fills an area of memory with
+; zero. The entry point at #R$956B fills
+; it with the byte in #REGe.
 ;
-; HL Start address
 ; BC Number of bytes
-; E Value to write (entry point #R$956B only)
+; HL Address of the first byte
 @label=FillMemory
 c$9569 LD E,$00      ; Set the value to write to #N$00.
 ; This entry point is used by the routine at #R$9573.
 @label=FillMemory_WithValue
 *$956B LD (HL),E     ; Write the value to the address.
  $956C INC HL        ; Move on to the next address.
- $956D DEC BC        ; {Decrease the byte counter and loop back to #R$956B until all of the
- $956E LD A,B        ; bytes have been written.
- $956F OR C          ;
+; Decrease the byte counter and loop back to #R$956B until all of the
+; bytes have been written.
+ $956D DEC BC        ; Decrement the byte counter.
+ $956E LD A,B        ; {Jump back to #R$956B until all of the bytes have been
+ $956F OR C          ; written.
  $9570 JR NZ,$956B   ; }
  $9572 RET           ; Return.
 ; View the equivalent code in;
@@ -3826,12 +3828,12 @@ c$95F3 LD B,$0C      ; Set the outer counter to #N$0C.
                      ; zero.
  $9608 RET           ; Return.
 
-; Game Over Text
+; Messaging: Game Over Text
 ;
 ; The text GAME OVER, with its attribute first. The last character has bit
 ; 7 set.
 @label=Game_Over_Text
-b$9609 DEFB $45                ; Attribute: #COLOUR(#PEEK(#PC)).
+t$9609 DEFB $45                ; Attribute: #COLOUR(#PEEK(#PC)).
  $960A DEFM "GAME OVE","R"+$80 ; "GAME OVER"
 
 ; Build Shift Table
@@ -6467,7 +6469,7 @@ c$9EA0 LD A,$47        ; Set the attribute to bright white (#N$47).
  $9F02 CALL $96DB      ; Draw the second star.
  $9F05 JR $9EDE        ; Jump to #R$9EDE to wait for a key.
 
-; Ending Text
+; Messaging: Ending Text
 ;
 ; The object record of the star that is drawn for each letter A of
 ; PENTAGRAM, followed by the text for the ending screen and for the game over
@@ -6475,7 +6477,7 @@ c$9EA0 LD A,$47        ; Set the attribute to bright white (#N$47).
 ; strings that start with an attribute byte, and #R$91B0 prints the others using
 ; the attribute in #R$8EE8.
 @label=Ending_Text
-b$9F07 DEFB $90                              ; Sprite id of the star.
+t$9F07 DEFB $90                              ; Sprite id of the star.
  $9F08 DEFB $70                              ; X position (set to #N$70 and
                                              ; then #N$90 before the star is
                                              ; drawn).
@@ -9174,20 +9176,20 @@ c$ABE5 LD A,($AAA4)  ; Fetch the displacement of the end of the rope.
 ; Multiplies #REGa by #REGde, by adding #REGde to the product for each bit
 ; of #REGa that is set. The product is a word.
 ;
-;   A Multiplier
-;   DE Multiplicand
+;   A The first number
+;   DE The second number
 ; O:HL Product
 @label=MultiplyAByDE
 c$AC68 LD HL,$0000   ; Set the product so far to #N$0000.
  $AC6B LD B,$08      ; Set the number of bits to #N$08.
 @label=MultiplyAByDE_Loop
 *$AC6D ADD HL,HL     ; Double the product.
- $AC6E RLCA          ; Move the next bit of the multiplier into the carry.
+ $AC6E RLCA          ; Move the next bit of the first number into the carry.
  $AC6F JR NC,$AC72   ; Jump to #R$AC72 if the bit is clear.
- $AC71 ADD HL,DE     ; Add the multiplicand to the product.
+ $AC71 ADD HL,DE     ; Add the second number to the product.
 @label=MultiplyAByDE_Next
 *$AC72 DJNZ $AC6D    ; Decrease the bit counter and loop back until all eight bits of the
-                     ; multiplier have been used.
+                     ; first number have been used.
  $AC74 RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
@@ -16724,8 +16726,7 @@ c$E18C CALL $989F    ; Save the state of the sparkle.
 ;
 ;   IX Object record
 ;   E Flags of the room (see #R$98CC)
-; O:B #N$A0 less the y position of the object (valid when there is
-; contact)
+; O:B #N$A0 less the y position of the object (valid when there is contact)
 ; O:C Contact result
 ; O:E Flags of the room, with bit 4 set if the object stands on a bubble
 @label=Check_Bubble_Contact

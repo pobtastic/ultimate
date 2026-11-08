@@ -1,5 +1,6 @@
 @org=$4000
 @rom
+@expand=#DEF(#POKE()(anchor,text) #LINK(Pokes#$anchor)($text))
 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
@@ -232,7 +233,7 @@ i$5B00
 ;
 ; The stub which the tape loader runs once the game has been loaded at
 ; #N$6000. It decrypts the whole game, #N$8000 bytes, two bytes at a time, and
-; then moves the game down by #N$0200 bytes to its real home at #N$5E00 before
+; then moves the game down by #N$0200 bytes to its real home at #R$5E00 before
 ; starting it.
 ; .
 ; The tape loader sets up this stub, and the game checks for the loader's
@@ -242,11 +243,11 @@ i$5B00
 ;
 ; Set up the first pair and the number of pairs to decrypt.
 @label=DecryptGame
-c$5B80 LD DE,$6000   ; Set #REGde to #N$6000, the address of the first byte of the pair to
-                     ; decrypt.
- $5B83 LD HL,$6001   ; Set #REGhl to #N$6001, the address of the second byte of
-                     ; the pair.
- $5B86 LD BC,$4000   ; Set #REGbc to #N$4000, the number of byte pairs to
+c$5B80 LD DE,$6000   ; Set #REGde to #N($6000), the address of the first byte of the pair
+                     ; to decrypt.
+ $5B83 LD HL,$6001   ; Set #REGhl to #N($6001), the address of the second byte
+                     ; of the pair.
+ $5B86 LD BC,$4000   ; Set #REGbc to #N($4000), the number of byte pairs to
                      ; decrypt.
 ; Start rotating each byte through #REGa to decrypt it.
 @label=DecryptGame_Loop
@@ -262,7 +263,7 @@ c$5B80 LD DE,$6000   ; Set #REGde to #N$6000, the address of the first byte of t
  $5B93 OR C          ; decrypted.
  $5B94 JR NZ,$5B89   ; }
 ; Move the decrypted game down to its real address and start it.
- $5B96 LD HL,$6000   ; {Copy #N$8000 bytes of the game from #N$6000 to #N$5E00.
+ $5B96 LD HL,$6000   ; {Copy #N$8000 bytes of the game from #N$6000 to #R$5E00.
  $5B99 LD DE,$5E00   ;
  $5B9C LD BC,$8000   ;
  $5B9F LDIR          ; }
@@ -6439,6 +6440,10 @@ c$A449 DEC (IX+$0C)    ; {Decrease the delay counter and return if it has not
 ; of the sprite in byte #N$0D grows by four every frame, with a rising sound,
 ; until it reaches #N$1C. The object then becomes a sheriff (type #N$01) and is
 ; protected from harm for a short time.
+;
+; .
+;
+; Raise the sprite and play a rising tone.
 @label=HandleSheriffEntrance
 c$A452 LD A,(IX+$0D)   ; Fetch the vertical offset of the sprite.
  $A455 ADD A,$04       ; Add #N$04 to the offset.
@@ -6447,6 +6452,7 @@ c$A452 LD A,(IX+$0D)   ; Fetch the vertical offset of the sprite.
  $A45D LD A,(IX+$0D)   ; Fetch the offset again.
  $A460 CP $1C          ; {Return if the offset is still below #N$1C.
  $A462 RET C           ; }
+; The sheriff has arrived, so turn the object into a sheriff.
  $A463 LD (IX+$00),$01 ; Turn the object into a sheriff.
  $A467 LD (IX+$0D),$00 ; Reset the vertical offset of the sprite to zero.
  $A46B LD A,$10        ; {Write #N$10 to #R$A208 to make the sheriff invulnerable for a short
@@ -6464,6 +6470,10 @@ c$A452 LD A,(IX+$0D)   ; Fetch the vertical offset of the sprite.
 ; Creates a money bag (an object of type #N$18) in the seventh object slot
 ; when the player's bounty has dropped below $100. The bag appears close to the
 ; sheriff, in a free cell.
+;
+; .
+;
+; Return unless the bounty is below $100 and the slot is free.
 @label=CreateMoneyBag
 c$A47E LD HL,$A257     ; {Return unless the first two bytes of the bounty are both zero, which
  $A481 LD A,(HL)       ; means it is less than $100.
@@ -6474,6 +6484,7 @@ c$A47E LD HL,$A257     ; {Return unless the first two bytes of the bounty are bo
  $A488 LD A,(DE)       ; Fetch the type of the object in the slot.
  $A489 AND A           ; {Return if the slot is already in use.
  $A48A RET NZ          ; }
+; Copy the template and place the bag near the sheriff.
  $A48B PUSH DE         ; {Copy #REGde to #REGiy (using the stack).
  $A48C POP IY          ; }
  $A48E LD HL,$A4B5     ; Point #REGhl at #R$A4B5.
@@ -6482,6 +6493,7 @@ c$A47E LD HL,$A257     ; {Return unless the first two bytes of the bounty are bo
  $A496 LD B,$01        ; Set the distance from the sheriff to one cell.
  $A498 CALL $B6CD      ; Place the bag one cell away from the sheriff.
  $A49B RET NZ          ; Return if that cell is blocked.
+; Choose a position inside the cell.
  $A49C LD A,($A218)    ; Fetch a random number.
  $A49F AND %00110000   ; Keep bits 4 and 5.
  $A4A1 ADD A,$80       ; Add #N$80 to give a position inside the cell.
@@ -6511,11 +6523,16 @@ b$A4B5 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; {Type, position, speed, size and c
 ; Type #N$18: a money bag put in the street by #R$A47E to help a player
 ; who has run out of money. It disappears if the sheriff moves away from it.
 ; When the sheriff touches it, it adds $100 to the bounty.
+;
+; .
+;
+; Remove the bag if the sheriff has moved away.
 @label=HandleMoneyBag
 c$A4C9 LD C,$02      ; Set the distance at which the bag stays alive to two
                      ; cells.
  $A4CB CALL $B810    ; Check how close the sheriff is.
  $A4CE JP NC,$C7BB   ; Remove the bag if the sheriff has moved away.
+; Add $100 when the sheriff touches the bag.
  $A4D1 CALL $B631    ; Check whether the sheriff is touching the bag.
  $A4D4 RET NC        ; Return if not.
  $A4D5 LD BC,$0100   ; Set the $100 added to the bounty in #REGbc.
@@ -6621,7 +6638,7 @@ c$A50A CALL $A6EA    ; Swap the states of the two players.
 *$A53F LD A,C        ; Fetch the winning player.
  $A540 ADD A,$31     ; Convert it to the character for the player number.
  $A542 LD ($A5B0),A  ; Write it into the "PLAYER" text.
- $A545 LD E,$00      ; Set the attribute colour to black.
+ $A545 LD E,$00      ; Set the attribute to #COLOUR$00.
  $A547 CALL $D6D3    ; Clear the attributes.
  $A54A CALL $D6DB    ; Clear the pixels of the screen.
  $A54D POP DE        ; Retrieve the address of the winning score.
@@ -6631,20 +6648,24 @@ c$A50A CALL $A6EA    ; Swap the states of the two players.
  $A556 LD DE,$A5D2   ; Point #REGde at #R$A5D2.
  $A559 LD HL,$A5CB   ; Point #REGhl at #R$A5CB.
  $A55C CALL $A4F2    ; Convert the score to digits.
-; Print the message in large letters, one line at a time.
- $A55F LD HL,$4087   ; Point #REGhl at the screen address for the first line.
+; Print the first line.
+ $A55F LD HL,$4087   ; Point #REGhl at #N$4087 (in the screen buffer).
  $A562 LD DE,$A59D   ; Point #REGde at #R$A59D.
  $A565 CALL $AA9A    ; Print it in large letters.
- $A568 LD HL,$40E8   ; Point #REGhl at the screen address for the second line.
+; Print the second line.
+ $A568 LD HL,$40E8   ; Point #REGhl at #N$40E8 (in the screen buffer).
  $A56B LD DE,$A5A8   ; Point #REGde at #R$A5A8.
  $A56E CALL $AA9A    ; Print it in large letters.
- $A571 LD HL,$4846   ; Point #REGhl at the screen address for the third line.
+; Print the third line.
+ $A571 LD HL,$4846   ; Point #REGhl at #N$4846 (in the screen buffer).
  $A574 LD DE,$A5B2   ; Point #REGde at #R$A5B2.
  $A577 CALL $AA9A    ; Print it in large letters.
- $A57A LD HL,$48A8   ; Point #REGhl at the screen address for the fourth line.
+; Print the fourth line.
+ $A57A LD HL,$48A8   ; Point #REGhl at #N$48A8 (in the screen buffer).
  $A57D LD DE,$A5BE   ; Point #REGde at #R$A5BE.
  $A580 CALL $AA9A    ; Print it in large letters.
- $A583 LD HL,$5048   ; Point #REGhl at the screen address for the fifth line.
+; Print the fifth line.
+ $A583 LD HL,$5048   ; Point #REGhl at #N$5048 (in the screen buffer).
  $A586 LD DE,$A5C8   ; Point #REGde at #R$A5C8.
  $A589 CALL $AA9A    ; Print it in large letters.
  $A58C LD DE,$B1E0   ; Point #REGde at #R$B1E0.
@@ -6654,14 +6675,14 @@ c$A50A CALL $A6EA    ; Swap the states of the two players.
  $A597 CALL $AE82    ; Wait for a while.
  $A59A JP $A37E      ; Restart the game from the title screen.
 
-; Score Messages
+; Messaging: Score Text
 ;
 ; The messages shown when the top score has been beaten. Each is an
 ; attribute byte, the characters and a zero terminator. The #N$5E in the last
 ; message is the dollar sign of the font, and the score digits are written over
 ; the spaces after it.
 @label=ScoreMessages
-b$A59D DEFB $43          ; Attribute: #COLOUR(#PEEK(#PC)).
+t$A59D DEFB $43          ; Attribute: #COLOUR(#PEEK(#PC)).
  $A59E DEFM "WELL DONE"  ; "WELL DONE".
  $A5A7 DEFB $00          ; Terminator.
 @label=ScoreMessages_Player
@@ -6793,10 +6814,13 @@ c$A5D5 LD HL,($A216) ; Fetch the frame counter.
 ; is complete when its counter has reached #N$0E.
 ;
 ; O:F The zero flag is set if every line is complete
+;
+; Check each of the six telegram lines.
 @label=CheckTelegramComplete
 c$A64F LD HL,$A830   ; Point #REGhl at the first telegram line.
  $A652 LD DE,$0012   ; Set the size of a telegram line in #REGde.
  $A655 LD B,$06      ; Set the number of lines to six.
+; Return unless this line is complete.
 @label=CheckTelegramComplete_Loop
 *$A657 LD A,(HL)     ; Fetch the counter of the line.
  $A658 CP $0E        ; Compare it with the number of characters in a line.
@@ -6854,6 +6878,10 @@ g$A67F DEFW $0100    ; {$100, $150, $250, $400, $1000, $1500, $3000 and $5000.
 ; Gives the current player the starting values for a new game: four lives,
 ; level zero, a bounty of $280, and the first stage, in which the player shoots
 ; twenty money bags.
+;
+; .
+;
+; Give the player four lives and start at level zero.
 @label=SetUpPlayer
 c$A68F LD A,$04      ; {Write #N$04 to #R$A263 to give the player four lives.
  $A691 LD ($A263),A  ; }
@@ -6861,6 +6889,7 @@ c$A68F LD A,$04      ; {Write #N$04 to #R$A263 to give the player four lives.
  $A695 LD ($A260),A  ; }
  $A698 LD ($A261),A  ; Write #N$00 to #R$A261 to start at the easiest
                      ; difficulty.
+; Set the starting bounty and the first stage.
  $A69B LD BC,$0280   ; Set the starting bounty of $280 in #REGbc.
  $A69E CALL $D354    ; Add it to the bounty.
  $A6A1 LD HL,$0114   ; Set the number of targets to twenty and the stage type to the money
@@ -6868,6 +6897,7 @@ c$A68F LD A,$04      ; {Write #N$04 to #R$A263 to give the player four lives.
  $A6A4 LD ($A264),HL ; Store them.
  $A6A7 LD A,$46      ; {Write #N$46 to #R$A266 to colour the border and screen
  $A6A9 LD ($A266),A  ; yellow.}
+; Make sure the prices are set.
  $A6AC CALL $A770    ; Make sure the price of a bullet is set.
  $A6AF CALL $A7B8    ; Make sure the price of a horse is set.
  $A6B2 JP $A7CB      ; Jump to #R$A7CB.
@@ -6878,10 +6908,15 @@ c$A68F LD A,$04      ; {Write #N$04 to #R$A263 to give the player four lives.
 ; .
 ; Gives both players the starting values. In a game for one player the
 ; second player is left with no lives.
+;
+; .
+;
+; Set up both players.
 @label=SetUpPlayers
 c$A6B5 CALL $A68F    ; Set up the first player.
  $A6B8 CALL $A6EA    ; Swap to the state of the second player.
  $A6BB CALL $A68F    ; Set up the second player.
+; In a one player game, leave the second player with no lives.
  $A6BE LD A,($A21C)  ; Fetch the option flags.
  $A6C1 BIT 0,A       ; Test bit 0, which is set for a two player game.
  $A6C3 RET NZ        ; Return if there are two players.
@@ -6896,14 +6931,15 @@ c$A6B5 CALL $A68F    ; Set up the first player.
 ; Clears the screen and prints the number of the player who is about to
 ; play in large letters, and then waits a moment.
 @label=ShowPlayerNumber
-c$A6C9 LD E,$00      ; Set the colour to black.
+c$A6C9 LD E,$00      ; Set the attribute to #COLOUR$00.
  $A6CB CALL $D6D3    ; Clear the attributes.
  $A6CE CALL $D6DB    ; Clear the pixels of the screen.
  $A6D1 LD A,($A23F)  ; Fetch the number of the current player, zero or one.
  $A6D4 ADD A,$31     ; Convert it to a character.
  $A6D6 LD ($B7EE),A  ; Write it into the "PLAYER" text.
  $A6D9 LD DE,$B7E6   ; Point #REGde at #R$B7E6.
- $A6DC LD HL,$4868   ; Point #REGhl at the screen address for the text.
+; Print the "PLAYER" text.
+ $A6DC LD HL,$4868   ; Point #REGhl at #N$4868 (in the screen buffer).
  $A6DF CALL $AA9A    ; Print it in large letters.
  $A6E2 LD B,$03      ; Set the number of delay loops to three.
  $A6E4 LD HL,$0000   ; Set the length of each delay loop.
@@ -7260,6 +7296,10 @@ g$A830 DEFB $0E           ; Letters typed so far.
 ; Called every frame in town. From level eight onwards it puts a
 ; tumbleweed (an object of type #N$17) in the ninth object slot, next to the
 ; sheriff, if the slot is free.
+;
+; .
+;
+; From level eight onwards, use the ninth slot if it is free.
 @label=CreateTumbleweed
 c$A89C LD A,($A260)    ; Fetch the level.
  $A89F CP $08          ; Compare it with eight.
@@ -7268,6 +7308,7 @@ c$A89C LD A,($A260)    ; Fetch the level.
  $A8A5 LD A,(DE)       ; Fetch the type of the object in the slot.
  $A8A6 AND A           ; {Return if the slot is in use.
  $A8A7 RET NZ          ; }
+; Copy the template and place the tumbleweed near the sheriff.
  $A8A8 PUSH DE         ; {Copy #REGde to #REGiy (using the stack).
  $A8A9 POP IY          ; }
  $A8AB LD HL,$A8C1     ; Point #REGhl at #R$A8C1.
@@ -7390,6 +7431,10 @@ g$A94B DEFW $A94F                           ; {The addresses of the two routes.
 ; Called every frame in town. While the sheriff is on foot it puts a horse
 ; (an object of type #N$14) in the eighth object slot, two cells from the
 ; sheriff, if the slot is free.
+;
+; .
+;
+; While the sheriff is on foot, use the eighth slot if it is free.
 @label=CreateHorse
 c$A981 LD A,($A27D)    ; Fetch the type of the object in the first slot.
  $A984 CP $01          ; Compare it with the type of a sheriff on foot.
@@ -7398,6 +7443,7 @@ c$A981 LD A,($A27D)    ; Fetch the type of the object in the first slot.
  $A98A LD A,(DE)       ; Fetch the type of the object in the slot.
  $A98B AND A           ; {Return if the slot is in use.
  $A98C RET NZ          ; }
+; Copy the template and place the horse near the sheriff.
  $A98D PUSH DE         ; {Copy #REGde to #REGiy (using the stack).
  $A98E POP IY          ; }
  $A990 LD HL,$A9A8     ; Point #REGhl at #R$A9A8.
@@ -7431,10 +7477,15 @@ b$A9A8 DEFB $00,$80,$00,$80,$00,$00,$00,$00 ; {Type, position, speed, size and
 ; is three cells away. If the sheriff touches it, the horse is removed, the
 ; sheriff turns into a mounted sheriff (type #N$15) who has a higher top speed,
 ; and the price of the horse is taken from the bounty.
+;
+; .
+;
+; Remove the horse if the sheriff has moved away.
 @label=HandleHorse
 c$A9BF LD C,$03        ; Set the distance to three cells.
  $A9C1 CALL $B810      ; Check how close the sheriff is.
  $A9C4 JP NC,$C7BB     ; Remove the horse if the sheriff has moved away.
+; Mount the sheriff when he touches the horse.
  $A9C7 CALL $B631      ; Check whether the sheriff is touching the horse.
  $A9CA RET NC          ; Return if not.
  $A9CB LD A,$08        ; {Write #N$08 to #R$A23C so that the sound lasts eight
@@ -7457,10 +7508,15 @@ c$A9BF LD C,$03        ; Set the distance to three cells.
 ; (see #R$AA76). When the sheriff comes within two cells of one, and the seventh
 ; object slot is free, the routine puts a cactus (an object of type #N$13) in
 ; the slot.
+;
+; .
+;
+; Return if the seventh slot is in use.
 @label=CreateCactus
 c$A9ED LD A,($A2DD)  ; Fetch the type of the object in the seventh slot.
  $A9F0 AND A         ; {Return if the slot is in use.
  $A9F1 RET NZ        ; }
+; Find a cactus that is within two cells of the sheriff.
  $A9F2 LD A,($A27F)  ; {Fetch the horizontal cell of the sheriff and keep it in
  $A9F5 LD E,A        ; #REGe.}
  $A9F6 LD A,($A281)  ; Fetch the vertical cell of the sheriff.
@@ -7566,10 +7622,15 @@ g$AA76 DEFB $08                             ; The number of cacti.
 ; Type #N$13: a cactus standing in the street. It goes away when the
 ; sheriff is more than two cells away. It hurts the sheriff if they touch, and
 ; it stops any bullet which hits it.
+;
+; .
+;
+; Remove the cactus if the sheriff has moved away.
 @label=HandleCactus
 c$AA7F LD C,$02        ; Set the distance to two cells.
  $AA81 CALL $B810      ; Check how close the sheriff is.
  $AA84 JP NC,$C7BB     ; Remove the cactus if the sheriff has moved away.
+; Hurt the sheriff or stop a bullet which hits it.
  $AA87 CALL $B631      ; Check whether the cactus is touching the sheriff.
  $AA8A JP C,$B754      ; Hurt the sheriff if it is.
  $AA8D CALL $B614      ; Check whether a bullet has hit the cactus.
@@ -7593,16 +7654,20 @@ c$AA7F LD C,$02        ; Set the distance to two cells.
 ;
 ; DE The address of the message
 ; HL The screen address to print it at
+;
+; Fetch the attribute of the message.
 @label=PrintLargeText
 c$AA9A LD A,(DE)     ; Fetch the attribute.
  $AA9B INC DE        ; Move on to the first character.
  $AA9C EX AF,AF'     ; Keep the attribute in the alternate accumulator.
+; Print each character until the terminator.
 @label=PrintLargeText_Loop
 *$AA9D LD A,(DE)     ; Fetch the next character.
  $AA9E AND A         ; Test whether it is the end of the message.
  $AA9F RET Z         ; Return if it is.
  $AAA0 INC DE        ; Move on to the next character.
  $AAA1 CALL $D4EA    ; Convert the character to the number of its tile.
+; Find the pixels of the character.
  $AAA4 PUSH DE       ; Stash the address of the message on the stack.
  $AAA5 PUSH HL       ; Stash the screen address on the stack.
  $AAA6 EX DE,HL      ; Swap the screen address into #REGde.
@@ -7615,6 +7680,7 @@ c$AA9A LD A,(DE)     ; Fetch the attribute.
  $AAB0 ADD HL,BC     ; Add the offset to find the pixels of the character.
  $AAB1 EX DE,HL      ; Swap them, so that #REGde has the pixels and #REGhl the screen
                      ; address.
+; Draw the four quarters of the character.
  $AAB2 CALL $AAC4    ; Draw the top left quarter of the character.
  $AAB5 CALL $AAE7    ; Draw the top right quarter of the character.
  $AAB8 CALL $AAC4    ; Draw the bottom left quarter of the character.
@@ -7637,12 +7703,15 @@ c$AA9A LD A,(DE)     ; Fetch the attribute.
 ;   DE The address of the pixels of the character
 ;   HL The screen address
 ; O:HL The screen address of the cell to the right
+;
+; Swap the pixels and the screen address.
 @label=PrintLeftHalfOfCharacter
 c$AAC4 PUSH DE       ; Stash the address of the pixels on the stack.
  $AAC5 PUSH HL       ; Stash the screen address on the stack.
  $AAC6 EX DE,HL      ; Swap the pixels into #REGhl and the screen address into
                      ; #REGde.
  $AAC7 LD B,$04      ; Set the number of rows to four.
+; Widen the left four pixels of each row.
 @label=PrintLeftHalf_Loop
 *$AAC9 LD A,(HL)     ; Fetch a row of pixels.
  $AACA INC HL        ; Move on to the next row.
@@ -7661,6 +7730,7 @@ c$AAC4 PUSH DE       ; Stash the address of the pixels on the stack.
  $AADC INC D         ; Move down a pixel row.
  $AADD POP HL        ; Retrieve the address of the pixels.
  $AADE DJNZ $AAC9    ; Loop back until four rows have been drawn.
+; Colour the cell and move to the right.
  $AAE0 POP HL        ; Retrieve the screen address.
  $AAE1 POP DE        ; Retrieve the address of the pixels.
  $AAE2 CALL $D63C    ; Set the attribute of the cell.
@@ -7679,11 +7749,14 @@ c$AAC4 PUSH DE       ; Stash the address of the pixels on the stack.
 ;   HL The screen address
 ; O:DE The address of the pixels of the next four rows
 ; O:HL The screen address of the cell below on the left
+;
+; Swap the pixels and the screen address.
 @label=PrintRightHalfOfCharacter
 c$AAE7 PUSH HL       ; Stash the screen address on the stack.
  $AAE8 EX DE,HL      ; Swap the pixels into #REGhl and the screen address into
                      ; #REGde.
  $AAE9 LD B,$04      ; Set the number of rows to four.
+; Widen the right four pixels of each row.
 @label=PrintRightHalf_Loop
 *$AAEB LD A,(HL)     ; Fetch a row of pixels.
  $AAEC INC HL        ; Move on to the next row.
@@ -7698,6 +7771,7 @@ c$AAE7 PUSH HL       ; Stash the screen address on the stack.
  $AAFA INC D         ; Move down a pixel row.
  $AAFB POP HL        ; Retrieve the address of the pixels.
  $AAFC DJNZ $AAEB    ; Loop back until four rows have been drawn.
+; Colour the cell and move down on the left.
  $AAFE EX DE,HL      ; Swap the screen address back into #REGhl and the pixels
                      ; into #REGde.
  $AAFF POP HL        ; Retrieve the screen address.
@@ -7721,11 +7795,16 @@ g$AB08 DEFB $00,$03,$0C,$0F,$30,$33,$3C,$3F
 ; Called every frame. In the town stage it draws the scenery sprites
 ; listed at #R$AB6A, which are fixed in the town and scroll with the view.
 ; Sprites which would be off the edge of the screen are skipped.
+;
+; .
+;
+; Return unless this is the town stage.
 @label=DrawScenery
 c$AB18 LD A,($A267)  ; Fetch the stage number.
  $AB1B AND A         ; Test whether this is a stage outside the town, which is the duel or
                      ; the bonus stage.
  $AB1C RET Z         ; Return if it is, as it has no scenery.
+; Set the origin from the sheriff's cell.
  $AB1D LD A,($A27F)  ; Fetch the horizontal cell of the sheriff.
  $AB20 AND %11111110 ; Make it an even number.
  $AB22 LD L,A        ; Keep the even horizontal cell in #REGl.
@@ -7736,6 +7815,7 @@ c$AB18 LD A,($A267)  ; Fetch the stage number.
                      ; positions.
  $AB2C CALL $C6DC    ; Work out where the origin is on the screen.
  $AB2F LD HL,$AB6A   ; Point #REGhl at #R$AB6A.
+; Draw each scenery sprite that is on the screen.
 @label=DrawScenery_Loop
 *$AB32 LD A,(HL)     ; Fetch the number of the sprite and its flip flag.
  $AB33 AND A         ; Test whether this is the end of the list.
@@ -7772,6 +7852,7 @@ c$AB18 LD A,($A267)  ; Fetch the stage number.
  $AB61 CALL $C4A7    ; Draw the sprite.
  $AB64 POP HL        ; Retrieve the address in the list.
  $AB65 JR $AB32      ; Go back for the next sprite in the list.
+; Skip a sprite that is off the edge.
 @label=DrawScenery_Skip
 *$AB67 INC HL        ; Skip the vertical offset of the sprite.
  $AB68 JR $AB32      ; Go back for the next sprite in the list.
@@ -7808,50 +7889,57 @@ b$AB6A DEFB $01,$20,$20
 c$AB77 XOR A         ; {Write #N$00 to #R$A242 to allow the title tune to play.
  $AB78 LD ($A242),A  ; }
  $AB7B CALL $D6DB    ; Clear the screen.
- $AB7E LD E,$45      ; Set the attribute to bright cyan on black.
+ $AB7E LD E,$45      ; Set the attribute to #COLOUR$45.
  $AB80 CALL $D6D3    ; Set all the attributes.
  $AB83 LD HL,$8A70   ; Point #REGhl at #R$8A70.
  $AB86 LD ($A20F),HL ; Set the tiles to use.
-; Draw the three revolvers and their digits.
- $AB89 LD HL,$4062   ; Point #REGhl at the top of the first revolver.
- $AB8C LD A,$47      ; Set the attribute to bright white on black.
+; Draw the first revolver.
+ $AB89 LD HL,$4062   ; Point #REGhl at #N$4062 (in the screen buffer).
+ $AB8C LD A,$47      ; Set the attribute to #COLOUR$47.
  $AB8E CALL $ADE3    ; Draw the revolver.
  $AB91 LD BC,$8EB0   ; Point #REGbc at #R$8EB0.
- $AB94 LD HL,$40C7   ; Point #REGhl at the screen position of the digit.
+; Draw its digit.
+ $AB94 LD HL,$40C7   ; Point #REGhl at #N$40C7 (in the screen buffer).
  $AB97 LD A,$01      ; Set the digit to one.
  $AB99 CALL $D2C9    ; Draw the digit.
- $AB9C LD HL,$4842   ; Point #REGhl at the top of the second revolver.
- $AB9F LD A,$46      ; Set the attribute to bright yellow on black.
+; Draw the second revolver.
+ $AB9C LD HL,$4842   ; Point #REGhl at #N$4842 (in the screen buffer).
+ $AB9F LD A,$46      ; Set the attribute to #COLOUR$46.
  $ABA1 CALL $ADE3    ; Draw the revolver.
  $ABA4 LD BC,$8EB0   ; Point #REGbc at #R$8EB0.
- $ABA7 LD HL,$48A7   ; Point #REGhl at the screen position of the digit.
+; Draw its digit.
+ $ABA7 LD HL,$48A7   ; Point #REGhl at #N$48A7 (in the screen buffer).
  $ABAA LD A,$02      ; Set the digit to two.
  $ABAC CALL $D2C9    ; Draw the digit.
- $ABAF LD HL,$5022   ; Point #REGhl at the top of the third revolver.
- $ABB2 LD A,$44      ; Set the attribute to bright green on black.
+; Draw the third revolver.
+ $ABAF LD HL,$5022   ; Point #REGhl at #N$5022 (in the screen buffer).
+ $ABB2 LD A,$44      ; Set the attribute to #COLOUR$44.
  $ABB4 CALL $ADE3    ; Draw the revolver.
  $ABB7 LD BC,$8EB0   ; Point #REGbc at #R$8EB0.
- $ABBA LD HL,$5087   ; Point #REGhl at the screen position of the digit.
+; Draw its digit.
+ $ABBA LD HL,$5087   ; Point #REGhl at #N$5087 (in the screen buffer).
  $ABBD LD A,$03      ; Set the digit to three.
  $ABBF CALL $D2C9    ; Draw the digit.
-; Make the first and last columns black, and the two columns by the
-; revolvers red.
- $ABC2 LD C,$00      ; Set the attribute to black.
- $ABC4 LD HL,$5800   ; Point #REGhl at the top of the first column.
+; Colour the first column black.
+ $ABC2 LD C,$00      ; Set the attribute to #COLOUR$00.
+ $ABC4 LD HL,$5800   ; Point #REGhl at #N$5800 (in the attribute buffer).
  $ABC7 CALL $AE8E    ; Colour the column.
- $ABCA LD HL,$581F   ; Point #REGhl at the top of the last column.
+; Colour the last column black.
+ $ABCA LD HL,$581F   ; Point #REGhl at #N$581F (in the attribute buffer).
  $ABCD CALL $AE8E    ; Colour the column.
- $ABD0 LD C,$42      ; Set the attribute to bright red on black.
- $ABD2 LD HL,$5809   ; Point #REGhl at the top of the tenth column.
+; Colour the tenth column red.
+ $ABD0 LD C,$42      ; Set the attribute to #COLOUR$42.
+ $ABD2 LD HL,$5809   ; Point #REGhl at #N$5809 (in the attribute buffer).
  $ABD5 CALL $AE8E    ; Colour the column.
- $ABD8 LD HL,$580A   ; Point #REGhl at the top of the eleventh column.
+; Colour the eleventh column red.
+ $ABD8 LD HL,$580A   ; Point #REGhl at #N$580A (in the attribute buffer).
  $ABDB CALL $AE8E    ; Colour the column.
-; Print the game name and the copyright message.
- $ABDE LD HL,$4006   ; Point #REGhl at the screen position of the game name.
+; Print the game name.
+ $ABDE LD HL,$4006   ; Point #REGhl at #N$4006 (in the screen buffer).
  $ABE1 LD DE,$AC32   ; Point #REGde at #R$AC32.
  $ABE4 CALL $AA9A    ; Print the game name in large letters.
- $ABE7 LD HL,$50EA   ; Point #REGhl at the screen position of the copyright
-                     ; message.
+; Print the copyright message.
+ $ABE7 LD HL,$50EA   ; Point #REGhl at #N$50EA (in the screen buffer).
  $ABEA LD DE,$AC23   ; Point #REGde at #R$AC23.
  $ABED CALL $D4D7    ; Print the copyright message.
 ; Set up the four menu entries.
@@ -7880,13 +7968,13 @@ c$AB77 XOR A         ; {Write #N$00 to #R$A242 to allow the title tune to play.
  $AC1E JR C,$AC03    ; Loop back until all four entries have been run.
  $AC20 JP $ABFB      ; Start the next frame.
 
-; Title Texts
+; Messaging: Title Text
 ;
 ; The copyright message and the game name. Each is an attribute byte, the
 ; characters and a zero terminator. The #N$5B in the copyright message is the
 ; copyright symbol of the font, and the #N$5C bytes are full stops.
 @label=TitleTexts
-b$AC23 DEFB $47          ; Attribute: #COLOUR(#PEEK(#PC)).
+t$AC23 DEFB $47          ; Attribute: #COLOUR(#PEEK(#PC)).
  $AC24 DEFB $5B          ; Copyright symbol.
  $AC25 DEFM " 1985 "     ; " 1985 ".
  $AC2B DEFM "A"          ; "A".
@@ -8033,12 +8121,17 @@ c$AC6A LD IY,$AC52     ; Point #REGiy at the entry for the first revolver.
 ; The routine for states #N$02 and #N$03 of a menu entry: a revolver
 ; firing. It draws the revolver in the state of the entry for twelve frames, and
 ; then moves on to the next state.
+;
+; .
+;
+; Draw the revolver for twelve frames.
 @label=HandleMenuRevolverFiring
 c$ACE2 CALL $AE10      ; Draw the revolver.
  $ACE5 INC (IX+$03)    ; Add one to the counter.
  $ACE8 LD A,(IX+$03)   ; Fetch the counter.
  $ACEB CP $0C          ; Compare it with twelve.
  $ACED RET NZ          ; Return if the counter has not reached twelve.
+; Move on to the next state.
  $ACEE INC (IX+$00)    ; Move on to the next state.
  $ACF1 LD (IX+$03),$00 ; Reset the counter.
  $ACF5 RET             ; Return.
@@ -8065,13 +8158,13 @@ c$ACF6 LD A,(IX+$01)   ; Fetch the horizontal position of the bullet.
  $AD0F DEC A           ; Subtract one.
  $AD10 JR Z,$AD61      ; Jump to #R$AD61 if this is the second entry.
 ; This is the third entry, which always says "START GAME".
- $AD12 LD A,$47        ; Set the attribute to bright white on black.
+ $AD12 LD A,$47        ; Set the attribute to #COLOUR$47.
  $AD14 EX AF,AF'       ; Keep it in the alternate accumulator.
  $AD15 LD HL,$ADD9     ; Point #REGhl at #R$ADD9.
  $AD18 JR $AD28        ; Jump to #R$AD28.
 ; The first entry says "ONE PLAYER GAME" or "TWO PLAYER GAME".
 @label=HandleMenuBullet_Players
-*$AD1A LD A,$42        ; Set the attribute to bright red on black.
+*$AD1A LD A,$42        ; Set the attribute to #COLOUR$42.
  $AD1C EX AF,AF'       ; Keep it in the alternate accumulator.
  $AD1D LD A,($A21C)    ; Fetch the options.
  $AD20 AND %00000001   ; Keep the number of players.
@@ -8118,7 +8211,7 @@ c$ACF6 LD A,(IX+$01)   ; Fetch the horizontal position of the bullet.
  $AD5E JP $D2C9        ; Jump to #R$D2C9.
 ; The second entry says which controls are used.
 @label=HandleMenuBullet_Controls
-*$AD61 LD A,$43        ; Set the attribute to bright magenta on black.
+*$AD61 LD A,$43        ; Set the attribute to #COLOUR$43.
  $AD63 EX AF,AF'       ; Keep it in the alternate accumulator.
  $AD64 LD A,($A21C)    ; Fetch the options.
  $AD67 RRCA            ; Move the type of controls into bits 0 and 1.
@@ -8354,9 +8447,14 @@ c$AE8E LD B,$18      ; Set the number of rows.
 ; length of each pulse.
 ; .
 ; #HTML(#AUDIO0(static-sound.wav)(#INCLUDE(StaticSound)))
+;
+; .
+;
+; Use the first #N$80 bytes of the ROM as pulse lengths.
 @label=PlayStatic
 c$AE98 LD HL,$0000   ; Point #REGhl at the start of the ROM.
  $AE9B LD C,$80      ; Set the number of pulses.
+; Play each pulse.
 @label=PlayStatic_Loop
 *$AE9D LD A,(HL)     ; Fetch a byte of the ROM.
  $AE9E INC HL        ; Move on to the next byte.
@@ -8387,11 +8485,16 @@ c$AE98 LD HL,$0000   ; Point #REGhl at the start of the ROM.
 ; { Bag Hit Sound |
 ; #HTML(#AUDIO0(bag-hit-sound.wav)(#INCLUDE(BagHitSound))) }
 ; TABLE#
+;
+; .
+;
+; Return if there are no notes left.
 @label=PlaySoundEffect
 c$AEA9 LD HL,$A23C   ; Point #REGhl at the number of notes left.
  $AEAC LD A,(HL)     ; Fetch the number of notes left.
  $AEAD AND A         ; Test whether the effect is over.
  $AEAE RET Z         ; Return if it is.
+; Play the next note from the end of the list.
  $AEAF DEC (HL)      ; Count down the notes.
  $AEB0 INC HL        ; Move on to the address of the notes.
  $AEB1 LD E,(HL)     ; Fetch the low byte of the address.
@@ -8432,6 +8535,8 @@ b$AEBF DEFB $20                         ; Not used.
 ;
 ; A The flags of the object before it was moved
 ; IX The address of the object
+;
+; Return unless both walk bits have just become set.
 @label=PlayFootstepSound
 c$AED3 BIT 0,A        ; Test bit 0 of the old flags.
  $AED5 RET NZ         ; Return if it was already set.
@@ -8439,6 +8544,7 @@ c$AED3 BIT 0,A        ; Test bit 0 of the old flags.
  $AEDA RET Z          ; }
  $AEDB BIT 1,(IX+$07) ; {Return if bit 1 of the flags is not set now.
  $AEDF RET Z          ; }
+; Play a burst of pulses.
  $AEE0 LD C,$10       ; Set the number of pulses.
 @label=PlayFootstepSound_Loop
 *$AEE2 LD A,C         ; Fetch the number of the pulse.
@@ -8513,8 +8619,13 @@ c$AEED LD HL,$A207   ; Point #REGhl at the sound counter.
 ; Plays a short, rough buzz made of twelve pulses of different lengths.
 ; .
 ; #HTML(#AUDIO0(buzz-sound.wav)(#INCLUDE(BuzzSound)))
+;
+; .
+;
+; Play twelve pulses of different lengths.
 @label=PlayBuzz
 c$AF22 LD C,$0C      ; Set the number of pulses.
+; Play the next pulse.
 @label=PlayBuzz_Loop
 *$AF24 LD A,C        ; Fetch the number of the pulse.
  $AF25 XOR %10100101 ; Change it.
@@ -8540,9 +8651,14 @@ c$AF22 LD C,$0C      ; Set the number of pulses.
 ; the length of each.
 ; .
 ; #HTML(#AUDIO0(rumble-sound.wav)(#INCLUDE(RumbleSound)))
+;
+; .
+;
+; Use the first sixteen bytes of the ROM as tone lengths.
 @label=PlayRumble
 c$AF30 LD HL,$0000   ; Point #REGhl at the start of the ROM.
  $AF33 LD E,$10      ; Set the number of tones.
+; Play each tone.
 @label=PlayRumble_Loop
 *$AF35 LD A,(HL)     ; Fetch a byte of the ROM.
  $AF36 INC HL        ; Move on to the next byte.
@@ -8648,6 +8764,8 @@ c$AF5F CALL $AF66    ; Play a pulse.
 ; toggling the speaker. #REGb is unchanged.
 ;
 ; B The length of the pulse
+;
+; Turn the speaker on for the length of the pulse.
 @label=PlaySquareWave
 c$AF66 LD A,$10      ; Set the speaker bit.
  $AF68 OUT ($FE),A   ; Turn the speaker on.
@@ -8655,6 +8773,7 @@ c$AF66 LD A,$10      ; Set the speaker bit.
 @label=PlaySquareWave_FirstDelay
 *$AF6B DJNZ $AF6B    ; Wait for the length of the pulse.
  $AF6D LD B,A        ; Restore the length of the pulse.
+; Turn the speaker off for the same length.
  $AF6E XOR A         ; Clear the speaker bit.
  $AF6F OUT ($FE),A   ; Turn the speaker off.
  $AF71 LD A,B        ; Keep the length of the pulse in #REGa.
@@ -8774,7 +8893,7 @@ c$AF8F LD A,(DE)     ; Fetch the next note.
 c$AF9A AND %00111111 ; Keep the number of the note.
  $AF9C JR Z,$AFDC    ; Play a rest if there is no note.
 ; Look up the delays and the number of cycles in the table at #R$AFF2.
- $AF9E LD L,A        ; {Copy the number into #REGhl.
+ $AF9E LD L,A        ; {Set #REGhl to the note number.
  $AF9F LD H,$00      ; }
  $AFA1 ADD HL,HL     ; Double the number.
  $AFA2 CALL $D275    ; Add the number again to treble it.
@@ -8848,6 +8967,8 @@ c$AF9A AND %00111111 ; Keep the number of the note.
 ;
 ;   DE The address of the rest
 ; O:DE The address after the rest
+;
+; Work out the length of the rest in beats.
 @label=PlayRest
 c$AFDC LD A,(DE)     ; Fetch the rest.
  $AFDD INC DE        ; Move on to the next note.
@@ -8857,6 +8978,7 @@ c$AFDC LD A,(DE)     ; Fetch the rest.
  $AFE2 INC A         ; Add one to get the length in beats.
  $AFE3 LD L,A        ; Copy the length into #REGl.
  $AFE4 LD BC,$430B   ; Set the length of a beat.
+; Wait for each beat.
 @label=PlayRest_Beat
 *$AFE7 PUSH BC       ; Stash the length of a beat on the stack.
 @label=PlayRest_Wait
@@ -9052,10 +9174,11 @@ c$B1F4 LD HL,$B4A8    ; Point #REGhl at the table of names.
 @label=PrintOutlawName_Found
 *$B205 PUSH HL        ; {Copy #REGhl to #REGiy (using the stack).
  $B206 POP IY         ; }
-; Print the two parts.
- $B208 LD DE,$4083    ; Point #REGde at the screen address for the first part.
+; Print the first part.
+ $B208 LD DE,$4083    ; Point #REGde at #N$4083 (in the screen buffer).
  $B20B CALL $B211     ; Call #R$B211 to print it.
- $B20E LD DE,$40A3    ; Point #REGde at the screen address for the second part.
+; Print the second part.
+ $B20E LD DE,$40A3    ; Point #REGde at #N$40A3 (in the screen buffer).
 ; Print a part of the name, centred on the screen address in #REGde. If
 ; the part has an even number of characters it is centred exactly, and otherwise
 ; it is half a character to the right, using a table which shifts a row of
@@ -9171,6 +9294,8 @@ c$B275 DEC (IX+$0D)  ; Count down byte #N$0D.
 ; B The number of sprites
 ; DE The address of the list of sprite numbers
 ; HL The address in the buffer
+;
+; Draw each sprite in the list.
 @label=DrawWideSprites
 c$B280 LD A,(DE)     ; Fetch the number of the next sprite.
  $B281 INC DE        ; Move on to the next sprite in the list.
@@ -9317,11 +9442,16 @@ c$B2E9 LD HL,$A20A   ; Point #REGhl at the outlaw shot flag.
 ; Called every frame in the town. Puts a pointing hand (an object of type
 ; #N$0B) in the sixth object slot, next to the sheriff, if the slot is free.
 ; #R$B347 makes it point towards the outlaw.
+;
+; .
+;
+; Use the sixth slot if it is free.
 @label=CreateDirectionPointer
 c$B318 LD DE,$A2CD     ; Point #REGde at the sixth object slot.
  $B31B LD A,(DE)       ; Fetch the type of the object in the slot.
  $B31C AND A           ; {Return if the slot is in use.
  $B31D RET NZ          ; }
+; Copy the template and place the pointer near the sheriff.
  $B31E PUSH DE         ; {Copy #REGde to #REGiy (using the stack).
  $B31F POP IY          ; }
  $B321 LD HL,$B337     ; Point #REGhl at #R$B337.
@@ -9453,10 +9583,15 @@ c$B3B6 LD L,(IY+$03) ; Fetch the low byte.
 ; Called every frame. In the town stage it updates the prices and makes
 ; new objects if there are free slots: bystanders, the outlaw, the pointer,
 ; money bags, cacti, the horse and the tumbleweed.
+;
+; .
+;
+; Return unless this is the town stage.
 @label=CreateTownObjects
 c$B3BD LD A,($A267)  ; {Return if this is a stage outside the town, which is the duel or
  $B3C0 AND A         ; the bonus stage.
  $B3C1 RET Z         ; }
+; Update the prices and make any missing town objects.
  $B3C2 CALL $A5D5    ; Update the prices.
  $B3C5 CALL $B691    ; Make a bystander if there is a free slot.
  $B3C8 CALL $B420    ; Make the outlaw if there is a free slot.
@@ -9592,7 +9727,7 @@ b$B484 DEFB $00,$80,$00,$80,$00,$00,$00,$00 ; {Type, position, speed, size and
 b$B494 DEFB $00,$01,$02,$03,$04,$05,$06,$07,$08,$09,$0A,$0B,$0C,$0D,$0E,$0F,$10,$11,$12,$13 ; #FOR($00,$13)||n|#R$B4A8(#N(#PEEK(#PC+n)))|,
                                                                                             ; ||
 
-; Outlaw Names
+; Messaging: Outlaw Names
 ;
 ; The names of the outlaws. Each outlaw has two parts, which are printed
 ; on two lines of the wanted poster by #R$B1F4. The last character of each part
@@ -9862,6 +9997,8 @@ c$B691 LD IY,$A30D     ; Point #REGiy at the tenth object slot.
 ;   B The distance in cells
 ;   IY The address of the object
 ; O:F The zero flag is set if the cell is free
+;
+; Fetch the sheriff's cell and the frame counter.
 @label=PlaceNearSheriff
 c$B6CD LD A,($A27F)  ; {Fetch the horizontal cell of the sheriff and keep it in
  $B6D0 LD L,A        ; #REGl.}
@@ -9869,6 +10006,7 @@ c$B6CD LD A,($A27F)  ; {Fetch the horizontal cell of the sheriff and keep it in
  $B6D4 LD H,A        ; #REGh.}
  $B6D5 LD A,($A216)  ; {Fetch the frame counter and keep it in #REGc.
  $B6D8 LD C,A        ; }
+; Choose a diagonal from the bottom two bits of the frame.
  $B6D9 LD A,B        ; Fetch the distance.
  $B6DA BIT 0,C       ; {Jump to #R$B6E0 if bit 0 of the frame counter is clear.
  $B6DC JR Z,$B6E0    ; }
@@ -9885,6 +10023,7 @@ c$B6CD LD A,($A27F)  ; {Fetch the horizontal cell of the sheriff and keep it in
 *$B6EB ADD A,H       ; Add the vertical cell of the sheriff.
  $B6EC AND %00001111 ; Wrap round the town.
  $B6EE LD H,A        ; Keep the wrapped vertical cell in #REGh.
+; Store the cell and test whether it is free.
  $B6EF LD (IY+$02),L ; Set the horizontal cell of the object.
  $B6F2 LD (IY+$04),H ; Set the vertical cell of the object.
  $B6F5 JP $C738      ; Jump to #R$C738.
@@ -9898,6 +10037,8 @@ c$B6CD LD A,($A27F)  ; {Fetch the horizontal cell of the sheriff and keep it in
 ; #R$B6CD must have been called first.
 ;
 ; IY The address of the object
+;
+; Set the horizontal position within the cell.
 @label=SetPositionInCell
 c$B6F8 LD A,($A27E)  ; Fetch the horizontal position of the sheriff within his
                      ; cell.
@@ -9909,6 +10050,7 @@ c$B6F8 LD A,($A27E)  ; Fetch the horizontal position of the sheriff within his
 @label=SetPositionInCell_Horizontal
 *$B705 LD (IY+$01),A ; Set the horizontal position of the object within its
                      ; cell.
+; Set the vertical position within the cell.
  $B708 LD A,($A280)  ; Fetch the vertical position of the sheriff within his
                      ; cell.
  $B70B AND %11000000 ; Keep the top two bits.
@@ -9966,6 +10108,8 @@ c$B719 LD A,(IX+$05) ; Fetch the speed of the bystander.
 ;
 ; IX The address of the object which killed the sheriff
 ; IY The address of the sheriff
+;
+; Make the sheriff die.
 @label=KillSheriff
 c$B754 PUSH IX       ; Stash the address of the object on the stack.
  $B756 PUSH IY       ; {Copy the address of the sheriff into #REGix (using the
@@ -9975,6 +10119,7 @@ c$B754 PUSH IX       ; Stash the address of the object on the stack.
  $B760 SUB $04       ; Take four off it.
  $B762 LD (IX+$0C),A ; Store the reduced delay counter.
  $B765 POP IX        ; Retrieve the address of the object from the stack.
+; Clear the three bullet slots.
  $B767 LD HL,$A28D   ; Point #REGhl at #R$A28D.
  $B76A LD BC,$0030   ; Set the size of the three bullet slots.
  $B76D JP $D6E1      ; Jump to #R$D6E1.
@@ -10053,18 +10198,19 @@ b$B798 DEFW $B79C           ; {The addresses of #R$B79C and #R$B7A0.
 ;
 ; Show the game over screen.
 @label=ShowGameOver
-c$B7A8 LD E,$00      ; Set the attribute to black.
+c$B7A8 LD E,$00      ; Set the attribute to #COLOUR$00.
  $B7AA CALL $D6D3    ; Set all the attributes.
  $B7AD CALL $D6DB    ; Clear the screen.
  $B7B0 LD A,($A23F)  ; Fetch the number of the current player, which is zero or
                      ; one.
  $B7B3 ADD A,$31     ; Make it the character "1" or "2".
  $B7B5 LD ($B7EE),A  ; Put it in the text.
- $B7B8 LD HL,$4826   ; Point #REGhl at the screen position of "GAME OVER".
+; Print "GAME OVER".
+ $B7B8 LD HL,$4826   ; Point #REGhl at #N$4826 (in the screen buffer).
  $B7BB LD DE,$B7DA   ; Point #REGde at #R$B7DA.
  $B7BE CALL $AA9A    ; Print it in large letters.
- $B7C1 LD HL,$48A8   ; Point #REGhl at the screen position of the number of the
-                     ; player.
+; Print the number of the player.
+ $B7C1 LD HL,$48A8   ; Point #REGhl at #N$48A8 (in the screen buffer).
  $B7C4 LD DE,$B7E6   ; Point #REGde at #R$B7E6.
  $B7C7 CALL $AA9A    ; Print it in large letters.
 ; Play the tune.
@@ -10075,12 +10221,12 @@ c$B7A8 LD E,$00      ; Set the attribute to black.
  $B7D4 LD DE,$B1CF   ; Point #REGde at #R$B1CF.
  $B7D7 JP $AF76      ; Jump to #R$AF76.
 
-; Game Over Texts
+; Messaging: Game Over Text
 ;
 ; The two messages of the game over screen. Each is an attribute byte, the
 ; characters and a zero terminator.
 @label=GameOverTexts
-b$B7DA DEFB $45          ; Attribute: #COLOUR(#PEEK(#PC)).
+t$B7DA DEFB $45          ; Attribute: #COLOUR(#PEEK(#PC)).
  $B7DB DEFM "GAME  OVER" ; "GAME  OVER".
  $B7E5 DEFB $00          ; Terminator.
 @label=GameOverTexts_Player
@@ -10098,6 +10244,8 @@ b$B7DA DEFB $45          ; Attribute: #COLOUR(#PEEK(#PC)).
 ; #N$06 of the object hold the direction.
 ;
 ; IX The address of the object
+;
+; Choose the frame from the direction and the view.
 @label=SetFrameAndFlip
 c$B7F0 LD A,($A268)  ; {Fetch the view number and keep it in #REGb.
  $B7F3 LD B,A        ; }
@@ -10107,6 +10255,7 @@ c$B7F0 LD A,($A268)  ; {Fetch the view number and keep it in #REGb.
  $B7FA AND %00000001 ; Keep bit 0.
  $B7FC XOR B         ; Combine it with the view.
  $B7FD LD (IX+$0C),A ; Set the frame.
+; Set the flip bit from the direction.
  $B800 LD A,(IX+$06) ; Fetch the direction.
  $B803 AND %01000000 ; Keep bit 6.
  $B805 LD C,A        ; Keep the flip bit in #REGc.
@@ -10127,6 +10276,8 @@ c$B7F0 LD A,($A268)  ; {Fetch the view number and keep it in #REGb.
 ;   C The distance in cells
 ;   IX The address of the object
 ; O:F The carry flag is set if the object is closer than that
+;
+; Compare the horizontal cells.
 @label=CheckDistance
 c$B810 LD A,($A27F)  ; Fetch the horizontal cell of the sheriff from
                      ; #R$A27D(#N$A27F).
@@ -10136,6 +10287,7 @@ c$B810 LD A,($A27F)  ; Fetch the horizontal cell of the sheriff from
 @label=CheckDistance_CompareHorizontal
 *$B81B CP C          ; Compare it with the distance.
  $B81C RET NC        ; Return if the object is too far away.
+; Compare the vertical cells.
  $B81D LD A,($A281)  ; Fetch the vertical cell of the sheriff from
                      ; #R$A27D(#N$A281).
  $B820 SUB (IX+$04)  ; Subtract the vertical cell of the object.
@@ -10161,6 +10313,8 @@ c$B810 LD A,($A27F)  ; Fetch the horizontal cell of the sheriff from
 ; figure with bit 5 of the flags set never changes direction on its own.
 ;
 ; IX The address of the object
+;
+; Change direction at once if the figure has hit a wall.
 @label=UpdateDirection
 c$B82A BIT 0,(IX+$07) ; {Jump to #R$B83F if the figure has bumped into a wall.
  $B82E JR NZ,$B83F    ; }
@@ -10171,6 +10325,7 @@ c$B82A BIT 0,(IX+$07) ; {Jump to #R$B83F if the figure has bumped into a wall.
                       ; two.
  $B839 BIT 5,(IX+$07) ; {Jump to #R$B85A to return if the figure keeps its
  $B83D JR NZ,$B85A    ; direction.}
+; Turn left or right and set a new counter.
 @label=UpdateDirection_Random
 *$B83F LD A,($A218)   ; Fetch a random number.
  $B842 CP $80         ; Compare it with #N$80.
@@ -10185,6 +10340,7 @@ c$B82A BIT 0,(IX+$07) ; {Jump to #R$B83F if the figure has bumped into a wall.
  $B851 OR C           ; Combine it with the direction.
  $B852 LD (IX+$06),A  ; Store the new direction.
  $B855 RET            ; Return.
+; The random number was #N$80 or more, so turn left.
 @label=UpdateDirection_TurnLeft
 *$B856 SUB $40        ; Turn left.
  $B858 JR $B84B       ; Go back to store the direction and counter.
@@ -10236,6 +10392,10 @@ w$B873 DEFW $A448
 ; Sets up the duel in the first two object slots. The first is the outlaw,
 ; in a random place in the middle of the screen, who will move about a random
 ; number of times before he draws, and the second is his gun.
+;
+; .
+;
+; Copy the outlaw and his gun into the first two slots.
 @label=SetUpDuel
 c$B879 LD DE,$A27D   ; Point #REGde at the first object slot.
  $B87C LD A,(DE)     ; Fetch the type of the object in the slot.
@@ -10246,6 +10406,7 @@ c$B879 LD DE,$A27D   ; Point #REGde at the first object slot.
  $B882 LD HL,$B8A3   ; Point #REGhl at #R$B8A3.
  $B885 LD BC,$0020   ; Set the size of two object slots in #REGbc.
  $B888 LDIR          ; Copy the templates into the slots.
+; Choose how many times he moves and where he stands.
  $B88A LD A,($A218)  ; Fetch a random number.
  $B88D AND %00000111 ; Keep a number from #N$00 to #N$07.
  $B88F ADD A,$02     ; Add two to give two to nine.
@@ -10507,6 +10668,10 @@ c$B9DD LD A,($A211)  ; Fetch #R$A211.
 ; #SIM(start=$A3F6,stop=$A3BA)
 ; #SIM(start=$A3BA,stop=$A3F6)
 ; #SCR$03,$02,$00,$18,$10(waiting-outlaw) } UDGTABLE# #POPS
+;
+; .
+;
+; Count down the current move, and draw if he has finished.
 @label=HandleWaitingOutlaw
 c$B9FB CALL $BA8B      ; Check whether the player has provoked the outlaw.
  $B9FE DEC (IX+$0B)    ; Count down the timer for the current move.
@@ -10517,6 +10682,7 @@ c$B9FB CALL $BA8B      ; Check whether the player has provoked the outlaw.
  $BA09 JP Z,$BAB1      ; Jump to make the outlaw draw if he has made all his
                        ; moves.
  $BA0C CALL $BC37      ; Choose a new move.
+; Keep him on the screen and move him.
 @label=HandleWaitingOutlaw_Move
 *$BA0F CALL $BBDD      ; Keep the outlaw on the screen, which reverses his
                        ; speed at an edge.
@@ -10528,6 +10694,8 @@ c$B9FB CALL $BA8B      ; Check whether the player has provoked the outlaw.
 @label=HandleWaitingOutlaw_Update
 *$BA1D CALL $BBCA      ; Move the outlaw.
 ; This entry point is used by the routines at #R$BAB1 and #R$BADA.
+; .
+; Check whether the crosshair has hit him.
 @label=HandleWaitingOutlaw_CheckHit
 *$BA20 CALL $BA63      ; Check whether the crosshair is on the outlaw.
  $BA23 JR NC,$BA32     ; Jump if the outlaw has not been hit.
@@ -10535,6 +10703,7 @@ c$B9FB CALL $BA8B      ; Check whether the player has provoked the outlaw.
  $BA27 LD ($A212),A    ; Store the flag which shows the outlaw has been hit.
  $BA2A LD (IX+$00),$11 ; Turn the outlaw into a shot outlaw.
  $BA2E LD (IX+$0C),$00 ; Start at the first frame of falling.
+; Draw the body of the outlaw.
 @label=HandleWaitingOutlaw_DrawBody
 *$BA32 LD A,(IX+$02)   ; {Fetch the horizontal position of the outlaw and keep
  $BA35 LD L,A          ; it in #REGl.}
@@ -10555,6 +10724,8 @@ c$B9FB CALL $BA8B      ; Check whether the player has provoked the outlaw.
 ; below the body.
 ;
 ; HL The address in the buffer
+;
+; Find the face sprites for this outlaw.
 @label=DrawOutlawFace
 c$BA47 LD A,($A260)  ; Fetch the level.
  $BA4A EX DE,HL      ; Swap the address in the buffer into #REGde.
@@ -10571,6 +10742,7 @@ c$BA47 LD A,($A260)  ; Fetch the level.
  $BA5C ADD HL,BC     ; Point #REGhl at the sprites of his face.
  $BA5D EX DE,HL      ; Swap the pointer to the face into #REGde and the address back into
                      ; #REGhl.
+; Draw the five sprites of the face.
  $BA5E LD B,$05      ; Set the number of sprites to five.
  $BA60 JP $B280      ; Jump to #R$B280.
 
@@ -10583,6 +10755,8 @@ c$BA47 LD A,($A260)  ; Fetch the level.
 ;
 ;   IX The address of the outlaw
 ; O:F The carry flag is set if the outlaw has been hit
+;
+; Return unless the player's shot is in the air.
 @label=CheckCrosshairOnOutlaw
 c$BA63 LD A,($A212)  ; {Return if #R$A212 is not zero.
  $BA66 AND A         ;
@@ -10592,6 +10766,7 @@ c$BA63 LD A,($A212)  ; {Return if #R$A212 is not zero.
  $BA6C LD A,(IY+$00) ; {Return if the shot slot is not in use.
  $BA6F AND A         ;
  $BA70 RET Z         ; }
+; Test whether the shot is on the outlaw.
  $BA71 LD A,(IX+$02) ; Fetch the horizontal position of the outlaw.
  $BA74 ADD A,$04     ; Move four pixels to the right.
  $BA76 SUB (IY+$02)  ; Subtract the horizontal position of the shot.
@@ -10632,7 +10807,8 @@ c$BA8B LD A,(IX+$06) ; Fetch the flag which shows that the outlaw has been
  $BAA4 AND A         ; {Return if the draw message has already been printed.
  $BAA5 RET NZ        ; }
  $BAA6 LD (HL),$01   ; Set the flag to one.
- $BAA8 LD HL,$502E   ; Point #REGhl at the screen address of the message.
+; Print the "DRAW!!" message.
+ $BAA8 LD HL,$502E   ; Point #REGhl at #N$502E (in the screen buffer).
  $BAAB LD DE,$BAD2   ; Point #REGde at #R$BAD2.
  $BAAE JP $AA9A      ; Jump to #R$AA9A.
 
@@ -10652,19 +10828,20 @@ c$BAB1 LD (IX+$00),$0D ; Turn the outlaw into one who is drawing.
  $BAB9 AND A           ; {Jump to #R$BAC7 if the draw message has been printed.
  $BABA JR NZ,$BAC7     ; }
  $BABC LD (HL),$02     ; Set the flag to two.
- $BABE LD HL,$502E     ; Point #REGhl at the screen address of the message.
+; Print the "DRAW!!" message.
+ $BABE LD HL,$502E     ; Point #REGhl at #N$502E (in the screen buffer).
  $BAC1 LD DE,$BACA     ; Point #REGde at #R$BACA.
  $BAC4 CALL $AA9A      ; Print the message.
 @label=StartOutlawDrawing_CheckHit
 *$BAC7 JP $BA20        ; Jump to check whether he has been hit.
 
-; Draw Messages
+; Messaging: Draw Text
 ;
 ; The two "DRAW!!" messages, each of which is an attribute byte (red, then
 ; yellow), characters and a zero byte. Each "!" is the character code #N$5D,
 ; which is why they are not text.
 @label=DrawMessages
-b$BACA DEFB $42      ; Attribute: #COLOUR(#PEEK(#PC)).
+t$BACA DEFB $42      ; Attribute: #COLOUR(#PEEK(#PC)).
  $BACB DEFM "DRAW"   ; "DRAW"
  $BACF DEFB $5D,$5D  ; Two exclamation marks.
  $BAD1 DEFB $00      ; Terminator.
@@ -10711,10 +10888,15 @@ c$BADD INC (IX+$0C)    ; Move on to the next frame.
 ;
 ; Type #N$12: an outlaw who is dying. He sinks out of sight, a sprite
 ; fewer each four frames, and when he has gone the player is rewarded.
+;
+; .
+;
+; Give the reward when the last frame is over.
 @label=HandleDyingOutlaw
 c$BB0B LD A,(IX+$0C) ; Fetch the frame.
  $BB0E CP $03        ; {Jump to #R$BB3A to give the reward if it is three.
  $BB10 JR Z,$BB3A    ; }
+; Draw the sprites of this frame.
  $BB12 LD E,A        ; Copy the frame into #REGe.
  $BB13 LD BC,$BBBB   ; Point #REGbc at #R$BBBB.
  $BB16 CALL $C75C    ; Fetch the pointer to the sprite list for the frame.
@@ -10730,6 +10912,7 @@ c$BB0B LD A,(IX+$0C) ; Fetch the frame.
  $BB27 LD H,(IX+$04) ; Fetch the vertical position of the outlaw into #REGh.
  $BB2A CALL $D233    ; Find the address in the buffer.
  $BB2D CALL $B280    ; Draw the sprites into the buffer.
+; Move on a frame every fourth frame.
  $BB30 LD A,($A216)  ; Fetch the frame counter.
  $BB33 AND %00000011 ; Keep a number from #N$00 to #N$03.
  $BB35 RET NZ        ; Return unless it is every fourth frame.
@@ -10794,7 +10977,8 @@ c$BB3A LD DE,$B0A9   ; Point #REGde at #R$B0A9.
  $BB82 CALL $D0B7    ; Clear the buffer.
  $BB85 CALL $D0B4    ; Draw the buffer on the screen, which blanks it, and
                      ; clear it again.
- $BB88 LD HL,$40EB   ; Point #REGhl at the screen address of the message.
+; Print the bonus message.
+ $BB88 LD HL,$40EB   ; Point #REGhl at #N$40EB (in the screen buffer).
  $BB8B LD DE,$BBB4   ; Point #REGde at #R$BBB4.
  $BB8E CALL $AA9A    ; Print the message.
  $BB91 LD DE,$B1E0   ; Point #REGde at #R$B1E0.
@@ -10811,12 +10995,12 @@ c$BB3A LD DE,$B0A9   ; Point #REGde at #R$B0A9.
  $BBB0 INC (HL)      ; stage takes.}
  $BBB1 JP $A3B3      ; Start the stage.
 
-; Bonus Message
+; Messaging: Bonus Text
 ;
 ; The message which is shown before the stage of money bags: an attribute
 ; byte, characters and a zero byte.
 @label=BonusMessage
-b$BBB4 DEFB $46      ; Attribute: #COLOUR(#PEEK(#PC)).
+t$BBB4 DEFB $46      ; Attribute: #COLOUR(#PEEK(#PC)).
  $BBB5 DEFM "BONUS"  ; "BONUS"
  $BBBA DEFB $00      ; Terminator.
 
@@ -10865,6 +11049,8 @@ c$BBCA LD A,(IX+$02)  ; Fetch the horizontal position.
 ; for the right edge, bit 2 for the lower edge and bit 3 for the upper edge.
 ;
 ; IX The address of the outlaw
+;
+; Test the left edge.
 @label=KeepOutlawOnScreen
 c$BBDD LD (IX+$05),$00 ; Clear the flags for the edges.
  $BBE1 LD A,(IX+$02)   ; Fetch the horizontal position.
@@ -10875,6 +11061,7 @@ c$BBDD LD (IX+$05),$00 ; Clear the flags for the edges.
  $BBED LD (IX+$01),A   ; Set it as the horizontal speed, which bounces him back
                        ; to the right.
  $BBF0 SET 0,(IX+$05)  ; Set the flag for the left edge.
+; Test the right edge.
 @label=KeepOutlawOnScreen_Right
 *$BBF4 LD A,(IX+$02)   ; Fetch the horizontal position.
  $BBF7 ADD A,(IX+$08)  ; Add the width of the outlaw.
@@ -10887,6 +11074,7 @@ c$BBDD LD (IX+$05),$00 ; Clear the flags for the edges.
  $BC06 LD (IX+$01),A   ; Set it as the horizontal speed, which stops him at the
                        ; edge.
  $BC09 SET 1,(IX+$05)  ; Set the flag for the right edge.
+; Test the lower edge.
 @label=KeepOutlawOnScreen_Lower
 *$BC0D LD A,(IX+$04)   ; Fetch the vertical position.
  $BC10 ADD A,(IX+$03)  ; Add the vertical speed.
@@ -10896,6 +11084,7 @@ c$BBDD LD (IX+$05),$00 ; Clear the flags for the edges.
  $BC19 LD (IX+$03),A   ; Set it as the vertical speed, which bounces him back
                        ; up.
  $BC1C SET 2,(IX+$05)  ; Set the flag for the lower edge.
+; Test the upper edge.
 @label=KeepOutlawOnScreen_Upper
 *$BC20 LD A,(IX+$04)   ; Fetch the vertical position.
  $BC23 ADD A,(IX+$09)  ; Add the height of the outlaw.
@@ -10918,6 +11107,8 @@ c$BBDD LD (IX+$05),$00 ; Clear the flags for the edges.
 ; nine frames. On the last move the speeds are doubled.
 ;
 ; IX The address of the outlaw
+;
+; Choose a horizontal speed.
 @label=ChooseOutlawMove
 c$BC37 LD A,($A218)  ; {Fetch a random number and keep it in #REGc.
  $BC3A LD C,A        ; }
@@ -10925,6 +11116,7 @@ c$BC37 LD A,($A218)  ; {Fetch a random number and keep it in #REGc.
  $BC3D BIT 7,C       ; {Jump to #R$BC43 if the top bit of the random number is
  $BC3F JR Z,$BC43    ; clear.}
  $BC41 NEG           ; Make the speed negative.
+; Store it, then choose a vertical speed.
 @label=ChooseOutlawMove_Vertical
 *$BC43 LD (IX+$01),A ; Set the horizontal speed.
  $BC46 LD A,($A219)  ; {Fetch another random number and keep it in #REGc.
@@ -10933,6 +11125,7 @@ c$BC37 LD A,($A218)  ; {Fetch a random number and keep it in #REGc.
  $BC4C BIT 7,C       ; {Jump to #R$BC52 if the top bit of the random number is
  $BC4E JR Z,$BC52    ; clear.}
  $BC50 NEG           ; Make the speed negative.
+; Store the vertical speed, then set the time of the move.
 @label=ChooseOutlawMove_Time
 *$BC52 LD (IX+$03),A ; Set the vertical speed.
  $BC55 LD A,($A216)  ; Fetch the frame counter.
@@ -10954,6 +11147,8 @@ c$BC37 LD A,($A218)  ; {Fetch a random number and keep it in #REGc.
 ;
 ;   IX The address of the outlaw
 ; O:DE The address of the sprite list
+;
+; Take a step every fourth frame while he is moving.
 @label=ChooseOutlawBody
 c$BC6C LD A,(IX+$01) ; Fetch the horizontal speed.
  $BC6F OR (IX+$03)   ; Combine it with the vertical speed.
@@ -10965,6 +11160,7 @@ c$BC6C LD A,(IX+$01) ; Fetch the horizontal speed.
  $BC7F AND %00000011 ; Keep a number from #N$00 to #N$03.
  $BC81 JR NZ,$BC86   ; Jump unless it is every fourth frame.
  $BC83 INC (IX+$0E)  ; Take a step.
+; Choose the sprite list for the step.
 @label=ChooseOutlawBody_Step
 *$BC86 LD A,(IX+$0E) ; Fetch the step.
  $BC89 AND %00000001 ; Keep the lowest bit.
@@ -11471,6 +11667,10 @@ c$BE85 EX AF,AF'     ; Save the number of rows left, and get #REGa.
 ; starts. Each piece puts a column into two bytes of the buffer, using the table
 ; for the shift to split the mask and the pixels in two. The buffer address is
 ; in #REGbc.
+;
+; .
+;
+; The jump at #R$A224 starts here for five columns.
 @label=DrawShiftedColumns
 c$BE8A CPL           ; {Invert the screen byte, and fetch the mask into #REGe and the pixels
  $BE8B POP DE        ; into #REGd.}
@@ -11490,6 +11690,7 @@ c$BE8A CPL           ; {Invert the screen byte, and fetch the mask into #REGe an
  $BE99 LD L,D        ; {Add the part of the pixels which has moved into it.
  $BE9A OR (HL)       ; }
  $BE9B DEC H         ; Point #REGh back at the first table.
+; The jump at #R$A224 starts here for four columns.
  $BE9C CPL           ; {Invert the screen byte, and fetch the mask into #REGe and the pixels
  $BE9D POP DE        ; into #REGd.}
  $BE9E LD L,E        ; {Clear the screen bits under the part of the mask which is in this
@@ -11508,6 +11709,7 @@ c$BE8A CPL           ; {Invert the screen byte, and fetch the mask into #REGe an
  $BEAB LD L,D        ; {Add the part of the pixels which has moved into it.
  $BEAC OR (HL)       ; }
  $BEAD DEC H         ; Point #REGh back at the first table.
+; The jump at #R$A224 starts here for three columns.
  $BEAE CPL           ; {Invert the screen byte, and fetch the mask into #REGe and the pixels
  $BEAF POP DE        ; into #REGd.}
  $BEB0 LD L,E        ; {Clear the screen bits under the part of the mask which is in this
@@ -11526,6 +11728,7 @@ c$BE8A CPL           ; {Invert the screen byte, and fetch the mask into #REGe an
  $BEBD LD L,D        ; {Add the part of the pixels which has moved into it.
  $BEBE OR (HL)       ; }
  $BEBF DEC H         ; Point #REGh back at the first table.
+; The jump at #R$A224 starts here for two columns.
  $BEC0 CPL           ; {Invert the screen byte, and fetch the mask into #REGe and the pixels
  $BEC1 POP DE        ; into #REGd.}
  $BEC2 LD L,E        ; {Clear the screen bits under the part of the mask which is in this
@@ -11544,6 +11747,7 @@ c$BE8A CPL           ; {Invert the screen byte, and fetch the mask into #REGe an
  $BECF LD L,D        ; {Add the part of the pixels which has moved into it.
  $BED0 OR (HL)       ; }
  $BED1 DEC H         ; Point #REGh back at the first table.
+; The jump at #R$A224 starts here for one column.
  $BED2 CPL           ; {Invert the screen byte, and fetch the mask into #REGe and the pixels
  $BED3 POP DE        ; into #REGd.}
  $BED4 LD L,E        ; {Clear the screen bits under the part of the mask which is in this
@@ -11994,7 +12198,7 @@ c$C049 LD A,($A27D)  ; {Fetch #R$A27D and keep it in #REGc.
 ; See whether there are two players.
  $C05B BIT 0,A       ; {Jump to #R$C084 if there are.
  $C05D JR NZ,$C084   ; }
-; Take a life away.
+; See #POKE(infinite_lives,Infinite Lives).
 @label=CheckSheriffLost_TakeLife
 *$C05F LD HL,$A263   ; Point #REGhl at #R$A263.
  $C062 DEC (HL)      ; Take one off.
@@ -16014,8 +16218,7 @@ c$CF67 LD B,H        ; {Keep the row in #REGb and the column in #REGc.
 ;   DE The horizontal position of the point
 ;   HL The vertical position of the point
 ;   IX The address of the object
-; O:A The depth into the wall along X, negative if they
-; overlap
+; O:A The depth into the wall along X, negative if they overlap
 ; O:F The carry flag is set if the object touches a wall
 ;
 ; Find the cell and its rectangle list.
@@ -16096,8 +16299,7 @@ c$CFC5 LD A,(IX+$08)  ; {Find the sum of half of the width of the object and
 ;   DE The horizontal position of the point
 ;   HL The vertical position of the point
 ;   IX The address of the object
-; O:A The depth into the wall along Y, negative if they
-; overlap
+; O:A The depth into the wall along Y, negative if they overlap
 ; O:F The carry flag is set if the object touches a wall
 ;
 ; Find the cell and its rectangle list.
@@ -16252,8 +16454,8 @@ c$D02C AND A         ; {Jump to #R$D037 if the number is negative.
 ;
 ; Multiplies #REGa by #REGde.
 ;
-;   A The multiplier
-;   DE The multiplicand
+;   A The first number
+;   DE The second number
 ; O:HL The product
 ;
 ; Start with a product of zero, and count eight bits.
@@ -16264,9 +16466,10 @@ c$D03E LD HL,$0000   ; Set the product to #N$0000.
 ; is set.
 @label=MultiplyAByDE_Bit
 *$D043 ADD HL,HL     ; Double the product.
- $D044 RLCA          ; Move the next bit of the multiplier into the carry flag.
+ $D044 RLCA          ; Move the next bit of the first number into the carry
+                     ; flag.
  $D045 JR NC,$D048   ; Jump to #R$D048 if it is not set.
- $D047 ADD HL,DE     ; Add the multiplicand.
+ $D047 ADD HL,DE     ; Add the second number.
 ; Count down the bits.
 @label=MultiplyAByDE_Next
 *$D048 DJNZ $D043    ; Jump to #R$D043 until all the bits are done.
@@ -17025,17 +17228,18 @@ c$D272 LD A,($A267)  ; Fetch #R$A267.
 ; #R$AEA9, #R$AF9A, #R$B420, #R$BA47, #R$BB3A, #R$C5F9, #R$CB03, #R$D3A7 and
 ; #R$D423.
 ; .
-; Adds an unsigned number to #REGhl.
+; Adds an unsigned number to
+; #REGhl.
 ;
 ;   A The number
 ;   HL The address
 ; O:HL The new address
 @label=AddAToHL
-c$D275 ADD A,L       ; {Add the number to the low byte.
- $D276 LD L,A        ; }
- $D277 LD A,H        ; {Add the carry to the high byte.
- $D278 ADC A,$00     ;
- $D27A LD H,A        ; }
+c$D275 ADD A,L       ; Add #REGa to #REGl.
+ $D276 LD L,A        ; Copy it to #REGl.
+ $D277 LD A,H        ; Fetch #REGh.
+ $D278 ADC A,$00     ; Add #N$00 with carry.
+ $D27A LD H,A        ; Copy it to #REGh.
  $D27B RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
@@ -17079,7 +17283,7 @@ c$D27C LD A,($A267)  ; {Fetch #R$A267.
 ; Draw that many hats.
  $D28A CALL $D296    ; Call #R$D296.
 ; Draw the hats for the lives which have been lost.
- $D28D XOR A         ; {Set the attribute to black.
+ $D28D XOR A         ; {Set the attribute to #COLOUR$00.
  $D28E EX AF,AF'     ; }
  $D28F LD A,($A263)  ; Fetch #R$A263.
  $D292 NEG           ; {Find #N$04 minus the number of lives.
@@ -18302,6 +18506,8 @@ c$D659 LD A,L        ; {Subtract thirty-two from the low byte.
 ; A The number of the tile, with bits 6 and 7 which say how to reflect it
 ; BC The address of the tile set
 ; HL The screen address
+;
+; Find the pixels of the tile.
 @label=DrawTilePixels
 c$D663 PUSH BC       ; {Save the registers.
  $D664 PUSH DE       ;
@@ -18317,6 +18523,7 @@ c$D663 PUSH BC       ; {Save the registers.
  $D670 ADD HL,BC     ; Add the address of the tile set.
  $D671 EX DE,HL      ; Put the address of the tile in #REGde and the screen address in
                      ; #REGhl.
+; Choose how to reflect it.
  $D672 POP AF        ; Restore the number of the tile.
  $D673 RLCA          ; {Move bits 6 and 7 to bits 0 and 1.
  $D674 RLCA          ; }
@@ -18369,6 +18576,8 @@ c$D695 LD B,$08      ; Set the number of lines.
 ;
 ; DE The address of the tile
 ; HL The screen address
+;
+; Draw each line turned round.
 @label=DrawTileHorizontal
 c$D69E LD B,$08      ; Set the number of lines.
 @label=DrawTileHorizontal_Line
@@ -18418,6 +18627,8 @@ c$D6AD LD B,$08      ; Set the number of lines.
 ;
 ; DE The address of the tile
 ; HL The screen address
+;
+; Start at the last line.
 @label=DrawTileBoth
 c$D6BD LD B,$08      ; Set the number of lines.
  $D6BF INC DE        ; {Move to the last line.
@@ -18427,6 +18638,7 @@ c$D6BD LD B,$08      ; Set the number of lines.
  $D6C3 INC DE        ;
  $D6C4 INC DE        ;
  $D6C5 INC DE        ; }
+; Draw each line turned round, from last to first.
 @label=DrawTileBoth_Line
 *$D6C6 LD A,(DE)     ; {Fetch a line, move to the previous one and keep the
  $D6C7 DEC DE        ; line in #REGc.
@@ -18448,7 +18660,7 @@ c$D6BD LD B,$08      ; Set the number of lines.
 ;
 ; E The attribute
 @label=SetAttributes
-c$D6D3 LD HL,$5800   ; Point #REGhl at the attributes.
+c$D6D3 LD HL,$5800   ; Point #REGhl at #N$5800 (in the attribute buffer).
  $D6D6 LD BC,$0300   ; Set the number of attributes.
  $D6D9 JR $D6E3      ; Jump to clear them.
 
@@ -18458,7 +18670,7 @@ c$D6D3 LD HL,$5800   ; Point #REGhl at the attributes.
 ; .
 ; Clears the pixel bytes of the screen.
 @label=ClearScreen
-c$D6DB LD HL,$4000   ; Point #REGhl at the screen.
+c$D6DB LD HL,$4000   ; Point #REGhl at #N$4000 (in the screen buffer).
  $D6DE LD BC,$1800   ; Set the number of bytes.
 ; Continue on to #R$D6E1.
 ; .
@@ -18481,21 +18693,22 @@ c$D6DB LD HL,$4000   ; Point #REGhl at the screen.
 ;
 ; Used by the routines at #R$A36D, #R$B754, #R$C7C8 and #R$D347.
 ; .
-; Clears a number of bytes to zero, or fills them with the value of #REGe
-; at #R$D6E3.
+; Fills an area of memory with
+; zero. The entry point at #R$D6E3 fills
+; it with the byte in #REGe.
 ;
-; BC The number of bytes
-; HL The address
+; BC Number of bytes
+; HL Address of the first byte
 @label=FillMemory
-c$D6E1 LD E,$00      ; Fill with zero.
+c$D6E1 LD E,$00      ; Set #REGe to #N$00.
 ; This entry point is used by the routine at #R$D6D3.
 @label=FillMemory_WithValue
-*$D6E3 LD (HL),E     ; {Store the value, move on and count down the bytes.
- $D6E4 INC HL        ;
- $D6E5 DEC BC        ;
- $D6E6 LD A,B        ;
- $D6E7 OR C          ; }
- $D6E8 JR NZ,$D6E3   ; Go back until they are all done.
+*$D6E3 LD (HL),E     ; Write #REGe.
+ $D6E4 INC HL        ; Increment #REGhl.
+ $D6E5 DEC BC        ; Decrement #REGbc.
+ $D6E6 LD A,B        ; {Jump to #R$D6E3 if #REGbc is
+ $D6E7 OR C          ; not zero.
+ $D6E8 JR NZ,$D6E3   ; }
  $D6EA RET           ; Return.
 ; View the equivalent code in;
 ; #LIST

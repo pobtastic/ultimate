@@ -2047,16 +2047,19 @@ R $8931 HL Attribute address of the bottom-left cell
 
 c $8947 Negate HL
 @ $8947 label=NegateHL
-D $8947 Two's-complement #REGhl and return.
+D $8947 Makes #REGhl negative.
 E $8947 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$D01B }
 . { #MARTIANOIDS$B4B1 }
 . { #NIGHTSHADE$E0DD }
 . LIST#
-R $8947 HL Value to negate
-R $8947 O:HL Negated value
-  $8947,$07 Invert #REGhl and add one.
+R $8947 HL The word
+R $8947 O:HL The negative of the word
+N $8947 Invert both bytes, then add one.
+  $8947,$03 Invert the low byte.
+  $894A,$03 Invert the high byte.
+  $894D,$01 Add one.
   $894E,$01 Return.
 
 c $894F Display Lives
@@ -2124,8 +2127,14 @@ D $899C Add #REGbc to the active player's BCD score, then print
 . that score.
 E $899C View the equivalent code in;
 . #LIST
+. { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
 . { #COOKIE$7415 }
+. { #CYBERUN$925E }
 . { #JETPAC$70F9 }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #PSSST$737A }
 . { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }

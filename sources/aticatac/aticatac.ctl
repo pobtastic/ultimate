@@ -7446,8 +7446,7 @@ D $8ADB Searches the eight records that start at #R$EB18 for one that is in
 . laid out in the same way as an entity.
 R $8ADB IX The entity
 R $8ADB O:C #N$01 if a record was found, otherwise #N$00
-R $8ADB O:DE The position of the record that was found (X in #REGe and Y in
-. #REGd)
+R $8ADB O:DE The position of the record that was found (X in #REGe and Y in #REGd)
 R $8ADB O:HL The address of the Y position of the record that was found
   $8ADB,$03 Point #REGhl at the first of the item records at #R$EB18.
   $8ADE,$03 #REGde=#N($0008,$04,$04) (the size of each record).
@@ -7950,8 +7949,7 @@ D $8D77 Moves the entity of a character, using the controls. Called by the
 . a flag that is set when movement is blocked along the X axis (bit 4) or
 . the Y axis (bit 5).
 R $8D77 B The change made to a velocity each frame by the controls
-R $8D77 C The fastest X velocity
-. (the Y velocity is limited by #REGb)
+R $8D77 C The fastest X velocity (the Y velocity is limited by #REGb)
 R $8D77 D The amount that the Y velocity is slowed by each frame
 R $8D77 E The amount that the X velocity is slowed by each frame
 R $8D77 IX The entity of the character
@@ -8888,21 +8886,21 @@ R $9260 IX The door entity
 
 c $926C Add A To HL
 @ $926C label=AddAToHL
-D $926C Adds the byte in #REGa to #REGhl.
+D $926C Adds an unsigned number to #REGhl.
 E $926C View the equivalent code in;
 . #LIST
 . { #CYBERUN$9BCF }
 . { #NIGHTSHADE$E596 }
 . { #PENTAGRAM$B519 }
 . LIST#
-R $926C A The value to add
+R $926C A The number
 R $926C HL The address
-R $926C O:HL The address plus #REGa
-  $926C,$01 Add the low byte of the address to the value.
-  $926D,$01 Keep the new low byte in #REGl.
-  $926E,$01 Fetch the high byte of the address.
-  $926F,$02 Add the carry.
-  $9271,$01 Keep the new high byte in #REGh.
+R $926C O:HL The new address
+  $926C,$01 Add #REGa to #REGl.
+  $926D,$01 Copy it to #REGl.
+  $926E,$01 Fetch #REGh.
+  $926F,$02 Add #N$00 with carry.
+  $9271,$01 Copy it to #REGh.
   $9272,$01 Return.
 
 c $9273 Find Inventory Item
@@ -10466,11 +10464,11 @@ E $9AAD View the equivalent code in;
 . { #TRANZAM$6F2F }
 . { #UNDERWURLDE$AC68 }
 . LIST#
-R $9AAD A The multiplier
-R $9AAD DE The multiplicand
+R $9AAD A The first number
+R $9AAD DE The second number
 R $9AAD O:HL The result
   $9AAD,$03 #REGhl=#N($0000,$04,$04).
-  $9AB0,$02 #REGb=#N$08 (the number of bits in the multiplier).
+  $9AB0,$02 #REGb=#N$08 (the number of bits in the first number).
 @ $9AB2 label=MultiplyAByDE_Loop
   $9AB2,$01 Shift the result left.
   $9AB3,$01 Rotate the next bit of #REGa into the carry flag.
@@ -10478,7 +10476,7 @@ R $9AAD O:HL The result
   $9AB6,$01 Add #REGde to the result.
 @ $9AB7 label=MultiplyAByDE_Next
   $9AB7,$02 Decrease the bit counter by one and loop back to #R$9AB2 until every
-. bit of the multiplier has been used.
+. bit of the first number has been used.
   $9AB9,$01 Return.
 
 c $9ABA Find Last Row
@@ -12344,9 +12342,16 @@ D $A19C Adds some points to the score, which is held as three bytes of BCD
 . #SCR$04,$18,$08,$08,$04(add-points-after) } UDGTABLE# #POPS
 E $A19C View the equivalent code in;
 . #LIST
+. { #BUBBLER$9662 }
 . { #COOKIE$7415 }
+. { #CYBERUN$925E }
 . { #JETPAC$70F9 }
+. { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #PSSST$737A }
+. { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }
 . { #UNDERWURLDE$A045 }
 . LIST#

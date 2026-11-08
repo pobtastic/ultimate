@@ -1,6 +1,7 @@
 ; Copyright Ashby Computers & Graphics Ltd 1985, Rare Ltd, 2026 ArcadeGeek LTD.
 > $4000 @org=$4000
 > $4000 @rom
+> $4000 @expand=#DEF(#POKE()(anchor,text) #LINK(Pokes#$anchor)($text))
 > $4000 @expand=#DEF(#COLOUR(id)#LET(ink=$id&$07)#IF({ink}>=$00)(INK:#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE)), #LET(paper=$id>>$03&$07)#IF({paper}>=$00)(PAPER:#MAP({paper})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#LET(bright=$id&$40)#IF({bright}>$00)( (BRIGHT))#LET(flash=$id&$80)#IF({flash}>$00)( (FLASH: ON)))
 > $4000 @expand=#DEF(#INK(id)#LET(bright=$id&$40)#LET(flash=$id&$80)#LET(ink=$id&$07)#IF({ink}>=$00)(#MAP({ink})(UNKNOWN,0:BLACK,1:BLUE,2:RED,3:MAGENTA,4:GREEN,5:CYAN,6:YELLOW,7:WHITE))#IF({bright}>$00)( (BRIGHT))#IF({flash}>$00)( (FLASH: ON)))
 > $4000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
@@ -19,7 +20,7 @@ c $5B80 Decrypt Game
 @ $5B80 label=DecryptGame
 D $5B80 The stub which the tape loader runs once the game has been loaded at
 . #N$6000. It decrypts the whole game, #N$8000 bytes, two bytes at a time, and
-. then moves the game down by #N$0200 bytes to its real home at #N$5E00 before
+. then moves the game down by #N$0200 bytes to its real home at #R$5E00 before
 . starting it.
 .
 . The tape loader sets up this stub, and the game checks for the loader's
@@ -35,10 +36,10 @@ E $5B80 View the equivalent code in;
 . { #TRANZAM$5B80 }
 . LIST#
 N $5B80 Set up the first pair and the number of pairs to decrypt.
-  $5B80,$03 Set #REGde to #N$6000, the address of the first byte of the pair to
-. decrypt.
-  $5B83,$03 Set #REGhl to #N$6001, the address of the second byte of the pair.
-  $5B86,$03 Set #REGbc to #N$4000, the number of byte pairs to decrypt.
+  $5B80,$03 Set #REGde to #N($6000), the address of the first byte of the pair
+. to decrypt.
+  $5B83,$03 Set #REGhl to #N($6001), the address of the second byte of the pair.
+  $5B86,$03 Set #REGbc to #N($4000), the number of byte pairs to decrypt.
 N $5B89 Start rotating each byte through #REGa to decrypt it.
 @ $5B89 label=DecryptGame_Loop
   $5B89,$01 Fetch the first byte of the pair.
@@ -49,7 +50,7 @@ N $5B89 Start rotating each byte through #REGa to decrypt it.
   $5B91,$01 Decrease the pair counter by one.
   $5B92,$04 Loop back to #R$5B89 until every pair has been decrypted.
 N $5B96 Move the decrypted game down to its real address and start it.
-  $5B96,$0B Copy #N$8000 bytes of the game from #N$6000 to #N$5E00.
+  $5B96,$0B Copy #N$8000 bytes of the game from #N$6000 to #R$5E00.
   $5BA1,$03 Jump to #R$5E00 to start the game.
 
 u $5BA4 Unused bytes
@@ -1679,12 +1680,14 @@ D $A452 Type #N$1A: the sheriff arriving back in the street. The vertical offset
 . of the sprite in byte #N$0D grows by four every frame, with a rising sound,
 . until it reaches #N$1C. The object then becomes a sheriff (type #N$01) and is
 . protected from harm for a short time.
+N $A452 Raise the sprite and play a rising tone.
   $A452,$03 Fetch the vertical offset of the sprite.
   $A455,$02 Add #N$04 to the offset.
   $A457,$03 Store the new offset.
   $A45A,$03 Play a sound effect whose pitch depends on the offset.
   $A45D,$03 Fetch the offset again.
   $A460,$03 Return if the offset is still below #N$1C.
+N $A463 The sheriff has arrived, so turn the object into a sheriff.
   $A463,$04 Turn the object into a sheriff.
   $A467,$04 Reset the vertical offset of the sprite to zero.
   $A46B,$05 Write #N$10 to #R$A208 to make the sheriff invulnerable for a short
@@ -1698,11 +1701,13 @@ c $A47E Create Money Bag
 D $A47E Creates a money bag (an object of type #N$18) in the seventh object slot
 . when the player's bounty has dropped below $100. The bag appears close to the
 . sheriff, in a free cell.
+N $A47E Return unless the bounty is below $100 and the slot is free.
   $A47E,$07 Return unless the first two bytes of the bounty are both zero, which
 . means it is less than $100.
   $A485,$03 Point #REGde at #R$A2DD.
   $A488,$01 Fetch the type of the object in the slot.
   $A489,$02 Return if the slot is already in use.
+N $A48B Copy the template and place the bag near the sheriff.
   $A48B,$03 Copy #REGde to #REGiy (using the stack).
   $A48E,$03 Point #REGhl at #R$A4B5.
   $A491,$03 Set the size of an object slot in #REGbc.
@@ -1710,6 +1715,7 @@ D $A47E Creates a money bag (an object of type #N$18) in the seventh object slot
   $A496,$02 Set the distance from the sheriff to one cell.
   $A498,$03 Place the bag one cell away from the sheriff.
   $A49B,$01 Return if that cell is blocked.
+N $A49C Choose a position inside the cell.
   $A49C,$03 Fetch a random number.
   $A49F,$02,b$01 Keep bits 4 and 5.
   $A4A1,$02 Add #N$80 to give a position inside the cell.
@@ -1737,9 +1743,11 @@ c $A4C9 Handle Money Bag
 D $A4C9 Type #N$18: a money bag put in the street by #R$A47E to help a player
 . who has run out of money. It disappears if the sheriff moves away from it.
 . When the sheriff touches it, it adds $100 to the bounty.
+N $A4C9 Remove the bag if the sheriff has moved away.
   $A4C9,$02 Set the distance at which the bag stays alive to two cells.
   $A4CB,$03 Check how close the sheriff is.
   $A4CE,$03 Remove the bag if the sheriff has moved away.
+N $A4D1 Add $100 when the sheriff touches the bag.
   $A4D1,$03 Check whether the sheriff is touching the bag.
   $A4D4,$01 Return if not.
   $A4D5,$03 Set the $100 added to the bounty in #REGbc.
@@ -1983,10 +1991,12 @@ c $A64F Check Telegram Complete
 D $A64F Checks whether every line of the telegram has been typed in full. A line
 . is complete when its counter has reached #N$0E.
 R $A64F O:F The zero flag is set if every line is complete
+N $A64F Check each of the six telegram lines.
   $A64F,$03 Point #REGhl at the first telegram line.
   $A652,$03 Set the size of a telegram line in #REGde.
   $A655,$02 Set the number of lines to six.
 @ $A657 label=CheckTelegramComplete_Loop
+N $A657 Return unless this line is complete.
   $A657,$01 Fetch the counter of the line.
   $A658,$02 Compare it with the number of characters in a line.
   $A65A,$01 Return if the line is not complete.
@@ -2017,15 +2027,18 @@ c $A68F Set Up Player
 D $A68F Gives the current player the starting values for a new game: four lives,
 . level zero, a bounty of $280, and the first stage, in which the player shoots
 . twenty money bags.
+N $A68F Give the player four lives and start at level zero.
   $A68F,$05 Write #N$04 to #R$A263 to give the player four lives.
   $A694,$04 Write #N$00 to #R$A260 to start on level zero.
   $A698,$03 Write #N$00 to #R$A261 to start at the easiest difficulty.
+N $A69B Set the starting bounty and the first stage.
   $A69B,$03 Set the starting bounty of $280 in #REGbc.
   $A69E,$03 Add it to the bounty.
   $A6A1,$03 Set the number of targets to twenty and the stage type to the money
 . bag shoot.
   $A6A4,$03 Store them.
   $A6A7,$05 Write #N$46 to #R$A266 to colour the border and screen yellow.
+N $A6AC Make sure the prices are set.
   $A6AC,$03 Make sure the price of a bullet is set.
   $A6AF,$03 Make sure the price of a horse is set.
   $A6B2,$03 Jump to #R$A7CB.
@@ -2034,9 +2047,11 @@ c $A6B5 Set Up Players
 @ $A6B5 label=SetUpPlayers
 D $A6B5 Gives both players the starting values. In a game for one player the
 . second player is left with no lives.
+N $A6B5 Set up both players.
   $A6B5,$03 Set up the first player.
   $A6B8,$03 Swap to the state of the second player.
   $A6BB,$03 Set up the second player.
+N $A6BE In a one player game, leave the second player with no lives.
   $A6BE,$03 Fetch the option flags.
   $A6C1,$02 Test bit 0, which is set for a two player game.
   $A6C3,$01 Return if there are two players.
@@ -2357,12 +2372,14 @@ c $A89C Create Tumbleweed
 D $A89C Called every frame in town. From level eight onwards it puts a
 . tumbleweed (an object of type #N$17) in the ninth object slot, next to the
 . sheriff, if the slot is free.
+N $A89C From level eight onwards, use the ninth slot if it is free.
   $A89C,$03 Fetch the level.
   $A89F,$02 Compare it with eight.
   $A8A1,$01 Return if the level is below eight.
   $A8A2,$03 Point #REGde at #R$A2FD.
   $A8A5,$01 Fetch the type of the object in the slot.
   $A8A6,$02 Return if the slot is in use.
+N $A8A8 Copy the template and place the tumbleweed near the sheriff.
   $A8A8,$03 Copy #REGde to #REGiy (using the stack).
   $A8AB,$03 Point #REGhl at #R$A8C1.
   $A8AE,$03 Set the size of an object slot in #REGbc.
@@ -2459,12 +2476,14 @@ c $A981 Create Horse
 D $A981 Called every frame in town. While the sheriff is on foot it puts a horse
 . (an object of type #N$14) in the eighth object slot, two cells from the
 . sheriff, if the slot is free.
+N $A981 While the sheriff is on foot, use the eighth slot if it is free.
   $A981,$03 Fetch the type of the object in the first slot.
   $A984,$02 Compare it with the type of a sheriff on foot.
   $A986,$01 Return if the sheriff is not on foot.
   $A987,$03 Point #REGde at #R$A2ED.
   $A98A,$01 Fetch the type of the object in the slot.
   $A98B,$02 Return if the slot is in use.
+N $A98D Copy the template and place the horse near the sheriff.
   $A98D,$03 Copy #REGde to #REGiy (using the stack).
   $A990,$03 Point #REGhl at #R$A9A8.
   $A993,$03 Set the size of an object slot in #REGbc.
@@ -2493,9 +2512,11 @@ D $A9BF Type #N$14: a horse waiting in the street. It goes away if the sheriff
 . is three cells away. If the sheriff touches it, the horse is removed, the
 . sheriff turns into a mounted sheriff (type #N$15) who has a higher top speed,
 . and the price of the horse is taken from the bounty.
+N $A9BF Remove the horse if the sheriff has moved away.
   $A9BF,$02 Set the distance to three cells.
   $A9C1,$03 Check how close the sheriff is.
   $A9C4,$03 Remove the horse if the sheriff has moved away.
+N $A9C7 Mount the sheriff when he touches the horse.
   $A9C7,$03 Check whether the sheriff is touching the horse.
   $A9CA,$01 Return if not.
   $A9CB,$05 Write #N$08 to #R$A23C so that the sound lasts eight notes.
@@ -2513,8 +2534,10 @@ D $A9ED Called every frame in town. Cacti stand in eight fixed cells of the town
 . (see #R$AA76). When the sheriff comes within two cells of one, and the seventh
 . object slot is free, the routine puts a cactus (an object of type #N$13) in
 . the slot.
+N $A9ED Return if the seventh slot is in use.
   $A9ED,$03 Fetch the type of the object in the seventh slot.
   $A9F0,$02 Return if the slot is in use.
+N $A9F2 Find a cactus that is within two cells of the sheriff.
   $A9F2,$04 Fetch the horizontal cell of the sheriff and keep it in #REGe.
   $A9F6,$03 Fetch the vertical cell of the sheriff.
   $A9F9,$04 Shift it into the high nibble.
@@ -2602,9 +2625,11 @@ c $AA7F Handle Cactus
 D $AA7F Type #N$13: a cactus standing in the street. It goes away when the
 . sheriff is more than two cells away. It hurts the sheriff if they touch, and
 . it stops any bullet which hits it.
+N $AA7F Remove the cactus if the sheriff has moved away.
   $AA7F,$02 Set the distance to two cells.
   $AA81,$03 Check how close the sheriff is.
   $AA84,$03 Remove the cactus if the sheriff has moved away.
+N $AA87 Hurt the sheriff or stop a bullet which hits it.
   $AA87,$03 Check whether the cactus is touching the sheriff.
   $AA8A,$03 Hurt the sheriff if it is.
   $AA8D,$03 Check whether a bullet has hit the cactus.
@@ -2624,15 +2649,18 @@ D $AA9A Prints a message in letters twice as big as normal, so each letter takes
 . #SCR$03,$06,$00,$14,$02(large-text) } UDGTABLE# #POPS
 R $AA9A DE The address of the message
 R $AA9A HL The screen address to print it at
+N $AA9A Fetch the attribute of the message.
   $AA9A,$01 Fetch the attribute.
   $AA9B,$01 Move on to the first character.
   $AA9C,$01 Keep the attribute in the alternate accumulator.
 @ $AA9D label=PrintLargeText_Loop
+N $AA9D Print each character until the terminator.
   $AA9D,$01 Fetch the next character.
   $AA9E,$01 Test whether it is the end of the message.
   $AA9F,$01 Return if it is.
   $AAA0,$01 Move on to the next character.
   $AAA1,$03 Convert the character to the number of its tile.
+N $AAA4 Find the pixels of the character.
   $AAA4,$01 Stash the address of the message on the stack.
   $AAA5,$01 Stash the screen address on the stack.
   $AAA6,$01 Swap the screen address into #REGde.
@@ -2643,6 +2671,7 @@ R $AA9A HL The screen address to print it at
   $AAB0,$01 Add the offset to find the pixels of the character.
   $AAB1,$01 Swap them, so that #REGde has the pixels and #REGhl the screen
 . address.
+N $AAB2 Draw the four quarters of the character.
   $AAB2,$03 Draw the top left quarter of the character.
   $AAB5,$03 Draw the top right quarter of the character.
   $AAB8,$03 Draw the bottom left quarter of the character.
@@ -2661,11 +2690,13 @@ D $AAC4 Draws the left half of four rows of a character in double size. The four
 R $AAC4 DE The address of the pixels of the character
 R $AAC4 HL The screen address
 R $AAC4 O:HL The screen address of the cell to the right
+N $AAC4 Swap the pixels and the screen address.
   $AAC4,$01 Stash the address of the pixels on the stack.
   $AAC5,$01 Stash the screen address on the stack.
   $AAC6,$01 Swap the pixels into #REGhl and the screen address into #REGde.
   $AAC7,$02 Set the number of rows to four.
 @ $AAC9 label=PrintLeftHalf_Loop
+N $AAC9 Widen the left four pixels of each row.
   $AAC9,$01 Fetch a row of pixels.
   $AACA,$01 Move on to the next row.
   $AACB,$04 Move the left four pixels into the bottom of the byte.
@@ -2680,6 +2711,7 @@ R $AAC4 O:HL The screen address of the cell to the right
   $AADC,$01 Move down a pixel row.
   $AADD,$01 Retrieve the address of the pixels.
   $AADE,$02 Loop back until four rows have been drawn.
+N $AAE0 Colour the cell and move to the right.
   $AAE0,$01 Retrieve the screen address.
   $AAE1,$01 Retrieve the address of the pixels.
   $AAE2,$03 Set the attribute of the cell.
@@ -2695,10 +2727,12 @@ R $AAE7 DE The address of the pixels of the character
 R $AAE7 HL The screen address
 R $AAE7 O:DE The address of the pixels of the next four rows
 R $AAE7 O:HL The screen address of the cell below on the left
+N $AAE7 Swap the pixels and the screen address.
   $AAE7,$01 Stash the screen address on the stack.
   $AAE8,$01 Swap the pixels into #REGhl and the screen address into #REGde.
   $AAE9,$02 Set the number of rows to four.
 @ $AAEB label=PrintRightHalf_Loop
+N $AAEB Widen the right four pixels of each row.
   $AAEB,$01 Fetch a row of pixels.
   $AAEC,$01 Move on to the next row.
   $AAED,$02,b$01 Keep the right four pixels.
@@ -2712,6 +2746,7 @@ R $AAE7 O:HL The screen address of the cell below on the left
   $AAFA,$01 Move down a pixel row.
   $AAFB,$01 Retrieve the address of the pixels.
   $AAFC,$02 Loop back until four rows have been drawn.
+N $AAFE Colour the cell and move down on the left.
   $AAFE,$01 Swap the screen address back into #REGhl and the pixels into #REGde.
   $AAFF,$01 Retrieve the screen address.
   $AB00,$03 Set the attribute of the cell.
@@ -2730,10 +2765,12 @@ c $AB18 Draw Scenery
 D $AB18 Called every frame. In the town stage it draws the scenery sprites
 . listed at #R$AB6A, which are fixed in the town and scroll with the view.
 . Sprites which would be off the edge of the screen are skipped.
+N $AB18 Return unless this is the town stage.
   $AB18,$03 Fetch the stage number.
   $AB1B,$01 Test whether this is a stage outside the town, which is the duel or
 . the bonus stage.
   $AB1C,$01 Return if it is, as it has no scenery.
+N $AB1D Set the origin from the sheriff's cell.
   $AB1D,$03 Fetch the horizontal cell of the sheriff.
   $AB20,$02,b$01 Make it an even number.
   $AB22,$01 Keep the even horizontal cell in #REGl.
@@ -2744,6 +2781,7 @@ D $AB18 Called every frame. In the town stage it draws the scenery sprites
   $AB2C,$03 Work out where the origin is on the screen.
   $AB2F,$03 Point #REGhl at #R$AB6A.
 @ $AB32 label=DrawScenery_Loop
+N $AB32 Draw each scenery sprite that is on the screen.
   $AB32,$01 Fetch the number of the sprite and its flip flag.
   $AB33,$01 Test whether this is the end of the list.
   $AB34,$01 Return if it is.
@@ -2775,6 +2813,7 @@ D $AB18 Called every frame. In the town stage it draws the scenery sprites
   $AB64,$01 Retrieve the address in the list.
   $AB65,$02 Go back for the next sprite in the list.
 @ $AB67 label=DrawScenery_Skip
+N $AB67 Skip a sprite that is off the edge.
   $AB67,$01 Skip the vertical offset of the sprite.
   $AB68,$02 Go back for the next sprite in the list.
 
@@ -3013,11 +3052,13 @@ c $ACE2 Handle Menu Revolver Firing
 D $ACE2 The routine for states #N$02 and #N$03 of a menu entry: a revolver
 . firing. It draws the revolver in the state of the entry for twelve frames, and
 . then moves on to the next state.
+N $ACE2 Draw the revolver for twelve frames.
   $ACE2,$03 Draw the revolver.
   $ACE5,$03 Add one to the counter.
   $ACE8,$03 Fetch the counter.
   $ACEB,$02 Compare it with twelve.
   $ACED,$01 Return if the counter has not reached twelve.
+N $ACEE Move on to the next state.
   $ACEE,$03 Move on to the next state.
   $ACF1,$04 Reset the counter.
   $ACF5,$01 Return.
@@ -3286,9 +3327,11 @@ D $AE98 Plays a burst of noise by using the first #N$80 bytes of the ROM as the
 . length of each pulse.
 .
 . #HTML(#AUDIO0(static-sound.wav)(#INCLUDE(StaticSound)))
+N $AE98 Use the first #N$80 bytes of the ROM as pulse lengths.
   $AE98,$03 Point #REGhl at the start of the ROM.
   $AE9B,$02 Set the number of pulses.
 @ $AE9D label=PlayStatic_Loop
+N $AE9D Play each pulse.
   $AE9D,$01 Fetch a byte of the ROM.
   $AE9E,$01 Move on to the next byte.
   $AE9F,$02,b$01 Keep the bottom six bits.
@@ -3316,10 +3359,12 @@ D $AEA9 Called every frame. Plays the next note of the sound effect which is in
 . { Bag Hit Sound |
 . #HTML(#AUDIO0(bag-hit-sound.wav)(#INCLUDE(BagHitSound))) }
 . TABLE#
+N $AEA9 Return if there are no notes left.
   $AEA9,$03 Point #REGhl at the number of notes left.
   $AEAC,$01 Fetch the number of notes left.
   $AEAD,$01 Test whether the effect is over.
   $AEAE,$01 Return if it is.
+N $AEAF Play the next note from the end of the list.
   $AEAF,$01 Count down the notes.
   $AEB0,$01 Move on to the address of the notes.
   $AEB1,$01 Fetch the low byte of the address.
@@ -3354,10 +3399,12 @@ D $AED3 Plays a burst of noise when a walking figure puts a foot down, which is
 . #HTML(#AUDIO0(footstep-sound.wav)(#INCLUDE(FootstepSound)))
 R $AED3 A The flags of the object before it was moved
 R $AED3 IX The address of the object
+N $AED3 Return unless both walk bits have just become set.
   $AED3,$02 Test bit 0 of the old flags.
   $AED5,$01 Return if it was already set.
   $AED6,$05 Return if bit 0 of the flags is not set now.
   $AEDB,$05 Return if bit 1 of the flags is not set now.
+N $AEE0 Play a burst of pulses.
   $AEE0,$02 Set the number of pulses.
 @ $AEE2 label=PlayFootstepSound_Loop
   $AEE2,$01 Fetch the number of the pulse.
@@ -3426,8 +3473,10 @@ E $AF22 View the equivalent code in;
 . { #PENTAGRAM$D5E4 }
 . { #SABREWULF$BF2F }
 . LIST#
+N $AF22 Play twelve pulses of different lengths.
   $AF22,$02 Set the number of pulses.
 @ $AF24 label=PlayBuzz_Loop
+N $AF24 Play the next pulse.
   $AF24,$01 Fetch the number of the pulse.
   $AF25,$02,b$01 Change it.
   $AF27,$01 Add it to the number of the pulse.
@@ -3443,9 +3492,11 @@ D $AF30 Plays sixteen short tones, using the first sixteen bytes of the ROM as
 . the length of each.
 .
 . #HTML(#AUDIO0(rumble-sound.wav)(#INCLUDE(RumbleSound)))
+N $AF30 Use the first sixteen bytes of the ROM as tone lengths.
   $AF30,$03 Point #REGhl at the start of the ROM.
   $AF33,$02 Set the number of tones.
 @ $AF35 label=PlayRumble_Loop
+N $AF35 Play each tone.
   $AF35,$01 Fetch a byte of the ROM.
   $AF36,$01 Move on to the next byte.
   $AF37,$02,b$01 Keep the bottom seven bits.
@@ -3537,12 +3588,14 @@ E $AF66 View the equivalent code in;
 . { #PENTAGRAM$D682 }
 . LIST#
 R $AF66 B The length of the pulse
+N $AF66 Turn the speaker on for the length of the pulse.
   $AF66,$02 Set the speaker bit.
   $AF68,$02 Turn the speaker on.
   $AF6A,$01 Keep the length of the pulse in #REGa.
 @ $AF6B label=PlaySquareWave_FirstDelay
   $AF6B,$02 Wait for the length of the pulse.
   $AF6D,$01 Restore the length of the pulse.
+N $AF6E Turn the speaker off for the same length.
   $AF6E,$01 Clear the speaker bit.
   $AF6F,$02 Turn the speaker off.
   $AF71,$01 Keep the length of the pulse in #REGa.
@@ -3645,7 +3698,7 @@ R $AF9A O:DE The address of the next note
   $AF9A,$02,b$01 Keep the number of the note.
   $AF9C,$02 Play a rest if there is no note.
 N $AF9E Look up the delays and the number of cycles in the table at #R$AFF2.
-  $AF9E,$03 Copy the number into #REGhl.
+  $AF9E,$03 Set #REGhl to the note number.
   $AFA1,$01 Double the number.
   $AFA2,$03 Add the number again to treble it.
   $AFA5,$04 Point #REGhl at the entry for the note.
@@ -3705,6 +3758,7 @@ E $AFDC View the equivalent code in;
 . LIST#
 R $AFDC DE The address of the rest
 R $AFDC O:DE The address after the rest
+N $AFDC Work out the length of the rest in beats.
   $AFDC,$01 Fetch the rest.
   $AFDD,$01 Move on to the next note.
   $AFDE,$02 Rotate the length bits into the bottom of the byte.
@@ -3713,6 +3767,7 @@ R $AFDC O:DE The address after the rest
   $AFE3,$01 Copy the length into #REGl.
   $AFE4,$03 Set the length of a beat.
 @ $AFE7 label=PlayRest_Beat
+N $AFE7 Wait for each beat.
   $AFE7,$01 Stash the length of a beat on the stack.
 @ $AFE8 label=PlayRest_Wait
   $AFE8,$01 Count down.
@@ -3907,6 +3962,7 @@ D $B280 Draws several wide sprites one after another.
 R $B280 B The number of sprites
 R $B280 DE The address of the list of sprite numbers
 R $B280 HL The address in the buffer
+N $B280 Draw each sprite in the list.
   $B280,$01 Fetch the number of the next sprite.
   $B281,$01 Move on to the next sprite in the list.
   $B282,$01 Stash the number of sprites on the stack.
@@ -4035,9 +4091,11 @@ c $B318 Create Direction Pointer
 D $B318 Called every frame in the town. Puts a pointing hand (an object of type
 . #N$0B) in the sixth object slot, next to the sheriff, if the slot is free.
 . #R$B347 makes it point towards the outlaw.
+N $B318 Use the sixth slot if it is free.
   $B318,$03 Point #REGde at the sixth object slot.
   $B31B,$01 Fetch the type of the object in the slot.
   $B31C,$02 Return if the slot is in use.
+N $B31E Copy the template and place the pointer near the sheriff.
   $B31E,$03 Copy #REGde to #REGiy (using the stack).
   $B321,$03 Point #REGhl at #R$B337.
   $B324,$03 Set the size of an object slot in #REGbc.
@@ -4144,8 +4202,10 @@ c $B3BD Create Town Objects
 D $B3BD Called every frame. In the town stage it updates the prices and makes
 . new objects if there are free slots: bystanders, the outlaw, the pointer,
 . money bags, cacti, the horse and the tumbleweed.
+N $B3BD Return unless this is the town stage.
   $B3BD,$05 Return if this is a stage outside the town, which is the duel or
 . the bonus stage.
+N $B3C2 Update the prices and make any missing town objects.
   $B3C2,$03 Update the prices.
   $B3C5,$03 Make a bystander if there is a free slot.
   $B3C8,$03 Make the outlaw if there is a free slot.
@@ -4454,9 +4514,11 @@ D $B6CD Puts an object in a cell which is a number of cells away from the
 R $B6CD B The distance in cells
 R $B6CD IY The address of the object
 R $B6CD O:F The zero flag is set if the cell is free
+N $B6CD Fetch the sheriff's cell and the frame counter.
   $B6CD,$04 Fetch the horizontal cell of the sheriff and keep it in #REGl.
   $B6D1,$04 Fetch the vertical cell of the sheriff and keep it in #REGh.
   $B6D5,$04 Fetch the frame counter and keep it in #REGc.
+N $B6D9 Choose a diagonal from the bottom two bits of the frame.
   $B6D9,$01 Fetch the distance.
   $B6DA,$04 Jump to #R$B6E0 if bit 0 of the frame counter is clear.
   $B6DE,$02 Go in the other direction horizontally.
@@ -4471,6 +4533,7 @@ R $B6CD O:F The zero flag is set if the cell is free
   $B6EB,$01 Add the vertical cell of the sheriff.
   $B6EC,$02,b$01 Wrap round the town.
   $B6EE,$01 Keep the wrapped vertical cell in #REGh.
+N $B6EF Store the cell and test whether it is free.
   $B6EF,$03 Set the horizontal cell of the object.
   $B6F2,$03 Set the vertical cell of the object.
   $B6F5,$03 Jump to #R$C738.
@@ -4481,6 +4544,7 @@ D $B6F8 Sets where an object stands within its cell, from the position of the
 . sheriff within his cell. The routine uses #REGc as left by #R$C738, and
 . #R$B6CD must have been called first.
 R $B6F8 IY The address of the object
+N $B6F8 Set the horizontal position within the cell.
   $B6F8,$03 Fetch the horizontal position of the sheriff within his cell.
   $B6FB,$02,b$01 Keep the top two bits.
   $B6FD,$02,b$01 Set bit 6.
@@ -4488,6 +4552,7 @@ R $B6F8 IY The address of the object
   $B703,$02 Negate the position.
 @ $B705 label=SetPositionInCell_Horizontal
   $B705,$03 Set the horizontal position of the object within its cell.
+N $B708 Set the vertical position within the cell.
   $B708,$03 Fetch the vertical position of the sheriff within his cell.
   $B70B,$02,b$01 Keep the top two bits.
   $B70D,$02,b$01 Set bit 6.
@@ -4536,6 +4601,7 @@ D $B754 Makes the sheriff die, and removes the bullets. It is used when the
 . sheriff touches something dangerous.
 R $B754 IX The address of the object which killed the sheriff
 R $B754 IY The address of the sheriff
+N $B754 Make the sheriff die.
   $B754,$02 Stash the address of the object on the stack.
   $B756,$04 Copy the address of the sheriff into #REGix (using the stack).
   $B75A,$03 Make the sheriff die.
@@ -4543,6 +4609,7 @@ R $B754 IY The address of the sheriff
   $B760,$02 Take four off it.
   $B762,$03 Store the reduced delay counter.
   $B765,$02 Retrieve the address of the object from the stack.
+N $B767 Clear the three bullet slots.
   $B767,$03 Point #REGhl at #R$A28D.
   $B76A,$03 Set the size of the three bullet slots.
   $B76D,$03 Jump to #R$D6E1.
@@ -4641,6 +4708,7 @@ D $B7F0 Chooses the frame of a walking figure and whether its sprite is flipped,
 . from the direction in which it is walking and the view. Bits 6 and 7 of byte
 . #N$06 of the object hold the direction.
 R $B7F0 IX The address of the object
+N $B7F0 Choose the frame from the direction and the view.
   $B7F0,$04 Fetch the view number and keep it in #REGb.
   $B7F4,$03 Fetch the direction.
   $B7F7,$02 Take one off the direction.
@@ -4648,6 +4716,7 @@ R $B7F0 IX The address of the object
   $B7FA,$02,b$01 Keep bit 0.
   $B7FC,$01 Combine it with the view.
   $B7FD,$03 Set the frame.
+N $B800 Set the flip bit from the direction.
   $B800,$03 Fetch the direction.
   $B803,$02,b$01 Keep bit 6.
   $B805,$01 Keep the flip bit in #REGc.
@@ -4668,6 +4737,7 @@ E $B810 View the equivalent code in;
 R $B810 C The distance in cells
 R $B810 IX The address of the object
 R $B810 O:F The carry flag is set if the object is closer than that
+N $B810 Compare the horizontal cells.
   $B810,$03 Fetch the horizontal cell of the sheriff from #R$A27D(#N$A27F).
   $B813,$03 Subtract the horizontal cell of the object.
   $B816,$03 Jump to #R$B81B if the difference is not negative.
@@ -4675,6 +4745,7 @@ R $B810 O:F The carry flag is set if the object is closer than that
 @ $B81B label=CheckDistance_CompareHorizontal
   $B81B,$01 Compare it with the distance.
   $B81C,$01 Return if the object is too far away.
+N $B81D Compare the vertical cells.
   $B81D,$03 Fetch the vertical cell of the sheriff from #R$A27D(#N$A281).
   $B820,$03 Subtract the vertical cell of the object.
   $B823,$03 Jump to #R$B828 if the difference is not negative.
@@ -4696,6 +4767,7 @@ E $B82A View the equivalent code in;
 . { #NIGHTSHADE$DD28 }
 . LIST#
 R $B82A IX The address of the object
+N $B82A Change direction at once if the figure has hit a wall.
   $B82A,$06 Jump to #R$B83F if the figure has bumped into a wall.
   $B830,$03 Count down the counter.
   $B833,$03 Fetch the counter.
@@ -4703,6 +4775,7 @@ R $B82A IX The address of the object
   $B838,$01 Return unless the counter is at a multiple of thirty two.
   $B839,$06 Jump to #R$B85A to return if the figure keeps its direction.
 @ $B83F label=UpdateDirection_Random
+N $B83F Turn left or right and set a new counter.
   $B83F,$03 Fetch a random number.
   $B842,$02 Compare it with #N$80.
   $B844,$03 Fetch the direction and counter.
@@ -4716,6 +4789,7 @@ R $B82A IX The address of the object
   $B852,$03 Store the new direction.
   $B855,$01 Return.
 @ $B856 label=UpdateDirection_TurnLeft
+N $B856 The random number was #N$80 or more, so turn left.
   $B856,$02 Turn left.
   $B858,$02 Go back to store the direction and counter.
 @ $B85A label=UpdateDirection_Finish
@@ -4748,6 +4822,7 @@ c $B879 Set Up Duel
 D $B879 Sets up the duel in the first two object slots. The first is the outlaw,
 . in a random place in the middle of the screen, who will move about a random
 . number of times before he draws, and the second is his gun.
+N $B879 Copy the outlaw and his gun into the first two slots.
   $B879,$03 Point #REGde at the first object slot.
   $B87C,$01 Fetch the type of the object in the slot.
   $B87D,$02 Return if the slot is in use.
@@ -4756,6 +4831,7 @@ D $B879 Sets up the duel in the first two object slots. The first is the outlaw,
   $B882,$03 Point #REGhl at #R$B8A3.
   $B885,$03 Set the size of two object slots in #REGbc.
   $B888,$02 Copy the templates into the slots.
+N $B88A Choose how many times he moves and where he stands.
   $B88A,$03 Fetch a random number.
   $B88D,$02,b$01 Keep a number from #N$00 to #N$07.
   $B88F,$02 Add two to give two to nine.
@@ -4975,6 +5051,7 @@ D $B9FB Type #N$0C: the outlaw in the duel before he draws. He wanders about the
 . #SIM(start=$A3BA,stop=$A3F6)
 . #SCR$03,$02,$00,$18,$10(waiting-outlaw) } UDGTABLE# #POPS
 E $B9FB Continue on to #R$BA47.
+N $B9FB Count down the current move, and draw if he has finished.
   $B9FB,$03 Check whether the player has provoked the outlaw.
   $B9FE,$03 Count down the timer for the current move.
   $BA01,$03 Fetch the timer.
@@ -4983,6 +5060,7 @@ E $B9FB Continue on to #R$BA47.
   $BA09,$03 Jump to make the outlaw draw if he has made all his moves.
   $BA0C,$03 Choose a new move.
 @ $BA0F label=HandleWaitingOutlaw_Move
+N $BA0F Keep him on the screen and move him.
   $BA0F,$03 Keep the outlaw on the screen, which reverses his speed at an edge.
   $BA12,$03 Fetch the flags which show whether he has reached an edge.
   $BA15,$02,b$01 Keep the four bits.
@@ -4991,6 +5069,7 @@ E $B9FB Continue on to #R$BA47.
 @ $BA1D label=HandleWaitingOutlaw_Update
   $BA1D,$03 Move the outlaw.
 @ $BA20 label=HandleWaitingOutlaw_CheckHit
+N $BA20 Check whether the crosshair has hit him.
   $BA20,$03 Check whether the crosshair is on the outlaw.
   $BA23,$02 Jump if the outlaw has not been hit.
   $BA25,$02 Set the flag which shows that the outlaw has been hit.
@@ -4998,6 +5077,7 @@ E $B9FB Continue on to #R$BA47.
   $BA2A,$04 Turn the outlaw into a shot outlaw.
   $BA2E,$04 Start at the first frame of falling.
 @ $BA32 label=HandleWaitingOutlaw_DrawBody
+N $BA32 Draw the body of the outlaw.
   $BA32,$04 Fetch the horizontal position of the outlaw and keep it in #REGl.
   $BA36,$03 Store it as the horizontal pixel position for the sprites.
   $BA39,$03 Fetch the vertical position of the outlaw into #REGh.
@@ -5011,6 +5091,7 @@ c $BA47 Draw Outlaw Face
 D $BA47 Draws the face of the outlaw, which is five sprites, into the buffer,
 . below the body.
 R $BA47 HL The address in the buffer
+N $BA47 Find the face sprites for this outlaw.
   $BA47,$03 Fetch the level.
   $BA4A,$01 Swap the address in the buffer into #REGde.
   $BA4B,$03 Point #REGhl at #R$B494.
@@ -5024,6 +5105,7 @@ R $BA47 HL The address in the buffer
   $BA5C,$01 Point #REGhl at the sprites of his face.
   $BA5D,$01 Swap the pointer to the face into #REGde and the address back into
 . #REGhl.
+N $BA5E Draw the five sprites of the face.
   $BA5E,$02 Set the number of sprites to five.
   $BA60,$03 Jump to #R$B280.
 
@@ -5033,10 +5115,12 @@ D $BA63 Checks whether the player's shot is on the outlaw. The outlaw cannot be
 . hit once he has fired his first shot.
 R $BA63 IX The address of the outlaw
 R $BA63 O:F The carry flag is set if the outlaw has been hit
+N $BA63 Return unless the player's shot is in the air.
   $BA63,$05 Return if #R$A212 is not zero.
   $BA68,$04 Point #REGiy at the fourteenth object slot, which holds the player's
 . shot.
   $BA6C,$05 Return if the shot slot is not in use.
+N $BA71 Test whether the shot is on the outlaw.
   $BA71,$03 Fetch the horizontal position of the outlaw.
   $BA74,$02 Move four pixels to the right.
   $BA76,$03 Subtract the horizontal position of the shot.
@@ -5137,8 +5221,10 @@ c $BB0B Handle Dying Outlaw
 @ $BB0B label=HandleDyingOutlaw
 D $BB0B Type #N$12: an outlaw who is dying. He sinks out of sight, a sprite
 . fewer each four frames, and when he has gone the player is rewarded.
+N $BB0B Give the reward when the last frame is over.
   $BB0B,$03 Fetch the frame.
   $BB0E,$04 Jump to #R$BB3A to give the reward if it is three.
+N $BB12 Draw the sprites of this frame.
   $BB12,$01 Copy the frame into #REGe.
   $BB13,$03 Point #REGbc at #R$BBBB.
   $BB16,$03 Fetch the pointer to the sprite list for the frame.
@@ -5152,6 +5238,7 @@ D $BB0B Type #N$12: an outlaw who is dying. He sinks out of sight, a sprite
   $BB27,$03 Fetch the vertical position of the outlaw into #REGh.
   $BB2A,$03 Find the address in the buffer.
   $BB2D,$03 Draw the sprites into the buffer.
+N $BB30 Move on a frame every fourth frame.
   $BB30,$03 Fetch the frame counter.
   $BB33,$02,b$01 Keep a number from #N$00 to #N$03.
   $BB35,$01 Return unless it is every fourth frame.
@@ -5261,6 +5348,7 @@ D $BBDD Checks whether the next move would take the outlaw past an edge of the
 . and sets a bit in #REGix+#N$05 for the edge: bit 0 for the left edge, bit 1
 . for the right edge, bit 2 for the lower edge and bit 3 for the upper edge.
 R $BBDD IX The address of the outlaw
+N $BBDD Test the left edge.
   $BBDD,$04 Clear the flags for the edges.
   $BBE1,$03 Fetch the horizontal position.
   $BBE4,$03 Add the horizontal speed.
@@ -5270,6 +5358,7 @@ R $BBDD IX The address of the outlaw
   $BBED,$03 Set it as the horizontal speed, which bounces him back to the right.
   $BBF0,$04 Set the flag for the left edge.
 @ $BBF4 label=KeepOutlawOnScreen_Right
+N $BBF4 Test the right edge.
   $BBF4,$03 Fetch the horizontal position.
   $BBF7,$03 Add the width of the outlaw.
   $BBFA,$03 Add the horizontal speed.
@@ -5280,6 +5369,7 @@ R $BBDD IX The address of the outlaw
   $BC06,$03 Set it as the horizontal speed, which stops him at the edge.
   $BC09,$04 Set the flag for the right edge.
 @ $BC0D label=KeepOutlawOnScreen_Lower
+N $BC0D Test the lower edge.
   $BC0D,$03 Fetch the vertical position.
   $BC10,$03 Add the vertical speed.
   $BC13,$02 Subtract the lower edge.
@@ -5288,6 +5378,7 @@ R $BBDD IX The address of the outlaw
   $BC19,$03 Set it as the vertical speed, which bounces him back up.
   $BC1C,$04 Set the flag for the lower edge.
 @ $BC20 label=KeepOutlawOnScreen_Upper
+N $BC20 Test the upper edge.
   $BC20,$03 Fetch the vertical position.
   $BC23,$03 Add the height of the outlaw.
   $BC26,$03 Add the vertical speed.
@@ -5305,17 +5396,20 @@ D $BC37 Gives the waiting outlaw a new move: a speed in each direction of up to
 . three, taken from random numbers, and a time for the move of eight to thirty
 . nine frames. On the last move the speeds are doubled.
 R $BC37 IX The address of the outlaw
+N $BC37 Choose a horizontal speed.
   $BC37,$04 Fetch a random number and keep it in #REGc.
   $BC3B,$02,b$01 Keep a number from #N$00 to #N$03.
   $BC3D,$04 Jump to #R$BC43 if the top bit of the random number is clear.
   $BC41,$02 Make the speed negative.
 @ $BC43 label=ChooseOutlawMove_Vertical
+N $BC43 Store it, then choose a vertical speed.
   $BC43,$03 Set the horizontal speed.
   $BC46,$04 Fetch another random number and keep it in #REGc.
   $BC4A,$02,b$01 Keep a number from #N$00 to #N$03.
   $BC4C,$04 Jump to #R$BC52 if the top bit of the random number is clear.
   $BC50,$02 Make the speed negative.
 @ $BC52 label=ChooseOutlawMove_Time
+N $BC52 Store the vertical speed, then set the time of the move.
   $BC52,$03 Set the vertical speed.
   $BC55,$03 Fetch the frame counter.
   $BC58,$02,b$01 Keep a number from #N$00 to #N$1F.
@@ -5333,6 +5427,7 @@ D $BC6C Chooses which of the two sprite lists for the body of the outlaw to
 . draw. He takes a step every fourth frame while he is moving.
 R $BC6C IX The address of the outlaw
 R $BC6C O:DE The address of the sprite list
+N $BC6C Take a step every fourth frame while he is moving.
   $BC6C,$03 Fetch the horizontal speed.
   $BC6F,$03 Combine it with the vertical speed.
   $BC72,$02 Jump if he is not moving.
@@ -5344,6 +5439,7 @@ R $BC6C O:DE The address of the sprite list
   $BC81,$02 Jump unless it is every fourth frame.
   $BC83,$03 Take a step.
 @ $BC86 label=ChooseOutlawBody_Step
+N $BC86 Choose the sprite list for the step.
   $BC86,$03 Fetch the step.
   $BC89,$02,b$01 Keep the lowest bit.
   $BC8B,$03 Point #REGde at #R$B5AA.
@@ -5753,6 +5849,7 @@ E $BE8A View the equivalent code in;
 . #LIST
 . { #NIGHTSHADE$E4CD }
 . LIST#
+N $BE8A The jump at #R$A224 starts here for five columns.
   $BE8A,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
 . into #REGd.
   $BE8C,$03 Clear the screen bits under the part of the mask which is in this
@@ -5765,6 +5862,7 @@ E $BE8A View the equivalent code in;
 . into it.
   $BE99,$02 Add the part of the pixels which has moved into it.
   $BE9B,$01 Point #REGh back at the first table.
+N $BE9C The jump at #R$A224 starts here for four columns.
   $BE9C,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
 . into #REGd.
   $BE9E,$03 Clear the screen bits under the part of the mask which is in this
@@ -5777,6 +5875,7 @@ E $BE8A View the equivalent code in;
 . into it.
   $BEAB,$02 Add the part of the pixels which has moved into it.
   $BEAD,$01 Point #REGh back at the first table.
+N $BEAE The jump at #R$A224 starts here for three columns.
   $BEAE,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
 . into #REGd.
   $BEB0,$03 Clear the screen bits under the part of the mask which is in this
@@ -5789,6 +5888,7 @@ E $BE8A View the equivalent code in;
 . into it.
   $BEBD,$02 Add the part of the pixels which has moved into it.
   $BEBF,$01 Point #REGh back at the first table.
+N $BEC0 The jump at #R$A224 starts here for two columns.
   $BEC0,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
 . into #REGd.
   $BEC2,$03 Clear the screen bits under the part of the mask which is in this
@@ -5801,6 +5901,7 @@ E $BE8A View the equivalent code in;
 . into it.
   $BECF,$02 Add the part of the pixels which has moved into it.
   $BED1,$01 Point #REGh back at the first table.
+N $BED2 The jump at #R$A224 starts here for one column.
   $BED2,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
 . into #REGd.
   $BED4,$03 Clear the screen bits under the part of the mask which is in this
@@ -6132,7 +6233,7 @@ N $C058 Fetch the options.
 N $C05B See whether there are two players.
   $C05B,$04 Jump to #R$C084 if there are.
 @ $C05F label=CheckSheriffLost_TakeLife
-N $C05F Take a life away.
+N $C05F See #POKE(infinite_lives,Infinite Lives).
   $C05F,$03 Point #REGhl at #R$A263.
   $C062,$01 Take one off.
 N $C063 There are no lives left.
@@ -9133,8 +9234,7 @@ E $CFA1 View the equivalent code in;
 R $CFA1 DE The horizontal position of the point
 R $CFA1 HL The vertical position of the point
 R $CFA1 IX The address of the object
-R $CFA1 O:A The depth into the wall along X, negative if they
-. overlap
+R $CFA1 O:A The depth into the wall along X, negative if they overlap
 R $CFA1 O:F The carry flag is set if the object touches a wall
 N $CFA1 Find the cell and its rectangle list.
   $CFA1,$03 Call #R$CF67.
@@ -9195,8 +9295,7 @@ E $CFDE View the equivalent code in;
 R $CFDE DE The horizontal position of the point
 R $CFDE HL The vertical position of the point
 R $CFDE IX The address of the object
-R $CFDE O:A The depth into the wall along Y, negative if they
-. overlap
+R $CFDE O:A The depth into the wall along Y, negative if they overlap
 R $CFDE O:F The carry flag is set if the object touches a wall
 N $CFDE Find the cell and its rectangle list.
   $CFDE,$03 Call #R$CF67.
@@ -9311,8 +9410,8 @@ E $D03E View the equivalent code in;
 . { #TRANZAM$6F2F }
 . { #UNDERWURLDE$AC68 }
 . LIST#
-R $D03E A The multiplier
-R $D03E DE The multiplicand
+R $D03E A The first number
+R $D03E DE The second number
 R $D03E O:HL The product
 N $D03E Start with a product of zero, and count eight bits.
   $D03E,$03 Set the product to #N$0000.
@@ -9321,9 +9420,9 @@ N $D043 Double the product, and add #REGde if the next bit of #REGa
 . is set.
 @ $D043 label=MultiplyAByDE_Bit
   $D043,$01 Double the product.
-  $D044,$01 Move the next bit of the multiplier into the carry flag.
+  $D044,$01 Move the next bit of the first number into the carry flag.
   $D045,$02 Jump to #R$D048 if it is not set.
-  $D047,$01 Add the multiplicand.
+  $D047,$01 Add the second number.
 N $D048 Count down the bits.
 @ $D048 label=MultiplyAByDE_Next
   $D048,$02 Jump to #R$D043 until all the bits are done.
@@ -9840,7 +9939,8 @@ R $D272 O:HL The new address
 
 c $D275 Add A To HL
 @ $D275 label=AddAToHL
-D $D275 Adds an unsigned number to #REGhl.
+D $D275 Adds an unsigned number to
+. #REGhl.
 E $D275 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE06 }
@@ -9854,8 +9954,11 @@ E $D275 View the equivalent code in;
 R $D275 A The number
 R $D275 HL The address
 R $D275 O:HL The new address
-  $D275,$02 Add the number to the low byte.
-  $D277,$04 Add the carry to the high byte.
+  $D275,$01 Add #REGa to #REGl.
+  $D276,$01 Copy it to #REGl.
+  $D277,$01 Fetch #REGh.
+  $D278,$02 Add #N$00 with carry.
+  $D27A,$01 Copy it to #REGh.
   $D27B,$01 Return.
 
 c $D27C Draw Lives
@@ -10806,6 +10909,7 @@ D $D663 Draws the pixels of a tile of eight by eight pixels. Bit 7 of the number
 R $D663 A The number of the tile, with bits 6 and 7 which say how to reflect it
 R $D663 BC The address of the tile set
 R $D663 HL The screen address
+N $D663 Find the pixels of the tile.
   $D663,$04 Save the registers.
   $D667,$01 Keep the screen address in #REGde.
   $D668,$02,b$01 Keep the number of the tile.
@@ -10814,6 +10918,7 @@ R $D663 HL The screen address
   $D670,$01 Add the address of the tile set.
   $D671,$01 Put the address of the tile in #REGde and the screen address in
 . #REGhl.
+N $D672 Choose how to reflect it.
   $D672,$01 Restore the number of the tile.
   $D673,$02 Move bits 6 and 7 to bits 0 and 1.
   $D675,$02,b$01 Keep them.
@@ -10849,6 +10954,7 @@ D $D69E Draws a tile reflected horizontally, using the page of bytes turned
 . round which is at #N$F9.
 R $D69E DE The address of the tile
 R $D69E HL The screen address
+N $D69E Draw each line turned round.
   $D69E,$02 Set the number of lines.
 @ $D6A0 label=DrawTileHorizontal_Line
   $D6A0,$03 Fetch a line and keep it in #REGc.
@@ -10877,9 +10983,11 @@ c $D6BD Draw Tile Both
 D $D6BD Draws a tile reflected both horizontally and vertically.
 R $D6BD DE The address of the tile
 R $D6BD HL The screen address
+N $D6BD Start at the last line.
   $D6BD,$02 Set the number of lines.
   $D6BF,$07 Move to the last line.
 @ $D6C6 label=DrawTileBoth_Line
+N $D6C6 Draw each line turned round, from last to first.
   $D6C6,$03 Fetch a line, move to the previous one and keep the line in #REGc.
   $D6C9,$01 Save the counters.
   $D6CA,$02 Point #REGbc at the page of bytes turned round.
@@ -10919,8 +11027,9 @@ E $D6DB View the equivalent code in;
 
 c $D6E1 Fill Memory
 @ $D6E1 label=FillMemory
-D $D6E1 Clears a number of bytes to zero, or fills them with the value of #REGe
-. at #R$D6E3.
+D $D6E1 Fills an area of memory with
+. zero. The entry point at #R$D6E3 fills
+. it with the byte in #REGe.
 E $D6E1 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE56 }
@@ -10930,12 +11039,15 @@ E $D6E1 View the equivalent code in;
 . { #PENTAGRAM$CB77 }
 . { #UNDERWURLDE$9569 }
 . LIST#
-R $D6E1 BC The number of bytes
-R $D6E1 HL The address
-  $D6E1,$02 Fill with zero.
+R $D6E1 BC Number of bytes
+R $D6E1 HL Address of the first byte
+  $D6E1,$02 Set #REGe to #N$00.
 @ $D6E3 label=FillMemory_WithValue
-  $D6E3,$05 Store the value, move on and count down the bytes.
-  $D6E8,$02 Go back until they are all done.
+  $D6E3,$01 Write #REGe.
+  $D6E4,$01 Increment #REGhl.
+  $D6E5,$01 Decrement #REGbc.
+  $D6E6,$04 Jump to #R$D6E3 if #REGbc is
+. not zero.
   $D6EA,$01 Return.
 
 g $D6EB Playfield Buffer

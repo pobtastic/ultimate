@@ -1726,16 +1726,19 @@ N $9B23 Put the actor in the player's room and test the position.
 
 c $9B37 Add A To HL
 @ $9B37 label=AddAToHL
-D $9B37 Adds #REGa to #REGhl.
+D $9B37 Adds an unsigned number to #REGhl.
 E $9B37 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D4F2 }
 . LIST#
-R $9B37 A Value to add
-R $9B37 HL Address
-R $9B37 O:HL #REGhl + #REGa
-  $9B37,$02 #REGl=#REGa+#REGl.
-  $9B39,$04 #REGh=#REGh+any carry.
+R $9B37 A The number
+R $9B37 HL The address
+R $9B37 O:HL The new address
+  $9B37,$01 Add #REGa to #REGl.
+  $9B38,$01 Copy it to #REGl.
+  $9B39,$01 Fetch #REGh.
+  $9B3A,$02 Add #N$00 with carry.
+  $9B3C,$01 Copy it to #REGh.
   $9B3D,$01 Return.
 
 w $9B3E Jump Table
@@ -3194,8 +3197,7 @@ D $A44B Works out where an actor will be after it has moved by its velocities
 . The X position is kept between #N$00 and #N($0100,$04,$04) minus the width
 . (held in #R$96AD) and the Y position between #N$27 and #N$BF.
 R $A44B IX Actor record
-R $A44B O:B Bit 0 is set if the actor hit the left or right of the screen, bit
-. 1 is set if it hit the top or bottom
+R $A44B O:B Bit 0 is set if the actor hit the left or right of the screen, bit 1 is set if it hit the top or bottom
 R $A44B O:D The new Y position
 R $A44B O:E The new X position
   $A44B,$02 Clear the edge flags in #REGb.
@@ -4346,8 +4348,7 @@ D $AAED Tests whether the position an actor has been moved to is the same as the
 . position it started from.
 R $AAED DE The new position of the actor (#REGe is X and #REGd is Y)
 R $AAED IX Actor record
-R $AAED O:F Zero flag set if the position is the same as the position in the
-. record
+R $AAED O:F Zero flag set if the position is the same as the position in the record
   $AAED,$01 Fetch the new X position of the actor.
   $AAEE,$03 Compare the new X position with the X position of the actor.
   $AAF1,$01 Return if the X positions are different.
@@ -6455,8 +6456,7 @@ D $B52D Prints a line of text with an attribute, for the game selection menu and
 . { =h After #R$B52D }
 . { #SIM(start=$B47F,stop=$B495,sp=$5B40)
 . #SCR$02,$02,$05,$1C,$03(menu-line-after) } UDGTABLE# #POPS
-R $B52D HL Position of the text, with the Y position in #REGh and the X position
-. in #REGl (both in pixels)
+R $B52D HL Position of the text, with the Y position in #REGh and the X position in #REGl (both in pixels)
 R $B52D DE' Pointer to the text, which ends with a character that has bit 7 set
 E $B52D View the equivalent code in;
 . #LIST
@@ -6501,8 +6501,7 @@ E $B53D View the equivalent code in;
 . { #TRANZAM$6518 }
 . { #UNDERWURLDE$9C3C }
 . LIST#
-R $B53D HL Position of the text, with the Y position in #REGh and the X position
-. in #REGl (both in pixels)
+R $B53D HL Position of the text, with the Y position in #REGh and the X position in #REGl (both in pixels)
 R $B53D DE Pointer to string data
   $B53D,$01 Stash the position of the string on the stack.
   $B53E,$03 Convert the position into a screen address.
@@ -6644,9 +6643,15 @@ D $B5A9 Adds points to the score of the active player. The scores are held as
 . #SCR$02,$00,$00,$20,$02(add-points-after) } UDGTABLE# #POPS
 E $B5A9 View the equivalent code in;
 . #LIST
+. { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
 . { #COOKIE$7415 }
+. { #CYBERUN$925E }
 . { #JETPAC$70F9 }
 . { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #PSSST$737A }
 . { #TRANZAM$6046 }
 . { #UNDERWURLDE$A045 }
@@ -6913,8 +6918,7 @@ E $B6B2 View the equivalent code in;
 . LIST#
 R $B6B2 DE Pointer to a score
 R $B6B2 HL Pointer to a score
-R $B6B2 O:F Carry set if the score at #REGde is less than the score at #REGhl.
-. Zero set if they are equal
+R $B6B2 O:F Carry set if the score at #REGde is less than the score at #REGhl. Zero set if they are equal
   $B6B2,$03 Stash #REGbc, #REGde and #REGhl on the stack.
 N $B6B5 Scores are held in three bytes.
   $B6B5,$02 Set the number of bytes of the score in #REGb to #N$03.

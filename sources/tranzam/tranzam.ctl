@@ -808,10 +808,14 @@ D $6046 Adds a number of points to the score, using BCD arithmetic, and then
 E $6046 View the equivalent code in;
 . #LIST
 . { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
 . { #COOKIE$7415 }
+. { #CYBERUN$925E }
 . { #JETPAC$70F9 }
 . { #LUNARJETMAN$899C }
 . { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
 . { #PSSST$737A }
 . { #SABREWULF$B5A9 }
 . { #UNDERWURLDE$A045 }
@@ -3239,8 +3243,7 @@ B $6BE6,$10
 
 c $6BF6 Negate HL
 @ $6BF6 label=NegateHL
-D $6BF6 Replaces #REGhl with its two's complement (i.e. #REGhl=#N$0000 -
-. #REGhl).
+D $6BF6 Makes #REGhl negative.
 E $6BF6 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$D01B }
@@ -3248,14 +3251,11 @@ E $6BF6 View the equivalent code in;
 . { #NIGHTSHADE$E0DD }
 . { #UNDERWURLDE$ADD6 }
 . LIST#
-R $6BF6 HL Value
-R $6BF6 O:HL Negated value
-  $6BF6,$01 #REGa=#REGl.
-  $6BF7,$01 Flip all the bits.
-  $6BF8,$01 #REGl=#REGa.
-  $6BF9,$01 #REGa=#REGh.
-  $6BFA,$01 Flip all the bits.
-  $6BFB,$01 #REGh=#REGa.
+R $6BF6 HL The word
+R $6BF6 O:HL The negative of the word
+N $6BF6 Invert both bytes, then add one.
+  $6BF6,$03 Invert the low byte.
+  $6BF9,$03 Invert the high byte.
   $6BFC,$01 Increment #REGhl by one.
   $6BFD,$01 Return.
 
@@ -3951,8 +3951,8 @@ E $6F2F View the equivalent code in;
 . { #SABREWULF$BC5A }
 . { #UNDERWURLDE$AC68 }
 . LIST#
-R $6F2F A Multiplier
-R $6F2F DE Multiplicand
+R $6F2F A The first number
+R $6F2F DE The second number
 R $6F2F O:HL Result
   $6F2F,$03 #REGhl=#N($0000, $04, $04).
   $6F32,$02 Set the bit counter to #N$08.

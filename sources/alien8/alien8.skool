@@ -968,7 +968,7 @@ u$6288 DEFB $00,$00,$00,$00,$00,$00,$00,$00
 ; Disable interrupts and start the game.
 @label=GameEntry
 c$6300 DI            ; Disable interrupts.
- $6301 LD SP,$F100   ; Set the stack pointer to #N$F100.
+ $6301 LD SP,$F100   ; Set the stack pointer to #R$F100.
  $6304 NOP           ; No operation.
  $6305 JP $A631      ; Jump to #R$A631.
 ; View the equivalent code in;
@@ -8722,7 +8722,7 @@ c$A68B CALL $CAA2    ; Call #R$CAA2.
 @label=RunGame_Frame
 *$A68E LD IX,$5B88   ; Point #REGix at #R$5B88.
 @label=RunGame_NextObject
-*$A692 LD SP,$F100   ; Set the stack pointer to #N$F100.
+*$A692 LD SP,$F100   ; Set the stack pointer to #R$F100.
  $A695 LD HL,$A6C0   ; Point #REGhl at #R$A6C0.
  $A698 PUSH HL       ; Stash the return address on the stack.
  $A699 LD A,(IX+$18) ; Fetch the width of the sprite.
@@ -10019,6 +10019,8 @@ c$AD13 CALL $B2A7     ; Call #R$B2A7.
 ; IX The address of the object
 ;
 ; Play a noise only on the first landed frame.
+; .
+; #HTML(#AUDIO0(explosion.wav)(#INCLUDE(Explosion)))
 @label=PlayLandingSoundOnce
 c$AD54 LD A,(IX+$0C) ; Fetch the collision flags.
  $AD57 AND %00000100 ; Keep bit 2.
@@ -11882,8 +11884,8 @@ c$B4BA LD A,(DE)     ; Fetch the next note.
 @label=PlayNote
 c$B4C5 AND %00111111 ; Keep bits 0 to 5.
  $B4C7 JR Z,$B507    ; Jump to #R$B507 if the note is a rest.
- $B4C9 LD L,A        ; Copy the note number to #REGl.
- $B4CA LD H,$00      ; Set #REGh to #N$00.
+ $B4C9 LD L,A        ; {Set #REGhl to the note number.
+ $B4CA LD H,$00      ; }
  $B4CC ADD HL,HL     ; Double the number.
  $B4CD CALL $CE06    ; Call #R$CE06.
  $B4D0 LD BC,$B51D   ; Point #REGbc at #R$B51D.
@@ -13741,7 +13743,7 @@ c$BBB1 PUSH HL       ; Stash the pixel position on the
 ; Prints a character in the screen
 ; buffer, using the font whose address is
 ; held in #R$5B27. A space is drawn as
-; #N$3D, which is blank in this font. The
+; #N($3D), which is blank in this font. The
 ; eight rows are written going down the
 ; buffer (see #R$D200), #N$20 bytes apart,
 ; and the address is left at the top of
@@ -17160,7 +17162,7 @@ c$C785 XOR A          ; {Write #N$00 to #R$5B1E.
  $C799 JR NZ,$C790    ; }
  $C79B CALL $CC96     ; Find the address of the object.
  $C79E LD ($5B2D),DE  ; Remember the place in the list.
- $C7A2 PUSH HL        ; {Point #REGix at the object.
+ $C7A2 PUSH HL        ; {Point #REGix at the object (using the stack).
  $C7A3 POP IX         ; }
 ; This entry point is used by the routines at #R$C869, #R$C86F and #R$C8AB.
 ; .
@@ -17176,7 +17178,7 @@ c$C785 XOR A          ; {Write #N$00 to #R$5B1E.
  $C7AE JR NZ,$C7A5    ; }
  $C7B0 CALL $CC96     ; Find the address of the object.
  $C7B3 LD ($5B2F),DE  ; Remember the place in the list.
- $C7B7 PUSH HL        ; {Point #REGiy at the other object.
+ $C7B7 PUSH HL        ; {Point #REGiy at the other object (using the stack).
  $C7B8 POP IY         ; }
  $C7BA PUSH IX        ; {Copy #REGix to #REGbc (using
  $C7BC POP BC         ; the stack).}
@@ -17606,6 +17608,9 @@ c$C91B LD A,$F7      ; {Read from the keyboard;
 ; Kempston joystick.
 ;
 ; O:C The controls
+;
+; Read the port and map each bit to a
+; control.
 @label=ReadKempstonJoystick
 c$C954 IN A,($1F)    ; Read port #N$1F.
  $C956 LD C,$00      ; Set #REGc to #N$00.
@@ -17647,6 +17652,8 @@ c$C954 IN A,($1F)    ; Read port #N$1F.
 ; and 0 for fire.
 ;
 ; O:C The controls
+;
+; Left from the 1-5 row.
 @label=ReadCursorJoystick
 c$C979 LD C,$00      ; Set #REGc to #N$00.
  $C97B LD A,$F7      ; {Read from the keyboard;
@@ -17658,6 +17665,8 @@ c$C979 LD C,$00      ; Set #REGc to #N$00.
  $C980 BIT 4,A       ; {Set bit 0 of #REGc if bit 4 of
  $C982 JR Z,$C986    ; #REGa is set.
  $C984 SET 0,C       ; }
+; Fire, up, right and down from the
+; 0-9 row.
 @label=ReadCursorJoystick_SecondRow
 *$C986 LD A,$EF      ; {Read from the keyboard;
  $C988 CALL $B759    ; #TABLE(default,centre,centre,centre,centre,centre,centre)
@@ -17818,7 +17827,7 @@ c$C9A5 LD A,$FE      ; {Read from the keyboard;
 @label=LoseLife
 c$CA07 LD HL,$CA1D   ; Point #REGhl at #R$CA1D.
  $CA0A LD DE,$5B88   ; Point #REGde at #R$5B88.
- $CA0D PUSH DE       ; {Copy #REGde to #REGix (using
+ $CA0D PUSH DE       ; {Point #REGix at #R$5B88 (using
  $CA0E POP IX        ; the stack).}
  $CA10 LD BC,$0040   ; Set #REGbc to #N($0040,$04,$04).
  $CA13 LDIR          ; Copy the player back.
@@ -18539,267 +18548,253 @@ c$CCD0 LD HL,$6288   ; Point #REGhl at #R$6288.
 ;
 ; Used by the routine at #R$CCA7.
 ; .
-; Makes the objects of a room from
-; its entry in the room data. The colour
-; of the room is the low three bits of the
-; byte after the length, and the size of
-; the room is the high two bits. The size
-; gives the distance to the walls and the
-; floor level, from the table at #R$6460.
-; Each type of block is the number of an
-; entry in the table at #R$7519, which
-; holds the address of a template of one
-; or more objects. These are copied into
-; the objects table, along with the number
-; of the room. The types of block end with
-; a #N($FF), or at the end of the entry if
-; there are no more objects. After the
-; #N$FF come the groups of other objects,
-; each with a type and a number of places
-; (see #R$6469).
+; Makes the objects of a room from its entry in the room data. The colour
+; of the room is the low three bits of the byte after the length, and the size
+; of the room is the high two bits. The size gives the distance to the walls and
+; the floor level, from the table at #R$6460. Each type of block is the number
+; of an entry in the table at #R$7519, which holds the address of a template of
+; one or more objects that already have their coordinates. These are copied into
+; the objects table, along with the number of the room. The types of block end
+; with a #N($FF), or at the end of the entry if there are no more objects. After
+; the #N$FF come the groups of other objects, each with a type in bits 3 to 7
+; and one less than the number of places in bits 0 to 2, followed by that many
+; positions (see #R$6469). Type #N$00 sets the position offset at #R$5B19, and
+; type #N$1F switches the table of types from #R$73C8 to #R$7408. The other
+; types are lists of objects that have a sprite, a size and flags, but no
+; coordinates.
 ;
 ; DE Address of the first object to make
 ; HL Address of the length of the entry of the room
 ; IX Address of the player
 ;
-; Set the colour, the size and the
-; floor.
+; Set the colour of the room, the size and the floor.
 @label=MakeRoomObjects
 c$CCDE LD B,(HL)       ; Fetch the length of the entry.
- $CCDF INC HL          ; Increment #REGhl.
+ $CCDF INC HL          ; Point #REGhl at the colour and size.
  $CCE0 LD A,(HL)       ; Fetch the colour and size.
- $CCE1 AND %00000111   ; Keep bits 0 to 2.
- $CCE3 LD ($5B0D),A    ; Set #R$5B0D.
- $CCE6 LD ($5B34),HL   ; Set #R$5B34.
- $CCE9 PUSH DE         ; Stash #REGde on the stack.
- $CCEA EX DE,HL        ; Exchange #REGde and #REGhl.
+ $CCE1 AND %00000111   ; Keep the colour.
+ $CCE3 LD ($5B0D),A    ; Store it as the colour of the room at #R$5B0D.
+ $CCE6 LD ($5B34),HL   ; Store the address of the colour and size at #R$5B34.
+ $CCE9 PUSH DE         ; Stash the address of the object to make on the stack.
+ $CCEA EX DE,HL        ; Point #REGde at the colour and size.
  $CCEB LD A,(DE)       ; Fetch the colour and size.
- $CCEC INC DE          ; Increment #REGde.
- $CCED RLCA            ; {Rotate the size into the low
- $CCEE RLCA            ; two bits.}
- $CCEF AND %00000011   ; Keep bits 0 and 1.
- $CCF1 LD C,A          ; Copy it to #REGc.
+ $CCEC INC DE          ; Point #REGde at the types of block.
+ $CCED RLCA            ; {Move the size into the low two bits.
+ $CCEE RLCA            ; }
+ $CCEF AND %00000011   ; Keep it.
+ $CCF1 LD C,A          ; Stash it in #REGc.
  $CCF2 ADD A,A         ; {Multiply it by three.
  $CCF3 ADD A,C         ; }
  $CCF4 LD HL,$6460     ; Point #REGhl at #R$6460.
- $CCF7 CALL $CE06      ; Call #R$CE06.
- $CCFA LD A,(HL)       ; {Fetch the east and west
- $CCFB INC HL          ; distance and increment #REGhl.}
- $CCFC LD ($5B0B),A    ; Set #R$5B0B.
- $CCFF LD A,(HL)       ; {Fetch the north and south
- $CD00 INC HL          ; distance and increment #REGhl.}
- $CD01 LD ($5B0C),A    ; Set #R$5B0C.
- $CD04 LD A,(HL)       ; Fetch the floor level.
- $CD05 LD ($5B0E),A    ; Set #R$5B0E.
- $CD08 DEC B           ; {Subtract #N$02 from #REGb.
+ $CCF7 CALL $CE06      ; Add the offset to find the size.
+ $CCFA LD A,(HL)       ; {Fetch the size of the room in X, and move on.
+ $CCFB INC HL          ; }
+ $CCFC LD ($5B0B),A    ; Store it at #R$5B0B.
+ $CCFF LD A,(HL)       ; {Fetch the size of the room in Y, and move on.
+ $CD00 INC HL          ; }
+ $CD01 LD ($5B0C),A    ; Store it at #R$5B0C.
+ $CD04 LD A,(HL)       ; Fetch the floor of the room.
+ $CD05 LD ($5B0E),A    ; Store it at #R$5B0E.
+ $CD08 DEC B           ; {Take two off the length that is left.
  $CD09 DEC B           ; }
- $CD0A EX DE,HL        ; Exchange #REGde and #REGhl.
- $CD0B POP DE          ; Restore #REGde from the stack.
-; Copy each type of block from
-; #R$7519.
+ $CD0A EX DE,HL        ; Point #REGhl at the types of block.
+ $CD0B POP DE          ; Restore the address of the object to make from the
+                       ; stack.
+; Copy each type of block from #R$7519.
 @label=MakeRoomObjects_Background
-*$CD0C LD A,(HL)       ; {Fetch the type and increment
- $CD0D INC HL          ; #REGhl.}
- $CD0E CP $FF          ; {Jump to #R$CD3A if it is #N$FF.
+*$CD0C LD A,(HL)       ; {Fetch the type of block, and move on.
+ $CD0D INC HL          ; }
+ $CD0E CP $FF          ; {Jump to #R$CD3A if it is the end of the types.
  $CD10 JR Z,$CD3A      ; }
- $CD12 PUSH BC         ; {Stash #REGbc and #REGhl on the
- $CD13 PUSH HL         ; stack.}
- $CD14 LD L,A          ; Copy it to #REGl.
- $CD15 LD H,$00        ; Set #REGh to #N$00.
- $CD17 ADD HL,HL       ; Double #REGhl.
+ $CD12 PUSH BC         ; {Stash the length that is left and the address of the next type on
+ $CD13 PUSH HL         ; the stack.}
+; Look up the list of objects of this type.
+ $CD14 LD L,A          ; {Make the type into an offset.
+ $CD15 LD H,$00        ; }
+ $CD17 ADD HL,HL       ; Double it.
  $CD18 LD BC,$7519     ; Point #REGbc at #R$7519.
- $CD1B ADD HL,BC       ; Add #REGbc to #REGhl.
- $CD1C LD A,(HL)       ; {Fetch the address of the
- $CD1D INC HL          ; template.
+ $CD1B ADD HL,BC       ; Add the two.
+ $CD1C LD A,(HL)       ; {Fetch the address of the list of objects of the
+ $CD1D INC HL          ; block.
  $CD1E LD H,(HL)       ;
  $CD1F LD L,A          ; }
+; Copy one block object into the objects table.
 @label=MakeRoomObjects_BackgroundCopy
-*$CD20 LD BC,$0008     ; Set #REGbc to #N($0008,$04,$04).
- $CD23 LDIR            ; Copy #N$08 bytes from #REGhl to
-                       ; #REGde.
- $CD25 LD A,(IX+$08)   ; Fetch the room number of the
-                       ; player.
- $CD28 LD (DE),A       ; Set the room number of the
-                       ; object.
- $CD29 INC DE          ; Increment #REGde.
- $CD2A LD B,$17        ; Set #REGb to #N$17.
- $CD2C CALL $CE1C      ; Call #R$CE1C.
- $CD2F LD A,(HL)       ; {Jump to #R$CD20 if the next
- $CD30 AND A           ; byte is not zero.
+*$CD20 LD BC,$0008     ; Set the number of bytes to copy to #N$08.
+ $CD23 LDIR            ; Copy the graphic number, the coordinates, the size and the flags of
+                       ; the object.
+ $CD25 LD A,(IX+$08)   ; Fetch the room number of the player.
+ $CD28 LD (DE),A       ; {Set the room number of the object, and move on.
+ $CD29 INC DE          ; }
+ $CD2A LD B,$17        ; Set the number of bytes to #N$17.
+ $CD2C CALL $CE1C      ; Clear the rest of the object.
+ $CD2F LD A,(HL)       ; {Jump to #R$CD20 if the list has not ended.
+ $CD30 AND A           ;
  $CD31 JR NZ,$CD20     ; }
- $CD33 POP HL          ; {Restore #REGhl and #REGbc from
- $CD34 POP BC          ; the stack.}
- $CD35 DJNZ $CD0C      ; Jump to #R$CD0C until #REGb is
-                       ; zero.
- $CD37 JP $CCD0        ; Jump to #R$CCD0.
-; The other objects. #REGiy points
-; at the object that is being made.
+ $CD33 POP HL          ; {Restore the address of the next type and the length that is left
+ $CD34 POP BC          ; from the stack.}
+ $CD35 DJNZ $CD0C      ; Jump to #R$CD0C until all of the types have been used.
+ $CD37 JP $CCD0        ; Jump to #R$CCD0 to clear the rest of the objects
+                       ; table.
+; The other objects. #REGiy points at the object that is being made.
 @label=MakeRoomObjects_Foreground
-*$CD3A DEC B           ; Decrement #REGb.
+*$CD3A DEC B           ; Take one off the length that is left, for the end of
+                       ; the types.
  $CD3B PUSH IY         ; Stash #REGiy on the stack.
- $CD3D PUSH DE         ; {Copy #REGde to #REGiy (using
- $CD3E POP IY          ; the stack).}
+ $CD3D PUSH DE         ; {Point #REGiy at the object to make (using the stack).
+ $CD3E POP IY          ; }
+; Decode the type and the number of places.
 @label=MakeRoomObjects_ForegroundObject
-*$CD40 LD A,(HL)       ; Fetch the type and the number
-                       ; of places.
- $CD41 AND %00000111   ; Keep bits 0 to 2.
- $CD43 INC A           ; Increment #REGa.
- $CD44 LD C,A          ; Copy it to #REGc.
- $CD45 LD A,(HL)       ; Fetch the type and the number
-                       ; of places again.
- $CD46 INC HL          ; Increment #REGhl.
- $CD47 DEC B           ; Decrement #REGb.
- $CD48 LD D,(HL)       ; Fetch the first place.
- $CD49 INC HL          ; Increment #REGhl.
- $CD4A PUSH HL         ; Stash #REGhl on the stack.
- $CD4B RRCA            ; {Move the type into bits 1 to
- $CD4C RRCA            ; 5.}
- $CD4D AND %00111110   ; Keep bits 1 to 5.
- $CD4F JP Z,$CE00      ; Jump to #R$CE00 if it is zero.
- $CD52 CP $3E          ; {Jump to #R$CDF0 if it is #N$3E.
+*$CD40 LD A,(HL)       ; Fetch the type and the number of places.
+ $CD41 AND %00000111   ; Keep the count.
+ $CD43 INC A           ; Add one to get the number of times.
+ $CD44 LD C,A          ; Stash it in #REGc.
+ $CD45 LD A,(HL)       ; {Fetch the type and the number of places again, and
+ $CD46 INC HL          ; move on.}
+ $CD47 DEC B           ; Take one off the length that is left.
+ $CD48 LD D,(HL)       ; {Fetch the first place, and move on.
+ $CD49 INC HL          ; }
+ $CD4A PUSH HL         ; Stash the address of the next byte on the stack.
+ $CD4B RRCA            ; {Move the type into bits 1 to 5.
+ $CD4C RRCA            ; }
+ $CD4D AND %00111110   ; Keep it, to make it twice the number of the type.
+ $CD4F JP Z,$CE00      ; Jump to #R$CE00 if the type is #N$00.
+ $CD52 CP $3E          ; {Jump to #R$CDF0 if the type is #N$1F.
  $CD54 JP Z,$CDF0      ; }
- $CD57 LD HL,($5B20)   ; Fetch #R$5B20.
- $CD5A CALL $CE06      ; Call #R$CE06.
- $CD5D LD A,(HL)       ; {Fetch the address of the
- $CD5E INC HL          ; template.
+ $CD57 LD HL,($5B20)   ; Fetch the address of the object types from #R$5B20.
+ $CD5A CALL $CE06      ; Add the offset to find the type.
+ $CD5D LD A,(HL)       ; {Fetch the address of the list of objects of the type.
+ $CD5E INC HL          ;
  $CD5F LD H,(HL)       ;
  $CD60 LD L,A          ; }
 @label=MakeRoomObjects_ForegroundPlace
-*$CD61 PUSH HL         ; Stash #REGhl on the stack.
+*$CD61 PUSH HL         ; Stash the address of the list of objects on the stack.
+; Copy the sprite, the size and the flags from the type.
 @label=MakeRoomObjects_ForegroundSprite
-*$CD62 LD A,(HL)       ; {Fetch the sprite number and
- $CD63 INC HL          ; increment #REGhl.}
- $CD64 LD (IY+$00),A   ; Set the sprite number of the
-                       ; object.
- $CD67 LD A,(HL)       ; {Fetch the width and increment
- $CD68 INC HL          ; #REGhl.}
+*$CD62 LD A,(HL)       ; {Fetch the sprite number, and move on.
+ $CD63 INC HL          ; }
+ $CD64 LD (IY+$00),A   ; Set the sprite number of the object.
+ $CD67 LD A,(HL)       ; {Fetch the width, and move on.
+ $CD68 INC HL          ; }
  $CD69 LD (IY+$04),A   ; Set the width of the object.
- $CD6C LD A,(HL)       ; {Fetch the depth and increment
- $CD6D INC HL          ; #REGhl.}
+ $CD6C LD A,(HL)       ; {Fetch the depth, and move on.
+ $CD6D INC HL          ; }
  $CD6E LD (IY+$05),A   ; Set the depth of the object.
- $CD71 LD A,(HL)       ; {Fetch the height and increment
- $CD72 INC HL          ; #REGhl.}
+ $CD71 LD A,(HL)       ; {Fetch the height, and move on.
+ $CD72 INC HL          ; }
  $CD73 LD (IY+$06),A   ; Set the height of the object.
- $CD76 LD A,(HL)       ; {Fetch the flags and increment
- $CD77 INC HL          ; #REGhl.}
+ $CD76 LD A,(HL)       ; {Fetch the flags, and move on.
+ $CD77 INC HL          ; }
  $CD78 LD (IY+$07),A   ; Set the flags of the object.
- $CD7B LD A,(IX+$08)   ; Fetch the room number of the
-                       ; player.
- $CD7E LD (IY+$08),A   ; Set the room number of the
-                       ; object.
-; The offset has the half step along
-; the x axis in bit 0, the half step along
-; the y axis in bit 1, and the offset up
-; the z axis in bits 2 to 7. The place has
-; the x position in bits 0 to 2, the y
-; position in bits 3 to 5 and the height
-; in bits 6 and 7. The x position of the
-; object is the x position times #N($10),
-; plus #N$08 if the half step is set, plus
-; #N$48.
- $CD81 LD A,($5B19)    ; Fetch #R$5B19.
- $CD84 RLCA            ; {Move the half step along x
- $CD85 RLCA            ; into bit 3.
+ $CD7B LD A,(IX+$08)   ; Fetch the room number of the player.
+ $CD7E LD (IY+$08),A   ; Set the room number of the object.
+; The offset at #R$5B19 has the half step along the x axis in bit 0, the
+; half step along the y axis in bit 1, and the offset up the z axis in bits 2
+; to 7. The place has the x position in bits 0 to 2, the y position in bits 3
+; to 5 and the height in bits 6 and 7. The x position of the object is the x
+; position times #N($10), plus #N$08 if the half step is set, plus #N$48.
+ $CD81 LD A,($5B19)    ; Fetch the position offset from #R$5B19.
+ $CD84 RLCA            ; {Move the half step along x into bit 3.
+ $CD85 RLCA            ;
  $CD86 RLCA            ; }
- $CD87 AND %00001000   ; Keep bit 3.
- $CD89 LD E,A          ; Copy it to #REGe.
+ $CD87 AND %00001000   ; Keep it.
+ $CD89 LD E,A          ; Stash it in #REGe.
  $CD8A LD A,D          ; Fetch the place.
- $CD8B RLCA            ; {Move the x position into bits
- $CD8C RLCA            ; 4 to 6.
+ $CD8B RLCA            ; {Move the x position into bits 4 to 6.
+ $CD8C RLCA            ;
  $CD8D RLCA            ;
  $CD8E RLCA            ; }
- $CD8F AND %01110000   ; Keep bits 4 to 6.
- $CD91 ADD A,E         ; Add #REGe.
+ $CD8F AND %01110000   ; Keep it.
+ $CD91 ADD A,E         ; Add the half step.
  $CD92 ADD A,$48       ; Add #N$48.
- $CD94 LD (IY+$01),A   ; Set the x position of the
-                       ; object.
-; The y position is worked out in
-; the same way from the y position and the
-; half step along y.
- $CD97 LD A,($5B19)    ; Fetch #R$5B19.
- $CD9A RLCA            ; {Move the half step along y
- $CD9B RLCA            ; into bit 3.}
- $CD9C AND %00001000   ; Keep bit 3.
- $CD9E LD E,A          ; Copy it to #REGe.
+ $CD94 LD (IY+$01),A   ; Set the x position of the object.
+; The y position is worked out in the same way from the y position and
+; the half step along y.
+ $CD97 LD A,($5B19)    ; Fetch the position offset from #R$5B19.
+ $CD9A RLCA            ; {Move the half step along y into bit 3.
+ $CD9B RLCA            ; }
+ $CD9C AND %00001000   ; Keep it.
+ $CD9E LD E,A          ; Stash it in #REGe.
  $CD9F LD A,D          ; Fetch the place.
- $CDA0 RLCA            ; Move the y position into bits
-                       ; 4 to 6.
- $CDA1 AND %01110000   ; Keep bits 4 to 6.
- $CDA3 ADD A,E         ; Add #REGe.
+ $CDA0 RLCA            ; Move the y position into bits 4 to 6.
+ $CDA1 AND %01110000   ; Keep it.
+ $CDA3 ADD A,E         ; Add the half step.
  $CDA4 ADD A,$48       ; Add #N$48.
- $CDA6 LD (IY+$02),A   ; Set the y position of the
-                       ; object.
-; The z position is the height times
-; #N($0C), plus the offset up the z axis,
-; plus the floor.
+ $CDA6 LD (IY+$02),A   ; Set the y position of the object.
+; The z position is the height times #N($0C), plus the offset up the z
+; axis, plus the floor.
  $CDA9 LD A,D          ; Fetch the place.
- $CDAA RLCA            ; {Move the height into the low
- $CDAB RLCA            ; two bits.}
- $CDAC AND %00000011   ; Keep bits 0 and 1.
+ $CDAA RLCA            ; {Move the height into the low two bits.
+ $CDAB RLCA            ; }
+ $CDAC AND %00000011   ; Keep it.
  $CDAE ADD A,A         ; {Multiply it by four.
  $CDAF ADD A,A         ; }
- $CDB0 LD E,A          ; Copy it to #REGe.
- $CDB1 ADD A,A         ; Double it.
- $CDB2 ADD A,E         ; Add #REGe.
- $CDB3 LD E,A          ; Copy it to #REGe.
- $CDB4 LD A,($5B19)    ; Fetch #R$5B19.
- $CDB7 ADD A,E         ; Add #REGe.
- $CDB8 AND %11111100   ; Keep bits 2 to 7.
- $CDBA LD E,A          ; Copy it to #REGe.
- $CDBB LD A,($5B0E)    ; Fetch #R$5B0E.
- $CDBE ADD A,E         ; Add #REGe.
- $CDBF LD (IY+$03),A   ; Set the z position of the
-                       ; object.
- $CDC2 PUSH BC         ; Stash #REGbc on the stack.
- $CDC3 LD BC,$0009     ; Set #REGbc to #N($0009,$04,$04).
- $CDC6 ADD IY,BC       ; Add #REGbc to #REGiy.
- $CDC8 LD B,$17        ; Set #REGb to #N$17.
+ $CDB0 LD E,A          ; Stash it in #REGe.
+ $CDB1 ADD A,A         ; Multiply it by eight.
+ $CDB2 ADD A,E         ; Add the four times to make twelve times.
+ $CDB3 LD E,A          ; Stash it in #REGe.
+ $CDB4 LD A,($5B19)    ; Fetch the position offset from #R$5B19.
+ $CDB7 ADD A,E         ; Add the twelve times.
+ $CDB8 AND %11111100   ; Clear the two bits of the half steps.
+ $CDBA LD E,A          ; Stash it in #REGe.
+ $CDBB LD A,($5B0E)    ; Fetch the floor of the room from #R$5B0E.
+ $CDBE ADD A,E         ; Add it.
+ $CDBF LD (IY+$03),A   ; Set the z position of the object.
+; Clear the rest of the object.
+ $CDC2 PUSH BC         ; Stash the count on the stack.
+ $CDC3 LD BC,$0009     ; Set the length of the part of the object that has been made to
+                       ; #N$09.
+ $CDC6 ADD IY,BC       ; Point #REGiy at the rest of the object.
+ $CDC8 LD B,$17        ; Set the number of bytes to clear to #N$17.
 @label=MakeRoomObjects_ForegroundClear
-*$CDCA LD (IY+$00),$00 ; Write #N$00.
- $CDCE INC IY          ; Increment #REGiy.
- $CDD0 DJNZ $CDCA      ; Jump to #R$CDCA until #REGb is
-                       ; zero.
- $CDD2 POP BC          ; Restore #REGbc from the stack.
- $CDD3 LD A,(HL)       ; {Jump to #R$CD62 if the next
- $CDD4 AND A           ; byte is not zero.
+*$CDCA LD (IY+$00),$00 ; Clear a byte.
+ $CDCE INC IY          ; Move on.
+ $CDD0 DJNZ $CDCA      ; Jump to #R$CDCA until the object is clear.
+; Move on to the next object of the type, or the next place, or the next
+; group.
+ $CDD2 POP BC          ; Restore the count from the stack.
+ $CDD3 LD A,(HL)       ; {Jump to #R$CD62 if the type has not ended.
+ $CDD4 AND A           ;
  $CDD5 JR NZ,$CD62     ; }
- $CDD7 POP DE          ; {Restore #REGde and #REGhl from
- $CDD8 POP HL          ; the stack.}
- $CDD9 DEC B           ; Decrement #REGb.
- $CDDA JR Z,$CDE8      ; Jump to #R$CDE8 if it is zero.
- $CDDC DEC C           ; {Jump to #R$CD40 if #REGc is
- $CDDD JP Z,$CD40      ; zero.}
- $CDE0 LD A,(HL)       ; {Fetch the next place and
- $CDE1 INC HL          ; increment #REGhl.}
- $CDE2 PUSH HL         ; Stash #REGhl on the stack.
- $CDE3 EX DE,HL        ; Exchange #REGde and #REGhl.
- $CDE4 LD D,A          ; Copy it to #REGd.
+ $CDD7 POP DE          ; {Restore the address of the type and the address of the next byte
+ $CDD8 POP HL          ; from the stack.}
+ $CDD9 DEC B           ; {Jump to #R$CDE8 if the entry has ended.
+ $CDDA JR Z,$CDE8      ; }
+ $CDDC DEC C           ; {Jump to #R$CD40 if the type has been used the number
+ $CDDD JP Z,$CD40      ; of times.}
+ $CDE0 LD A,(HL)       ; {Fetch the next place, and move on.
+ $CDE1 INC HL          ; }
+ $CDE2 PUSH HL         ; Stash the address of the next byte on the stack.
+ $CDE3 EX DE,HL        ; Point #REGhl at the list of objects of the type.
+ $CDE4 LD D,A          ; Put the place in #REGd.
  $CDE5 JP $CD61        ; Jump to #R$CD61.
+; Finish, and clear any objects that were not made.
 @label=MakeRoomObjects_Finish
-*$CDE8 PUSH IY         ; {Copy #REGiy to #REGde (using
- $CDEA POP DE          ; the stack).}
+*$CDE8 PUSH IY         ; {Point #REGde at the next object to make (using the
+ $CDEA POP DE          ; stack).}
  $CDEB POP IY          ; Restore #REGiy from the stack.
- $CDED JP $CCD0        ; Jump to #R$CCD0.
-; Switch to the second table of
-; object types.
+ $CDED JP $CCD0        ; Jump to #R$CCD0 to clear the rest of the objects
+                       ; table.
+; Type #N$1F switches to the second table of object types at #R$7408.
 @label=MakeRoomObjects_SwitchTable
-*$CDF0 LD HL,($5B20)   ; Fetch #R$5B20.
- $CDF3 LD A,$40        ; Set #REGa to #N$40.
- $CDF5 CALL $CE06      ; Call #R$CE06.
- $CDF8 LD ($5B20),HL   ; Set #R$5B20.
+*$CDF0 LD HL,($5B20)   ; Fetch the address of the object types from #R$5B20.
+ $CDF3 LD A,$40        ; Set the offset to #N$40.
+ $CDF5 CALL $CE06      ; Add it to switch to #R$7408.
+ $CDF8 LD ($5B20),HL   ; Store it at #R$5B20.
+; Go on to the next group.
 @label=MakeRoomObjects_Next
-*$CDFB DEC B           ; Decrement #REGb.
- $CDFC POP HL          ; Restore #REGhl from the stack.
+*$CDFB DEC B           ; Take one off the length that is left.
+ $CDFC POP HL          ; Restore the address of the next byte from the stack.
  $CDFD JP $CD40        ; Jump to #R$CD40.
-; Type #N$00 sets the position
-; offset.
+; Type #N$00 sets the position offset for the groups that follow.
 @label=MakeRoomObjects_SetOffset
-*$CE00 LD A,D          ; Fetch #REGd.
- $CE01 LD ($5B19),A    ; Set #R$5B19.
+*$CE00 LD A,D          ; Fetch the place, which is the offset.
+ $CE01 LD ($5B19),A    ; Store it at #R$5B19.
  $CE04 JR $CDFB        ; Jump to #R$CDFB.
 ; View the equivalent code in;
 ; #LIST
 ; { #KNIGHTLORE$D3F0 }
+; { #PENTAGRAM$C92C }
 ; LIST#
 
 ; Add A To HL
@@ -18835,13 +18830,18 @@ c$CE06 ADD A,L       ; Add #REGa to #REGl.
 ; .
 ; Multiplies #REGa by #REGde.
 ;
-;   A The multiplier
-;   DE The multiplicand
+;   A The first number
+;   DE The second number
 ; O:HL The product
+;
+; Clear the product and count the
+; bits.
 @label=MultiplyAByDE
 c$CE0D PUSH BC       ; Stash #REGbc on the stack.
  $CE0E LD HL,$0000   ; Set #REGhl to #N($0000,$04,$04).
  $CE11 LD B,$08      ; Set #REGb to #N$08.
+; Shift the product and add when the
+; next bit is set.
 @label=MultiplyAByDE_Loop
 *$CE13 ADD HL,HL     ; Double #REGhl.
  $CE14 RLCA          ; {Jump to #R$CE18 if the carry
@@ -20502,14 +20502,15 @@ g$F100 DEFS $20      ; {The reversed byte for
 ; shift of one to seven bits to the right,
 ; with the first page of the pair at #N$F0
 ; plus twice the shift, so the table for a
-; shift of one bit starts at #N$F200 and
+; shift of one bit starts at #R$F200 and
 ; the table for a shift of seven bits
-; starts at #N$FE00. The first page of a
-; pair has the inverse of the byte after
-; it has been shifted to the right, and
-; the second has the inverse of the bits
-; that were pushed out of the byte, which
-; go into the next byte of the line.
+; starts at #R$F200(#N$FE00). The first
+; page of a pair has the inverse of the
+; byte after it has been shifted to the
+; right, and the second has the inverse
+; of the bits that were pushed out of the
+; byte, which go into the next byte of the
+; line.
 @label=ShiftedByteTables
 g$F200 DEFS $0200                           ; {Two pages for each of
  $F400 DEFS $0200                           ; the seven shifts, from one bit to

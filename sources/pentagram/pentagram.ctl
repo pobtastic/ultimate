@@ -41,44 +41,45 @@ D $5E10 The records of the rooms of the game, which #R$C92C reads when it builds
 . colour and size of the room, and then the features of the room, which are
 . pairs of a feature number and a parameter, ended by #N$FF. Any groups of
 . templates come after that, each a byte and the cells that follow it. A room
-. can end before the #N$FF, when it has no groups of templates.
+. can end before the #N($FF), when it has no groups of templates.
 @ $5E10 label=Room_00
-B $5E10,$03,$03 Room #N$00, which has white ink and size #N$00, and is #N$1E
+B $5E10,$03,$03 Room #N($00), which has white ink and size #N($00), and is #N$1E
 . bytes long.
-B $5E13,$02,$02 Feature #N$18, the raised stone door and its frame in the wall
+B $5E13,$02,$02 Feature #N($18), the raised stone door and its frame in the wall
 . at the high end of y, which leads to #R$692C.
-B $5E15,$02,$02 Feature #N$1C, the slabs outside the raised door at the high end
-. of y.
-B $5E17,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $5E19,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $5E15,$02,$02 Feature #N($1C), the slabs outside the raised door at the high
+. end of y.
+B $5E17,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $5E19,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $5E1B,$01,$01 The end of the features.
 B $5E1C,$03,$03 Template #N$00 (stone slab), in 2 cells.
 B $5E1F,$07,$07 Template #N$17 (cube), in 6 cells.
 B $5E26,$07,$07 Template #N$03 (stalactites), in 6 cells.
 B $5E2D,$02,$02 Template #N$11 (slider y), in 1 cell.
 @ $5E2F label=Room_01
-B $5E2F,$03,$03 Room #N$01, which has red ink and size #N$00, and is #N$12 bytes
-. long.
-B $5E32,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5E2F,$03,$03 Room #N($01), which has red ink and size #N($00), and is #N$12
+. bytes long.
+B $5E32,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$5E6B.
-B $5E34,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $5E34,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$5E42.
-B $5E36,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $5E38,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5E36,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $5E38,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5E3A,$01,$01 The end of the features.
 B $5E3B,$07,$07 Template #N$05 (spiked ring), in 6 cells.
 @ $5E42 label=Room_02
-B $5E42,$03,$03 Room #N$02, which has magenta ink and size #N$00, and is #N$28
-. bytes long.
-B $5E45,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $5E42,$03,$03 Room #N($02), which has magenta ink and size #N($00), and is
+. #N$28 bytes long.
+B $5E45,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$5E2F.
-B $5E47,$02,$02 Feature #N$18, the raised stone door and its frame in the wall
+B $5E47,$02,$02 Feature #N($18), the raised stone door and its frame in the wall
 . at the high end of y, which leads to #R$694F.
-B $5E49,$02,$02 Feature #N$1C, the slabs outside the raised door at the high end
-. of y.
-B $5E4B,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $5E4D,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $5E49,$02,$02 Feature #N($1C), the slabs outside the raised door at the high
+. end of y.
+B $5E4B,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $5E4D,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $5E4F,$01,$01 The end of the features.
 B $5E50,$04,$04 Template #N$08 (pedestal), in 3 cells.
 B $5E54,$08,$08 Template #N$08 (pedestal), in 7 cells.
@@ -88,25 +89,25 @@ B $5E60,$02,$02 Template #N$0C (lift), in 1 cell.
 B $5E62,$03,$03 Template #N$00 (stone slab), in 2 cells.
 B $5E65,$06,$06 Template #N$05 (spiked ring), in 5 cells.
 @ $5E6B label=Room_03
-B $5E6B,$03,$03 Room #N$03, which has green ink and size #N$00, and is #N$11
+B $5E6B,$03,$03 Room #N($03), which has green ink and size #N($00), and is #N$11
 . bytes long.
-B $5E6E,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5E6E,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$5EBA.
-B $5E70,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $5E70,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5E2F.
-B $5E72,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $5E74,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5E72,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $5E74,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5E76,$01,$01 The end of the features.
 B $5E77,$04,$04 Template #N$04 (falling pedestal), in 3 cells.
 B $5E7B,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $5E7D label=Room_04
-B $5E7D,$03,$03 Room #N$04, which has cyan ink and size #N$00, and is #N$19
+B $5E7D,$03,$03 Room #N($04), which has cyan ink and size #N($00), and is #N$19
 . bytes long.
-B $5E80,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5E80,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$5EEA.
-B $5E82,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $5E84,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5E82,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $5E84,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5E86,$01,$01 The end of the features.
 B $5E87,$08,$08 Template #N$05 (spiked ring), in 7 cells.
@@ -114,141 +115,146 @@ B $5E8F,$04,$04 Template #N$00 (stone slab), in 3 cells.
 B $5E93,$02,$02 Template #N$18 (crumbling block), in 1 cell.
 B $5E95,$02,$02 Template #N$10 (slider x), in 1 cell.
 @ $5E97 label=Room_05
-B $5E97,$03,$03 Room #N$05, which has yellow ink and size #N$00, and is #N$15
-. bytes long.
-B $5E9A,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5E97,$03,$03 Room #N($05), which has yellow ink and size #N($00), and is
+. #N$15 bytes long.
+B $5E9A,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5EAD.
-B $5E9C,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $5E9E,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $5E9C,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $5E9E,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $5EA0,$01,$01 The end of the features.
 B $5EA1,$04,$04 Template #N$01 (round pedestal), in 3 cells.
 B $5EA5,$05,$05 Template #N$05 (spiked ring), in 4 cells.
 B $5EAA,$03,$03 Template #N$04 (falling pedestal), in 2 cells.
 @ $5EAD label=Room_06
-B $5EAD,$03,$03 Room #N$06, which has white ink and size #N$02, and is #N$0C
+B $5EAD,$03,$03 Room #N($06), which has white ink and size #N($02), and is #N$0C
 . bytes long.
-B $5EB0,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5EB0,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5EBA.
-B $5EB2,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5EB2,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5E97.
-B $5EB4,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $5EB4,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 B $5EB6,$01,$01 The end of the features.
 B $5EB7,$03,$03 Template #N$1E (harmful slider y), in 2 cells.
 @ $5EBA label=Room_07
-B $5EBA,$03,$03 Room #N$07, which has red ink and size #N$00, and is #N$1F bytes
-. long.
-B $5EBD,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5EBA,$03,$03 Room #N($07), which has red ink and size #N($00), and is #N$1F
+. bytes long.
+B $5EBD,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5EDA.
-B $5EBF,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $5EBF,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5E6B.
-B $5EC1,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5EC1,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5EAD.
-B $5EC3,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $5EC3,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $5EC5,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $5EC5,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $5EC7,$01,$01 The end of the features.
 B $5EC8,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $5ED1,$09,$09 Template #N$03 (stalactites), in 8 cells.
 @ $5EDA label=Room_08
-B $5EDA,$03,$03 Room #N$08, which has green ink and size #N$00, and is #N$0F
+B $5EDA,$03,$03 Room #N($08), which has green ink and size #N($00), and is #N$0F
 . bytes long.
-B $5EDD,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5EDD,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$5FEE.
-B $5EDF,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5EDF,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5EBA.
-B $5EE1,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $5EE1,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $5EE3,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5EE3,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5EE5,$01,$01 The end of the features.
 B $5EE6,$04,$04 Template #N$0E (falling stalactites), in 3 cells.
 @ $5EEA label=Room_09
-B $5EEA,$03,$03 Room #N$09, which has cyan ink and size #N$00, and is #N$18
+B $5EEA,$03,$03 Room #N($09), which has cyan ink and size #N($00), and is #N$18
 . bytes long.
-B $5EED,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5EED,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6000.
-B $5EEF,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5EEF,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5F03.
-B $5EF1,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $5EF1,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5E7D.
-B $5EF3,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $5EF5,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5EF3,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $5EF5,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5EF7,$01,$01 The end of the features.
 B $5EF8,$09,$09 Template #N$04 (falling pedestal), in 8 cells.
 B $5F01,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $5F03 label=Room_0A
-B $5F03,$03,$03 Room #N$0A, which has cyan ink and size #N$02, and is #N$08
+B $5F03,$03,$03 Room #N($0A), which has cyan ink and size #N($02), and is #N$08
 . bytes long.
-B $5F06,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5F06,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5F0C.
-B $5F08,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5F08,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5EEA.
-B $5F0A,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $5F0A,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 @ $5F0C label=Room_0B
-B $5F0C,$03,$03 Room #N$0B, which has yellow ink and size #N$02, and is #N$1D
-. bytes long.
-B $5F0F,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5F0C,$03,$03 Room #N($0B), which has yellow ink and size #N($02), and is
+. #N$1D bytes long.
+B $5F0F,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5F2A.
-B $5F11,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5F11,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5F03.
-B $5F13,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $5F13,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 B $5F15,$01,$01 The end of the features.
 B $5F16,$09,$09 Template #N$01 (round pedestal), in 8 cells.
 B $5F1F,$05,$05 Template #N$01 (round pedestal), in 4 cells.
 B $5F24,$04,$04 Template #N$04 (falling pedestal), in 3 cells.
 B $5F28,$02,$02 Template #N$0F (bobbing head), in 1 cell.
 @ $5F2A label=Room_0C
-B $5F2A,$03,$03 Room #N$0C, which has white ink and size #N$00, and is #N$22
+B $5F2A,$03,$03 Room #N($0C), which has white ink and size #N($00), and is #N$22
 . bytes long. The player may start in this room.
-B $5F2D,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5F2D,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$601B.
-B $5F2F,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5F2F,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5F4D.
-B $5F31,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5F31,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5F0C.
-B $5F33,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $5F33,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $5F35,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5F35,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5F37,$01,$01 The end of the features.
 B $5F38,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $5F41,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $5F4A,$03,$03 Template #N$03 (stalactites), in 2 cells.
 @ $5F4D label=Room_0D
-B $5F4D,$03,$03 Room #N$0D, which has red ink and size #N$02, and is #N$1C bytes
-. long.
-B $5F50,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5F4D,$03,$03 Room #N($0D), which has red ink and size #N($02), and is #N$1C
+. bytes long.
+B $5F50,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5F6A.
-B $5F52,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5F52,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5F2A.
-B $5F54,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $5F54,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 B $5F56,$01,$01 The end of the features.
 B $5F57,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $5F60,$07,$07 Template #N$04 (falling pedestal), in 6 cells.
 B $5F67,$03,$03 Template #N$12 (wandering spark), in 3 cells, though the room
 . ends after 2 of them.
 @ $5F6A label=Room_0E
-B $5F6A,$03,$03 Room #N$0E, which has magenta ink and size #N$00, and is #N$12
-. bytes long.
-B $5F6D,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5F6A,$03,$03 Room #N($0E), which has magenta ink and size #N($00), and is
+. #N$12 bytes long.
+B $5F6D,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$602A.
-B $5F6F,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5F6F,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5F4D.
-B $5F71,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $5F71,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $5F73,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5F73,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5F75,$01,$01 The end of the features.
 B $5F76,$05,$05 Template #N$0E (falling stalactites), in 4 cells.
 B $5F7B,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $5F7D label=Room_0F
-B $5F7D,$03,$03 Room #N$0F, which has green ink and size #N$00, and is #N$20
+B $5F7D,$03,$03 Room #N($0F), which has green ink and size #N($00), and is #N$20
 . bytes long.
-B $5F80,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $5F80,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$6035.
-B $5F82,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $5F84,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $5F82,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $5F84,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $5F86,$01,$01 The end of the features.
 B $5F87,$04,$04 Template #N$17 (cube), in 3 cells.
 B $5F8B,$09,$09 Template #N$03 (stalactites), in 8 cells.
@@ -258,146 +264,149 @@ B $5F98,$02,$02 Template #N$0A (sinking block), in 1 cell.
 B $5F9A,$02,$02 Template #N$18 (crumbling block), in 1 cell.
 B $5F9C,$02,$02 Template #N$03 (stalactites), in 1 cell.
 @ $5F9E label=Room_10
-B $5F9E,$03,$03 Room #N$10, which has cyan ink and size #N$00, and is #N$15
+B $5F9E,$03,$03 Room #N($10), which has cyan ink and size #N($00), and is #N$15
 . bytes long.
-B $5FA1,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $5FA1,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$5FB4.
-B $5FA3,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $5FA5,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $5FA3,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $5FA5,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $5FA7,$01,$01 The end of the features.
 B $5FA8,$02,$02 Template #N$00 (stone slab), in 1 cell.
 B $5FAA,$02,$02 Template #N$18 (crumbling block), in 1 cell.
 B $5FAC,$06,$06 Template #N$03 (stalactites), in 5 cells.
 B $5FB2,$02,$02 Template #N$07 (table), in 1 cell.
 @ $5FB4 label=Room_11
-B $5FB4,$03,$03 Room #N$11, which has yellow ink and size #N$00, and is #N$0A
-. bytes long. It is where the object of the type #N$72 is at the start of the
-. game.
-B $5FB7,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $5FB4,$03,$03 Room #N($11), which has yellow ink and size #N($00), and is
+. #N$0A bytes long. It is where the object of the type #N$72 is at the start of
+. the game.
+B $5FB7,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$5F9E.
-B $5FB9,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5FB9,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6053.
-B $5FBB,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $5FBD,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5FBB,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $5FBD,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $5FBF label=Room_12
-B $5FBF,$03,$03 Room #N$12, which has white ink and size #N$00, and is #N$1A
+B $5FBF,$03,$03 Room #N($12), which has white ink and size #N($00), and is #N$1A
 . bytes long.
-B $5FC2,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5FC2,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5FDA.
-B $5FC4,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $5FC6,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $5FC4,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $5FC6,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $5FC8,$01,$01 The end of the features.
 B $5FC9,$05,$05 Template #N$01 (round pedestal), in 4 cells.
 B $5FCE,$03,$03 Template #N$04 (falling pedestal), in 2 cells.
 B $5FD1,$09,$09 Template #N$03 (stalactites), in 8 cells.
 @ $5FDA label=Room_13
-B $5FDA,$03,$03 Room #N$13, which has red ink and size #N$00, and is #N$13 bytes
-. long.
-B $5FDD,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $5FDA,$03,$03 Room #N($13), which has red ink and size #N($00), and is #N$13
+. bytes long.
+B $5FDD,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6078.
-B $5FDF,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5FDF,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$5FEE.
-B $5FE1,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5FE1,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5FBF.
-B $5FE3,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $5FE3,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $5FE5,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $5FE5,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $5FE7,$01,$01 The end of the features.
 B $5FE8,$02,$02 Template #N$07 (table), in 1 cell.
 B $5FEA,$02,$02 Template #N$0C (lift), in 1 cell.
 B $5FEC,$02,$02 Template #N$0E (falling stalactites), in 1 cell.
 @ $5FEE label=Room_14
-B $5FEE,$03,$03 Room #N$14, which has magenta ink and size #N$00, and is #N$11
-. bytes long.
-B $5FF1,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $5FEE,$03,$03 Room #N($14), which has magenta ink and size #N($00), and is
+. #N$11 bytes long.
+B $5FF1,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6000.
-B $5FF3,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $5FF3,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5EDA.
-B $5FF5,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $5FF5,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5FDA.
-B $5FF7,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $5FF7,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $5FF9,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $5FF9,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $5FFB,$01,$01 The end of the features.
 B $5FFC,$02,$02 Template #N$05 (spiked ring), in 1 cell.
 B $5FFE,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $6000 label=Room_15
-B $6000,$03,$03 Room #N$15, which has green ink and size #N$00, and is #N$1A
+B $6000,$03,$03 Room #N($15), which has green ink and size #N($00), and is #N$1A
 . bytes long.
-B $6003,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6003,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5EEA.
-B $6005,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6005,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$5FEE.
-B $6007,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6007,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6009,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6009,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $600B,$01,$01 The end of the features.
 B $600C,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $6015,$06,$06 Template #N$05 (spiked ring), in 5 cells.
 @ $601B label=Room_16
-B $601B,$03,$03 Room #N$16, which has cyan ink and size #N$00, and is #N$0E
+B $601B,$03,$03 Room #N($16), which has cyan ink and size #N($00), and is #N$0E
 . bytes long.
-B $601E,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $601E,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5F2A.
-B $6020,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6020,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$608B.
-B $6022,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6024,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6022,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6024,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $6026,$01,$01 The end of the features.
 B $6027,$03,$03 Template #N$04 (falling pedestal), in 2 cells.
 @ $602A label=Room_17
-B $602A,$03,$03 Room #N$17, which has yellow ink and size #N$00, and is #N$0A
-. bytes long.
-B $602D,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $602A,$03,$03 Room #N($17), which has yellow ink and size #N($00), and is
+. #N$0A bytes long.
+B $602D,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5F6A.
-B $602F,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $602F,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$60AE.
-B $6031,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6033,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6031,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6033,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $6035 label=Room_18
-B $6035,$03,$03 Room #N$18, which has white ink and size #N$00, and is #N$12
+B $6035,$03,$03 Room #N($18), which has white ink and size #N($00), and is #N$12
 . bytes long.
-B $6038,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $6038,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$6048.
-B $603A,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $603A,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$5F7D.
-B $603C,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $603E,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $603C,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $603E,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $6040,$01,$01 The end of the features.
 B $6041,$05,$05 Template #N$06 (falling cube), in 4 cells.
 B $6046,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $6048 label=Room_19
-B $6048,$03,$03 Room #N$19, which has red ink and size #N$00, and is #N$0A bytes
-. long.
-B $604B,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6048,$03,$03 Room #N($19), which has red ink and size #N($00), and is #N$0A
+. bytes long.
+B $604B,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$60E6.
-B $604D,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $604D,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$6035.
-B $604F,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6051,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $604F,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6051,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $6053 label=Room_1A
-B $6053,$03,$03 Room #N$1A, which has magenta ink and size #N$01, and is #N$0E
-. bytes long.
-B $6056,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6053,$03,$03 Room #N($1A), which has magenta ink and size #N($01), and is
+. #N$0E bytes long.
+B $6056,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$60F9.
-B $6058,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6058,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5FB4.
-B $605A,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $605A,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $605C,$01,$01 The end of the features.
 B $605D,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 B $605F,$03,$03 Template #N$01 (round pedestal), in 2 cells.
 @ $6062 label=Room_1B
-B $6062,$03,$03 Room #N$1B, which has green ink and size #N$00, and is #N$15
+B $6062,$03,$03 Room #N($1B), which has green ink and size #N($00), and is #N$15
 . bytes long.
-B $6065,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6065,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6106.
-B $6067,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6069,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6067,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6069,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $606B,$01,$01 The end of the features.
 B $606C,$02,$02 Template #N$18 (crumbling block), in 1 cell.
@@ -406,22 +415,23 @@ B $6071,$02,$02 Template #N$10 (slider x), in 1 cell.
 B $6073,$03,$03 Template #N$05 (spiked ring), in 2 cells.
 B $6076,$02,$02 Template #N$0F (bobbing head), in 1 cell.
 @ $6078 label=Room_1C
-B $6078,$03,$03 Room #N$1C, which has cyan ink and size #N$01, and is #N$12
+B $6078,$03,$03 Room #N($1C), which has cyan ink and size #N($01), and is #N$12
 . bytes long.
-B $607B,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $607B,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$615A.
-B $607D,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $607D,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$5FDA.
-B $607F,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $607F,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $6081,$01,$01 The end of the features.
 B $6082,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 @ $608B label=Room_1D
-B $608B,$03,$03 Room #N$1D, which has yellow ink and size #N$00, and is #N$19
-. bytes long.
-B $608E,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $608B,$03,$03 Room #N($1D), which has yellow ink and size #N($00), and is
+. #N$19 bytes long.
+B $608E,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$601B.
-B $6090,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6092,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6090,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6092,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6094,$01,$01 The end of the features.
 B $6095,$02,$02 Template #N$13 (well), in 1 cell.
 B $6097,$08,$08 Template #N$05 (spiked ring), in 7 cells.
@@ -429,320 +439,337 @@ B $609F,$02,$02 Template #N$04 (falling pedestal), in 1 cell.
 B $60A1,$02,$02 Template #N$1D (harmful slider x), in 1 cell.
 B $60A3,$02,$02 Template #N$1E (harmful slider y), in 1 cell.
 @ $60A5 label=Room_1E
-B $60A5,$03,$03 Room #N$1E, which has white ink and size #N$00, and is #N$08
+B $60A5,$03,$03 Room #N($1E), which has white ink and size #N($00), and is #N$08
 . bytes long.
-B $60A8,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $60A8,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$60AE.
-B $60AA,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $60AC,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $60AA,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $60AC,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $60AE label=Room_1F
-B $60AE,$03,$03 Room #N$1F, which has red ink and size #N$00, and is #N$1F bytes
-. long.
-B $60B1,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $60AE,$03,$03 Room #N($1F), which has red ink and size #N($00), and is #N$1F
+. bytes long.
+B $60B1,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$60CE.
-B $60B3,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $60B3,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$602A.
-B $60B5,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $60B5,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$60A5.
-B $60B7,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $60B7,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $60B9,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $60B9,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $60BB,$01,$01 The end of the features.
 B $60BC,$09,$09 Template #N$00 (stone slab), in 8 cells.
 B $60C5,$09,$09 Template #N$03 (stalactites), in 8 cells.
 @ $60CE label=Room_20
-B $60CE,$03,$03 Room #N$20, which has magenta ink and size #N$00, and is #N$0C
-. bytes long.
-B $60D1,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $60CE,$03,$03 Room #N($20), which has magenta ink and size #N($00), and is
+. #N$0C bytes long.
+B $60D1,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$61D0.
-B $60D3,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $60D3,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$60DB.
-B $60D5,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $60D5,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$60AE.
-B $60D7,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $60D7,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $60D9,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $60D9,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $60DB label=Room_21
-B $60DB,$03,$03 Room #N$21, which has green ink and size #N$00, and is #N$0A
+B $60DB,$03,$03 Room #N($21), which has green ink and size #N($00), and is #N$0A
 . bytes long. It is where the object of the type #N$73 is at the start of the
 . game.
-B $60DE,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $60DE,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$61EF.
-B $60E0,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $60E0,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$60CE.
-B $60E2,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $60E2,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $60E4,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $60E4,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $60E6 label=Room_22
-B $60E6,$03,$03 Room #N$22, which has cyan ink and size #N$00, and is #N$12
+B $60E6,$03,$03 Room #N($22), which has cyan ink and size #N($00), and is #N$12
 . bytes long.
-B $60E9,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $60E9,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6205.
-B $60EB,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $60EB,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$60F9.
-B $60ED,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $60ED,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6048.
-B $60EF,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $60F1,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $60EF,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $60F1,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $60F3,$01,$01 The end of the features.
 B $60F4,$03,$03 Template #N$03 (stalactites), in 2 cells.
 B $60F7,$02,$02 Template #N$1D (harmful slider x), in 1 cell.
 @ $60F9 label=Room_23
-B $60F9,$03,$03 Room #N$23, which has yellow ink and size #N$00, and is #N$0C
-. bytes long.
-B $60FC,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $60F9,$03,$03 Room #N($23), which has yellow ink and size #N($00), and is
+. #N$0C bytes long.
+B $60FC,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6106.
-B $60FE,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $60FE,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6053.
-B $6100,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6100,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$60E6.
-B $6102,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6102,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6104,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6104,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $6106 label=Room_24
-B $6106,$03,$03 Room #N$24, which has white ink and size #N$00, and is #N$0E
+B $6106,$03,$03 Room #N($24), which has white ink and size #N($00), and is #N$0E
 . bytes long.
-B $6109,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6109,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6062.
-B $610B,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $610B,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$60F9.
-B $610D,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $610D,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $610F,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $610F,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6111,$01,$01 The end of the features.
 B $6112,$03,$03 Template #N$05 (spiked ring), in 2 cells.
 @ $6115 label=Room_25
-B $6115,$03,$03 Room #N$25, which has red ink and size #N$00, and is #N$1C bytes
-. long.
-B $6118,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6115,$03,$03 Room #N($25), which has red ink and size #N($00), and is #N$1C
+. bytes long.
+B $6118,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$625A.
-B $611A,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $611C,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $611A,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $611C,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $611E,$01,$01 The end of the features.
 B $611F,$04,$04 Template #N$00 (stone slab), in 3 cells.
 B $6123,$04,$04 Template #N$19 (conveyor block plus x), in 3 cells.
 B $6127,$04,$04 Template #N$1B (conveyor block plus y), in 3 cells.
 B $612B,$07,$07 Template #N$03 (stalactites), in 6 cells.
 @ $6132 label=Room_26
-B $6132,$03,$03 Room #N$26, which has magenta ink and size #N$00, and is #N$1C
-. bytes long.
-B $6135,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6132,$03,$03 Room #N($26), which has magenta ink and size #N($00), and is
+. #N$1C bytes long.
+B $6135,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$627E.
-B $6137,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $6137,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$614F.
-B $6139,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $613B,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $6139,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $613B,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $613D,$01,$01 The end of the features.
 B $613E,$06,$06 Template #N$00 (stone slab), in 5 cells.
 B $6144,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $614D,$02,$02 Template #N$10 (slider x), in 1 cell.
 @ $614F label=Room_27
-B $614F,$03,$03 Room #N$27, which has green ink and size #N$00, and is #N$0A
+B $614F,$03,$03 Room #N($27), which has green ink and size #N($00), and is #N$0A
 . bytes long.
-B $6152,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6152,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$629C.
-B $6154,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6154,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$6132.
-B $6156,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6158,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $6156,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6158,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $615A label=Room_28
-B $615A,$03,$03 Room #N$28, which has cyan ink and size #N$01, and is #N$08
+B $615A,$03,$03 Room #N($28), which has cyan ink and size #N($01), and is #N$08
 . bytes long.
-B $615D,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $615D,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$62BC.
-B $615F,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $615F,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6078.
-B $6161,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $6161,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 @ $6163 label=Room_29
-B $6163,$03,$03 Room #N$29, which has magenta ink and size #N$00, and is #N$1E
-. bytes long.
-B $6166,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6163,$03,$03 Room #N($29), which has magenta ink and size #N($00), and is
+. #N$1E bytes long.
+B $6166,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$62D4.
-B $6168,$02,$02 Feature #N$1B, the raised stone door and its frame in the wall
+B $6168,$02,$02 Feature #N($1B), the raised stone door and its frame in the wall
 . at the low end of x, which leads to #R$68AC.
-B $616A,$02,$02 Feature #N$1F, the slabs outside the raised door at the low end
-. of x.
-B $616C,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $616E,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $616A,$02,$02 Feature #N($1F), the slabs outside the raised door at the low
+. end of x.
+B $616C,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $616E,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $6170,$01,$01 The end of the features.
 B $6171,$08,$08 Template #N$00 (stone slab), in 7 cells.
 B $6179,$02,$02 Template #N$07 (table), in 1 cell.
 B $617B,$02,$02 Template #N$0E (falling stalactites), in 1 cell.
 B $617D,$05,$05 Template #N$03 (stalactites), in 4 cells.
 @ $6182 label=Room_2A
-B $6182,$03,$03 Room #N$2A, which has white ink and size #N$00, and is #N$19
+B $6182,$03,$03 Room #N($2A), which has white ink and size #N($00), and is #N$19
 . bytes long.
-B $6185,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6185,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$62E1.
-B $6187,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $6189,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $6187,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $6189,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $618B,$01,$01 The end of the features.
 B $618C,$09,$09 Template #N$00 (stone slab), in 8 cells.
 B $6195,$02,$02 Template #N$00 (stone slab), in 1 cell.
 B $6197,$03,$03 Template #N$0B (falling block), in 2 cells.
 B $619A,$02,$02 Template #N$0F (bobbing head), in 1 cell.
 @ $619C label=Room_2B
-B $619C,$03,$03 Room #N$2B, which has red ink and size #N$00, and is #N$0A bytes
-. long.
-B $619F,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
-. high end of y, which leads to #R$62EE.
-B $61A1,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
-. high end of x, which leads to #R$61A7.
-B $61A3,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $61A5,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
-@ $61A7 label=Room_2C
-B $61A7,$03,$03 Room #N$2C, which has magenta ink and size #N$00, and is #N$1D
+B $619C,$03,$03 Room #N($2B), which has red ink and size #N($00), and is #N$0A
 . bytes long.
-B $61AA,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $619F,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
+. high end of y, which leads to #R$62EE.
+B $61A1,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
+. high end of x, which leads to #R$61A7.
+B $61A3,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $61A5,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
+@ $61A7 label=Room_2C
+B $61A7,$03,$03 Room #N($2C), which has magenta ink and size #N($00), and is
+. #N$1D bytes long.
+B $61AA,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$6312.
-B $61AC,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $61AC,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$619C.
-B $61AE,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $61B0,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $61AE,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $61B0,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $61B2,$01,$01 The end of the features.
 B $61B3,$09,$09 Template #N$01 (round pedestal), in 8 cells.
 B $61BC,$09,$09 Template #N$03 (stalactites), in 8 cells.
 @ $61C5 label=Room_2D
-B $61C5,$03,$03 Room #N$2D, which has green ink and size #N$00, and is #N$0A
+B $61C5,$03,$03 Room #N($2D), which has green ink and size #N($00), and is #N$0A
 . bytes long.
-B $61C8,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $61C8,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$631D.
-B $61CA,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $61CA,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$61D0.
-B $61CC,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $61CE,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $61CC,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $61CE,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $61D0 label=Room_2E
-B $61D0,$03,$03 Room #N$2E, which has cyan ink and size #N$00, and is #N$1E
+B $61D0,$03,$03 Room #N($2E), which has cyan ink and size #N($00), and is #N$1E
 . bytes long.
-B $61D3,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $61D3,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$60CE.
-B $61D5,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $61D5,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$61C5.
-B $61D7,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $61D7,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $61D9,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $61D9,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $61DB,$01,$01 The end of the features.
 B $61DC,$08,$08 Template #N$01 (round pedestal), in 7 cells.
 B $61E4,$02,$02 Template #N$10 (slider x), in 1 cell.
 B $61E6,$02,$02 Template #N$11 (slider y), in 1 cell.
 B $61E8,$07,$07 Template #N$05 (spiked ring), in 6 cells.
 @ $61EF label=Room_2F
-B $61EF,$03,$03 Room #N$2F, which has yellow ink and size #N$01, and is #N$15
-. bytes long.
-B $61F2,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $61EF,$03,$03 Room #N($2F), which has yellow ink and size #N($01), and is
+. #N$15 bytes long.
+B $61F2,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6330.
-B $61F4,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $61F4,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$60DB.
-B $61F6,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $61F6,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $61F8,$01,$01 The end of the features.
 B $61F9,$05,$05 Template #N$03 (stalactites), in 4 cells.
 B $61FE,$05,$05 Template #N$18 (crumbling block), in 4 cells.
 B $6203,$02,$02 Template #N$1D (harmful slider x), in 1 cell.
 @ $6205 label=Room_30
-B $6205,$03,$03 Room #N$30, which has white ink and size #N$00, and is #N$0A
+B $6205,$03,$03 Room #N($30), which has white ink and size #N($00), and is #N$0A
 . bytes long.
-B $6208,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6208,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6210.
-B $620A,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $620A,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$60E6.
-B $620C,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $620E,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $620C,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $620E,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $6210 label=Room_31
-B $6210,$03,$03 Room #N$31, which has red ink and size #N$02, and is #N$0C bytes
-. long.
-B $6213,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6210,$03,$03 Room #N($31), which has red ink and size #N($02), and is #N$0C
+. bytes long.
+B $6213,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$621D.
-B $6215,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6215,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6205.
-B $6217,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $6217,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 B $6219,$01,$01 The end of the features.
 B $621A,$03,$03 Template #N$1E (harmful slider y), in 2 cells.
 @ $621D label=Room_32
-B $621D,$03,$03 Room #N$32, which has magenta ink and size #N$02, and is #N$08
-. bytes long.
-B $6220,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $621D,$03,$03 Room #N($32), which has magenta ink and size #N($02), and is
+. #N$08 bytes long.
+B $6220,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6226.
-B $6222,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6222,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6210.
-B $6224,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $6224,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 @ $6226 label=Room_33
-B $6226,$03,$03 Room #N$33, which has green ink and size #N$00, and is #N$22
+B $6226,$03,$03 Room #N($33), which has green ink and size #N($00), and is #N$22
 . bytes long. The player may start in this room.
-B $6229,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6229,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$634B.
-B $622B,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $622B,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6249.
-B $622D,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $622D,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$621D.
-B $622F,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $622F,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6231,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6231,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $6233,$01,$01 The end of the features.
 B $6234,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $623D,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $6246,$03,$03 Template #N$03 (stalactites), in 2 cells.
 @ $6249 label=Room_34
-B $6249,$03,$03 Room #N$34, which has cyan ink and size #N$02, and is #N$10
+B $6249,$03,$03 Room #N($34), which has cyan ink and size #N($02), and is #N$10
 . bytes long.
-B $624C,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $624C,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$625A.
-B $624E,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $624E,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6226.
-B $6250,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $6250,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 B $6252,$01,$01 The end of the features.
 B $6253,$05,$05 Template #N$05 (spiked ring), in 4 cells.
 B $6258,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $625A label=Room_35
-B $625A,$03,$03 Room #N$35, which has yellow ink and size #N$00, and is #N$23
-. bytes long.
-B $625D,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $625A,$03,$03 Room #N($35), which has yellow ink and size #N($00), and is
+. #N$23 bytes long.
+B $625D,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$635A.
-B $625F,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $625F,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$627E.
-B $6261,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6261,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6115.
-B $6263,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6263,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$6249.
-B $6265,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6267,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $6265,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6267,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $6269,$01,$01 The end of the features.
 B $626A,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $6273,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $627C,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $627E label=Room_36
-B $627E,$03,$03 Room #N$36, which has white ink and size #N$00, and is #N$1D
+B $627E,$03,$03 Room #N($36), which has white ink and size #N($00), and is #N$1D
 . bytes long.
-B $6281,$02,$02 Feature #N$18, the raised stone door and its frame in the wall
+B $6281,$02,$02 Feature #N($18), the raised stone door and its frame in the wall
 . at the high end of y, which leads to #R$6372.
-B $6283,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6283,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6132.
-B $6285,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6285,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$625A.
-B $6287,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6289,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $628B,$02,$02 Feature #N$1C, the slabs outside the raised door at the high end
-. of y.
+B $6287,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6289,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $628B,$02,$02 Feature #N($1C), the slabs outside the raised door at the high
+. end of y.
 B $628D,$01,$01 The end of the features.
 B $628E,$03,$03 Template #N$00 (stone slab), in 2 cells.
 B $6291,$02,$02 Template #N$0C (lift), in 1 cell.
 B $6293,$03,$03 Template #N$18 (crumbling block), in 2 cells.
 B $6296,$06,$06 Template #N$03 (stalactites), in 5 cells.
 @ $629C label=Room_37
-B $629C,$03,$03 Room #N$37, which has red ink and size #N$00, and is #N$1F bytes
-. long.
-B $629F,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $629C,$03,$03 Room #N($37), which has red ink and size #N($00), and is #N$1F
+. bytes long.
+B $629F,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$614F.
-B $62A1,$02,$02 Feature #N$19, the raised stone door and its frame in the wall
+B $62A1,$02,$02 Feature #N($19), the raised stone door and its frame in the wall
 . at the high end of x, which leads to #R$68E7.
-B $62A3,$02,$02 Feature #N$1D, the slabs outside the raised door at the high end
-. of x.
-B $62A5,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $62A7,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $62A3,$02,$02 Feature #N($1D), the slabs outside the raised door at the high
+. end of x.
+B $62A5,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $62A7,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $62A9,$01,$01 The end of the features.
 B $62AA,$05,$05 Template #N$00 (stone slab), in 4 cells.
 B $62AF,$07,$07 Template #N$03 (stalactites), in 6 cells.
@@ -750,151 +777,158 @@ B $62B6,$02,$02 Template #N$18 (crumbling block), in 1 cell.
 B $62B8,$02,$02 Template #N$0B (falling block), in 1 cell.
 B $62BA,$02,$02 Template #N$0F (bobbing head), in 1 cell.
 @ $62BC label=Room_38
-B $62BC,$03,$03 Room #N$38, which has yellow ink and size #N$00, and is #N$17
-. bytes long.
-B $62BF,$02,$02 Feature #N$19, the raised stone door and its frame in the wall
+B $62BC,$03,$03 Room #N($38), which has yellow ink and size #N($00), and is
+. #N$17 bytes long.
+B $62BF,$02,$02 Feature #N($19), the raised stone door and its frame in the wall
 . at the high end of x, which leads to #R$62D4.
-B $62C1,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $62C1,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$615A.
-B $62C3,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $62C5,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $62C7,$02,$02 Feature #N$1D, the slabs outside the raised door at the high end
-. of x.
+B $62C3,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $62C5,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $62C7,$02,$02 Feature #N($1D), the slabs outside the raised door at the high
+. end of x.
 B $62C9,$01,$01 The end of the features.
 B $62CA,$04,$04 Template #N$00 (stone slab), in 3 cells.
 B $62CE,$02,$02 Template #N$10 (slider x), in 1 cell.
 B $62D0,$02,$02 Template #N$0B (falling block), in 1 cell.
 B $62D2,$02,$02 Template #N$03 (stalactites), in 1 cell.
 @ $62D4 label=Room_39
-B $62D4,$03,$03 Room #N$39, which has green ink and size #N$00, and is #N$0C
+B $62D4,$03,$03 Room #N($39), which has green ink and size #N($00), and is #N$0C
 . bytes long.
-B $62D7,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $62D7,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$62E1.
-B $62D9,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $62D9,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6163.
-B $62DB,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $62DB,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$62BC.
-B $62DD,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $62DF,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $62DD,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $62DF,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $62E1 label=Room_3A
-B $62E1,$03,$03 Room #N$3A, which has cyan ink and size #N$00, and is #N$0C
+B $62E1,$03,$03 Room #N($3A), which has cyan ink and size #N($00), and is #N$0C
 . bytes long.
-B $62E4,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $62E4,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$62EE.
-B $62E6,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $62E6,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6182.
-B $62E8,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $62E8,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$62D4.
-B $62EA,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $62EC,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $62EA,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $62EC,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $62EE label=Room_3B
-B $62EE,$03,$03 Room #N$3B, which has yellow ink and size #N$00, and is #N$23
-. bytes long.
-B $62F1,$02,$02 Feature #N$18, the raised stone door and its frame in the wall
+B $62EE,$03,$03 Room #N($3B), which has yellow ink and size #N($00), and is
+. #N$23 bytes long.
+B $62F1,$02,$02 Feature #N($18), the raised stone door and its frame in the wall
 . at the high end of y, which leads to #R$637B.
-B $62F3,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $62F3,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$6312.
-B $62F5,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $62F5,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$619C.
-B $62F7,$02,$02 Feature #N$1B, the raised stone door and its frame in the wall
+B $62F7,$02,$02 Feature #N($1B), the raised stone door and its frame in the wall
 . at the low end of x, which leads to #R$62E1.
-B $62F9,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $62FB,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $62FD,$02,$02 Feature #N$1F, the slabs outside the raised door at the low end
-. of x.
-B $62FF,$02,$02 Feature #N$1C, the slabs outside the raised door at the high end
-. of y.
+B $62F9,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $62FB,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $62FD,$02,$02 Feature #N($1F), the slabs outside the raised door at the low
+. end of x.
+B $62FF,$02,$02 Feature #N($1C), the slabs outside the raised door at the high
+. end of y.
 B $6301,$01,$01 The end of the features.
 B $6302,$07,$07 Template #N$00 (stone slab), in 6 cells.
 B $6309,$02,$02 Template #N$10 (slider x), in 1 cell.
 B $630B,$02,$02 Template #N$11 (slider y), in 1 cell.
 B $630D,$05,$05 Template #N$03 (stalactites), in 4 cells.
 @ $6312 label=Room_3C
-B $6312,$03,$03 Room #N$3C, which has white ink and size #N$00, and is #N$0A
+B $6312,$03,$03 Room #N($3C), which has white ink and size #N($00), and is #N$0A
 . bytes long.
-B $6315,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6315,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$61A7.
-B $6317,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6317,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$62EE.
-B $6319,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $631B,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $6319,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $631B,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $631D label=Room_3D
-B $631D,$03,$03 Room #N$3D, which has red ink and size #N$01, and is #N$12 bytes
-. long.
-B $6320,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $631D,$03,$03 Room #N($3D), which has red ink and size #N($01), and is #N$12
+. bytes long.
+B $6320,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6384.
-B $6322,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6322,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$61C5.
-B $6324,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $6324,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $6326,$01,$01 The end of the features.
 B $6327,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 @ $6330 label=Room_3E
-B $6330,$03,$03 Room #N$3E, which has magenta ink and size #N$00, and is #N$1A
-. bytes long.
-B $6333,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6330,$03,$03 Room #N($3E), which has magenta ink and size #N($00), and is
+. #N$1A bytes long.
+B $6333,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$61EF.
-B $6335,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6337,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6335,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6337,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6339,$01,$01 The end of the features.
 B $633A,$07,$07 Template #N$05 (spiked ring), in 6 cells.
 B $6341,$04,$04 Template #N$00 (stone slab), in 3 cells.
 B $6345,$03,$03 Template #N$0F (bobbing head), in 2 cells.
 B $6348,$03,$03 Template #N$18 (crumbling block), in 2 cells.
 @ $634B label=Room_3F
-B $634B,$03,$03 Room #N$3F, which has green ink and size #N$01, and is #N$0E
+B $634B,$03,$03 Room #N($3F), which has green ink and size #N($01), and is #N$0E
 . bytes long.
-B $634E,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $634E,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6398.
-B $6350,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6350,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6226.
-B $6352,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $6352,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $6354,$01,$01 The end of the features.
 B $6355,$05,$05 Template #N$15 (floor trap 2), in 4 cells.
 @ $635A label=Room_40
-B $635A,$03,$03 Room #N$40, which has cyan ink and size #N$01, and is #N$17
+B $635A,$03,$03 Room #N($40), which has cyan ink and size #N($01), and is #N$17
 . bytes long.
-B $635D,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $635D,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$63D8.
-B $635F,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $635F,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$625A.
-B $6361,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $6361,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $6363,$01,$01 The end of the features.
 B $6364,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $636D,$05,$05 Template #N$18 (crumbling block), in 4 cells.
 @ $6372 label=Room_41
-B $6372,$03,$03 Room #N$41, which has yellow ink and size #N$01, and is #N$08
-. bytes long.
-B $6375,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6372,$03,$03 Room #N($41), which has yellow ink and size #N($01), and is
+. #N$08 bytes long.
+B $6375,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$63F8.
-B $6377,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6377,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$627E.
-B $6379,$02,$02 Feature #N$14, a stone wall that is inside the low end of x.
+B $6379,$02,$02 Feature #N($14), a stone wall that is inside the low end of x.
 @ $637B label=Room_42
-B $637B,$03,$03 Room #N$42, which has red ink and size #N$01, and is #N$08 bytes
-. long.
-B $637E,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
-. high end of y, which leads to #R$640B.
-B $6380,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
-. low end of y, which leads to #R$62EE.
-B $6382,$02,$02 Feature #N$14, a stone wall that is inside the low end of x.
-@ $6384 label=Room_43
-B $6384,$03,$03 Room #N$43, which has magenta ink and size #N$01, and is #N$13
+B $637B,$03,$03 Room #N($42), which has red ink and size #N($01), and is #N$08
 . bytes long.
-B $6387,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $637E,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
+. high end of y, which leads to #R$640B.
+B $6380,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
+. low end of y, which leads to #R$62EE.
+B $6382,$02,$02 Feature #N($14), a stone wall that is inside the low end of x.
+@ $6384 label=Room_43
+B $6384,$03,$03 Room #N($43), which has magenta ink and size #N($01), and is
+. #N$13 bytes long.
+B $6387,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$644B.
-B $6389,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6389,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$631D.
-B $638B,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $638B,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $638D,$01,$01 The end of the features.
 B $638E,$05,$05 Template #N$1B (conveyor block plus y), in 4 cells.
 B $6393,$05,$05 Template #N$03 (stalactites), in 4 cells.
 @ $6398 label=Room_45
-B $6398,$03,$03 Room #N$45, which has cyan ink and size #N$00, and is #N$21
+B $6398,$03,$03 Room #N($45), which has cyan ink and size #N($00), and is #N$21
 . bytes long.
-B $639B,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $639B,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$634B.
-B $639D,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $639F,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $639D,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $639F,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $63A1,$01,$01 The end of the features.
 B $63A2,$03,$03 Template #N$0B (falling block), in 2 cells.
 B $63A5,$02,$02 Template #N$10 (slider x), in 1 cell.
@@ -904,219 +938,226 @@ B $63AB,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 B $63AD,$07,$07 Template #N$00 (stone slab), in 6 cells.
 B $63B4,$06,$06 Template #N$00 (stone slab), in 5 cells.
 @ $63BA label=Room_46
-B $63BA,$03,$03 Room #N$46, which has yellow ink and size #N$00, and is #N$1D
-. bytes long.
-B $63BD,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $63BA,$03,$03 Room #N($46), which has yellow ink and size #N($00), and is
+. #N$1D bytes long.
+B $63BD,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$63D8.
-B $63BF,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $63C1,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $63BF,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $63C1,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $63C3,$01,$01 The end of the features.
 B $63C4,$09,$09 Template #N$01 (round pedestal), in 8 cells.
 B $63CD,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $63D6,$02,$02 Template #N$04 (falling pedestal), in 1 cell.
 @ $63D8 label=Room_47
-B $63D8,$03,$03 Room #N$47, which has white ink and size #N$00, and is #N$1F
+B $63D8,$03,$03 Room #N($47), which has white ink and size #N($00), and is #N$1F
 . bytes long.
-B $63DB,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $63DB,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$63F8.
-B $63DD,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $63DD,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$635A.
-B $63DF,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $63DF,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$63BA.
-B $63E1,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $63E1,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $63E3,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $63E3,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $63E5,$01,$01 The end of the features.
 B $63E6,$02,$02 Template #N$13 (well), in 1 cell.
 B $63E8,$03,$03 Template #N$04 (falling pedestal), in 2 cells.
 B $63EB,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $63F4,$04,$04 Template #N$03 (stalactites), in 3 cells.
 @ $63F8 label=Room_48
-B $63F8,$03,$03 Room #N$48, which has red ink and size #N$00, and is #N$12 bytes
-. long.
-B $63FB,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $63F8,$03,$03 Room #N($48), which has red ink and size #N($00), and is #N$12
+. bytes long.
+B $63FB,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$648E.
-B $63FD,$02,$02 Feature #N$1A, the raised stone door and its frame in the wall
+B $63FD,$02,$02 Feature #N($1A), the raised stone door and its frame in the wall
 . at the low end of y, which leads to #R$6372.
-B $63FF,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $63FF,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$63D8.
-B $6401,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6403,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
-B $6405,$02,$02 Feature #N$1E, the slabs outside the raised door at the low end
-. of y.
+B $6401,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6403,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
+B $6405,$02,$02 Feature #N($1E), the slabs outside the raised door at the low
+. end of y.
 B $6407,$01,$01 The end of the features.
 B $6408,$03,$03 Template #N$00 (stone slab), in 2 cells.
 @ $640B label=Room_49
-B $640B,$03,$03 Room #N$49, which has magenta ink and size #N$00, and is #N$19
-. bytes long.
-B $640E,$02,$02 Feature #N$18, the raised stone door and its frame in the wall
+B $640B,$03,$03 Room #N($49), which has magenta ink and size #N($00), and is
+. #N$19 bytes long.
+B $640E,$02,$02 Feature #N($18), the raised stone door and its frame in the wall
 . at the high end of y, which leads to #R$64CA.
-B $6410,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $6410,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$6425.
-B $6412,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6412,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$637B.
-B $6414,$02,$02 Feature #N$1C, the slabs outside the raised door at the high end
-. of y.
-B $6416,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $6418,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $6414,$02,$02 Feature #N($1C), the slabs outside the raised door at the high
+. end of y.
+B $6416,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $6418,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $641A,$01,$01 The end of the features.
 B $641B,$02,$02 Template #N$07 (table), in 1 cell.
 B $641D,$03,$03 Template #N$01 (round pedestal), in 2 cells.
 B $6420,$02,$02 Template #N$04 (falling pedestal), in 1 cell.
 B $6422,$03,$03 Template #N$00 (stone slab), in 2 cells.
 @ $6425 label=Room_4A
-B $6425,$03,$03 Room #N$4A, which has green ink and size #N$00, and is #N$1A
+B $6425,$03,$03 Room #N($4A), which has green ink and size #N($00), and is #N$1A
 . bytes long.
-B $6428,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6428,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6440.
-B $642A,$02,$02 Feature #N$1B, the raised stone door and its frame in the wall
+B $642A,$02,$02 Feature #N($1B), the raised stone door and its frame in the wall
 . at the low end of x, which leads to #R$640B.
-B $642C,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $642E,$02,$02 Feature #N$09, a wall of roots along the high end of y.
-B $6430,$02,$02 Feature #N$1F, the slabs outside the raised door at the low end
-. of x.
+B $642C,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $642E,$02,$02 Feature #N($09), a wall of roots along the high end of y.
+B $6430,$02,$02 Feature #N($1F), the slabs outside the raised door at the low
+. end of x.
 B $6432,$01,$01 The end of the features.
 B $6433,$03,$03 Template #N$01 (round pedestal), in 2 cells.
 B $6436,$03,$03 Template #N$04 (falling pedestal), in 2 cells.
 B $6439,$03,$03 Template #N$00 (stone slab), in 2 cells.
 B $643C,$04,$04 Template #N$05 (spiked ring), in 3 cells.
 @ $6440 label=Room_4B
-B $6440,$03,$03 Room #N$4B, which has cyan ink and size #N$00, and is #N$0A
+B $6440,$03,$03 Room #N($4B), which has cyan ink and size #N($00), and is #N$0A
 . bytes long.
-B $6443,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6443,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$64DF.
-B $6445,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6445,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6425.
-B $6447,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6447,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6449,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6449,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $644B label=Room_4C
-B $644B,$03,$03 Room #N$4C, which has yellow ink and size #N$00, and is #N$16
-. bytes long.
-B $644E,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $644B,$03,$03 Room #N($4C), which has yellow ink and size #N($00), and is
+. #N$16 bytes long.
+B $644E,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$650A.
-B $6450,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6450,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6462.
-B $6452,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6452,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6384.
-B $6454,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6456,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6454,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6456,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $6458,$01,$01 The end of the features.
 B $6459,$07,$07 Template #N$0E (falling stalactites), in 6 cells.
 B $6460,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $6462 label=Room_4D
-B $6462,$03,$03 Room #N$4D, which has white ink and size #N$00, and is #N$12
+B $6462,$03,$03 Room #N($4D), which has white ink and size #N($00), and is #N$12
 . bytes long.
-B $6465,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6465,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$652D.
-B $6467,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6467,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6475.
-B $6469,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6469,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$644B.
-B $646B,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $646B,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $646D,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $646D,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $646F,$01,$01 The end of the features.
 B $6470,$05,$05 Template #N$15 (floor trap 2), in 4 cells.
 @ $6475 label=Room_4E
-B $6475,$03,$03 Room #N$4E, which has red ink and size #N$00, and is #N$18 bytes
-. long.
-B $6478,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6475,$03,$03 Room #N($4E), which has red ink and size #N($00), and is #N$18
+. bytes long.
+B $6478,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6462.
-B $647A,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $647A,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $647C,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $647C,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $647E,$01,$01 The end of the features.
 B $647F,$07,$07 Template #N$15 (floor trap 2), in 6 cells.
 B $6486,$08,$08 Template #N$0D (floor trap 1), in 7 cells.
 @ $648E label=Room_50
-B $648E,$03,$03 Room #N$50, which has green ink and size #N$00, and is #N$27
+B $648E,$03,$03 Room #N($50), which has green ink and size #N($00), and is #N$27
 . bytes long.
-B $6491,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6491,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$6595.
-B $6493,$02,$02 Feature #N$19, the raised stone door and its frame in the wall
+B $6493,$02,$02 Feature #N($19), the raised stone door and its frame in the wall
 . at the high end of x, which leads to #R$64B6.
-B $6495,$02,$02 Feature #N$1A, the raised stone door and its frame in the wall
+B $6495,$02,$02 Feature #N($1A), the raised stone door and its frame in the wall
 . at the low end of y, which leads to #R$63F8.
-B $6497,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $6499,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
-B $649B,$02,$02 Feature #N$1D, the slabs outside the raised door at the high end
-. of x.
-B $649D,$02,$02 Feature #N$1E, the slabs outside the raised door at the low end
-. of y.
+B $6497,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $6499,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
+B $649B,$02,$02 Feature #N($1D), the slabs outside the raised door at the high
+. end of x.
+B $649D,$02,$02 Feature #N($1E), the slabs outside the raised door at the low
+. end of y.
 B $649F,$01,$01 The end of the features.
 B $64A0,$09,$09 Template #N$00 (stone slab), in 8 cells.
 B $64A9,$06,$06 Template #N$18 (crumbling block), in 5 cells.
 B $64AF,$02,$02 Template #N$0A (sinking block), in 1 cell.
 B $64B1,$05,$05 Template #N$03 (stalactites), in 4 cells.
 @ $64B6 label=Room_51
-B $64B6,$03,$03 Room #N$51, which has cyan ink and size #N$00, and is #N$0A
+B $64B6,$03,$03 Room #N($51), which has cyan ink and size #N($00), and is #N$0A
 . bytes long.
-B $64B9,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $64B9,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$65B7.
-B $64BB,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $64BB,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$648E.
-B $64BD,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $64BF,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $64BD,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $64BF,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $64C1 label=Room_52
-B $64C1,$03,$03 Room #N$52, which has yellow ink and size #N$00, and is #N$08
-. bytes long. The pentagram is in this room.
-B $64C4,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $64C1,$03,$03 Room #N($52), which has yellow ink and size #N($00), and is
+. #N$08 bytes long. The pentagram is in this room.
+B $64C4,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$65FB.
-B $64C6,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $64C8,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $64C6,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $64C8,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $64CA label=Room_53
-B $64CA,$03,$03 Room #N$53, which has white ink and size #N$01, and is #N$14
+B $64CA,$03,$03 Room #N($53), which has white ink and size #N($01), and is #N$14
 . bytes long.
-B $64CD,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $64CD,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$660A.
-B $64CF,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $64CF,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$640B.
-B $64D1,$02,$02 Feature #N$14, a stone wall that is inside the low end of x.
+B $64D1,$02,$02 Feature #N($14), a stone wall that is inside the low end of x.
 B $64D3,$01,$01 The end of the features.
 B $64D4,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $64DD,$02,$02 Template #N$1D (harmful slider x), in 1 cell.
 @ $64DF label=Room_54
-B $64DF,$03,$03 Room #N$54, which has red ink and size #N$00, and is #N$1F bytes
-. long.
-B $64E2,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $64DF,$03,$03 Room #N($54), which has red ink and size #N($00), and is #N$1F
+. bytes long.
+B $64E2,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$661D.
-B $64E4,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $64E4,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$64FF.
-B $64E6,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $64E6,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6440.
-B $64E8,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $64EA,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $64E8,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $64EA,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $64EC,$01,$01 The end of the features.
 B $64ED,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $64F6,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 @ $64FF label=Room_55
-B $64FF,$03,$03 Room #N$55, which has magenta ink and size #N$00, and is #N$0A
-. bytes long.
-B $6502,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $64FF,$03,$03 Room #N($55), which has magenta ink and size #N($00), and is
+. #N$0A bytes long.
+B $6502,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$650A.
-B $6504,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6504,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$64DF.
-B $6506,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6506,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6508,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6508,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $650A label=Room_56
-B $650A,$03,$03 Room #N$56, which has green ink and size #N$00, and is #N$22
+B $650A,$03,$03 Room #N($56), which has green ink and size #N($00), and is #N$22
 . bytes long.
-B $650D,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $650D,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$644B.
-B $650F,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $650F,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$64FF.
-B $6511,$02,$02 Feature #N$19, the raised stone door and its frame in the wall
+B $6511,$02,$02 Feature #N($19), the raised stone door and its frame in the wall
 . at the high end of x, which leads to #R$68FF.
-B $6513,$02,$02 Feature #N$1D, the slabs outside the raised door at the high end
-. of x.
-B $6515,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6513,$02,$02 Feature #N($1D), the slabs outside the raised door at the high
+. end of x.
+B $6515,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6517,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6517,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6519,$01,$01 The end of the features.
 B $651A,$03,$03 Template #N$00 (stone slab), in 2 cells.
 B $651D,$06,$06 Template #N$05 (spiked ring), in 5 cells.
@@ -1124,89 +1165,91 @@ B $6523,$02,$02 Template #N$0A (sinking block), in 1 cell.
 B $6525,$03,$03 Template #N$08 (pedestal), in 2 cells.
 B $6528,$05,$05 Template #N$08 (pedestal), in 4 cells.
 @ $652D label=Room_57
-B $652D,$03,$03 Room #N$57, which has cyan ink and size #N$00, and is #N$26
+B $652D,$03,$03 Room #N($57), which has cyan ink and size #N($00), and is #N$26
 . bytes long.
-B $6530,$02,$02 Feature #N$19, the raised stone door and its frame in the wall
+B $6530,$02,$02 Feature #N($19), the raised stone door and its frame in the wall
 . at the high end of x, which leads to #R$6554.
-B $6532,$02,$02 Feature #N$1A, the raised stone door and its frame in the wall
+B $6532,$02,$02 Feature #N($1A), the raised stone door and its frame in the wall
 . at the low end of y, which leads to #R$6462.
-B $6534,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $6536,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $6538,$02,$02 Feature #N$1D, the slabs outside the raised door at the high end
-. of x.
-B $653A,$02,$02 Feature #N$1E, the slabs outside the raised door at the low end
-. of y.
+B $6534,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $6536,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $6538,$02,$02 Feature #N($1D), the slabs outside the raised door at the high
+. end of x.
+B $653A,$02,$02 Feature #N($1E), the slabs outside the raised door at the low
+. end of y.
 B $653C,$01,$01 The end of the features.
 B $653D,$09,$09 Template #N$00 (stone slab), in 8 cells.
 B $6546,$06,$06 Template #N$18 (crumbling block), in 5 cells.
 B $654C,$06,$06 Template #N$03 (stalactites), in 5 cells.
 B $6552,$02,$02 Template #N$0C (lift), in 1 cell.
 @ $6554 label=Room_58
-B $6554,$03,$03 Room #N$58, which has yellow ink and size #N$00, and is #N$0E
-. bytes long.
-B $6557,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6554,$03,$03 Room #N($58), which has yellow ink and size #N($00), and is
+. #N$0E bytes long.
+B $6557,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$6677.
-B $6559,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6559,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$652D.
-B $655B,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $655D,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $655B,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $655D,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $655F,$01,$01 The end of the features.
 B $6560,$03,$03 Template #N$0F (bobbing head), in 2 cells.
 @ $6563 label=Room_5B
-B $6563,$03,$03 Room #N$5B, which has magenta ink and size #N$00, and is #N$0E
-. bytes long.
-B $6566,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6563,$03,$03 Room #N($5B), which has magenta ink and size #N($00), and is
+. #N$0E bytes long.
+B $6566,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$668A.
-B $6568,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6568,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6572.
-B $656A,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $656C,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $656A,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $656C,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $656E,$01,$01 The end of the features.
 B $656F,$03,$03 Template #N$09 (block), in 2 cells.
 @ $6572 label=Room_5C
-B $6572,$03,$03 Room #N$5C, which has green ink and size #N$00, and is #N$22
+B $6572,$03,$03 Room #N($5C), which has green ink and size #N($00), and is #N$22
 . bytes long. The player may start in this room.
-B $6575,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6575,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$669A.
-B $6577,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $6577,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$6595.
-B $6579,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6579,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6563.
-B $657B,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $657B,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $657D,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $657D,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $657F,$01,$01 The end of the features.
 B $6580,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $6589,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $6592,$03,$03 Template #N$03 (stalactites), in 2 cells.
 @ $6595 label=Room_5D
-B $6595,$03,$03 Room #N$5D, which has cyan ink and size #N$00, and is #N$21
+B $6595,$03,$03 Room #N($5D), which has cyan ink and size #N($00), and is #N$21
 . bytes long.
-B $6598,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6598,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$648E.
-B $659A,$02,$02 Feature #N$1B, the raised stone door and its frame in the wall
+B $659A,$02,$02 Feature #N($1B), the raised stone door and its frame in the wall
 . at the low end of x, which leads to #R$6572.
-B $659C,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $659E,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $65A0,$02,$02 Feature #N$1F, the slabs outside the raised door at the low end
-. of x.
+B $659C,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $659E,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $65A0,$02,$02 Feature #N($1F), the slabs outside the raised door at the low
+. end of x.
 B $65A2,$01,$01 The end of the features.
 B $65A3,$09,$09 Template #N$18 (crumbling block), in 8 cells.
 B $65AC,$02,$02 Template #N$10 (slider x), in 1 cell.
 B $65AE,$09,$09 Template #N$03 (stalactites), in 8 cells.
 @ $65B7 label=Room_5E
-B $65B7,$03,$03 Room #N$5E, which has yellow ink and size #N$00, and is #N$1F
-. bytes long.
-B $65BA,$02,$02 Feature #N$19, the raised stone door and its frame in the wall
+B $65B7,$03,$03 Room #N($5E), which has yellow ink and size #N($00), and is
+. #N$1F bytes long.
+B $65BA,$02,$02 Feature #N($19), the raised stone door and its frame in the wall
 . at the high end of x, which leads to #R$65D7.
-B $65BC,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $65BC,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$64B6.
-B $65BE,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $65C0,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $65C2,$02,$02 Feature #N$1D, the slabs outside the raised door at the high end
-. of x.
+B $65BE,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $65C0,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $65C2,$02,$02 Feature #N($1D), the slabs outside the raised door at the high
+. end of x.
 B $65C4,$01,$01 The end of the features.
 B $65C5,$03,$03 Template #N$00 (stone slab), in 2 cells.
 B $65C8,$09,$09 Template #N$03 (stalactites), in 8 cells.
@@ -1214,144 +1257,151 @@ B $65D1,$02,$02 Template #N$0C (lift), in 1 cell.
 B $65D3,$02,$02 Template #N$11 (slider y), in 1 cell.
 B $65D5,$02,$02 Template #N$18 (crumbling block), in 1 cell.
 @ $65D7 label=Room_5F
-B $65D7,$03,$03 Room #N$5F, which has white ink and size #N$00, and is #N$0A
+B $65D7,$03,$03 Room #N($5F), which has white ink and size #N($00), and is #N$0A
 . bytes long.
-B $65DA,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $65DA,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$65E2.
-B $65DC,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $65DC,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$65B7.
-B $65DE,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $65E0,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $65DE,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $65E0,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $65E2 label=Room_60
-B $65E2,$03,$03 Room #N$60, which has red ink and size #N$00, and is #N$18 bytes
-. long.
-B $65E5,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $65E2,$03,$03 Room #N($60), which has red ink and size #N($00), and is #N$18
+. bytes long.
+B $65E5,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$66BC.
-B $65E7,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $65E7,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$65FB.
-B $65E9,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $65E9,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$65D7.
-B $65EB,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $65ED,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $65EB,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $65ED,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $65EF,$01,$01 The end of the features.
 B $65F0,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $65F9,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $65FB label=Room_61
-B $65FB,$03,$03 Room #N$61, which has magenta ink and size #N$00, and is #N$0E
-. bytes long.
-B $65FE,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $65FB,$03,$03 Room #N($61), which has magenta ink and size #N($00), and is
+. #N$0E bytes long.
+B $65FE,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$66D8.
-B $6600,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $6600,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$660A.
-B $6602,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6602,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$64C1.
-B $6604,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6604,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$65E2.
-B $6606,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6608,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $6606,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6608,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $660A label=Room_62
-B $660A,$03,$03 Room #N$62, which has green ink and size #N$00, and is #N$12
+B $660A,$03,$03 Room #N($62), which has green ink and size #N($00), and is #N$12
 . bytes long.
-B $660D,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $660D,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$64CA.
-B $660F,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $660F,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$65FB.
-B $6611,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6613,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $6611,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6613,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $6615,$01,$01 The end of the features.
 B $6616,$05,$05 Template #N$06 (falling cube), in 4 cells.
 B $661B,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $661D label=Room_63
-B $661D,$03,$03 Room #N$63, which has cyan ink and size #N$00, and is #N$14
+B $661D,$03,$03 Room #N($63), which has cyan ink and size #N($00), and is #N$14
 . bytes long.
-B $6620,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6620,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6632.
-B $6622,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6622,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$64DF.
-B $6624,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6626,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6624,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6626,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6628,$01,$01 The end of the features.
 B $6629,$03,$03 Template #N$01 (round pedestal), in 2 cells.
 B $662C,$02,$02 Template #N$1D (harmful slider x), in 1 cell.
 B $662E,$04,$04 Template #N$15 (floor trap 2), in 3 cells.
 @ $6632 label=Room_64
-B $6632,$03,$03 Room #N$64, which has yellow ink and size #N$00, and is #N$22
-. bytes long. The player may start in this room.
-B $6635,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6632,$03,$03 Room #N($64), which has yellow ink and size #N($00), and is
+. #N$22 bytes long. The player may start in this room.
+B $6635,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$66F8.
-B $6637,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6637,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6655.
-B $6639,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6639,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$661D.
-B $663B,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $663B,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $663D,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $663D,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $663F,$01,$01 The end of the features.
 B $6640,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $6649,$09,$09 Template #N$03 (stalactites), in 8 cells.
 B $6652,$03,$03 Template #N$03 (stalactites), in 2 cells.
 @ $6655 label=Room_65
-B $6655,$03,$03 Room #N$65, which has white ink and size #N$02, and is #N$14
+B $6655,$03,$03 Room #N($65), which has white ink and size #N($02), and is #N$14
 . bytes long.
-B $6658,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6658,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$666A.
-B $665A,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $665A,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6632.
-B $665C,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $665C,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 B $665E,$01,$01 The end of the features.
 B $665F,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $6668,$02,$02 Template #N$10 (slider x), in 1 cell.
 @ $666A label=Room_66
-B $666A,$03,$03 Room #N$66, which has red ink and size #N$00, and is #N$0C bytes
-. long.
-B $666D,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $666A,$03,$03 Room #N($66), which has red ink and size #N($00), and is #N$0C
+. bytes long.
+B $666D,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6716.
-B $666F,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $666F,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6677.
-B $6671,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6671,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6655.
-B $6673,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6673,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6675,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6675,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $6677 label=Room_67
-B $6677,$03,$03 Room #N$67, which has magenta ink and size #N$00, and is #N$12
-. bytes long.
-B $667A,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6677,$03,$03 Room #N($67), which has magenta ink and size #N($00), and is
+. #N$12 bytes long.
+B $667A,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6554.
-B $667C,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $667C,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$666A.
-B $667E,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $667E,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6680,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6680,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6682,$01,$01 The end of the features.
 B $6683,$03,$03 Template #N$0E (falling stalactites), in 2 cells.
 B $6686,$04,$04 Template #N$15 (floor trap 2), in 3 cells.
 @ $668A label=Room_6A
-B $668A,$03,$03 Room #N$6A, which has yellow ink and size #N$00, and is #N$0F
-. bytes long.
-B $668D,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $668A,$03,$03 Room #N($6A), which has yellow ink and size #N($00), and is
+. #N$0F bytes long.
+B $668D,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$669A.
-B $668F,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $668F,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6563.
-B $6691,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6693,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6691,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6693,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6695,$01,$01 The end of the features.
 B $6696,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 B $6698,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $669A label=Room_6B
-B $669A,$03,$03 Room #N$6B, which has white ink and size #N$00, and is #N$21
+B $669A,$03,$03 Room #N($6B), which has white ink and size #N($00), and is #N$21
 . bytes long.
-B $669D,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $669D,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6734.
-B $669F,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $669F,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6572.
-B $66A1,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $66A1,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$668A.
-B $66A3,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $66A3,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $66A5,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $66A5,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $66A7,$01,$01 The end of the features.
 B $66A8,$05,$05 Template #N$04 (falling pedestal), in 4 cells.
@@ -1359,12 +1409,12 @@ B $66AD,$03,$03 Template #N$0F (bobbing head), in 2 cells.
 B $66B0,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $66B9,$03,$03 Template #N$05 (spiked ring), in 2 cells.
 @ $66BC label=Room_6C
-B $66BC,$03,$03 Room #N$6C, which has red ink and size #N$00, and is #N$1B bytes
-. long.
-B $66BF,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $66BC,$03,$03 Room #N($6C), which has red ink and size #N($00), and is #N$1B
+. bytes long.
+B $66BF,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$65E2.
-B $66C1,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $66C3,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $66C1,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $66C3,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $66C5,$01,$01 The end of the features.
 B $66C6,$02,$02 Template #N$1B (conveyor block plus y), in 1 cell.
 B $66C8,$02,$02 Template #N$1C (conveyor block minus y), in 1 cell.
@@ -1374,117 +1424,118 @@ B $66D1,$02,$02 Template #N$0F (bobbing head), in 1 cell.
 B $66D3,$05,$05 Template #N$05 (spiked ring), in 5 cells, though the room ends
 . after 4 of them.
 @ $66D8 label=Room_6D
-B $66D8,$03,$03 Room #N$6D, which has magenta ink and size #N$00, and is #N$1F
-. bytes long.
-B $66DB,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $66D8,$03,$03 Room #N($6D), which has magenta ink and size #N($00), and is
+. #N$1F bytes long.
+B $66DB,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$674A.
-B $66DD,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $66DD,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$65FB.
-B $66DF,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $66E1,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $66DF,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $66E1,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $66E3,$01,$01 The end of the features.
 B $66E4,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $66ED,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $66F6,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $66F8 label=Room_6E
-B $66F8,$03,$03 Room #N$6E, which has green ink and size #N$00, and is #N$0A
+B $66F8,$03,$03 Room #N($6E), which has green ink and size #N($00), and is #N$0A
 . bytes long.
-B $66FB,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $66FB,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6703.
-B $66FD,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $66FD,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6632.
-B $66FF,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6701,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $66FF,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6701,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $6703 label=Room_6F
-B $6703,$03,$03 Room #N$6F, which has cyan ink and size #N$00, and is #N$12
+B $6703,$03,$03 Room #N($6F), which has cyan ink and size #N($00), and is #N$12
 . bytes long.
-B $6706,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6706,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6755.
-B $6708,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6708,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$66F8.
-B $670A,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $670A,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $670C,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $670C,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $670E,$01,$01 The end of the features.
 B $670F,$05,$05 Template #N$0E (falling stalactites), in 4 cells.
 B $6714,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $6716 label=Room_70
-B $6716,$03,$03 Room #N$70, which has yellow ink and size #N$00, and is #N$1D
-. bytes long.
-B $6719,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6716,$03,$03 Room #N($70), which has yellow ink and size #N($00), and is
+. #N$1D bytes long.
+B $6719,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$666A.
-B $671B,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $671D,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $671B,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $671D,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $671F,$01,$01 The end of the features.
 B $6720,$09,$09 Template #N$0D (floor trap 1), in 8 cells.
 B $6729,$07,$07 Template #N$15 (floor trap 2), in 6 cells.
 B $6730,$04,$04 Template #N$01 (round pedestal), in 3 cells.
 @ $6734 label=Room_75
-B $6734,$03,$03 Room #N$75, which has cyan ink and size #N$01, and is #N$15
+B $6734,$03,$03 Room #N($75), which has cyan ink and size #N($01), and is #N$15
 . bytes long.
-B $6737,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6737,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$677E.
-B $6739,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6739,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$669A.
-B $673B,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $673B,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $673D,$01,$01 The end of the features.
 B $673E,$05,$05 Template #N$01 (round pedestal), in 4 cells.
 B $6743,$05,$05 Template #N$05 (spiked ring), in 4 cells.
 B $6748,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $674A label=Room_76
-B $674A,$03,$03 Room #N$76, which has yellow ink and size #N$00, and is #N$0A
-. bytes long.
-B $674D,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $674A,$03,$03 Room #N($76), which has yellow ink and size #N($00), and is
+. #N$0A bytes long.
+B $674D,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6787.
-B $674F,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $674F,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$66D8.
-B $6751,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6753,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $6751,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6753,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $6755 label=Room_77
-B $6755,$03,$03 Room #N$77, which has white ink and size #N$00, and is #N$0C
+B $6755,$03,$03 Room #N($77), which has white ink and size #N($00), and is #N$0C
 . bytes long.
-B $6758,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6758,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$67ED.
-B $675A,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $675A,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6762.
-B $675C,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $675C,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6703.
-B $675E,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6760,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $675E,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6760,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $6762 label=Room_78
-B $6762,$03,$03 Room #N$78, which has red ink and size #N$00, and is #N$1B bytes
-. long.
-B $6765,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6762,$03,$03 Room #N($78), which has red ink and size #N($00), and is #N$1B
+. bytes long.
+B $6765,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6755.
-B $6767,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6767,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6769,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6769,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $676B,$01,$01 The end of the features.
 B $676C,$08,$08 Template #N$01 (round pedestal), in 7 cells.
 B $6774,$02,$02 Template #N$04 (falling pedestal), in 1 cell.
 B $6776,$06,$06 Template #N$05 (spiked ring), in 5 cells.
 B $677C,$02,$02 Template #N$1D (harmful slider x), in 1 cell.
 @ $677E label=Room_7A
-B $677E,$03,$03 Room #N$7A, which has green ink and size #N$00, and is #N$08
+B $677E,$03,$03 Room #N($7A), which has green ink and size #N($00), and is #N$08
 . bytes long. It is where the object of the type #N$70 is at the start of the
 . game.
-B $6781,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6781,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6734.
-B $6783,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6785,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6783,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6785,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $6787 label=Room_7B
-B $6787,$03,$03 Room #N$7B, which has cyan ink and size #N$00, and is #N$20
+B $6787,$03,$03 Room #N($7B), which has cyan ink and size #N($00), and is #N$20
 . bytes long.
-B $678A,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $678A,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$67A8.
-B $678C,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $678C,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$674A.
-B $678E,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6790,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $678E,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6790,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6792,$01,$01 The end of the features.
 B $6793,$02,$02 Template #N$13 (well), in 1 cell.
 B $6795,$09,$09 Template #N$0D (floor trap 1), in 8 cells.
@@ -1492,65 +1543,66 @@ B $679E,$06,$06 Template #N$15 (floor trap 2), in 5 cells.
 B $67A4,$02,$02 Template #N$0A (sinking block), in 1 cell.
 B $67A6,$02,$02 Template #N$01 (round pedestal), in 1 cell.
 @ $67A8 label=Room_7C
-B $67A8,$03,$03 Room #N$7C, which has yellow ink and size #N$00, and is #N$0A
-. bytes long.
-B $67AB,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $67A8,$03,$03 Room #N($7C), which has yellow ink and size #N($00), and is
+. #N$0A bytes long.
+B $67AB,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$67B3.
-B $67AD,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $67AD,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6787.
-B $67AF,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $67AF,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $67B1,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $67B1,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $67B3 label=Room_7D
-B $67B3,$03,$03 Room #N$7D, which has white ink and size #N$00, and is #N$16
+B $67B3,$03,$03 Room #N($7D), which has white ink and size #N($00), and is #N$16
 . bytes long.
-B $67B6,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $67B6,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$67CA.
-B $67B8,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $67B8,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$67A8.
-B $67BA,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $67BA,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $67BC,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $67BC,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $67BE,$01,$01 The end of the features.
 B $67BF,$09,$09 Template #N$15 (floor trap 2), in 8 cells.
 B $67C8,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $67CA label=Room_7E
-B $67CA,$03,$03 Room #N$7E, which has red ink and size #N$02, and is #N$17 bytes
-. long.
-B $67CD,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $67CA,$03,$03 Room #N($7E), which has red ink and size #N($02), and is #N$17
+. bytes long.
+B $67CD,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$67E2.
-B $67CF,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $67CF,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$67B3.
-B $67D1,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
+B $67D1,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
 B $67D3,$01,$01 The end of the features.
 B $67D4,$09,$09 Template #N$05 (spiked ring), in 8 cells.
 B $67DD,$05,$05 Template #N$04 (falling pedestal), in 4 cells.
 @ $67E2 label=Room_7F
-B $67E2,$03,$03 Room #N$7F, which has magenta ink and size #N$00, and is #N$0A
-. bytes long.
-B $67E5,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $67E2,$03,$03 Room #N($7F), which has magenta ink and size #N($00), and is
+. #N$0A bytes long.
+B $67E5,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6811.
-B $67E7,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $67E7,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$67CA.
-B $67E9,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $67E9,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $67EB,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $67EB,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 @ $67ED label=Room_80
-B $67ED,$03,$03 Room #N$80, which has green ink and size #N$00, and is #N$08
+B $67ED,$03,$03 Room #N($80), which has green ink and size #N($00), and is #N$08
 . bytes long. It is where the object of the type #N$71 is at the start of the
 . game.
-B $67F0,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $67F0,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6755.
-B $67F2,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $67F4,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $67F2,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $67F4,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 @ $67F6 label=Room_81
-B $67F6,$03,$03 Room #N$81, which has cyan ink and size #N$00, and is #N$1A
+B $67F6,$03,$03 Room #N($81), which has cyan ink and size #N($00), and is #N$1A
 . bytes long.
-B $67F9,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $67F9,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$682A.
-B $67FB,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $67FD,$02,$02 Feature #N$0B, a wall of roots along the high end of y, with a
+B $67FB,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $67FD,$02,$02 Feature #N($0B), a wall of roots along the high end of y, with a
 . gap.
 B $67FF,$01,$01 The end of the features.
 B $6800,$02,$02 Template #N$00 (stone slab), in 1 cell.
@@ -1559,186 +1611,201 @@ B $6804,$02,$02 Template #N$1E (harmful slider y), in 1 cell.
 B $6806,$02,$02 Template #N$19 (conveyor block plus x), in 1 cell.
 B $6808,$09,$09 Template #N$15 (floor trap 2), in 8 cells.
 @ $6811 label=Room_82
-B $6811,$03,$03 Room #N$82, which has yellow ink and size #N$01, and is #N$18
-. bytes long.
-B $6814,$02,$02 Feature #N$00, the root door and its frame in the wall at the
+B $6811,$03,$03 Room #N($82), which has yellow ink and size #N($01), and is
+. #N$18 bytes long.
+B $6814,$02,$02 Feature #N($00), the root door and its frame in the wall at the
 . high end of y, which leads to #R$6861.
-B $6816,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6816,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$67E2.
-B $6818,$02,$02 Feature #N$10, a wall of roots that is inside the low end of x.
+B $6818,$02,$02 Feature #N($10), a wall of roots that is inside the low end of
+. x.
 B $681A,$01,$01 The end of the features.
 B $681B,$04,$04 Template #N$01 (round pedestal), in 3 cells.
 B $681F,$04,$04 Template #N$04 (falling pedestal), in 3 cells.
 B $6823,$05,$05 Template #N$05 (spiked ring), in 4 cells.
 B $6828,$02,$02 Template #N$1D (harmful slider x), in 1 cell.
 @ $682A label=Room_83
-B $682A,$03,$03 Room #N$83, which has white ink and size #N$00, and is #N$16
+B $682A,$03,$03 Room #N($83), which has white ink and size #N($00), and is #N$16
 . bytes long.
-B $682D,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $682D,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6841.
-B $682F,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $682F,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$67F6.
-B $6831,$02,$02 Feature #N$08, a wall of roots along the low end of x.
-B $6833,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6831,$02,$02 Feature #N($08), a wall of roots along the low end of x.
+B $6833,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6835,$01,$01 The end of the features.
 B $6836,$09,$09 Template #N$15 (floor trap 2), in 8 cells.
 B $683F,$02,$02 Template #N$14 (flickering spark), in 1 cell.
 @ $6841 label=Room_84
-B $6841,$03,$03 Room #N$84, which has red ink and size #N$02, and is #N$08 bytes
-. long.
-B $6844,$02,$02 Feature #N$01, the root door and its frame in the wall at the
-. high end of x, which leads to #R$684A.
-B $6846,$02,$02 Feature #N$03, the root door and its frame in the wall at the
-. low end of x, which leads to #R$682A.
-B $6848,$02,$02 Feature #N$11, a wall of roots that is inside the high end of y.
-@ $684A label=Room_85
-B $684A,$03,$03 Room #N$85, which has magenta ink and size #N$00, and is #N$16
+B $6841,$03,$03 Room #N($84), which has red ink and size #N($02), and is #N$08
 . bytes long.
-B $684D,$02,$02 Feature #N$01, the root door and its frame in the wall at the
+B $6844,$02,$02 Feature #N($01), the root door and its frame in the wall at the
+. high end of x, which leads to #R$684A.
+B $6846,$02,$02 Feature #N($03), the root door and its frame in the wall at the
+. low end of x, which leads to #R$682A.
+B $6848,$02,$02 Feature #N($11), a wall of roots that is inside the high end of
+. y.
+@ $684A label=Room_85
+B $684A,$03,$03 Room #N($85), which has magenta ink and size #N($00), and is
+. #N$16 bytes long.
+B $684D,$02,$02 Feature #N($01), the root door and its frame in the wall at the
 . high end of x, which leads to #R$6861.
-B $684F,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $684F,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$6841.
-B $6851,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $6851,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $6853,$02,$02 Feature #N$09, a wall of roots along the high end of y.
+B $6853,$02,$02 Feature #N($09), a wall of roots along the high end of y.
 B $6855,$01,$01 The end of the features.
 B $6856,$09,$09 Template #N$04 (falling pedestal), in 8 cells.
 B $685F,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 @ $6861 label=Room_86
-B $6861,$03,$03 Room #N$86, which has green ink and size #N$00, and is #N$11
+B $6861,$03,$03 Room #N($86), which has green ink and size #N($00), and is #N$11
 . bytes long.
-B $6864,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6864,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$6873.
-B $6866,$02,$02 Feature #N$02, the root door and its frame in the wall at the
+B $6866,$02,$02 Feature #N($02), the root door and its frame in the wall at the
 . low end of y, which leads to #R$6811.
-B $6868,$02,$02 Feature #N$03, the root door and its frame in the wall at the
+B $6868,$02,$02 Feature #N($03), the root door and its frame in the wall at the
 . low end of x, which leads to #R$684A.
-B $686A,$02,$02 Feature #N$0A, a wall of roots along the low end of x, with a
+B $686A,$02,$02 Feature #N($0A), a wall of roots along the low end of x, with a
 . gap.
-B $686C,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $686C,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $686E,$01,$01 The end of the features.
 B $686F,$02,$02 Template #N$0D (floor trap 1), in 1 cell.
 B $6871,$02,$02 Template #N$15 (floor trap 2), in 1 cell.
 @ $6873 label=Room_87
-B $6873,$03,$03 Room #N$87, which has cyan ink and size #N$00, and is #N$0C
+B $6873,$03,$03 Room #N($87), which has cyan ink and size #N($00), and is #N$0C
 . bytes long.
-B $6876,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6876,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$688B.
-B $6878,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $6878,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$6880.
-B $687A,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $687A,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6861.
-B $687C,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $687E,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $687C,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $687E,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $6880 label=Room_88
-B $6880,$03,$03 Room #N$88, which has yellow ink and size #N$00, and is #N$0A
-. bytes long.
-B $6883,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $6880,$03,$03 Room #N($88), which has yellow ink and size #N($00), and is
+. #N$0A bytes long.
+B $6883,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$6896.
-B $6885,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6885,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$6873.
-B $6887,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6889,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $6887,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6889,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $688B label=Room_89
-B $688B,$03,$03 Room #N$89, which has white ink and size #N$00, and is #N$0A
+B $688B,$03,$03 Room #N($89), which has white ink and size #N($00), and is #N$0A
 . bytes long.
-B $688E,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $688E,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$6896.
-B $6890,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6890,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6873.
-B $6892,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $6894,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $6892,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $6894,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $6896 label=Room_8A
-B $6896,$03,$03 Room #N$8A, which has red ink and size #N$00, and is #N$0A bytes
-. long.
-B $6899,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6896,$03,$03 Room #N($8A), which has red ink and size #N($00), and is #N$0A
+. bytes long.
+B $6899,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$6880.
-B $689B,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $689B,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$688B.
-B $689D,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $689F,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $689D,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $689F,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $68A1 label=Room_8B
-B $68A1,$03,$03 Room #N$8B, which has magenta ink and size #N$00, and is #N$0A
-. bytes long.
-B $68A4,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $68A1,$03,$03 Room #N($8B), which has magenta ink and size #N($00), and is
+. #N$0A bytes long.
+B $68A4,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$68CD.
-B $68A6,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $68A6,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$68AC.
-B $68A8,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $68AA,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $68A8,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $68AA,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $68AC label=Room_8C
-B $68AC,$03,$03 Room #N$8C, which has green ink and size #N$00, and is #N$0C
+B $68AC,$03,$03 Room #N($8C), which has green ink and size #N($00), and is #N$0C
 . bytes long.
-B $68AF,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $68AF,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$68E7.
-B $68B1,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $68B1,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$6163.
-B $68B3,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $68B3,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$68A1.
-B $68B5,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $68B7,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $68B5,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $68B7,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 @ $68B9 label=Room_8D
-B $68B9,$03,$03 Room #N$8D, which has cyan ink and size #N$00, and is #N$13
+B $68B9,$03,$03 Room #N($8D), which has cyan ink and size #N($00), and is #N$13
 . bytes long.
-B $68BC,$02,$02 Feature #N$04, the stone door and its frame in the wall at the
+B $68BC,$02,$02 Feature #N($04), the stone door and its frame in the wall at the
 . high end of y, which leads to #R$68F4.
-B $68BE,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $68C0,$02,$02 Feature #N$0F, a stone wall along the high end of y, with a gap.
+B $68BE,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $68C0,$02,$02 Feature #N($0F), a stone wall along the high end of y, with a
+. gap.
 B $68C2,$01,$01 The end of the features.
 B $68C3,$04,$04 Template #N$18 (crumbling block), in 3 cells.
 B $68C7,$02,$02 Template #N$00 (stone slab), in 1 cell.
 B $68C9,$04,$04 Template #N$03 (stalactites), in 3 cells.
 @ $68CD label=Room_8E
-B $68CD,$03,$03 Room #N$8E, which has yellow ink and size #N$00, and is #N$19
-. bytes long.
-B $68D0,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $68CD,$03,$03 Room #N($8E), which has yellow ink and size #N($00), and is
+. #N$19 bytes long.
+B $68D0,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$68A1.
-B $68D2,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $68D4,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $68D2,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $68D4,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $68D6,$01,$01 The end of the features.
 B $68D7,$06,$06 Template #N$00 (stone slab), in 5 cells.
 B $68DD,$04,$04 Template #N$18 (crumbling block), in 3 cells.
 B $68E1,$03,$03 Template #N$09 (block), in 2 cells.
 B $68E4,$03,$03 Template #N$12 (wandering spark), in 2 cells.
 @ $68E7 label=Room_8F
-B $68E7,$03,$03 Room #N$8F, which has white ink and size #N$00, and is #N$0C
+B $68E7,$03,$03 Room #N($8F), which has white ink and size #N($00), and is #N$0C
 . bytes long.
-B $68EA,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $68EA,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$68F4.
-B $68EC,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $68EC,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$68AC.
-B $68EE,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $68EE,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$629C.
-B $68F0,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $68F2,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $68F0,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $68F2,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $68F4 label=Room_90
-B $68F4,$03,$03 Room #N$90, which has red ink and size #N$00, and is #N$0A bytes
-. long.
-B $68F7,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
-. low end of y, which leads to #R$68B9.
-B $68F9,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
-. low end of x, which leads to #R$68E7.
-B $68FB,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $68FD,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-@ $68FF label=Room_91
-B $68FF,$03,$03 Room #N$91, which has magenta ink and size #N$00, and is #N$0F
+B $68F4,$03,$03 Room #N($90), which has red ink and size #N($00), and is #N$0A
 . bytes long.
-B $6902,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $68F7,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
+. low end of y, which leads to #R$68B9.
+B $68F9,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
+. low end of x, which leads to #R$68E7.
+B $68FB,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $68FD,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+@ $68FF label=Room_91
+B $68FF,$03,$03 Room #N($91), which has magenta ink and size #N($00), and is
+. #N$0F bytes long.
+B $6902,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$690F.
-B $6904,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6904,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$650A.
-B $6906,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6908,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $6906,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6908,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $690A,$01,$01 The end of the features.
 B $690B,$02,$02 Template #N$12 (wandering spark), in 1 cell.
 B $690D,$02,$02 Template #N$00 (stone slab), in 1 cell.
 @ $690F label=Room_92
-B $690F,$03,$03 Room #N$92, which has green ink and size #N$00, and is #N$1C
+B $690F,$03,$03 Room #N($92), which has green ink and size #N($00), and is #N$1C
 . bytes long.
-B $6912,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6912,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$68FF.
-B $6914,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $6916,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $6914,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $6916,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 B $6918,$01,$01 The end of the features.
 B $6919,$05,$05 Template #N$18 (crumbling block), in 4 cells.
 B $691E,$02,$02 Template #N$0A (sinking block), in 1 cell.
@@ -1746,41 +1813,42 @@ B $6920,$05,$05 Template #N$00 (stone slab), in 4 cells.
 B $6925,$02,$02 Template #N$09 (block), in 1 cell.
 B $6927,$05,$05 Template #N$03 (stalactites), in 4 cells.
 @ $692C label=Room_93
-B $692C,$03,$03 Room #N$93, which has cyan ink and size #N$00, and is #N$17
+B $692C,$03,$03 Room #N($93), which has cyan ink and size #N($00), and is #N$17
 . bytes long.
-B $692F,$02,$02 Feature #N$19, the raised stone door and its frame in the wall
+B $692F,$02,$02 Feature #N($19), the raised stone door and its frame in the wall
 . at the high end of x, which leads to #R$6944.
-B $6931,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6931,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$5E10.
-B $6933,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $6935,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $6937,$02,$02 Feature #N$1D, the slabs outside the raised door at the high end
-. of x.
+B $6933,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $6935,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $6937,$02,$02 Feature #N($1D), the slabs outside the raised door at the high
+. end of x.
 B $6939,$01,$01 The end of the features.
 B $693A,$02,$02 Template #N$0C (lift), in 1 cell.
 B $693C,$03,$03 Template #N$00 (stone slab), in 2 cells.
 B $693F,$02,$02 Template #N$1E (harmful slider y), in 1 cell.
 B $6941,$03,$03 Template #N$03 (stalactites), in 2 cells.
 @ $6944 label=Room_94
-B $6944,$03,$03 Room #N$94, which has yellow ink and size #N$00, and is #N$0A
-. bytes long.
-B $6947,$02,$02 Feature #N$05, the stone door and its frame in the wall at the
+B $6944,$03,$03 Room #N($94), which has yellow ink and size #N($00), and is
+. #N$0A bytes long.
+B $6947,$02,$02 Feature #N($05), the stone door and its frame in the wall at the
 . high end of x, which leads to #R$694F.
-B $6949,$02,$02 Feature #N$07, the stone door and its frame in the wall at the
+B $6949,$02,$02 Feature #N($07), the stone door and its frame in the wall at the
 . low end of x, which leads to #R$692C.
-B $694B,$02,$02 Feature #N$0E, a stone wall along the low end of x, with a gap.
-B $694D,$02,$02 Feature #N$0D, a stone wall along the high end of y.
+B $694B,$02,$02 Feature #N($0E), a stone wall along the low end of x, with a
+. gap.
+B $694D,$02,$02 Feature #N($0D), a stone wall along the high end of y.
 @ $694F label=Room_95
-B $694F,$03,$03 Room #N$95, which has white ink and size #N$00, and is #N$1D
+B $694F,$03,$03 Room #N($95), which has white ink and size #N($00), and is #N$1D
 . bytes long.
-B $6952,$02,$02 Feature #N$06, the stone door and its frame in the wall at the
+B $6952,$02,$02 Feature #N($06), the stone door and its frame in the wall at the
 . low end of y, which leads to #R$5E42.
-B $6954,$02,$02 Feature #N$1B, the raised stone door and its frame in the wall
+B $6954,$02,$02 Feature #N($1B), the raised stone door and its frame in the wall
 . at the low end of x, which leads to #R$6944.
-B $6956,$02,$02 Feature #N$0C, a stone wall along the low end of x.
-B $6958,$02,$02 Feature #N$0D, a stone wall along the high end of y.
-B $695A,$02,$02 Feature #N$1F, the slabs outside the raised door at the low end
-. of x.
+B $6956,$02,$02 Feature #N($0C), a stone wall along the low end of x.
+B $6958,$02,$02 Feature #N($0D), a stone wall along the high end of y.
+B $695A,$02,$02 Feature #N($1F), the slabs outside the raised door at the low
+. end of x.
 B $695C,$01,$01 The end of the features.
 B $695D,$08,$08 Template #N$03 (stalactites), in 7 cells.
 B $6965,$04,$04 Template #N$18 (crumbling block), in 3 cells.
@@ -1853,293 +1921,293 @@ D $69AD The features, each a list of objects of eight bytes, which are the type,
 @ $69AD label=Feature_Root_Doors_High_Y
 N $69AD Feature #N$00: The root door and its frame in the wall at the high end
 . of y.
-B $69AD,$08,$08 The root door frame of the type #N$07, at #N$73, #N$C5 and #N$80
+B $69AD,$08,$08 The root door frame of the type #N($07), at #N($73), #N$C5 and
+. #N$80 along x, y and z.
+B $69B5,$08,$08 The root door of the type #N($06), at #N($8D), #N$C5 and #N$80
 . along x, y and z.
-B $69B5,$08,$08 The root door of the type #N$06, at #N$8D, #N$C5 and #N$80 along
-. x, y and z.
 B $69BD,$01,$01 The end of the feature.
 @ $69BE label=Feature_Root_Doors_High_X
 N $69BE Feature #N$01: The root door and its frame in the wall at the high end
 . of x.
-B $69BE,$08,$08 The root door frame of the type #N$07, at #N$C5, #N$8D and #N$80
+B $69BE,$08,$08 The root door frame of the type #N($07), at #N($C5), #N$8D and
+. #N$80 along x, y and z.
+B $69C6,$08,$08 The root door of the type #N($06), at #N($C5), #N$73 and #N$80
 . along x, y and z.
-B $69C6,$08,$08 The root door of the type #N$06, at #N$C5, #N$73 and #N$80 along
-. x, y and z.
 B $69CE,$01,$01 The end of the feature.
 @ $69CF label=Feature_Root_Doors_Low_Y
 N $69CF Feature #N$02: The root door and its frame in the wall at the low end of
 . y.
-B $69CF,$08,$08 The root door frame of the type #N$07, at #N$73, #N$3B and #N$80
+B $69CF,$08,$08 The root door frame of the type #N($07), at #N($73), #N$3B and
+. #N$80 along x, y and z.
+B $69D7,$08,$08 The root door of the type #N($06), at #N($8D), #N$3B and #N$80
 . along x, y and z.
-B $69D7,$08,$08 The root door of the type #N$06, at #N$8D, #N$3B and #N$80 along
-. x, y and z.
 B $69DF,$01,$01 The end of the feature.
 @ $69E0 label=Feature_Root_Doors_Low_X
 N $69E0 Feature #N$03: The root door and its frame in the wall at the low end of
 . x.
-B $69E0,$08,$08 The root door frame of the type #N$07, at #N$3B, #N$8D and #N$80
+B $69E0,$08,$08 The root door frame of the type #N($07), at #N($3B), #N$8D and
+. #N$80 along x, y and z.
+B $69E8,$08,$08 The root door of the type #N($06), at #N($3B), #N$73 and #N$80
 . along x, y and z.
-B $69E8,$08,$08 The root door of the type #N$06, at #N$3B, #N$73 and #N$80 along
-. x, y and z.
 B $69F0,$01,$01 The end of the feature.
 @ $69F1 label=Feature_Stone_Doors_High_Y
 N $69F1 Feature #N$04: The stone door and its frame in the wall at the high end
 . of y.
-B $69F1,$08,$08 The stone door frame of the type #N$09, at #N$73, #N$C5 and
+B $69F1,$08,$08 The stone door frame of the type #N($09), at #N($73), #N$C5 and
 . #N$80 along x, y and z.
-B $69F9,$08,$08 The stone door of the type #N$08, at #N$8D, #N$C5 and #N$80
+B $69F9,$08,$08 The stone door of the type #N($08), at #N($8D), #N$C5 and #N$80
 . along x, y and z.
 B $6A01,$01,$01 The end of the feature.
 @ $6A02 label=Feature_Stone_Doors_High_X
 N $6A02 Feature #N$05: The stone door and its frame in the wall at the high end
 . of x.
-B $6A02,$08,$08 The stone door frame of the type #N$09, at #N$C5, #N$8D and
+B $6A02,$08,$08 The stone door frame of the type #N($09), at #N($C5), #N$8D and
 . #N$80 along x, y and z.
-B $6A0A,$08,$08 The stone door of the type #N$08, at #N$C5, #N$73 and #N$80
+B $6A0A,$08,$08 The stone door of the type #N($08), at #N($C5), #N$73 and #N$80
 . along x, y and z.
 B $6A12,$01,$01 The end of the feature.
 @ $6A13 label=Feature_Stone_Doors_Low_Y
 N $6A13 Feature #N$06: The stone door and its frame in the wall at the low end
 . of y.
-B $6A13,$08,$08 The stone door frame of the type #N$09, at #N$73, #N$3B and
+B $6A13,$08,$08 The stone door frame of the type #N($09), at #N($73), #N$3B and
 . #N$80 along x, y and z.
-B $6A1B,$08,$08 The stone door of the type #N$08, at #N$8D, #N$3B and #N$80
+B $6A1B,$08,$08 The stone door of the type #N($08), at #N($8D), #N$3B and #N$80
 . along x, y and z.
 B $6A23,$01,$01 The end of the feature.
 @ $6A24 label=Feature_Stone_Doors_Low_X
 N $6A24 Feature #N$07: The stone door and its frame in the wall at the low end
 . of x.
-B $6A24,$08,$08 The stone door frame of the type #N$09, at #N$3B, #N$8D and
+B $6A24,$08,$08 The stone door frame of the type #N($09), at #N($3B), #N$8D and
 . #N$80 along x, y and z.
-B $6A2C,$08,$08 The stone door of the type #N$08, at #N$3B, #N$73 and #N$80
+B $6A2C,$08,$08 The stone door of the type #N($08), at #N($3B), #N$73 and #N$80
 . along x, y and z.
 B $6A34,$01,$01 The end of the feature.
 @ $6A35 label=Feature_Raised_Stone_Doors_High_Y
 N $6A35 Feature #N$18: The raised stone door and its frame in the wall at the
 . high end of y.
-B $6A35,$08,$08 The stone door frame of the type #N$09, at #N$93, #N$C5 and
+B $6A35,$08,$08 The stone door frame of the type #N($09), at #N($93), #N$C5 and
 . #N$B0 along x, y and z.
-B $6A3D,$08,$08 The stone door of the type #N$08, at #N$AD, #N$C5 and #N$B0
+B $6A3D,$08,$08 The stone door of the type #N($08), at #N($AD), #N$C5 and #N$B0
 . along x, y and z.
 B $6A45,$01,$01 The end of the feature.
 @ $6A46 label=Feature_Raised_Stone_Doors_High_X
 N $6A46 Feature #N$19: The raised stone door and its frame in the wall at the
 . high end of x.
-B $6A46,$08,$08 The stone door frame of the type #N$09, at #N$C5, #N$AD and
+B $6A46,$08,$08 The stone door frame of the type #N($09), at #N($C5), #N$AD and
 . #N$B0 along x, y and z.
-B $6A4E,$08,$08 The stone door of the type #N$08, at #N$C5, #N$93 and #N$B0
+B $6A4E,$08,$08 The stone door of the type #N($08), at #N($C5), #N$93 and #N$B0
 . along x, y and z.
 B $6A56,$01,$01 The end of the feature.
 @ $6A57 label=Feature_Raised_Stone_Doors_Low_Y
 N $6A57 Feature #N$1A: The raised stone door and its frame in the wall at the
 . low end of y.
-B $6A57,$08,$08 The stone door frame of the type #N$09, at #N$53, #N$3B and
+B $6A57,$08,$08 The stone door frame of the type #N($09), at #N($53), #N$3B and
 . #N$B0 along x, y and z.
-B $6A5F,$08,$08 The stone door of the type #N$08, at #N$6D, #N$3B and #N$B0
+B $6A5F,$08,$08 The stone door of the type #N($08), at #N($6D), #N$3B and #N$B0
 . along x, y and z.
 B $6A67,$01,$01 The end of the feature.
 @ $6A68 label=Feature_Raised_Stone_Doors_Low_X
 N $6A68 Feature #N$1B: The raised stone door and its frame in the wall at the
 . low end of x.
-B $6A68,$08,$08 The stone door frame of the type #N$09, at #N$3B, #N$6D and
+B $6A68,$08,$08 The stone door frame of the type #N($09), at #N($3B), #N$6D and
 . #N$B0 along x, y and z.
-B $6A70,$08,$08 The stone door of the type #N$08, at #N$3B, #N$53 and #N$B0
+B $6A70,$08,$08 The stone door of the type #N($08), at #N($3B), #N$53 and #N$B0
 . along x, y and z.
 B $6A78,$01,$01 The end of the feature.
 @ $6A79 label=Feature_Doorstep_Slabs_High_Y
 N $6A79 Feature #N$1C: The slabs outside the raised door at the high end of y.
-B $6A79,$08,$08 The stone slab of the type #N$0B, at #N$98, #N$C8 and #N$A4
+B $6A79,$08,$08 The stone slab of the type #N($0B), at #N($98), #N$C8 and #N$A4
 . along x, y and z.
-B $6A81,$08,$08 The stone slab of the type #N$0B, at #N$A8, #N$C8 and #N$A4
+B $6A81,$08,$08 The stone slab of the type #N($0B), at #N($A8), #N$C8 and #N$A4
 . along x, y and z.
 B $6A89,$01,$01 The end of the feature.
 @ $6A8A label=Feature_Doorstep_Slabs_High_X
 N $6A8A Feature #N$1D: The slabs outside the raised door at the high end of x.
-B $6A8A,$08,$08 The stone slab of the type #N$0B, at #N$C8, #N$98 and #N$A4
+B $6A8A,$08,$08 The stone slab of the type #N($0B), at #N($C8), #N$98 and #N$A4
 . along x, y and z.
-B $6A92,$08,$08 The stone slab of the type #N$0B, at #N$C8, #N$A8 and #N$A4
+B $6A92,$08,$08 The stone slab of the type #N($0B), at #N($C8), #N$A8 and #N$A4
 . along x, y and z.
 B $6A9A,$01,$01 The end of the feature.
 @ $6A9B label=Feature_Doorstep_Slabs_Low_Y
 N $6A9B Feature #N$1E: The slabs outside the raised door at the low end of y.
-B $6A9B,$08,$08 The stone slab of the type #N$0B, at #N$58, #N$39 and #N$A4
+B $6A9B,$08,$08 The stone slab of the type #N($0B), at #N($58), #N$39 and #N$A4
 . along x, y and z.
-B $6AA3,$08,$08 The stone slab of the type #N$0B, at #N$68, #N$39 and #N$A4
+B $6AA3,$08,$08 The stone slab of the type #N($0B), at #N($68), #N$39 and #N$A4
 . along x, y and z.
 B $6AAB,$01,$01 The end of the feature.
 @ $6AAC label=Feature_Doorstep_Slabs_Low_X
 N $6AAC Feature #N$1F: The slabs outside the raised door at the low end of x.
-B $6AAC,$08,$08 The stone slab of the type #N$0B, at #N$38, #N$58 and #N$A4
+B $6AAC,$08,$08 The stone slab of the type #N($0B), at #N($38), #N$58 and #N$A4
 . along x, y and z.
-B $6AB4,$08,$08 The stone slab of the type #N$0B, at #N$38, #N$68 and #N$A4
+B $6AB4,$08,$08 The stone slab of the type #N($0B), at #N($38), #N$68 and #N$A4
 . along x, y and z.
 B $6ABC,$01,$01 The end of the feature.
 @ $6ABD label=Feature_Root_Wall_Low_X
 N $6ABD Feature #N$08: A wall of roots along the low end of x.
-B $6ABD,$08,$08 The root wall piece of the type #N$0F, at #N$40, #N$78 and #N$80
-. along x, y and z.
-B $6AC5,$08,$08 The root wall piece of the type #N$0C, at #N$40, #N$88 and #N$80
-. along x, y and z.
+B $6ABD,$08,$08 The root wall piece of the type #N($0F), at #N($40), #N$78 and
+. #N$80 along x, y and z.
+B $6AC5,$08,$08 The root wall piece of the type #N($0C), at #N($40), #N$88 and
+. #N$80 along x, y and z.
 @ $6ACD label=Feature_Root_Wall_Low_X_Gap
 N $6ACD Feature #N$0A: A wall of roots along the low end of x, with a gap.
-B $6ACD,$08,$08 The root wall piece of the type #N$0C, at #N$40, #N$48 and #N$80
-. along x, y and z.
-B $6AD5,$08,$08 The root wall piece of the type #N$0D, at #N$40, #N$58 and #N$80
-. along x, y and z.
-B $6ADD,$08,$08 The root wall piece of the type #N$0E, at #N$40, #N$68 and #N$80
-. along x, y and z.
-B $6AE5,$08,$08 The root wall piece of the type #N$0D, at #N$40, #N$98 and #N$80
-. along x, y and z.
-B $6AED,$08,$08 The root wall piece of the type #N$0E, at #N$40, #N$A8 and #N$80
-. along x, y and z.
-B $6AF5,$08,$08 The root wall piece of the type #N$0F, at #N$40, #N$B8 and #N$80
-. along x, y and z.
+B $6ACD,$08,$08 The root wall piece of the type #N($0C), at #N($40), #N$48 and
+. #N$80 along x, y and z.
+B $6AD5,$08,$08 The root wall piece of the type #N($0D), at #N($40), #N$58 and
+. #N$80 along x, y and z.
+B $6ADD,$08,$08 The root wall piece of the type #N($0E), at #N($40), #N$68 and
+. #N$80 along x, y and z.
+B $6AE5,$08,$08 The root wall piece of the type #N($0D), at #N($40), #N$98 and
+. #N$80 along x, y and z.
+B $6AED,$08,$08 The root wall piece of the type #N($0E), at #N($40), #N$A8 and
+. #N$80 along x, y and z.
+B $6AF5,$08,$08 The root wall piece of the type #N($0F), at #N($40), #N$B8 and
+. #N$80 along x, y and z.
 B $6AFD,$01,$01 The end of the feature.
 @ $6AFE label=Feature_Root_Wall_High_Y
 N $6AFE Feature #N$09: A wall of roots along the high end of y.
-B $6AFE,$08,$08 The root wall piece of the type #N$0F, at #N$78, #N$C0 and #N$80
-. along x, y and z.
-B $6B06,$08,$08 The root wall piece of the type #N$0C, at #N$88, #N$C0 and #N$80
-. along x, y and z.
+B $6AFE,$08,$08 The root wall piece of the type #N($0F), at #N($78), #N$C0 and
+. #N$80 along x, y and z.
+B $6B06,$08,$08 The root wall piece of the type #N($0C), at #N($88), #N$C0 and
+. #N$80 along x, y and z.
 @ $6B0E label=Feature_Root_Wall_High_Y_Gap
 N $6B0E Feature #N$0B: A wall of roots along the high end of y, with a gap.
-B $6B0E,$08,$08 The root wall piece of the type #N$0C, at #N$48, #N$C0 and #N$80
-. along x, y and z.
-B $6B16,$08,$08 The root wall piece of the type #N$0D, at #N$58, #N$C0 and #N$80
-. along x, y and z.
-B $6B1E,$08,$08 The root wall piece of the type #N$0E, at #N$68, #N$C0 and #N$80
-. along x, y and z.
-B $6B26,$08,$08 The root wall piece of the type #N$0D, at #N$98, #N$C0 and #N$80
-. along x, y and z.
-B $6B2E,$08,$08 The root wall piece of the type #N$0E, at #N$A8, #N$C0 and #N$80
-. along x, y and z.
-B $6B36,$08,$08 The root wall piece of the type #N$0F, at #N$B8, #N$C0 and #N$80
-. along x, y and z.
+B $6B0E,$08,$08 The root wall piece of the type #N($0C), at #N($48), #N$C0 and
+. #N$80 along x, y and z.
+B $6B16,$08,$08 The root wall piece of the type #N($0D), at #N($58), #N$C0 and
+. #N$80 along x, y and z.
+B $6B1E,$08,$08 The root wall piece of the type #N($0E), at #N($68), #N$C0 and
+. #N$80 along x, y and z.
+B $6B26,$08,$08 The root wall piece of the type #N($0D), at #N($98), #N$C0 and
+. #N$80 along x, y and z.
+B $6B2E,$08,$08 The root wall piece of the type #N($0E), at #N($A8), #N$C0 and
+. #N$80 along x, y and z.
+B $6B36,$08,$08 The root wall piece of the type #N($0F), at #N($B8), #N$C0 and
+. #N$80 along x, y and z.
 B $6B3E,$01,$01 The end of the feature.
 @ $6B3F label=Feature_Inner_Root_Wall_Low_X
 N $6B3F Feature #N$10: A wall of roots that is inside the low end of x.
-B $6B3F,$08,$08 The root wall piece of the type #N$0F, at #N$60, #N$78 and #N$80
-. along x, y and z.
-B $6B47,$08,$08 The root wall piece of the type #N$0C, at #N$60, #N$88 and #N$80
-. along x, y and z.
-B $6B4F,$08,$08 The root wall piece of the type #N$0C, at #N$60, #N$48 and #N$80
-. along x, y and z.
-B $6B57,$08,$08 The root wall piece of the type #N$0D, at #N$60, #N$58 and #N$80
-. along x, y and z.
-B $6B5F,$08,$08 The root wall piece of the type #N$0E, at #N$60, #N$68 and #N$80
-. along x, y and z.
-B $6B67,$08,$08 The root wall piece of the type #N$0D, at #N$60, #N$98 and #N$80
-. along x, y and z.
-B $6B6F,$08,$08 The root wall piece of the type #N$0E, at #N$60, #N$A8 and #N$80
-. along x, y and z.
-B $6B77,$08,$08 The root wall piece of the type #N$0F, at #N$60, #N$B8 and #N$80
-. along x, y and z.
-B $6B7F,$08,$08 The root wall piece of the type #N$0E, at #N$68, #N$C0 and #N$80
-. along x, y and z.
+B $6B3F,$08,$08 The root wall piece of the type #N($0F), at #N($60), #N$78 and
+. #N$80 along x, y and z.
+B $6B47,$08,$08 The root wall piece of the type #N($0C), at #N($60), #N$88 and
+. #N$80 along x, y and z.
+B $6B4F,$08,$08 The root wall piece of the type #N($0C), at #N($60), #N$48 and
+. #N$80 along x, y and z.
+B $6B57,$08,$08 The root wall piece of the type #N($0D), at #N($60), #N$58 and
+. #N$80 along x, y and z.
+B $6B5F,$08,$08 The root wall piece of the type #N($0E), at #N($60), #N$68 and
+. #N$80 along x, y and z.
+B $6B67,$08,$08 The root wall piece of the type #N($0D), at #N($60), #N$98 and
+. #N$80 along x, y and z.
+B $6B6F,$08,$08 The root wall piece of the type #N($0E), at #N($60), #N$A8 and
+. #N$80 along x, y and z.
+B $6B77,$08,$08 The root wall piece of the type #N($0F), at #N($60), #N$B8 and
+. #N$80 along x, y and z.
+B $6B7F,$08,$08 The root wall piece of the type #N($0E), at #N($68), #N$C0 and
+. #N$80 along x, y and z.
 B $6B87,$01,$01 The end of the feature.
 @ $6B88 label=Feature_Inner_Root_Wall_High_Y
 N $6B88 Feature #N$11: A wall of roots that is inside the high end of y.
-B $6B88,$08,$08 The root wall piece of the type #N$0F, at #N$78, #N$A0 and #N$80
-. along x, y and z.
-B $6B90,$08,$08 The root wall piece of the type #N$0C, at #N$88, #N$A0 and #N$80
-. along x, y and z.
-B $6B98,$08,$08 The root wall piece of the type #N$0C, at #N$48, #N$A0 and #N$80
-. along x, y and z.
-B $6BA0,$08,$08 The root wall piece of the type #N$0D, at #N$58, #N$A0 and #N$80
-. along x, y and z.
-B $6BA8,$08,$08 The root wall piece of the type #N$0E, at #N$68, #N$A0 and #N$80
-. along x, y and z.
-B $6BB0,$08,$08 The root wall piece of the type #N$0D, at #N$98, #N$A0 and #N$80
-. along x, y and z.
-B $6BB8,$08,$08 The root wall piece of the type #N$0E, at #N$A8, #N$A0 and #N$80
-. along x, y and z.
-B $6BC0,$08,$08 The root wall piece of the type #N$0F, at #N$B8, #N$A0 and #N$80
-. along x, y and z.
-B $6BC8,$08,$08 The root wall piece of the type #N$0D, at #N$40, #N$98 and #N$80
-. along x, y and z.
+B $6B88,$08,$08 The root wall piece of the type #N($0F), at #N($78), #N$A0 and
+. #N$80 along x, y and z.
+B $6B90,$08,$08 The root wall piece of the type #N($0C), at #N($88), #N$A0 and
+. #N$80 along x, y and z.
+B $6B98,$08,$08 The root wall piece of the type #N($0C), at #N($48), #N$A0 and
+. #N$80 along x, y and z.
+B $6BA0,$08,$08 The root wall piece of the type #N($0D), at #N($58), #N$A0 and
+. #N$80 along x, y and z.
+B $6BA8,$08,$08 The root wall piece of the type #N($0E), at #N($68), #N$A0 and
+. #N$80 along x, y and z.
+B $6BB0,$08,$08 The root wall piece of the type #N($0D), at #N($98), #N$A0 and
+. #N$80 along x, y and z.
+B $6BB8,$08,$08 The root wall piece of the type #N($0E), at #N($A8), #N$A0 and
+. #N$80 along x, y and z.
+B $6BC0,$08,$08 The root wall piece of the type #N($0F), at #N($B8), #N$A0 and
+. #N$80 along x, y and z.
+B $6BC8,$08,$08 The root wall piece of the type #N($0D), at #N($40), #N$98 and
+. #N$80 along x, y and z.
 B $6BD0,$01,$01 The end of the feature.
 @ $6BD1 label=Feature_Stone_Wall_Low_X
 N $6BD1 Feature #N$0C: A stone wall along the low end of x.
-B $6BD1,$08,$08 The stone wall piece of the type #N$34, at #N$40, #N$78 and
+B $6BD1,$08,$08 The stone wall piece of the type #N($34), at #N($40), #N$78 and
 . #N$80 along x, y and z.
-B $6BD9,$08,$08 The stone wall piece of the type #N$35, at #N$40, #N$88 and
+B $6BD9,$08,$08 The stone wall piece of the type #N($35), at #N($40), #N$88 and
 . #N$80 along x, y and z.
 @ $6BE1 label=Feature_Stone_Wall_Low_X_Gap
 N $6BE1 Feature #N$0E: A stone wall along the low end of x, with a gap.
-B $6BE1,$08,$08 The stone wall piece of the type #N$39, at #N$40, #N$48 and
+B $6BE1,$08,$08 The stone wall piece of the type #N($39), at #N($40), #N$48 and
 . #N$80 along x, y and z.
-B $6BE9,$08,$08 The stone wall piece of the type #N$37, at #N$40, #N$58 and
+B $6BE9,$08,$08 The stone wall piece of the type #N($37), at #N($40), #N$58 and
 . #N$80 along x, y and z.
-B $6BF1,$08,$08 The stone wall piece of the type #N$38, at #N$40, #N$68 and
+B $6BF1,$08,$08 The stone wall piece of the type #N($38), at #N($40), #N$68 and
 . #N$80 along x, y and z.
-B $6BF9,$08,$08 The stone wall piece of the type #N$37, at #N$40, #N$98 and
+B $6BF9,$08,$08 The stone wall piece of the type #N($37), at #N($40), #N$98 and
 . #N$80 along x, y and z.
-B $6C01,$08,$08 The stone wall piece of the type #N$36, at #N$40, #N$A8 and
+B $6C01,$08,$08 The stone wall piece of the type #N($36), at #N($40), #N$A8 and
 . #N$80 along x, y and z.
-B $6C09,$08,$08 The stone wall piece of the type #N$35, at #N$40, #N$B8 and
+B $6C09,$08,$08 The stone wall piece of the type #N($35), at #N($40), #N$B8 and
 . #N$80 along x, y and z.
 B $6C11,$01,$01 The end of the feature.
 @ $6C12 label=Feature_Stone_Wall_High_Y
 N $6C12 Feature #N$0D: A stone wall along the high end of y.
-B $6C12,$08,$08 The stone wall piece of the type #N$37, at #N$78, #N$C0 and
+B $6C12,$08,$08 The stone wall piece of the type #N($37), at #N($78), #N$C0 and
 . #N$80 along x, y and z.
-B $6C1A,$08,$08 The stone wall piece of the type #N$38, at #N$88, #N$C0 and
+B $6C1A,$08,$08 The stone wall piece of the type #N($38), at #N($88), #N$C0 and
 . #N$80 along x, y and z.
 @ $6C22 label=Feature_Stone_Wall_High_Y_Gap
 N $6C22 Feature #N$0F: A stone wall along the high end of y, with a gap.
-B $6C22,$08,$08 The stone wall piece of the type #N$36, at #N$48, #N$C0 and
+B $6C22,$08,$08 The stone wall piece of the type #N($36), at #N($48), #N$C0 and
 . #N$80 along x, y and z.
-B $6C2A,$08,$08 The stone wall piece of the type #N$35, at #N$58, #N$C0 and
+B $6C2A,$08,$08 The stone wall piece of the type #N($35), at #N($58), #N$C0 and
 . #N$80 along x, y and z.
-B $6C32,$08,$08 The stone wall piece of the type #N$34, at #N$68, #N$C0 and
+B $6C32,$08,$08 The stone wall piece of the type #N($34), at #N($68), #N$C0 and
 . #N$80 along x, y and z.
-B $6C3A,$08,$08 The stone wall piece of the type #N$36, at #N$98, #N$C0 and
+B $6C3A,$08,$08 The stone wall piece of the type #N($36), at #N($98), #N$C0 and
 . #N$80 along x, y and z.
-B $6C42,$08,$08 The stone wall piece of the type #N$37, at #N$A8, #N$C0 and
+B $6C42,$08,$08 The stone wall piece of the type #N($37), at #N($A8), #N$C0 and
 . #N$80 along x, y and z.
-B $6C4A,$08,$08 The stone wall piece of the type #N$39, at #N$B8, #N$C0 and
+B $6C4A,$08,$08 The stone wall piece of the type #N($39), at #N($B8), #N$C0 and
 . #N$80 along x, y and z.
 B $6C52,$01,$01 The end of the feature.
 @ $6C53 label=Feature_Inner_Stone_Wall_Low_X
 N $6C53 Feature #N$14: A stone wall that is inside the low end of x.
-B $6C53,$08,$08 The stone wall piece of the type #N$34, at #N$60, #N$78 and
+B $6C53,$08,$08 The stone wall piece of the type #N($34), at #N($60), #N$78 and
 . #N$80 along x, y and z.
-B $6C5B,$08,$08 The stone wall piece of the type #N$35, at #N$60, #N$88 and
+B $6C5B,$08,$08 The stone wall piece of the type #N($35), at #N($60), #N$88 and
 . #N$80 along x, y and z.
-B $6C63,$08,$08 The stone wall piece of the type #N$39, at #N$60, #N$48 and
+B $6C63,$08,$08 The stone wall piece of the type #N($39), at #N($60), #N$48 and
 . #N$80 along x, y and z.
-B $6C6B,$08,$08 The stone wall piece of the type #N$37, at #N$60, #N$58 and
+B $6C6B,$08,$08 The stone wall piece of the type #N($37), at #N($60), #N$58 and
 . #N$80 along x, y and z.
-B $6C73,$08,$08 The stone wall piece of the type #N$36, at #N$60, #N$68 and
+B $6C73,$08,$08 The stone wall piece of the type #N($36), at #N($60), #N$68 and
 . #N$80 along x, y and z.
-B $6C7B,$08,$08 The stone wall piece of the type #N$37, at #N$60, #N$98 and
+B $6C7B,$08,$08 The stone wall piece of the type #N($37), at #N($60), #N$98 and
 . #N$80 along x, y and z.
-B $6C83,$08,$08 The stone wall piece of the type #N$35, at #N$60, #N$A8 and
+B $6C83,$08,$08 The stone wall piece of the type #N($35), at #N($60), #N$A8 and
 . #N$80 along x, y and z.
-B $6C8B,$08,$08 The stone wall piece of the type #N$34, at #N$60, #N$B8 and
+B $6C8B,$08,$08 The stone wall piece of the type #N($34), at #N($60), #N$B8 and
 . #N$80 along x, y and z.
-B $6C93,$08,$08 The stone wall piece of the type #N$36, at #N$68, #N$C0 and
+B $6C93,$08,$08 The stone wall piece of the type #N($36), at #N($68), #N$C0 and
 . #N$80 along x, y and z.
 B $6C9B,$01,$01 The end of the feature.
 @ $6C9C label=Feature_Inner_Stone_Wall_High_Y
 N $6C9C Feature #N$15: A stone wall that is inside the high end of y.
-B $6C9C,$08,$08 The stone wall piece of the type #N$34, at #N$78, #N$A0 and
+B $6C9C,$08,$08 The stone wall piece of the type #N($34), at #N($78), #N$A0 and
 . #N$80 along x, y and z.
-B $6CA4,$08,$08 The stone wall piece of the type #N$37, at #N$88, #N$A0 and
+B $6CA4,$08,$08 The stone wall piece of the type #N($37), at #N($88), #N$A0 and
 . #N$80 along x, y and z.
-B $6CAC,$08,$08 The stone wall piece of the type #N$36, at #N$48, #N$A0 and
+B $6CAC,$08,$08 The stone wall piece of the type #N($36), at #N($48), #N$A0 and
 . #N$80 along x, y and z.
-B $6CB4,$08,$08 The stone wall piece of the type #N$35, at #N$58, #N$A0 and
+B $6CB4,$08,$08 The stone wall piece of the type #N($35), at #N($58), #N$A0 and
 . #N$80 along x, y and z.
-B $6CBC,$08,$08 The stone wall piece of the type #N$36, at #N$68, #N$A0 and
+B $6CBC,$08,$08 The stone wall piece of the type #N($36), at #N($68), #N$A0 and
 . #N$80 along x, y and z.
-B $6CC4,$08,$08 The stone wall piece of the type #N$37, at #N$98, #N$A0 and
+B $6CC4,$08,$08 The stone wall piece of the type #N($37), at #N($98), #N$A0 and
 . #N$80 along x, y and z.
-B $6CCC,$08,$08 The stone wall piece of the type #N$35, at #N$A8, #N$A0 and
+B $6CCC,$08,$08 The stone wall piece of the type #N($35), at #N($A8), #N$A0 and
 . #N$80 along x, y and z.
-B $6CD4,$08,$08 The stone wall piece of the type #N$39, at #N$B8, #N$A0 and
+B $6CD4,$08,$08 The stone wall piece of the type #N($39), at #N($B8), #N$A0 and
 . #N$80 along x, y and z.
-B $6CDC,$08,$08 The stone wall piece of the type #N$36, at #N$40, #N$98 and
+B $6CDC,$08,$08 The stone wall piece of the type #N($36), at #N($40), #N$98 and
 . #N$80 along x, y and z.
 B $6CE4,$01,$01 The end of the feature.
 
@@ -2188,154 +2256,154 @@ D $6D23 The templates, each a list of objects of five bytes, which are the type,
 . are for the same template.
 @ $6D23 label=Template_Block
 N $6D23 Template #N$09 and #N$16: A block that the player can push.
-B $6D23,$05,$05 The object of the type #N$5B, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D28,$01,$01 The end of the template.
+B $6D23,$05,$05 The object of the type #N($5B), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D28,$01,$01 Terminator.
 @ $6D29 label=Template_Stone_Slab
 N $6D29 Template #N$00: A stone slab.
-B $6D29,$05,$05 The object of the type #N$0B, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D2E,$01,$01 The end of the template.
+B $6D29,$05,$05 The object of the type #N($0B), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D2E,$01,$01 Terminator.
 @ $6D2F label=Template_Floor_Trap_1
 N $6D2F Template #N$0D: A trap in the floor that harms the player.
-B $6D2F,$05,$05 The object of the type #N$4A, with half sizes of #N$0C and
-. #N$0C, a height of #N$01 and the flags #N$10.
-B $6D34,$01,$01 The end of the template.
+B $6D2F,$05,$05 The object of the type #N($4A), with half sizes of #N$0C and
+. #N($0C), a height of #N$01 and the flags #N$10.
+B $6D34,$01,$01 Terminator.
 @ $6D35 label=Template_Floor_Trap_2
 N $6D35 Template #N$15: A trap in the floor that harms the player.
-B $6D35,$05,$05 The object of the type #N$4B, with half sizes of #N$0C and
-. #N$0C, a height of #N$01 and the flags #N$10.
-B $6D3A,$01,$01 The end of the template.
+B $6D35,$05,$05 The object of the type #N($4B), with half sizes of #N$0C and
+. #N($0C), a height of #N$01 and the flags #N$10.
+B $6D3A,$01,$01 Terminator.
 @ $6D3B label=Template_Round_Pedestal
 N $6D3B Template #N$01: A round pedestal.
-B $6D3B,$05,$05 The object of the type #N$0A, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D40,$01,$01 The end of the template.
+B $6D3B,$05,$05 The object of the type #N($0A), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D40,$01,$01 Terminator.
 @ $6D41 label=Template_Ghost
 N $6D41 Template #N$02: A ghost, which homes in on the player.
-B $6D41,$05,$05 The object of the type #N$30, with half sizes of #N$05 and
-. #N$05, a height of #N$05 and the flags #N$10.
-B $6D46,$01,$01 The end of the template.
+B $6D41,$05,$05 The object of the type #N($30), with half sizes of #N$05 and
+. #N($05), a height of #N$05 and the flags #N$10.
+B $6D46,$01,$01 Terminator.
 @ $6D47 label=Template_Stalactites
 N $6D47 Template #N$03: Stalactites that harm the player.
-B $6D47,$05,$05 The object of the type #N$17, with half sizes of #N$07 and
-. #N$07, a height of #N$0A and the flags #N$10.
-B $6D4C,$01,$01 The end of the template.
+B $6D47,$05,$05 The object of the type #N($17), with half sizes of #N$07 and
+. #N($07), a height of #N$0A and the flags #N$10.
+B $6D4C,$01,$01 Terminator.
 @ $6D4D label=Template_Falling_Pedestal
 N $6D4D Template #N$04: A round pedestal that falls.
-B $6D4D,$05,$05 The object of the type #N$48, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$14.
-B $6D52,$01,$01 The end of the template.
+B $6D4D,$05,$05 The object of the type #N($48), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$14.
+B $6D52,$01,$01 Terminator.
 @ $6D53 label=Template_Spiked_Ring
 N $6D53 Template #N$05: A spiked ring that harms the player.
-B $6D53,$05,$05 The object of the type #N$1E, with half sizes of #N$07 and
-. #N$07, a height of #N$0A and the flags #N$10.
-B $6D58,$01,$01 The end of the template.
+B $6D53,$05,$05 The object of the type #N($1E), with half sizes of #N$07 and
+. #N($07), a height of #N$0A and the flags #N$10.
+B $6D58,$01,$01 Terminator.
 @ $6D59 label=Template_Falling_Cube
 N $6D59 Template #N$06: A stone cube that falls.
-B $6D59,$05,$05 The object of the type #N$3F, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$14.
-B $6D5E,$01,$01 The end of the template.
+B $6D59,$05,$05 The object of the type #N($3F), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$14.
+B $6D5E,$01,$01 Terminator.
 @ $6D5F label=Template_Table_Object
 N $6D5F Template #N$07: A table that can be pushed.
-B $6D5F,$05,$05 The object of the type #N$49, with half sizes of #N$08 and
-. #N$0E, a height of #N$0C and the flags #N$14.
-B $6D64,$01,$01 The end of the template.
+B $6D5F,$05,$05 The object of the type #N($49), with half sizes of #N$08 and
+. #N($0E), a height of #N$0C and the flags #N$14.
+B $6D64,$01,$01 Terminator.
 @ $6D65 label=Template_Pedestal
 N $6D65 Template #N$08: A round pedestal.
-B $6D65,$05,$05 The object of the type #N$4C, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D6A,$01,$01 The end of the template.
+B $6D65,$05,$05 The object of the type #N($4C), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D6A,$01,$01 Terminator.
 @ $6D6B label=Template_Sinking_Block
 N $6D6B Template #N$0A: A block that sinks when it is stood on.
-B $6D6B,$05,$05 The object of the type #N$4E, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D70,$01,$01 The end of the template.
+B $6D6B,$05,$05 The object of the type #N($4E), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D70,$01,$01 Terminator.
 @ $6D71 label=Template_Falling_Block
 N $6D71 Template #N$0B: A block that falls.
-B $6D71,$05,$05 The object of the type #N$4F, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$14.
-B $6D76,$01,$01 The end of the template.
+B $6D71,$05,$05 The object of the type #N($4F), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$14.
+B $6D76,$01,$01 Terminator.
 @ $6D77 label=Template_Lift
 N $6D77 Template #N$0C: A lift.
-B $6D77,$05,$05 The object of the type #N$54, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D7C,$01,$01 The end of the template.
+B $6D77,$05,$05 The object of the type #N($54), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D7C,$01,$01 Terminator.
 @ $6D7D label=Template_Falling_Stalactites
 N $6D7D Template #N$0E: Stalactites that fall and harm the player.
-B $6D7D,$05,$05 The object of the type #N$1C, with half sizes of #N$07 and
-. #N$07, a height of #N$0B and the flags #N$14.
-B $6D82,$01,$01 The end of the template.
+B $6D7D,$05,$05 The object of the type #N($1C), with half sizes of #N$07 and
+. #N($07), a height of #N$0B and the flags #N$14.
+B $6D82,$01,$01 Terminator.
 @ $6D83 label=Template_Bobbing_Head
 N $6D83 Template #N$0F: A spiked head that bobs up and down.
-B $6D83,$05,$05 The object of the type #N$56, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D88,$01,$01 The end of the template.
+B $6D83,$05,$05 The object of the type #N($56), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D88,$01,$01 Terminator.
 @ $6D89 label=Template_Slider_X
 N $6D89 Template #N$10: A block that slides along x.
-B $6D89,$05,$05 The object of the type #N$57, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D8E,$01,$01 The end of the template.
+B $6D89,$05,$05 The object of the type #N($57), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D8E,$01,$01 Terminator.
 @ $6D8F label=Template_Slider_Y
 N $6D8F Template #N$11: A block that slides along y.
-B $6D8F,$05,$05 The object of the type #N$58, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6D94,$01,$01 The end of the template.
+B $6D8F,$05,$05 The object of the type #N($58), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6D94,$01,$01 Terminator.
 @ $6D95 label=Template_Wandering_Spark
 N $6D95 Template #N$12: A spark that wanders about the room.
-B $6D95,$05,$05 The object of the type #N$59, with half sizes of #N$08 and
-. #N$08, a height of #N$0A and the flags #N$10.
-B $6D9A,$01,$01 The end of the template.
+B $6D95,$05,$05 The object of the type #N($59), with half sizes of #N$08 and
+. #N($08), a height of #N$0A and the flags #N$10.
+B $6D9A,$01,$01 Terminator.
 @ $6D9B label=Template_Harmful_Slider_X
 N $6D9B Template #N$1D: A spiked head that slides along x.
-B $6D9B,$05,$05 The object of the type #N$5C, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6DA0,$01,$01 The end of the template.
+B $6D9B,$05,$05 The object of the type #N($5C), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6DA0,$01,$01 Terminator.
 @ $6DA1 label=Template_Harmful_Slider_Y
 N $6DA1 Template #N$1E: A spiked head that slides along y.
-B $6DA1,$05,$05 The object of the type #N$5D, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$50.
-B $6DA6,$01,$01 The end of the template.
+B $6DA1,$05,$05 The object of the type #N($5D), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$50.
+B $6DA6,$01,$01 Terminator.
 @ $6DA7 label=Template_Well
 N $6DA7 Template #N$13: A well that makes a helper.
-B $6DA7,$05,$05 The object of the type #N$78, with half sizes of #N$0A and
-. #N$0A, a height of #N$0C and the flags #N$10.
-B $6DAC,$01,$01 The end of the template.
+B $6DA7,$05,$05 The object of the type #N($78), with half sizes of #N$0A and
+. #N($0A), a height of #N$0C and the flags #N$10.
+B $6DAC,$01,$01 Terminator.
 @ $6DAD label=Template_Flickering_Spark
 N $6DAD Template #N$14: A spark that wanders about the room.
-B $6DAD,$05,$05 The object of the type #N$10, with half sizes of #N$08 and
-. #N$08, a height of #N$0A and the flags #N$10.
-B $6DB2,$01,$01 The end of the template.
+B $6DAD,$05,$05 The object of the type #N($10), with half sizes of #N$08 and
+. #N($08), a height of #N$0A and the flags #N$10.
+B $6DB2,$01,$01 Terminator.
 @ $6DB3 label=Template_Cube
 N $6DB3 Template #N$17: A stone cube.
-B $6DB3,$05,$05 The object of the type #N$52, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6DB8,$01,$01 The end of the template.
+B $6DB3,$05,$05 The object of the type #N($52), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6DB8,$01,$01 Terminator.
 @ $6DB9 label=Template_Crumbling_Block
 N $6DB9 Template #N$18: A block that crumbles when it is stood on.
-B $6DB9,$05,$05 The object of the type #N$88, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6DBE,$01,$01 The end of the template.
+B $6DB9,$05,$05 The object of the type #N($88), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6DBE,$01,$01 Terminator.
 @ $6DBF label=Template_Conveyor_Block_Plus_X
 N $6DBF Template #N$19: A block that pushes along x.
-B $6DBF,$05,$05 The object of the type #N$8C, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6DC4,$01,$01 The end of the template.
+B $6DBF,$05,$05 The object of the type #N($8C), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6DC4,$01,$01 Terminator.
 @ $6DC5 label=Template_Conveyor_Block_Minus_X
 N $6DC5 Template #N$1A: A block that pushes back along x.
-B $6DC5,$05,$05 The object of the type #N$8D, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6DCA,$01,$01 The end of the template.
+B $6DC5,$05,$05 The object of the type #N($8D), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6DCA,$01,$01 Terminator.
 @ $6DCB label=Template_Conveyor_Block_Plus_Y
 N $6DCB Template #N$1B: A block that pushes along y.
-B $6DCB,$05,$05 The object of the type #N$8E, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6DD0,$01,$01 The end of the template.
+B $6DCB,$05,$05 The object of the type #N($8E), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6DD0,$01,$01 Terminator.
 @ $6DD1 label=Template_Conveyor_Block_Minus_Y
 N $6DD1 Template #N$1C: A block that pushes back along y.
-B $6DD1,$05,$05 The object of the type #N$8F, with half sizes of #N$08 and
-. #N$08, a height of #N$0C and the flags #N$10.
-B $6DD6,$01,$01 The end of the template.
+B $6DD1,$05,$05 The object of the type #N($8F), with half sizes of #N$08 and
+. #N($08), a height of #N$0C and the flags #N$10.
+B $6DD6,$01,$01 Terminator.
 
 w $6DD7 Sprite Table
 @ $6DD7 label=SpriteTable
@@ -2505,7 +2573,7 @@ B $7679,$D8,$08 #SPRITEDATA(crumbling-block-4)
 
 b $7751 Sprite: Spiked Head
 @ $7751 label=Sprite_Spiked_Head
-D $7751 The sprite of a spiked head, which is used for the object types #N$56,
+D $7751 The sprite of a spiked head, which is used for the object types #N($56),
 . #N$5C and #N$5D.
 B $7751,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $7752,$01,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -2642,7 +2710,7 @@ B $8177,$4E,$06 #SPRITEDATA(explosion-2)
 b $81C5 Sprite: Explosion 3
 @ $81C5 label=Sprite_Explosion_3
 D $81C5 The sprite of the third frame of an explosion, which is used for the
-. object types #N$42, #N$44 and #N$45.
+. object types #N($42), #N$44 and #N$45.
 B $81C5,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $81C6,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $81C7,$66,$06 #SPRITEDATA(explosion-3)
@@ -2682,7 +2750,7 @@ B $8315,$40,$04 #SPRITEDATA(projectile-3)
 b $8355 Font
 @ $8355 label=Font
 D $8355 The glyphs of the font, of #N$08 bytes each, for the codes #N$30 to
-. #N$5A, so that the digits are first. #R$BAEA draws them. #R$BC66 and #R$BB48
+. #N($5A), so that the digits are first. #R$BAEA draws them. #R$BC66 and #R$BB48
 . print with them.
 D $8355 #UDGTABLE { #FONT(font) } UDGTABLE#
 E $8355 View the equivalent code in;
@@ -2698,7 +2766,7 @@ L $8355,$08,$2B
 
 b $84AD Sprite: Spark
 @ $84AD label=Sprite_Spark
-D $84AD The sprite of a spark, which is used for the object types #N$10, #N$11
+D $84AD The sprite of a spark, which is used for the object types #N($10), #N$11
 . and #N$59.
 B $84AD,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $84AE,$01,$01 Height = #N(#PEEK(#PC)) pixels.
@@ -2752,9 +2820,9 @@ B $8879,$44,$04 #SPRITEDATA(player-icon)
 b $88BD Sprite: Stone Block
 @ $88BD label=Sprite_Stone_Block
 D $88BD The sprite of a stone block, which most of the blocks of the game use,
-. which is used for the object types #N$0B, #N$4E, #N$4F, #N$54, #N$55, #N$57,
-. #N$58, #N$5B, #N$79, #N$7A, #N$7B, #N$7C, #N$7D, #N$7E, #N$7F, #N$88, #N$8C,
-. #N$8D, #N$8E and #N$8F.
+. which is used for the object types #N($0B), #N($4E), #N($4F), #N($54),
+. #N($55), #N($57), #N($58), #N($5B), #N($79), #N($7A), #N($7B), #N($7C),
+. #N($7D), #N($7E), #N($7F), #N($88), #N($8C), #N($8D), #N$8E and #N$8F.
 B $88BD,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $88BE,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $88BF,$E8,$08 #SPRITEDATA(stone-block)
@@ -2815,7 +2883,7 @@ B $8C15,$140,$0A #SPRITEDATA(well)
 b $8D55 Sprite: Quest Object 1
 @ $8D55 label=Sprite_Quest_Object_1
 D $8D55 The sprite of the first of the objects of the quest, which is used for
-. the object types #N$70, #N$71, #N$72 and #N$73.
+. the object types #N($70), #N($71), #N$72 and #N$73.
 B $8D55,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $8D56,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $8D57,$138,$08 #SPRITEDATA(quest-object-1)
@@ -2823,7 +2891,7 @@ B $8D57,$138,$08 #SPRITEDATA(quest-object-1)
 b $8E8F Sprite: Quest Object 2
 @ $8E8F label=Sprite_Quest_Object_2
 D $8E8F The sprite of the second of the objects of the quest, which is taller,
-. which is used for the object types #N$74, #N$75, #N$76 and #N$77.
+. which is used for the object types #N($74), #N($75), #N$76 and #N$77.
 B $8E8F,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $8E90,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $8E91,$198,$08 #SPRITEDATA(quest-object-2)
@@ -2878,9 +2946,10 @@ B $9305,$90,$06 #SPRITEDATA(pentagram-stone-5)
 b $9395 Sprite: Empty
 @ $9395 label=Sprite_Empty
 D $9395 The sprite of a sprite with nothing in it, which is used for the object
-. types #N$00, #N$01, #N$18, #N$19, #N$1A, #N$1B, #N$53, #N$5E, #N$5F, #N$60,
-. #N$61, #N$62, #N$63, #N$64, #N$65, #N$66, #N$67, #N$68, #N$69, #N$6A, #N$6B,
-. #N$6C, #N$6D, #N$6E, #N$6F, #N$9D, #N$9E and #N$9F.
+. types #N($00), #N($01), #N($18), #N($19), #N($1A), #N($1B), #N($53), #N($5E),
+. #N($5F), #N($60), #N($61), #N($62), #N($63), #N($64), #N($65), #N($66),
+. #N($67), #N($68), #N($69), #N($6A), #N($6B), #N($6C), #N($6D), #N($6E),
+. #N($6F), #N($9D), #N$9E and #N$9F.
 B $9395,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $9396,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 
@@ -2943,7 +3012,7 @@ B $97EF,$5A,$06 #SPRITEDATA(player-legs-3)
 b $9849 Sprite: Player Legs 2
 @ $9849 label=Sprite_Player_Legs_2
 D $9849 The sprite of a frame of the legs of the player, which is used for the
-. object types #N$15, #N$1D, #N$21 and #N$23.
+. object types #N($15), #N($1D), #N$21 and #N$23.
 B $9849,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $984A,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $984B,$5A,$06 #SPRITEDATA(player-legs-2)
@@ -2951,7 +3020,7 @@ B $984B,$5A,$06 #SPRITEDATA(player-legs-2)
 b $98A5 Sprite: Player Legs 1
 @ $98A5 label=Sprite_Player_Legs_1
 D $98A5 The sprite of a frame of the legs of the player, which is used for the
-. object types #N$12, #N$14 and #N$20.
+. object types #N($12), #N$14 and #N$20.
 B $98A5,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $98A6,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $98A7,$5A,$06 #SPRITEDATA(player-legs-1)
@@ -2959,7 +3028,7 @@ B $98A7,$5A,$06 #SPRITEDATA(player-legs-1)
 b $9901 Sprite: Player Legs 5
 @ $9901 label=Sprite_Player_Legs_5
 D $9901 The sprite of a frame of the legs of the player, which is used for the
-. object types #N$13, #N$25 and #N$27.
+. object types #N($13), #N$25 and #N$27.
 B $9901,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $9902,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $9903,$6C,$06 #SPRITEDATA(player-legs-5)
@@ -3030,7 +3099,7 @@ B $9DB1,$A0,$04 #SPRITEDATA(root-door-frame)
 b $9E51 Sprite: Round Pedestal
 @ $9E51 label=Sprite_Round_Pedestal
 D $9E51 The sprite of a round pedestal, which is used for the object types
-. #N$0A, #N$48, #N$4C and #N$4D.
+. #N($0A), #N($48), #N$4C and #N$4D.
 B $9E51,$01,$01 Width = #N(#PEEK(#PC)&$0F) bytes.
 B $9E52,$01,$01 Height = #N(#PEEK(#PC)) pixels.
 B $9E53,$C8,$08 #SPRITEDATA(round-pedestal)
@@ -3170,7 +3239,7 @@ B $A70D,$01
 
 g $A70E Helper Active Flag
 @ $A70E label=HelperActiveFlag
-D $A70E Set to #N$01 while the helper creature (object type #N$5A, see
+D $A70E Set to #N$01 while the helper creature (object type #N($5A), see
 . #R$CFD2) exists, so that only one is created at a time.
 B $A70E,$01
 
@@ -3252,7 +3321,7 @@ B $A720,$01
 
 g $A721 Lives
 @ $A721 label=Lives
-D $A721 Number of lives the player has left. It starts at #N$05, is lowered
+D $A721 Number of lives the player has left. It starts at #N($05), is lowered
 . by #R$C2EC each time the player is sent back to the start and is raised by
 . #R$CF68.
 B $A721,$01
@@ -3804,7 +3873,7 @@ N $B0E3 Remember which store entry the object came from, and clear the workspace
 @ $B0EE label=LoadRoomObjects_ClearWorkspace
   $B0EE,$04 Write #N$00 to the workspace and move on, until all the bytes are
 . done.
-  $B0F2,$03 Set #REGde to #N$FFE0, which is minus the size of a record.
+  $B0F2,$03 Set #REGde to #N($FFE0), which is minus the size of a record.
   $B0F5,$01 Move #REGhl back to the start of the record.
   $B0F6,$03 Copy #REGhl to #REGix (using the stack).
 N $B0F9 Lift the object until it is not inside any other object, unless it is an
@@ -3818,7 +3887,7 @@ N $B0F9 Lift the object until it is not inside any other object, unless it is an
   $B107,$03 Fetch the height of the object.
   $B10A,$02 Add #N$0C to it.
   $B10C,$03 Write it back.
-  $B10F,$02 Jump back to #R$B102 to test the object again.
+  $B10F,$02 Jump to #R$B102 to test the object again.
 @ $B111 label=LoadRoomObjects_Next
   $B111,$01 Restore the entry counter and the room number from the stack.
   $B112,$02 Decrease the entry counter and look at the next store entry until
@@ -3858,7 +3927,7 @@ N $B135 Copy the record into the store entry.
   $B139,$01 Stash the record counter on the stack.
   $B13A,$03 Set a counter in #REGbc of #N$10 bytes.
   $B13D,$02 Copy the first #N$10 bytes of the object to the store entry.
-  $B13F,$01 Restore the record counter.
+  $B13F,$01 Restore the record counter from the stack.
   $B140,$03 Set the size of an object record in #REGde.
   $B143,$02 Jump to #R$B131 to move on to the next record.
 
@@ -3866,7 +3935,7 @@ c $B145 Copy Score To Screen
 @ $B145 label=CopyScoreToScreen
 D $B145 Copies the part of the buffer that holds the score to the screen. It is
 . #N$06 bytes wide and #N$08 pixel lines tall, and its bottom left corner is at
-. (#N$B8, #N$09).
+. (#N($B8), #N$09).
 N $B145 Work out the addresses of the area in the screen and in the buffer.
   $B145,$03 Set #REGb to the y co-ordinate and #REGc to the x co-ordinate of the
 . area.
@@ -3948,65 +4017,92 @@ N $B188 Move up to the next pixel line of the screen.
 
 c $B19E Draw Changed Objects
 @ $B19E label=DrawChangedObjects
-D $B19E Redraws the objects that need it. For each object that has moved, this
-. works out the rectangle that covers the old and the new positions of its
-. sprite, clears it in the buffer and queues it on the stack. The objects are
-. then sorted and drawn into the buffer, and finally each queued rectangle is
-. copied to the screen.
-D $B19E When the room has just been built the whole room is redrawn instead, so
-. no rectangles are queued.
+D $B19E Updates the playing area for the objects that have changed. First the
+. sprites of the objects that moved are wiped out of the screen buffer: for each
+. object in the list at #R$B55A that is flagged to be wiped, the area covered by
+. the old and the new position of its sprite is cleared, and the area is kept on
+. the stack. Then the objects are drawn in order and the objects that the player
+. is carrying are shown. Last, each of the areas that were kept is copied from
+. the buffer to the screen. When the panel is to be drawn again, the whole
+. screen is going to be drawn, so none of the areas are wiped.
 E $B19E View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D59F }
 . { #ALIENEIGHT$CEAB }
 . LIST#
 N $B19E Start with no rectangles queued, unless the whole room needs drawing.
+N $B19E Wipe each flagged sprite, unless the panel is to be drawn again.
   $B19E,$04 Write #N$00 to #R$A710.
   $B1A2,$02 Stash #REGix on the stack.
-  $B1A4,$07 Jump to #R$B252 if the room has just been built.
-  $B1AB,$06 Point #R$A712 at the start of the list of objects to draw, #R$B55A.
-@ $B1B1 label=DrawChangedObjects_NextEntry
+N $B1A4 Jump to #R$B252 if the room has just been built.
+  $B1A4,$03 Fetch #R$A711.
+  $B1A7,$04 Jump to #R$B252 if it is not zero.
+N $B1AB Point #R$A712 at the start of the list of objects to draw, #R$B55A.
+  $B1AB,$03 Point #REGhl at #R$B55A.
+  $B1AE,$03 Set #R$A712.
 N $B1B1 Take the next object from the list and skip it if it has not moved.
+@ $B1B1 label=DrawChangedObjects_NextEntry
   $B1B1,$03 Fetch the list pointer from #R$A712.
-  $B1B4,$05 Fetch the object number and move on the list pointer.
+N $B1B4 Fetch the object number and move on the list pointer.
+  $B1B4,$01 Fetch the index of the object.
+  $B1B5,$01 Increment the list pointer.
+  $B1B6,$03 Update #R$A712.
   $B1B9,$05 Jump to #R$B252 if the end of the list has been reached.
+N $B1BE Get the address of the object record.
   $B1BE,$03 Call #R$B520 to get the address of the object record.
-  $B1C1,$03 Copy it to #REGix (using the stack).
+  $B1C1,$03 Copy the address of the object record to #REGix (using the stack).
   $B1C4,$06 Jump to #R$B1B1 if the object has not moved.
   $B1CA,$04 Clear the flag that says it has moved.
-N $B1CE Find the left edge of the rectangle: the lower of the old and new x
-. positions.
-  $B1CE,$09 Jump to #R$B248 if the new x position is lower than the previous
-. one.
+N $B1CE The left edge of the area is the lower of the old and the new pixel x
+. position. The width is worked out in bytes of the screen from there to the
+. higher of the old and the new right edge.
+  $B1CE,$06 Subtract the old pixel x from the new.
+  $B1D4,$03 Jump to #R$B248 if carry is set.
   $B1D7,$03 Use the previous x position as the left edge.
-@ $B1DA label=DrawChangedObjects_RightEdge
 N $B1DA Find the right edge, in bytes: the larger of the old and new right
 . edges.
-  $B1DA,$06 Divide the previous x position by eight, to get its byte column.
+@ $B1DA label=DrawChangedObjects_RightEdge
+  $B1DA,$03 Fetch the old pixel x position.
+  $B1DD,$03 Divide it by eight.
   $B1E0,$02,b$01 Keep only the five bits of the column.
-  $B1E2,$04 Add the previous width to get the old right edge.
-  $B1E6,$06 Divide the new x position by eight, to get its byte column.
+N $B1E2 Add the previous width to get the old right edge.
+  $B1E2,$03 Add the old width in bytes.
+  $B1E5,$01 Copy it to #REGe.
+N $B1E6 Divide the new x position by eight, to get its byte column.
+  $B1E6,$03 Fetch the new pixel x position.
+  $B1E9,$03 Divide it by eight to get the byte column.
   $B1EC,$02,b$01 Keep only the five bits of the column.
   $B1EE,$03 Add the new width to get the new right edge.
-  $B1F1,$01 Compare it with the old right edge.
-  $B1F2,$02 Jump to #R$B1F5 if the new right edge is lower.
+N $B1F1 Compare it with the old right edge.
+  $B1F1,$03 Jump to #R$B1F5 if the new right edge is lower.
   $B1F4,$01 Use the new right edge.
+N $B1F5 Divide the left edge by eight to get its byte column.
 @ $B1F5 label=DrawChangedObjects_Width
-  $B1F5,$04 Divide the left edge by eight to get its byte column.
+  $B1F5,$01 Fetch #REGc.
+  $B1F6,$03 Divide it by eight.
   $B1F9,$02,b$01 Keep only the five bits of the column.
   $B1FB,$01 Stash the left column in #REGb.
-  $B1FC,$03 Subtract it from the right edge to get the width of the rectangle in
+N $B1FC Subtract it from the right edge to get the width of the rectangle in
 . bytes, in #REGh.
-N $B1FF Find the bottom edge: the lower of the old and new y positions.
-  $B1FF,$08 Jump to #R$B24D if the new y position is lower than the previous
-. one.
+  $B1FC,$01 Fetch #REGe.
+  $B1FD,$01 Subtract #REGb.
+  $B1FE,$01 Copy it to #REGh.
+N $B1FF The bottom edge of the area is the lower of the old and the new pixel y
+. position. The height is worked out from there to the higher of the old and the
+. new top edge.
+  $B1FF,$03 Fetch the new pixel y position.
+  $B202,$03 Subtract the old pixel y.
+  $B205,$02 Jump to #R$B24D if carry is set.
   $B207,$03 Use the previous y position as the bottom edge.
-@ $B20A label=DrawChangedObjects_TopEdge
 N $B20A Find the top edge: the higher of the old and new tops, and so the
 . height.
-  $B20A,$07 Add the previous height to the previous y position to get the old
-. top.
-  $B211,$06 Add the new height to the new y position to get the new top.
+@ $B20A label=DrawChangedObjects_TopEdge
+  $B20A,$03 Fetch the old pixel y position.
+  $B20D,$03 Add the old height in lines.
+  $B210,$01 Copy it to #REGe.
+N $B211 Add the new height to the new y position to get the new top.
+  $B211,$03 Fetch the new pixel y position.
+  $B214,$03 Add the new height in lines.
   $B217,$01 Compare it with the old top.
   $B218,$02 Jump to #R$B21B if the new top is higher or the same.
   $B21A,$01 Use the old top.
@@ -4021,33 +4117,50 @@ N $B21D Clip the rectangle to the top of the screen, and ignore it when it is
   $B222,$01 Add the height to get the top edge.
   $B223,$02 Subtract #N$C0 to see how far it is above the screen.
   $B225,$02 Jump to #R$B22B if it is not above the screen.
-  $B227,$04 Reduce the height by that amount, so the rectangle ends at the top
-. of the screen.
+N $B227 Reduce the height by that amount, so the rectangle ends at the top of
+. the screen.
+  $B227,$02 Negate #REGa.
+  $B229,$01 Add #REGl.
+  $B22A,$01 Copy it to #REGl.
 @ $B22B label=DrawChangedObjects_Queue
-N $B22B Queue the rectangle on the stack.
+N $B22B Wipe the area and keep it on the stack.
   $B22B,$03 Call #R$B394 to get the screen address of the rectangle in #REGde.
   $B22E,$03 Call #R$B37F to get the buffer address in #REGbc.
-  $B231,$06 Swap so that #REGhl is the buffer address, #REGb the width and #REGc
-. the height.
-  $B237,$07 Count the rectangle in #R$A710.
+N $B231 Swap so that #REGhl is the buffer address, #REGb the width and #REGc the
+. height.
+  $B231,$03 Exchange #REGl and #REGc.
+  $B234,$03 Exchange #REGh and #REGb.
+N $B237 Count the rectangle in #R$A710.
+  $B237,$03 Fetch #R$A710.
+  $B23A,$01 Increment #REGa.
+  $B23B,$03 Set #R$A710.
   $B23E,$03 Stash the width and height, the screen address and the buffer
 . address on the stack.
   $B241,$01 Set #REGa to #N$00.
   $B242,$03 Call #R$B6DD to clear the rectangle in the buffer.
-  $B245,$03 Jump back to #R$B1B1 to look at the next object.
+  $B245,$03 Jump to #R$B1B1 to look at the next object.
+N $B248 Use the new x position as the left edge, and carry on at #R$B1DA.
 @ $B248 label=DrawChangedObjects_NewLeft
-  $B248,$05 Use the new x position as the left edge, and carry on at #R$B1DA.
+  $B248,$03 Copy the new pixel x to #REGc.
+  $B24B,$02 Jump to #R$B1DA.
+N $B24D Use the new y position as the bottom edge, and carry on at #R$B20A.
 @ $B24D label=DrawChangedObjects_NewBottom
-  $B24D,$05 Use the new y position as the bottom edge, and carry on at #R$B20A.
-
+  $B24D,$03 Copy the new pixel y to #REGb.
+  $B250,$02 Jump to #R$B20A.
 @ $B252 label=DrawChangedObjects_Draw
-N $B252 Draw the objects, then copy the queued rectangles to the screen.
+N $B252 Draw the objects, then copy the wiped areas to the screen.
   $B252,$03 Call #R$B58A to sort the objects and draw them into the buffer.
   $B255,$03 Call #R$BA34 to redraw the inventory if it has changed.
-  $B258,$0A Add the number of rectangles queued to the count of objects drawn in
+N $B258 Add the number of rectangles queued to the count of objects drawn in
 . #R$A714.
+  $B258,$03 Point #REGhl at #R$A710.
+  $B25B,$03 Fetch #R$A714.
+  $B25E,$01 Add #R$A710.
+  $B25F,$03 Set #R$A714.
+N $B262 Jump to #R$B275 if there are no rectangles left on the stack.
 @ $B262 label=DrawChangedObjects_Copy
-  $B262,$07 Jump to #R$B275 if there are no rectangles left on the stack.
+  $B262,$03 Point #REGhl at #R$A710.
+  $B265,$04 Jump to #R$B275 if it is zero.
   $B269,$01 Count the rectangle off.
   $B26A,$03 Fetch the buffer address, the screen address and the width and
 . height from the stack.
@@ -4058,7 +4171,6 @@ N $B252 Draw the objects, then copy the queued rectangles to the screen.
 @ $B275 label=DrawChangedObjects_Done
   $B275,$02 Restore #REGix from the stack.
   $B277,$01 Return.
-
 c $B278 Copy Block To Screen
 @ $B278 label=CopyBlockToScreen
 D $B278 Copies a rectangle from the buffer to the screen, a line at a time.
@@ -4098,7 +4210,7 @@ c $B29A Build Lookup Tables
 @ $B29A label=BuildLookupTables
 D $B29A Builds the tables that the sprite drawing and flipping code uses.
 . #R$F100 gets the reversed bits of each byte value. The shift tables fill the
-. pages from #N$F200 to #N$FFFF: for each of the seven shifts, one page holds
+. pages from #R$F200 to #N$FFFF: for each of the seven shifts, one page holds
 . the low byte and the page below it holds the high byte of every byte value
 . shifted left by that number of bits, with all the bits inverted.
 E $B29A View the equivalent code in;
@@ -4128,7 +4240,7 @@ N $B29A Build the shift tables, one pair of pages for each shift of one to seven
   $B2B1,$01 Move on to the next byte value.
   $B2B2,$02 Jump to #R$B29C until all #N$100 byte values are done.
 N $B2B4 Build the table of bytes with the order of their bits reversed.
-  $B2B4,$03 Start the table of reversed bytes at #N$F100.
+  $B2B4,$03 Start the table of reversed bytes at #R$F100.
 @ $B2B7 label=BuildLookupTables_Reverse
   $B2B7,$01 Fetch the byte value to be reversed in #REGd.
   $B2B8,$02 Set a counter in #REGb of eight bits.
@@ -4143,40 +4255,38 @@ N $B2B4 Build the table of bytes with the order of their bits reversed.
 
 c $B2C5 Calculate Pixel Coordinates
 @ $B2C5 label=CalculatePixelCoordinates
-D $B2C5 Works out where the sprite of an object goes on the screen, from its
-. position in the room. Objects are shown in an isometric view: moving along x
-. takes the object down and to the right and moving along y takes it up and to
-. the right, while height lifts it straight up.
-D $B2C5 The screen x co-ordinate is x + y - #N$80 plus the sprite offset in the
-. object, and is set to zero if that comes out below zero. The screen y
-. co-ordinate is (y - x + #N$80) / 2 + z - #N$68 plus the sprite offset in the
-. object. The y co-ordinate counts up from the bottom of the screen.
+D $B2C5 Works out the pixel position of an object on the screen from its x, y
+. and z positions. The pixel x position is x + y - #N$80 and the pixel y
+. position (from the bottom of the screen) is half of y - x + #N($80), plus z,
+. less #N($68), each with the adjustments of the object added. The pixel x
+. position is set to zero if it would be below zero.
 E $B2C5 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CFD2 }
 . { #KNIGHTLORE$D6C9 }
 . LIST#
-R $B2C5 IX Object record
-R $B2C5 O:F Carry flag set if the sprite is not above the top of the screen
-N $B2C5 Work out the screen x co-ordinate.
-  $B2C5,$06 Add the y position of the object to its x position.
+R $B2C5 IX The address of the object
+R $B2C5 O:F The carry flag is set if the sprite is on the screen
+N $B2C5 Work out the pixel x position.
+  $B2C5,$03 Fetch the x position of the object.
+  $B2C8,$03 Add the y position.
   $B2CB,$02 Subtract #N$80 to centre the room on the screen.
   $B2CD,$03 Add the horizontal sprite offset.
   $B2D0,$02 Jump to #R$B2D3 if the result is not below zero.
-  $B2D2,$01 Otherwise use zero.
+  $B2D2,$01 Set #REGa to #N$00.
 @ $B2D3 label=CalculatePixelCoordinates_SetX
   $B2D3,$03 Write the screen x co-ordinate of the object.
-N $B2D6 Work out the screen y co-ordinate.
-  $B2D6,$06 Subtract the x position of the object from its y position.
+N $B2D6 Work out the pixel y position.
+  $B2D6,$03 Fetch the y position of the object.
+  $B2D9,$03 Subtract the x position.
   $B2DC,$02 Add #N$80.
   $B2DE,$02 Halve it.
   $B2E0,$03 Add the height of the object.
   $B2E3,$02 Subtract #N$68 to put the floor at the bottom of the screen.
   $B2E5,$03 Add the vertical sprite offset.
   $B2E8,$03 Write the screen y co-ordinate of the object.
-  $B2EB,$02 Compare it with #N$C0, the number of lines on the screen.
+  $B2EB,$02 Compare it with #N($C0), the number of lines on the screen.
   $B2ED,$01 Return, with the carry flag set when the sprite is on the screen.
-
 c $B2EE Get Sprite Address
 @ $B2EE label=GetSpriteAddress
 D $B2EE Makes sure that the sprite of an object faces the way the object does.
@@ -4197,10 +4307,14 @@ E $B2EE View the equivalent code in;
 . LIST#
 R $B2EE IX Object record
 R $B2EE O:DE Address of the sprite
-N $B2EE Find the sprite of the object.
-  $B2EE,$06 Fetch the type of the object and double it.
-  $B2F4,$04 Find the entry for the type in the sprite table, #R$6DD7.
-  $B2F8,$03 Fetch the address of the sprite in #REGde.
+N $B2EE Find the address of the sprite.
+  $B2EE,$03 Fetch the sprite number.
+  $B2F1,$02 Set #REGh to #N$00.
+  $B2F3,$01 Double #REGhl.
+N $B2F4 Find the entry for the type in the sprite table, #R$6DD7.
+  $B2F4,$03 Point #REGbc at #R$6DD7.
+  $B2F7,$01 Add #REGbc to #REGhl.
+  $B2F8,$03 Fetch the address of the sprite.
   $B2FB,$04 Jump to #R$B302 if the sprite exists, which is when its first byte
 . is not zero.
   $B2FF,$02 Otherwise discard the return address of the caller...
@@ -4224,7 +4338,7 @@ N $B302 Flip the sprite upside down if its state differs from that of the
   $B319,$05 Set #REGde to the height and clear #REGhl.
 @ $B31E label=GetSpriteAddress_Multiply
   $B31E,$03 Multiply the height by the row length, to get the size of the data.
-  $B321,$02 Restore the address of the data and the row length.
+  $B321,$02 Restore the address of the data and the row length from the stack.
   $B323,$01 Add the address of the data to get the address of the end of it.
   $B324,$01 Put the end of the sprite data against its start.
   $B325,$04 Call #R$B519 to add the row length to #REGhl, which then points to
@@ -4260,14 +4374,15 @@ N $B343 Mirror the sprite if its state differs from that of the object.
   $B358,$01 Move on to the first row.
   $B359,$01 Start at the first row of the sprite.
   $B35A,$01 Stash the address of the first row on the stack.
-  $B35B,$01 Switch to the alternate registers.
-  $B35C,$01 Restore it into #REGhl' to read the data with.
+  $B35B,$01 Switch to the shadow registers.
+  $B35C,$01 Restore it into #REGhl' from the stack to read the
+. data with.
   $B35D,$02 Use the table of reversed bytes, whose page is #N$F1.
   $B35F,$01 Switch back to the main registers.
 @ $B360 label=GetSpriteAddress_ReadRow
 N $B360 Read a row, reversing the bits of each byte, and stack each pair of
 . bytes.
-  $B360,$01 Switch to the alternate registers.
+  $B360,$01 Switch to the shadow registers.
   $B361,$03 Look up the mask byte in the table of reversed bytes, and keep the
 . result in the low byte of #REGde'.
   $B364,$01 Move on to the pixel byte.
@@ -4299,65 +4414,67 @@ c $B37F Calculate Buffer Address
 @ $B37F label=CalculateBufferAddress
 D $B37F Finds the address in the buffer of the byte that holds a pixel. The
 . buffer is #N$20 bytes wide with its bottom line first, so the address is
-. #N$D88F + y * #N$20 + x / #N$08.
+. #R$D88F + y * #N$20 + x / #N$08.
 E $B37F View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D811 }
 . { #ALIENEIGHT$D120 }
 . LIST#
-R $B37F B Pixel y co-ordinate, counting up from the bottom of the screen
-R $B37F C Pixel x co-ordinate
-R $B37F O:BC Address in the buffer
+R $B37F B The pixel y position
+R $B37F C The pixel x position
+R $B37F O:BC The address in the buffer
+N $B37F Work out the byte from the position.
   $B37F,$01 Stash #REGhl on the stack.
-  $B380,$0C Divide the pixel co-ordinates by eight.
+N $B380 Divide the pixel co-ordinates by eight.
+  $B380,$04 Divide #REGbc by two.
+  $B384,$04 Divide #REGbc by four.
+  $B388,$04 Divide #REGbc by eight.
   $B38C,$03 Start at the first byte of the buffer, #R$D88F.
-  $B38F,$01 Add #REGbc to get the address of the byte.
+  $B38F,$01 Add #REGbc to #REGhl.
   $B390,$02 Keep the address in the buffer.
-  $B392,$01 Restore #REGhl from the stack.
-  $B393,$01 Return.
+  $B392,$02 Restore #REGhl from the stack and return.
 
 c $B394 Calculate Screen Address
 @ $B394 label=CalculateScreenAddress
 D $B394 Finds the address in the display file of the byte that holds a pixel.
-. The y co-ordinate counts up from the bottom of the screen, so the first step
-. is to invert it. A y co-ordinate of #N$C0 or more is above the top of the
+. The pixel y position counts up from the bottom of the screen, so the first
+. step is to invert it. A y position of #N$C0 or more is above the top of the
 . screen, and gives an address below #N$4000.
 E $B394 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D826 }
 . { #ALIENEIGHT$D135 }
 . LIST#
-R $B394 B Pixel y co-ordinate, counting up from the bottom of the screen
-R $B394 C Pixel x co-ordinate
-R $B394 O:DE Address in the display file
-N $B394 Start with the column, which is the x co-ordinate divided by eight.
-  $B394,$04 Divide the x co-ordinate by eight.
+R $B394 B The pixel y position
+R $B394 C The pixel x position
+R $B394 O:DE The address on the screen
+N $B394 Work out the byte from the position.
+  $B394,$04 Divide #REGc by eight.
   $B398,$02,b$01 Keep only the five bits of the column.
   $B39A,$01 Set #REGe to the column.
 N $B39B Find the line within the character square.
   $B39B,$02 Invert the y co-ordinate, to count down from the top of the screen.
   $B39D,$02,b$01 Keep the three bits of the line within the character square.
-  $B39F,$01 Stash that in #REGaf'.
+  $B39F,$01 Copy it to #REGa'.
 N $B3A0 Find the character row within the third of the screen, and merge it with
 . the column to make the low byte of the address.
-  $B3A0,$04 Invert the y co-ordinate and rotate the three bits of the character
-. row up to the top of #REGa.
-  $B3A4,$02,b$01 Keep only those three bits.
+  $B3A0,$02 Fetch #REGb and invert it.
+  $B3A2,$02 Move the character row into bits 5 to 7.
+  $B3A4,$02,b$01 Keep bits 5 to 7.
   $B3A6,$01 Combine them with the column in #REGe.
-  $B3A7,$01 Set #REGe to the low byte of the address.
+  $B3A7,$01 Copy it to #REGe.
 N $B3A8 Find the third of the screen and merge it with the line to make the high
 . byte of the address.
-  $B3A8,$05 Invert the y co-ordinate and rotate the two bits of the third down
-. to bits 3 and 4.
-  $B3AD,$02,b$01 Keep only those two bits.
-  $B3AF,$01 Set #REGd to the third.
+  $B3A8,$02 Fetch #REGb and invert it.
+  $B3AA,$03 Move the third into bits 3 and 4.
+  $B3AD,$02,b$01 Keep bits 3 and 4.
+  $B3AF,$01 Copy it to #REGd.
   $B3B0,$01 Fetch the line within the character square.
-  $B3B1,$01 Combine it with the third.
-  $B3B2,$02 Add #N$38, which corrects for the inverted y co-ordinate and adds
+  $B3B1,$01 Merge #REGd.
+  $B3B2,$02 Add #N($38), which corrects for the inverted y co-ordinate and adds
 . the display file base of #N$40.
-  $B3B4,$01 Set #REGd to the high byte of the address.
+  $B3B4,$01 Copy it to #REGd.
   $B3B5,$01 Return.
-
 c $B3B6 Calculate Attribute Address
 @ $B3B6 label=CalculateAttributeAddress
 D $B3B6 Finds the address in the attribute file of the colour square that holds
@@ -4372,6 +4489,7 @@ E $B3B6 View the equivalent code in;
 R $B3B6 H Pixel y co-ordinate, counting up from the bottom of the screen
 R $B3B6 L Pixel x co-ordinate
 R $B3B6 O:DE Address in the attribute file
+N $B3B6 Turn the pixel position into a character offset.
   $B3B6,$01 Stash #REGhl on the stack.
   $B3B7,$03 Invert the y co-ordinate.
   $B3BA,$08 Shift the inverted y co-ordinate right four times.
@@ -4380,7 +4498,8 @@ R $B3B6 O:DE Address in the attribute file
   $B3C4,$04 Shift #REGh again, and rotate the bit shifted out into #REGl.
   $B3C8,$04 Shift #REGh once more, and rotate the bit shifted out into #REGl.
 . This leaves #REGhl as the character row times #N$20 plus the column.
-  $B3CC,$03 Set #REGde to #N$5700, the base of the attribute file less #N$100.
+N $B3CC Add the attribute file base.
+  $B3CC,$03 Set #REGde to #N($5700), the base of the attribute file less #N$100.
   $B3CF,$01 Add the offset to get the address of the attribute.
   $B3D0,$01 Keep the attribute address.
   $B3D1,$01 Restore #REGhl from the stack.
@@ -4414,7 +4533,7 @@ R $B3D3 IX Object record
 N $B3D3 An object of type #N$01 only marks an area to be erased, so it is freed
 . and not drawn.
   $B3D3,$07 Jump to #R$B3DF if the type of the object is not #N$01.
-  $B3DA,$04 Set the type of the object to #N$00, which frees it.
+  $B3DA,$04 Set the type of the object to #N($00), which frees it.
   $B3DE,$01 Return.
 @ $B3DF label=DrawObject_Project
 N $B3DF Work out where on the screen the sprite goes and fetch the sprite,
@@ -4447,15 +4566,16 @@ N $B400 Work out the displacement that jumps into the shifted code at the first
   $B401,$02,b$01 Keep the width (which is at most five).
   $B403,$04 Multiply it by sixteen, the size of a unit.
   $B407,$02 Negate it.
-  $B409,$02 Add #N$50, the distance from the displacement to the end of the
+  $B409,$02 Add #N($50), the distance from the displacement to the end of the
 . units.
 @ $B40B label=DrawObject_SetOffset
-  $B40B,$03 Write it into the jump that starts the drawing, at #N$B47C.
+  $B40B,$03 Write it into the jump that starts the drawing, at
+. #R$B47B(#N$B47C).
 N $B40E Work out the amount to add to the buffer address to get from the end of
 . a row of the sprite to the start of the next.
   $B40E,$02 Fetch the width, and invert it.
-  $B410,$02 Add #N$22, which makes the amount #N$21 less the width.
-  $B412,$03 Write it to the code that finishes a row, at #N$B4D0.
+  $B410,$02 Add #N($22), which makes the amount #N$21 less the width.
+  $B412,$03 Write it to the code that finishes a row, at #R$B4CE(#N$B4D0).
 N $B415 Fetch the height of the sprite, and cut it down if the sprite sticks out
 . above the top of the screen.
   $B415,$02 Fetch the height and move on to the data.
@@ -4484,18 +4604,17 @@ N $B43E Set up the drawing code for a sprite that is not shifted. Each unit of
   $B445,$01 Stash the width in #REGb.
   $B446,$03 Multiply it by eight, the size of a unit.
   $B449,$02 Negate it.
-  $B44B,$02 Subtract #N$06, which makes the jump end at the last unit.
+  $B44B,$02 Subtract #N($06), which makes the jump end at the last unit.
   $B44D,$02 Jump to #R$B40B to write the displacement and carry on.
 
 c $B44F Draw Aligned Columns
 @ $B44F label=DrawAlignedColumns
-D $B44F Draws the rows of a sprite that is not shifted. There is one unit of
-. code for each byte column of the sprite, and the first unit that is used
-. depends on the width of the sprite: the jump at #R$B47B is patched with a
-. displacement that enters the run at the right place. The last unit finishes by
-. jumping to #R$B4CE.
-D $B44F Every unit fetches a mask and a pixel byte, clears the bits of the
-. buffer under the mask and sets the pixel bits.
+D $B44F Draws the columns of a sprite which is not shifted or flipped. There is
+. a piece of code for each of up to five columns, and the code for the width of
+. the sprite is where the jump at #R$B47B starts. Each piece takes the mask and
+. the pixels for one byte of the row from the sprite data on the stack, wipes
+. the screen where the mask is and puts the pixels in. The buffer address is in
+. #REGbc.
 E $B44F View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D780 }
@@ -4505,23 +4624,33 @@ E $B44F View the equivalent code in;
 . LIST#
 N $B44F The first unit of the run, which is used by sprites of five bytes wide.
   $B44F,$01 Fetch the mask byte into #REGe and the pixel byte into #REGd.
-  $B450,$01 Fetch the byte from the buffer.
-  $B451,$01 Invert it.
-  $B452,$01 Set the mask bits (which clears them once it is inverted back).
-  $B453,$01 Invert it back, which leaves the bits under the mask cleared.
+N $B450 Fetch the byte from the buffer.
+  $B450,$04 Clear the screen bits under the mask.
   $B454,$01 Set the pixel bits.
-  $B455,$01 Write the byte to the buffer.
-  $B456,$01 Move on to the next byte of the buffer.
+N $B455 Write the byte to the buffer.
+  $B455,$02 Store the byte and move on to the next.
 N $B457 The second unit, which is used by sprites that are four bytes wide.
-  $B457,$08 Draw the second byte column in the same way as the first.
+  $B457,$01 Fetch the mask into #REGe and the pixels into #REGd.
+  $B458,$04 Clear the screen bits under the mask.
+  $B45C,$01 Add the pixels.
+  $B45D,$02 Store the byte and move on to the next.
 N $B45F The third unit, which is used by sprites that are three bytes wide.
-  $B45F,$08 Draw the third byte column.
+  $B45F,$01 Fetch the mask into #REGe and the pixels into #REGd.
+  $B460,$04 Clear the screen bits under the mask.
+  $B464,$01 Add the pixels.
+  $B465,$02 Store the byte and move on to the next.
 N $B467 The fourth unit, which is used by sprites that are two bytes wide.
-  $B467,$08 Draw the fourth byte column.
+  $B467,$01 Fetch the mask into #REGe and the pixels into #REGd.
+  $B468,$04 Clear the screen bits under the mask.
+  $B46C,$01 Add the pixels.
+  $B46D,$02 Store the byte and move on to the next.
 N $B46F The last unit, which is used by sprites that are one byte wide.
-  $B46F,$07 Draw the last byte column, but without moving on to the next byte.
+  $B46F,$01 Fetch the mask into #REGe and the pixels into #REGd.
+  $B470,$04 Clear the screen bits under the mask.
+  $B474,$01 Add the pixels.
+  $B475,$01 Store the byte.
+N $B476 Finish the row.
   $B476,$03 Jump to #R$B4CE to finish the row.
-
 c $B479 Draw Lines
 @ $B479 label=DrawLines
 D $B479 Draws the rows of a sprite, which is shifted if its x co-ordinate is not
@@ -4547,7 +4676,8 @@ R $B479 H Page of the shift table for the high part of the sprite bytes
   $B479,$01 Stash the number of rows in #REGaf'.
   $B47A,$01 Fetch the first byte of the buffer row.
 @ $B47B label=DrawLines_Jump
-  $B47B,$02 Jump into the run of units. The displacement is patched at #N$B47C.
+  $B47B,$02 Jump into the run of units. The displacement is patched at
+. #R$B47B(#N$B47C).
 N $B47D The first unit of the run, which is used by sprites of five bytes wide.
 @ $B47D label=DrawLines_FirstUnit
   $B47D,$01 Fetch the mask byte into #REGe and the pixel byte into #REGd.
@@ -4574,7 +4704,7 @@ N $B4CD Write the last byte of the row and move to the next row.
 @ $B4CE label=DrawLines_FinishRow
   $B4CE,$01 Fetch the low byte of the buffer address.
   $B4CF,$02 Add the amount that takes the address to the start of the next row.
-. This is patched at #N$B4D0.
+. This is patched at #R$B4CE(#N$B4D0).
   $B4D1,$01 Set the low byte of the buffer address.
   $B4D2,$01 Fetch the high byte of the buffer address.
   $B4D3,$02 Add the carry.
@@ -4607,25 +4737,25 @@ N $B4E0 Return unless CAPS SHIFT or SPACE is the only key being pressed.
 N $B4EE Wait for the key to be released.
 @ $B4EE label=PauseGame_WaitRelease
   $B4EE,$05 Read the keyboard rows that hold CAPS SHIFT and SPACE.
-  $B4F3,$04 Jump back to #R$B4EE if CAPS SHIFT or SPACE is still pressed.
+  $B4F3,$04 Jump to #R$B4EE if CAPS SHIFT or SPACE is still pressed.
   $B4F7,$04 Set up the system variables for the ROM interrupt routine.
   $B4FB,$01 Enable interrupts.
 N $B4FC The game is paused: wait for the key to be pressed.
 @ $B4FC label=PauseGame_WaitPress
   $B4FC,$05 Read the keyboard rows that hold CAPS SHIFT and SPACE.
-  $B501,$04 Jump back to #R$B4FC if neither is pressed.
+  $B501,$04 Jump to #R$B4FC if neither is pressed.
 N $B505 Wait for the key to be released again.
 @ $B505 label=PauseGame_WaitResume
   $B505,$05 Read the keyboard rows that hold CAPS SHIFT and SPACE.
-  $B50A,$04 Jump back to #R$B505 if CAPS SHIFT or SPACE is still pressed.
+  $B50A,$04 Jump to #R$B505 if CAPS SHIFT or SPACE is still pressed.
   $B50E,$01 Disable interrupts.
   $B50F,$03 Call #R$D5D7 to make a click.
   $B512,$01 Return.
 
 c $B513 Clear Bytes
 @ $B513 label=ClearBytes
-D $B513 Writes a value to a number of bytes. The entry point at #R$B514 writes
-. the value in #REGa instead of zero.
+D $B513 Fills a number of bytes with zero. The entry point at #R$B514 fills them
+. with the byte in #REGa.
 E $B513 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D508 }
@@ -4633,16 +4763,16 @@ E $B513 View the equivalent code in;
 . LIST#
 R $B513 B Number of bytes
 R $B513 DE Address of the first byte
-  $B513,$01 Set the value to write to #N$00.
+  $B513,$01 Set #REGa to #N$00.
 @ $B514 label=ClearBytes_FillBytes
-  $B514,$01 Write the value to the next byte.
-  $B515,$01 Move on to the next byte.
+  $B514,$01 Write #REGa.
+  $B515,$01 Increment #REGde.
   $B516,$02 Decrease the counter and loop until all the bytes have been written.
   $B518,$01 Return.
 
 c $B519 Add A To HL
 @ $B519 label=AddAToHL
-D $B519 Adds the value of #REGa to #REGhl.
+D $B519 Adds an unsigned number to #REGhl.
 E $B519 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D4F2 }
@@ -4651,14 +4781,14 @@ E $B519 View the equivalent code in;
 . { #CYBERUN$9BCF }
 . { #ATICATAC$926C }
 . LIST#
-R $B519 A Value to add
-R $B519 HL Value to add it to
-R $B519 O:HL The sum
-  $B519,$01 Add the low byte.
-  $B51A,$01 Set the low byte of the result.
-  $B51B,$01 Fetch the high byte.
-  $B51C,$02 Add the carry.
-  $B51E,$01 Set the high byte of the result.
+R $B519 A The number
+R $B519 HL The address
+R $B519 O:HL The new address
+  $B519,$01 Add #REGa to #REGl.
+  $B51A,$01 Copy it to #REGl.
+  $B51B,$01 Fetch #REGh.
+  $B51C,$02 Add #N$00 with carry.
+  $B51E,$01 Copy it to #REGh.
   $B51F,$01 Return.
 
 c $B520 Find Object Address
@@ -4672,12 +4802,15 @@ E $B520 View the equivalent code in;
 . LIST#
 R $B520 A Object number
 R $B520 O:HL Address of the object record
+N $B520 Turn the object number into an address in the object table.
   $B520,$01 Stash #REGbc on the stack.
   $B521,$02,b$01 Ignore bit 7 of the object number.
-  $B523,$03 Set #REGhl to the object number.
-  $B526,$05 Multiply it by #N$20, the size of an object record.
+N $B523 Set #REGhl to the object number.
+  $B523,$01 Copy it to #REGl.
+  $B524,$02 Set #REGh to #N$00.
+  $B526,$05 Multiply it by #N($20), the size of an object record.
   $B52B,$03 Start from the object table, #R$A76F.
-  $B52E,$01 Add it to get the address of the record.
+  $B52E,$01 Add #REGbc to #REGhl.
   $B52F,$01 Restore #REGbc from the stack.
   $B530,$01 Return.
 
@@ -4720,58 +4853,57 @@ B $B55A,$30,$08
 
 c $B58A Draw Objects In Order
 @ $B58A label=DrawObjectsInOrder
-D $B58A Draws every object in the draw list at #R$B55A, back to front, so that
-. the nearer objects are drawn over the further ones.
-D $B58A The routine looks at the objects in the list in turn, and draws the
-. first one that no other undrawn object has to be drawn before. To decide that,
-. it compares the object that it is considering (held in #REGix) with each of
-. the other undrawn objects (held in #REGiy) along the three axes. Each axis
-. gives a code of 0, 1 or 2: 1 when the two overlap on that axis, and 0 or 2
-. when they are apart. For x and for the height, 0 means that the object
-. considered is in front of the other and 2 that it is behind it; for y it is
-. the other way round. The three codes make up a number from 0 to 26 (the code
-. for x is multiplied by 9, and for y by 3), which selects a routine from the
-. table at #R$B638.
-D $B58A When the object considered is in front of the other one, and so must be
-. drawn after it, the other one becomes the object that is considered instead
-. and the search starts again from the beginning of the list. A list of the
-. objects that have been looked at in this way, at #R$B6CD, stops this from
-. going on forever if there is a loop of objects that each have to be drawn
-. after another: in that case the object that closed the loop is drawn.
-D $B58A Each time an object is drawn, bit 7 of its entry in the list is set, and
-. the sort starts again at the beginning of the list.
+D $B58A Draws the objects in the list at #R$B55A so that the objects at the back
+. are drawn before the objects in front of them. It takes the first object in
+. the list that has not been drawn yet and compares it with each of the other
+. objects that are waiting. If another object has to be drawn first, that object
+. takes the place of the first object and is compared with the others in its
+. turn. This carries on until an object is found that does not have to wait for
+. any other object, and that one is drawn. This is repeated until the list is
+. empty. The objects drawn are counted in #R$A714.
 E $B58A View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CEBB }
 . { #ALIENEIGHT$C785 }
 . LIST#
-N $B58A Start with no objects drawn.
+N $B58A Clear the count and find the first object that is still waiting.
   $B58A,$04 Write #N$00 to #R$A714.
   $B58E,$04 Stash #REGix and #REGiy on the stack.
-@ $B592 label=DrawObjectsInOrder_Restart
 N $B592 Find the first object in the list that has not been drawn.
-  $B592,$03 Point #REGde at the start of the draw list, #R$B55A.
+@ $B592 label=DrawObjectsInOrder_Restart
+  $B592,$03 Point #REGde at #R$B55A.
+N $B595 Skip entries that have already been drawn.
 @ $B595 label=DrawObjectsInOrder_NextCandidate
-  $B595,$02 Fetch the next object number from the list.
+  $B595,$01 Fetch an index from the list.
+  $B596,$01 Move on to the next entry.
   $B597,$05 Jump to #R$B6C8 if the end of the list has been reached, as every
 . object has been drawn.
   $B59C,$04 Jump to #R$B595 if the object has already been drawn.
   $B5A0,$03 Call #R$B520 to get the address of the object.
-  $B5A3,$04 Write the list pointer to #R$A719.
+  $B5A3,$04 Remember the place in the list.
   $B5A7,$03 Copy the address of the object to #REGix (using the stack).
 @ $B5AA label=DrawObjectsInOrder_NextOther
-N $B5AA Compare it with each of the other undrawn objects in the list.
-  $B5AA,$02 Fetch the next object number from the list.
+N $B5AA Compare it with each later object that is still waiting.
+  $B5AA,$01 Fetch an index from the list.
+  $B5AB,$01 Move on to the next entry.
   $B5AC,$05 Jump to #R$B6B3 if the end of the list has been reached, as nothing
 . has to be drawn before the object considered.
   $B5B1,$04 Jump to #R$B5AA if the object has already been drawn.
   $B5B5,$03 Call #R$B520 to get the address of the object.
-  $B5B8,$04 Write the list pointer to #R$A71B.
+  $B5B8,$04 Remember the place in the list.
   $B5BC,$03 Copy the address of the object to #REGiy (using the stack).
   $B5BF,$03 Copy #REGix to #REGbc (using the stack).
   $B5C2,$05 Jump to #R$B5AA if the other object is the object considered, as an
 . object is not compared with itself.
-  $B5C7,$02 Start with a code of zero in #REGc.
+N $B5C7 Each of the three directions gives a number. The number along z is #N$00
+. if the first object is above the other, #N$01 if the objects overlap along z
+. and #N$02 if the first object is below. The number along y is #N$00 if the
+. first object is to the north of the other, #N$03 if the objects overlap along
+. y and #N$06 if the first object is to the south. The number along x is #N$00
+. if the first object is to the east of the other, #N$09 if the objects overlap
+. along x and #N$12 if the first object is to the west. The three numbers are
+. added together in #REGc.
+  $B5C7,$02 Set the number to #N$00.
 N $B5C9 Compare the heights. The code is 0 if the object considered is above the
 . other and so in front, 1 if they overlap and 2 if it is below the other.
   $B5C9,$07 Fetch the height of the top of the other object.
@@ -4782,10 +4914,8 @@ N $B5C9 Compare the heights. The code is 0 if the object considered is above the
   $B5E1,$02 Jump to #R$B5E4 if the two overlap.
   $B5E3,$01 Add one to the code, as the object considered is below the other.
 @ $B5E4 label=DrawObjectsInOrder_HeightCode
-  $B5E4,$01 Add one to the code.
-N $B5E5 Compare the y positions, which add three or six to the code. The code is
-. 0 if the object considered has the higher y position and so is behind, 1 if
-. they overlap and 2 if it has the lower y position and so is in front.
+  $B5E4,$01 Add one to the number along z.
+N $B5E5 Add the number along y.
 @ $B5E5 label=DrawObjectsInOrder_CompareY
   $B5E5,$07 Fetch the highest y position of the other object.
   $B5EC,$07 Subtract it from the lowest y position of the object considered.
@@ -4793,17 +4923,14 @@ N $B5E5 Compare the y positions, which add three or six to the code. The code is
 . and is behind.
   $B5F5,$07 Fetch the highest y position of the object considered.
   $B5FC,$07 Subtract it from the lowest y position of the other object.
-  $B603,$01 Fetch the code.
+  $B603,$01 Fetch the number so far.
   $B604,$02 Jump to #R$B608 if the two overlap.
   $B606,$02 Add three to the code, as the object considered has the lower y
 . position.
 @ $B608 label=DrawObjectsInOrder_YCode
-  $B608,$02 Add three to the code.
-  $B60A,$01 Set the code.
-N $B60B Compare the x positions, which add nine or eighteen to the code. The
-. code is 0 if the object considered has the higher x position and so is in
-. front, 1 if they overlap and 2 if it has the lower x position and so is
-. behind.
+  $B608,$02 Add #N$03 to the number along y.
+  $B60A,$01 Store the number.
+N $B60B Add the number along x.
 @ $B60B label=DrawObjectsInOrder_CompareX
   $B60B,$07 Fetch the highest x position of the other object.
   $B612,$07 Subtract it from the lowest x position of the object considered.
@@ -4811,21 +4938,18 @@ N $B60B Compare the x positions, which add nine or eighteen to the code. The
 . and is in front.
   $B61B,$07 Fetch the highest x position of the object considered.
   $B622,$07 Subtract it from the lowest x position of the other object.
-  $B629,$01 Fetch the code.
+  $B629,$01 Fetch the number so far.
   $B62A,$02 Jump to #R$B62E if the two overlap.
   $B62C,$02 Add nine to the code, as the object considered has the lower x
 . position.
 @ $B62E label=DrawObjectsInOrder_XCode
-  $B62E,$02 Add nine to the code.
-  $B630,$01 Set the code.
+  $B62E,$02 Add #N$09 to the number along x.
+  $B630,$01 Store the number.
 @ $B631 label=DrawObjectsInOrder_Dispatch
-N $B631 Jump to the routine for the combination of codes, using the code to find
-. its address in the table at #R$B638. The dispatch code of the main loop at
-. #R$B003 is used for this.
-  $B631,$01 Set #REGl to the combined code.
+N $B631 Jump to the routine for the number.
+  $B631,$01 Use the number as the index into the table.
   $B632,$03 Point #REGbc at #R$B638.
   $B635,$03 Jump to #R$B003.
-
 w $B638 Sort Jump Table
 @ $B638 label=SortJumpTable
 D $B638 The routines that #R$B58A uses for each combination of the codes for the
@@ -4877,7 +5001,7 @@ N $B674 The object considered is in front of the other so it must be drawn after
   $B681,$03 Jump to #R$B69D if the object has already been tried, which means
 . that there is a loop.
   $B684,$01 Move on in the list.
-  $B685,$02 Jump back to #R$B67C to look at the next number.
+  $B685,$02 Jump to #R$B67C to look at the next number.
 N $B687 Add the object to the list of the objects tried.
 @ $B687 label=ResolveObjectOrder_AddTried
   $B687,$01 Fetch the number of the object.
@@ -4899,7 +5023,7 @@ N $B69D The object has been tried before, so there is a loop. Draw it, to break
 @ $B6A0 label=ResolveObjectOrder_FindEntry
   $B6A0,$02 Fetch the next number from the list.
   $B6A2,$05 Jump to #R$B592 if the end of the list has been reached.
-  $B6A7,$03 Jump back to #R$B6A0 if it is not the entry of the object.
+  $B6A7,$03 Jump to #R$B6A0 if it is not the entry of the object.
   $B6AA,$04 Copy #REGiy to #REGix (using the stack).
   $B6AE,$02 Jump to #R$B6B6 to draw the object.
 N $B6B0 The two objects overlap completely, so look at the next object.
@@ -4940,82 +5064,79 @@ R $B6DD A Byte to fill with
 R $B6DD B Width in bytes
 R $B6DD C Height in lines
 R $B6DD HL Address in the buffer of the bottom left byte
+N $B6DD Set the line length of the buffer.
   $B6DD,$03 Set #REGde to the length of a line of the buffer.
+N $B6E0 Fill one line, then step to the next.
 @ $B6E0 label=FillWindow_NextLine
   $B6E0,$02 Stash the counters and the start of the line on the stack.
 @ $B6E2 label=FillWindow_NextByte
   $B6E2,$01 Write the byte.
   $B6E3,$01 Move on to the next byte.
   $B6E4,$02 Decrease the width counter and loop until the line has been filled.
-  $B6E6,$01 Restore the start of the line.
+  $B6E6,$01 Restore the start of the line from the stack.
   $B6E7,$01 Move up to the next line.
-  $B6E8,$01 Restore the counters.
+  $B6E8,$01 Restore the counters from the stack.
   $B6E9,$03 Count down the lines and jump to #R$B6E0 until the rectangle is
 . filled.
   $B6EC,$01 Return.
 
 c $B6ED Block Movement
 @ $B6ED label=BlockMovement
-D $B6ED Moves an object by its speeds along the three axes, which are held in
-. the object, and stops it where it is blocked by a wall or by another object.
-. The speeds are changed to the distances that the object has actually moved.
-. The routine records what blocked the object in its collision flags: bit 0 is
-. set if it was stopped on x, bit 1 if it was stopped on y and bit 2 if it was
-. stopped on z, which also means that the object is standing on the floor or on
-. another object. These flags are cleared first.
-D $B6ED The object is flagged as being moved while this happens, so that the
-. tests for collisions with other objects ignore it, and so that this routine
-. ignores a second call for it.
-D $B6ED The z axis is done first, then x, then y. The speed is first cut down to
-. what the walls (or the floor) allow, and then to what the other objects allow.
+D $B6ED Stops an object moving through the walls of the room or through other
+. objects. The speeds along x, y and z of the object are each brought closer to
+. zero until the object can move without hitting anything. Whichever direction
+. is hit is flagged in the low bits of the collision flags: bit 0 for x, bit 1
+. for y and bit 2 for z. For z that means the object is standing on something.
+. An object that is flagged to be ignored is not adjusted.
 E $B6ED View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CB45 }
 . { #ALIENEIGHT$C442 }
 . LIST#
-R $B6ED IX Object record
-N $B6ED Return if the object is already being moved. If not, flag that it is and
-. clear the collision flags of the last move.
+R $B6ED IX The address of the object
+N $B6ED Ignore the object so that it does not hit itself, and clear the blocked
+. flags.
   $B6ED,$05 Return if the object is already being moved.
   $B6F2,$04 Flag that the object is being moved.
   $B6F6,$03 Fetch the collision flags.
-  $B6F9,$02,b$01 Clear the flags for x, y and z.
-  $B6FB,$03 Write the flags back.
+  $B6F9,$02,b$01 Clear the blocked flags of x, y and z.
+  $B6FB,$03 Store the collision flags.
   $B6FE,$03 Start with no speed along y in #REGl and none along x in #REGc.
-N $B701 Move along the z axis.
-  $B701,$07 Fetch the speed along z into #REGh, and jump to #R$B712 if it is
-. zero.
+N $B701 The new speeds are kept in #REGh for z, #REGc for x and #REGl for y.
+. Test z against the floor, then other objects.
+  $B701,$04 Fetch the speed along z and test whether it is zero.
+  $B705,$01 Copy it to #REGh.
+  $B706,$02 Jump to #R$B712 if it is zero.
   $B708,$03 Call #R$B963 to cut the speed down so that the object stays above
 . the floor.
   $B70B,$04 Jump to #R$B712 if that has left no speed.
   $B70F,$03 Call #R$B7E0 to cut the speed down so that the object does not go
 . through another object.
-N $B712 Move along the x axis.
+N $B712 Test x against the walls of the room, then other objects.
 @ $B712 label=BlockMovement_X
-  $B712,$07 Fetch the speed along x into #REGc, and jump to #R$B723 if it is
-. zero.
+  $B712,$04 Fetch the speed along x and test whether it is zero.
+  $B716,$01 Copy it to #REGc.
+  $B717,$02 Jump to #R$B723 if it is zero.
   $B719,$03 Call #R$B8E2 to cut the speed down so that the object stays inside
 . the walls.
   $B71C,$04 Jump to #R$B723 if that has left no speed.
   $B720,$03 Call #R$B742 to cut the speed down so that the object does not go
 . through another object.
-N $B723 Move along the y axis.
+N $B723 Test y against the walls of the room, then other objects.
 @ $B723 label=BlockMovement_Y
-  $B723,$07 Fetch the speed along y into #REGl, and jump to #R$B734 if it is
-. zero.
+  $B723,$04 Fetch the speed along y and test whether it is zero.
+  $B727,$01 Copy it to #REGl.
+  $B728,$02 Jump to #R$B734 if it is zero.
   $B72A,$03 Call #R$B90D to cut the speed down so that the object stays inside
 . the walls.
   $B72D,$04 Jump to #R$B734 if that has left no speed.
   $B731,$03 Call #R$B791 to cut the speed down so that the object does not go
 . through another object.
-N $B734 Store the distances that the object can move, and finish.
+N $B734 Store the new speeds and stop ignoring the object.
 @ $B734 label=BlockMovement_Store
-  $B734,$03 Write the distance along x.
-  $B737,$03 Write the distance along y.
-  $B73A,$03 Write the distance along z.
+  $B734,$09 Store the new speeds along x, y and z.
   $B73D,$04 Flag that the object is not being moved.
   $B741,$01 Return.
-
 c $B742 Block Movement In X
 @ $B742 label=BlockMovementInX
 D $B742 Cuts down the distance that an object moves along x until it does not go
@@ -5150,14 +5271,15 @@ N $B7FA The objects hit each other. Flag a hit along z, which also means the
 . player or a block of type #N$5B.
 N $B801 Flag the object if it is standing on the player.
   $B801,$03 Fetch the type of the other object.
-  $B804,$04 Jump to #R$B810 if it is below #N$20, the first part of the player.
+  $B804,$04 Jump to #R$B810 if it is below #N($20), the first part of the
+. player.
   $B808,$04 Jump to #R$B810 if it is #N$28 or more, which is not a part of the
 . player.
   $B80C,$04 Flag that the object is on the player.
 N $B810 An object that stands on a moving block is pushed by it.
 @ $B810 label=BlockMovementInZ_Block
-  $B810,$04 Jump to #R$B819 if the other object is below #N$8C, the first of the
-. moving blocks.
+  $B810,$04 Jump to #R$B819 if the other object is below #N($8C), the first of
+. the moving blocks.
   $B814,$05 Call #R$B866 to push the object if the other object is a moving
 . block, which is when it is below #N$90.
 N $B819 Pass on the hit flags, and flag that the other object has something on
@@ -5204,11 +5326,14 @@ D $B866 A block is not pushed if it already has something on it, so the first
 R $B866 A Type of the block
 R $B866 IX Object record
 R $B866 IY Block record
+N $B866 Return if the block already has something on it.
   $B866,$05 Return if the block already has something on it.
+N $B86B Find the push for this direction.
   $B86B,$02,b$01 Keep the two bits that give the direction.
   $B86D,$01 Double it, to get an offset into the table of pairs.
   $B86E,$02 Stash #REGde and #REGhl on the stack.
   $B870,$03 Set #REGde to the offset.
+N $B873 Push on every other frame.
   $B873,$03 Fetch the frame counter.
   $B876,$02,b$01 Keep only bit 0.
   $B878,$02 Jump to #R$B88D if it is an even frame.
@@ -5227,87 +5352,102 @@ R $B866 IY Block record
 
 c $B890 Mark Object Below
 @ $B890 label=MarkObjectBelow
-D $B890 Flags the object that a part of the player, or a block of type #N$5B,
+D $B890 Flags the object that a part of the player, or a block of type #N($5B),
 . has landed on, by setting bit 7 of its handler flags. Nothing is done for any
 . other type of object.
 R $B890 IX Object record
 R $B890 IY Record of the object that has been landed on
+N $B890 Test whether the object is a block or a part of the player.
   $B890,$03 Fetch the type of the object.
   $B893,$04 Jump to #R$B89D if it is a block of type #N$5B.
-  $B897,$02 Compare the type with #N$20, the first part of the player.
+  $B897,$02 Compare the type with #N($20), the first part of the player.
   $B899,$01 Return if it is lower.
   $B89A,$02 Compare the type with #N$28.
   $B89C,$01 Return if it is higher, which means that it is not a part of the
 . player.
+N $B89D Flag the object that has been landed on.
 @ $B89D label=MarkObjectBelow_Set
   $B89D,$04 Flag the object as having a player or block on it.
   $B8A1,$01 Return.
 
 c $B8A2 Test Overlap In X
 @ $B8A2 label=TestOverlapInX
-D $B8A2 Tests if two objects overlap along x, once the first one has moved by a
-. distance. The objects overlap if the distance between their centres is less
-. than the sum of their half sizes.
+D $B8A2 Tests whether two objects overlap along x, once the first has moved by
+. its new speed along x. They overlap when the distance between the x positions
+. is smaller than the two widths added together.
 E $B8A2 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CC9D }
 . { #ALIENEIGHT$C5A9 }
 . LIST#
-R $B8A2 C Distance that the first object moves along x
-R $B8A2 IX Record of the first object
-R $B8A2 IY Record of the second object
+R $B8A2 C New speed along x of the first object
+R $B8A2 IX The address of the first object
+R $B8A2 IY The address of the second object
 R $B8A2 O:F Carry flag set if the objects overlap
-  $B8A2,$07 Add the half sizes of the objects along x together, in #REGd.
-  $B8A9,$07 Work out the distance between the centres, once the first has moved.
+N $B8A2 Compare the x distance with the widths.
+  $B8A2,$03 Fetch the width of the first object.
+  $B8A5,$03 Add the width of the second object.
+  $B8A8,$01 Copy the total to #REGd.
+N $B8A9 Work out the distance between the centres, once the first has moved.
+  $B8A9,$03 Fetch the x position of the first object.
+  $B8AC,$01 Add #REGc.
+  $B8AD,$03 Subtract the x position of the second object.
   $B8B0,$03 Jump to #R$B8B5 if the distance is positive.
-  $B8B3,$02 Make the distance positive.
+  $B8B3,$02 Negate #REGa.
 @ $B8B5 label=TestOverlapInX_Compare
-  $B8B5,$01 Subtract the sum of the half sizes, which sets the carry flag if
-. they overlap.
+  $B8B5,$01 Subtract #REGd.
   $B8B6,$01 Return.
 
 c $B8B7 Test Overlap In Y
 @ $B8B7 label=TestOverlapInY
-D $B8B7 Tests if two objects overlap along y, once the first one has moved by a
-. distance, in the same way as #R$B8A2 does for x.
+D $B8B7 Tests whether two objects overlap along y, once the first has moved by
+. its new speed along y. They overlap when the distance between the y positions
+. is smaller than the two depths added together.
 E $B8B7 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CCB2 }
 . { #ALIENEIGHT$C5BE }
 . LIST#
-R $B8B7 L Distance that the first object moves along y
-R $B8B7 IX Record of the first object
-R $B8B7 IY Record of the second object
+R $B8B7 L New speed along y of the first object
+R $B8B7 IX The address of the first object
+R $B8B7 IY The address of the second object
 R $B8B7 O:F Carry flag set if the objects overlap
-  $B8B7,$07 Add the half sizes of the objects along y together, in #REGd.
-  $B8BE,$07 Work out the distance between the centres, once the first has moved.
+N $B8B7 Compare the y distance with the depths.
+  $B8B7,$03 Fetch the depth of the first object.
+  $B8BA,$03 Add the depth of the second object.
+  $B8BD,$01 Copy the total to #REGd.
+N $B8BE Work out the distance between the centres, once the first has moved.
+  $B8BE,$03 Fetch the y position of the first object.
+  $B8C1,$01 Add #REGl.
+  $B8C2,$03 Subtract the y position of the second object.
   $B8C5,$03 Jump to #R$B8CA if the distance is positive.
-  $B8C8,$02 Make the distance positive.
+  $B8C8,$02 Negate #REGa.
 @ $B8CA label=TestOverlapInY_Compare
-  $B8CA,$01 Subtract the sum of the half sizes, which sets the carry flag if
-. they overlap.
+  $B8CA,$01 Subtract #REGd.
   $B8CB,$01 Return.
 
 c $B8CC Test Overlap In Z
 @ $B8CC label=TestOverlapInZ
-D $B8CC Tests if two objects overlap along z, once the first one has moved by a
-. distance. The z position of an object is its bottom, so the distance between
-. the bottoms is compared with the height of the object that is the lower of the
-. two.
+D $B8CC Tests whether two objects overlap along z, once the first has moved by
+. its new speed along z. They overlap when the distance between the z positions
+. is smaller than the height of whichever of the objects is lower.
 E $B8CC View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CCC7 }
 . { #ALIENEIGHT$C5D3 }
 . LIST#
-R $B8CC H Distance that the first object moves along z
-R $B8CC IX Record of the first object
-R $B8CC IY Record of the second object
+R $B8CC H New speed along z of the first object
+R $B8CC IX The address of the first object
+R $B8CC IY The address of the second object
 R $B8CC O:F Carry flag set if the objects overlap
-  $B8CC,$07 Work out the distance between the bottoms of the objects, once the
-. first has moved.
+N $B8CC Use the height of the lower object.
+  $B8CC,$03 Fetch the z position of the first object.
+  $B8CF,$01 Add #REGh.
+  $B8D0,$03 Subtract the z position of the second object.
   $B8D3,$03 Jump to #R$B8DD if the first object is the higher.
-  $B8D6,$02 Make the distance positive.
+  $B8D6,$02 Negate #REGa.
   $B8D8,$03 Fetch the height of the first object, which is the lower.
+N $B8DB Compare the distance with the height of the lower object.
 @ $B8DB label=TestOverlapInZ_Compare
   $B8DB,$01 Subtract the height of the lower object, which sets the carry flag
 . if they overlap.
@@ -5318,78 +5458,82 @@ R $B8CC O:F Carry flag set if the objects overlap
 
 c $B8E2 Keep Object In Room In X
 @ $B8E2 label=KeepObjectInRoomInX
-D $B8E2 Cuts down the distance that an object moves along x until it stays
-. inside the walls of the room, and flags a hit on x in the collision flags if
-. it had to. Nothing is done if the object is allowed to ignore the walls, or
-. has only just entered the room (which is when the top four bits of its
-. collision flags are not zero), as it would be outside them.
-D $B8E2 The limit is in #R$A71D, and the walls are placed an equal distance
-. either side of position #N$80.
+D $B8E2 Brings the speed along x of an object closer to zero until the object
+. stays within the walls of the room. Nothing is done while the object is
+. entering the room, or while it is near an arch, as it can then go out through
+. the wall.
 E $B8E2 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CCDD }
 . { #ALIENEIGHT$C5E9 }
 . LIST#
-R $B8E2 C Distance to move along x
-R $B8E2 IX Object record
-R $B8E2 O:C Distance that can be moved
+R $B8E2 C Speed along x
+R $B8E2 IX The address of the object
+R $B8E2 O:C The new speed along x
+N $B8E2 Return while entering or near an arch.
   $B8E2,$03 Fetch the collision flags.
   $B8E5,$02,b$01 Keep only the countdown from entering the room.
   $B8E7,$01 Return if the object has only just entered the room.
   $B8E8,$05 Return if the object ignores the walls.
-  $B8ED,$04 Fetch the limit along x in #REGb.
+  $B8ED,$03 Fetch #R$A71D.
+  $B8F0,$01 Copy it to #REGb.
+N $B8F1 Slow x until the object stays in the room.
 @ $B8F1 label=KeepObjectInRoomInX_Test
-  $B8F1,$04 Work out the position of the object along x, once it has moved.
-  $B8F5,$02 Subtract #N$80 to get its distance from the middle.
+  $B8F1,$03 Fetch the x position of the object.
+  $B8F4,$01 Add #REGc.
+  $B8F5,$02 Subtract #N$80.
   $B8F7,$02 Jump to #R$B8FB if that is not negative.
-  $B8F9,$02 Make the distance positive.
+  $B8F9,$02 Negate #REGa.
 @ $B8FB label=KeepObjectInRoomInX_Compare
   $B8FB,$03 Add the half size of the object, to get the distance of its edge
 . from the middle.
   $B8FE,$03 Return if the edge is inside the limit.
   $B901,$04 Flag that the object has been stopped along x.
-  $B905,$01 Fetch the distance to move.
-  $B906,$03 Call #R$B95A to step it one closer to zero.
-  $B909,$01 Set the distance.
+  $B905,$01 Copy #REGc to #REGa.
+  $B906,$03 Call #R$B95A.
+  $B909,$01 Copy it to #REGc.
   $B90A,$02 Jump to #R$B8F1 to test again, unless the distance is zero.
 @ $B90C label=KeepObjectInRoomInX_Done
   $B90C,$01 Return.
-
 c $B90D Keep Object In Room In Y
 @ $B90D label=KeepObjectInRoomInY
-D $B90D Cuts down the distance that an object moves along y until it stays
-. inside the walls of the room, in the same way as #R$B8E2 does for x. The limit
-. is in #R$A71E.
+D $B90D Brings the speed along y of an object closer to zero until the object
+. stays within the walls of the room. Nothing is done while the object is
+. entering the room, or while it is near an arch, as it can then go out through
+. the wall.
 E $B90D View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CD08 }
 . { #ALIENEIGHT$C613 }
 . LIST#
-R $B90D L Distance to move along y
-R $B90D IX Object record
-R $B90D O:L Distance that can be moved
+R $B90D L Speed along y
+R $B90D IX The address of the object
+R $B90D O:L The new speed along y
+N $B90D Return while entering or near an arch.
   $B90D,$03 Fetch the collision flags.
   $B910,$02,b$01 Keep only the countdown from entering the room.
   $B912,$01 Return if the object has only just entered the room.
   $B913,$05 Return if the object ignores the walls.
-  $B918,$04 Fetch the limit along y in #REGb.
+  $B918,$03 Fetch #R$A71E.
+  $B91B,$01 Copy it to #REGb.
+N $B91C Slow y until the object stays in the room.
 @ $B91C label=KeepObjectInRoomInY_Test
-  $B91C,$04 Work out the position of the object along y, once it has moved.
-  $B920,$02 Subtract #N$80 to get its distance from the middle.
+  $B91C,$03 Fetch the y position of the object.
+  $B91F,$01 Add #REGl.
+  $B920,$02 Subtract #N$80.
   $B922,$02 Jump to #R$B926 if that is not negative.
-  $B924,$02 Make the distance positive.
+  $B924,$02 Negate #REGa.
 @ $B926 label=KeepObjectInRoomInY_Compare
   $B926,$03 Add the half size of the object, to get the distance of its edge
 . from the middle.
   $B929,$03 Return if the edge is inside the limit.
   $B92C,$04 Flag that the object has been stopped along y.
-  $B930,$01 Fetch the distance to move.
-  $B931,$03 Call #R$B95A to step it one closer to zero.
-  $B934,$01 Set the distance.
+  $B930,$01 Copy #REGl to #REGa.
+  $B931,$03 Call #R$B95A.
+  $B934,$01 Copy it to #REGl.
   $B935,$02 Jump to #R$B91C to test again, unless the distance is zero.
 @ $B937 label=KeepObjectInRoomInY_Done
   $B937,$01 Return.
-
 c $B938 Calculate Sprite Size
 @ $B938 label=CalculateSpriteSize
 D $B938 Works out the size on the screen of the sprite of an object, without
@@ -5401,6 +5545,7 @@ E $B938 View the equivalent code in;
 . { #ALIENEIGHT$C63D }
 . LIST#
 R $B938 IX Object record
+N $B938 Find the sprite and whether it is shifted.
   $B938,$03 Call #R$B2C5 to work out the screen position of the object.
   $B93B,$03 Call #R$B2EE to get the address of its sprite.
   $B93E,$03 Fetch the screen x co-ordinate.
@@ -5408,6 +5553,7 @@ R $B938 IX Object record
   $B943,$02 Fetch the width of the sprite, and move on to its height.
   $B945,$02 Jump to #R$B948 if the sprite is not shifted.
   $B947,$01 Add one to the width for the shift.
+N $B948 Store the width and height.
 @ $B948 label=CalculateSpriteSize_Store
   $B948,$02,b$01 Keep only the width.
   $B94A,$03 Write the width to the object.
@@ -5417,11 +5563,10 @@ R $B938 IX Object record
 
 c $B952 Read Keyboard Port
 @ $B952 label=ReadKeyboardPort
-D $B952 Reads half-rows of the keyboard. The pressed keys come back as set bits,
-. in the same order as the bits that the keyboard port gives, so bit 0 is the
-. key that is nearest the outside edge of the keyboard.
-D $B952 The value is also written to port #N$FD first, whose effect on a 128K
-. Spectrum, which uses that port number for paging, is not known.
+D $B952 Reads some rows of the keyboard. The row selector is also written to
+. port #N$FD (with the selector as the high byte of the address), which does
+. nothing on a 48K Spectrum and is not part of any sound; the keyboard is read
+. with the same selector straight afterwards.
 E $B952 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$B5F7 }
@@ -5430,13 +5575,14 @@ E $B952 View the equivalent code in;
 . { #GUNFRIGHT$D0DB }
 . { #CYBERUN$9BC3 }
 . LIST#
-R $B952 A High byte of the port, which selects the half-rows: a bit that is
-. clear selects a half-row
-R $B952 O:A Keys pressed, in bits 0 to 4
-  $B952,$02 Write the value to port #N$FD.
+R $B952 A Row selector (a bit which is reset selects the row)
+R $B952 O:A Keys pressed, in bits 0 to 4 (a bit is set when a key is pressed)
+R $B952 O:F Zero flag set if no key is pressed
+N $B952 Write the selector, then read the keys.
+  $B952,$02 Write the row selector to port #N$FD.
   $B954,$02 Read the keyboard half-rows.
   $B956,$01 Make the pressed keys set bits.
-  $B957,$02,b$01 Keep only the five keys.
+  $B957,$02,b$01 Keep only bits 0 to 4.
   $B959,$01 Return.
 
 c $B95A Bring Speed Closer To Zero
@@ -5460,163 +5606,194 @@ R $B95A O:F Zero flag set if the result is zero
 
 c $B963 Stop Object At Floor
 @ $B963 label=StopObjectAtFloor
-D $B963 Cuts down the distance that an object moves along z until it stays above
-. the floor of the room, whose height is in #R$A71F. Sets the flag in the
-. collision flags that says the object is on the ground if it had to.
+D $B963 Stops an object from going through the floor. If the z position of the
+. object after it has moved is below the floor of the room, the object is
+. flagged as blocked along z, and its speed along z is brought closer to zero
+. until the object no longer goes through the floor.
 E $B963 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CA5A }
 . { #ALIENEIGHT$C357 }
 . LIST#
-R $B963 H Distance to move along z
-R $B963 IX Object record
-R $B963 O:H Distance that can be moved
-  $B963,$04 Fetch the height of the floor in #REGd.
+R $B963 H Speed along the z axis
+R $B963 IX The address of the object
+R $B963 O:H The new speed along the z axis
+N $B963 Test the floor and slow z.
+  $B963,$03 Fetch #R$A71F.
+  $B966,$01 Copy it to #REGd.
+N $B967 Slow z until the object stays above the floor.
 @ $B967 label=StopObjectAtFloor_Test
-  $B967,$04 Work out the height of the bottom of the object, once it has moved.
-  $B96B,$02 Return if it is not below the floor.
+  $B967,$03 Fetch the z position of the object.
+  $B96A,$03 Return if the object does not end up below the floor.
   $B96D,$04 Flag that the object has been stopped along z, which is on the
 . ground.
-  $B971,$01 Fetch the distance to move.
-  $B972,$03 Call #R$B95A to step it one closer to zero.
-  $B975,$01 Set the distance.
+  $B971,$01 Copy #REGh to #REGa.
+  $B972,$03 Call #R$B95A.
+  $B975,$01 Copy it to #REGh.
   $B976,$02 Jump to #R$B967 to test again, unless the distance is zero.
   $B978,$01 Return.
 
 c $B979 Apply Gravity And Move
 @ $B979 label=ApplyGravityAndMove
-D $B979 Applies gravity to an object, moves it by its speeds (limited to where
-. it is able to go by #R$B6ED, which changes the speeds), and updates its
-. position.
+D $B979 Applies gravity to an object, then moves it by its speeds, limited to
+. where it is able to go by #R$B6ED, which changes the speeds. #R$B97F only
+. moves the object.
 E $B979 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$C700 }
 . { #ALIENEIGHT$BFB6 }
 . LIST#
-R $B979 IX Object record
+R $B979 IX The address of the object
+N $B979 Speed the fall, then stay clear of walls and other objects.
   $B979,$03 Reduce the speed along z by one, which is gravity.
 @ $B97C label=ApplyGravityAndMove_Move
   $B97C,$03 Call #R$B6ED to move the object.
+N $B97F Add the speeds to the position.
 @ $B97F label=ApplyGravityAndMove_AddSpeeds
-  $B97F,$09 Add the speed along x to the position along x.
-  $B988,$09 Add the speed along y to the position along y.
-  $B991,$09 Add the speed along z to the position along z.
+  $B97F,$03 Fetch the x position of the object.
+  $B982,$03 Add the speed along the x axis.
+  $B985,$03 Set the new x position.
+  $B988,$03 Fetch the y position of the object.
+  $B98B,$03 Add the speed along the y axis.
+  $B98E,$03 Set the new y position.
+  $B991,$03 Fetch the z position of the object.
+  $B994,$03 Add the speed along the z axis.
+  $B997,$03 Set the new z position.
   $B99A,$01 Return.
 
 c $B99B Test Object Solid
 @ $B99B label=TestObjectSolid
-D $B99B Tests if an object takes part in the collision tests: it must be in use
-. and must not be the one that is being moved.
+D $B99B Tests whether collision tests should take any notice of an object. The
+. object must be in use and must not be the one that is being moved. The zero
+. flag is set if the slot is unused or bit 1 of the flags is set.
 E $B99B View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$B538 }
 . { #ALIENEIGHT$B74D }
 . LIST#
-R $B99B IY Object record
-R $B99B O:F Zero flag set if the object is free, or is being moved
-  $B99B,$05 Return with the zero flag set if the object is free.
-  $B9A0,$04 Fetch the flags, inverted.
+R $B99B IY The address of the object
+R $B99B O:F Zero flag set if the slot is not used or the object is ignored
+N $B99B Return if the slot is empty.
+  $B99B,$03 Fetch the sprite number of the object.
+  $B99E,$02 Return if the slot is not used.
+N $B9A0 After invert, bit 1 is set when the object is not ignored.
+  $B9A0,$03 Fetch the flags of the object.
+  $B9A3,$01 Invert them.
   $B9A4,$02,b$01 Test the flag for being moved, which is set in the object being
 . moved.
   $B9A6,$01 Return.
 
 c $B9A7 Flag Overlapping Objects
 @ $B9A7 label=FlagOverlappingObjects
-D $B9A7 Flags every object whose sprite overlaps the area that an object has
-. just moved through, so that they are redrawn as well, otherwise they would be
-. left with a piece cut out of them when the area was cleared. The area is the
-. rectangle that covers both the old and the new places of the sprite of the
-. object, which is in whole bytes, so only the columns are compared in bytes.
-D $B9A7 An object is flagged by setting bit 4 of its flags.
+D $B9A7 Flags every object that overlaps the area of the screen covered by an
+. object to be drawn again. The area is the one that is covered by the old and
+. the new position of the sprite of the object together, so that the whole of it
+. is redrawn.
 E $B9A7 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$CD4D }
 . { #ALIENEIGHT$C657 }
 . LIST#
-R $B9A7 IX Object record
-N $B9A7 Work out the size of the new sprite, which is stored in the object.
+R $B9A7 IX The address of the object
+N $B9A7 The left edge, in bytes, is the lower of the old and new positions. It
+. is kept in #REGe.
   $B9A7,$04 Start with the first object record, #R$A76F.
   $B9AB,$03 Call #R$B938 to work out the size of the sprite of the object.
   $B9AE,$02 Set a counter in #REGb of #N$36 objects.
 N $B9B0 Work out the first column of the area, which is the lower of the new and
 . the old first columns.
-  $B9B0,$06 Divide the new x co-ordinate by eight...
+  $B9B0,$03 Fetch the new pixel x position.
+  $B9B3,$03 Divide it by eight.
   $B9B6,$02,b$01 ...and keep only the five bits of the column.
   $B9B8,$01 Set #REGl to the new first column.
-  $B9B9,$06 Divide the old x co-ordinate by eight...
+  $B9B9,$03 Fetch the old pixel x position.
+  $B9BC,$03 Divide it by eight.
   $B9BF,$02,b$01 ...and keep only the five bits of the column.
   $B9C1,$01 Set #REGh to the old first column.
   $B9C2,$03 Jump to #R$B9C6 if the old column is lower.
   $B9C5,$01 Use the new column.
 @ $B9C6 label=FlagOverlappingObjects_Width
   $B9C6,$01 Set #REGe to the first column of the area.
-N $B9C7 Work out the width of the area, which is up to the higher of the new and
-. the old last columns.
-  $B9C7,$04 Add the new width to the new first column to get the new last
-. column.
-  $B9CB,$01 Set #REGl to it.
-  $B9CC,$04 Add the old width to the old first column to get the old last
-. column.
+N $B9C7 The width is the higher right edge less the left edge. It is kept in
+. #REGd.
+  $B9C7,$01 Copy #REGl to #REGa.
+  $B9C8,$03 Add the new width.
+  $B9CB,$01 Copy it to #REGl.
+N $B9CC Add the old width to the old first column to get the old last column.
+  $B9CC,$01 Copy #REGh to #REGa.
+  $B9CD,$03 Add the old width.
   $B9D0,$03 Jump to #R$B9D4 if the old last column is higher.
   $B9D3,$01 Use the new last column.
 @ $B9D4 label=FlagOverlappingObjects_Bottom
   $B9D4,$01 Subtract the first column to get the width of the area.
   $B9D5,$01 Set #REGd to the width of the area.
-N $B9D6 Work out the bottom of the area, which is the lower of the new and the
-. old bottoms.
-  $B9D6,$06 Fetch the new y co-ordinate and compare it with the old one.
+N $B9D6 The bottom edge is the lower of the old and new pixel y. It is kept in
+. #REGl.
+  $B9D6,$03 Fetch the new pixel y position.
+  $B9D9,$03 Compare it with the old one.
   $B9DC,$02 Jump to #R$B9E1 if the new one is lower.
-  $B9DE,$03 Use the old one.
+  $B9DE,$03 Fetch the old pixel y position.
 @ $B9E1 label=FlagOverlappingObjects_Height
-  $B9E1,$01 Set #REGl to the bottom of the area.
-N $B9E2 Work out the height of the area, which is up to the higher of the new
-. and the old tops.
-  $B9E2,$06 Add the new height to the new y co-ordinate to get the new top.
-  $B9E8,$01 Set #REGh to it.
-  $B9E9,$06 Add the old height to the old y co-ordinate to get the old top.
+  $B9E1,$01 Copy it to #REGl.
+N $B9E2 The height is the higher top edge less the bottom edge. It is kept in
+. #REGh.
+  $B9E2,$03 Fetch the new pixel y position.
+  $B9E5,$03 Add the new height.
+  $B9E8,$01 Copy it to #REGh.
+N $B9E9 Add the old height to the old y co-ordinate to get the old top.
+  $B9E9,$03 Fetch the old pixel y position.
+  $B9EC,$03 Add the old height.
   $B9EF,$03 Jump to #R$B9F3 if the old top is higher.
-  $B9F2,$01 Use the new top.
+  $B9F2,$01 Copy #REGh to #REGa.
 @ $B9F3 label=FlagOverlappingObjects_Loop
   $B9F3,$01 Subtract the bottom to get the height of the area.
   $B9F4,$01 Set #REGh to the height of the area.
-N $B9F5 Test each of the other objects against the area.
+N $B9F5 Flag any object that overlaps the area.
 @ $B9F5 label=FlagOverlappingObjects_Next
-  $B9F5,$06 Jump to #R$BA1C if the other object is free.
+  $B9F5,$03 Fetch the sprite number of the other object.
+  $B9F8,$03 Jump to #R$BA1C if it is zero.
   $B9FB,$06 Jump to #R$BA1C if the other object is already flagged.
-  $BA01,$06 Divide the screen x co-ordinate of the other object by eight...
+N $BA01 Divide the screen x co-ordinate of the other object by eight...
+  $BA01,$03 Fetch the pixel x position of the other object.
+  $BA04,$03 Divide it by eight.
   $BA07,$02,b$01 ...and keep only the five bits of the column.
   $BA09,$01 Subtract the first column of the area.
   $BA0A,$02 Jump to #R$BA26 if it starts before the area.
   $BA0C,$01 Compare the distance with the width of the area.
 @ $BA0D label=FlagOverlappingObjects_TestColumns
   $BA0D,$02 Jump to #R$BA1C if it starts after the area.
-  $BA0F,$04 Subtract the bottom of the area from the screen y co-ordinate of the
+N $BA0F Subtract the bottom of the area from the screen y co-ordinate of the
 . other object.
+  $BA0F,$03 Fetch the pixel y position of the other object.
+  $BA12,$01 Subtract #REGl.
   $BA13,$02 Jump to #R$BA2D if it starts below the area.
   $BA15,$01 Compare the distance with the height of the area.
 @ $BA16 label=FlagOverlappingObjects_TestRows
   $BA16,$02 Jump to #R$BA1C if it starts above the area.
   $BA18,$04 Flag the other object as needing to be drawn.
+N $BA1C Move #REGiy on to the next object record, using the alternate registers
+. so that the area is kept.
 @ $BA1C label=FlagOverlappingObjects_Skip
-  $BA1C,$07 Move #REGiy on to the next object record, using the alternate
-. registers so that the area is kept.
+  $BA1C,$01 Switch to the shadow registers.
+  $BA1D,$03 Set #REGde' to #N($0020,$04,$04).
+  $BA20,$02 Add #REGde' to #REGiy.
+  $BA22,$01 Switch to the main registers.
   $BA23,$02 Decrease the counter and loop until all the objects have been tried.
   $BA25,$01 Return.
-N $BA26 The other object starts before the area, so it only overlaps it if it is
-. wide enough to reach it.
+N $BA26 The object starts to the left of the area, so it overlaps only if it is
+. wide enough to reach the area.
 @ $BA26 label=FlagOverlappingObjects_StartsBefore
-  $BA26,$02 Make the distance positive.
+  $BA26,$02 Negate #REGa.
   $BA28,$03 Compare it with the width of the other object.
   $BA2B,$02 Jump to #R$BA0D to jump to the next object if it is not wide enough,
 . or to carry on with the test if it is.
-N $BA2D The other object starts below the area, so it only overlaps it if it is
-. tall enough to reach it.
+N $BA2D The object starts below the area, so it overlaps only if it is tall
+. enough to reach the area.
 @ $BA2D label=FlagOverlappingObjects_StartsBelow
-  $BA2D,$02 Make the distance positive.
+  $BA2D,$02 Negate #REGa.
   $BA2F,$03 Compare it with the height of the other object.
   $BA32,$02 Jump to #R$BA16 to jump to the next object if it is not tall enough,
 . or to carry on with the test if it is.
-
 c $BA34 Check Inventory
 @ $BA34 label=CheckInventory
 D $BA34 Redraws the inventory if the flag to say that it has changed is set, and
@@ -5628,15 +5805,11 @@ D $BA34 Redraws the inventory if the flag to say that it has changed is set, and
 
 c $BA3D Display Objects Carried
 @ $BA3D label=DisplayObjectsCarried
-D $BA3D Draws the three icons of the inventory in the bottom left of the screen.
-. The icons are drawn into the buffer, which is copied to the screen, and the
-. colours of the icons are put in the attributes. The temporary object at
-. #R$BACA is used to draw them.
-E $BA3D View the equivalent code in;
-. #LIST
-. { #ALIENEIGHT$BC9D }
-. { #KNIGHTLORE$BF45 }
-. LIST#
+D $BA3D Displays the objects which the player is carrying in the panel. Each of
+. the three places takes three cells across and is #N$18 pixels apart from the
+. next. The place is cleared, the sprite of the object is printed in the screen
+. buffer and copied to the screen, and the cells are coloured according to the
+. shape of the object (see #R$BAC2).
 .
 . #PUSHS #UDGTABLE(default,centre,centre)
 . { =h Before | =h After #R$BA3D and #R$B178 }
@@ -5650,76 +5823,78 @@ E $BA3D View the equivalent code in;
 . #SIM(start=$BA3D,stop=$0000,sp=$5D00)
 . #SIM(start=$B178,stop=$0000,sp=$5D00)
 . #SCR$03,$02,$12,$0A,$06(objects-carried-after) } UDGTABLE# #POPS
-N $BA3D Set up for the three entries of the inventory.
+E $BA3D View the equivalent code in;
+. #LIST
+. { #ALIENEIGHT$BC9D }
+. { #KNIGHTLORE$BF45 }
+. LIST#
+N $BA3D Draw the three places in the panel.
   $BA3D,$02 Stash #REGix on the stack.
   $BA3F,$04 Use the temporary object, #R$BACA.
-  $BA43,$02 Set a counter in #REGb of three entries.
+  $BA43,$02 Set a counter of #N$03 places.
   $BA45,$03 Start with the first carried object, #R$A726.
+N $BA48 Work out the pixel x of this place (#N$18 times the place, plus #N$10).
 @ $BA48 label=DisplayObjectsCarried_Next
-N $BA48 Work out the x co-ordinate of the icon, which is #N$10 plus #N$18 for
-. each icon so far, and clear its place in the buffer.
-  $BA48,$02 Stash the counter and the pointer on the stack.
-  $BA4A,$01 Fetch the counter.
-  $BA4B,$02 Negate it...
+  $BA48,$01 Stash the counter on the stack.
+  $BA49,$01 Stash the address of the object on the stack.
+  $BA4A,$01 Copy the counter to #REGa.
+  $BA4B,$02 Make it negative.
   $BA4D,$02 ...and add three, to get the number of the icon.
-  $BA4F,$02 Multiply it by two...
-  $BA51,$02 ...and by two...
-  $BA53,$02 ...and by two.
-  $BA55,$01 Stash the number times eight in #REGc.
+  $BA4F,$06 Multiply it by eight.
+  $BA55,$01 Keep it in #REGc.
   $BA56,$02 Multiply by two again, which makes #N$10 times the number.
-  $BA58,$01 Add the earlier value to make it #N$18 times the number.
+  $BA58,$01 Add the eight times.
   $BA59,$02 Add #N$10.
   $BA5B,$03 Write it as the screen x co-ordinate of the temporary object.
   $BA5E,$04 Write #N$00 as the screen y co-ordinate.
-  $BA62,$03 Set #REGc to the x co-ordinate.
-  $BA65,$03 Set #REGb to the y co-ordinate.
-  $BA68,$01 Stash the pointer on the stack.
+N $BA62 Clear the place and print the sprite.
+  $BA62,$03 Fetch the pixel x position into #REGc.
+  $BA65,$03 Fetch the pixel y position into #REGb.
+  $BA68,$01 Stash the address of the object on the stack.
   $BA69,$03 Call #R$B37F to get the address in the buffer.
   $BA6C,$02 Copy it to #REGhl.
-  $BA6E,$03 Set the size of the area in #REGbc to #N$03 bytes wide and #N$18
-. lines.
-  $BA71,$01 Set the fill byte in #REGa to #N$00.
-  $BA72,$03 Call #R$B6DD to clear the area.
-  $BA75,$01 Restore the pointer from the stack.
+  $BA6E,$03 Set #REGbc to #N$0318.
+  $BA71,$01 Set #REGa to #N$00.
+  $BA72,$03 Call #R$B6DD.
+  $BA75,$01 Restore the address of the object from the stack.
 N $BA76 Draw the icon, if there is an object in this entry.
   $BA76,$01 Fetch the type of the object.
   $BA77,$03 Jump to #R$BA80 if the carried entry is empty.
   $BA7A,$03 Set the type of the temporary object.
   $BA7D,$03 Call #R$B3E7 to draw its sprite.
-N $BA80 Copy the icon to the screen.
+N $BA80 Copy the place to the screen.
 @ $BA80 label=DisplayObjectsCarried_Copy
-  $BA80,$03 Set #REGc to the x co-ordinate.
-  $BA83,$03 Set #REGb to the y co-ordinate.
+  $BA80,$03 Fetch the pixel x position into #REGc.
+  $BA83,$03 Fetch the pixel y position into #REGb.
   $BA86,$03 Call #R$B394 to get the address in the display file.
   $BA89,$03 Call #R$B37F to get the address in the buffer.
   $BA8C,$02 Copy it to #REGhl.
-  $BA8E,$03 Set the size of the area in #REGbc to #N$18 lines and #N$03 bytes
-. wide.
+  $BA8E,$03 Set #REGbc to #N$1803.
   $BA91,$03 Call #R$B278 to copy the icon to the screen.
-N $BA94 Set the colour of the icon from the type of the object.
-  $BA94,$04 Restore the pointer and the counter from the stack, and stash them
-. again.
+N $BA94 Colour the cells from the shape.
+  $BA94,$01 Restore the address of the object from the stack.
+  $BA95,$02 Keep the counter on the stack.
+  $BA97,$01 Stash the address of the object on the stack.
   $BA98,$01 Fetch the type of the object.
-  $BA99,$02,b$01 Keep only the three bits that choose the colour.
-  $BA9B,$03 Set #REGde to the offset into the table of colours.
-  $BA9E,$03 Use the table of colours, #R$BAC2.
-  $BAA1,$01 Add the offset.
+  $BA99,$02,b$01 Keep only bits 0 to 2.
+  $BA9B,$03 Copy the shape into #REGde.
+  $BA9E,$04 Point #REGhl at the entry of #R$BAC2 for the shape.
   $BAA2,$01 Fetch the colour into #REGc.
-  $BAA3,$03 Set #REGl to the x co-ordinate.
-  $BAA6,$05 Add #N$17 to the y co-ordinate to get to the top of the icon.
-  $BAAB,$01 Set #REGh to it.
+  $BAA3,$03 Fetch the pixel x position of the place into #REGl.
+N $BAA6 Add #N$17 to the y co-ordinate to get to the top of the icon.
+  $BAA6,$03 Fetch the pixel y position of the place.
+  $BAA9,$02 Add #N$17.
+  $BAAB,$01 Keep it in #REGh.
   $BAAC,$03 Call #R$B3B6 to get the address in the attribute file.
-  $BAAF,$01 Move it to #REGhl.
-  $BAB0,$01 Set the colour in #REGa.
-  $BAB1,$03 Set the size of the area in #REGbc to three bytes wide and three
-. lines.
+  $BAAF,$01 Swap it into #REGhl.
+  $BAB0,$01 Fetch the colour.
+  $BAB1,$03 Set #REGbc to #N$0303.
   $BAB4,$03 Call #R$B6DD to set the attributes.
-  $BAB7,$02 Restore the pointer and the counter from the stack.
+  $BAB7,$02 Restore the address of the object and the counter from the stack.
   $BAB9,$04 Move on to the next entry, which is four bytes on.
   $BABD,$02 Decrease the counter and loop until all three icons have been drawn.
   $BABF,$02 Restore #REGix from the stack.
   $BAC1,$01 Return.
-
 b $BAC2 Inventory Colours
 @ $BAC2 label=InventoryColours
 D $BAC2 The attribute used for an inventory icon, which is chosen by the lowest
@@ -5737,47 +5912,49 @@ B $BACA,$20,$08
 
 c $BAEA Print Character
 @ $BAEA label=PrintCharacter
-D $BAEA Draws a character into the buffer, a #N$08 by #N$08 block of pixels, and
-. leaves the address ready for the next character. A space is drawn as the glyph
-. with code #N$3D, which is blank. The glyph is found in the table at the
-. address in #R$A732: the address of a glyph is that address plus the code times
-. eight.
+D $BAEA Prints a character in the screen buffer, using the font
+. whose address is held in #R$A732. A space is drawn as
+. #N($3D), which is blank in this font. The eight rows are
+. written going down the buffer (see #R$D88F), #N$20 bytes
+. apart, and the address is left at the top of the next
+. character.
 E $BAEA View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BBEB }
 . { #KNIGHTLORE$BE7F }
 . LIST#
-R $BAEA A Character code
-R $BAEA HL Address in the buffer of the top line of the place for the character
-R $BAEA O:HL Address in the buffer of the top line of the place to the right
-N $BAEA Find the glyph.
-  $BAEA,$03 Stash #REGbc, #REGde and #REGhl on the stack.
-  $BAED,$04 Jump to #R$BAF3 if the character is not a space.
-  $BAF1,$02 Use the glyph for the code #N$3D instead, which is blank.
+R $BAEA A The character
+R $BAEA HL Address in the screen buffer of the top row
+R $BAEA O:HL Address of the top row of the next character
+N $BAEA Stash the registers and turn a space into the font
+. space.
+  $BAEA,$03 Stash #REGbc, #REGde and the screen buffer address
+. on the stack.
+  $BAED,$04 Jump to #R$BAF3 if it is not a space.
+  $BAF1,$02 Use the font space (#N$3D).
+N $BAF3 Find the glyph.
 @ $BAF3 label=PrintCharacter_Glyph
-  $BAF3,$03 Set #REGhl to the character code.
-  $BAF6,$03 Multiply it by eight.
-  $BAF9,$04 Fetch the address of the glyph table from #R$A732.
-  $BAFD,$01 Add it to get the address of the glyph.
-  $BAFE,$01 Set #REGde to it.
-  $BAFF,$01 Restore #REGhl, the address in the buffer, from the stack.
-N $BB00 Copy the eight lines of the glyph to the buffer, working down the buffer
-. from the top line.
-  $BB00,$02 Set a counter in #REGb of eight lines.
+  $BAF3,$03 Set #REGhl to the character.
+  $BAF6,$03 Multiply the character by eight.
+N $BAF9 Add the font address.
+  $BAF9,$04 Fetch #R$A732.
+  $BAFD,$01 Add it to get the glyph address.
+  $BAFE,$01 Point #REGde at the glyph.
+  $BAFF,$01 Restore the screen buffer address from the stack.
+N $BB00 Copy eight rows down the buffer.
+  $BB00,$02 Set a counter of #N$08 rows.
 @ $BB02 label=PrintCharacter_Loop
-  $BB02,$02 Copy a line of the glyph to the buffer.
-  $BB04,$01 Move on to the next line of the glyph.
-  $BB05,$01 Stash the counter on the stack.
-  $BB06,$03 Set #REGbc to #N$FFE0, which is minus the length of a line of the
-. buffer.
-  $BB09,$01 Move #REGhl down to the next line of the buffer.
-  $BB0A,$01 Restore the counter.
-  $BB0B,$02 Decrease the counter and loop until all eight lines have been
-. copied.
-N $BB0D Move on to the next character position, which is eight lines up and one
+  $BB02,$02 Copy a row of the glyph to the buffer.
+  $BB04,$01 Move on to the next row of the glyph.
+  $BB05,$01 Stash the row counter on the stack.
+  $BB06,$04 Move #REGhl down a row.
+  $BB0A,$01 Restore the row counter from the stack.
+  $BB0B,$02 Jump to #R$BB02 until all eight rows have been
+. written.
+N $BB0D Move on to the next character, eight lines up and one
 . byte to the right.
   $BB0D,$01 Restore #REGde from the stack.
-  $BB0E,$04 Add #N$0101 to #REGhl.
+  $BB0E,$04 Move #REGhl on by #N($0101,$04,$04).
   $BB12,$01 Restore #REGbc from the stack.
   $BB13,$01 Return.
 
@@ -5825,6 +6002,22 @@ D $BB29 Adds an amount to the score, which is held as three bytes of binary
 . | #SIM(start=$BB29,stop=$0000,sp=$5D00,bc=$0150)
 . #SIM(start=$B178,stop=$0000,sp=$5D00)
 . #SCR$03,$16,$13,$0A,$05(add-to-score-after) } UDGTABLE# #POPS
+E $BB29 Continue on to #R$BB3B.
+E $BB29 View the equivalent code in;
+. #LIST
+. { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
+. { #COOKIE$7415 }
+. { #CYBERUN$925E }
+. { #JETPAC$70F9 }
+. { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PSSST$737A }
+. { #SABREWULF$B5A9 }
+. { #TRANZAM$6046 }
+. { #UNDERWURLDE$A045 }
+. LIST#
 R $BB29 BC Amount to add, as four decimal digits
   $BB29,$03 Start at the last byte of the score, #R$A744.
   $BB2C,$04 Add the last two digits of the amount to the last two digits of the
@@ -5856,30 +6049,30 @@ E $BB48 View the equivalent code in;
 . { #MARTIANOIDS$B5AF }
 . LIST#
 R $BB48 B Number of bytes
-R $BB48 DE Address of the first byte
-R $BB48 HL Address in the buffer of the top line of the place for the first
-. digit
-  $BB48,$01 Stash the buffer address on the stack.
-  $BB49,$06 Set the glyph table to the start of the font, #N$8355, where the
-. digits are.
-  $BB4F,$01 Restore the buffer address from the stack.
-  $BB50,$01 Fetch the byte.
-  $BB51,$04 Move the upper digit down to the bottom four bits.
-  $BB55,$02,b$01 Keep only the digit.
-  $BB57,$03 Call #R$BAEA to print it.
+R $BB48 DE Address of the number
+R $BB48 HL Address in the screen buffer
+N $BB48 Point at the digit font.
+  $BB48,$01 Stash the screen buffer address on the stack.
+  $BB49,$06 Set #R$A732 to #R$8355.
+  $BB4F,$01 Restore the screen buffer address from the stack.
+N $BB50 Print the upper digit of the byte.
+  $BB50,$01 Fetch a byte of the number.
+  $BB51,$04 Move the upper digit to the lowest four bits.
+  $BB55,$02,b$01 Keep only bits 0 to 3.
+  $BB57,$03 Call #R$BAEA.
+N $BB5A Print the lower digit and move on.
 @ $BB5A label=PrintBCDNumber_Lower
-  $BB5A,$01 Fetch the byte again.
-  $BB5B,$02,b$01 Keep only the lower digit.
-  $BB5D,$03 Call #R$BAEA to print it.
+  $BB5A,$01 Fetch a byte of the number.
+  $BB5B,$02,b$01 Keep only bits 0 to 3.
+  $BB5D,$03 Call #R$BAEA.
   $BB60,$01 Move on to the next byte.
-  $BB61,$02 Decrease the counter and loop until all the bytes have been done.
+  $BB61,$02 Jump to #R$BB48 until all of the bytes have been done.
   $BB63,$01 Return.
 
 c $BB64 Set Flashing Attribute
 @ $BB64 label=SetFlashingAttribute
-D $BB64 Makes one of the colours of a list of colours flash, and stops the
-. others from flashing, by setting or clearing bit 7. This is used to show the
-. chosen line of the menu.
+D $BB64 Sets bit 7 of the attribute of one line of text in a
+. list of lines, and resets it for the other lines.
 E $BB64 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$BEA3 }
@@ -5887,40 +6080,29 @@ E $BB64 View the equivalent code in;
 . { #NIGHTSHADE$CA1B }
 . { #MARTIANOIDS$BB73 }
 . LIST#
-R $BB64 A Number of the colour to make flash
-R $BB64 B Number of colours
-R $BB64 HL Address of the first colour
-  $BB64,$03 Jump to #R$BB6E if this is not the first colour.
+R $BB64 A The number of the line
+R $BB64 B Number of lines
+R $BB64 HL Address of the attributes
+N $BB64 Flash one line and steady the rest.
+  $BB64,$03 Jump to #R$BB6E if the line is not the first.
 @ $BB67 label=SetFlashingAttribute_Flash
-  $BB67,$02 Make the colour flash.
+  $BB67,$02 Set bit 7 of the attribute.
   $BB69,$02 Jump to #R$BB70.
 @ $BB6B label=SetFlashingAttribute_Next
-  $BB6B,$03 Jump to #R$BB67 when the countdown reaches that colour.
+  $BB6B,$03 Jump to #R$BB67 if this is the line.
 @ $BB6E label=SetFlashingAttribute_Steady
-  $BB6E,$02 Stop the colour from flashing.
+  $BB6E,$02 Reset bit 7 of the attribute.
 @ $BB70 label=SetFlashingAttribute_Loop
-  $BB70,$01 Move on to the next colour.
-  $BB71,$02 Decrease the counter and loop until all the colours have been done.
+  $BB70,$01 Move on to the next line.
+  $BB71,$02 Jump to #R$BB6B until all of the lines have been done.
   $BB73,$01 Return.
 
 c $BB74 Game Selection Menu
 @ $BB74 label=GameMenu
-D $BB74 Shows the title screen with the menu of control methods, and waits for
-. the player to choose a method and start the game. The menu text is drawn again
-. on every pass, so that the line that is chosen flashes. A tune is played while
-. the menu is on the screen.
-D $BB74 Keys #N$31 to #N$34 choose the keyboard, a Kempston joystick, a cursor
-. joystick or an Interface II joystick, and key #N$30 starts the game. The
-. choice is held in #R$A709.
-E $BB74 View the equivalent code in;
-. #LIST
-. { #ALIENEIGHT$BA7E }
-. { #KNIGHTLORE$BD0C }
-. { #MARTIANOIDS$BB12 }
-. { #NIGHTSHADE$C8CA }
-. LIST#
-.
-. #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune)))
+D $BB74 Displays the menu and waits for the control method to be chosen and the
+. game to be started. The keys "1" to "4" choose the keyboard, the Kempston
+. joystick, the cursor joystick and Interface II, and "0" starts the game. The
+. menu tune is played once. The choice is held in #R$A709.
 .
 . #PUSHS #UDGTABLE { =h The menu }
 . { #SIM(start=$AF87,stop=$AFB6,sp=$5E00,clear=1)
@@ -5930,24 +6112,32 @@ E $BB74 View the equivalent code in;
 . #SCR$02(screen-frame)
 . #HTML(</div>)
 . #POPS
-N $BB74 Clear the buffer and draw the menu.
+E $BB74 View the equivalent code in;
+. #LIST
+. { #ALIENEIGHT$BA7E }
+. { #KNIGHTLORE$BD0C }
+. { #MARTIANOIDS$BB12 }
+. { #NIGHTSHADE$C8CA }
+. LIST#
+N $BB74 Prepare the menu.
   $BB74,$04 Write #N$00 to #R$A734, so that the frame will be drawn.
   $BB78,$03 Start at the colours of the lines of the menu, #R$BBF1.
-  $BB7B,$02 Set a counter in #REGb of eight bytes.
+  $BB7B,$02 Set the number of lines to #N$08.
 @ $BB7D label=GameMenu_Steady
-  $BB7D,$02 Stop the colour from flashing.
-  $BB7F,$01 Move on to the next colour.
+  $BB7D,$02 Stop the line flashing.
+  $BB7F,$01 Move on to the next line.
   $BB80,$02 Decrease the counter and loop until all the colours are steady.
   $BB82,$03 Call #R$CB81 to clear the buffer.
   $BB85,$03 Call #R$BCB4 to draw the menu.
-  $BB88,$03 Call #R$BBD8 to make the chosen line flash.
+  $BB88,$03 Call #R$BBD8.
+N $BB8B Read the keys that choose the control method.
 @ $BB8B label=GameMenu_Loop
   $BB8B,$03 Call #R$BCB4 to draw the menu.
+N $BB8E #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune)))
   $BB8E,$03 Take the menu tune, #R$D7CF.
   $BB91,$03 Call #R$D69C to play it until a key is pressed.
 N $BB94 Read the keys that choose the control method.
-  $BB94,$05 Read from the keyboard, with a call to #R$B952 that returns the
-. pressed keys as set bits;
+  $BB94,$05 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
 . { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
@@ -5955,39 +6145,40 @@ N $BB94 Read the keys that choose the control method.
 . TABLE#
   $BB99,$01 Stash the keys that are pressed in #REGe.
   $BB9A,$03 Fetch the control method from #R$A709.
-  $BB9D,$03 Copy it to #R$A70C.
+  $BB9D,$03 Set #R$A70C.
   $BBA0,$04 Jump to #R$BBA6 if key #N$31 is not pressed.
   $BBA4,$02,b$01 Choose the keyboard, by clearing the bits of the control
 . method.
+N $BBA6 Choose a joystick if one of those keys is pressed.
 @ $BBA6 label=GameMenu_TestKempston
   $BBA6,$04 Jump to #R$BBAE if key #N$32 is not pressed.
   $BBAA,$02,b$01 Clear the bits of the control method...
-  $BBAC,$02,b$01 ...and choose the Kempston joystick.
+  $BBAC,$02,b$01 Choose the Kempston joystick.
 @ $BBAE label=GameMenu_TestCursor
   $BBAE,$04 Jump to #R$BBB6 if key #N$33 is not pressed.
   $BBB2,$02,b$01 Clear the bits of the control method...
-  $BBB4,$02,b$01 ...and choose the cursor joystick.
+  $BBB4,$02,b$01 Choose the cursor joystick.
 @ $BBB6 label=GameMenu_TestInterfaceII
   $BBB6,$04 Jump to #R$BBBC if key #N$34 is not pressed.
   $BBBA,$02,b$01 Choose the Interface II joystick.
 @ $BBBC label=GameMenu_SetMethod
   $BBBC,$03 Write the control method to #R$A709.
-  $BBBF,$03 Address #R$A735, which is not used.
+N $BBBF Start the game if "0" is pressed.
+  $BBBF,$03 Point #REGhl at #R$A735.
   $BBC2,$03 Take the previous control method, #R$A70C.
   $BBC5,$01 Compare the control method with the previous one, which is not used.
 N $BBC6 Start the game if key #N$30 is pressed.
-  $BBC6,$05 Read from the keyboard, with a call to #R$B952 that returns the
-. pressed keys as set bits;
+  $BBC6,$05 Read from the keyboard;
 . #TABLE(default,centre,centre,centre,centre,centre,centre)
 . { =h,r2 Port Number | =h,c5 Bit }
 . { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
 . { #N$EF | 0 | 9 | 8 | 7 | 6 }
 . TABLE#
   $BBCB,$03 Return if key #N$30 is pressed.
-  $BBCE,$04 Count the pass in #R$A70A.
-  $BBD2,$03 Call #R$BBD8 to make the chosen line flash.
+  $BBCE,$03 Point #REGhl at #R$A70A.
+  $BBD1,$01 Increment #R$A70A.
+  $BBD2,$03 Call #R$BBD8.
   $BBD5,$03 Jump to #R$BB8B for another pass.
-
 c $BBD8 Flash Menu Options
 @ $BBD8 label=FlashMenuOptions
 D $BBD8 Makes the line of the menu that shows the chosen control method flash,
@@ -5999,6 +6190,7 @@ E $BBD8 View the equivalent code in;
 . { #ALIENEIGHT$BAFB }
 . { #NIGHTSHADE$C949 }
 . LIST#
+N $BBD8 Flash the chosen control method.
   $BBD8,$03 Start at the colour of the first control method line, which is
 . the byte after the first of #R$BBF1.
   $BBDB,$03 Fetch the control method.
@@ -6006,6 +6198,7 @@ E $BBD8 View the equivalent code in;
   $BBDF,$02,b$01 ...and keep only those bits.
   $BBE1,$02 Set a counter in #REGb of four lines.
   $BBE3,$03 Call #R$BB64 to make that line flash.
+N $BBE6 Flash the start-game line if bit 3 of #R$A709 is set.
   $BBE6,$02 Stop the line that starts the game from flashing.
   $BBE8,$03 Fetch the control method.
   $BBEB,$02,b$01 Keep only bit 3.
@@ -6042,12 +6235,10 @@ D $BC06 The lines of the menu. The last character of each has bit 7 set. The
 
 c $BC66 Print Text Single Colour
 @ $BC66 label=PrintTextSingleColour
-D $BC66 Prints a string to the buffer and sets the attributes of its characters
-. to the text colour in #R$A736. The last character of the string has bit 7 set.
-. The font used is the one at #N$8355, whose first character is code #N$30, and
-. which is shifted so that the address of the glyph for a code is found by
-. adding the code times eight to #N$81D5. The attributes are written straight to
-. the screen.
+D $BC66 Prints a line of text in the colour held in #R$A736,
+. using the ASCII font at #R$8355. The last character of the
+. text has bit 7 set. Each character cell has its attribute
+. set as well.
 E $BC66 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$BE31 }
@@ -6066,20 +6257,20 @@ E $BC66 View the equivalent code in;
 . | #SIM(start=$BC66,stop=$0000,sp=$5D00,de=$BB24,hl=$1F68)
 . #SIM(start=$B178,stop=$0000,sp=$5D00)
 . #SCR$03,$09,$13,$0C,$04(print-text-after) } UDGTABLE# #POPS
-R $BC66 DE Address of the string
-R $BC66 H Pixel y co-ordinate of the string, counting up from the bottom of the
-. screen
-R $BC66 L Pixel x co-ordinate of the string
-R $BC66 O:DE Address after the string
-  $BC66,$01 Stash the position on the stack.
-  $BC67,$06 Point the glyph table at #N$81D5.
-  $BC6D,$01 Fetch the position into #REGbc.
-  $BC6E,$01 Stash the position on the stack again.
-  $BC6F,$03 Call #R$B37F to get the address in the buffer.
+R $BC66 DE Address of the text
+R $BC66 H Pixel y position
+R $BC66 L Pixel x position
+R $BC66 O:DE Address after the text
+N $BC66 Point at the ASCII font and keep #R$A736.
+  $BC66,$01 Stash the pixel position on the stack.
+  $BC67,$03 Point #REGhl at #N$81D5.
+  $BC6A,$03 Set #R$A732.
+  $BC6D,$02 Copy the pixel position to #REGbc (using the stack).
+  $BC6F,$03 Call #R$B37F.
   $BC72,$02 Copy it to #REGhl.
-  $BC74,$03 Fetch the text colour.
-  $BC77,$01 Stash the colour in #REGaf'.
-  $BC78,$02 Jump to #R$BC8B to print the string.
+  $BC74,$03 Fetch #R$A736.
+  $BC77,$01 Keep the colour in #REGaf'.
+  $BC78,$02 Jump to #R$BC8B.
 
 c $BC7A Print Text Standard Font
 @ $BC7A label=PrintTextStandardFont
@@ -6090,48 +6281,59 @@ E $BC7A View the equivalent code in;
 . { #KNIGHTLORE$BE45 }
 . { #ALIENEIGHT$BBB1 }
 . LIST#
-R $BC7A DE Address of the colour and the string
-R $BC7A H Pixel y co-ordinate of the string, counting up from the bottom of the
-. screen
-R $BC7A L Pixel x co-ordinate of the string
-  $BC7A,$01 Stash the position on the stack.
-  $BC7B,$06 Point the glyph table at #N$81D5.
-  $BC81,$01 Fetch the position into #REGbc.
-  $BC82,$01 Stash the position on the stack again.
-  $BC83,$03 Call #R$B37F to get the address in the buffer.
+R $BC7A DE Address of the text
+R $BC7A H Pixel y position
+R $BC7A L Pixel x position
+N $BC7A Point at the ASCII font and fetch the attribute
+. from the text.
+  $BC7A,$01 Stash the pixel position on the stack.
+  $BC7B,$03 Point #REGhl at #N$81D5.
+  $BC7E,$03 Set #R$A732.
+  $BC81,$02 Copy the pixel position to #REGbc (using the stack).
+  $BC83,$03 Call #R$B37F.
   $BC86,$02 Copy it to #REGhl.
-  $BC88,$01 Fetch the colour from the string.
-  $BC89,$01 Stash the colour in #REGaf'.
-  $BC8A,$01 Move on to the string.
+  $BC88,$01 Fetch the attribute of the text.
+  $BC89,$01 Keep the attribute in #REGaf'.
+  $BC8A,$01 Move on to the first character.
 
 c $BC8B Print Text
 @ $BC8B label=PrintText
-D $BC8B The part of #R$BC66 that prints the characters and their attributes. The
-. alternate registers hold the address in the attribute file, and the main
-. registers hold the address in the buffer.
-  $BC8B,$01 Switch to the alternate registers.
-  $BC8C,$01 Fetch the position from the stack.
-  $BC8D,$01 Stash the string pointer on the stack.
-  $BC8E,$03 Call #R$B3B6 to get the address in the attribute file.
+D $BC8B Prints each character of a line of text and sets the
+. attribute of its cell. #REGde' holds the colour, #REGhl'
+. holds the address in the attribute file, and #REGhl holds
+. the address in the screen buffer.
+N $BC8B Find the attribute address.
+  $BC8B,$01 Switch to the shadow registers.
+  $BC8C,$01 Fetch the pixel position.
+  $BC8D,$01 Stash the address of the text on the stack.
+  $BC8E,$03 Call #R$B3B6.
   $BC91,$02 Copy it to #REGhl'.
-  $BC93,$01 Restore the string pointer.
+  $BC93,$01 Restore the address of the text from the stack.
+N $BC94 Print each character and set its attribute.
 @ $BC94 label=PrintText_Next
-  $BC94,$01 Switch to the main registers.
-  $BC95,$01 Fetch the next character.
-  $BC96,$04 Jump to #R$BCA7 if it is the last character.
-  $BC9A,$01 Stash the string pointer on the stack.
-  $BC9B,$03 Call #R$BAEA to print the character.
-  $BC9E,$01 Restore the string pointer.
+  $BC94,$01 Switch back to the main registers.
+  $BC95,$01 Fetch a character of the text.
+  $BC96,$04 Jump to #R$BCA7 if it is the last.
+  $BC9A,$01 Stash the address of the text on the stack.
+  $BC9B,$03 Call #R$BAEA.
+  $BC9E,$01 Restore the address of the text from the stack.
   $BC9F,$01 Move on to the next character.
-  $BCA0,$01 Switch to the alternate registers.
-  $BCA1,$04 Write the colour to the attribute file and move on to the next
-. attribute.
-  $BCA5,$02 Jump to #R$BC94 to print the next character.
+  $BCA0,$01 Switch to the shadow registers.
+  $BCA1,$01 Fetch the attribute.
+  $BCA2,$01 Set the attribute of the cell.
+  $BCA3,$01 Move on to the next cell.
+  $BCA4,$01 Keep the attribute in #REGaf'.
+  $BCA5,$02 Jump to #R$BC94.
+N $BCA7 Print the last character.
 @ $BCA7 label=PrintText_Last
-  $BCA7,$02,b$01 Clear bit 7 of the character.
-  $BCA9,$06 Print it, and move on to the end of the string.
-  $BCAF,$01 Switch to the alternate registers.
-  $BCB0,$02 Write the colour to the attribute file.
+  $BCA7,$02,b$01 Keep only bits 0 to 6.
+  $BCA9,$01 Stash the address of the text on the stack.
+  $BCAA,$03 Call #R$BAEA.
+  $BCAD,$01 Restore the address of the text from the stack.
+  $BCAE,$01 Move on past the text.
+  $BCAF,$01 Switch to the shadow registers.
+  $BCB0,$01 Fetch the attribute.
+  $BCB1,$01 Set the attribute of the last cell.
   $BCB2,$01 Switch back to the main registers.
   $BCB3,$01 Return.
 
@@ -6153,32 +6355,36 @@ E $BCB4 View the equivalent code in;
 . #SIM(start=$BB74,stop=$BB85,sp=$5E00)
 . #SIM(start=$BCB4,stop=$0000,sp=$5D00)
 . #SCR$02(display-menu) } UDGTABLE# #POPS
-  $BCB4,$03 Take the colours of the lines, #R$BBF1.
-  $BCB7,$01 Switch to the alternate registers.
-  $BCB8,$03 Take the positions of the lines, #R$BBF8.
-  $BCBB,$03 Take the text of the lines, #R$BC06.
-  $BCBE,$02 Set a counter in #REGbc' of seven lines.
+N $BCB4 Point at the menu colours, positions and text.
+  $BCB4,$03 Point #REGde at #R$BBF1.
+  $BCB7,$01 Switch to the shadow registers.
+  $BCB8,$03 Point #REGhl at #R$BBF8.
+  $BCBB,$03 Point #REGde at #R$BC06.
+  $BCBE,$02 Set the number of lines to #N$07.
+N $BCC0 Print one line from the three lists.
 @ $BCC0 label=DisplayMenu_Next
-  $BCC0,$01 Switch to the main registers.
-  $BCC1,$01 Fetch the colour of the line.
-  $BCC2,$03 Write it to #R$A736 as the text colour.
-  $BCC5,$01 Move on to the next colour.
-  $BCC6,$01 Switch to the alternate registers.
-  $BCC7,$01 Stash the counter on the stack.
-  $BCC8,$01 Fetch the x co-ordinate of the line.
-  $BCC9,$02 Move on to the next position.
-  $BCCB,$01 Stash the pointer on the stack.
-  $BCCC,$01 Take the y co-ordinate.
-  $BCCD,$01 Set #REGh to it.
-  $BCCE,$01 Set #REGl to the x co-ordinate.
-  $BCCF,$03 Call #R$BC66 to print the line.
-  $BCD2,$02 Restore the pointer and the counter from the stack.
-  $BCD4,$02 Decrease the counter and loop until all the lines have been printed.
-  $BCD6,$05 Return if the frame has already been drawn.
-  $BCDB,$01 Take #N$01 as the flag that the frame has been drawn.
-  $BCDC,$03 Write it to #R$A734, to say that the frame has been drawn.
-  $BCDF,$03 Call #R$BD59 to draw the frame of the menu.
-  $BCE2,$03 Jump to #R$B178 to copy the buffer to the screen.
+  $BCC0,$01 Switch back to the main registers.
+  $BCC1,$01 Fetch the attribute of the line.
+  $BCC2,$03 Set #R$A736.
+  $BCC5,$01 Move on to the next attribute.
+  $BCC6,$01 Switch to the shadow registers.
+  $BCC7,$01 Stash the number of lines on the stack.
+  $BCC8,$01 Fetch the x position.
+  $BCC9,$02 Move on to the next pair of positions.
+  $BCCB,$01 Stash the address of the next pair on the stack.
+  $BCCC,$01 Point #REGhl at the y position.
+  $BCCD,$01 Fetch the y position.
+  $BCCE,$01 Set the x position.
+  $BCCF,$03 Call #R$BC66.
+  $BCD2,$02 Restore the address of the next pair and the number
+. of lines from the stack.
+  $BCD4,$02 Jump to #R$BCC0 until all of the lines have been
+. printed.
+N $BCD6 Draw the border the first time.
+  $BCD6,$05 Return if #R$A734 is set.
+  $BCDB,$04 Write #N$01 to #R$A734.
+  $BCDF,$03 Call #R$BD59.
+  $BCE2,$03 Jump to #R$B178.
 
 c $BCE5 Draw Frame
 @ $BCE5 label=DrawFrame
@@ -6252,14 +6458,10 @@ B $BD55,$04,$04 Cap at the top of the upright edge on the right.
 c $BD59 Print Border
 @ $BD59 label=PrintBorder
 D $BD59 Draws the frame around the title screen, and around the end screens,
-. into the buffer, from the pieces whose data starts at #R$BD98. It is made of
-. four corners, two long edges, and two shorter ones, each drawn as a run of
-. pieces.
-E $BD59 View the equivalent code in;
-. #LIST
-. { #KNIGHTLORE$D296 }
-. { #ALIENEIGHT$CB8A }
-. LIST#
+. into the buffer, from the pieces whose data starts at #R$BD98. The four
+. corners are drawn first, then the top and bottom edges, which are each made of
+. #N$08 sprites that are #N$18 pixels apart, and the left and right edges, which
+. are each made of #N$06 sprites that are #N$18 pixels apart.
 .
 . #PUSHS #UDGTABLE(default,centre,centre)
 . { =h Before | =h After #R$BD59 and #R$B178 }
@@ -6271,29 +6473,38 @@ E $BD59 View the equivalent code in;
 . | #SIM(start=$BD59,stop=$0000,sp=$5D00)
 . #SIM(start=$B178,stop=$0000,sp=$5D00)
 . #SCR$01(print-border-after) } UDGTABLE# #POPS
+E $BD59 View the equivalent code in;
+. #LIST
+. { #KNIGHTLORE$D296 }
+. { #ALIENEIGHT$CB8A }
+. LIST#
+N $BD59 Corners, then the four edges.
   $BD59,$04 Use the temporary object, #R$BACA.
-  $BD5D,$03 Take the data of the pieces, #R$BD98.
+  $BD5D,$03 Point #REGhl at #R$BD98.
 N $BD60 Draw the four corners.
-  $BD60,$0C Call #R$BDD5 to draw each of the four corners.
+  $BD60,$03 Call #R$BDD5.
+  $BD63,$03 Call #R$BDD5.
+  $BD66,$03 Call #R$BDD5.
+  $BD69,$03 Call #R$BDD5.
 N $BD6C Draw the top edge and the bottom edge, which run to the right.
   $BD6C,$03 Call #R$BDC0 to set up the top edge.
-  $BD6F,$03 Set the distance between pieces, which is #N$18 to the right.
-  $BD72,$02 Set a counter in #REGb of eight pieces.
-  $BD74,$03 Call #R$BDDE to draw them.
+  $BD6F,$03 Set #REGde to #N($0018,$04,$04).
+  $BD72,$02 Set #REGb to #N$08.
+  $BD74,$03 Call #R$BDDE.
   $BD77,$03 Call #R$BDC0 to set up the bottom edge.
-  $BD7A,$02 Set a counter in #REGb of eight pieces.
-  $BD7C,$03 Call #R$BDDE to draw them.
+  $BD7A,$02 Set #REGb to #N$08.
+  $BD7C,$03 Call #R$BDDE.
 N $BD7F Draw the two pieces that finish the top and bottom edges.
-  $BD7F,$06 Call #R$BDD5 to draw each of the two.
+  $BD7F,$03 Call #R$BDD5.
+  $BD82,$03 Call #R$BDD5.
 N $BD85 Draw the left edge and the right edge, which run up.
   $BD85,$03 Call #R$BDC0 to set up the left edge.
-  $BD88,$03 Set the distance between pieces, which is #N$18 up.
-  $BD8B,$02 Set a counter in #REGb of six pieces.
-  $BD8D,$03 Call #R$BDDE to draw them.
+  $BD88,$03 Set #REGde to #N$1800.
+  $BD8B,$02 Set #REGb to #N$06.
+  $BD8D,$03 Call #R$BDDE.
   $BD90,$03 Call #R$BDC0 to set up the right edge.
-  $BD93,$02 Set a counter in #REGb of six pieces.
+  $BD93,$02 Set #REGb to #N$06.
   $BD95,$03 Jump to #R$BDDE.
-
 b $BD98 Menu Frame Pieces
 @ $BD98 label=MenuFramePieces
 D $BD98 The pieces of the frame that #R$BD59 draws, in the same form as the
@@ -6312,22 +6523,29 @@ B $BDBC,$04,$04 Right edge, first piece, mirrored.
 
 c $BDC0 Set Sprite Details
 @ $BDC0 label=SetSpriteDetails
-D $BDC0 Sets up the temporary object from the four bytes that describe a piece
-. of a frame: the type, the flags and the screen position.
+D $BDC0 Sets the sprite number, the flags and the pixel position of an object
+. from four bytes of data.
 E $BDC0 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$D237 }
 . { #ALIENEIGHT$CAF1 }
 . LIST#
-R $BDC0 HL Address of the data
-R $BDC0 IX Temporary object record
-R $BDC0 O:HL Address of the data after the piece
-  $BDC0,$05 Set the type of the object.
-  $BDC5,$05 Set the flags of the object.
-  $BDCA,$05 Set the screen x co-ordinate of the object.
-  $BDCF,$05 Set the screen y co-ordinate of the object.
+R $BDC0 HL The address of the data
+R $BDC0 IX The address of the object
+R $BDC0 O:HL The address of the byte after the data
+N $BDC0 Set the type of the object.
+  $BDC0,$02 Fetch the sprite number and move on.
+  $BDC2,$03 Set the sprite number.
+N $BDC5 Set the flags of the object.
+  $BDC5,$02 Fetch the flags and move on.
+  $BDC7,$03 Set the flags.
+N $BDCA Set the screen x co-ordinate of the object.
+  $BDCA,$02 Fetch the pixel x and move on.
+  $BDCC,$03 Set the pixel x position.
+N $BDCF Set the screen y co-ordinate of the object.
+  $BDCF,$02 Fetch the pixel y and move on.
+  $BDD1,$03 Set the pixel y position.
   $BDD4,$01 Return.
-
 c $BDD5 Print Table Sprite
 @ $BDD5 label=PrintTableSprite
 D $BDD5 Sets up a piece of a frame from its data, and draws it.
@@ -6342,28 +6560,35 @@ R $BDD5 O:HL Address of the data after the piece
   $BDD5,$03 Call #R$BDC0 to set up the piece.
   $BDD8,$01 Stash the data pointer on the stack.
   $BDD9,$03 Call #R$B3E7 to draw the piece.
-  $BDDC,$01 Restore the data pointer.
+  $BDDC,$01 Restore the data pointer from the stack.
   $BDDD,$01 Return.
 
 c $BDDE Print Sprites
 @ $BDDE label=PrintSprites
-D $BDDE Draws a number of copies of the piece in the temporary object, one after
-. another, each the same distance from the last.
+D $BDDE Prints the sprite of an object a number of times,
+. moving the pixel position of the object by a step each
+. time, so that it makes a row of sprites.
 E $BDDE View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$BEE4 }
 . { #ALIENEIGHT$BC56 }
 . LIST#
-R $BDDE B Number of pieces
-R $BDDE D Distance up the screen from one piece to the next
-R $BDDE E Distance to the right from one piece to the next
-R $BDDE IX Temporary object record
-  $BDDE,$03 Stash the counter, the distance and the data pointer on the stack.
-  $BDE1,$03 Call #R$B3E7 to draw the piece.
-  $BDE4,$03 Restore the data pointer, the distance and the counter.
-  $BDE7,$07 Move the piece on to the right.
-  $BDEE,$07 Move the piece up.
-  $BDF5,$02 Decrease the counter and loop until all the pieces have been drawn.
+R $BDDE B Number of times
+R $BDDE D Step along the y axis in pixels
+R $BDDE E Step along the x axis in pixels
+R $BDDE IX The address of the object
+N $BDDE Print one sprite and step the position.
+  $BDDE,$03 Stash #REGbc, #REGde and #REGhl on the stack.
+  $BDE1,$03 Call #R$B3E7.
+  $BDE4,$03 Restore #REGhl, #REGde and #REGbc from the stack.
+  $BDE7,$03 Fetch the pixel x position of the object.
+  $BDEA,$01 Add the step along the x axis.
+  $BDEB,$03 Set the pixel x position of the object.
+  $BDEE,$03 Fetch the pixel y position of the object.
+  $BDF1,$01 Add the step along the y axis.
+  $BDF2,$03 Set the pixel y position of the object.
+  $BDF5,$02 Jump to #R$BDDE until all of the sprites have been
+. printed.
   $BDF7,$01 Return.
 
 c $BDF8 Read Controls
@@ -6616,48 +6841,50 @@ E $BF0D View the equivalent code in;
 
 c $BF1B Test Object Intersections
 @ $BF1B label=TestObjectIntersections
-D $BF1B Tests if an object is overlapping any other object, where it is at the
-. moment. This is used to find out if there is room to put the object somewhere,
-. once its position has been changed.
+D $BF1B Tests whether an object overlaps any other solid object in the table
+. that starts at #R$A76F, without moving. The object itself is ignored while the
+. table is searched.
 E $BF1B View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$B4FD }
 . { #ALIENEIGHT$B712 }
 . LIST#
-R $BF1B IX Record of the object
-R $BF1B O:F Carry flag set if the object overlaps another object
-  $BF1B,$03 Stash #REGbc, #REGde and #REGhl on the stack.
-  $BF1E,$02 Stash #REGiy on the stack.
+R $BF1B IX The address of the object
+R $BF1B O:F Carry flag set if the object intersects another object
+N $BF1B Start at the first object with no movement.
+  $BF1B,$05 Stash the registers on the stack.
   $BF20,$04 Start with the first object record, #R$A76F.
   $BF24,$02 Set a counter in #REGb of the number of object records, #N$36.
-  $BF26,$02 Set the distance moved along x to zero.
-  $BF28,$02 Set the distances moved along y and z to zero.
+  $BF26,$02 Set the x speed to #N$00.
+  $BF28,$02 Set the y and z speeds to #N$00.
   $BF2A,$04 Flag the object as being moved, so that it is not tested against
 . itself.
 N $BF2E Test whether this object overlaps on all three axes.
 @ $BF2E label=TestObjectIntersections_Loop
-  $BF2E,$05 Jump to #R$BF4C to try the next object if this one is free, or is
-. the object that is being tested.
-  $BF33,$05 Jump to #R$BF4C to try the next object if they do not overlap along
-. x.
-  $BF38,$05 Jump to #R$BF4C to try the next object if they do not overlap along
-. y.
-  $BF3D,$05 Jump to #R$BF4C to try the next object if they do not overlap along
-. z.
+  $BF2E,$03 Call #R$B99B.
+  $BF31,$02 Jump to #R$BF4C if the object is not used or is ignored.
+N $BF33 Jump to #R$BF4C to try the next object if they do not overlap along x.
+  $BF33,$03 Call #R$B8A2.
+  $BF36,$02 Jump to #R$BF4C if they do not overlap along x.
+N $BF38 Jump to #R$BF4C to try the next object if they do not overlap along y.
+  $BF38,$03 Call #R$B8B7.
+  $BF3B,$02 Jump to #R$BF4C if they do not overlap along y.
+N $BF3D Jump to #R$BF4C to try the next object if they do not overlap along z.
+  $BF3D,$03 Call #R$B8CC.
+  $BF40,$02 Jump to #R$BF4C if they do not overlap along z.
 N $BF42 The objects overlap on all three axes (and the carry flag is set), or
 . there are none left to try (and it is not).
 @ $BF42 label=TestObjectIntersections_Done
-  $BF42,$02 Restore #REGiy from the stack.
-  $BF44,$03 Restore #REGhl, #REGde and #REGbc from the stack.
+  $BF42,$05 Restore #REGiy, #REGhl, #REGde and #REGbc from the stack.
   $BF47,$04 Clear the flag that says that the object is being moved.
   $BF4B,$01 Return.
 N $BF4C Move on to the next object.
 @ $BF4C label=TestObjectIntersections_Next
-  $BF4C,$05 Move on to the next object record.
+  $BF4C,$03 Set the size of an object record to #N$20.
+  $BF4F,$02 Move on to the next object.
   $BF51,$02 Decrease the counter and loop until all the records have been tried.
   $BF53,$01 Clear the carry flag, as nothing overlaps the object.
   $BF54,$02 Jump to #R$BF42.
-
 c $BF56 Set Wipe And Draw Flags For Object
 @ $BF56 label=SetWipeAndDrawFlagsForObject
 D $BF56 Does what #R$CCDE does for the object in #REGiy, which is to say that it
@@ -6685,6 +6912,7 @@ E $BF66 View the equivalent code in;
 . { #ALIENEIGHT$BD58 }
 . LIST#
 R $BF66 O:F Zero flag clear if the key is being pressed
+N $BF66 Use a different bit when the control method has bit 3 set.
   $BF66,$03 Take the control method, #R$A709.
   $BF69,$01 Fetch the control method.
   $BF6A,$02,b$01 Keep only the bits that choose a joystick.
@@ -6692,6 +6920,7 @@ R $BF66 O:F Zero flag clear if the key is being pressed
   $BF6F,$02 Jump to #R$BF76 if the keyboard is being used.
   $BF71,$04 Jump to #R$BF76 if bit 3 of the control method is not set.
   $BF75,$01 Shift the bits of the controls down by one place.
+N $BF76 Keep only the pick-up and drop bit.
 @ $BF76 label=TestPickupDropKey_Mask
   $BF76,$02,b$01 Keep only the bit for picking up and dropping.
   $BF78,$01 Return.
@@ -6764,8 +6993,8 @@ N $BFE4 Nothing can be picked up, so look for a free object record to drop an
 . tried.
 @ $BFFC label=HandlePickupAndDrop_Done
 N $BFFC Put the size of the player back to what it was, and make a noise.
-  $BFFC,$04 Restore the old size along z.
-  $C000,$01 Restore the old half sizes along x and y.
+  $BFFC,$04 Restore the old size along z from the stack.
+  $C000,$01 Restore the old half sizes along x and y from the stack.
   $C001,$06 Put the old half sizes back.
   $C007,$06 Start a sound effect with a type of #N$01 and a count of #N$05.
   $C00D,$01 Return.
@@ -6783,7 +7012,7 @@ c $C017 Drop Object
 D $C017 Drops the oldest carried object into the free object record in #REGiy,
 . at the position of the player. If there is no object in the oldest place in
 . the inventory, the carried objects are only moved along. The player rises by
-. #N$0C, to be out of the way of the object that is dropped.
+. #N($0C), to be out of the way of the object that is dropped.
 R $C017 IX Record of the object of the legs of the player
 R $C017 IY Free object record
   $C017,$03 Take the oldest of the carried objects, #R$A72E.
@@ -6837,7 +7066,7 @@ N $C091 Move the carried objects along one place, which gets rid of the oldest
 . and leaves the first place empty.
   $C091,$03 Start at the last byte of the third entry of #R$A722.
   $C094,$03 Take the last byte of the fourth entry.
-  $C097,$03 Set the number of bytes in #REGbc to #N$0C, three objects.
+  $C097,$03 Set the number of bytes in #REGbc to #N($0C), three objects.
   $C09A,$02 Move them along, copying down from the end.
   $C09C,$03 Take the first place of the inventory, #R$A722.
   $C09F,$02 Set a counter in #REGb of four bytes.
@@ -6851,6 +7080,7 @@ D $C0A7 Picks up an object, which is put in the first place of the inventory
 . object is changed into the marker that makes #R$B3D3 erase it. If the carried
 . objects are all in use, the oldest one is dropped where the other one was.
 R $C0A7 IY Record of the object that is being picked up
+N $C0A7 Copy the object into the first place of the inventory.
   $C0A7,$03 Start at the first place of the inventory, #R$A722.
   $C0AA,$04 Set the type of the object in the inventory.
   $C0AE,$01 Move on to the flags.
@@ -6860,8 +7090,10 @@ R $C0A7 IY Record of the object that is being picked up
   $C0BA,$02 Write zero to the store, to say that the object is no longer in the
 . room.
   $C0BC,$03 Set the address in the inventory.
+N $C0BF Erase the object from the room.
   $C0BF,$03 Call #R$BF56 to mark the object to be drawn.
   $C0C2,$04 Change the object to the type that makes it be erased.
+N $C0C6 Drop the oldest carried object if the inventory is full.
   $C0C6,$03 Take the oldest carried object, #R$A72E.
   $C0C9,$02 Fetch the type of it.
   $C0CB,$03 Jump to #R$C091 to move the objects along if it is not in use.
@@ -6884,11 +7116,13 @@ E $C0D4 View the equivalent code in;
 R $C0D4 IX Record of the object of the legs of the player
 R $C0D4 IY Record of the object to test
 R $C0D4 O:F Carry flag set if the object can be picked up and touches the player
+N $C0D4 Return unless the object is one that can be picked up.
   $C0D4,$03 Fetch the type of the object.
   $C0D7,$04 Jump to #R$C0E0 if it is type #N$5A.
   $C0DB,$02 Take away #N$90 from it.
   $C0DD,$03 Return with the carry flag clear if it was not one of the five types
 . #N$90 to #N$94.
+N $C0E0 Test whether the player touches the object.
 @ $C0E0 label=TestObjectCanBePickedUp_Overlap
   $C0E0,$01 Stash #REGbc on the stack.
   $C0E1,$03 Set the distance moved along x to zero.
@@ -6916,9 +7150,9 @@ R $C107 IX Record of the object
 
 c $C111 Run Explosion
 @ $C111 label=RunExplosion
-D $C111 The handler of the object types #N$40 to #N$46, which are the stages of
-. an explosion. Each time it is run the object moves on to the next type, which
-. has the next sprite.
+D $C111 The handler of the object types #N$40 to #N($46), which are the stages
+. of an explosion. Each time it is run the object moves on to the next type,
+. which has the next sprite.
 R $C111 IX Record of the object
   $C111,$03 Call #R$C77A to set where the sprite is drawn.
   $C114,$03 Call #R$D64E to make a noise.
@@ -6968,7 +7202,7 @@ N $C149 Copy the player to the free record, then change the copy into a
   $C14A,$03 Take the free record, using the stack.
   $C14D,$03 Take the player, using the stack.
   $C150,$02 Copy the player to the projectile.
-  $C152,$04 Set the type of the projectile to #N$96, which is the first of its
+  $C152,$04 Set the type of the projectile to #N($96), which is the first of its
 . sprites.
   $C156,$03 Call #R$C5BD to find out which way the player is facing.
   $C159,$03 Set #REGhl to the number of the direction.
@@ -6994,15 +7228,15 @@ N $C18E Make sure that the projectile is inside the room.
   $C191,$05 Take away the half size along x from the limit along x.
   $C196,$05 Take away the half size along y from the limit along y.
   $C19B,$03 Fetch the x position of the projectile.
-  $C19E,$05 Take away the middle of the room, #N$80, and jump to #R$C1A5 if the
-. distance from the middle is not negative.
+  $C19E,$05 Take away the middle of the room, #N($80), and jump to #R$C1A5 if
+. the distance from the middle is not negative.
   $C1A3,$02 Make the distance positive.
 @ $C1A5 label=FireProjectile_TestX
   $C1A5,$03 Jump to #R$C1B8 to give up if the distance is not less than the
 . limit along x.
   $C1A8,$03 Fetch the y position of the projectile.
-  $C1AB,$05 Take away the middle of the room, #N$80, and jump to #R$C1B2 if the
-. distance from the middle is not negative.
+  $C1AB,$05 Take away the middle of the room, #N($80), and jump to #R$C1B2 if
+. the distance from the middle is not negative.
   $C1B0,$02 Make the distance positive.
 @ $C1B2 label=FireProjectile_TestY
   $C1B2,$03 Jump to #R$C1B8 to give up if the distance is not less than the
@@ -7024,7 +7258,7 @@ B $C1C3,$02,$02 Facing the direction that numbers #N$03.
 
 c $C1C5 Run Projectile
 @ $C1C5 label=RunProjectile
-D $C1C5 The handler of the object types #N$95 to #N$97, which are the three
+D $C1C5 The handler of the object types #N$95 to #N($97), which are the three
 . sprites of a projectile that is in flight, and of #N$3C. Each time that it is
 . run the projectile moves on one place, and changes type to the next of the
 . three sprites.
@@ -7032,18 +7266,21 @@ D $C1C5 The projectile flies at least #N$84 up, and does not fall. It explodes
 . if it hits a wall, and if it hits one of the creatures then the player scores
 . for it and the creature explodes instead.
 R $C1C5 IX Record of the projectile
+N $C1C5 Move the projectile and cycle its sprite.
   $C1C5,$03 Call #R$C775 to set where the sprite is drawn.
   $C1C8,$03 Call #R$B979 to move the projectile.
   $C1CB,$04 Fetch the type of the projectile, and take one away to get the next
 . sprite.
-  $C1CF,$04 Jump to #R$C1D5 unless that gives #N$94, which is not a sprite of a
-. projectile.
+  $C1CF,$04 Jump to #R$C1D5 unless that gives #N($94), which is not a sprite of
+. a projectile.
   $C1D3,$02 Use the sprite #N$97 instead.
+N $C1D5 Keep the projectile at least #N$84 up.
 @ $C1D5 label=RunProjectile_SetType
   $C1D5,$03 Set the type of the projectile.
   $C1D8,$07 Jump to #R$C1E7 if the projectile is at least #N$84 up.
   $C1DF,$04 Put the projectile at a height of #N$84.
   $C1E3,$04 Stop it from falling.
+N $C1E7 Explode on a creature or a wall, else keep flying.
 @ $C1E7 label=RunProjectile_TestHit
   $C1E7,$03 Call #R$C206 to find out if the projectile touches a creature.
   $C1EA,$01 Fetch the result.
@@ -7063,22 +7300,21 @@ D $C206 Tests if an object touches either of the two creatures that wander about
 . the room, which are in the object records #R$A7EF and #R$A80F. The touching is
 . tested with a margin of #N$02.
 R $C206 IX Record of the object
-R $C206 O:D #N$00 if it touches a creature (and #REGiy holds the record of the
-. creature), or #N$01 if it does not
-  $C206,$02 Set the result to #N$01, as nothing has been hit.
+R $C206 O:D #N$00 if a creature is hit, else #N$01
+  $C206,$02 Set the result to #N($01), as nothing has been hit.
   $C208,$04 Start with the first of the creatures, #R$A7EF.
   $C20C,$03 Call #R$C216 to test it.
   $C20F,$01 Fetch the result.
   $C210,$02 Return if the creature was hit.
   $C212,$04 Move on to the second of the creatures, #R$A80F.
 @ $C216 label=TestCreatureHit_Test
-N $C216 Ignore objects that are free, are of a type below #N$08, or are
+N $C216 Ignore objects that are free, are of a type below #N($08), or are
 . explosions.
   $C216,$03 Fetch the type of the creature.
   $C219,$02,b$01 Keep only the bits of the type that tell the kinds of object
 . apart.
   $C21B,$01 Return if the object is free or of a type that is below #N$08.
-  $C21C,$02 Compare the kind of the object with #N$40, which is an explosion.
+  $C21C,$02 Compare the kind of the object with #N($40), which is an explosion.
 @ $C21E label=TestCreatureHit_Projectile
   $C21E,$01 Return if it is an explosion.
 N $C21F Test along x.
@@ -7105,7 +7341,7 @@ N $C24B Test along z.
   $C256,$01 Stash the distance along z in #REGe.
   $C257,$08 Add the sizes along z of the two objects, and the margin.
   $C25F,$02 Return with the carry flag set if the distance is more than that.
-  $C261,$02 Set the result to #N$00, as the creature has been hit.
+  $C261,$02 Set the result to #N($00), as the creature has been hit.
   $C263,$01 Return.
 
 c $C264 Score For Creature
@@ -7116,6 +7352,7 @@ D $C264 Adds the points for a creature that has been hit by a projectile to the
 . keeping the ones that make up the digits, each of which is from 0 to 7.
 R $C264 IX Record of the projectile
 R $C264 IY Record of the creature
+N $C264 Work out the points from the type of the creature.
   $C264,$04 Fetch the type of the creature, and stash it in #REGb.
   $C268,$02 Rotate it left twice.
   $C26A,$02,b$01 Keep only the bits that make the lower two digits.
@@ -7124,6 +7361,7 @@ R $C264 IY Record of the creature
   $C26E,$03 Rotate it left three times.
   $C271,$02,b$01 Keep only the bits that make the upper two digits.
   $C273,$01 Set the upper two digits of the points in #REGb.
+N $C274 Add the points and explode both objects.
   $C274,$03 Call #R$BB29 to add the points to the score.
   $C277,$03 Call #R$B145 to copy the score to the screen.
   $C27A,$04 Change the creature to the first stage of an explosion.
@@ -7133,9 +7371,9 @@ R $C264 IY Record of the creature
 
 c $C285 Run Dangerous Fixed
 @ $C285 label=RunDangerousFixed
-D $C285 The handler of the object types #N$17, #N$1E, #N$4A and #N$4B, which are
-. objects that harm the player but do not move. The sprite is drawn without a
-. change.
+D $C285 The handler of the object types #N($17), #N($1E), #N$4A and #N($4B),
+. which are objects that harm the player but do not move. The sprite is drawn
+. without a change.
 R $C285 IX Record of the object
   $C285,$03 Call #R$C291 to make the object harm the player.
   $C288,$03 Jump to #R$C75F to set where the sprite is drawn.
@@ -7181,7 +7419,7 @@ D $C29A Draws the icon for the lives that the player has left, and the number of
 . #SIM(start=$B178,stop=$0000,sp=$5D00)
 . #SCR$03,$01,$11,$07,$05(draw-lives-after) } UDGTABLE# #POPS
   $C29A,$04 Use the temporary object, #R$BACA.
-  $C29E,$04 Set the type of the temporary object to #N$16, which is the sprite
+  $C29E,$04 Set the type of the temporary object to #N($16), which is the sprite
 . of the icon.
   $C2A2,$04 Set the flags of the temporary object to #N$00.
   $C2A6,$04 Set the screen x co-ordinate of the object to #N$10.
@@ -7234,10 +7472,12 @@ D $C2CE Makes the copy of the object record of the legs of the player that is
 . #SIM(start=$AFBF,stop=$AFDA,sp=$5E00)
 . #SIM(start=$AFDA,stop=$B087,sp=$5E00)
 . #SCR$01(choose-start-room-3) } UDGTABLE# #POPS
+N $C2CE Copy the starting record of the legs.
   $C2CE,$03 Take the original of the record, #R$C3EF.
   $C2D1,$03 Take the copy of the record, #R$C3FF.
   $C2D4,$03 Set the number of bytes to copy in #REGbc to #N$10.
   $C2D7,$02 Copy the record.
+N $C2D9 Choose one of the four start rooms.
   $C2D9,$03 Fetch the random seed from #R$A70D.
   $C2DC,$02,b$01 Keep only two bits of it, which give a number from #N$00 to
 . #N$03.
@@ -7265,7 +7505,7 @@ E $C2EC View the equivalent code in;
   $C2EC,$03 Take the records, #R$C3FF.
   $C2EF,$03 Take the first object record, #R$A76F.
   $C2F2,$03 Take the first record, using the stack.
-  $C2F5,$03 Set the number of bytes to copy in #REGbc to #N$40, which is two
+  $C2F5,$03 Set the number of bytes to copy in #REGbc to #N($40), which is two
 . records.
   $C2F8,$02 Copy the records.
 N $C2FA See #POKE(infinite_lives,Infinite Lives).
@@ -7292,7 +7532,7 @@ N $C302 Show the victory screen.
   $C305,$02 Set the attribute in #REGa to bright cyan ink on a black paper.
   $C307,$03 Call #R$CB6A to set all the attributes to it.
   $C30A,$03 Take the colours of the lines, #R$C3E9.
-  $C30D,$01 Switch to the alternate registers.
+  $C30D,$01 Switch to the shadow registers.
   $C30E,$03 Take the positions of the lines, #R$C3DD.
   $C311,$03 Take the text of the lines, #R$C38B.
   $C314,$02 Set a counter in #REGbc' of six lines.
@@ -7322,7 +7562,7 @@ N $C323 Show the game over screen.
   $C328,$03 Call #R$CB6A to set all the attributes to it.
   $C32B,$03 Call #R$BD59 to draw the frame.
   $C32E,$03 Take the colours of the lines, #R$C35D.
-  $C331,$01 Switch to the alternate registers.
+  $C331,$01 Switch to the shadow registers.
   $C332,$03 Take the positions of the lines, #R$C360.
   $C335,$03 Take the text of the lines, #R$C366.
   $C338,$02 Set a counter in #REGbc' of three lines.
@@ -7342,7 +7582,7 @@ N $C34D Wait for a time.
   $C352,$01 Decrease the counter.
   $C353,$01 Fetch the high byte of it.
   $C354,$01 Combine it with the low byte.
-  $C355,$02 Jump back to #R$C352 until the delay has run out.
+  $C355,$02 Jump to #R$C352 until the delay has run out.
   $C357,$02 Repeat the delay for each of the remaining passes.
 N $C359 Throw away the return address, and start again.
   $C359,$01 Take the return address off the stack.
@@ -7445,7 +7685,7 @@ N $C46B Move the player, which is done with the body flagged as being moved so
 . that the legs do not collide with it.
   $C46B,$04 Flag the body as being moved.
   $C46F,$07 Jump to #R$C47A unless the legs are higher than #N$F0.
-  $C476,$04 Put the legs at a height of #N$F0, which is the highest that they
+  $C476,$04 Put the legs at a height of #N($F0), which is the highest that they
 . can be.
 @ $C47A label=HandlePlayerLegs_MoveLegs
   $C47A,$03 Call #R$C61D to move the legs.
@@ -7471,34 +7711,45 @@ N $C495 The player is not clear of the walls, as it is in a doorway. Stop it
 
 c $C4A3 Test Player In Room
 @ $C4A3 label=TestPlayerInRoom
-D $C4A3 Tests if an object is clear of the walls of the room, which is to say
-. that the middle of it is nearer to the middle of the room than the wall is,
-. once the half size of the object has been taken off.
+D $C4A3 Tests whether the player is inside the room. The distance from the
+. middle of the room (#N$80) has to be smaller than the distance to the wall,
+. less the width of the player along x and less the depth of the player along y.
 E $C4A3 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$C87A }
 . { #ALIENEIGHT$C117 }
 . LIST#
-R $C4A3 IX Record of the object
-R $C4A3 O:F Carry flag set if the object is clear of the walls
+R $C4A3 IX The address of the object
+R $C4A3 O:F Carry flag set if the player is inside the room
+N $C4A3 Limits from the wall distances.
   $C4A3,$03 Fetch the limits of the room, #R$A71D along x and #R$A71E along y.
-  $C4A6,$05 Take the half size along x off the limit along x.
-  $C4AB,$05 Take the half size along y off the limit along y.
+N $C4A6 Take the half size along x off the limit along x.
+  $C4A6,$01 Copy the distance along x to #REGa.
+  $C4A7,$03 Subtract the width of the player.
+  $C4AA,$01 Store the limit along x in #REGl.
+N $C4AB Take the half size along y off the limit along y.
+  $C4AB,$01 Copy the distance along y to #REGa.
+  $C4AC,$03 Subtract the depth of the player.
+  $C4AF,$01 Store the limit along y in #REGh.
+N $C4B0 Compare the x distance from the middle.
   $C4B0,$03 Fetch the x position of the object.
-  $C4B3,$05 Take away the middle of the room, #N$80, and jump to #R$C4BA if the
+N $C4B3 Take away the middle of the room, #N($80), and jump to #R$C4BA if the
 . distance is not negative.
-  $C4B8,$02 Make the distance positive.
+  $C4B3,$02 Subtract #N$80.
+  $C4B5,$03 Jump to #R$C4BA if the sign flag is clear.
+  $C4B8,$02 Negate #REGa.
 @ $C4BA label=TestPlayerInRoom_LimitX
-  $C4BA,$02 Return with the carry flag clear if the distance is not less than
-. the limit along x.
+  $C4BA,$02 Return if the player is outside along x.
+N $C4BC Compare the y distance from the middle.
   $C4BC,$03 Fetch the y position of the object.
-  $C4BF,$05 Take away the middle of the room, #N$80, and jump to #R$C4C6 if the
+N $C4BF Take away the middle of the room, #N($80), and jump to #R$C4C6 if the
 . distance is not negative.
-  $C4C4,$02 Make the distance positive.
+  $C4BF,$02 Subtract #N$80.
+  $C4C1,$03 Jump to #R$C4C6 if the sign flag is clear.
+  $C4C4,$02 Negate #REGa.
 @ $C4C6 label=TestPlayerInRoom_LimitY
-  $C4C6,$01 Test the distance against the limit along y.
-  $C4C7,$01 Return with the carry flag set if it is less than that.
-
+  $C4C6,$01 Compare it with the limit along y.
+  $C4C7,$01 Return.
 c $C4C8 Handle Turning
 @ $C4C8 label=HandleTurning
 D $C4C8 Turns the player to the left or the right, if the controls ask for it. A
@@ -7516,8 +7767,7 @@ E $C4C8 View the equivalent code in;
 . LIST#
 R $C4C8 C Controls
 R $C4C8 IX Record of the legs
-R $C4C8 O:C Controls, in which the bit for walking is set by the second way of
-. controlling the player
+R $C4C8 O:C Controls, with the walking bit set
   $C4C8,$03 Take the control method, #R$A709.
   $C4CB,$01 Fetch the control method.
   $C4CC,$02,b$01 Keep only the bits that choose a joystick.
@@ -7600,7 +7850,7 @@ N $C51B Turn the usual way. Wait first if the player has turned during the last
   $C541,$02 Test the bit for turning right.
 @ $C543 label=HandleTurning_Turn
   $C543,$02 Jump to #R$C564 to turn right if it is set.
-N $C545 Turn left, which makes the direction go from #N$02 to #N$00, #N$03,
+N $C545 Turn left, which makes the direction go from #N$02 to #N($00), #N($03),
 . #N$01 and back to #N$02. This is done by flipping the mirror flag of the legs,
 . and the type as well if they were mirrored.
   $C545,$06 Jump to #R$C553 if the legs are not mirrored.
@@ -7614,7 +7864,7 @@ N $C545 Turn left, which makes the direction go from #N$02 to #N$00, #N$03,
   $C558,$03 Set them.
   $C55B,$08 Set the type of the body to be eight more than the type of the legs.
   $C563,$01 Return.
-N $C564 Turn right, which makes the direction go from #N$02 to #N$01, #N$03,
+N $C564 Turn right, which makes the direction go from #N$02 to #N($01), #N($03),
 . #N$00 and back to #N$02. This is done in the same way, but the type is flipped
 . if the legs were not mirrored.
 @ $C564 label=HandleTurning_Right
@@ -7625,15 +7875,17 @@ c $C56C Handle Jump
 @ $C56C label=HandleJump
 D $C56C Starts a jump, if the jump key is pressed and the player is standing on
 . the ground and was not already jumping. The jump is started by giving the
-. player an upward speed of #N$08, which is cut down by gravity in #R$C61D.
+. player an upward speed of #N($08), which is cut down by gravity in #R$C61D.
 R $C56C C Controls
 R $C56C IX Record of the legs
+N $C56C Return unless the player can start a jump.
   $C56C,$03 Return if the jump key is not pressed.
   $C56F,$03 Fetch the collision flags.
   $C572,$02,b$01 Keep only the countdown from entering the room.
   $C574,$01 Return if the player has only just entered the room.
   $C575,$05 Return if the player is already jumping.
   $C57A,$05 Return if the player is not on the ground.
+N $C57F Start the jump and play the sound.
   $C57F,$04 Flag that the player is jumping.
   $C583,$04 Set the speed along z to #N$08.
   $C587,$01 Stash the controls on the stack.
@@ -7649,11 +7901,13 @@ D $C58D Makes the legs take a step, which means that the type moves on to the
 . the standing position, which is the third of the four.
 R $C58D C Controls
 R $C58D IX Record of the legs
+N $C58D Step while walking, jumping or entering the room.
   $C58D,$03 Fetch the collision flags.
   $C590,$02,b$01 Keep only the countdown from entering the room.
   $C592,$02 Jump to #R$C59E to step if the player has just entered the room.
   $C594,$06 Jump to #R$C59E to step if the player is jumping.
   $C59A,$04 Jump to #R$C5B3 if the player is not walking.
+N $C59E Move on to the next of the four steps.
 @ $C59E label=StepLegs_Step
   $C59E,$03 Fetch the type of the legs.
   $C5A1,$01 Stash the type of the legs in #REGe.
@@ -7668,6 +7922,7 @@ R $C58D IX Record of the legs
   $C5AE,$03 Call #R$D635 to make the sound of a footstep.
   $C5B1,$01 Restore the controls from the stack.
   $C5B2,$01 Return.
+N $C5B3 Step until the legs are in the standing position.
 @ $C5B3 label=StepLegs_Standing
   $C5B3,$03 Fetch the type of the legs.
   $C5B6,$02,b$01 Keep only the step.
@@ -7691,10 +7946,12 @@ E $C5BD View the equivalent code in;
 . LIST#
 R $C5BD IX Record of the legs
 R $C5BD O:A Direction, from #N$00 to #N$03
+N $C5BD Combine the mirror flag with bit 2 of the type.
   $C5BD,$03 Fetch the flags.
   $C5C0,$03 Move bit 6, which mirrors the object, down to bit 3.
   $C5C3,$02,b$01 Keep only that bit.
   $C5C5,$02,b$01 Flip it, to say that the object is not mirrored.
+N $C5C7 Merge in bit 2 of the type and keep the direction.
   $C5C7,$01 Stash the flag in #REGl.
   $C5C8,$03 Fetch the type.
   $C5CB,$02,b$01 Keep only bit 2 of the type.
@@ -7715,9 +7972,11 @@ E $C5D3 View the equivalent code in;
 . { #KNIGHTLORE$CDDF }
 . LIST#
 R $C5D3 IX Record of the body
+N $C5D3 Explode if something dangerous has touched the body.
   $C5D3,$03 Call #R$C764 to set where the sprite is drawn.
   $C5D6,$07 Jump to #R$C107 to make the body explode if something dangerous has
 . touched it.
+N $C5DD Copy the position and flags from the legs.
   $C5DD,$03 Take the body, using the stack.
   $C5E0,$03 Set the distance back to the legs, which is one record, in #REGhl.
   $C5E3,$01 Move back to the legs.
@@ -7727,15 +7986,18 @@ R $C5D3 IX Record of the body
   $C5EC,$02 Copy the position, sizes and flags of the legs to the body.
   $C5EE,$04 Set the size of the body along z to #N$00.
   $C5F2,$04 Flag the body as being moved.
+N $C5F6 Leave the type alone while a countdown is running.
   $C5F6,$03 Fetch the hit flags of the body.
   $C5F9,$02,b$01 Keep only the lowest four bits, which are a countdown.
   $C5FB,$02 Jump to #R$C602 if it is not running.
   $C5FD,$03 Take one off the countdown.
   $C600,$02 Jump to #R$C60A to leave the type of the body as it is.
+N $C602 Set the type of the body to eight more than the legs.
 @ $C602 label=HandlePlayerTop_Type
   $C602,$03 Fetch the type of the legs.
   $C605,$02 Add eight to it.
   $C607,$03 Set it as the type of the body.
+N $C60A Raise the body a little above the legs.
 @ $C60A label=HandlePlayerTop_Height
   $C60A,$03 Fetch the type of the legs.
   $C60D,$02,b$01 Keep only bit 2 of it.
@@ -7748,21 +8010,19 @@ R $C5D3 IX Record of the body
 
 c $C61D Move Player
 @ $C61D label=MovePlayer
-D $C61D Moves the legs of the player for a frame, using the controls, gravity
-. and anything that has pushed the player. If the player is walking, or is in
-. the air or has just entered the room, it is given a speed along x or y, and
-. then it is moved as far as it is able to go.
-D $C61D Gravity works on the speed along z: it is cut by one for each frame
-. while the player is rising with the jump key held down, and by two otherwise,
-. which makes the player fall faster, and makes a jump that is shorter when the
-. key is let go. When the player lands, the flag for jumping is cleared.
+D $C61D Moves the player by one frame. The speeds along x and y are only set up
+. while the player walks, is jumping or is entering the room, and they are
+. cleared again afterwards. The speed along z has gravity taken off it, which is
+. more if the player is not rising with the jump control held down. If the
+. player lands the jump is over.
 E $C61D View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$C9A1 }
 . { #ALIENEIGHT$C296 }
 . LIST#
-R $C61D C Controls
-R $C61D IX Record of the legs
+R $C61D C The controls
+R $C61D IX The address of the object
+N $C61D Set the walk speeds unless the player is turning.
   $C61D,$06 Jump to #R$C62E to walk if the player is jumping.
   $C623,$03 Fetch the collision flags.
   $C626,$02,b$01 Keep only the countdown from entering the room.
@@ -7772,47 +8032,55 @@ R $C61D IX Record of the legs
   $C62E,$01 Stash the controls on the stack.
   $C62F,$03 Call #R$C66A to give the player a speed along x or y.
   $C632,$01 Restore the controls from the stack.
+N $C633 Gravity takes one off the speed along z when the player is rising with
+. the jump control held down, and two otherwise.
 @ $C633 label=MovePlayer_Gravity
-  $C633,$03 Fetch the speed along z.
+  $C633,$03 Fetch the speed along the z axis.
   $C636,$04 Jump to #R$C63E if the player is falling.
   $C63A,$04 Jump to #R$C63F if the jump key is held down.
 @ $C63E label=MovePlayer_GravityFalling
-  $C63E,$01 Take one off the speed along z.
+  $C63E,$01 Decrement #REGa.
 @ $C63F label=MovePlayer_GravityApply
-  $C63F,$01 Take one off the speed along z.
-  $C640,$03 Set the speed along z.
-  $C643,$03 Keep a copy of it in #R$A739.
-  $C646,$02 Add two to it, which is not used.
+  $C63F,$01 Decrement #REGa.
+  $C640,$03 Store the speed along the z axis.
+  $C643,$03 Set #R$A739.
+  $C646,$02 Add #N$02.
   $C648,$03 Call #R$B6ED to move the object, as far as it can go.
-  $C64B,$03 Call #R$C6B5, which does nothing.
+  $C64B,$03 Call #R$C6B5.
   $C64E,$03 Call #R$B97F to add the distances that the player moved to the
 . position of the player.
+N $C651 Clear the jump flag when the player lands from a fall.
   $C651,$06 Jump to #R$C662 if the player is not on the ground.
-  $C657,$03 Fetch the speed along z from before the move.
+  $C657,$03 Fetch #R$A739.
   $C65A,$04 Jump to #R$C662 if the player was not falling.
   $C65E,$04 Clear the flag for jumping, as the player has landed.
+N $C662 Clear the speeds along x and y.
 @ $C662 label=MovePlayer_Done
-  $C662,$07 Set the speeds along x and y to zero.
+  $C662,$07 Write #N$00 to the speeds along x and y.
   $C669,$01 Return.
-
 c $C66A Set Player Speed
 @ $C66A label=SetPlayerSpeed
 D $C66A Gives the player a speed of three along the direction that it faces,
 . after adding any speed that something else has pushed it with, which comes
-. from the two bytes of the object that hold the push. The last three
-. instructions are also used by #R$C8D2, with a different table, to find the
-. routine for the direction.
+. from the two bytes of the object that hold the push. Those bytes are also
+. where arches write the nudge into a doorway. #R$C8D2 uses #R$C686 with a
+. different table.
 E $C66A View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$C9FB }
 . { #ALIENEIGHT$C2F6 }
 . LIST#
-R $C66A IX Record of the legs
-  $C66A,$09 Add the push along x to the speed along x.
-  $C673,$09 Add the push along y to the speed along y.
-  $C67C,$07 Clear the pushes along x and y.
-  $C683,$03 Take the table of the four routines that add the speed,
-. #R$C68D.
+R $C66A IX The address of the object
+N $C66A Add the doorway nudges.
+  $C66A,$03 Fetch the speed along the x axis.
+  $C66D,$03 Add the adjustment along x.
+  $C670,$03 Store the speed along the x axis.
+  $C673,$03 Fetch the speed along the y axis.
+  $C676,$03 Add the adjustment along y.
+  $C679,$03 Store the speed along the y axis.
+  $C67C,$07 Write #N$00 to the adjustments along x and y.
+N $C683 Jump by the facing direction.
+  $C683,$03 Take the table of the four routines that add the speed, #R$C68D.
 @ $C686 label=SetPlayerSpeed_JumpByFacing
   $C686,$03 Call #R$C5BD to find out which way the player is facing.
   $C689,$01 Use the direction as the index into the table.
@@ -7909,11 +8177,13 @@ D $C6CC Sets the bit for a room in the table of the rooms that the player has
 . visited, #R$A74F. The room number is in eight bits: the upper five choose the
 . byte, and the lower three choose the bit, starting from the top of the byte.
 R $C6CC IX Record of the legs, which holds the number of the room
+N $C6CC Find the byte for this room.
   $C6CC,$03 Fetch the room.
   $C6CF,$03 Move the upper five bits of the room to the lower five.
   $C6D2,$02,b$01 Keep only those bits.
   $C6D4,$01 Set the offset of the byte in #REGe.
   $C6D5,$03 Fetch the room again.
+N $C6D8 Make the bit for this room.
   $C6D8,$02,b$01 Keep only the lower three bits.
   $C6DA,$01 Keep the bit number.
   $C6DB,$01 Add one to it, to be the number of times to rotate.
@@ -7922,6 +8192,7 @@ R $C6CC IX Record of the legs, which holds the number of the room
 @ $C6DE label=MarkRoomVisited_Rotate
   $C6DE,$01 Rotate the carry flag in from the left.
   $C6DF,$02 Decrease the counter and loop until the bit is in place.
+N $C6E1 Set the bit in the table of rooms visited.
   $C6E1,$02 Set #REGd to zero, to make the offset of the byte a whole number.
   $C6E3,$03 Start at the table of rooms visited.
   $C6E6,$01 Add the offset to get the address of the byte.
@@ -7933,11 +8204,11 @@ c $C6EA Print Quest Percentage
 @ $C6EA label=PrintQuestPercentage
 D $C6EA Works out how much of the quest has been done, and prints it to the
 . buffer for the game over screen. The percentage is the number of rooms that
-. have been visited, halved and no more than #N$36, plus four for each of the
+. have been visited, halved and no more than #N($36), plus four for each of the
 . objects that have been collected, plus six for each of the stones that have
 . been put on the pentagram. That makes #N$64 at the most.
 D $C6EA The percentage is kept in #R$A74D as binary coded decimal, and it is
-. printed as three digits if it is #N$64, and otherwise as two.
+. printed as three digits if it is #N($64), and otherwise as two.
 .
 . #PUSHS #UDGTABLE(default,centre,centre)
 . { =h Before | =h After #R$C6EA and #R$B178 }
@@ -8001,8 +8272,7 @@ N $C728 Print the percentage in the buffer.
   $C736,$03 Jump to #R$C745 if the percentage is under #N$64.
   $C739,$01 Set the counter to two bytes.
   $C73A,$01 Stash the buffer address on the stack.
-  $C73B,$06 Set the glyph table to the start of the font, #N$8355, where the
-. digits are.
+  $C73B,$06 Set #R$A732 to #R$8355.
   $C741,$01 Restore the buffer address from the stack.
   $C742,$03 Jump to #R$BB5A to print the digits, starting from the lower digit
 . of the first byte.
@@ -8016,8 +8286,8 @@ c $C74B Set Sprite Offset Minus 8 0
 D $C74B Sets how far the sprite of an object is moved from the position on the
 . screen that is worked out for it by #R$B2C5, which is #N$08 to the left and
 . none up. The same is done by each of the routines up to #R$C784, which differ
-. in the distances. It is also the handler of the object type #N$39, which does
-. nothing else.
+. in the distances. It is also the handler of the object type #N($39), which
+. does nothing else.
 R $C74B IX Object record
   $C74B,$03 Set the offsets in #REGhl, which are #N$F8 horizontally and #N$00
 . vertically.
@@ -8105,7 +8375,7 @@ R $C77A IX Object record
 c $C77F Set Sprite Offset Minus 8 Minus 4
 @ $C77F label=SetSpriteOffset_Minus8_Minus4
 D $C77F Sets the offsets of the sprite to #N$F8 horizontally and #N$FC
-. vertically. It is also the handler of the object types #N$35 to #N$38, which
+. vertically. It is also the handler of the object types #N$35 to #N($38), which
 . do nothing else.
 R $C77F IX Object record
   $C77F,$03 Set the offsets in #REGhl.
@@ -8115,29 +8385,32 @@ c $C784 Set Sprite Offset Minus 8 Minus 2
 @ $C784 label=SetSpriteOffset_Minus8_Minus2
 D $C784 Sets the offsets of the sprite to #N$F8 horizontally and #N$FE
 . vertically. It is also the handler of the object types #N$0C to #N$0F and
-. #N$34, which do nothing else.
+. #N($34), which do nothing else.
 R $C784 IX Object record
   $C784,$03 Set the offsets in #REGhl.
   $C787,$02 Jump to #R$C76E to set them.
 
 c $C789 Run Door Frame
 @ $C789 label=RunDoorFrame
-D $C789 The handler of the object types #N$07 and #N$09, which are the frames of
-. the doors in the walls. They only have to be placed on the screen: the doors
-. themselves are the object types #N$06 and #N$08, run by #R$C7AD.
+D $C789 The handler of the object types #N$07 and #N($09), which are the frames
+. of the doors in the walls. They only have to be placed on the screen: the
+. doors themselves are the object types #N$06 and #N($08), run by #R$C7AD.
 R $C789 IX Object record
+N $C789 Choose the sprite offsets for this frame.
   $C789,$06 Jump to #R$C79C if the frame is mirrored.
   $C78F,$03 Fetch the type.
   $C792,$04 Jump to #R$C7A2 if it is type #N$09.
-  $C796,$03 Set the offsets for type #N$07, which are #N$F9 horizontally and
+  $C796,$03 Set the offsets for type #N($07), which are #N$F9 horizontally and
 . #N$FB vertically.
   $C799,$03 Jump to #R$C76E to set them.
+N $C79C Use the offsets for a mirrored frame.
 @ $C79C label=RunDoorFrame_Mirrored
   $C79C,$03 Set the offsets for a mirrored frame, which are #N$F9 horizontally
 . and #N$FC vertically.
   $C79F,$03 Jump to #R$C76E to set them.
+N $C7A2 Use the offsets for type #N$09.
 @ $C7A2 label=RunDoorFrame_TypeNine
-  $C7A2,$03 Set the offsets for type #N$09, which are #N$F0 horizontally and
+  $C7A2,$03 Set the offsets for type #N($09), which are #N$F0 horizontally and
 . #N$FB vertically.
   $C7A5,$03 Jump to #R$C76E to set them.
 
@@ -8152,8 +8425,8 @@ R $C7A8 IX Door record
 
 c $C7AD Handle Near Arch
 @ $C7AD label=HandleNearArch
-D $C7AD The handler of the object types #N$06 and #N$08, which are the doors in
-. the walls of a room. A door does not change, but it checks for the player
+D $C7AD The handler of the object types #N$06 and #N($08), which are the doors
+. in the walls of a room. A door does not change, but it checks for the player
 . standing in the doorway, which makes the player pass into the room on the
 . other side.
 D $C7AD A door that is not mirrored is in a wall at one end of the x axis, and
@@ -8218,13 +8491,12 @@ D $C802 When the player enters the next room it is put at the other side of the
 . so that the player starts here again after losing a life, and the main loop is
 . restarted at #R$AFC8 to build the room.
 R $C802 IX Door record
-R $C802 HL Sizes of the area in front of the door that the player has to be in,
-. along x and along y
+R $C802 HL Box sizes in front of the door, along x and y
   $C802,$04 Start with the first object record, #R$A76F, which is the legs
 . of the player.
   $C806,$03 Fetch the type of the legs.
   $C809,$02 Take away #N$10 from it.
-  $C80B,$03 Return if the legs are not of a type that is from #N$10 to #N$2F,
+  $C80B,$03 Return if the legs are not of a type that is from #N$10 to #N($2F),
 . which are the types of the player when alive.
   $C80E,$05 Return if the player cannot open doors.
   $C813,$04 Return if the player is not in front of the door.
@@ -8263,8 +8535,9 @@ D $C843 Finds out if the player is far enough through the wall on the side of
 . is put at the opposite side of the next room.
 R $C843 IX Door record
 R $C843 IY Record of the legs of the player
+N $C843 Return unless the player is through the wall.
   $C843,$01 Restore the limits of the room from the stack.
-  $C844,$02 Set #REGa to #N$80, the middle of the room.
+  $C844,$02 Set #REGa to #N($80), the middle of the room.
   $C846,$01 Take the limit along x away from it, to get the position of the
 . wall.
   $C847,$01 Set the position of the wall in #REGl.
@@ -8272,6 +8545,7 @@ R $C843 IY Record of the legs of the player
   $C84B,$03 Add the half size along x.
   $C84E,$02 Return if the player is not through the wall.
   $C850,$04 Put the player at the lowest x position, ready for the next room.
+N $C854 Save the player and build the next room.
 @ $C854 label=TestPassageAlongMinusX_Done
   $C854,$06 Set the room of the player to the room of the door.
   $C85A,$03 Fetch the collision flags of the player.
@@ -8279,7 +8553,7 @@ R $C843 IY Record of the legs of the player
   $C85F,$03 Set them.
   $C862,$03 Take the first object record, using the stack.
   $C865,$03 Take the records of the player to start from, #R$C3FF.
-  $C868,$03 Set the number of bytes to copy in #REGbc to #N$40, which is two
+  $C868,$03 Set the number of bytes to copy in #REGbc to #N($40), which is two
 . records.
   $C86B,$02 Save the records of the player.
   $C86D,$04 Throw away the two return addresses on the stack.
@@ -8291,6 +8565,7 @@ D $C874 Finds out if the player is far enough through the wall on the side of
 . high x, in the same way as #R$C843.
 R $C874 IX Door record
 R $C874 IY Record of the legs of the player
+N $C874 Return unless the player is through the wall.
   $C874,$01 Restore the limits of the room from the stack.
   $C875,$01 Fetch the limit along x.
   $C876,$02 Add #N$80 to it, to get the position of the wall.
@@ -8307,6 +8582,7 @@ D $C887 Finds out if the player is far enough through the wall on the side of
 . high y, in the same way as #R$C843.
 R $C887 IX Door record
 R $C887 IY Record of the legs of the player
+N $C887 Return unless the player is through the wall.
   $C887,$01 Restore the limits of the room from the stack.
   $C888,$01 Fetch the limit along y.
   $C889,$02 Add #N$80 to it, to get the position of the wall.
@@ -8323,8 +8599,9 @@ D $C89A Finds out if the player is far enough through the wall on the side of
 . low y, in the same way as #R$C843.
 R $C89A IX Door record
 R $C89A IY Record of the legs of the player
+N $C89A Return unless the player is through the wall.
   $C89A,$01 Restore the limits of the room from the stack.
-  $C89B,$02 Set #REGa to #N$80, the middle of the room.
+  $C89B,$02 Set #REGa to #N($80), the middle of the room.
   $C89D,$01 Take the limit along y away from it, to get the position of the
 . wall.
   $C89E,$01 Keep the position of the wall.
@@ -8350,10 +8627,12 @@ R $C8AD L Size of the box along x
 R $C8AD IX Door record
 R $C8AD IY Record of the legs of the player
 R $C8AD O:F Carry flag set if the player is in the box
+N $C8AD Test along x.
   $C8AD,$03 Fetch the x position of the place.
   $C8B0,$03 Take away the x position of the player.
   $C8B3,$02 Jump to #R$C8B7 if the difference is not negative.
   $C8B5,$02 Make it positive.
+N $C8B7 Test along y.
 @ $C8B7 label=TestNearTo_Y
   $C8B7,$02 Return with the carry flag clear if it is not less than the size of
 . the box along x.
@@ -8361,6 +8640,7 @@ R $C8AD O:F Carry flag set if the player is in the box
   $C8BC,$03 Take away the y position of the player.
   $C8BF,$02 Jump to #R$C8C3 if the difference is not negative.
   $C8C1,$02 Make it positive.
+N $C8C3 Test along z.
 @ $C8C3 label=TestNearTo_Z
   $C8C3,$02 Return with the carry flag clear if it is not less than the size of
 . the box along y.
@@ -8383,6 +8663,7 @@ E $C8D2 View the equivalent code in;
 . { #ALIENEIGHT$C02C }
 . LIST#
 R $C8D2 IX Door record
+N $C8D2 Return unless the player is in front of the door.
   $C8D2,$03 Set the size of the box in front of the door in #REGhl to #N$0F
 . along both x and y.
   $C8D5,$04 Start with the first object record, #R$A76F, which is the legs
@@ -8390,10 +8671,11 @@ R $C8D2 IX Door record
   $C8D9,$05 Return if the legs are not in use.
   $C8DE,$05 Return if the player cannot open doors.
   $C8E3,$04 Return if the player is not in front of the door.
-  $C8E7,$03 Take the table of routines for type #N$08, #R$C8F7.
+N $C8E7 Push towards the middle of the door.
+  $C8E7,$03 Take the table of routines for type #N($08), #R$C8F7.
   $C8EA,$07 Jump to #R$C686 to run the routine for the direction if the door is
 . type #N$08.
-  $C8F1,$03 Take the table of routines for type #N$06, #R$C8FF.
+  $C8F1,$03 Take the table of routines for type #N($06), #R$C8FF.
   $C8F4,$03 Jump to #R$C686 to run the routine for the direction.
 
 w $C8F7 Door Push Routines
@@ -8416,6 +8698,7 @@ E $C907 View the equivalent code in;
 . LIST#
 R $C907 IX Door record
 R $C907 IY Record of the legs of the player
+N $C907 Push one step towards the door along y.
   $C907,$03 Fetch the y position of the place in front of the door.
   $C90A,$03 Compare it with the y position of the player.
   $C90D,$02 Jump to #R$C92B if they are the same.
@@ -8432,6 +8715,7 @@ D $C91A Gives the player a push of one along x, towards the x position that is
 . held in the speed along x of a door.
 R $C91A IX Door record
 R $C91A IY Record of the legs of the player
+N $C91A Push one step towards the door along x.
   $C91A,$03 Fetch the x position of the place in front of the door.
   $C91D,$03 Compare it with the x position of the player.
   $C920,$02 Jump to #R$C92B if they are the same.
@@ -8481,15 +8765,18 @@ D $C92C The objects are made from the last of the object slots, which is at
 . the slots at the start.
 E $C92C View the equivalent code in;
 . #LIST
-. { #ALIENEIGHT$CCA7 }
+. { #ALIENEIGHT$CCDE }
+. { #KNIGHTLORE$D3F0 }
 . LIST#
 R $C92C IX Object record of the player's legs
+N $C92C Clear the objects and point at the room data.
   $C92C,$03 Call #R$CB54 to clear all of the objects except for the player.
   $C92F,$06 Start with the first of the tables of templates, which is #R$6CE5.
   $C935,$04 Set the offset of the cells to zero.
   $C939,$03 Take the last of the object slots.
   $C93C,$03 Take the end of the room data, which is #R$696D.
   $C93F,$03 Start at the first room record, which is #R$5E10.
+N $C942 Find the record for this room.
 @ $C942 label=BuildRoomScenery_FindRoomRecord
   $C942,$02 Fetch the number of the room, and move on to the length.
   $C944,$05 Jump to #R$C953 if it is the room that the player is in.
@@ -8498,6 +8785,7 @@ R $C92C IX Object record of the player's legs
   $C94D,$04 Compare #REGhl with the end of the room data, which sets the carry
 . flag if it is before it.
   $C951,$02 Jump to #R$C942 if there are more records.
+N $C953 Read the colour and size of the room.
 @ $C953 label=BuildRoomScenery_ReadRoomHeader
   $C953,$02 Fetch the length of the record into #REGb, and move on to the colour
 . and size of the room.
@@ -8520,6 +8808,7 @@ R $C92C IX Object record of the player's legs
   $C97D,$02 Count the length and the colour and size as read.
   $C97F,$01 Put the address of the room data back in #REGhl.
   $C980,$01 Get the address of the next free object slot back.
+N $C981 Make the objects of each feature.
 @ $C981 label=BuildRoomScenery_MakeFeature
   $C981,$02 Fetch the number of the feature, and move on to its parameter.
   $C983,$04 Jump to #R$C9B6 if it is the end of the features.
@@ -8554,10 +8843,11 @@ R $C92C IX Object record of the player's legs
   $C9B3,$02 Jump to #R$C981 for the next feature, counting the number as read,
 . while any data is left.
   $C9B5,$01 Return.
+N $C9B6 Make the objects from the templates.
 @ $C9B6 label=BuildRoomScenery_MakeTemplates
   $C9B6,$01 Count the end of the features as read.
   $C9B7,$02 Save #REGiy.
-  $C9B9,$03 Move on to the next free object slot.
+  $C9B9,$03 Move on to the next free object slot (using the stack).
 @ $C9BC label=BuildRoomScenery_MakeTemplateGroup
   $C9BC,$01 Fetch the byte that holds the template and the number of cells.
   $C9BD,$02,b$01 Keep the number of cells less one.
@@ -8575,6 +8865,7 @@ R $C92C IX Object record of the player's legs
   $C9D3,$03 Call #R$B519 to find the entry for the template.
   $C9D6,$02 Fetch the low byte of the address of the template, and move on.
   $C9D8,$02 Fetch the high byte, and make the address of the template in #REGhl.
+N $C9DA Copy a template object into a cell.
 @ $C9DA label=BuildRoomScenery_MakeTemplateCell
   $C9DA,$01 Save the address of the template.
 @ $C9DB label=BuildRoomScenery_MakeTemplateObject
@@ -8644,8 +8935,10 @@ R $C92C IX Object record of the player's legs
   $CA61,$01 Put the address of the template in #REGhl.
   $CA62,$01 Put the cell in #REGd.
   $CA63,$03 Jump to #R$C9DA to make the object for it.
+N $CA66 Finish, or switch the template table.
 @ $CA66 label=BuildRoomScenery_FinishRoomScenery
-  $CA66,$03 Put the address of the next free object slot in #REGde.
+  $CA66,$03 Put the address of the next free object slot in #REGde
+. (using the stack).
   $CA69,$02 Get the original #REGiy back.
   $CA6B,$01 Return.
 @ $CA6C label=BuildRoomScenery_SwitchTemplateTable
@@ -8680,12 +8973,15 @@ E $CA82 View the equivalent code in;
 . { #KNIGHTLORE$D320 }
 . { #ALIENEIGHT$CC01 }
 . LIST#
-R $CA82 IX Object record of the player's legs
-  $CA82,$05 Fetch the distance to the walls along x and take off two, which is
-. how far the player is put inside the wall.
-  $CA87,$01 Put it in #REGl.
-  $CA88,$05 Fetch the distance to the walls along y and take off two.
-  $CA8D,$01 Put it in #REGh.
+R $CA82 IX Address of the player
+N $CA82 Fetch the wall distances, then see which way the player came.
+  $CA82,$03 Fetch #R$A71D.
+  $CA85,$02 Subtract #N$02.
+  $CA87,$01 Copy it to #REGl.
+N $CA88 Fetch the distance to the walls along y and take off two.
+  $CA88,$03 Fetch #R$A71E.
+  $CA8B,$02 Subtract #N$02.
+  $CA8D,$01 Copy it to #REGh.
   $CA8E,$03 Fetch the x position of the player.
   $CA91,$03 Jump to #R$CAE1 if the player went through the wall at the start of
 . x.
@@ -8697,6 +8993,7 @@ R $CA82 IX Object record of the player's legs
   $CA9D,$03 Jump to #R$CAA1 if it went through the wall at the end of y, which
 . is #N$FF.
   $CAA0,$01 Return.
+N $CAA1 The player came from the north.
 @ $CAA1 label=PlacePlayerAtDoor_StartOfY
   $CAA1,$02 Set the wall to look for a door in, which is at the start of y.
   $CAA3,$03 Call #R$CAEE to find the door and put the player in front of it.
@@ -8707,12 +9004,18 @@ R $CA82 IX Object record of the player's legs
 . the player nearest the centre of the room two units inside the wall.
 @ $CAAC label=PlacePlayerAtDoor_SetPlayerY
   $CAAC,$03 Store it as the y position of the player.
+N $CAAF Mark the player to be drawn.
 @ $CAAF label=PlacePlayerAtDoor_MarkPlayerForDrawing
-  $CAAF,$04 Flag the legs as needing to be drawn.
-  $CAB3,$04 Flag the body as needing to be drawn.
-  $CAB7,$06 Copy the x position of the player to the body.
-  $CABD,$06 Copy the y position of the player to the body.
+  $CAAF,$04 Set bit 4 of the flags.
+  $CAB3,$04 Set bit 4 of the flags of the top half.
+N $CAB7 Copy the x position of the player to the body.
+  $CAB7,$03 Fetch the x position of the player.
+  $CABA,$03 Set the x position of the top half.
+N $CABD Copy the y position of the player to the body.
+  $CABD,$03 Fetch the y position of the player.
+  $CAC0,$03 Set the y position of the top half.
   $CAC3,$01 Return.
+N $CAC4 The player came from the south.
 @ $CAC4 label=PlacePlayerAtDoor_EndOfY
   $CAC4,$02 Set the wall to look for a door in, which is at the end of y.
   $CAC6,$03 Call #R$CAEE to find the door and put the player in front of it.
@@ -8720,6 +9023,7 @@ R $CA82 IX Object record of the player's legs
   $CACA,$02 Add the position of the centre of the room...
   $CACC,$03 ...and the half size of the player along y.
   $CACF,$02 Jump to #R$CAAC to store it.
+N $CAD1 The player came from the east.
 @ $CAD1 label=PlacePlayerAtDoor_StartOfX
   $CAD1,$02 Set the wall to look for a door in, which is at the start of x.
   $CAD3,$03 Call #R$CAEE to find the door and put the player in front of it.
@@ -8731,6 +9035,7 @@ R $CA82 IX Object record of the player's legs
 @ $CADC label=PlacePlayerAtDoor_SetPlayerX
   $CADC,$03 Store it as the x position of the player.
   $CADF,$02 Jump to #R$CAAF to finish.
+N $CAE1 The player came from the west.
 @ $CAE1 label=PlacePlayerAtDoor_EndOfX
   $CAE1,$02 Set the wall to look for a door in, which is at the end of x.
   $CAE3,$03 Call #R$CAEE to find the door and put the player in front of it.
@@ -8738,7 +9043,6 @@ R $CA82 IX Object record of the player's legs
   $CAE7,$02 Add the position of the centre of the room...
   $CAE9,$03 ...and the half size of the player along x.
   $CAEC,$02 Jump to #R$CADC to store it.
-
 c $CAEE Find Door
 @ $CAEE label=FindDoor
 D $CAEE Looks for the door in a particular wall of the room, and puts the player
@@ -8750,9 +9054,9 @@ D $CAEE The position that the player is put at is not the same as that of the
 . door, but is the place that the door holds for it, which is #N$0D further
 . along y than a door that is not mirrored, or #N$0D back along x than a
 . mirrored one.
-R $CAEE C The wall to look in: #N$00 is the end of x, #N$01 is the start of x,
-. #N$02 is the end of y and #N$03 is the start of y
+R $CAEE C Wall: #N$00 end x, #N$01 start x, #N$02 end y, #N$03 start y
 R $CAEE IX Object record of the player's legs
+N $CAEE Look through the door slots.
   $CAEE,$04 Start at the slot of the first door.
   $CAF2,$03 Set the offset to the previous door, which is #N$40 bytes back.
   $CAF5,$02 Set the number of doors to check.
@@ -8771,6 +9075,7 @@ R $CAEE IX Object record of the player's legs
   $CB10,$02 Move on to the next door.
   $CB12,$02 Jump to #R$CAF7 until all of the doors have been checked.
   $CB14,$01 Return.
+N $CB15 Put the player in front of the door.
 @ $CB15 label=FindDoor_PlacePlayerBesideDoorY
   $CB15,$08 Set the y position of the player to be #N$0D further along than the
 . door.
@@ -8781,6 +9086,7 @@ R $CAEE IX Object record of the player's legs
 @ $CB29 label=FindDoor_PlacePlayerBesideDoorX
   $CB29,$08 Set the x position of the player to be #N$0D back from the door.
   $CB31,$02 Jump to #R$CB1D to set the height.
+N $CB33 Test which wall this door is in.
 @ $CB33 label=FindDoor_EndOfX
   $CB33,$03 Fetch the x position of the object.
   $CB36,$04 Jump to #R$CB15 if the door is at the end of x.
@@ -8796,16 +9102,16 @@ R $CAEE IX Object record of the player's legs
 
 c $CB4E Run Scenery
 @ $CB4E label=RunScenery
-D $CB4E The handler of the object types #N$0A, #N$0B, #N$4C, #N$52 and #N$98 to
-. #N$9F, which are scenery that only has to be placed on the screen.
+D $CB4E The handler of the object types #N($0A), #N($0B), #N($4C), #N$52 and
+. #N$98 to #N($9F), which are scenery that only has to be placed on the screen.
 R $CB4E IX Object record
   $CB4E,$03 Jump to #R$C75F to set the offsets of the sprite.
 
 c $CB51 Run Raised Scenery
 @ $CB51 label=RunRaisedScenery
-D $CB51 The handler of the object type #N$4D, which is scenery that only has to
-. be placed on the screen. It differs from the others, run by #R$CB4E, in that
-. its sprite is moved #N$0C up and not #N$08.
+D $CB51 The handler of the object type #N($4D), which is scenery that only has
+. to be placed on the screen. It differs from the others, run by #R$CB4E, in
+. that its sprite is moved #N$0C up and not #N$08.
 R $CB51 IX Object record
   $CB51,$03 Jump to #R$C769 to set the offsets of the sprite.
 
@@ -8855,7 +9161,8 @@ R $CB6A A Attribute
 
 c $CB77 Fill Memory
 @ $CB77 label=FillMemory
-D $CB77 Clears a number of bytes of memory.
+D $CB77 Fills an area of memory with zero. The entry point at #R$CB79 fills it
+. with the byte in #REGe.
 E $CB77 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE56 }
@@ -8871,8 +9178,8 @@ R $CB77 HL Address of the first byte
 @ $CB79 label=FillMemory_WithValue
   $CB79,$01 Write the value to the next byte.
   $CB7A,$01 Move on to the next byte.
-  $CB7B,$01 Decrease the counter.
-  $CB7C,$04 Jump to #R$CB79 until all the bytes have been written.
+  $CB7B,$01 Decrement the byte counter by one.
+  $CB7C,$04 Jump back to #R$CB79 until all the bytes have been written.
   $CB80,$01 Return.
 
 c $CB81 Clear Screen Buffer
@@ -8890,8 +9197,9 @@ E $CB81 View the equivalent code in;
 c $CB89 Check Special Objects
 @ $CB89 label=CheckSpecialObjects
 D $CB89 Looks for any special object in the room, which is an ordinary object of
-. one of the types #N$70 to #N$78 or #N$80 to #N$87, and sets the flag at
+. one of the types #N$70 to #N$78 or #N$80 to #N($87), and sets the flag at
 . #R$A742 to show if there is one. It is called when a room has been built.
+N $CB89 Look through the ordinary objects.
   $CB89,$03 Call #R$D071 to point #REGiy at the first ordinary object, with the
 . number of them in #REGb and the size of each in #REGde.
   $CB8C,$02 Set the first of the types to look for, #N$70.
@@ -8903,6 +9211,7 @@ D $CB89 Looks for any special object in the room, which is an ordinary object of
   $CB9A,$04 Jump to #R$CBA7 if it is one of the types #N$80 to #N$87.
   $CB9E,$02 Move on to the next object.
   $CBA0,$02 Jump to #R$CB8E until all of the objects have been checked.
+N $CBA2 Set the flag from whether a special object was found.
   $CBA2,$01 Set the flag value to zero, as there is not a special object.
 @ $CBA3 label=CheckSpecialObjects_SetSpecialObjectFlag
   $CBA3,$03 Store the flag.
@@ -8926,6 +9235,7 @@ D $CBAB The creature that is made comes from the template of an object at
 . above the floor, ready for the next time. If it is found to overlap another
 . object there, its type is set to zero instead, which makes the object that is
 . copied the next time one that does not exist.
+N $CBAB Return if the room has a special object or the timer is still running.
   $CBAB,$03 Fetch the special object flag.
   $CBAE,$02 Return if there is a special object in the room.
   $CBB0,$03 Take the creature timer, #R$A73D.
@@ -8933,21 +9243,24 @@ D $CBAB The creature that is made comes from the template of an object at
   $CBB4,$01 Return if it is not zero.
   $CBB5,$02 Set the timer to one, so that it is zero again after the next frame
 . unless it is changed.
+N $CBB7 Try once every four frames, then find a free creature slot.
   $CBB7,$03 Fetch the random seed.
   $CBBA,$02,b$01 Keep the lowest two bits.
   $CBBC,$01 Return unless they are zero.
   $CBBD,$03 Call #R$CC31 to set the timer.
   $CBC0,$03 Start at the first of the objects for creatures, #R$A7EF.
-  $CBC3,$03 Set the size of an object, #N$20, in #REGbc.
+  $CBC3,$03 Set the size of an object, #N($20), in #REGbc.
   $CBC6,$03 Take the template of the creature, #R$CC11.
   $CBC9,$01 Fetch the type of the object.
   $CBCA,$03 Jump to #R$CBD1 if it is free.
   $CBCD,$01 Move on to the second object for creatures.
   $CBCE,$01 Fetch the type of the object.
   $CBCF,$02 Return if it is not free either.
+N $CBD1 Copy the template, then pick a new creature for next time.
 @ $CBD1 label=CreateCreature_Copy
   $CBD1,$01 Put the template against the free object.
-  $CBD2,$03 Take the template as the object being filled in.
+  $CBD2,$03 Take the template as the object being filled in (using the
+. stack).
   $CBD5,$02 Copy the template into the free object.
   $CBD7,$03 Fetch the random seed.
   $CBDA,$02,b$01 Keep bits 0-3 and bit 5.
@@ -8970,14 +9283,15 @@ D $CBAB The creature that is made comes from the template of an object at
   $CC00,$03 Call #R$BF1B to find out if the creature overlaps an object where it
 . is.
   $CC03,$01 Return if it does not.
+N $CC04 Clear the template if the new place overlaps another object.
   $CC04,$04 Set the type in the template to zero.
   $CC08,$01 Return.
 
 b $CC09 Creature Types
 @ $CC09 label=CreatureTypes
 D $CC09 The types of the creatures that #R$CBAB makes. One of the eight is
-. picked at random, which makes the types #N$A0, #N$30 and #N$50 twice as likely
-. as #N$A4 and #N$A8.
+. picked at random, which makes the types #N($A0), #N$30 and #N$50 twice as
+. likely as #N$A4 and #N$A8.
 B $CC09,$08,$08
 
 g $CC11 Creature Template
@@ -8985,7 +9299,7 @@ g $CC11 Creature Template
 D $CC11 The object record that #R$CBAB copies into a free object, and then
 . changes to the next creature. The type is zero until a creature has been made,
 . and the position is set by the routine. The creature has a z position of
-. #N$D8, which is high above the floor, so it falls into the room.
+. #N($D8), which is high above the floor, so it falls into the room.
 B $CC11,$08,$08 The type, position, half sizes and flags.
 B $CC19,$18,$08 The rest of the record, set by #R$B2C5.
 
@@ -8996,10 +9310,11 @@ D $CC31 Sets the number of frames that #R$CBAB waits before it makes a creature.
 . store at #R$D432 that have one of the types #N$70 to #N$73. The loop does not
 . move on from the first entry, though, so the first entry is tested #N$12 times
 . and the timer is #N$50 if it has one of the types and #N$08 if it does not.
+N $CC31 Count the matching entries of the object store.
   $CC31,$03 Start at the first entry of the object store.
   $CC34,$03 Set the size of an entry (which is not used).
-  $CC37,$03 Set the number of entries in #REGb, which is #N$12, and the starting
-. count in #REGc, which is #N$02.
+  $CC37,$03 Set the number of entries in #REGb, which is #N($12), and the
+. starting count in #REGc, which is #N$02.
 @ $CC3A label=SetCreatureTimer_Loop
   $CC3A,$01 Fetch the type of the object.
   $CC3B,$02,b$01 Keep the type without its lowest two bits.
@@ -9007,6 +9322,7 @@ D $CC31 Sets the number of frames that #R$CBAB waits before it makes a creature.
   $CC41,$01 Add one to the count.
 @ $CC42 label=SetCreatureTimer_Next
   $CC42,$02 Count down the entries and jump to #R$CC3A until all are tested.
+N $CC44 Set the timer to four times the count.
   $CC44,$01 Fetch the count.
   $CC45,$02 Multiply it by four.
   $CC47,$03 Set the timer.
@@ -9014,18 +9330,19 @@ D $CC31 Sets the number of frames that #R$CBAB waits before it makes a creature.
 
 c $CC4B Run Homing Creature
 @ $CC4B label=RunHomingCreature
-D $CC4B The handler of the object types #N$30, #N$A0 and #N$A4, which are
+D $CC4B The handler of the object types #N($30), #N$A0 and #N($A4), which are
 . creatures that chase the player. Each frame the creature speeds up a little
 . towards the player along each axis, bounces off anything that it hits along x
 . or y, and moves.
 D $CC4B The speeds that the creature works out are kept in the stored speeds at
 . #N$14 to #N$16 of its record in sixteenths, which gives it finer control than
 . the whole numbers that #R$B979 uses. The speeds that are used for moving it,
-. in #N$09 to #N$0B, are the stored speeds rounded to whole numbers, which can
+. in #N$09 to #N($0B), are the stored speeds rounded to whole numbers, which can
 . be from #N$FC to #N$04.
 D $CC4B The lowest two bits of the type of the creature are the number of the
 . picture of it, and are changed each frame to make it move.
 R $CC4B IX Object record
+N $CC4B Move the creature and bounce off anything that it hits.
   $CC4B,$03 Call #R$C775 to set the offsets of the sprite.
   $CC4E,$04 Set the half size of the creature along x to #N$0A.
   $CC52,$04 Set the half size of the creature along y to #N$0A.
@@ -9038,6 +9355,7 @@ R $CC4B IX Object record
   $CC62,$03 Call #R$CCE9 to turn the creature around along x, if it did.
   $CC65,$04 Test the flag for hitting something along y.
   $CC69,$03 Call #R$CCF2 to turn the creature around along y, if it did.
+N $CC6C Steer towards the player along x, y and z.
 @ $CC6C label=RunHomingCreature_Steer
   $CC6C,$03 Fetch the x position of the player.
   $CC6F,$03 Subtract the x position of the creature.
@@ -9060,10 +9378,11 @@ R $CC4B IX Object record
   $CC99,$03 Call #R$CD0D to speed up backwards.
 @ $CC9C label=RunHomingCreature_StoreZ
   $CC9C,$03 Store the speed along z.
+N $CC9F Round the stored speeds to whole numbers.
   $CC9F,$02 Set a counter for the three speeds in #REGb.
 @ $CCA1 label=RunHomingCreature_RoundSpeeds
   $CCA1,$02 Move #REGix on by one byte, so that the stored speed is at #N$13 and
-. the speed to move at is at #N$08, for each speed in turn.
+. the speed to move at is at #N($08), for each speed in turn.
   $CCA3,$03 Fetch the stored speed.
   $CCA6,$02 Add half of the sixteen that is to be divided by, which rounds the
 . result.
@@ -9072,6 +9391,7 @@ R $CC4B IX Object record
   $CCB3,$02 Jump to #R$CCA1 until the three speeds have been set.
   $CCB5,$06 Put the record pointer back.
   $CCBB,$02 Jump to #R$CCCC to change the picture of the creature.
+N $CCBD Speed up forwards along the axis that the player is further along.
 @ $CCBD label=RunHomingCreature_ForwardsX
   $CCBD,$03 Call #R$CD04 to speed up forwards.
   $CCC0,$02 Jump to #R$CC7A to store the speed.
@@ -9081,6 +9401,7 @@ R $CC4B IX Object record
 @ $CCC7 label=RunHomingCreature_ForwardsZ
   $CCC7,$03 Call #R$CD04 to speed up forwards.
   $CCCA,$02 Jump to #R$CC9C to store the speed.
+N $CCCC Cycle the picture of the creature.
 @ $CCCC label=RunHomingCreature_Animate
   $CCCC,$03 Add one to the picture counter of the creature.
   $CCCF,$03 Fetch it.
@@ -9159,7 +9480,7 @@ R $CD0D O:A New stored speed
 
 c $CD16 Run Pentagram Stone
 @ $CD16 label=RunPentagramStone
-D $CD16 The handler of the object types #N$90 to #N$94, which are the five
+D $CD16 The handler of the object types #N$90 to #N($94), which are the five
 . stones that have to be put on the pentagram. A stone can be picked up and
 . dropped by the player, and falls like any other object, which is done by
 . #R$CD84.
@@ -9171,11 +9492,13 @@ D $CD16 In the room of the pentagram (room #N$52), once it has been revealed by
 . which is a stone that is alight, and one is added to the count of stones in
 . place. The game is won when the fifth is in place.
 R $CD16 IX Object record
+N $CD16 Fall under gravity unless the pentagram is revealed.
   $CD16,$03 Call #R$C75F to set the offsets of the sprite.
   $CD19,$03 Fetch the room that the player is in.
-  $CD1C,$05 Jump to #R$CD84 if it is not room #N$52, to be moved by gravity.
+  $CD1C,$05 Jump to #R$CD84 if it is not room #N($52), to be moved by gravity.
   $CD21,$03 Fetch the flag for the pentagram having been revealed.
   $CD24,$04 Jump to #R$CD84 if it has not been, to be moved by gravity.
+N $CD28 Steer the stone to its place on the pentagram.
   $CD28,$03 Fetch the type of the stone.
   $CD2B,$02,b$01 Keep the type without its highest five bits, which makes the
 . number of the stone.
@@ -9195,6 +9518,7 @@ R $CD16 IX Object record
   $CD4B,$06 Fetch the y position of the stone and take off that of the place.
   $CD51,$04 Combine the differences, and jump to #R$CD87 if the stone is not
 . there yet.
+N $CD55 Light the stone when it is in place.
   $CD55,$06 Set the new type, which is #N$08 more than the old, in #REGc.
   $CD5B,$03 Fetch the old type of the stone.
   $CD5E,$03 Call #R$CF9E to change the type of the stone, and that of its entry
@@ -9205,15 +9529,15 @@ R $CD16 IX Object record
 
 c $CD70 Run Harmful Falling Object
 @ $CD70 label=RunHarmfulFallingObject
-D $CD70 The handler of the object type #N$1C, which is an object that harms the
-. player and falls, carries on as #R$CD81.
+D $CD70 The handler of the object type #N($1C), which is an object that harms
+. the player and falls, carries on as #R$CD81.
 R $CD70 IX Object record
   $CD70,$03 Call #R$C291 to make the object harm the player.
   $CD73,$02 Jump to #R$CD81 to move it.
 
 c $CD75 Run Block
 @ $CD75 label=RunBlock
-D $CD75 The handler of the object type #N$5B, which is a block that falls but
+D $CD75 The handler of the object type #N($5B), which is a block that falls but
 . cannot be pushed along x or y. It is also treated like the player when it
 . lands on something, see #R$B890. It carries on as #R$CD7C.
 E $CD75 Continue on to #R$CD7C.
@@ -9222,15 +9546,15 @@ R $CD75 IX Object record
 
 c $CD7C Run Table
 @ $CD7C label=RunTable
-D $CD7C The handler of the object type #N$49, which is an object that falls and
-. can be pushed, in the same way as #R$CD81.
+D $CD7C The handler of the object type #N($49), which is an object that falls
+. and can be pushed, in the same way as #R$CD81.
 R $CD7C IX Object record
   $CD7C,$03 Call #R$C769 to set the offsets of the sprite.
   $CD7F,$02 Jump to #R$CD84 to move it.
 
 c $CD81 Run Falling Object
 @ $CD81 label=RunFallingObject
-D $CD81 The handler of the object types #N$3F, #N$48 and #N$4F, which are
+D $CD81 The handler of the object types #N($3F), #N$48 and #N($4F), which are
 . objects that fall and can be pushed by the player or by the objects that move.
 R $CD81 IX Object record
   $CD81,$03 Call #R$C75F to set the offsets of the sprite.
@@ -9250,11 +9574,12 @@ R $CD87 IX Object record
 
 c $CDA0 Run Sinking Block
 @ $CDA0 label=RunSinkingBlock
-D $CDA0 The handler of the object type #N$4E, which is a block that sinks while
-. something is standing on it. It does not move at all unless something pushes
-. it down, which gives it a speed along z, and then it goes down by one for each
-. frame.
+D $CDA0 The handler of the object type #N($4E), which is a block that sinks
+. while something is standing on it. It does not move at all unless something
+. pushes it down, which gives it a speed along z, and then it goes down by one
+. for each frame.
 R $CDA0 IX Object record
+N $CDA0 Sink one step while something is pushing down.
   $CDA0,$03 Call #R$C75F to set the offsets of the sprite.
   $CDA3,$04 Set the speed along x to zero.
   $CDA7,$04 Set the speed along y to zero.
@@ -9267,7 +9592,7 @@ R $CDA0 IX Object record
 
 c $CDBB Run Lift
 @ $CDBB label=RunLift
-D $CDBB The handler of the object type #N$54, which is a lift. When the player
+D $CDBB The handler of the object type #N($54), which is a lift. When the player
 . (or a block of type #N$5B) lands on it, it carries it up, to a height of
 . #N$B0. When there is nothing on it any longer, it comes down again to where it
 . started.
@@ -9300,13 +9625,13 @@ N $CDEC The lift is moving. If nothing is pushing down on it, it comes down.
   $CE03,$07 Jump to #R$CE16 to keep going up if the lift is not at the top,
 . which is #N$B0.
   $CE0A,$04 Put the lift at the top.
-  $CE0E,$05 Set the speed along z of the player to #N$FE, to hold it down on the
-. lift.
+  $CE0E,$05 Set the speed along z of the player to #N($FE), to hold it down on
+. the lift.
   $CE13,$03 Jump to #R$CCDE to flag the lift as moved.
 @ $CE16 label=RunLift_Rise
   $CE16,$04 Set the speed along z of the lift to #N$02.
-  $CE1A,$05 Set the speed along z of the player to #N$03, to take it up with the
-. lift.
+  $CE1A,$05 Set the speed along z of the player to #N($03), to take it up with
+. the lift.
   $CE1F,$03 Fetch the collision flags of the player.
   $CE22,$02,b$01 Set the flag for being on the ground, so that the player can
 . jump from the lift.
@@ -9318,10 +9643,10 @@ N $CDEC The lift is moving. If nothing is pushing down on it, it comes down.
 
 c $CE31 Run Bobbing Block
 @ $CE31 label=RunBobbingBlock
-D $CE31 The handler of the object type #N$55, which no room uses. The block
-. falls until it lands, and then it rises until it is at a height of #N$B0, and
-. falls again. It rises faster while something is standing on it. Flag bit 2 of
-. the hit flags is used for the state: it is set while the block is rising.
+D $CE31 The handler of the object type #N($55), which no room uses. The block
+. falls until it lands, and then it rises until it is at a height of #N($B0),
+. and falls again. It rises faster while something is standing on it. Flag bit 2
+. of the hit flags is used for the state: it is set while the block is rising.
 R $CE31 IX Object record
   $CE31,$03 Call #R$C75F to set the offsets of the sprite.
   $CE34,$07 Set the speeds along x and y to zero.
@@ -9335,7 +9660,7 @@ N $CE3B Fall until the block lands, then start rising.
 @ $CE55 label=RunBobbingBlock_Finish
   $CE55,$07 Set the speeds along x and y to zero.
   $CE5C,$03 Jump to #R$CCDE to flag the block as moved.
-N $CE5F Rise towards #N$B0, faster if something is standing on the block.
+N $CE5F Rise towards #N($B0), faster if something is standing on the block.
 @ $CE5F label=RunBobbingBlock_Rising
   $CE5F,$03 Fetch the collision flags of the player.
   $CE62,$02,b$01 Keep the flag for the player jumping.
@@ -9363,7 +9688,7 @@ N $CE5F Rise towards #N$B0, faster if something is standing on the block.
 
 c $CE9A Run Harmful Bobbing Block
 @ $CE9A label=RunHarmfulBobbingBlock
-D $CE9A The handler of the object type #N$56, which is a creature that bobs up
+D $CE9A The handler of the object type #N($56), which is a creature that bobs up
 . and down, in the same way as #R$CE31 does for a block. It harms the player.
 R $CE9A IX Object record
   $CE9A,$03 Call #R$C291 to make the creature harm the player.
@@ -9371,7 +9696,7 @@ R $CE9A IX Object record
 
 c $CEA0 Run Harmful Slider X
 @ $CEA0 label=RunHarmfulSliderX
-D $CEA0 The handler of the object type #N$5C, which is a creature that goes
+D $CEA0 The handler of the object type #N($5C), which is a creature that goes
 . backwards and forwards along x, in the same way as #R$CEA3, and harms the
 . player.
 R $CEA0 IX Object record
@@ -9379,7 +9704,7 @@ R $CEA0 IX Object record
 
 c $CEA3 Run Slider X
 @ $CEA3 label=RunSliderX
-D $CEA3 The handler of the object type #N$57, which is a block that goes
+D $CEA3 The handler of the object type #N($57), which is a block that goes
 . backwards and forwards along x. It moves #N$02 for each frame, carrying
 . anything that stands on it, and turns around when it is stopped. Bit 0 of the
 . number at #N$10 of its record is the direction that it is going in.
@@ -9405,7 +9730,7 @@ N $CEC7 Go towards the start of the run.
 
 c $CEDA Run Harmful Slider Y
 @ $CEDA label=RunHarmfulSliderY
-D $CEDA The handler of the object type #N$5D, which is a creature that goes
+D $CEDA The handler of the object type #N($5D), which is a creature that goes
 . backwards and forwards along y, in the same way as #R$CEDD, and harms the
 . player.
 R $CEDA IX Object record
@@ -9413,7 +9738,7 @@ R $CEDA IX Object record
 
 c $CEDD Run Slider Y
 @ $CEDD label=RunSliderY
-D $CEDD The handler of the object type #N$58, which is a block that goes
+D $CEDD The handler of the object type #N($58), which is a block that goes
 . backwards and forwards along y, in the same way as #R$CEA3 does along x.
 R $CEDD IX Object record
   $CEDD,$03 Call #R$C75F to set the offsets of the sprite.
@@ -9437,8 +9762,8 @@ N $CF01 Go towards the start of the run.
 
 c $CF14 Run Static Object
 @ $CF14 label=RunStaticObject
-D $CF14 The handler of the object types #N$79 to #N$87, which include the eight
-. parts of the pentagram. They do not move, unless they can be pushed and
+D $CF14 The handler of the object types #N$79 to #N($87), which include the
+. eight parts of the pentagram. They do not move, unless they can be pushed and
 . something pushes them.
 R $CF14 IX Object record
   $CF14,$03 Call #R$C75F to set the offsets of the sprite.
@@ -9448,11 +9773,12 @@ R $CF14 IX Object record
 
 c $CF22 Run Wandering Spark
 @ $CF22 label=RunWanderingSpark
-D $CF22 The handler of the object type #N$59, which is a spark that harms the
+D $CF22 The handler of the object type #N($59), which is a spark that harms the
 . player. It falls to the floor, and then moves about at random, in a new
 . direction along x and y each time that it is stopped. The sprite of it is
 . turned over every other frame.
 R $CF22 IX Object record
+N $CF22 Fall, then flip the sprite on every other frame.
   $CF22,$03 Call #R$C75F to set the offsets of the sprite.
   $CF25,$03 Call #R$C291 to make the spark harm the player.
   $CF28,$04 Set the speed along z to zero.
@@ -9462,6 +9788,7 @@ R $CF22 IX Object record
   $CF36,$02,b$01 Keep bit 0.
   $CF38,$02 Jump to #R$CF3E if it is an even frame.
   $CF3A,$04 Turn the sprite over.
+N $CF3E Pick a new direction when the spark is stopped.
 @ $CF3E label=RunWanderingSpark_Test
   $CF3E,$06 Jump to #R$CF52 if the spark was stopped along x.
   $CF44,$06 Jump to #R$CF52 if the spark was stopped along y.
@@ -9480,7 +9807,7 @@ R $CF22 IX Object record
 
 c $CF68 Run Collectable Object
 @ $CF68 label=RunCollectableObject
-D $CF68 The handler of the object types #N$70 to #N$77, which are the four
+D $CF68 The handler of the object types #N$70 to #N($77), which are the four
 . objects that are the aim of the quest, and the same four once they have been
 . collected. An object is collected by the helper, #R$D0AC, which sets bit 0 of
 . the handler flags at #N$16.
@@ -9488,9 +9815,11 @@ D $CF68 When that has happened, the player is given an extra life, and the
 . object changes to the type that is #N$04 higher, in the object store as well.
 . When all four have been collected, #R$D13A reveals the pentagram.
 R $CF68 IX Object record
+N $CF68 Return unless the helper has collected the object.
   $CF68,$03 Call #R$C75F to set the offsets of the sprite.
   $CF6B,$03 Call #R$B97C to move the object, without gravity.
   $CF6E,$05 Return if the object has not been collected.
+N $CF73 Give a life and change the object to the collected type.
   $CF73,$07 Add one to the count of objects collected.
   $CF7A,$07 Add one to the number of lives.
   $CF81,$02 Save #REGix.
@@ -9511,12 +9840,14 @@ D $CF9E Changes the type of an object, and the type of the entry for it in the
 R $CF9E A Old type
 R $CF9E C New type
 R $CF9E IX Object record
+N $CF9E Find the store entry that has the old type.
   $CF9E,$03 Call #R$D07B to point #REGiy at the first entry of the object store.
 @ $CFA1 label=ChangeObjectType_Loop
   $CFA1,$05 Jump to #R$CFAB if the entry has the old type.
   $CFA6,$02 Move on to the next entry.
   $CFA8,$02 Jump to #R$CFA1 until all of the entries have been tested.
   $CFAA,$01 Return.
+N $CFAB Set the new type in the store and the object.
 @ $CFAB label=ChangeObjectType_Found
   $CFAB,$03 Set the new type of the entry.
   $CFAE,$03 Set the new type of the object.
@@ -9527,7 +9858,8 @@ c $CFB2 Test Projectile Hit
 D $CFB2 Tests if either of the two projectiles of the player touches an object.
 R $CFB2 IX Record of the object
 R $CFB2 O:F Zero flag set if a projectile touches the object
-  $CFB2,$02 Set the result to #N$01, as nothing has been hit.
+N $CFB2 Test the first projectile.
+  $CFB2,$02 Set the result to #N($01), as nothing has been hit.
   $CFB4,$04 Start with the first of the projectiles, #R$A7AF.
   $CFB8,$03 Fetch the type of the projectile.
   $CFBB,$02,b$01 Keep only the bits of the type that tell the kinds of object
@@ -9535,6 +9867,7 @@ R $CFB2 O:F Zero flag set if a projectile touches the object
   $CFBD,$03 Call #R$C21E to test it, as long as there is a projectile.
   $CFC0,$01 Fetch the result.
   $CFC1,$02 Return if the projectile touches the object.
+N $CFC3 Test the second projectile.
   $CFC3,$04 Move on to the second of the projectiles, #R$A7CF.
   $CFC7,$03 Fetch the type of the projectile.
   $CFCA,$02,b$01 Keep only the bits of the type that tell the kinds of object
@@ -9546,17 +9879,18 @@ R $CFB2 O:F Zero flag set if a projectile touches the object
 
 c $CFD2 Run Helper Source
 @ $CFD2 label=RunHelperSource
-D $CFD2 The handler of the object type #N$78, which makes a helper (the object
-. type #N$5A, run by #R$D0AC) when it has been hit by enough of the projectiles
-. of the player. Nothing happens while there is a helper in the game already.
-. Otherwise, a count at #N$14 of its record goes up by one for each frame that a
-. projectile is touching it, and the helper is made when the count gets to
-. #N$20.
+D $CFD2 The handler of the object type #N($78), which makes a helper (the object
+. type #N($5A), run by #R$D0AC) when it has been hit by enough of the
+. projectiles of the player. Nothing happens while there is a helper in the game
+. already. Otherwise, a count at #N$14 of its record goes up by one for each
+. frame that a projectile is touching it, and the helper is made when the count
+. gets to #N$20.
 D $CFD2 The helper is made by copying the record of this object into a free
 . object slot, and changing it. It starts in front of the object, rising. The
 . type and room of the helper are also written to the last entry of the object
 . store, #R$D542, so that it is remembered when the player leaves the room.
 R $CFD2 IX Object record
+N $CFD2 Count frames while a projectile is touching the object.
   $CFD2,$03 Call #R$C75F to set the offsets of the sprite.
   $CFD5,$03 Call #R$B97C to move the object, without gravity.
   $CFD8,$03 Fetch the helper flag.
@@ -9567,6 +9901,7 @@ R $CFD2 IX Object record
 . object.
   $CFE4,$06 Return if the count is less than #N$20.
   $CFEA,$04 Set the count back to zero.
+N $CFEE Return if a helper already exists.
   $CFEE,$03 Call #R$D071 to point #REGiy at the first ordinary object.
   $CFF1,$02 Set the type to look for to that of the helper.
 @ $CFF3 label=RunHelperSource_Test
@@ -9580,19 +9915,20 @@ R $CFD2 IX Object record
   $D004,$04 Move on to the next object, and jump to #R$CFFF until all have been
 . tested.
   $D008,$01 Return, as there is no room for a helper.
+N $D009 Copy this object into a free slot and make the helper.
 @ $D009 label=RunHelperSource_Make
-  $D009,$03 Take this object.
-  $D00C,$03 Take the free object.
+  $D009,$03 Point #REGhl at this object (using the stack).
+  $D00C,$03 Point #REGde at the free object (using the stack).
   $D00F,$03 Set the number of bytes to copy, which is the size of an object.
   $D012,$02 Copy this object into the free object.
   $D014,$04 Set the type of the new object to #N$5A.
   $D018,$04 Set the z position of the helper.
-  $D01C,$02 Set #REGa to #N$08, for the half sizes along x and y.
+  $D01C,$02 Set #REGa to #N($08), for the half sizes along x and y.
   $D01E,$03 Set the half size along x.
   $D021,$03 Set the half size along y.
   $D024,$04 Set the size along z.
   $D028,$04 Set the flags, which are for an object that can be pushed.
-  $D02C,$04 Set the speed along z to #N$01, which makes the helper rise.
+  $D02C,$04 Set the speed along z to #N($01), which makes the helper rise.
   $D030,$03 Take the entry of the object store for the helper, #R$D542.
   $D033,$03 Write the low byte of the address as the pointer to the store.
   $D036,$03 Write the high byte.
@@ -9640,6 +9976,7 @@ D $D085 Sets the speeds of an object along x and y to one in the direction that
 . takes it towards a target, or to nothing if it is already in line with the
 . target on an axis. The target is held at #N$15 and #N$16 of the record.
 R $D085 IX Object record
+N $D085 Set the speed along x towards the target.
   $D085,$03 Fetch the x position of the object.
   $D088,$05 Jump to #R$D099 if it is the same as the target.
   $D08D,$02 Jump to #R$D095 if it is lower.
@@ -9647,6 +9984,7 @@ R $D085 IX Object record
   $D093,$02 Jump to #R$D099.
 @ $D095 label=SteerTowardsTarget_X
   $D095,$04 Set the speed along x to #N$01.
+N $D099 Set the speed along y towards the target.
 @ $D099 label=SteerTowardsTarget_Y
   $D099,$03 Fetch the y position of the object.
   $D09C,$04 Return if it is the same as the target.
@@ -9659,18 +9997,19 @@ R $D085 IX Object record
 
 c $D0AC Run Helper
 @ $D0AC label=RunHelper
-D $D0AC The handler of the object type #N$5A, which is the helper. It can be
+D $D0AC The handler of the object type #N($5A), which is the helper. It can be
 . picked up by the player, like the stones, and when it is not held it goes to
 . an object of one of the types #N$70 to #N$73 in the room, and collects it.
 D $D0AC The helper starts by falling to the floor. If there is an object of the
 . right type, it takes the position of that as a target, which it keeps in its
-. record. Then it rises, to a height of #N$B0, and goes towards the target in a
-. straight line along x and y, as #R$D085 sets its speeds. When it gets there it
-. flags the object, so that #R$CF68 collects it, makes a noise and disappears in
-. an explosion, and its entry in the object store is removed.
+. record. Then it rises, to a height of #N($B0), and goes towards the target in
+. a straight line along x and y, as #R$D085 sets its speeds. When it gets there
+. it flags the object, so that #R$CF68 collects it, makes a noise and disappears
+. in an explosion, and its entry in the object store is removed.
 .
 . #HTML(#AUDIO0(collected-tune.wav)(#INCLUDE(CollectedTune)))
 R $D0AC IX Object record
+N $D0AC Fly towards the target if one is set.
   $D0AC,$03 Call #R$C75F to set the offsets of the sprite.
   $D0AF,$06 Jump to #R$D10C if the helper has no target.
   $D0B5,$03 Call #R$D085 to set the speeds towards the target.
@@ -9680,6 +10019,7 @@ R $D0AC IX Object record
   $D0C3,$03 Call #R$B97C to move the helper, without gravity.
   $D0C6,$09 Fetch the speeds together.
   $D0CF,$03 Jump to #R$CD87 to finish if the helper is still moving.
+N $D0D2 Collect the object when the helper arrives.
   $D0D2,$03 Call #R$D071 to point #REGiy at the first ordinary object.
   $D0D5,$02 Set the first type to look for.
 @ $D0D7 label=RunHelper_FindObject
@@ -9704,8 +10044,9 @@ R $D0AC IX Object record
 @ $D105 label=RunHelper_RemoveEntry
   $D105,$04 Remove the helper from the object store.
   $D109,$03 Jump to #R$C107 to make the helper explode.
+N $D10C Fall, then pick a quest object as the target.
 @ $D10C label=RunHelper_Seek
-  $D10C,$04 Set the speed along z to #N$FF, to make the helper fall.
+  $D10C,$04 Set the speed along z to #N($FF), to make the helper fall.
   $D110,$03 Call #R$B97C to move it, without gravity.
   $D113,$03 Call #R$D071 to point #REGiy at the first ordinary object.
   $D116,$02 Set the first type to look for.
@@ -9730,6 +10071,7 @@ D $D13A Finds out if all four of the quest objects have been collected, which is
 . to be drawn, and the pentagram is flagged as being revealed, so that #R$B097
 . brings the parts into a room.
 R $D13A IX Record of the object that was collected
+N $D13A Count the collected quest objects in the store.
   $D13A,$03 Call #R$D07B to point #REGiy at the first entry of the object store.
   $D13D,$02 Set the count of the entries to zero.
 @ $D13F label=CheckObjectsCollected_Count
@@ -9742,12 +10084,13 @@ R $D13A IX Record of the object that was collected
   $D14B,$02 Jump to #R$D13F until all of the entries have been tested.
   $D14D,$01 Fetch the count.
   $D14E,$03 Return unless all four have been collected.
+N $D151 Reveal the parts of the pentagram.
   $D151,$03 Call #R$D07B to point #REGiy at the first entry of the object store
 . again.
 @ $D154 label=CheckObjectsCollected_Reveal
   $D154,$03 Fetch the type of the entry.
   $D157,$02,b$01 Keep the type without its lowest three bits.
-  $D159,$04 Jump to #R$D16A unless it is one of the types #N$80 to #N$87, the
+  $D159,$04 Jump to #R$D16A unless it is one of the types #N$80 to #N($87), the
 . parts of the pentagram.
   $D15D,$04 Set bit 0 of the high byte of the pointer to the store in the record
 . of the object.
@@ -9765,6 +10108,7 @@ D $D16F Puts the objects of the quest into the object store at the start of a
 . are all in room #N$61. The rooms and positions of the stones are then replaced
 . with five consecutive entries of the table at #R$D1A5, starting at one of the
 . first sixteen, which is picked by the random seed.
+N $D16F Copy the initial store, then pick a set of stone rooms.
   $D16F,$03 Take the object store, #R$D432.
   $D172,$03 Take the initial entries of the store, #R$D312.
   $D175,$03 Set the number of bytes to copy, which is the size of #N$12 entries.
@@ -9776,11 +10120,12 @@ D $D16F Puts the objects of the quest into the object store at the start of a
   $D182,$03 Take the table of rooms and positions of the stones,
 . #R$D1A5.
   $D185,$01 Add the offset.
-  $D186,$04 Start at the store entry of the stone of type #N$94, which is
+  $D186,$04 Start at the store entry of the stone of type #N($94), which is
 . the first of the five, #R$D472.
   $D18A,$02 Set the number of stones.
   $D18C,$03 Set the offset from the end of the position to the start of the next
 . entry.
+N $D18F Write the room and position of each stone.
 @ $D18F label=InitialiseObjectStore_Stone
   $D18F,$01 Fetch the room from the table.
   $D190,$03 Set the room of the stone in the store.
@@ -9801,12 +10146,12 @@ b $D1A5 Stone Places
 @ $D1A5 label=StonePlaces
 D $D1A5 The rooms and positions that #R$D16F gives to the five stones, which are
 . twenty entries of the room and the x, y and z positions. The first of the five
-. is given to the stone of type #N$94, and the others to #N$93 down to #N$90.
+. is given to the stone of type #N($94), and the others to #N$93 down to #N$90.
 B $D1A5,$50,$04
 
 c $D1F5 Run Flickering Wanderer
 @ $D1F5 label=RunFlickeringWanderer
-D $D1F5 The handler of the object types #N$10 and #N$11, which are creatures
+D $D1F5 The handler of the object types #N$10 and #N($11), which are creatures
 . that harm the player and wander about the room. It turns the sprite over each
 . frame, to make it flicker, and carries on as #R$D1FD.
 E $D1F5 Continue on to #R$D1FD.
@@ -9817,7 +10162,7 @@ R $D1F5 IX Object record
 
 c $D1FD Run Wanderer
 @ $D1FD label=RunWanderer
-D $D1FD The handler of the object types #N$50 and #N$51, which are creatures
+D $D1FD The handler of the object types #N$50 and #N($51), which are creatures
 . that harm the player and wander about the room. A creature stays just above
 . the floor, and walks along one axis at a time, at a speed of four. When it has
 . no speed, because something has stopped it, it picks a new direction at
@@ -9825,12 +10170,14 @@ D $D1FD The handler of the object types #N$50 and #N$51, which are creatures
 . lowest bit of its type and the flag for the sprite being mirrored are set to
 . show which of the four ways it is going, to give the right picture.
 R $D1FD IX Object record
+N $D1FD Move the creature and keep it just above the floor.
   $D1FD,$03 Call #R$C75F to set the offsets of the sprite.
   $D200,$03 Call #R$C291 to make the creature harm the player.
   $D203,$03 Call #R$B979 to apply gravity to the creature and move it.
   $D206,$07 Jump to #R$D215 if the creature is at least #N$81 up.
   $D20D,$04 Put the creature at a height of #N$81.
   $D211,$04 Set the speed along z to zero.
+N $D215 Pick a new direction when the creature is stopped.
 @ $D215 label=RunWanderer_Test
   $D215,$09 Jump to #R$CCDE to flag the creature as moved if it is moving.
   $D21E,$02 Fetch a random number from the refresh register.
@@ -9856,11 +10203,12 @@ R $D1FD IX Object record
 
 c $D251 Run Four Frame Wanderer
 @ $D251 label=RunFourFrameWanderer
-D $D251 The handler of the object types #N$A8 to #N$AB, which are creatures that
-. harm the player and wander about the room in the same way as #R$D1FD. Bit 0 of
-. the type is turned around each frame, to make the creature walk, and bit 1 is
-. used to show which way it is going.
+D $D251 The handler of the object types #N$A8 to #N($AB), which are creatures
+. that harm the player and wander about the room in the same way as #R$D1FD. Bit
+. 0 of the type is turned around each frame, to make the creature walk, and bit
+. 1 is used to show which way it is going.
 R $D251 IX Object record
+N $D251 Flip the walk frame, then move the creature.
   $D251,$03 Call #R$C75F to set the offsets of the sprite.
   $D254,$03 Call #R$C291 to make the creature harm the player.
   $D257,$03 Call #R$B979 to apply gravity to the creature and move it.
@@ -9870,6 +10218,7 @@ R $D251 IX Object record
   $D262,$07 Jump to #R$D271 if the creature is at least #N$81 up.
   $D269,$04 Put the creature at a height of #N$81.
   $D26D,$04 Set the speed along z to zero.
+N $D271 Pick a new direction when the creature is stopped.
 @ $D271 label=RunFourFrameWanderer_Test
   $D271,$09 Jump to #R$CCDE to flag the creature as moved if it is moving.
   $D27A,$02 Fetch a random number from the refresh register.
@@ -9895,11 +10244,12 @@ R $D251 IX Object record
 
 c $D2AD Run Crumbling Block
 @ $D2AD label=RunCrumblingBlock
-D $D2AD The handler of the object types #N$88 to #N$8B, which are the stages of
-. a block that crumbles away. Each time that the player or a block of type #N$5B
-. lands on it, it changes to the next type, which has the next sprite, and after
-. the last it is erased.
+D $D2AD The handler of the object types #N$88 to #N($8B), which are the stages
+. of a block that crumbles away. Each time that the player or a block of type
+. #N$5B lands on it, it changes to the next type, which has the next sprite, and
+. after the last it is erased.
 R $D2AD IX Object record
+N $D2AD Crumble one stage when something lands on the block.
   $D2AD,$03 Call #R$C75F to set the offsets of the sprite.
   $D2B0,$04 Set the speed along z to zero.
   $D2B4,$03 Call #R$B97C to move the block, without gravity.
@@ -9912,13 +10262,14 @@ R $D2AD IX Object record
   $D2D0,$01 Move on to the next type.
   $D2D1,$03 Set the type.
   $D2D4,$03 Jump to #R$CCDE to flag the block as moved.
+N $D2D7 Erase the last stage of the block.
 @ $D2D7 label=RunCrumblingBlock_Erase
-  $D2D7,$04 Change the block to the type #N$01, which makes #R$B3D3 erase it.
+  $D2D7,$04 Change the block to the type #N($01), which makes #R$B3D3 erase it.
   $D2DB,$03 Jump to #R$CCDE to flag the block as moved.
 
 c $D2DE Run Conveyor Block Plus X
 @ $D2DE label=RunConveyorBlockPlusX
-D $D2DE The handler of the object type #N$8C, which is a block that pushes
+D $D2DE The handler of the object type #N($8C), which is a block that pushes
 . whatever stands on it along x, using the table at #R$D30A, see #R$B866. All
 . that this handler does is to clear the flag for something being on the block,
 . which lets the next thing that lands on it push it again.
@@ -9930,7 +10281,7 @@ R $D2DE IX Object record
 
 c $D2E9 Run Conveyor Block Minus X
 @ $D2E9 label=RunConveyorBlockMinusX
-D $D2E9 The handler of the object type #N$8D, which is a block that pushes
+D $D2E9 The handler of the object type #N($8D), which is a block that pushes
 . whatever stands on it back along x, in the same way as #R$D2DE.
 R $D2E9 IX Object record
   $D2E9,$03 Call #R$C75F to set the offsets of the sprite.
@@ -9940,7 +10291,7 @@ R $D2E9 IX Object record
 
 c $D2F4 Run Conveyor Block Plus Y
 @ $D2F4 label=RunConveyorBlockPlusY
-D $D2F4 The handler of the object type #N$8E, which is a block that pushes
+D $D2F4 The handler of the object type #N($8E), which is a block that pushes
 . whatever stands on it along y, in the same way as #R$D2DE.
 R $D2F4 IX Object record
   $D2F4,$03 Call #R$C75F to set the offsets of the sprite.
@@ -9950,7 +10301,7 @@ R $D2F4 IX Object record
 
 c $D2FF Run Conveyor Block Minus Y
 @ $D2FF label=RunConveyorBlockMinusY
-D $D2FF The handler of the object type #N$8F, which is a block that pushes
+D $D2FF The handler of the object type #N($8F), which is a block that pushes
 . whatever stands on it back along y, in the same way as #R$D2DE.
 R $D2FF IX Object record
   $D2FF,$03 Call #R$C75F to set the offsets of the sprite.
@@ -9961,7 +10312,7 @@ R $D2FF IX Object record
 b $D30A Conveyor Pushes
 @ $D30A label=ConveyorPushes
 D $D30A The pairs of speeds, along x and then along y, that #R$B866 gives to
-. something on a block of the types #N$8C to #N$8F, which is a block that
+. something on a block of the types #N$8C to #N($8F), which is a block that
 . pushes. The type of the block gives the pair, in the same order.
 B $D30A,$08,$02
 
@@ -10014,10 +10365,12 @@ E $D56C View the equivalent code in;
 .
 . #HTML(#AUDIO0(moving-sound.wav)(#INCLUDE(MovingSound)))
 R $D56C IX Object record
+N $D56C Return unless the object has just been moved.
   $D56C,$03 Take the table of pitches, #R$D587.
   $D56F,$04 Test the flag for the object being moved.
   $D573,$04 Clear the flag.
   $D577,$01 Return if it was not set.
+N $D578 Play a pitch from the table.
   $D578,$03 Fetch the frame counter.
   $D57B,$02,b$01 Keep the lowest four bits.
   $D57D,$03 Put that in #REGhl.
@@ -10065,6 +10418,7 @@ E $D5E4 View the equivalent code in;
 . LIST#
 .
 . #HTML(#AUDIO0(jump-sound.wav)(#INCLUDE(JumpSound)))
+N $D5E4 Play sixteen cycles of a rattling tone.
   $D5E4,$02 Set the number of cycles to #N$10.
 @ $D5E6 label=PlayJumpSound_Loop
   $D5E6,$01 Fetch the number of cycles left.
@@ -10073,7 +10427,7 @@ E $D5E4 View the equivalent code in;
   $D5EA,$01 Put the pitch in #REGb.
   $D5EB,$03 Call #R$D682 to make a cycle of the tone.
   $D5EE,$01 Count the cycle.
-  $D5EF,$02 Jump back to #R$D5E6 until all of the cycles have been made.
+  $D5EF,$02 Jump to #R$D5E6 until all of the cycles have been made.
   $D5F1,$01 Return.
 
 c $D5F2 Play Sound Effect
@@ -10096,10 +10450,12 @@ E $D5F2 View the equivalent code in;
 . #HTML(#AUDIO0(new-room-sound.wav)(#INCLUDE(NewRoomSound))) }
 . { Item Sound | #HTML(#AUDIO0(item-sound.wav)(#INCLUDE(ItemSound))) }
 . TABLE#
+N $D5F2 Return if no notes are left.
   $D5F2,$03 Take the number of notes left, #R$A749.
   $D5F5,$01 Fetch it.
   $D5F6,$02 Return if there are none.
   $D5F8,$01 Take one off.
+N $D5F9 Play the next note of the sequence.
   $D5F9,$01 Keep the number of notes that were left in #REGaf'.
   $D5FA,$01 Move on to the type of the effect.
   $D5FB,$01 Fetch it.
@@ -10141,6 +10497,7 @@ E $D629 View the equivalent code in;
 .
 . #HTML(#AUDIO0(shot-sound.wav)(#INCLUDE(ShotSound)))
 R $D629 B Starting value of the pitch
+N $D629 Play thirty-two cycles of a changing tone.
   $D629,$02 Set the number of cycles to #N$20.
 @ $D62B label=PlayProjectileSound_Loop
   $D62B,$01 Fetch the number of cycles left.
@@ -10148,7 +10505,7 @@ R $D629 B Starting value of the pitch
   $D62D,$01 Set it as the new pitch.
   $D62E,$03 Call #R$D682 to make a cycle of the tone.
   $D631,$01 Count the cycle.
-  $D632,$02 Jump back to #R$D62B until all of the cycles have been made.
+  $D632,$02 Jump to #R$D62B until all of the cycles have been made.
   $D634,$01 Return.
 
 c $D635 Play Footstep Sound
@@ -10157,6 +10514,7 @@ D $D635 Makes the sound of a footstep, on every fourth call, which alternates
 . between two pitches.
 .
 . #HTML(#AUDIO0(footstep-sound.wav)(#INCLUDE(FootstepSound)))
+N $D635 Play a tone on every fourth footstep.
   $D635,$03 Take the count of the footsteps, #R$A748.
   $D638,$01 Add one to it.
   $D639,$01 Fetch it.
@@ -10165,6 +10523,7 @@ D $D635 Makes the sound of a footstep, on every fourth call, which alternates
   $D640,$01 Return if the count is not a multiple of four.
   $D641,$03 Set the pitch to #N$40 and the length to #N$02.
   $D644,$02 Jump to #R$D67B to make the tone.
+N $D646 Play the other pitch on the other fourth steps.
 @ $D646 label=PlayFootstepSound_Other
   $D646,$02,b$01 Keep the lowest two bits.
   $D648,$01 Return if the count is not a multiple of four.
@@ -10178,11 +10537,13 @@ D $D64E Makes the noise of an explosion, from four single cycles of tones with
 . seed.
 .
 . #HTML(#AUDIO0(explosion.wav)(#INCLUDE(Explosion)))
+N $D64E Point at four ROM bytes from the random seed.
   $D64E,$03 Fetch the random seed.
   $D651,$01 Fetch the high byte.
   $D652,$02,b$01 Keep it within the first #N$2000 bytes of the ROM.
   $D654,$01 Put it in #REGh.
   $D655,$02 Set the number of tones to four.
+N $D657 Play four cycles from those bytes.
 @ $D657 label=PlayExplosionSound_Loop
   $D657,$01 Fetch a byte of the ROM.
   $D658,$01 Move on to the next.
@@ -10191,7 +10552,7 @@ D $D64E Makes the noise of an explosion, from four single cycles of tones with
   $D65C,$02 Set the length of the tone to one cycle.
   $D65E,$03 Call #R$D67B to make the tone.
   $D661,$01 Count the tone.
-  $D662,$02 Jump back to #R$D657 until all of the tones have been made.
+  $D662,$02 Jump to #R$D657 until all of the tones have been made.
   $D664,$01 Return.
 
 c $D665 Play Object Sound
@@ -10217,8 +10578,8 @@ c $D673 Play Stored Sound
 @ $D673 label=PlayStoredSound
 D $D673 Never used. The routine from #R$D674 makes a tone of a pitch that is
 . held in the byte at #R$D673, which is the instruction at the start of this
-. routine, a #N$00. That makes the tone the same as the pitch #N$FF, as the byte
-. is inverted. It carries on as #R$D67B.
+. routine, a #N$00. That makes the tone the same as the pitch #N($FF), as the
+. byte is inverted. It carries on as #R$D67B.
 E $D673 Continue on to #R$D67B.
 .
 . #HTML(#AUDIO0(stored-sound.wav)(#INCLUDE(StoredSound)))
@@ -10238,17 +10599,18 @@ E $D67B View the equivalent code in;
 . { #GUNFRIGHT$AF5F }
 . { #MARTIANOIDS$C05B }
 . LIST#
-R $D67B B Half the length of a cycle, in units of the time that DJNZ takes
-R $D67B C Number of cycles
-  $D67B,$03 Call #R$D682 to make a cycle of the tone.
-  $D67E,$01 Count the cycle.
-  $D67F,$02 Jump back to #R$D67B until all of the cycles have been made.
+R $D67B B Pitch
+R $D67B C Number of beeps
+N $D67B Play one beep per count.
+  $D67B,$03 Call #R$D682.
+  $D67E,$03 Jump to #R$D67B until all of the beeps have been
+. played.
   $D681,$01 Return.
 
 c $D682 Play Square Wave
 @ $D682 label=PlaySquareWave
-D $D682 Makes one cycle of a square wave on the speaker, in which the speaker is
-. on for a time and then off for the same time. The value in #REGb is kept.
+D $D682 Plays a single beep by switching the speaker on, waiting, switching it
+. off and waiting again. The bigger the pitch, the longer the beep.
 E $D682 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$B4ED }
@@ -10259,19 +10621,18 @@ E $D682 View the equivalent code in;
 . { #BUBBLER$9E93 }
 . { #CYBERUN$71E0 }
 . LIST#
-R $D682 B Half the length of the cycle
-  $D682,$02 Set bit 4 to turn the speaker on.
-  $D684,$02 Write it to the ULA.
-  $D686,$01 Keep the length of the delay in #REGa.
+R $D682 B Pitch
+N $D682 Hold the speaker on, then off.
+  $D682,$04 Turn the speaker on.
+  $D686,$01 Keep the pitch in #REGa.
 @ $D687 label=PlaySquareWave_On
-  $D687,$02 Wait while the speaker is on.
-  $D689,$01 Get the length back.
-  $D68A,$01 Set the speaker to off.
-  $D68B,$02 Write it to the ULA.
-  $D68D,$01 Keep the length of the delay in #REGa.
+  $D687,$02 Wait for the first half of the beep.
+  $D689,$01 Restore the pitch.
+  $D68A,$03 Turn the speaker off.
+  $D68D,$01 Keep the pitch in #REGa.
 @ $D68E label=PlaySquareWave_Off
-  $D68E,$02 Wait while the speaker is off.
-  $D690,$01 Get the length back.
+  $D68E,$02 Wait for the second half of the beep.
+  $D690,$01 Restore the pitch.
   $D691,$01 Return.
 
 c $D692 Get Table Entry
@@ -10286,6 +10647,7 @@ E $D692 View the equivalent code in;
 R $D692 A Number of the word
 R $D692 BC Address of the table
 R $D692 O:HL The word
+N $D692 Fetch the word at twice the index.
   $D692,$03 Put the number in #REGhl.
   $D695,$01 Double it.
   $D696,$01 Add the table.
@@ -10297,9 +10659,15 @@ R $D692 O:HL The word
 
 c $D69C Play Music Once
 @ $D69C label=PlayMusicOnce
-D $D69C Plays the tune of the menu, until a key is pressed or the tune ends. The
-. tune is only started once in a game, as the flag at #R$A747 is set when it is,
-. and it is only cleared when the game starts.
+D $D69C Plays a tune once, and stops early if a key is pressed. After the tune
+. has been played, nothing happens until #R$A747 is cleared.
+.
+. The tunes played by this routine are:
+. #TABLE(default,centre,centre)
+. { =h Tune | =h Sound }
+. { Main Tune |
+. #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune))) }
+. TABLE#
 E $D69C View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$B2B6 }
@@ -10308,22 +10676,24 @@ E $D69C View the equivalent code in;
 . { #GUNFRIGHT$AF76 }
 . { #MARTIANOIDS$C0B6 }
 . LIST#
-R $D69C DE Address of the tune
-  $D69C,$03 Take the flag for the tune having been played, #R$A747.
-  $D69F,$01 Fetch it.
-  $D6A0,$02 Return if the tune has been played already.
+R $D69C DE The address of the tune
+N $D69C Play only if #R$A747 is clear.
+  $D69C,$03 Point #REGhl at the flag which says whether the tune has been
+. played.
+  $D69F,$01 Fetch the flag.
+  $D6A0,$02 Return if the tune has already been played.
   $D6A2,$02 Set the flag.
+N $D6A4 Stop if a key is pressed.
 @ $D6A4 label=PlayMusicOnce_Loop
-  $D6A4,$01 Clear #REGa to read all of the rows of the keyboard.
-  $D6A5,$03 Call #R$B952 to read the keyboard.
+  $D6A4,$04 Read every row of the keyboard.
   $D6A8,$02 Jump to #R$D6AB if no key is pressed.
-  $D6AA,$01 Return, as a key is pressed.
+  $D6AA,$01 Return.
+N $D6AB Play the next note.
 @ $D6AB label=PlayMusicOnce_Note
   $D6AB,$01 Fetch the next note.
-  $D6AC,$04 Return if it is the end of the tune.
-  $D6B0,$03 Call #R$D6C0 to play it.
-  $D6B3,$02 Jump back to #R$D6A4 to play the next.
-
+  $D6AC,$04 Jump to #R$D6BF if the terminator has been reached.
+  $D6B0,$03 Play the note.
+  $D6B3,$02 Jump to #R$D6A4.
 c $D6B5 Play Music
 @ $D6B5 label=PlayMusic
 D $D6B5 Plays a tune until its end.
@@ -10349,22 +10719,21 @@ E $D6B5 View the equivalent code in;
 . #HTML(#AUDIO0(game-complete-tune.wav)(#INCLUDE(GameCompleteTune))) }
 . TABLE#
 R $D6B5 DE Address of the tune
+N $D6B5 Play each note until #N$FF.
   $D6B5,$01 Fetch the next note.
-  $D6B6,$04 Jump to #R$D6BF if it is the end of the tune.
-  $D6BA,$03 Call #R$D6C0 to play it.
-  $D6BD,$02 Jump back to #R$D6B5 to play the next.
+  $D6B6,$04 Jump to #R$D6BF if it is #N$FF.
+  $D6BA,$03 Call #R$D6C0.
+  $D6BD,$02 Jump to #R$D6B5.
 @ $D6BF label=PlayMusic_Done
   $D6BF,$01 Return.
 
 c $D6C0 Play Note
 @ $D6C0 label=PlayNote
-D $D6C0 Plays a note of a tune, or lets the time of a rest go by. The note is a
-. byte in which the lowest six bits are the number of the note, with a rest if
-. it is zero, and the highest two bits are one less than the length of the note,
-. which is that number of times the length of the shortest note. The pitch and
-. the number of cycles of the note come from the table at #R$D718. A note is
-. made of the same number of cycles for each of its lengths, so that the notes
-. are all as long, whatever their pitch.
+D $D6C0 Plays a note of a tune, or a rest if the note number
+. is zero. Bits 0 to 5 select the entry in #R$D718 that holds
+. the two delays of a cycle and the number of cycles. Bits 6
+. and 7 are the length less one, which multiplies the number
+. of cycles, so the note is one to four times as long.
 E $D6C0 View the equivalent code in;
 . #LIST
 . { #KNIGHTLORE$B2DA }
@@ -10375,81 +10744,78 @@ E $D6C0 View the equivalent code in;
 . { #BUBBLER$A1CC }
 . { #CYBERUN$9AB4 }
 . LIST#
-R $D6C0 A Note
-R $D6C0 DE Address of the note in the tune
+R $D6C0 A The note
+R $D6C0 DE Address of the note
 R $D6C0 O:DE Address of the next note
-  $D6C0,$02,b$01 Keep the number of the note.
-  $D6C2,$02 Jump to #R$D702 if it is a rest.
-N $D6C4 Look up the delays and the number of cycles in the table at #R$D718.
-  $D6C4,$03 Put the number in #REGhl.
-  $D6C7,$01 Double it.
-  $D6C8,$03 Call #R$B519 to add the number, to make three times it.
-  $D6CB,$03 Find the note in the table at #R$D718.
-  $D6CE,$01 Add it to find the entry of the note.
-  $D6CF,$01 Fetch the count for the first run of the delay loop for half a
-. cycle.
+N $D6C0 Look up the delays and the number of cycles.
+  $D6C0,$02,b$01 Keep bits 0 to 5.
+  $D6C2,$02 Jump to #R$D702 if the note is a rest.
+  $D6C4,$03 Set #REGhl to the note number.
+  $D6C7,$01 Double the number.
+  $D6C8,$03 Call #R$B519.
+  $D6CB,$03 Point #REGbc at #R$D718.
+  $D6CE,$01 Find the entry for the note.
+  $D6CF,$01 Fetch the first delay.
   $D6D0,$01 Move on.
-  $D6D1,$01 Fetch the number of times that the delay loop is run on from there.
+  $D6D1,$01 Fetch the second delay.
   $D6D2,$01 Move on.
-  $D6D3,$01 Fetch the number of cycles for a note of the shortest length.
-  $D6D4,$02 Clear the high byte.
-N $D6D6 Bits 6 and 7 of the note are the length, less one.
+  $D6D3,$01 Fetch the number of cycles.
+  $D6D4,$02 Set #REGh to #N$00.
+N $D6D6 Bits 6 and 7 are the length, less one.
   $D6D6,$01 Fetch the note again.
-  $D6D7,$02 Move the highest two bits to the lowest.
-  $D6D9,$02,b$01 Keep them.
-  $D6DB,$01 Add one to get the length of the note.
-  $D6DC,$01 Save the address in the tune.
+  $D6D7,$02 Move bits 6 and 7 to bits 0 and 1.
+  $D6D9,$02,b$01 Keep bits 0 and 1.
+  $D6DB,$01 Add one.
+  $D6DC,$01 Stash the note address on the stack.
   $D6DD,$02 Copy the number of cycles to #REGde.
-N $D6DF Multiply the number of cycles by the length of the note.
+N $D6DF Multiply the number of cycles by the length.
 @ $D6DF label=PlayNote_Multiply
-  $D6DF,$01 Take one off the length.
-  $D6E0,$02 Jump to #R$D6E5 if it is the last.
-  $D6E2,$01 Add the number of cycles for the shortest note.
-  $D6E3,$02 Jump back to #R$D6DF.
+  $D6DF,$01 Count down the length.
+  $D6E0,$02 Jump to #R$D6E5 if the length has been used up.
+  $D6E2,$01 Add the number of cycles again.
+  $D6E3,$02 Jump to #R$D6DF.
 @ $D6E5 label=PlayNote_Start
-  $D6E5,$01 Get the address in the tune back.
-N $D6E6 Each pass of this loop makes one cycle of the note, so the length of
-. the note is the number of cycles.
+  $D6E5,$01 Restore the note address from the stack.
+N $D6E6 Each pass makes one cycle of the note.
 @ $D6E6 label=PlayNote_Cycle
-  $D6E6,$01 Save the half length of a cycle.
-  $D6E7,$01 Set the speaker to off.
-  $D6E8,$02 Write it to the ULA.
+  $D6E6,$01 Stash the delays on the stack.
+  $D6E7,$01 Set #REGa to #N$00.
+  $D6E8,$02 Turn the speaker off.
 @ $D6EA label=PlayNote_LowWait
-  $D6EA,$02 Wait while the speaker is off.
-  $D6EC,$01 Count a loop of the high byte.
-  $D6ED,$02 Jump back to #R$D6EA until the half cycle is over.
-  $D6EF,$01 Get the half length back.
-  $D6F0,$01 Save it again.
-  $D6F1,$02 Set bit 4 to turn the speaker on.
-  $D6F3,$02 Write it to the ULA.
+  $D6EA,$02 Wait for the first half of the cycle.
+  $D6EC,$01 Count down the second delay.
+  $D6ED,$02 Jump to #R$D6EA until it has finished.
+  $D6EF,$01 Restore the delays from the stack.
+  $D6F0,$01 Stash the delays on the stack.
+  $D6F1,$02 Set bit 4.
+  $D6F3,$02 Turn the speaker on.
 @ $D6F5 label=PlayNote_HighWait
-  $D6F5,$02 Wait while the speaker is on.
-  $D6F7,$01 Count a loop of the high byte.
-  $D6F8,$02 Jump back to #R$D6F5 until the half cycle is over.
-  $D6FA,$01 Get the half length back.
-  $D6FB,$01 Count the cycle.
-  $D6FC,$02 Test whether there are any left.
-  $D6FE,$02 Jump back to #R$D6E6 until all of the cycles have been made.
-  $D700,$01 Move on to the next note of the tune.
+  $D6F5,$02 Wait for the second half of the cycle.
+  $D6F7,$01 Count down the second delay.
+  $D6F8,$02 Jump to #R$D6F5 until it has finished.
+  $D6FA,$01 Restore the delays from the stack.
+  $D6FB,$01 Count down the cycles.
+  $D6FC,$04 Jump to #R$D6E6 until all of the cycles have been
+. played.
+  $D700,$01 Move on to the next note.
   $D701,$01 Return.
-N $D702 A rest is a silent pause, which is made by waiting one to four times.
+N $D702 A rest is a silent pause of one to four units.
 @ $D702 label=PlayNote_Rest
-  $D702,$01 Fetch the rest.
-  $D703,$01 Move on to the next note of the tune.
-  $D704,$02 Move the highest two bits to the lowest.
-  $D706,$02,b$01 Keep them.
-  $D708,$01 Add one to get the length of the rest.
-  $D709,$01 Put it in #REGl.
-  $D70A,$03 Set the count of the delay.
+  $D702,$01 Fetch the length of the rest.
+  $D703,$01 Move on to the next note.
+  $D704,$02 Move bits 6 and 7 to bits 0 and 1.
+  $D706,$02,b$01 Keep bits 0 and 1.
+  $D708,$01 Add one.
+  $D709,$01 Keep it in #REGl.
+  $D70A,$03 Set #REGbc to #N$430B.
 @ $D70D label=PlayNote_RestOuter
-  $D70D,$01 Save it.
+  $D70D,$01 Stash the pause length on the stack.
 @ $D70E label=PlayNote_RestWait
-  $D70E,$01 Count down.
-  $D70F,$02 Test whether it is zero.
-  $D711,$02 Jump back to #R$D70E until the delay is over.
-  $D713,$01 Get the count back.
-  $D714,$01 Take one off the length.
-  $D715,$02 Jump back to #R$D70D until the rest is over.
+  $D70E,$01 Count down the pause.
+  $D70F,$04 Jump to #R$D70E until the delay is over.
+  $D713,$01 Restore the pause length from the stack.
+  $D714,$01 Count down the units of the rest.
+  $D715,$02 Jump to #R$D70D until the rest is over.
   $D717,$01 Return.
 
 b $D718 Note Table

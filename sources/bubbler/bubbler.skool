@@ -7732,6 +7732,19 @@ c$A1B2 XOR A         ; Select all of the keyboard rows.
 ; Plays a piece of music. Each byte of the music is a note, or #N$FF at
 ; the end. Bits 0-5 of a note are its number in the table at #R$A226 (#N$00 for
 ; a rest). Bits 6-7 are not used.
+; .
+; The tunes played by this routine are:
+; #TABLE(default,centre,centre)
+; { =h Tune | =h Sound }
+; { Title Tune |
+; #HTML(#AUDIO0(title-tune.wav)(#INCLUDE(TitleTune))) }
+; { Start Tune |
+; #HTML(#AUDIO0(start-tune.wav)(#INCLUDE(StartTune))) }
+; { Fanfare |
+; #HTML(#AUDIO0(fanfare.wav)(#INCLUDE(Fanfare))) }
+; { Game Over Tune |
+; #HTML(#AUDIO0(game-over-tune.wav)(#INCLUDE(GameOverTune))) }
+; TABLE#
 ;
 ; DE The address of the music
 @label=PlayMusic
@@ -7766,8 +7779,8 @@ c$A1C1 LD A,(DE)     ; Fetch the next byte of the music.
 c$A1CC AND %00111111 ; Use bits 0-5, the number of the note.
  $A1CE JR Z,$A20F    ; Jump to #R$A20F if it is a rest.
 ; Look up the delays and the number of cycles in the table at #R$A226.
- $A1D0 LD L,A        ; Copy the note number into #REGl.
- $A1D1 LD H,$00      ; Clear #REGh.
+ $A1D0 LD L,A        ; {Set #REGhl to the note number.
+ $A1D1 LD H,$00      ; }
  $A1D3 ADD HL,HL     ; Double it.
  $A1D4 CALL $AA3C    ; Add the note number to make three times the number.
  $A1D7 LD BC,$A226   ; Point #REGbc at #R$A226.

@@ -708,8 +708,8 @@ b$605B DEFB $04,$08,$38,$58
 ; Bit 7 of the first byte of a pool record marks it as used so that the same
 ; record is never picked twice in one go.
 ;
-; DE Address of the table to fill (#R$F604 for player one, #R$F66D for
-; player two)
+; DE Address of the table to fill (#R$F604 for player one, #R$F66D for player
+; .  two)
 ;
 ; Start at the beginning of the list of pool numbers.
 @label=ChooseItemSites
@@ -7803,6 +7803,21 @@ c$9A9A XOR A         ; Select every keyboard row.
 ; .
 ; Plays a tune made of notes, which ends with #N($FF). The keyboard is
 ; not checked.
+; .
+; The tunes played by this routine are:
+; #TABLE(default,centre,centre)
+; { =h Tune | =h Sound }
+; { Title Tune |
+; #HTML(#AUDIO0(title-tune.wav)(#INCLUDE(TitleTune))) }
+; { Game Start Tune |
+; #HTML(#AUDIO0(game-start-tune.wav)(#INCLUDE(GameStartTune))) }
+; { Ship Destroyed Tune |
+; #HTML(#AUDIO0(ship-destroyed-tune.wav)(#INCLUDE(ShipDestroyedTune))) }
+; { Planet Complete Tune |
+; #HTML(#AUDIO0(planet-complete-tune.wav)(#INCLUDE(PlanetCompleteTune))) }
+; { Game Over Tune |
+; #HTML(#AUDIO0(game-over-tune.wav)(#INCLUDE(GameOverTune))) }
+; TABLE#
 ;
 ; DE Address of the first note
 @label=PlayMusic
@@ -7829,60 +7844,67 @@ c$9AA9 LD A,(DE)     ; Fetch a note.
 ;
 ; Used by the routines at #R$9A9A and #R$9AA9.
 ; .
-; Plays a single note of a tune. The bottom six bits of the note byte are
-; the number of the note, where zero is a rest, and the top two bits are a
-; multiplier for the length of the note.
+; Plays a note of a tune, or a rest if the note number is zero.
+; Bits 0 to 5 select the entry in #R$9B0C that holds the two delays of a cycle
+; and the number of cycles. Bits 6 and 7 are the length less one, which
+; multiplies the number of cycles, so the note is one to four times as long.
 ;
-;   A Note byte
-;   DE Address of the note byte
-; O:DE Address of the next note byte
+;   A The note
+;   DE Address of the note
+; O:DE Address of the next note
+;
+; Look up the delays and the number of cycles.
 @label=PlayNote
 c$9AB4 AND %00111111 ; Keep the note number.
- $9AB6 JR Z,$9AF6    ; Jump to #R$9AF6 if it is a rest.
- $9AB8 LD L,A        ; {Multiply the note number by three...
- $9AB9 LD H,$00      ;
- $9ABB ADD HL,HL     ; }
- $9ABC CALL $9BCF    ; {...and add the address of the table of notes at
- $9ABF LD BC,$9B0C   ; #R$9B0C.
- $9AC2 ADD HL,BC     ; }
- $9AC3 LD B,(HL)     ; {Fetch the half-period from the table into #REGbc.
- $9AC4 INC HL        ;
- $9AC5 LD C,(HL)     ;
- $9AC6 INC HL        ; }
- $9AC7 LD L,(HL)     ; Fetch the number of cycles into #REGl.
- $9AC8 LD H,$00      ; Clear #REGh.
- $9ACA LD A,(DE)     ; Fetch the note byte again.
- $9ACB RLCA          ; {Move the top two bits to the bottom.
+ $9AB6 JR Z,$9AF6    ; Jump to #R$9AF6 if the note is a rest.
+ $9AB8 LD L,A        ; {Set #REGhl to the note number.
+ $9AB9 LD H,$00      ; }
+ $9ABB ADD HL,HL     ; Double the number.
+; Add the address of the table of notes at #R$9B0C.
+ $9ABC CALL $9BCF    ; Call #R$9BCF.
+ $9ABF LD BC,$9B0C   ; Point #REGbc at #R$9B0C.
+ $9AC2 ADD HL,BC     ; Find the entry for the note.
+ $9AC3 LD B,(HL)     ; Fetch the first delay.
+ $9AC4 INC HL        ; Move on.
+ $9AC5 LD C,(HL)     ; Fetch the second delay.
+ $9AC6 INC HL        ; Move on.
+ $9AC7 LD L,(HL)     ; Fetch the number of cycles.
+ $9AC8 LD H,$00      ; Set #REGh to #N$00.
+; Bits 6 and 7 are the length, less one.
+ $9ACA LD A,(DE)     ; Fetch the note again.
+ $9ACB RLCA          ; {Move bits 6 and 7 to bits 0 and 1.
  $9ACC RLCA          ; }
- $9ACD AND %00000011 ; Keep them.
- $9ACF INC A         ; Add one to get a multiplier.
+ $9ACD AND %00000011 ; Keep bits 0 and 1.
+ $9ACF INC A         ; Add one.
  $9AD0 PUSH DE       ; Save the address of the note.
- $9AD1 LD E,L        ; {Copy the number of cycles into #REGde.
+ $9AD1 LD E,L        ; {Copy the number of cycles to #REGde.
  $9AD2 LD D,H        ; }
+; Multiply the number of cycles by the length.
 @label=PlayNote_Multiply
-*$9AD3 DEC A         ; Decrease the multiplier by one.
+*$9AD3 DEC A         ; Count down the length.
  $9AD4 JR Z,$9AD9    ; Jump to #R$9AD9 if it is zero.
  $9AD6 ADD HL,DE     ; Add the number of cycles again.
  $9AD7 JR $9AD3      ; Jump back to #R$9AD3.
 @label=PlayNote_Play
-*$9AD9 POP DE        ; Restore the address of the note.
+*$9AD9 POP DE        ; Restore the note address from the stack.
+; Each pass makes one cycle of the note.
 @label=PlayNote_Cycle
-*$9ADA PUSH BC       ; Save the half-period.
- $9ADB XOR A         ; Select the low level.
+*$9ADA PUSH BC       ; Stash the delays on the stack.
+ $9ADB XOR A         ; Set #REGa to #N$00.
  $9ADC OUT ($FE),A   ; Send it to the speaker.
 @label=PlayNote_Low
-*$9ADE DJNZ $9ADE    ; Delay.
- $9AE0 DEC C         ; Decrease the outer counter by one.
+*$9ADE DJNZ $9ADE    ; Wait for the first half of the cycle.
+ $9AE0 DEC C         ; Count down the second delay.
  $9AE1 JR NZ,$9ADE   ; Jump back to #R$9ADE until none remain.
- $9AE3 POP BC        ; Restore the half-period.
- $9AE4 PUSH BC       ; Save the half-period again.
- $9AE5 LD A,$10      ; Select the high level.
+ $9AE3 POP BC        ; Restore the delays from the stack.
+ $9AE4 PUSH BC       ; Stash the delays on the stack.
+ $9AE5 LD A,$10      ; Set bit 4.
  $9AE7 OUT ($FE),A   ; Send it to the speaker.
 @label=PlayNote_High
-*$9AE9 DJNZ $9AE9    ; Delay.
- $9AEB DEC C         ; Decrease the outer counter by one.
+*$9AE9 DJNZ $9AE9    ; Wait for the second half of the cycle.
+ $9AEB DEC C         ; Count down the second delay.
  $9AEC JR NZ,$9AE9   ; Jump back to #R$9AE9 until none remain.
- $9AEE POP BC        ; Restore the half-period.
+ $9AEE POP BC        ; Restore the delays from the stack.
  $9AEF DEC HL        ; Decrease the number of cycles.
  $9AF0 LD A,H        ; {Combine the high and low bytes.
  $9AF1 OR L          ; }
@@ -8032,17 +8054,17 @@ g$9BCB DEFB $17      ; First random byte.
 ; #R$9AB4, #R$9BDA, #R$A1FB, #R$A303, #R$A8D9, #R$AA37, #R$AAD7, #R$AC08,
 ; #R$B09C, #R$C374, #R$C5FF, #R$DCA1, #R$E08F, #R$E114, #R$F311 and #R$F39E.
 ; .
-; Adds #REGa to #REGhl.
+; Adds an unsigned number to #REGhl.
 ;
-;   A Value to add
-;   HL Value to add to
-; O:HL The sum
+;   A The number
+;   HL The address
+; O:HL The new address
 @label=AddAToHL
-c$9BCF ADD A,L       ; {Add the low byte.
- $9BD0 LD L,A        ; }
- $9BD1 LD A,H        ; Fetch the high byte.
- $9BD2 ADC A,$00     ; Add the carry.
- $9BD4 LD H,A        ; Store the high byte.
+c$9BCF ADD A,L       ; Add #REGa to #REGl.
+ $9BD0 LD L,A        ; Copy it to #REGl.
+ $9BD1 LD A,H        ; Fetch #REGh.
+ $9BD2 ADC A,$00     ; Add #N$00 with carry.
+ $9BD4 LD H,A        ; Copy it to #REGh.
  $9BD5 RET           ; Return.
 ; View the equivalent code in;
 ; #LIST
@@ -12326,8 +12348,8 @@ c$B115 CALL $B16F    ; Call #R$B16F.
 ; all for up, the top row is for fire, the number keys are for the extra key,
 ; and the keys of the bottom row alternate between right and left.
 ;
-; O:C Controls: bit 0 is right, bit 1 left, bit 3 up, bit 4 fire and
-; bit 5 the extra key
+; O:C Controls: bit 0 is right, bit 1 left, bit 3 up, bit 4 fire and bit 5 the
+; .   extra key
 @label=ReadInputDevice
 c$B16F LD A,($F603)  ; The control device.
  $B172 AND A         ; {Jump to #R$B1D2 if #REGa is zero.

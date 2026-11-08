@@ -4987,9 +4987,16 @@ c $B075 Read Controls
 @ $B075 label=ReadControls
 D $B075 Reads the controls, using the method that has been chosen in the menu:
 . keyboard, Kempston joystick, cursor keys or Sinclair interface 2. The controls
-. are kept as bits that stay set until the robot has used them: bit 0 is turn
-. right, bit 1 is turn left, bit 2 is move forward, bit 3 is fire the second
-. weapon, bit 4 is fire the first weapon and bit 6 is use the action key.
+. are kept as bits that stay set until the robot has used them.
+. #TABLE(default,centre,centre)
+. { =h Bit | =h Meaning }
+. { #N$00 | Turn right }
+. { #N$01 | Turn left }
+. { #N$02 | Move forward }
+. { #N$03 | Fire the second weapon }
+. { #N$04 | Fire the first weapon }
+. { #N$06 | Use the action key }
+. TABLE#
 R $B075 O:A The controls
 R $B075 O:C The controls
   $B075,$01 Save #REGbc.
@@ -5003,12 +5010,20 @@ c $B085 Read Interface 2
 @ $B085 label=ReadInterface2
 D $B085 Reads the Sinclair interface 2 joysticks. The keys #N$06 to #N$00 are
 . one joystick and the keys #N$01 to #N$05 are the other; both are used at once.
-  $B085,$02 Read the half row for the keys #N$00 to #N$06...
-  $B087,$03 Read the keyboard.
-  $B08A,$01 ...and keep it in #REGc.
-  $B08B,$02 Read the half row for the keys #N$01 to #N$05...
-  $B08D,$03 Read the keyboard.
-  $B090,$01 ...and combine the keys of both.
+  $B085,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
+  $B08A,$01 Keep the keys in #REGc.
+  $B08B,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+  $B090,$01 Combine the keys of both.
   $B091,$02 Clear the controls.
   $B093,$04 Jump if the first key is not pressed (#N$00 or #N$01).
   $B097,$02 Set the bit for firing the second weapon.
@@ -5059,13 +5074,21 @@ D $B0D9 Reads the cursor keys, which are the keys #N$05 (left), #N$06 (down),
 . right and #N$00 the test is the wrong way round, so the bits are set when the
 . keys are not being pressed.
   $B0D9,$02 Clear the controls.
-  $B0DB,$02 Read the half row for the keys #N$01 to #N$05...
-  $B0DD,$03 Read the keyboard.
+  $B0DB,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
   $B0E0,$04 Jump if the key #N$05 (left) is not pressed.
   $B0E4,$02 Set the bit for turning left.
 @ $B0E6 label=ReadCursorKeys_Digits
-  $B0E6,$02 Read the half row for the keys #N$06 to #N$00...
-  $B0E8,$03 Read the keyboard.
+  $B0E6,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
   $B0EB,$04 Jump if the key #N$06 (down) is not pressed.
   $B0EF,$02 Set the bit for the action key.
 @ $B0F1 label=ReadCursorKeys_CheckUp
@@ -5088,8 +5111,12 @@ R $B103 C Controls that were read
   $B106,$02 ...clear the bit for the action key...
   $B108,$01 ...and add the controls that were read.
   $B109,$01 Keep the controls.
-  $B10A,$02 Read the half rows for the first and last rows of keys...
-  $B10C,$03 Read the keyboard.
+  $B10A,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
   $B10F,$04 Jump if none of the keys Z, X, C, V, Symbol Shift, M, N and B is
 . pressed.
   $B113,$02 Set the bit for firing the first weapon.
@@ -5108,8 +5135,12 @@ D $B11C Reads the keyboard. The keys C, M and B turn right, and X, V and N turn
 . Symbol Shift and all of the number keys use the action key.
 R $B11C O:A The controls
 R $B11C O:C The controls
-  $B11C,$02 Read the half row for Caps Shift to V...
-  $B11E,$03 Read the keyboard.
+  $B11C,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$FE | SHIFT | Z | X | C | V }
+. TABLE#
   $B121,$01 Save #REGbc.
   $B122,$01 Move the keys Z, X, C and V into the lowest bits...
   $B123,$02 ...and keep X, C and V.
@@ -5119,8 +5150,12 @@ R $B11C O:C The controls
   $B12A,$02 Shift C into the right-turn bit and V into the left-turn bit.
   $B12C,$01 Combine them, so that C turns right and X or V turn left...
   $B12D,$03 ...and keep just the bits for turning.
-  $B130,$02 Read the half row for Space to B...
-  $B132,$03 Read the keyboard.
+  $B130,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7F | SPACE | SYMBOL SHIFT | M | N | B }
+. TABLE#
   $B135,$01 Move the keys Symbol Shift, M, N and B into the lowest bits...
   $B136,$02 ...and keep M, N and B.
   $B138,$01 Keep the keys M, N and B.
@@ -5137,13 +5172,21 @@ R $B11C O:C The controls
   $B149,$03 ...keep just the bits for turning and combine them with the others.
   $B14C,$01 Restore #REGbc.
   $B14D,$01 Keep the bits for turning.
-  $B14E,$02 Read the half rows for A to G and Enter to H...
-  $B150,$03 Read the keyboard.
+  $B14E,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$BD | A / ENTER | S / L | D / K | F / J | G / H }
+. TABLE#
   $B153,$04 Jump if none of them is pressed.
   $B157,$02 Set the bit for moving forward.
 @ $B159 label=ReadKeyboard_ReadPToY
-  $B159,$02 Read the half row for P to Y...
-  $B15B,$03 Read the keyboard.
+  $B159,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$DF | P | O | I | U | Y }
+. TABLE#
   $B15E,$01 Keep the keys P to Y.
   $B15F,$04 Jump if neither O nor U is pressed.
   $B163,$02 Set the bit for firing the second weapon.
@@ -5152,8 +5195,12 @@ R $B11C O:C The controls
   $B166,$04 Jump if none of P, I and Y is pressed.
   $B16A,$02 Set the bit for firing the first weapon.
 @ $B16C label=ReadKeyboard_ReadQToT
-  $B16C,$02 Read the half row for Q to T...
-  $B16E,$03 Read the keyboard.
+  $B16C,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$FB | Q | W | E | R | T }
+. TABLE#
   $B171,$01 Keep the keys Q to T.
   $B172,$04 Jump if none of Q, E and T is pressed.
   $B176,$02 Set the bit for firing the second weapon.
@@ -5166,13 +5213,21 @@ R $B11C O:C The controls
   $B182,$01 ...and add the new ones.
   $B183,$01 Keep the controls.
   $B184,$02 Clear the bit for the action key.
-  $B186,$02 Read the half rows for Caps Shift to V and Space to B...
-  $B188,$03 Read the keyboard.
+  $B186,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
   $B18B,$04 Jump if neither Z nor Symbol Shift is pressed.
   $B18F,$02 Set the bit for the action key.
 @ $B191 label=ReadKeyboard_ReadNumbers
-  $B191,$02 Read the half rows for the keys #N$01 to #N$05 and #N$06 to #N$00...
-  $B193,$03 Read the keyboard.
+  $B191,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$E7 | 1 / 0 | 2 / 9 | 3 / 8 | 4 / 7 | 5 / 6 }
+. TABLE#
   $B196,$04 Jump if none of the number keys is pressed.
   $B19A,$02 Set the bit for the action key.
 @ $B19C label=ReadKeyboard_Store
@@ -5184,9 +5239,8 @@ R $B11C O:C The controls
 
 c $B1A3 Fill Memory
 @ $B1A3 label=FillMemory
-D $B1A3 Writes #N$00 to every byte of a block of memory. The entry point at
-. #R$B1A5 fills it with the byte in #REGe.
-E $B1A3 Continue on to #R$B1A5.
+D $B1A3 Fills an area of memory with zero. The entry point at #R$B1A5 fills it
+. with the byte in #REGe.
 E $B1A3 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE56 }
@@ -5196,28 +5250,13 @@ E $B1A3 View the equivalent code in;
 . { #PENTAGRAM$CB77 }
 . { #UNDERWURLDE$9569 }
 . LIST#
-R $B1A3 HL Start address
 R $B1A3 BC Number of bytes
-  $B1A3,$02 Set the fill value to #N$00.
-
-c $B1A5 Fill Memory With Value
+R $B1A3 HL Address of the first byte
+  $B1A3,$02 Set #REGe to #N$00.
 @ $B1A5 label=FillMemory_WithValue
-D $B1A5 Writes a value to every byte of a block of memory.
-E $B1A5 View the equivalent code in;
-. #LIST
-. { #ALIENEIGHT$CE56 }
-. { #GUNFRIGHT$D6E1 }
-. { #KNIGHTLORE$D53A }
-. { #NIGHTSHADE$E5BA }
-. { #PENTAGRAM$CB77 }
-. { #UNDERWURLDE$9569 }
-. LIST#
-R $B1A5 E Value to write
-R $B1A5 HL Start address
-R $B1A5 BC Number of bytes
-  $B1A5,$01 Write the fill value to the current address.
-  $B1A6,$01 Move on to the next address.
-  $B1A7,$01 Decrease the byte counter by one.
+  $B1A5,$01 Write #REGe.
+  $B1A6,$01 Increment #REGhl.
+  $B1A7,$01 Decrement #REGbc.
   $B1A8,$04 Loop back until the byte counter is zero.
   $B1AC,$01 Return.
 
@@ -5863,10 +5902,11 @@ E $B4B1 View the equivalent code in;
 . { #TRANZAM$6BF6 }
 . { #LUNARJETMAN$8947 }
 . LIST#
-R $B4B1 HL Number
-R $B4B1 O:HL Number negated
-  $B4B1,$03 Flip the bits of the low byte.
-  $B4B4,$03 Flip the bits of the high byte.
+R $B4B1 HL The word
+R $B4B1 O:HL The negative of the word
+N $B4B1 Invert both bytes, then add one.
+  $B4B1,$03 Invert the low byte.
+  $B4B4,$03 Invert the high byte.
   $B4B7,$01 Add one.
   $B4B8,$01 Return.
 
@@ -6077,7 +6117,18 @@ D $B573 Adds points to the score of the player and then prints the new score.
 . #SCR$02(add-points-after) } UDGTABLE# #POPS
 E $B573 View the equivalent code in;
 . #LIST
+. { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
+. { #COOKIE$7415 }
+. { #CYBERUN$925E }
+. { #JETPAC$70F9 }
+. { #LUNARJETMAN$899C }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
+. { #PSSST$737A }
+. { #SABREWULF$B5A9 }
 . { #TRANZAM$6046 }
+. { #UNDERWURLDE$A045 }
 . LIST#
 R $B573 B Points to add (the hundreds and thousands digits)
 R $B573 C Points to add (the units and tens digits)
@@ -6951,12 +7002,11 @@ B $BAAC,$0E,$02 Coordinates of the seven lines of text.
 
 c $BB12 Game Selection Menu
 @ $BB12 label=GameMenu
-D $BB12 Shows the title and the menu, and waits for the player to choose a
-. method of control with the keys #N$01 to #N($04), or to start the game with
-. the key #N$00. The tune is played the first time through. The line of the
-. menu for the method that has been chosen flashes. If nothing is done for a
-. while then
-. the hall of fame is shown.
+D $BB12 Displays the menu and waits for the control method to be chosen and the
+. game to be started. The keys "1" to "4" choose the keyboard, the Kempston
+. joystick, the cursor joystick and Interface II, and "0" starts the game. The
+. menu tune is played once. The choice is held in #R$961A. If nothing is done
+. for a while then the hall of fame is shown.
 E $BB12 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BA7E }
@@ -6966,44 +7016,57 @@ E $BB12 View the equivalent code in;
 . LIST#
   $BB12,$05 Set the last method of control that was seen to an impossible value.
   $BB17,$01 Clear the attribute.
-  $BB18,$03 Clear the large window using #R$B212.
+  $BB18,$03 Call #R$B212.
+N $BB1B Read the keys that choose the control method.
 @ $BB1B label=GameMenu_Loop
   $BB1B,$03 Draw the menu using #R$B8B3.
+N $BB1E #HTML(#AUDIO0(title-tune.wav)(#INCLUDE(TitleTune)))
   $BB1E,$03 Point #REGde at #R$C1E9.
   $BB21,$03 Play it using #R$C0B6, if it has not been played yet.
-  $BB24,$02 Read the half row of keys for the keys #N$01 to #N$05...
-  $BB26,$03 Read the keyboard.
-  $BB29,$01 ...and keep it in #REGe.
+  $BB24,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+  $BB29,$01 Keep the keys that are pressed in #REGe.
   $BB2A,$03 Fetch the method of control.
   $BB2D,$04 Jump if the key #N$01 is not pressed.
-  $BB31,$02 Use method zero (keyboard).
+  $BB31,$02,b$01 Use method zero (keyboard).
+N $BB33 Choose a joystick if one of those keys is pressed.
 @ $BB33 label=GameMenu_CheckKey2
   $BB33,$04 Jump if the key #N$02 is not pressed.
-  $BB37,$02 Use method one (Kempston joystick)...
-  $BB39,$02 Set the method to the Kempston joystick.
+  $BB37,$02,b$01 Use method one (Kempston joystick)...
+  $BB39,$02,b$01 Set the method to the Kempston joystick.
 @ $BB3B label=GameMenu_CheckKey3
   $BB3B,$04 Jump if the key #N$03 is not pressed.
-  $BB3F,$02 Use method two (cursor keys)...
-  $BB41,$02 Set the method to the cursor keys.
+  $BB3F,$02,b$01 Use method two (cursor keys)...
+  $BB41,$02,b$01 Set the method to the cursor keys.
 @ $BB43 label=GameMenu_CheckKey4
   $BB43,$04 Jump if the key #N$04 is not pressed.
-  $BB47,$02 Use method three (interface 2).
+  $BB47,$02,b$01 Choose Interface II.
 @ $BB49 label=GameMenu_StoreControl
   $BB49,$03 Store the method of control.
-  $BB4C,$02 Read the half row of keys for the keys #N$06 to #N$00...
-  $BB4E,$03 Read the keyboard.
-  $BB51,$02 ...and keep the key #N$00.
+N $BB4C Start the game if "0" is pressed.
+  $BB4C,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
+  $BB51,$02,b$01 ...and keep the key #N$00.
   $BB53,$02 Jump to start the game if it is pressed.
   $BB55,$03 Point #REGhl at the last method of control that was seen.
   $BB58,$03 Fetch the method of control...
-  $BB5B,$01 ...and compare it with the last one...
-  $BB5C,$03 ...and store it.
+  $BB5B,$01 Compare it with the last method.
+  $BB5C,$03 Set #R$9632.
   $BB5F,$03 Reset the idle timer if the method has changed, or count it down,
 . using #R$B760.
+N $BB62 Flash the chosen control method.
   $BB62,$03 Point #REGhl at #R$B8E5.
   $BB65,$03 Fetch the method of control...
-  $BB68,$01 Move the method into the lowest bits.
-  $BB69,$02 ...and keep the bits that choose it.
+  $BB68,$01 Move the method to bits 0 and 1.
+  $BB69,$02,b$01 Keep only bits 0 and 1.
   $BB6B,$02 There are four lines for the methods of control.
   $BB6D,$03 Make the line for the method flash using #R$BB73.
   $BB70,$03 Jump back to draw the menu again.
@@ -7812,6 +7875,7 @@ c $C04E Play Noise Sound
 @ $C04E label=PlayNoiseSound
 D $C04E Makes the sound of a shot. Plays #N$28 tones, each with a pitch worked
 . out from a counter that counts down, so the sound falls in pitch.
+.
 . #HTML(#AUDIO0(shot-sound.wav)(#INCLUDE(ShotSound)))
 E $C04E View the equivalent code in;
 . #LIST
@@ -7820,12 +7884,18 @@ E $C04E View the equivalent code in;
 . { #PENTAGRAM$D5E4 }
 . { #SABREWULF$BF2F }
 . LIST#
+N $C04E Play #N$28 pulses of different lengths.
   $C04E,$02 Use #N$28 cycles.
 @ $C050 label=PlayNoiseSound_Counter
-N $C050 This entry point takes the number of cycles in #REGc.
-  $C050,$04 Find the pitch from the number of cycles that are left.
+N $C050 This entry point takes the number of pulses in #REGc.
+N $C050 Play the next pulse.
+  $C050,$01 Fetch the number of the pulse.
+  $C051,$02,b$01 Change it.
+  $C053,$01 Use it as the length of the pulse.
   $C054,$03 Make a single cycle using #R$C062.
-  $C057,$03 Loop back until all of the cycles have been made.
+N $C057 Loop back until all of the cycles have been made.
+  $C057,$01 Count down the pulses.
+  $C058,$02 Loop back until all of the pulses have been played.
   $C05A,$01 Return.
 
 c $C05B Play Wave Sequence
@@ -7844,9 +7914,9 @@ R $C05B C Number of cycles
 
 c $C062 Play Square Wave
 @ $C062 label=PlaySquareWave
-D $C062 Makes a single cycle of a tone, by switching the speaker on and then off
-. again. The length of each half of the cycle is set by the pitch. The border is
-. set to black.
+D $C062 Plays a single beep by switching the speaker on, waiting, switching it
+. off and waiting again. The bigger the pitch, the longer the beep. The border
+. is set to black.
 E $C062 View the equivalent code in;
 . #LIST
 . { #CYBERUN$71E0 }
@@ -7857,15 +7927,16 @@ E $C062 View the equivalent code in;
 . { #SABREWULF$BF74 }
 . LIST#
 R $C062 B Pitch
+N $C062 Hold the speaker on, then off.
   $C062,$04 Switch the speaker on.
-  $C066,$01 Keep the pitch.
+  $C066,$01 Keep the pitch in #REGa.
 @ $C067 label=PlaySquareWave_FirstWait
   $C067,$02 Wait for a time that depends on the pitch.
   $C069,$01 Restore the pitch.
   $C06A,$03 Switch the speaker off.
-  $C06D,$01 Keep the pitch.
+  $C06D,$01 Keep the pitch in #REGa.
 @ $C06E label=PlaySquareWave_SecondWait
-  $C06E,$02 Wait for the same time.
+  $C06E,$02 Wait for the second half of the beep.
   $C070,$01 Restore the pitch.
   $C071,$01 Return.
 
@@ -7924,33 +7995,53 @@ c $C0B6 Play Music Until Key Pressed
 @ $C0B6 label=PlayMusic_WaitKey
 D $C0B6 Plays a tune, but only the first time that it is used, and stops if a
 . key is pressed. The tune is a list of notes that ends with #N$FF. See #R$C0DA
-. for what the notes are.
+. for what the notes are. After the tune has been played, nothing happens until
+. #R$9637 is cleared.
+.
+. The tunes played by this routine are:
+. #TABLE(default,centre,centre)
+. { =h Tune | =h Sound }
+. { Title Tune |
+. #HTML(#AUDIO0(title-tune.wav)(#INCLUDE(TitleTune))) }
+. TABLE#
 E $C0B6 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$AF76 }
 . { #NIGHTSHADE$C63D }
 . { #PENTAGRAM$D69C }
 . LIST#
-R $C0B6 DE Address of the tune
-R $C0B6 O:F Non-zero flag set if the tune has been played before
+R $C0B6 DE The address of the tune
   $C0B6,$03 Point #REGhl at the flag that records that a tune has been played.
-  $C0B9,$03 Return if it has been played before.
+  $C0B9,$01 Fetch the flag.
+  $C0BA,$02 Return if the tune has already been played.
   $C0BC,$02 Set the flag.
+N $C0BE Select every half row of the keyboard.
 @ $C0BE label=PlayMusic_WaitKey_Loop
-  $C0BE,$01 Select every half row of the keyboard.
-  $C0BF,$03 Read the keyboard using #R$C0AB.
-  $C0C2,$02 Jump if no key is pressed.
+  $C0BE,$04 Read every row of the keyboard.
+  $C0C2,$02 Jump to #R$C0C5 if no key is pressed.
   $C0C4,$01 Return as a key has been pressed.
+N $C0C5 Play the next note.
 @ $C0C5 label=PlayMusic_WaitKey_Next
-  $C0C5,$05 Jump to return if the next note is #N($FF), which is the end of the
-. tune.
+  $C0C5,$01 Fetch the next note.
+  $C0C6,$04 Jump to #R$C0D9 if the terminator has been reached.
   $C0CA,$03 Play the note using #R$C0DA.
   $C0CD,$02 Loop back for the next note.
 
 c $C0CF Play Music
 @ $C0CF label=PlayMusic
-D $C0CF Plays a tune from start to finish. The tune is a list of notes that ends
-. with #N$FF. See #R$C0DA for what the notes are.
+D $C0CF Plays a tune, which cannot be stopped. A tune is a list of notes (see
+. #R$C0DA) which ends with #N$FF.
+.
+. The tunes played by this routine are:
+. #TABLE(default,centre,centre)
+. { =h Tune | =h Sound }
+. { Start Tune |
+. #HTML(#AUDIO0(start-tune.wav)(#INCLUDE(StartTune))) }
+. { Level Complete Tune |
+. #HTML(#AUDIO0(level-complete-tune.wav)(#INCLUDE(LevelCompleteTune))) }
+. { Game Over Tune |
+. #HTML(#AUDIO0(game-over-tune.wav)(#INCLUDE(GameOverTune))) }
+. TABLE#
 E $C0CF View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B4BA }
@@ -7961,8 +8052,9 @@ E $C0CF View the equivalent code in;
 . { #SABREWULF$BD6E }
 . LIST#
 R $C0CF DE Address of the tune
-  $C0CF,$05 Jump to return if the next note is #N($FF), which is the end of the
-. tune.
+N $C0CF Play each note until #N$FF.
+  $C0CF,$01 Fetch the next note.
+  $C0D0,$04 Jump to #R$C0D9 if it is #N$FF.
   $C0D4,$03 Play the note using #R$C0DA.
   $C0D7,$02 Loop back for the next note.
 @ $C0D9 label=PlayMusic_Return
@@ -7970,12 +8062,10 @@ R $C0CF DE Address of the tune
 
 c $C0DA Play Note
 @ $C0DA label=PlayNote
-D $C0DA Plays one note of a tune, by making a tone, or by waiting if it is a
-. rest. The bottom six bits of the note byte are the number of the note (zero is
-. a rest) and the top two bits are one less than the length. The pitch and the
-. duration of the note are found from a table of three bytes for each note: the
-. delay for each half cycle (as two bytes), then the number of cycles that last
-. for the shortest note. The length multiplies it.
+D $C0DA Plays a note of a tune, or a rest if the note number is zero.
+. Bits 0 to 5 select the entry in #R$C132 that holds the two delays of a cycle
+. and the number of cycles. Bits 6 and 7 are the length less one, which
+. multiplies the number of cycles, so the note is one to four times as long.
 E $C0DA View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B4C5 }
@@ -7985,51 +8075,60 @@ E $C0DA View the equivalent code in;
 . { #PENTAGRAM$D6C0 }
 . { #SABREWULF$BD7B }
 . LIST#
-R $C0DA A Note byte
+R $C0DA A The note
 R $C0DA DE Address of the note
 R $C0DA O:DE Address of the next note
-  $C0DA,$02 Keep the note number.
+  $C0DA,$02,b$01 Keep the note number.
   $C0DC,$02 Jump to make a rest if the note number is zero.
-N $C0DE Look up the delays and the number of cycles in the table at #R$C132.
-  $C0DE,$03 Put the note number in #REGhl...
-  $C0E1,$01 ...double it...
+N $C0DE Look up the delays and the number of cycles.
+  $C0DE,$03 Set #REGhl to the note number.
+  $C0E1,$01 Double the number.
   $C0E2,$03 ...and add the note number to give three times it, using #R$BF92.
   $C0E5,$04 Add the address of the table of notes.
-  $C0E9,$02 Fetch the first byte of the delay into #REGb...
-  $C0EB,$02 ...and the second into #REGc.
+  $C0E9,$01 Fetch the first delay.
+  $C0EA,$01 Move on.
+  $C0EB,$01 Fetch the second delay.
+  $C0EC,$01 Move on.
   $C0ED,$01 Fetch the number of cycles of the shortest note.
-  $C0EE,$02 Make it a 16-bit number.
-N $C0F0 Bits 6 and 7 of the note are the length, less one.
-  $C0F0,$03 Fetch the note byte again and rotate the bits of the length to the
-. bottom.
-  $C0F3,$02 Keep them...
-  $C0F5,$01 ...and add one to give the length.
+  $C0EE,$02 Set #REGh to #N$00.
+N $C0F0 Bits 6 and 7 are the length, less one.
+  $C0F0,$01 Fetch the note again.
+  $C0F1,$02 Move bits 6 and 7 to bits 0 and 1.
+  $C0F3,$02,b$01 Keep bits 0 and 1.
+  $C0F5,$01 Add one.
   $C0F6,$01 Save the address of the note.
   $C0F7,$02 Copy the number of cycles of the shortest note into #REGde.
-N $C0F9 Multiply the number of cycles by the length of the note.
+N $C0F9 Multiply the number of cycles by the length.
 @ $C0F9 label=PlayMusic_Process_Multiply
-  $C0F9,$03 Jump if the length has been counted down.
+  $C0F9,$01 Count down the length.
+  $C0FA,$02 Jump to #R$C0FF if the length has been used up.
   $C0FC,$01 Otherwise add on the number of cycles of the shortest note again...
-  $C0FD,$02 ...and loop back.
+  $C0FD,$02 Jump to #R$C0F9.
 @ $C0FF label=PlayMusic_Process_Finished
-  $C0FF,$01 Restore the address of the note.
-N $C100 Each pass of this loop makes one cycle of the note, so the length of
-. the note is the number of cycles.
+  $C0FF,$01 Restore the note address from the stack.
+N $C100 Each pass makes one cycle of the note.
 @ $C100 label=PlayMusic_Process_Cycle
-  $C100,$01 Save the delay.
-  $C101,$03 Switch the speaker off (and set the border to black).
+  $C100,$01 Stash the delays on the stack.
+  $C101,$01 Set #REGa to #N$00.
+  $C102,$02 Turn the speaker off.
 @ $C104 label=PlayMusic_Process_LowWait
   $C104,$02 Wait for the time of the low half of a cycle...
-  $C106,$03 Count down the rest of the delay.
-  $C109,$01 Restore the delay.
-  $C10A,$01 Save the delay again.
-  $C10B,$04 Switch the speaker on.
+N $C106 Count down the rest of the delay.
+  $C106,$01 Count down the second delay.
+  $C107,$02 Jump to #R$C104 until it has finished.
+  $C109,$01 Restore the delays from the stack.
+  $C10A,$01 Stash the delays on the stack.
+  $C10B,$02 Set bit 4.
+  $C10D,$02 Turn the speaker on.
 @ $C10F label=PlayMusic_Process_HighWait
   $C10F,$02 Wait for the time of the high half of a cycle...
-  $C111,$03 Count down the rest of the delay.
-  $C114,$01 Restore the delay.
-  $C115,$05 Count down the number of cycles, and loop back until it reaches
-. zero.
+N $C111 Count down the rest of the delay.
+  $C111,$01 Count down the second delay.
+  $C112,$02 Jump to #R$C10F until it has finished.
+  $C114,$01 Restore the delays from the stack.
+N $C115 Count down the number of cycles, and loop back until it reaches zero.
+  $C115,$01 Count down the cycles.
+  $C116,$04 Jump to #R$C100 until all of the cycles have been played.
   $C11A,$01 Move on to the next note.
   $C11B,$01 Return.
 
@@ -8041,20 +8140,26 @@ E $C11C View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$AFDC }
 . LIST#
-R $C11C DE Address of the note
-R $C11C O:DE Address of the next note
-  $C11C,$02 Fetch the note and move on to the next one.
-  $C11E,$02 Rotate the bits of the length to the bottom.
-  $C120,$02 Keep them...
-  $C122,$01 ...and add one to give the length.
-  $C123,$01 Keep the length.
-  $C124,$03 Set the time of the shortest rest.
+R $C11C DE The address of the rest
+R $C11C O:DE The address after the rest
+N $C11C Work out the length of the rest in beats.
+  $C11C,$01 Fetch the rest.
+  $C11D,$01 Move on to the next note.
+  $C11E,$02 Rotate the length bits into the bottom of the byte.
+  $C120,$02,b$01 Keep them.
+  $C122,$01 Add one to get the length in beats.
+  $C123,$01 Copy the length into #REGl.
+  $C124,$03 Set the length of a beat.
+N $C127 Wait for each beat.
 @ $C127 label=PlayRest_Loop
-  $C127,$01 Save it.
+  $C127,$01 Stash the length of a beat on the stack.
 @ $C128 label=PlayRest_Wait
-  $C128,$05 Count it down to zero.
-  $C12D,$01 Restore it.
-  $C12E,$03 Loop back until the length has been counted down.
+  $C128,$01 Count down.
+  $C129,$04 Jump to #R$C128 if the count is not zero.
+  $C12D,$01 Retrieve the length of a beat.
+N $C12E Loop back until the length has been counted down.
+  $C12E,$01 Count down the beats.
+  $C12F,$02 Loop back until the rest is over.
   $C131,$01 Return.
 
 b $C132 Note Table

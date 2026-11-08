@@ -50,8 +50,8 @@ N $5B80 Set bit 7 of the memory refresh register for the random
 . random number.
   $5B85,$02 Write #REGa back to the memory refresh register.
 N $5B87 Unscramble the whole game, a pair of bytes at a time.
-  $5B87,$03 Set #REGde to #N$6000, the first byte of the first pair.
-  $5B8A,$03 Set #REGhl to #N$6001, the second byte of the first pair.
+  $5B87,$03 Set #REGde to #N($6000), the first byte of the first pair.
+  $5B8A,$03 Set #REGhl to #N($6001), the second byte of the first pair.
   $5B8D,$03 Set a pair counter in #REGbc to #N$4400.
 @ $5B90 label=Decryption_Loop
   $5B90,$01 Fetch the first byte of the pair.
@@ -60,7 +60,7 @@ N $5B87 Unscramble the whole game, a pair of bytes at a time.
   $5B94,$02 Move #REGde on to the first byte of the next pair.
   $5B96,$02 Move #REGhl on to the second byte of the next pair.
   $5B98,$01 Decrease the pair counter by one.
-  $5B99,$04 Jump back to #R$5B90 until every pair has been unscrambled.
+  $5B99,$04 Jump to #R$5B90 until every pair has been unscrambled.
 N $5B9D Move the unscrambled game down so that it starts at #R$5E00.
   $5B9D,$0B Move #N$8800 bytes from #N$6000 down to #R$5E00.
   $5BA8,$03 Jump to #R$5E00 to start the game.
@@ -264,48 +264,48 @@ b $637C Rectangle Lists
 D $637C The lists of rectangles. Each rectangle is four bytes: the X and Y
 . positions of the centre, and then the half width and the half depth. A zero X
 . position ends a list. Several tiles share the same list.
-B $637C,$01,$01 The list for tile #N$00, which has no rectangles.
+B $637C,$01,$01 The list for tile #N($00), which has no rectangles.
 @ $637D label=RectangleList_01
-B $637D,$11,$04 The list for tiles #N$01 and #N$02, which has 4 rectangles.
+B $637D,$11,$04 The list for tiles #N$01 and #N($02), which has 4 rectangles.
 @ $638E label=RectangleList_02
-B $638E,$19,$04 The list for tiles #N$07, #N$0F and #N$17, which has 6
+B $638E,$19,$04 The list for tiles #N($07), #N$0F and #N($17), which has 6
 . rectangles.
 @ $63A7 label=RectangleList_03
-B $63A7,$15,$04 The list for tiles #N$04, #N$0C and #N$14, which has 5
+B $63A7,$15,$04 The list for tiles #N($04), #N$0C and #N($14), which has 5
 . rectangles.
 @ $63BC label=RectangleList_04
-B $63BC,$15,$04 The list for tiles #N$05, #N$0D and #N$15, which has 5
+B $63BC,$15,$04 The list for tiles #N($05), #N$0D and #N($15), which has 5
 . rectangles.
 @ $63D1 label=RectangleList_05
-B $63D1,$15,$04 The list for tiles #N$06, #N$0E and #N$16, which has 5
+B $63D1,$15,$04 The list for tiles #N($06), #N$0E and #N($16), which has 5
 . rectangles.
 @ $63E6 label=RectangleList_06
-B $63E6,$15,$04 The list for tiles #N$03, #N$0B, #N$13, #N$1D and #N$1F, which
-. has 5 rectangles.
+B $63E6,$15,$04 The list for tiles #N($03), #N($0B), #N($13),
+. #N$1D and #N($1F), which has 5 rectangles.
 @ $63FB label=RectangleList_07
-B $63FB,$19,$04 The list for tiles #N$08, #N$10 and #N$18, which has 6
+B $63FB,$19,$04 The list for tiles #N($08), #N$10 and #N($18), which has 6
 . rectangles.
 @ $6414 label=RectangleList_08
-B $6414,$21,$04 The list for tiles #N$09, #N$11 and #N$19, which has 8
+B $6414,$21,$04 The list for tiles #N($09), #N$11 and #N($19), which has 8
 . rectangles.
 @ $6435 label=RectangleList_09
-B $6435,$19,$04 The list for tile #N$12, which has 6 rectangles.
+B $6435,$19,$04 The list for tile #N($12), which has 6 rectangles.
 @ $644E label=RectangleList_10
-B $644E,$41,$04 The list for tile #N$0A, which has 16 rectangles.
+B $644E,$41,$04 The list for tile #N($0A), which has 16 rectangles.
 @ $648F label=RectangleList_11
-B $648F,$19,$04 The list for tiles #N$1A and #N$1C, which has 6 rectangles.
+B $648F,$19,$04 The list for tiles #N$1A and #N($1C), which has 6 rectangles.
 @ $64A8 label=RectangleList_12
-B $64A8,$15,$04 The list for tile #N$1B, which has 5 rectangles.
+B $64A8,$15,$04 The list for tile #N($1B), which has 5 rectangles.
 @ $64BD label=RectangleList_13
-B $64BD,$1D,$04 The list for tile #N$1E, which has 7 rectangles.
+B $64BD,$1D,$04 The list for tile #N($1E), which has 7 rectangles.
 @ $64DA label=RectangleList_14
-B $64DA,$1D,$04 The list for tile #N$20, which has 7 rectangles.
+B $64DA,$1D,$04 The list for tile #N($20), which has 7 rectangles.
 @ $64F7 label=RectangleList_15
-B $64F7,$19,$04 The list for tile #N$21, which has 6 rectangles.
+B $64F7,$19,$04 The list for tile #N($21), which has 6 rectangles.
 @ $6510 label=RectangleList_16
-B $6510,$19,$04 The list for tile #N$22, which has 6 rectangles.
+B $6510,$19,$04 The list for tile #N($22), which has 6 rectangles.
 @ $6529 label=RectangleList_17
-B $6529,$19,$04 The list for tile #N$23, which has 6 rectangles.
+B $6529,$19,$04 The list for tile #N($23), which has 6 rectangles.
 
 b $6542 Strip Variants
 @ $6542 label=StripVariants
@@ -453,7 +453,7 @@ B $6C96,$20,$02 The list for tile #N$17 in the view as it is, and for tile #N$17
 b $6CB6 Tube Characters
 @ $6CB6 label=TubeCharacters
 D $6CB6 The five characters that are used to draw the inventory tube (see
-. #R$C83F), from #N$00 to #N$04 when the font pointer is #N$6CB6.
+. #R$C83F), from #N$00 to #N$04 when the font pointer is #R$6CB6.
 B $6CB6,$28,$08
 
 b $6CDE Font
@@ -700,7 +700,7 @@ W $6FD8,$02,$02 Type #N$9D: Logo Piece 6.
 b $6FDA Sprite: Blank
 @ $6FDA label=Sprite_Blank
 D $6FDA A sprite with no width and no height, which draws nothing. The sprite is
-. used for object types #N$00, #N$01, #N$17 and #N$1F.
+. used for object types #N($00), #N($01), #N$17 and #N$1F.
 B $6FDA,$01,$01 Width = #N(#PEEK(#PC)) characters.
 B $6FDB,$01,$01 Height = #N(#PEEK(#PC)) rows.
 
@@ -823,7 +823,7 @@ b $7571 Inventory Item Icons
 D $7571 The icons of the items in the inventory tube, with four characters (two
 . by two) for each item, in the order of the characters on the screen: the top
 . left, top right, bottom left and bottom right. The font pointer is set to
-. #N$7571 to print them (see #R$C4A4). The first icon is blank, and the others
+. #R$7571 to print them (see #R$C4A4). The first icon is blank, and the others
 . are the items that are numbered from #N$01 (see #R$C489).
 B $7571,$120,$08
 
@@ -891,7 +891,7 @@ b $7B2F Sprite: Burst 1
 @ $7B2F label=Sprite_Burst_1
 D $7B2F A frame of the burst that shows an object being destroyed (see #R$D7D8).
 . The balls (see #R$C164) and the flash of a destroyed monster (see #R$D847) use
-. the same frames. The sprite is used for object types #N$0C, #N$83 and #N$84.
+. the same frames. The sprite is used for object types #N($0C), #N$83 and #N$84.
 B $7B2F,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $7B30,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $7B31,$40,$04 #SPRITEDATA(burst-1*)
@@ -900,7 +900,7 @@ b $7B71 Sprite: Burst 2
 @ $7B71 label=Sprite_Burst_2
 D $7B71 A frame of the burst that shows an object being destroyed (see #R$D7D8).
 . The balls (see #R$C164) and the flash of a destroyed monster (see #R$D847) use
-. the same frames. The sprite is used for object types #N$0D, #N$82 and #N$85.
+. the same frames. The sprite is used for object types #N($0D), #N$82 and #N$85.
 B $7B71,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $7B72,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $7B73,$40,$04 #SPRITEDATA(burst-2*)
@@ -909,7 +909,7 @@ b $7BB3 Sprite: Burst 3
 @ $7BB3 label=Sprite_Burst_3
 D $7BB3 A frame of the burst that shows an object being destroyed (see #R$D7D8).
 . The balls (see #R$C164) and the flash of a destroyed monster (see #R$D847) use
-. the same frames. The sprite is used for object types #N$0E, #N$81 and #N$86.
+. the same frames. The sprite is used for object types #N($0E), #N$81 and #N$86.
 B $7BB3,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $7BB4,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $7BB5,$40,$04 #SPRITEDATA(burst-3*)
@@ -918,7 +918,7 @@ b $7BF5 Sprite: Burst 4
 @ $7BF5 label=Sprite_Burst_4
 D $7BF5 A frame of the burst that shows an object being destroyed (see #R$D7D8).
 . The balls (see #R$C164) and the flash of a destroyed monster (see #R$D847) use
-. the same frames. The sprite is used for object types #N$0F, #N$80 and #N$87.
+. the same frames. The sprite is used for object types #N($0F), #N$80 and #N$87.
 B $7BF5,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $7BF6,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $7BF7,$40,$04 #SPRITEDATA(burst-4*)
@@ -944,7 +944,7 @@ b $7D41 Sprite: Monster 1 Frame 1
 @ $7D41 label=Sprite_Monster_1_Frame_1
 D $7D41 A frame of one of the four kinds of monster (see #R$D94F). The ghosts
 . that are shown at the end of the game use the same frames (see #R$CD58). The
-. sprite is used for object types #N$60, #N$62 and #N$90.
+. sprite is used for object types #N($60), #N$62 and #N$90.
 B $7D41,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $7D42,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $7D43,$102,$06 #SPRITEDATA(monster-1-frame-1*)
@@ -953,7 +953,7 @@ b $7E45 Sprite: Monster 1 Frame 2
 @ $7E45 label=Sprite_Monster_1_Frame_2
 D $7E45 A frame of one of the four kinds of monster (see #R$D94F). The ghosts
 . that are shown at the end of the game use the same frames (see #R$CD58). The
-. sprite is used for object types #N$61, #N$63 and #N$91.
+. sprite is used for object types #N($61), #N$63 and #N$91.
 B $7E45,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $7E46,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $7E47,$102,$06 #SPRITEDATA(monster-1-frame-2*)
@@ -1024,7 +1024,7 @@ b $8359 Sprite: Shot 1 Frame 1
 D $8359 A frame of one of the four kinds of item that appear in the village (see
 . #R$D9A3). The same frames are used for the shots that the player fires (see
 . #R$D7ED) and for the fragments of a destroyed monster (see #R$D70A). The
-. sprite is used for object types #N$30, #N$50 and #N$8C.
+. sprite is used for object types #N($30), #N$50 and #N$8C.
 B $8359,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $835A,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $835B,$34,$04 #SPRITEDATA(shot-1-frame-1*)
@@ -1064,7 +1064,7 @@ b $8431 Sprite: Shot 2 Frame 1
 D $8431 A frame of one of the four kinds of item that appear in the village (see
 . #R$D9A3). The same frames are used for the shots that the player fires (see
 . #R$D7ED) and for the fragments of a destroyed monster (see #R$D70A). The
-. sprite is used for object types #N$34, #N$54 and #N$8D.
+. sprite is used for object types #N($34), #N$54 and #N$8D.
 B $8431,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $8432,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $8433,$40,$04 #SPRITEDATA(shot-2-frame-1*)
@@ -1074,7 +1074,7 @@ b $8473 Sprite: Shot 2 Frame 2
 D $8473 A frame of one of the four kinds of item that appear in the village (see
 . #R$D9A3). The same frames are used for the shots that the player fires (see
 . #R$D7ED) and for the fragments of a destroyed monster (see #R$D70A). The
-. sprite is used for object types #N$35, #N$37, #N$55 and #N$57.
+. sprite is used for object types #N($35), #N($37), #N$55 and #N$57.
 B $8473,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $8474,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $8475,$40,$04 #SPRITEDATA(shot-2-frame-2*)
@@ -1094,7 +1094,7 @@ b $84F7 Sprite: Shot 3 Frame 1
 D $84F7 A frame of one of the four kinds of item that appear in the village (see
 . #R$D9A3). The same frames are used for the shots that the player fires (see
 . #R$D7ED) and for the fragments of a destroyed monster (see #R$D70A). The
-. sprite is used for object types #N$38, #N$58 and #N$8E.
+. sprite is used for object types #N($38), #N$58 and #N$8E.
 B $84F7,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $84F8,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $84F9,$40,$04 #SPRITEDATA(shot-3-frame-1*)
@@ -1134,7 +1134,7 @@ b $85FF Sprite: Shot 4 Frame 1
 D $85FF A frame of one of the four kinds of item that appear in the village (see
 . #R$D9A3). The same frames are used for the shots that the player fires (see
 . #R$D7ED) and for the fragments of a destroyed monster (see #R$D70A). The
-. sprite is used for object types #N$3C, #N$5C and #N$8F.
+. sprite is used for object types #N($3C), #N$5C and #N$8F.
 B $85FF,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $8600,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $8601,$40,$04 #SPRITEDATA(shot-4-frame-1*)
@@ -1200,7 +1200,7 @@ b $8995 Sprite: Monster 3 Frame 1
 @ $8995 label=Sprite_Monster_3_Frame_1
 D $8995 A frame of one of the four kinds of monster (see #R$D94F). The ghosts
 . that are shown at the end of the game use the same frames (see #R$CD58). The
-. sprite is used for object types #N$68, #N$69, #N$94 and #N$95.
+. sprite is used for object types #N($68), #N($69), #N$94 and #N$95.
 B $8995,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $8996,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $8997,$CC,$06 #SPRITEDATA(monster-3-frame-1*)
@@ -1369,7 +1369,7 @@ b $9567 Sprite: Monster 2 Frame 1
 @ $9567 label=Sprite_Monster_2_Frame_1
 D $9567 A frame of one of the four kinds of monster (see #R$D94F). The ghosts
 . that are shown at the end of the game use the same frames (see #R$CD58). The
-. sprite is used for object types #N$64, #N$65, #N$92 and #N$93.
+. sprite is used for object types #N($64), #N($65), #N$92 and #N$93.
 B $9567,$01,$01 Width = #N(#PEEK(#PC)&$0F) characters.
 B $9568,$01,$01 Height = #N(#PEEK(#PC)) rows.
 B $9569,$CC,$06 #SPRITEDATA(monster-2-frame-1*)
@@ -2074,8 +2074,9 @@ B $BBBD,$01,$01
 
 g $BBBE Maximum Speed
 @ $BBBE label=MaximumSpeed
-D $BBBE The speed that the player works up to when moving forward. It is #N$0A,
-. and it is #N$12 while a speed bonus lasts (see #R$D727).
+D $BBBE The speed that the player works up to when moving
+. forward. It is #N($0A), and it is #N$12 while a speed bonus
+. lasts (see #R$D727).
 B $BBBE,$01,$01
 
 g $BBBF Menu Frame Drawn Flag
@@ -2149,9 +2150,9 @@ D $BBCE The number of items that are left to be found on each kind of tile, for
 . the tiles #N$00 to #N$23. An item appears in the village when the player
 . stands on a tile that has some left (see #R$C5CE), and it is added back when
 . the item is lost again (see #R$D9A3).
-B $BBCE,$02,$02 Tiles #N$00 and #N$01, which never have any.
+B $BBCE,$02,$02 Tiles #N$00 and #N($01), which never have any.
 @ $BBD0 label=ItemsLeft_Tiles
-B $BBD0,$22,$11 Tiles #N$02 to #N$23, which are filled in with random numbers
+B $BBD0,$22,$11 Tiles #N$02 to #N($23), which are filled in with random numbers
 . from #N$10 to #N$1F when the game starts (see #R$C1DB).
 
 g $BBF2 Mirror Flag
@@ -2358,7 +2359,7 @@ N $BDFE Check that the game was started by the tape loader.
   $BDFE,$06 Return if the high byte of the system variable FRAMES (#N$5C79)
 . is not #N$63.
 N $BE04 Clear the game variables.
-  $BE04,$03 Set the stack pointer to #N$5E00, so that the stack grows down
+  $BE04,$03 Set the stack pointer to #R$5E00, so that the stack grows down
 . from the start of the game.
   $BE07,$03 Point at the start of the game variables (#R$BBAA).
   $BE0A,$03 Set the number of bytes to clear to #N$0254.
@@ -2413,11 +2414,12 @@ N $BE71 The main loop. Each pass updates every object, draws the view, and
   $BE7E,$03 Update the random number generator.
   $BE81,$03 Set the size of an object to #N$0010 bytes.
   $BE84,$02 Move on to the next object.
-  $BE86,$03 Get the address of the next object.
+  $BE86,$03 Copy the address of the next object to #REGhl (using the
+. stack).
   $BE89,$03 Point at the end of the object table.
   $BE8C,$03 Subtract the end of the object table from the address of the next
 . object.
-  $BE8F,$02 Jump back to #R$BE75 until every object has been updated.
+  $BE8F,$02 Jump to #R$BE75 until every object has been updated.
 N $BE91 Run the once-per-frame updates.
   $BE91,$03 Increase the frame counter and update the random number generator.
   $BE94,$07 Jump to #R$BECD if the game has finished (the flag at #R$BBFF is
@@ -2434,7 +2436,7 @@ N $BEB0 Colour the area around the player according to the player's health.
   $BEB3,$03 Point at the table of attribute colours.
   $BEB6,$03 Add the health to the address to point at its colour.
   $BEB9,$01 Fetch the attribute.
-  $BEBA,$01 Switch to the shadow #REGaf to hold the attribute.
+  $BEBA,$01 Switch to #REGaf' to hold the attribute.
   $BEBB,$03 Set the position of the player's feet on the screen (#N$7070).
   $BEBE,$03 Get the address in the attribute buffer for this position.
   $BEC1,$02 Set the width of the area to #N$04 attributes.
@@ -2450,7 +2452,7 @@ N $BECD Update the screen and check for the pause key.
   $BED6,$01 Clear the accumulator.
   $BED7,$03 Reset the flag.
   $BEDA,$03 Check whether the game has been paused.
-  $BEDD,$02 Jump back to #R$BE71 for the next frame.
+  $BEDD,$02 Jump to #R$BE71 for the next frame.
 
 c $BEDF Calculate Percentage Complete
 @ $BEDF label=CalculatePercentage
@@ -2460,7 +2462,7 @@ D $BEDF Works out how much of the game has been completed and stores it as a
 .
 . Every bit set in the #N$80 bytes at #R$BC0E is a cell of the village that has
 . been visited. Every monster that has been killed counts as three more
-. cells. The total is multiplied by #N$2830 and divided by #N$010000, so that
+. cells. The total is multiplied by #N$2830 and divided by #N($010000), so that
 . visiting about #N$027D cells (or a few less when monsters have been killed)
 . gives #N$64 percent.
 N $BEDF Count the visited cells.
@@ -2489,7 +2491,7 @@ N $BEF4 Add three for every monster that has been killed.
 . bytes.
   $BF0A,$02 Move on to the next monster.
   $BF0C,$02 Loop back until all four monsters have been counted.
-N $BF0E Multiply the count by #N$2830 and divide by #N$010000, using BCD
+N $BF0E Multiply the count by #N$2830 and divide by #N($010000), using BCD
 . arithmetic for the high byte.
   $BF0E,$03 Set the value to add on each pass.
   $BF11,$01 Start the BCD result at zero.
@@ -2499,13 +2501,13 @@ N $BF0E Multiply the count by #N$2830 and divide by #N$010000, using BCD
   $BF16,$01 Add the value to the total.
   $BF17,$02 Add any carry to the BCD result.
   $BF19,$01 Adjust the BCD result.
-  $BF1A,$01 Keep the result.
+  $BF1A,$01 Stash the result on the stack.
   $BF1B,$01 Decrease the count.
   $BF1C,$04 Jump to #R$BF23 if the count has reached zero.
-  $BF20,$01 Get the result back.
-  $BF21,$02 Jump back to #R$BF16.
+  $BF20,$01 Restore the result from the stack.
+  $BF21,$02 Jump to #R$BF16.
 @ $BF23 label=CalculatePercentage_Finish
-  $BF23,$01 Get the result back.
+  $BF23,$01 Restore the result from the stack.
   $BF24,$03 Add #N$0090 to the total, which rounds the percentage.
   $BF27,$04 Add any carry to the BCD result.
   $BF2B,$03 Set the tens and units of the percentage.
@@ -2525,11 +2527,13 @@ D $BF36 Prints the percentage complete from #R$BBFD and #R$BBFE, with the
 . #SIM(start=$BF36,stop=$0000,xa=$45,hl=$4894,sp=$5BF0)
 . #SCR$02,$14,$0B,$04,$03(print-percentage) } UDGTABLE# #POPS
 R $BF36 HL Screen position of the first digit
+N $BF36 Print the hundreds digit only when it is not zero.
   $BF36,$05 Point at the hundreds digit and set the number of digits to one.
   $BF3B,$04 Fetch the hundreds digit and jump to #R$BF43 if it is zero.
   $BF3F,$01 Include the hundreds digit.
   $BF40,$03 Jump to #R$C327 to print the digits.
 @ $BF43 label=PrintPercentage_NoHundreds
+N $BF43 Print the tens and units.
   $BF43,$02 Move the screen position and the pointer on to the tens digit.
   $BF45,$03 Jump to #R$C314 to print the two digits.
 
@@ -2592,7 +2596,7 @@ D $BF95 Creates a ghost at the player's position every #N$0100 frames. The
 . not close to the player, at a random position within the player's cell. The
 . ghost becomes a burst if it appears on top of the player.
   $BF95,$05 Return unless the frame counter has wrapped round to a multiple of
-. #N$0100, so that a ghost appears every #N$0100 frames.
+. #N($0100), so that a ghost appears every #N$0100 frames.
   $BF9A,$04 Start with the first of the six short-lived objects.
   $BF9E,$03 Set the distance between one object and the next (#N$0010 bytes).
   $BFA1,$02 Set a counter for the six short-lived objects.
@@ -2629,7 +2633,7 @@ N $BFB4 Place the ghost in the player's cell at a random position.
 
 c $BFF1 Update Ghost
 @ $BFF1 label=UpdateGhost
-D $BFF1 The routine for objects of type #N$88 to #N$8B, the ghosts. A ghost
+D $BFF1 The routine for objects of type #N$88 to #N($8B), the ghosts. A ghost
 . drifts towards the player and hurts the player if it touches. It vanishes when
 . the player moves more than three cells away, and turns into a burst
 . (scoring #N$10 hundred points) when a shot hits it.
@@ -2720,16 +2724,18 @@ E $C069 View the equivalent code in;
 R $C069 IX Object
 R $C069 C Distance in cells
 R $C069 O:F The carry flag is set if the object is closer than the distance
-  $C069,$03 Fetch the player's column.
+N $C069 Compare the columns.
+  $C069,$03 Fetch the player's column from #R$BC8E(#N$BC90).
   $C06C,$03 Work out how many columns the object is from the player.
-  $C06F,$03 Jump to #R$C074 if the object is to the left of the player.
+  $C06F,$03 Jump to #R$C074 if the difference is not negative.
   $C072,$02 Otherwise turn the distance round, so that it is positive.
 @ $C074 label=CheckPlayerClose_Columns
   $C074,$01 Compare the distance in columns with the limit.
   $C075,$01 Return with the carry flag clear if the object is too far away.
-  $C076,$03 Fetch the player's row.
+N $C076 Compare the rows.
+  $C076,$03 Fetch the player's row from #R$BC8E(#N$BC92).
   $C079,$03 Work out how many rows the object is from the player.
-  $C07C,$03 Jump to #R$C081 if the object is below the player.
+  $C07C,$03 Jump to #R$C081 if the difference is not negative.
   $C07F,$02 Otherwise turn the distance round, so that it is positive.
 @ $C081 label=CheckPlayerClose_Rows
   $C081,$01 Compare the distance in rows with the limit.
@@ -2737,7 +2743,7 @@ R $C069 O:F The carry flag is set if the object is closer than the distance
 
 c $C083 Update Creature
 @ $C083 label=UpdateCreature
-D $C083 The routine for objects of type #N$70 to #N$7F, the creatures. A
+D $C083 The routine for objects of type #N$70 to #N($7F), the creatures. A
 . creature wanders about the village and hurts the player if it touches. It
 . vanishes when the player is more than three cells away. When a shot hits it,
 . the kind of the shot and the kind of the creature are added together to choose
@@ -2816,8 +2822,9 @@ D $C101 Splits the creature in two. The shot turns into a burst, and a copy of
 . two creatures go in opposite directions, and #N$15 hundred points are added to
 . the score. If there is no room for the copy, the player scores only a small
 . number of points.
+N $C101 Find a short-lived object that is free, or far from the player.
   $C101,$04 Turn the shot into a burst.
-  $C105,$02 Keep the address of the creature.
+  $C105,$02 Stash the address of the creature on the stack.
   $C107,$04 Start with the first short-lived object.
   $C10B,$03 Set the distance between one object and the next (#N$0010 bytes).
   $C10E,$02 Set a counter for the six objects.
@@ -2829,15 +2836,17 @@ D $C101 Splits the creature in two. The shot turns into a burst, and a copy of
 . the player.
   $C11D,$02 Move on to the next object.
   $C11F,$02 Loop back until all six objects have been tried.
-  $C121,$02 Get the creature back.
+N $C121 There is no free slot, so add a small score and return.
+  $C121,$02 Restore the creature from the stack.
   $C123,$03 Set the points for failing to split the creature.
   $C126,$03 Jump to #R$C2ED to add the points to the score.
 @ $C129 label=HitOutcome_Split_Copy
-  $C129,$03 Remember the address of the free object in #REGde.
-  $C12C,$03 Make #REGiy point at the free object.
+N $C129 Copy the creature and send the two in opposite directions.
+  $C129,$03 Copy the address of the free object to #REGde (using the
+. stack).
+  $C12C,$03 Point #REGiy at the free object (using the stack).
   $C12F,$01 Get the address of the creature back.
-  $C130,$01 Keep it on the stack.
-  $C131,$02 Make #REGix point at the creature.
+  $C130,$03 Point #REGix at the creature (using the stack).
   $C133,$03 Set the size of an object to #N$0010 bytes.
   $C136,$02 Copy the creature into the free object.
   $C138,$03 Fetch the direction timer of the original creature.
@@ -2867,17 +2876,19 @@ D $C152 Turns the creature into a spore (a type #N$40 to #N$4F object), adds
 
 c $C164 Update Ball
 @ $C164 label=UpdateBall
-D $C164 The routine for objects of type #N$80 to #N$83, the balls. A ball
+D $C164 The routine for objects of type #N$80 to #N($83), the balls. A ball
 . changes
 . through four frames and then turns into a creature (type #N$70 to #N$7F) or,
 . at random, into a type #N$40 to #N$4F object. The kind is that of the monster
 . that is nearest to the ball.
+N $C164 Animate the ball, and play its sound if it is in the view.
   $C164,$04 Test whether the ball has been drawn in the view.
   $C168,$04 Clear the flag.
   $C16C,$03 Play the sound of the ball if it was drawn.
   $C16F,$03 Move on to the next frame of animation.
   $C172,$06 Fetch the type of the ball, and return unless the frame number has
 . wrapped round to zero.
+N $C178 Become a type #N$40 to #N$4F object, or a creature.
   $C178,$07 Jump to #R$C191 if a random number is less than #N$80.
   $C17F,$03 Find the nearest living monster.
   $C182,$02 Multiply its number by four to get its kind.
@@ -2887,6 +2898,7 @@ D $C164 The routine for objects of type #N$80 to #N$83, the balls. A ball
   $C18C,$04 Set the depth of the object to #N$18 (type #N$4C only).
   $C190,$01 Return.
 @ $C191 label=UpdateBall_Creature
+N $C191 Turn the ball into a creature of the nearest monster's kind.
   $C191,$03 Find the nearest living monster.
   $C194,$02 Multiply its number by four to get its kind.
   $C196,$02,b$01 Make it a creature (#N$70 to #N$7F).
@@ -2898,23 +2910,26 @@ c $C19C Find Nearest Monster
 D $C19C Finds the living monster that is nearest to the object at #REGix, using
 . the sum of the differences in columns and rows as the distance.
 R $C19C IX Object
-R $C19C O:A The nearest monster, from #N$00 to #N$03 (#N$03 is the monster at
-. #R$BD5E)
+R $C19C O:A The nearest monster from #N$00 to #N$03 (#N$03 is #R$BD5E)
+N $C19C Start with the first monster and no nearest so far.
   $C19C,$04 Start with the first monster.
   $C1A0,$02 Set a counter for the four monsters.
   $C1A2,$03 Start with the shortest distance as #N$FF and no monster.
 @ $C1A5 label=FindNearestMonster_Loop
+N $C1A5 Keep this monster if it is closer than the nearest so far.
   $C1A5,$03 Find the distance to this monster.
   $C1A8,$01 Compare it with the shortest distance so far.
   $C1A9,$02 Jump to #R$C1AD if it is not shorter.
   $C1AB,$01 Remember the shortest distance.
   $C1AC,$01 Remember the monster.
 @ $C1AD label=FindNearestMonster_Next
-  $C1AD,$01 Save the shortest distance and the monster.
+N $C1AD Move on to the next monster.
+  $C1AD,$01 Stash the shortest distance and the monster on the stack.
   $C1AE,$03 Set the size of an object to #N$0010 bytes.
   $C1B1,$02 Move on to the next monster.
-  $C1B3,$01 Restore the shortest distance and the monster.
+  $C1B3,$01 Restore the shortest distance and the monster from the stack.
   $C1B4,$02 Loop back until all four monsters have been checked.
+N $C1B6 Convert the nearest monster to a number from #N$00 to #N$03.
   $C1B6,$02 Fetch the monster and convert it to a number from #N$00 to #N$03.
   $C1B8,$01 Return.
 
@@ -2925,18 +2940,20 @@ D $C1B9 Works out the distance from the object at #REGix to a monster, which is
 R $C1B9 IX Object
 R $C1B9 IY Monster
 R $C1B9 O:A The distance, or #N$FF if the monster is dead
+N $C1B9 Return #N$FF if the monster is dead.
   $C1B9,$06 Check whether the monster is alive, and jump to #R$C1C2 if it is.
-  $C1BF,$02 The monster has been killed, so return a distance of #N$FF, which is
-. too far away to matter.
+  $C1BF,$02 The monster has been killed, so return a
+. distance of #N($FF), which is too far away to matter.
   $C1C1,$01 Return.
 @ $C1C2 label=GetDistanceToMonster_Alive
+N $C1C2 Add the absolute differences in columns and rows.
   $C1C2,$06 Work out how many columns the object is from the monster.
-  $C1C8,$03 Jump to #R$C1CD if the object is to the right of the monster.
+  $C1C8,$03 Jump to #R$C1CD if the difference is not negative.
   $C1CB,$02 Otherwise turn the distance round, so that it is positive.
 @ $C1CD label=GetDistanceToMonster_Rows
   $C1CD,$01 Keep the distance in columns.
   $C1CE,$06 Work out how many rows the object is from the monster.
-  $C1D4,$03 Jump to #R$C1D9 if the object is above the monster.
+  $C1D4,$03 Jump to #R$C1D9 if the difference is not negative.
   $C1D7,$02 Otherwise turn the distance round, so that it is positive.
 @ $C1D9 label=GetDistanceToMonster_Add
   $C1D9,$01 Add the two distances together to get the distance from the monster.
@@ -2945,7 +2962,7 @@ R $C1B9 O:A The distance, or #N$FF if the monster is dead
 c $C1DB Build Random Table
 @ $C1DB label=BuildRandomTable
 D $C1DB Fills the #N$22 bytes at #R$BBD0 with random numbers from #N$10 to
-. #N$1F, taken from a random place in the ROM.
+. #N($1F), taken from a random place in the ROM.
 .
 . The routine then makes the second part of the copy protection check: it
 . returns if bit 7 of the memory refresh register is set (the loader sets it,
@@ -2958,7 +2975,7 @@ D $C1DB Fills the #N$22 bytes at #R$BBD0 with random numbers from #N$10 to
   $C1E8,$02 Set the length of the table to #N$22 bytes.
 @ $C1EA label=BuildRandomTable_Loop
   $C1EA,$0A Copy a byte of the ROM into the table, after making it a number from
-. #N$10 to #N$1F, and loop back until the table is full.
+. #N$10 to #N($1F), and loop back until the table is full.
   $C1F4,$05 Return if the loader has set bit 7 of the memory refresh register.
 N $C1F9 The memory refresh register has not been set up by the stub, so the game
 . has been tampered with. Reset the computer.
@@ -2989,7 +3006,7 @@ D $C1FD Draws the icons of the four monsters in the status panel. The icon of a
 @ $C206 label=DrawMonsterIcons_Loop
   $C206,$02 Keep the counter and the screen address.
   $C208,$05 Work out the type of the first frame of this monster's sprite
-. (#N$6C, #N$68, #N$64 or #N$60).
+. (#N($6C), #N($68), #N$64 or #N$60).
   $C20D,$03 Point at the table of sprite addresses.
   $C210,$03 Find the address of the sprite in the table.
   $C213,$01 Swap the sprite address and the screen address over.
@@ -3075,13 +3092,15 @@ D $C29A Draws the four characters of the compass text in the status panel, using
 . #SIM(start=$C29A,stop=$0000,sp=$5BF0)
 . #SCR$02,$1B,$16,$04,$01(compass-text-rotated) } UDGTABLE# #POPS
 R $C29A DE Preserved
-  $C29A,$01 Keep #REGde safe.
+N $C29A Choose the characters and colour for the way the view faces.
+  $C29A,$01 Stash #REGde on the stack.
   $C29B,$03 Fetch the flag that tells whether the view is turned round.
   $C29E,$04 Jump to #R$C2BD if the view is turned round.
   $C2A2,$03 Point at the characters for the normal view.
   $C2A5,$02 Use bright cyan ink (attribute #N$45).
 @ $C2A7 label=DrawCompassText_Draw
-  $C2A7,$01 Keep the colour.
+N $C2A7 Print the four characters of the compass text.
+  $C2A7,$01 Stash the colour on the stack.
   $C2A8,$03 Set the font to the compass characters.
   $C2AB,$03 Set the screen position of the compass text to
 . #N$50DB (in the screen buffer).
@@ -3090,8 +3109,9 @@ R $C29A DE Preserved
 @ $C2B3 label=DrawCompassText_Loop
   $C2B3,$08 Print a character of the compass text, and loop back until all four
 . have been printed.
-  $C2BB,$02 Get #REGde back and return.
+  $C2BB,$02 Restore #REGde from the stack and return.
 @ $C2BD label=DrawCompassText_Rotated
+N $C2BD Use the characters and colour for the turned view.
   $C2BD,$03 Point at the characters for the turned round view.
   $C2C0,$02 Use bright magenta ink (attribute #N$43).
   $C2C2,$02 Jump to #R$C2A7 to print the compass text.
@@ -3112,14 +3132,16 @@ D $C2C8 Draws the compass icon in the status panel, which is made of two blocks
 . #SIM(start=$BE18,stop=$BE24)
 . #SIM(start=$C2C8,stop=$0000,sp=$5BF0)
 . #SCR$02,$1B,$13,$04,$02(compass-icon) } UDGTABLE# #POPS
+N $C2C8 Print the left block of the icon.
   $C2C8,$03 Point at the character set of the status panel icons.
   $C2CB,$03 Set it as the font.
   $C2CE,$03 Set the screen position of the first block of the
 . icon to #N$507B (in the screen buffer).
   $C2D1,$03 Point at the list of characters of the icon.
   $C2D4,$02 Use bright yellow ink (attribute #N$46).
-  $C2D6,$01 Keep the colour.
+  $C2D6,$01 Stash the colour on the stack.
   $C2D7,$03 Print the first block of the icon.
+N $C2DA Print the right block of the icon.
   $C2DA,$02 Move the screen position on by two characters.
   $C2DC,$03 Jump to #R$CB3E to print the second block of the icon.
 
@@ -3143,6 +3165,21 @@ D $C2ED Adds points to the score, which is held as BCD in the three bytes from
 .
 . The score is printed with two zeroes added to the end, so the points are in
 . hundreds.
+E $C2ED View the equivalent code in;
+. #LIST
+. { #ATICATAC$A19C }
+. { #BUBBLER$9662 }
+. { #COOKIE$7415 }
+. { #CYBERUN$925E }
+. { #JETPAC$70F9 }
+. { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #PENTAGRAM$BB29 }
+. { #PSSST$737A }
+. { #SABREWULF$B5A9 }
+. { #TRANZAM$6046 }
+. { #UNDERWURLDE$A045 }
+. LIST#
 R $C2ED BC The points to add, as BCD (in hundreds)
   $C2ED,$03 Point at the last (lowest) byte of the score.
   $C2F0,$04 Add the lowest two digits of the points to the lowest two digits of
@@ -3164,25 +3201,27 @@ D $C2FF Prints the score, as seven digits, in the status panel. The last two
 . #POKES$BBC9,$12;$BBCA,$34;$BBCB,$56
 . #SIM(start=$C2FF,stop=$0000,sp=$5BF0)
 . #SCR$02,$05,$16,$09,$02(print-score) } UDGTABLE# #POPS
-  $C2FF,$03 Use bright yellow ink (attribute #N$46), and keep it for printing
+N $C2FF Set the colour and the position of the score.
+  $C2FF,$03 Use bright yellow ink (attribute #N$46), and stash it for printing
 . the digits.
   $C302,$03 Set the screen position of the score to
 . #N$50E6 (in the screen buffer).
 @ $C305 label=PrintScore_Position
+N $C305 Point at the score and the digit font.
   $C305,$05 Point at the score, and set the number of bytes to print to four.
-  $C30A,$01 Keep the screen position.
+  $C30A,$01 Stash the screen position on the stack.
   $C30B,$03 Point at the font of the digits.
   $C30E,$03 Set it as the font.
-  $C311,$01 Get the screen position back.
+  $C311,$01 Restore the screen position from the stack.
   $C312,$02 Jump to #R$C327 to print the digits, starting with the lower digit
 . of the first byte.
 
 c $C314 Print BCD Number
 @ $C314 label=PrintBCDNumber
-D $C314 Prints the digits of BCD numbers.
-.
-. Entering at #R$C314 sets the font to the digits first. Entering at #R$C327
-. prints only the lower digit of the first byte.
+D $C314 Prints a number which is held in
+. BCD, using the font with the digits.
+. Entering at #R$C327 prints only the
+. lower digit of the first byte.
 E $C314 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BA62 }
@@ -3190,24 +3229,33 @@ E $C314 View the equivalent code in;
 . { #MARTIANOIDS$B5AF }
 . LIST#
 R $C314 B Number of bytes
-R $C314 DE Address of the BCD number
-R $C314 HL Screen position of the first digit
-  $C314,$01 Keep the screen position.
-  $C315,$03 Point at the font of the digits.
-  $C318,$03 Set it as the font.
-  $C31B,$01 Get the screen position back.
+R $C314 DE Address of the number
+R $C314 HL Screen address of the first digit
+N $C314 Point at the digit font.
+  $C314,$01 Stash the screen address on the
+. stack.
+  $C315,$06 Set #R$BBAC to #R$6CDE.
+  $C31B,$01 Restore the screen address from the
+. stack.
+N $C31C Print the upper digit of the byte.
 @ $C31C label=PrintBCDNumber_Loop
-  $C31C,$05 Fetch a byte of the number and move its upper digit down to the
-. lower four bits.
-  $C321,$02,b$01 Keep only the digit.
-  $C323,$03 Print the upper digit.
-  $C326,$01 Move on to the next screen position.
+  $C31C,$01 Fetch a byte of the number.
+  $C31D,$04 Move the upper digit to the lowest
+. four bits.
+  $C321,$02,b$01 Keep only bits 0 to 3.
+  $C323,$03 Call #R$CB5B.
+  $C326,$01 Move on to the next screen
+. position.
+N $C327 Print the lower digit and move on.
 @ $C327 label=PrintBCDNumber_LowerDigit
-  $C327,$03 Fetch the byte again and keep only its lower digit.
-  $C32A,$03 Print the lower digit.
-  $C32D,$01 Move on to the next screen position.
-  $C32E,$01 Move on to the next byte of the number.
-  $C32F,$02 Loop back until all of the bytes have been printed.
+  $C327,$01 Fetch a byte of the number.
+  $C328,$02,b$01 Keep only bits 0 to 3.
+  $C32A,$03 Call #R$CB5B.
+  $C32D,$01 Move on to the next screen
+. position.
+  $C32E,$01 Move on to the next byte.
+  $C32F,$02 Jump to #R$C31C until all of the
+. bytes have been printed.
   $C331,$01 Return.
 
 c $C332 Play Ghost Sound
@@ -3304,13 +3352,13 @@ D $C3BD Plays the next note of the current sound effect. The note counter is
 . The sound effects are:
 . #TABLE(default,centre,centre)
 . { =h Effect | =h Sound }
-. { #N$00, a new cell |
+. { #N($00), a new cell |
 . #HTML(#AUDIO0(new-cell-sound.wav)(#INCLUDE(NewCellSound))) }
-. { #N$01, a speed bonus |
+. { #N($01), a speed bonus |
 . #HTML(#AUDIO0(speed-bonus-sound.wav)(#INCLUDE(SpeedBonusSound))) }
-. { #N$02, a health bonus |
+. { #N($02), a health bonus |
 . #HTML(#AUDIO0(health-bonus-sound.wav)(#INCLUDE(HealthBonusSound))) }
-. { #N$03, an item |
+. { #N($03), an item |
 . #HTML(#AUDIO0(item-sound.wav)(#INCLUDE(ItemSound))) }
 . TABLE#
 E $C3BD View the equivalent code in;
@@ -3318,15 +3366,17 @@ E $C3BD View the equivalent code in;
 . { #MARTIANOIDS$BFDA }
 . { #PENTAGRAM$D5F2 }
 . LIST#
+N $C3BD Count down the notes of the current sound effect.
   $C3BD,$03 Point at the counter of notes still to play.
   $C3C0,$03 Return if there are no more notes to play.
   $C3C3,$01 Count down a note.
-  $C3C4,$01 Keep the note counter.
+  $C3C4,$01 Keep the note counter in #REGaf'.
   $C3C5,$01 Point at the number of the sound effect.
+N $C3C6 Find the pitch of this note.
   $C3C6,$01 Fetch the number of the sound effect.
   $C3C7,$03 Point at the table of sound effects.
   $C3CA,$03 Fetch the address of the notes of the sound effect.
-  $C3CD,$01 Get the number of the note.
+  $C3CD,$01 Get the number of the note back from #REGaf'.
   $C3CE,$01 Use it as the distance along the notes.
   $C3CF,$02 Make the distance a whole number of bytes.
   $C3D1,$01 Find the address of the note.
@@ -3373,30 +3423,50 @@ c $C400 Play Movement Sound
 D $C400 Plays a short tick, which is alternately high and low, once every few
 . frames. The ticks are made twice as often when the object is moving quickly.
 .
-. #HTML(#AUDIO0(footstep-sound.wav)(#INCLUDE(FootstepSound)))
+. The sounds played by this routine are:
+. #TABLE(default,centre,centre)
+. { =h Speed | =h Sound }
+. { Movement Sound |
+. #HTML(#AUDIO0(footstep-sound.wav)(#INCLUDE(FootstepSound))) }
+. TABLE#
 E $C400 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$AEED }
 . LIST#
 R $C400 IX Object
-  $C400,$03 Point at the counter of steps.
-  $C403,$01 Count a step.
+N $C400 Count a step and choose the rate from the speed.
+  $C400,$03 Point #REGhl at the sound counter.
+  $C403,$01 Add one to the counter.
   $C404,$03 Fetch the speed of the object.
   $C407,$04 Jump to #R$C420 if the object is moving quickly.
-  $C40B,$05 Jump to #R$C418 to make the low tick unless bit 2 of the step
-. counter is set.
-  $C410,$08 Return unless the step counter is a multiple of four, otherwise play
-. the high tick.
+N $C40B Jump to #R$C418 to make the low tick unless bit 2 of the step counter is
+. set.
+  $C40B,$01 Fetch the counter.
+  $C40C,$04 Jump to #R$C418 unless bit 2 of the counter is set.
+  $C410,$02,b$01 Keep the lowest two bits.
+  $C412,$01 Return unless they are clear.
+  $C413,$03 Choose the high tone.
+  $C416,$02 Play it.
+N $C418 Play the low tone of a slow movement.
 @ $C418 label=PlayMovementSound_Low
-  $C418,$08 Return unless the step counter is a multiple of four, otherwise play
-. the low tick.
+  $C418,$02,b$01 Keep the lowest two bits.
+  $C41A,$01 Return unless they are clear.
+  $C41B,$03 Choose the low tone.
+  $C41E,$02 Play it.
+N $C420 Play a tone every other frame when the object is going fast.
 @ $C420 label=PlayMovementSound_Fast
-  $C420,$05 Jump to #R$C42D to make the low tick unless bit 1 of the step
-. counter is set.
-  $C425,$08 Return unless the step counter is even, otherwise play the high
-. tick.
+  $C420,$01 Fetch the counter.
+  $C421,$04 Jump to #R$C42D unless bit 1 of the counter is set.
+  $C425,$02,b$01 Keep the lowest bit.
+  $C427,$01 Return unless it is clear.
+  $C428,$03 Choose the high tone.
+  $C42B,$02 Play it.
+N $C42D Play the low tone of a fast movement.
 @ $C42D label=PlayMovementSound_FastLow
-  $C42D,$08 Return unless the step counter is even, otherwise play the low tick.
+  $C42D,$02,b$01 Keep the lowest bit.
+  $C42F,$01 Return unless it is clear.
+  $C430,$03 Choose the low tone.
+  $C433,$02 Play it.
 
 c $C435 Play Random Sound
 @ $C435 label=PlayRandomSound
@@ -3448,7 +3518,8 @@ R $C46A C Length of the tone, in cycles
 
 c $C471 Play Square Wave
 @ $C471 label=PlaySquareWave
-D $C471 Plays a single cycle of a tone on the speaker.
+D $C471 Plays a single beep by switching the speaker on, waiting, switching it
+. off and waiting again. The bigger the pitch, the longer the beep.
 E $C471 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B702 }
@@ -3460,13 +3531,19 @@ E $C471 View the equivalent code in;
 . { #PENTAGRAM$D682 }
 . LIST#
 R $C471 B Pitch
-  $C471,$05 Turn the speaker on.
+N $C471 Hold the speaker on, then off.
+  $C471,$04 Turn the speaker on.
+  $C475,$01 Keep the pitch in #REGa.
 @ $C476 label=PlaySquareWave_High
   $C476,$02 Wait, to make the first half of the cycle.
-  $C478,$05 Turn the speaker off.
+  $C478,$01 Restore the pitch.
+  $C479,$03 Turn the speaker off.
+  $C47C,$01 Keep the pitch in #REGa.
 @ $C47D label=PlaySquareWave_Low
   $C47D,$02 Wait, to make the second half of the cycle.
-  $C47F,$02 Get the pitch back and return.
+N $C47F Get the pitch back and return.
+  $C47F,$01 Restore the pitch.
+  $C480,$01 Return.
 
 c $C481 Pick Up Special Item
 @ $C481 label=PickUpItem_Special
@@ -3539,9 +3616,10 @@ D $C4DC Sets the attributes of the items in the inventory tube. Each item is a
 . block of two by two attributes. Items #N$01 to #N$04 flash in the colours of
 . items #N$05 to #N$08 when the player is within five cells of the monster that
 . they belong to.
+N $C4DC Colour each place in the inventory tube.
   $C4DC,$06 Point at the table of colours, and at the lowest item
 . at #N$5AC2 (in the attribute buffer).
-  $C4E2,$06 Swap to the shadow registers, point at the inventory and set a
+  $C4E2,$06 Switch to the shadow registers, point at the inventory and set a
 . counter for the eleven places in it.
 @ $C4E8 label=ColourInventoryItems_Loop
   $C4E8,$03 Fetch the item, and return if there are no more items.
@@ -3610,7 +3688,7 @@ D $C554 Checks whether the object at #REGix overlaps the object that is four
 . places further along the object table.
 R $C554 IX Object
 R $C554 O:F The carry flag is set if the objects overlap
-  $C554,$04 Make #REGiy point at the same object.
+  $C554,$04 Point #REGiy at the same object (using the stack).
   $C558,$05 Move #REGiy on by four objects.
   $C55D,$02 Jump to #R$C572 to check whether they overlap.
 
@@ -3677,15 +3755,18 @@ D $C5CE Every sixteen frames, when the player is standing on a kind of tile that
 . item is placed in the first free one of the four objects from #R$BCCE, at a
 . random position within the cell. The number of items that are left for each
 . kind of tile is held in the table at #R$BBCE.
+N $C5CE Wait until it is time to spawn an item.
   $C5CE,$06 Return if the player is still materialising.
   $C5D4,$06 Return unless the frame counter is a multiple of sixteen.
   $C5DA,$09 Start with the first of the four item objects, set the distance from
 . one object to the next (#N$0010 bytes) and set a counter for the four items.
 @ $C5E3 label=SpawnItem_Find
+N $C5E3 Find a free item object.
   $C5E3,$06 Jump to #R$C5EE if this item object is free.
   $C5E9,$05 Move on to the next item object and loop back until all four have
 . been tried, and then return.
 @ $C5EE label=SpawnItem_Spawn
+N $C5EE Place the item in the player's cell, if the tile still has items left.
   $C5EE,$0A Fetch the column and row of the player's cell.
   $C5F8,$03 Find out what kind of tile is in the cell.
   $C5FB,$0A Fetch the number of items that are left for this kind of tile, and
@@ -3693,8 +3774,8 @@ D $C5CE Every sixteen frames, when the player is standing on a kind of tile that
   $C605,$01 Take one from the number of items that are left.
   $C606,$09 Set the column and row of the item to those of the player's cell,
 . and the tile to the kind of tile.
-  $C60F,$07 Choose the type of the item (#N$30, #N$34, #N$38 or #N$3C) from the
-. kind of tile.
+  $C60F,$07 Choose the type of the item (#N($30), #N($34),
+. #N$38 or #N$3C) from the kind of tile.
   $C616,$03 Make the object an item.
   $C619,$0B Put the item at a random place along the X axis of the cell.
   $C624,$08 Put the item at a random place along the Y axis of the cell.
@@ -3704,8 +3785,18 @@ D $C5CE Every sixteen frames, when the player is standing on a kind of tile that
 
 c $C63D Play Music Once
 @ $C63D label=PlayMusicOnce
-D $C63D Plays a tune, which is stopped by any key being pressed. A tune that has
-. been started is not started again.
+D $C63D Plays a tune, but only if this
+. routine has not played one before. Bit 0
+. of #R$BBC1 is set the first time and
+. nothing clears it. The tune stops when a
+. key is pressed.
+.
+. The tunes played by this routine are:
+. #TABLE(default,centre,centre)
+. { =h Tune | =h Sound }
+. { Main Tune |
+. #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune))) }
+. TABLE#
 E $C63D View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B4A1 }
@@ -3715,18 +3806,23 @@ E $C63D View the equivalent code in;
 . { #PENTAGRAM$D69C }
 . LIST#
 R $C63D DE Address of the tune
-  $C63D,$06 Return if this tune has been played before.
-  $C643,$02 Remember that the tune has been played.
+N $C63D Play only if #R$BBC1 is clear.
+  $C63D,$03 Point #REGhl at #R$BBC1.
+  $C640,$03 Return if #R$BBC1 is set.
+  $C643,$02 Set bit 0 of #R$BBC1.
+N $C645 Stop if a key is pressed.
 @ $C645 label=PlayMusicOnce_Loop
-  $C645,$01 Read every row of the keyboard at once.
-  $C646,$03 Check whether a key is being pressed.
-  $C649,$02 Jump to #R$C64C to play the next note if no key is being pressed.
-  $C64B,$01 Return, to stop the tune.
+  $C645,$01 Select all of the keyboard rows.
+  $C646,$03 Call #R$E239.
+  $C649,$02 Jump to #R$C64C if no key is
+. pressed.
+  $C64B,$01 Return.
+N $C64C Play the next note.
 @ $C64C label=PlayMusicOnce_Note
-  $C64C,$03 Fetch the next note and jump to #R$C660 if it marks the end of the
-. tune.
-  $C64F,$05 Play the note.
-  $C654,$02 Jump back to #R$C645 to check the keyboard again.
+  $C64C,$01 Fetch the next note.
+  $C64D,$04 Jump to #R$C660 if it is #N$FF.
+  $C651,$03 Call #R$C661.
+  $C654,$02 Jump to #R$C645.
 
 c $C656 Play Music
 @ $C656 label=PlayMusic
@@ -3761,14 +3857,24 @@ E $C656 View the equivalent code in;
 . { #PENTAGRAM$D6B5 }
 . LIST#
 R $C656 DE Address of the tune
-  $C656,$0A Fetch the next note, return if it marks the end of the tune, and
-. otherwise play the note and loop back.
+N $C656 Play each note until #N$FF.
+  $C656,$01 Fetch the next note.
+  $C657,$04 Jump to #R$C660 if it is #N$FF.
+  $C65B,$03 Call #R$C661.
+  $C65E,$02 Jump to #R$C656.
 @ $C660 label=PlayMusic_Return
   $C660,$01 Return.
 
 c $C661 Play Note
 @ $C661 label=PlayNote
-D $C661 Plays a note of a tune, or waits if it is a rest.
+D $C661 Plays a note of a tune, or a rest
+. if the note number is zero. Bits 0 to 5
+. select the entry in #R$C6B9 that holds the
+. two delays of a cycle and the number of
+. cycles. Bits 6 and 7 are the length less
+. one, which multiplies the number of
+. cycles, so the note is one to four times
+. as long.
 E $C661 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B4C5 }
@@ -3779,53 +3885,88 @@ E $C661 View the equivalent code in;
 . { #MARTIANOIDS$C0DA }
 . { #PENTAGRAM$D6C0 }
 . LIST#
-R $C661 A Note
+R $C661 A The note
 R $C661 DE Address of the note
 R $C661 O:DE Address of the next note
-  $C661,$04 Keep the note, and jump to #R$C6A3 if it is a rest.
-N $C665 Look up the delays and the number of cycles in the table at #R$C6B9.
-  $C665,$04 Multiply the note number by three.
-  $C669,$03 Add the note number to get the place in the table of notes.
-  $C66C,$04 Point at the table of notes.
-  $C670,$01 Fetch the pitch of the note.
-  $C671,$01 Move on to the next byte.
-  $C672,$01 Fetch the delay of the note.
-  $C673,$01 Move on to the next byte.
-  $C674,$03 Fetch the number of cycles that make up one unit of length of the
-. note.
-N $C677 Bits 6 and 7 of the note are the length, less one.
-  $C677,$06 Fetch the length of the note, from bits 6 and 7 of the note.
-  $C67D,$03 Keep the address of the next note, and use #REGde to count out the
-. length.
-N $C680 Multiply the number of cycles by the length of the note.
+N $C661 Look up the delays and the number of cycles.
+  $C661,$02,b$01 Keep bits 0 to 5.
+  $C663,$02 Jump to #R$C6A3 if the note is a rest.
+  $C665,$03 Set #REGhl to the note number.
+  $C668,$01 Double the number.
+  $C669,$03 Call #R$E596.
+N $C66C Point #REGhl at the entry for the note.
+  $C66C,$03 Point #REGbc at #R$C6B9.
+  $C66F,$01 Find the entry for the note.
+  $C670,$01 Fetch the first delay.
+  $C671,$01 Move on.
+  $C672,$01 Fetch the second delay.
+  $C673,$01 Move on.
+  $C674,$01 Fetch the number of cycles.
+  $C675,$02 Set #REGh to #N$00.
+N $C677 Bits 6 and 7 are the length, less one.
+  $C677,$01 Fetch the note again.
+  $C678,$02 Move bits 6 and 7 to bits 0 and 1.
+  $C67A,$02,b$01 Keep bits 0 and 1.
+  $C67C,$01 Add one.
+  $C67D,$01 Stash the note address on the stack.
+  $C67E,$02 Copy the number of cycles to #REGde.
+N $C680 Multiply the number of cycles by the length.
 @ $C680 label=PlayNote_Length
-  $C680,$03 Jump to #R$C686 when the length has been counted out.
-  $C683,$03 Add the number of cycles in a unit of length, and loop back.
+  $C680,$01 Count down the length.
+  $C681,$02 Jump to #R$C686 if the length has
+. been used up.
+  $C683,$01 Add the number of cycles again.
+  $C684,$02 Jump to #R$C680.
 @ $C686 label=PlayNote_Start
-  $C686,$01 Get the address of the next note back.
-N $C687 Each pass of this loop makes one cycle of the note, so the length of
-. the note is the number of cycles.
+  $C686,$01 Restore the note address from the
+. stack.
+N $C687 Each pass makes one cycle of the note.
 @ $C687 label=PlayNote_Cycle
-  $C687,$04 Keep the pitch and the delay, and turn the speaker off.
+  $C687,$01 Stash the delays on the stack.
+  $C688,$01 Set #REGa to #N$00.
+  $C689,$02 Turn the speaker off.
 @ $C68B label=PlayNote_Low
-  $C68B,$05 Wait while the speaker is off.
-  $C690,$06 Get the pitch and the delay back, keep them again and turn the
-. speaker on.
+  $C68B,$02 Wait for the first half of the
+. cycle.
+  $C68D,$01 Count down the second delay.
+  $C68E,$02 Jump to #R$C68B until it has
+. finished.
+  $C690,$01 Restore the delays from the stack.
+  $C691,$01 Stash the delays on the stack.
+  $C692,$02 Set bit 4.
+  $C694,$02 Turn the speaker on.
 @ $C696 label=PlayNote_High
-  $C696,$05 Wait while the speaker is on.
-  $C69B,$06 Get the pitch and the delay back, count down the cycles and loop
-. back until the note has been played.
-  $C6A1,$02 Move on to the next note and return.
+  $C696,$02 Wait for the second half of the
+. cycle.
+  $C698,$01 Count down the second delay.
+  $C699,$02 Jump to #R$C696 until it has
+. finished.
+  $C69B,$01 Restore the delays from the stack.
+  $C69C,$01 Count down the cycles.
+  $C69D,$04 Jump to #R$C687 until all of the
+. cycles have been played.
+  $C6A1,$01 Move on to the next note.
+  $C6A2,$01 Return.
+N $C6A3 A rest is a silent pause of one to four units.
 @ $C6A3 label=PlayNote_Rest
-N $C6A3 The note is a rest, so wait for as long as the note would last.
-  $C6A3,$0B Fetch the length of the rest, and set the delay for one unit of the
-. rest.
+  $C6A3,$01 Fetch the length of the rest.
+  $C6A4,$01 Move on to the next note.
+  $C6A5,$02 Move bits 6 and 7 to bits 0 and 1.
+  $C6A7,$02,b$01 Keep bits 0 and 1.
+  $C6A9,$01 Add one.
+  $C6AA,$01 Keep it in #REGl.
+  $C6AB,$03 Set #REGbc to #N$430B.
 @ $C6AE label=PlayNote_RestLoop
-  $C6AE,$01 Keep the delay for one unit.
+  $C6AE,$01 Stash the pause length on the stack.
 @ $C6AF label=PlayNote_RestWait
-  $C6AF,$05 Wait for one unit of the rest.
-  $C6B4,$04 Get the delay for one unit back, and loop back until the rest is
-. over.
+  $C6AF,$01 Count down the pause.
+  $C6B0,$04 Jump to #R$C6AF until it has
+. finished.
+  $C6B4,$01 Restore the pause length from the
+. stack.
+  $C6B5,$01 Count down the units of the rest.
+  $C6B6,$02 Jump to #R$C6AE until the rest has
+. finished.
   $C6B8,$01 Return.
 
 b $C6B9 Note Table
@@ -3950,9 +4091,11 @@ D $C898 Sets a block of two attributes across, down a number of rows of the
 R $C898 A' Attribute
 R $C898 B Number of rows
 R $C898 HL Address in the attribute buffer
+N $C898 Return if the player is dead.
   $C898,$01 Keep the attribute.
   $C899,$05 Return if the player is dead.
   $C89E,$01 Get the attribute back.
+N $C89F Colour two attributes down each row.
   $C89F,$05 Add the flash colour used in the last frame (#R$BBFC) to the
 . attribute.
   $C8A4,$03 Set the distance to the first attribute in the next row
@@ -3970,11 +4113,13 @@ R $C8B2 A Attribute
 R $C8B2 B Width
 R $C8B2 C Height
 R $C8B2 HL Address in the attribute buffer
+N $C8B2 Work out the distance from one row to the next.
   $C8B2,$06 Add the flash colour used in the last frame (#R$BBFC) to the
 . attribute, and keep it.
   $C8B8,$07 Work out how far to move on from the end of one row of the rectangle
 . to the start of the next.
 @ $C8BF label=FillAttributeRectangle_Row
+N $C8BF Fill each row of the rectangle.
   $C8BF,$01 Keep the width and the height.
 @ $C8C0 label=FillAttributeRectangle_Loop
   $C8C0,$04 Set the attributes of one row of the rectangle.
@@ -4002,77 +4147,112 @@ E $C8CA View the equivalent code in;
 . { #PENTAGRAM$BB74 }
 . LIST#
 N $C8CA Prepare the menu.
-  $C8CA,$04 Flag that the frame around the screen has not been drawn.
-  $C8CE,$05 Point at the attributes of the lines of the menu, and set a counter
-. for eight lines.
+  $C8CA,$04 Write #N$00 to *#R$BBBF.
+  $C8CE,$03 Point #REGhl at #R$C962.
+  $C8D1,$02 Set the number of lines to #N$08.
 @ $C8D3 label=GameMenu_Unflash
-  $C8D3,$05 Turn off the flashing of the line, and loop back until all of the
-. lines have been done.
-  $C8D8,$03 Clear the playing area and the screen buffer.
-  $C8DB,$03 Print the lines of the menu.
-  $C8DE,$03 Make the lines for the options that have been chosen flash.
+  $C8D3,$02 Stop the line flashing.
+  $C8D5,$01 Move on to the next line.
+  $C8D6,$02 Jump to #R$C8D3 until all of the
+. lines are done.
+  $C8D8,$03 Call #R$E206.
+  $C8DB,$03 Call #R$CA2B.
+  $C8DE,$03 Call #R$C949.
+N $C8E1 Read the keys that choose the control method.
 @ $C8E1 label=GameMenu_Loop
-  $C8E1,$03 Print the lines of the menu.
-  $C8E4,$03 Point at the menu tune.
-  $C8E7,$03 Play the tune until a key is pressed.
+  $C8E1,$03 Call #R$CA2B.
+N $C8E4 #HTML(#AUDIO0(main-tune.wav)(#INCLUDE(MainTune)))
+  $C8E4,$03 Point #REGde at #R$C770.
+  $C8E7,$03 Call #R$C63D.
 N $C8EA Read the keys "1" to "5".
-  $C8EA,$05 Read the keys "1" to "5".
-  $C8EF,$01 Keep the keys that are being pressed.
-  $C8F0,$06 Fetch the control options, and keep a copy to compare with later.
-  $C8F6,$04 Jump to #R$C8FC unless "1" (keyboard) is being pressed.
+  $C8EA,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+  $C8EF,$01 Keep the keys that are pressed in
+. #REGe.
+  $C8F0,$03 Fetch #R$BBB0.
+  $C8F3,$03 Set #R$BBB1.
+  $C8F6,$04 Jump to #R$C8FC if "1" is not
+. pressed.
   $C8FA,$02,b$01 Choose the keyboard.
+N $C8FC Choose a joystick if one of those keys is pressed.
 @ $C8FC label=GameMenu_Key2
-  $C8FC,$04 Jump to #R$C904 unless "2" (Kempston joystick) is being pressed.
-  $C900,$04 Choose the Kempston joystick.
+  $C8FC,$04 Jump to #R$C904 if "2" is not
+. pressed.
+  $C900,$02,b$01 Clear bits 1 and 2.
+  $C902,$02,b$01 Choose the Kempston joystick.
 @ $C904 label=GameMenu_Key3
-  $C904,$04 Jump to #R$C90C unless "3" (cursor joystick) is being pressed.
-  $C908,$04 Choose the cursor joystick.
+  $C904,$04 Jump to #R$C90C if "3" is not
+. pressed.
+  $C908,$02,b$01 Clear bits 1 and 2.
+  $C90A,$02,b$01 Choose the cursor joystick.
 @ $C90C label=GameMenu_Key4
-  $C90C,$04 Jump to #R$C912 unless "4" (Interface II) is being pressed.
+  $C90C,$04 Jump to #R$C912 if "4" is not
+. pressed.
   $C910,$02,b$01 Choose Interface II.
-@ $C912 label=GameMenu_Key5
-  $C912,$03 Store the control options.
-  $C915,$03 Point at the flag that says that the "5" key is being held.
-  $C918,$04 Jump to #R$C945 unless "5" (directional control) is being pressed.
-  $C91C,$04 Jump to #R$C92A if the key was already being held.
-  $C920,$02 Flag that the key is being held.
-  $C922,$03 Fetch the control options.
-  $C925,$02,b$01 Switch directional control on or off.
-  $C927,$03 Store the control options.
+@ $C912 label=GameMenu_SetMethod
+  $C912,$03 Set #R$BBB0.
+N $C915 Toggle directional control once for each press of "5".
+  $C915,$03 Point #REGhl at #R$BBBD.
+  $C918,$04 Jump to #R$C945 if "5" is not
+. pressed.
+  $C91C,$04 Jump to #R$C92A if "5" was pressed
+. last time as well.
+  $C920,$02 Set bit 0 of #R$BBBD.
+  $C922,$03 Fetch #R$BBB0.
+  $C925,$02,b$01 Toggle directional control.
+  $C927,$03 Set #R$BBB0.
+N $C92A Start the game if "0" is pressed.
 @ $C92A label=GameMenu_Check
-  $C92A,$04 Check whether the control options have changed.
-  $C92E,$03 Point at the menu selection jingle.
-  $C931,$03 Play the jingle if they have changed.
-  $C934,$05 Read the keys "0" to "9".
-  $C939,$03 Return to start the game if "0" is being pressed.
-  $C93C,$03 Update the random number generator.
-  $C93F,$03 Make the lines for the options that have been chosen flash.
-  $C942,$03 Jump back to #R$C8E1 to read the keys again.
+  $C92A,$03 Point #REGhl at #R$BBB1.
+  $C92D,$01 Compare with the previous options.
+  $C92E,$03 Point #REGde at #R$C7F4.
+  $C931,$03 Call #R$C656 if the control method
+. has changed.
+  $C934,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
+  $C939,$03 Return if "0" is pressed.
+  $C93C,$03 Call #R$C5B4.
+  $C93F,$03 Call #R$C949.
+  $C942,$03 Jump to #R$C8E1.
+N $C945 "5" has been released.
 @ $C945 label=GameMenu_Key5Released
-  $C945,$02 Flag that the "5" key is not being held.
+  $C945,$02 Reset bit 0 of #R$BBBD.
   $C947,$02 Jump to #R$C92A.
 
 c $C949 Flash Menu Options
 @ $C949 label=FlashMenuOptions
-D $C949 Makes the attributes of the lines of the menu for the chosen control
-. method and for directional control flash.
+D $C949 Makes the line of the menu for
+. the selected control method flash, and
+. the line for directional control if that
+. is on.
 E $C949 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BAFB }
 . { #KNIGHTLORE$BD89 }
 . { #PENTAGRAM$BBD8 }
 . LIST#
-  $C949,$03 Point at the attribute of the first control method.
-  $C94C,$03 Fetch the control options.
-  $C94F,$01 Move the chosen control method into the lowest two bits.
-  $C950,$02,b$01 Keep only the chosen control method.
-  $C952,$02 Set a counter for the four control methods.
-  $C954,$03 Make the line for the chosen control method flash.
-  $C957,$02 Turn off the flashing of the line for directional control.
-  $C959,$03 Fetch the control options again.
-  $C95C,$02,b$01 Keep only the directional control bit.
-  $C95E,$01 Return if directional control has not been chosen.
-  $C95F,$02 Make the line for directional control flash.
+N $C949 Flash the chosen control method.
+  $C949,$03 Point #REGhl at #R$C963.
+  $C94C,$03 Fetch #R$BBB0.
+  $C94F,$01 Move the method to bits 0 and 1.
+  $C950,$02,b$01 Keep only bits 0 and 1.
+  $C952,$02 Set a counter of #N$04 lines.
+  $C954,$03 Call #R$CA1B.
+N $C957 Flash directional control if it is
+. on.
+  $C957,$02 Reset bit 7 of the attribute.
+  $C959,$03 Fetch #R$BBB0.
+  $C95C,$02,b$01 Keep only bit 3.
+  $C95E,$01 Return if it is off.
+  $C95F,$02 Set bit 7 of the attribute.
   $C961,$01 Return.
 
 b $C962 Menu Line Attributes
@@ -4110,7 +4290,7 @@ c $C9EF Print String
 @ $C9EF label=PrintString
 D $C9EF Prints a string in the main font, at a position given in pixels measured
 . from the bottom left of the screen. The string ends with a character that has
-. bit 7 set. The attribute for the whole string is in the shadow #REGaf, unless
+. bit 7 set. The attribute for the whole string is in #REGaf', unless
 . the string is printed by entering at #R$C9FC, which takes the attribute from
 . the first byte of the string.
 .
@@ -4122,47 +4302,65 @@ D $C9EF Prints a string in the main font, at a position given in pixels measured
 R $C9EF A' Attribute
 R $C9EF DE Address of the string
 R $C9EF HL Position (X in #REGl, Y in #REGh)
-  $C9EF,$08 Set the font to the main font.
-  $C9F7,$03 Work out the screen address of the position.
-  $C9FA,$02 Jump to #R$CA0A to print the string.
+N $C9EF Set the font and find the screen address.
+  $C9EF,$01 Stash the position on the stack.
+  $C9F0,$06 Write #N$6B5E to #R$BBAC.
+  $C9F6,$01 Restore the position from the stack.
+  $C9F7,$03 Call #R$E556.
+  $C9FA,$02 Jump to #R$CA0A.
 @ $C9FC label=PrintStringWithAttribute
 N $C9FC Prints a string that starts with an attribute.
 R $C9FC DE Address of the attribute and the string
 R $C9FC HL Position (X in #REGl, Y in #REGh)
-  $C9FC,$08 Set the font to the main font.
-  $CA04,$03 Work out the screen address of the position.
-  $CA07,$03 Fetch the attribute from the start of the string, and keep it for
-. printing.
+  $C9FC,$01 Stash the position on the stack.
+  $C9FD,$06 Write #N$6B5E to #R$BBAC.
+  $CA03,$01 Restore the position from the stack.
+  $CA04,$03 Call #R$E556.
+  $CA07,$01 Fetch the attribute.
+  $CA08,$01 Move on to the string.
+  $CA09,$01 Keep the attribute in #REGaf'.
+N $CA0A Print each character of the string.
 @ $CA0A label=PrintString_Loop
-  $CA0A,$06 Fetch the next character of the string, and jump to #R$CA16 if it is
-. the last one.
-  $CA10,$06 Print the character, move on to the next position and loop back.
+  $CA0A,$01 Fetch the next character.
+  $CA0B,$01 Move on to the next character.
+  $CA0C,$04 Jump to #R$CA16 if it is the last
+. one.
+  $CA10,$03 Call #R$CB5B.
+  $CA13,$01 Move on to the next position.
+  $CA14,$02 Jump to #R$CA0A.
+N $CA16 Print the last character.
 @ $CA16 label=PrintString_Last
-  $CA16,$05 Print the last character, after clearing bit 7.
+  $CA16,$02,b$01 Keep bits 0 to 6.
+  $CA18,$03 Jump to #R$CB5B.
 
 c $CA1B Set Flashing Attribute
 @ $CA1B label=SetFlashingAttribute
-D $CA1B Sets bit 7 (flash) of the attribute of one of a number of lines of the
-. menu, and resets it in the other lines.
+D $CA1B Sets bit 7 of the attribute of
+. one line of text in a list of lines, and
+. resets it for the other lines.
 E $CA1B View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$BC15 }
 . { #PENTAGRAM$BB64 }
 . LIST#
-R $CA1B A Number of the line to flash
+R $CA1B A The number of the line
 R $CA1B B Number of lines
-R $CA1B HL Address of the attribute of the first line
-  $CA1B,$03 Jump to #R$CA25 unless this is the line to flash.
+R $CA1B HL Address of the attributes
+N $CA1B Flash one line and steady the rest.
+  $CA1B,$03 Jump to #R$CA25 if the line is not
+. the first.
 @ $CA1E label=FlashChosenLine_Flash
-  $CA1E,$04 Turn on flashing for the line, and jump to #R$CA27.
+  $CA1E,$02 Set bit 7 of the attribute.
+  $CA20,$02 Jump to #R$CA27.
 @ $CA22 label=FlashChosenLine_Next
-  $CA22,$03 Count down the lines, and jump to #R$CA1E when the line to flash is
-. reached.
+  $CA22,$03 Jump to #R$CA1E if this is the
+. line.
 @ $CA25 label=FlashChosenLine_NoFlash
-  $CA25,$02 Turn off flashing for the line.
+  $CA25,$02 Reset bit 7 of the attribute.
 @ $CA27 label=FlashChosenLine_Skip
-  $CA27,$03 Move on to the next line, and loop back until all of the lines have
-. been done.
+  $CA27,$01 Move on to the next line.
+  $CA28,$02 Jump to #R$CA22 until all of the
+. lines have been done.
   $CA2A,$01 Return.
 
 c $CA2B Display Menu
@@ -4182,23 +4380,37 @@ E $CA2B View the equivalent code in;
 . #SCR$02(print-menu-lines-before)
 . | #SIM(start=$CA2B,stop=$0000,sp=$5BF0)
 . #SCR$02(print-menu-lines-after) } UDGTABLE# #POPS
-  $CA2B,$03 Point at the attributes of the lines of the menu.
-  $CA2E,$01 Swap to the shadow registers to keep the pointer to the attributes.
-  $CA2F,$08 Point at the positions of the lines and at the text of the lines,
-. and set a counter for eight lines.
+N $CA2B Point at the menu colours,
+. positions and text.
+  $CA2B,$03 Point #REGde at #R$C962.
+  $CA2E,$01 Switch to the shadow registers.
+  $CA2F,$03 Point #REGhl at #R$C96A.
+  $CA32,$03 Point #REGde at #R$C97A.
+  $CA35,$02 Set the number of lines to #N$08.
+N $CA37 Print one line from the three lists.
 @ $CA37 label=DisplayMenu_Loop
-  $CA37,$03 Fetch the position of the line.
-  $CA3A,$04 Keep the pointer to the positions, and put the position of the line
-. into #REGhl.
-  $CA3E,$01 Swap to the shadow registers.
-  $CA3F,$03 Fetch the attribute of the line, and keep it for printing.
-  $CA42,$01 Swap back to the main registers.
-  $CA43,$03 Print the line.
-  $CA46,$03 Get the pointer to the positions back, and loop back until all eight
+  $CA37,$01 Fetch the x position.
+  $CA38,$02 Move on to the next pair of
+. positions.
+  $CA3A,$01 Stash the address of the next pair
+. on the stack.
+  $CA3B,$01 Point #REGhl at the y position.
+  $CA3C,$01 Fetch the y position.
+  $CA3D,$01 Set the x position.
+  $CA3E,$01 Switch to the shadow registers.
+  $CA3F,$01 Fetch the attribute of the line.
+  $CA40,$01 Move on to the next attribute.
+  $CA41,$01 Keep the attribute in #REGaf'.
+  $CA42,$01 Switch back to the main registers.
+  $CA43,$03 Call #R$C9EF.
+  $CA46,$01 Restore the address of the next
+. pair from the stack.
+  $CA47,$02 Jump to #R$CA37 until all of the
 . lines have been printed.
-  $CA49,$05 Return if the frame around the screen has been drawn.
-  $CA4E,$04 Flag that the frame has been drawn.
-  $CA52,$03 Jump to #R$CA9D to draw the frame.
+N $CA49 Draw the frame the first time.
+  $CA49,$05 Return if #R$BBBF is set.
+  $CA4E,$04 Write #N$01 to *#R$BBBF.
+  $CA52,$03 Jump to #R$CA9D.
 
 c $CA55 Draw Playing Area Border
 @ $CA55 label=DrawPlayingAreaBorder
@@ -4209,18 +4421,22 @@ D $CA55 Draws the border around the playing area, in yellow on red.
 . #SIM(start=$BE18,stop=$BE24)
 . #SIM(start=$CA55,stop=$0000,sp=$5BF0)
 . #SCR$02,$05,$00,$1A,$12(playing-area-border) } UDGTABLE# #POPS
-  $CA55,$03 Use yellow ink on red paper (attribute #N$16), and keep it in the
-. shadow #REGaf.
+N $CA55 Set the colour and the font.
+  $CA55,$03 Use yellow ink on red paper (attribute #N$16), and keep it in
+. #REGaf'.
   $CA58,$06 Set the font to the characters of the border.
   $CA5E,$03 Point at the characters of the border.
+N $CA61 Draw the four corners.
   $CA61,$06 Draw the top left corner at #N$4005 (in the screen buffer).
   $CA67,$06 Draw the top right corner at #N$401D (in the screen buffer).
   $CA6D,$06 Draw the bottom left corner at #N$5005 (in the screen buffer).
   $CA73,$06 Draw the bottom right corner at #N$501D (in the screen buffer).
+N $CA79 Draw the top and bottom edges.
   $CA79,$08 Draw the top edge, eleven blocks long, at
 . #N$4007 (in the screen buffer).
   $CA81,$08 Draw the bottom edge, eleven blocks long, at
 . #N$5007 (in the screen buffer).
+N $CA89 Draw the sides.
   $CA89,$04 Point at the characters of the sides.
   $CA8D,$08 Draw the left edge, seven blocks long, at
 . #N$4045 (in the screen buffer).
@@ -4236,18 +4452,22 @@ D $CA9D Draws the frame around the whole screen, in yellow on blue.
 . #SIM(start=$BE18,stop=$BE24)
 . #SIM(start=$CA9D,stop=$0000,sp=$5BF0)
 . #SCR$02(screen-frame) } UDGTABLE# #POPS
+N $CA9D Set the colour and the font.
   $CA9D,$03 Use bright yellow ink on blue paper (attribute #N$4E), and keep it
-. in the shadow #REGaf.
+. in #REGaf'.
   $CAA0,$06 Set the font to the characters of the border.
   $CAA6,$03 Point at the characters of the border.
+N $CAA9 Draw the four corners.
   $CAA9,$06 Draw the top left corner at #N$4000 (in the screen buffer).
   $CAAF,$06 Draw the top right corner at #N$401E (in the screen buffer).
   $CAB5,$06 Draw the bottom left corner at #N$50C0 (in the screen buffer).
   $CABB,$06 Draw the bottom right corner at #N$50DE (in the screen buffer).
+N $CAC1 Draw the top and bottom edges.
   $CAC1,$08 Draw the top edge, fourteen blocks long, at
 . #N$4002 (in the screen buffer).
   $CAC9,$08 Draw the bottom edge, fourteen blocks long, at
 . #N$50C2 (in the screen buffer).
+N $CAD1 Draw the sides.
   $CAD1,$04 Point at the characters of the sides.
   $CAD5,$08 Draw the left edge, ten blocks long, at
 . #N$4040 (in the screen buffer).
@@ -4268,11 +4488,14 @@ R $CAFD A' Attribute
 R $CAFD B Number of blocks
 R $CAFD DE Address of the four characters in a block
 R $CAFD HL Screen address of the first block
-  $CAFD,$02 Keep the number of blocks and the address of the characters.
-  $CAFF,$03 Print a block.
+  $CAFD,$02 Stash the count and the characters on the
+. stack.
+  $CAFF,$03 Call #R$CB3E.
   $CB02,$02 Move on two positions to the right.
-  $CB04,$02 Get the number of blocks and the address of the characters back.
-  $CB06,$02 Loop back until all of the blocks have been drawn.
+  $CB04,$02 Restore the count and the characters from the
+. stack.
+  $CB06,$02 Jump to #R$CAFD until all of the
+. blocks have been drawn.
   $CB08,$01 Return.
 
 c $CB09 Draw Vertical Edge
@@ -4282,17 +4505,24 @@ R $CB09 A' Attribute
 R $CB09 B Number of blocks
 R $CB09 DE Address of the four characters in a block
 R $CB09 HL Screen address of the first block
-  $CB09,$02 Keep the number of blocks and the address of the characters.
-  $CB0B,$03 Print a block.
+  $CB09,$02 Stash the count and the characters on the
+. stack.
+  $CB0B,$03 Call #R$CB3E.
   $CB0E,$06 Move down two rows.
-  $CB14,$02 Get the number of blocks and the address of the characters back.
-  $CB16,$02 Loop back until all of the blocks have been drawn.
+  $CB14,$02 Restore the count and the characters from the
+. stack.
+  $CB16,$02 Jump to #R$CB09 until all of the
+. blocks have been drawn.
   $CB18,$01 Return.
 
 c $CB19 Print Character
 @ $CB19 label=PrintScreen
-D $CB19 Prints a character on the screen, using the font pointed at by #R$BBAC.
-. Both the pixels and the attribute are set.
+D $CB19 Prints a character on the screen, using
+. the font whose address is held in #R$BBAC.
+. A space is drawn as #N($3C), which is blank
+. in this font. The eight rows are written
+. going down the screen, and the address is
+. left at the top of the character.
 .
 . #PUSHS #UDGTABLE { =h After #R$CB19 }
 . { #SIM(start=$BE04,stop=$BE18,sp=$5E00,r=$80,clear=1)
@@ -4312,24 +4542,37 @@ E $CB19 View the equivalent code in;
 . { #TRANZAM$6C96 }
 . { #UNDERWURLDE$98DF }
 . LIST#
-R $CB19 A Character
+R $CB19 A The character
 R $CB19 A' Attribute
-R $CB19 HL Screen address
-  $CB19,$06 Print the blank character #N$3C instead of a space (#N$20).
+R $CB19 HL Screen address of the top row
+R $CB19 O:HL Screen address of the top row
+N $CB19 Turn a space into the font space.
+  $CB19,$04 Jump to #R$CB1F if it is not a space.
+  $CB1D,$02 Use the font space (#N$3C).
+N $CB1F Find the glyph.
 @ $CB1F label=PrintGlyph
-N $CB1F Draws the eight rows of pixels of a character, without setting the
-. attribute.
-  $CB1F,$03 Keep the registers safe.
-  $CB22,$03 Multiply the character code by eight...
-  $CB25,$03 ... to get the distance to the character in the font.
-  $CB28,$06 Add the address of the font to get the address of the character.
-  $CB2E,$01 Get the screen address back.
-  $CB2F,$02 Set a counter for the eight rows of the character.
+  $CB1F,$03 Stash #REGbc, #REGde and the
+. screen address on the stack.
+  $CB22,$03 Set #REGhl to the character.
+  $CB25,$03 Multiply the character by eight.
+N $CB28 Add the font address.
+  $CB28,$04 Fetch #R$BBAC.
+  $CB2C,$01 Add it to get the glyph address.
+  $CB2D,$01 Point #REGde at the glyph.
+  $CB2E,$01 Restore the screen address from the stack.
+N $CB2F Copy eight rows down the screen.
+  $CB2F,$02 Set a counter of #N$08 rows.
 @ $CB31 label=PrintGlyph_Loop
-  $CB31,$06 Copy a row of the character to the screen, and loop back until all
-. eight rows have been drawn.
-  $CB37,$02 Get the registers back.
-  $CB39,$04 Move the screen address back to the top row of the character.
+  $CB31,$01 Fetch a row of the glyph.
+  $CB32,$01 Move on to the next row of the glyph.
+  $CB33,$01 Copy it to the screen.
+  $CB34,$01 Move #REGhl down a row.
+  $CB35,$02 Jump to #R$CB31 until all eight
+. rows have been written.
+N $CB37 Move back to the top of the character.
+  $CB37,$02 Restore #REGde and #REGbc from the
+. stack.
+  $CB39,$04 Move #REGhl back to the top row.
   $CB3D,$01 Return.
 
 c $CB3E Print Character Block
@@ -4340,30 +4583,51 @@ R $CB3E A' Attribute
 R $CB3E DE Address of the four characters
 R $CB3E HL Screen address of the top left character
 R $CB3E O:DE Address after the four characters
-  $CB3E,$01 Keep the screen address.
-  $CB3F,$06 Print the top left character and move to the right.
-  $CB45,$06 Print the top right character and move back to the left.
-  $CB4B,$03 Move down a row.
-  $CB4E,$06 Print the bottom left character and move to the right.
+N $CB3E Print the top row of the block.
+  $CB3E,$01 Stash the screen address on the stack.
+  $CB3F,$06 Print the top left character and move
+. to the right.
+  $CB45,$06 Print the top right character and
+. move back to the left.
+N $CB4B Print the bottom row of the block.
+  $CB4B,$03 Call #R$CB71.
+  $CB4E,$06 Print the bottom left character and
+. move to the right.
   $CB54,$05 Print the bottom right character.
-  $CB59,$02 Get the screen address back and return.
+  $CB59,$01 Restore the screen address from the
+. stack.
+  $CB5A,$01 Return.
 
 c $CB5B Print Character With Attribute
 @ $CB5B label=PrintCharacterWithAttribute
-D $CB5B Prints a character on the screen and sets its attribute.
+D $CB5B Prints a character on the screen and
+. sets its attribute.
 E $CB5B View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$D639 }
 . LIST#
-R $CB5B A Character
+R $CB5B A The character
 R $CB5B A' Attribute
 R $CB5B HL Screen address
-  $CB5B,$03 Print the pixels of the character.
-  $CB5E,$02 Keep the registers safe.
-  $CB60,$07 Turn the screen address into an address in the attribute file.
-  $CB67,$04 Add #N$5800, the start of the attribute buffer.
-  $CB6B,$03 Set the attribute of the character.
-  $CB6E,$03 Get the registers back and return.
+N $CB5B Print the pixels, then the attribute.
+  $CB5B,$03 Call #R$CB19.
+  $CB5E,$02 Stash #REGde and #REGhl on the
+. stack.
+  $CB60,$01 Copy the high byte of the screen
+. address.
+  $CB61,$03 Move it into the attribute file
+. range.
+  $CB64,$02,b$01 Keep bits 0 and 1.
+  $CB66,$01 Set the high byte.
+  $CB67,$03 Set #REGde to #N$5800.
+  $CB6A,$01 Add it to get the attribute
+. address.
+  $CB6B,$01 Switch to #REGaf'.
+  $CB6C,$01 Set the attribute of the character.
+  $CB6D,$01 Switch back.
+  $CB6E,$02 Restore #REGhl and #REGde from the
+. stack.
+  $CB70,$01 Return.
 
 c $CB71 Move Down Row
 @ $CB71 label=MoveDownRow
@@ -4374,18 +4638,20 @@ E $CB71 View the equivalent code in;
 . { #MARTIANOIDS$B6B2 }
 . { #UNDERWURLDE$98D5 }
 . LIST#
-R $CB71 HL Screen address
-R $CB71 O:HL The screen address one character row below
-  $CB71,$05 Move down one character row, and return if that is still within the
-. same third of the screen.
-  $CB76,$05 Otherwise move to the first row of the next third of the screen and
-. return.
+R $CB71 HL The screen address
+R $CB71 O:HL The new screen address
+  $CB71,$04 Add thirty-two to the low byte.
+  $CB75,$01 Return if it has not gone into the
+. next third.
+  $CB76,$04 Add eight to the high byte.
+  $CB7A,$01 Return.
 
 c $CB7B Choose Start Position
 @ $CB7B label=ChooseStartPosition
 D $CB7B Chooses a random cell of the village for the player to start in,
 . avoiding cells that are solid (tiles #N$01 and #N$02), and stores its column
 . and row in the template for the player at #R$CC36.
+N $CB7B Pick a random cell that is not solid.
   $CB7B,$03 Update the random number generator.
   $CB7E,$04 Fetch the random number.
 @ $CB82 label=ChooseStartPosition_Cell
@@ -4395,6 +4661,7 @@ D $CB7B Chooses a random cell of the village for the player to start in,
 . (#N$01 or #N$02).
   $CB90,$03 Otherwise move on to the next cell and try again.
 @ $CB93 label=ChooseStartPosition_Found
+N $CB93 Store the column and the row in the template.
   $CB93,$06 Store the column of the cell in the template for the player.
   $CB99,$0C Shift the place in the map left three times, which moves the row of
 . the cell into the lowest five bits of #REGd.
@@ -4465,7 +4732,9 @@ D $CC1D Draws the icon of a knight that shows a life, which is two blocks of two
 R $CC1D A' Attribute
 R $CC1D DE Address of the characters
 R $CC1D HL Screen address
-  $CC1D,$02 Keep the address of the characters and the screen address.
+N $CC1D Draw the top block, then the bottom block.
+  $CC1D,$02 Stash the address of the characters and the screen address on the
+. stack.
   $CC1F,$03 Draw the top block.
   $CC22,$06 Move down two rows.
   $CC28,$03 Draw the bottom block.
@@ -4532,7 +4801,7 @@ N $CCAA All four monsters have been killed. Set up the ending.
   $CCD6,$03 Clear the screen.
   $CCD9,$05 Flag that the game has been finished.
   $CCDE,$03 Clear the playing area.
-  $CCE1,$03 Jump back to the main loop to show the ending.
+  $CCE1,$03 Jump to #R$BE71 to show the ending.
 
 b $CCE4 Ending Pieces
 @ $CCE4 label=EndingPieces
@@ -4555,8 +4824,9 @@ D $CD02 Removes every object by setting the types of all #N$17 objects to zero.
 
 c $CD10 Update Logo Piece
 @ $CD10 label=UpdateLogoPiece
-D $CD10 The routine for objects of type #N$98 to #N$9D, the pieces of the title
-. graphic that are shown during the ending. Each piece stays where it was
+D $CD10 The routine for objects of type #N$98 to #N($9D), the
+. pieces of the title graphic that are shown during the
+. ending. Each piece stays where it was
 . placed. It is drawn, and its attributes are set to bright white.
 .
 . The large piece (type #N$98) is the last piece in the object table, and waits
@@ -4588,8 +4858,9 @@ N $CD1B Draw the piece, and set its attributes.
   $CD2A,$06 Fetch the screen position of the sprite.
   $CD30,$03 Turn the position into an address in the attribute buffer.
   $CD33,$04 Fetch the number of rows of the sprite that were drawn.
-  $CD37,$08 Add the position of the sprite within a character cell and #N$05, to
-. get the height of the sprite in pixels.
+  $CD37,$08 Add the position of the sprite within a
+. character cell and #N($05), to get the height of the
+. sprite in pixels.
   $CD3F,$06 Divide by eight to get the height in characters.
   $CD45,$04 Fetch the width of the sprite in characters.
   $CD49,$03 Fetch the attribute.
@@ -4600,10 +4871,11 @@ N $CD4F The ending is over.
 
 c $CD58 Update Ending Ghost
 @ $CD58 label=UpdateEndingGhost
-D $CD58 The routine for objects of type #N$90 to #N$97, the ghosts that are
+D $CD58 The routine for objects of type #N$90 to #N($97), the ghosts that are
 . shown during the ending. A ghost moves sideways towards the large piece of the
 . title graphic, and then drops down the screen and goes away. It does not start
 . until the ghost before it has gone.
+N $CD58 Wait for the previous ghost, then move sideways.
   $CD58,$08 Flip the sprite of the ghost to its other frame.
   $CD60,$08 Return if the object before this one is a ghost that is still there.
   $CD68,$03 Play a tone that falls in pitch each time.
@@ -4612,10 +4884,12 @@ D $CD58 The routine for objects of type #N$90 to #N$97, the ghosts that are
   $CD73,$03 Jump to #R$CD8A if the ghost has arrived.
   $CD76,$06 Move the ghost sideways by that amount.
 @ $CD7C label=UpdateEndingGhost_Draw
+N $CD7C Draw the ghost.
   $CD7C,$0B Set the colour of the ghost from its sprite
 . (bright red, magenta, green or cyan).
   $CD87,$03 Draw the ghost.
 @ $CD8A label=UpdateEndingGhost_Drop
+N $CD8A Drop the ghost down the screen.
   $CD8A,$0C Move the ghost down the screen by four pixels, and jump to #R$CD7C
 . to draw it unless it has reached the bottom.
   $CD96,$08 Stop the falling tone and remove the ghost.
@@ -4672,7 +4946,7 @@ D $CDE8 Starts a ball (a type #N$80 object, which turns into a creature - see
   $CE08,$01 Return, as there is no free object.
 @ $CE09 label=SpawnBall_Found
   $CE09,$03 Point at the template for a ball.
-  $CE0C,$03 Point at the free object.
+  $CE0C,$03 Point #REGde at the free object (using the stack).
   $CE0F,$05 Copy the template into the object.
 N $CE14 Choose the cell for the ball: the player's cell, with the column and row
 . each moved by one cell, or not moved, using the random seeds.
@@ -4704,31 +4978,32 @@ N $CE4F Choose the position of the ball within the cell using the random seeds.
 . #N$C0.
   $CE59,$02 Bring the number into the range #N$80 to #N$BF.
 @ $CE5B label=SpawnBall_X
-  $CE5B,$05 Add #N$20 to get a position within the cell from #N$20 to #N$DF, and
-. set it as the X position of the ball.
+  $CE5B,$05 Add #N$20 to get a position within the cell from
+. #N$20 to #N($DF), and set it as the X position of the ball.
   $CE60,$07 Fetch the second random number and jump to #R$CE69 if it is less
 . than #N$C0.
   $CE67,$02 Bring the number into the range #N$80 to #N$BF.
 @ $CE69 label=SpawnBall_Y
-  $CE69,$05 Add #N$20 to get a position within the cell from #N$20 to #N$DF, and
-. set it as the Y position of the ball.
+  $CE69,$05 Add #N$20 to get a position within the cell from
+. #N$20 to #N($DF), and set it as the Y position of the ball.
   $CE6E,$06 Return if the frame counter is #N$80 or more.
   $CE74,$05 Set the flag that makes the ball chase the player, and return.
 
 b $CE79 Ball Template
 @ $CE79 label=BallTemplate
 D $CE79 The initial state of a ball, copied into the object table by #R$CDE8
-. (see #R$BC8E for the fields). The type is #N$80, the speed is #N$06 and the
+. (see #R$BC8E for the fields). The type is #N($80), the speed is #N$06 and the
 . size is #N$10 by #N$10.
 B $CE79,$10,$10
 
 c $CE89 Update Spore
 @ $CE89 label=UpdateSpore
-D $CE89 The routine for objects of type #N$40 to #N$4F, the spores. A spore
+D $CE89 The routine for objects of type #N$40 to #N($4F), the spores. A spore
 . wanders about at random, and vanishes when the player is more than three cells
 . away. If a shot hits it, both the spore and the shot burst. If the player
 . touches it, the spore bursts and the player is hurt. Either way, #N$05 hundred
 . points are added to the score.
+N $CE89 Wander, then flip the sprite if the view is turned.
   $CE89,$02 Use #N$07 as the number of random bits for the velocity.
   $CE8B,$03 Choose a new random velocity when the timer has run out.
   $CE8E,$03 Make the spore face the way that it is moving.
@@ -4736,6 +5011,7 @@ D $CE89 The routine for objects of type #N$40 to #N$4F, the spores. A spore
   $CE94,$03 Animate the spore.
   $CE97,$08 Check whether the view is turned round, to flip the sprite to match.
   $CE9F,$09 Set or clear the flip flag of the spore.
+N $CEA8 Vanish, burst, or hurt the player.
   $CEA8,$05 Set the distance to #N$03 cells and check whether the spore is that
 . close to the player.
   $CEAD,$02 Jump to #R$CEF3 to remove the spore if it is further away.
@@ -4762,10 +5038,12 @@ c $CEC4 Kill Player
 D $CEC4 Kills the player by turning both of the player's objects into bursts.
 . The position and the direction of the player are kept in the template at
 . #R$CC36 so that the next life starts in the same place.
+N $CEC4 Keep the place of the player for the next life.
   $CEC4,$06 Keep the column of the player in the template for the next life.
   $CECA,$06 Keep the row of the player in the template.
   $CED0,$06 Keep the direction and timer of the player in the template.
   $CED6,$06 Keep the flags of the player in the template.
+N $CEDC Turn both of the player's objects into bursts.
   $CEDC,$08 Turn both of the player's objects into bursts.
   $CEE4,$01 Return.
 
@@ -4893,100 +5171,152 @@ N $CFAA Draw only the objects in the cell.
 
 c $CFAF Find Objects In Cell
 @ $CFAF label=FindObjectsInCell
-D $CFAF Makes a list of the objects that are in a cell, at #R$D15D, ending with
-. a zero word.
+D $CFAF Makes a list at #R$D15D of the addresses of all of the objects which are
+. in a cell. The list ends with a zero word.
 E $CFAF View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$C1A4 }
 . LIST#
-R $CFAF H Row in the view
-R $CFAF L Column in the view
-  $CFAF,$08 Point #REGiy at the list and #REGix at the first object.
-  $CFB7,$04 Turn the cell into the column and the row on the map.
+R $CFAF HL The cell: the column in #REGl and the row in #REGh
+N $CFAF Point at the list and the first object slot.
+  $CFAF,$04 Point #REGiy at #R$D15D.
+  $CFB3,$04 Point #REGix at #R$BC8E.
+N $CFB7 Turn the cell round if the view is rotated.
+  $CFB7,$03 Call #R$D17D.
+  $CFBA,$01 Keep the column in #REGe and the row in #REGd.
 @ $CFBB label=FindObjectsInCell_Loop
+N $CFBB Look at this slot.
   $CFBB,$06 Jump to #R$CFDA to move on if the object is free.
   $CFC1,$06 Jump to #R$CFDA to move on if the object is not in the column.
   $CFC7,$06 Jump to #R$CFDA to move on if the object is not in the row.
-  $CFCD,$03 Get the address of the object.
+  $CFCD,$03 Copy the address of the object into #REGhl (using the stack).
   $CFD0,$06 Add the address of the object to the list.
   $CFD6,$04 Move on to the next place in the list.
+N $CFDA Move on to the next object.
 @ $CFDA label=FindObjectsInCell_Next
-  $CFDA,$05 Move on to the next object.
-  $CFDF,$03 Get the address of the object.
+  $CFDA,$05 Move on to the next object slot.
+  $CFDF,$03 Copy the address of the object to #REGhl (using the stack).
+N $CFE2 See whether every slot has been looked at.
   $CFE2,$06 Check whether the end of the object table at #R$BDFE has been
 . reached.
+N $CFE8 Go back for the next slot.
   $CFE8,$02 Loop back until all #N$17 objects have been checked.
-  $CFEA,$07 Add the zero word that marks the end of the list.
+N $CFEA End the list.
+  $CFEA,$07 Write a zero word to the end of the list.
   $CFF1,$01 Return.
 
 c $CFF2 Draw Objects In List
 @ $CFF2 label=DrawObjectsInList
-D $CFF2 Draws the objects in the list at #R$D15D, from the furthest away to the
-. nearest. It repeatedly finds the object that has no other object behind it,
-. draws it, and then marks it as drawn by clearing bit 7 of the high byte of its
-. entry in the list.
+D $CFF2 Draws the objects in the list at #R$D15D, which are the objects in one
+. cell. The objects are drawn so that the ones further from the viewer come
+. first. Each time it takes the first object in the list which has not been
+. drawn, compares it with each of the rest, and swaps it for any object which
+. should be drawn before it. It then draws the object it is left with, and marks
+. it as drawn by clearing bit 7 of the high byte of its address in the list.
 E $CFF2 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$C1E7 }
 . LIST#
-  $CFF2,$03 Point at the list.
+N $CFF2 Find the first object in the list which has not been drawn.
+  $CFF2,$03 Point #REGhl at #R$D15D.
 @ $CFF5 label=DrawObjectsInList_Next
-  $CFF5,$04 Fetch the next entry in the list.
-  $CFF9,$03 Return if it is the zero word that marks the end of the list.
+  $CFF5,$04 Fetch the address of the next object into #REGde.
+  $CFF9,$03 Return if this is the end of the list.
   $CFFC,$04 Skip the entry if the object has been drawn already.
-  $D000,$06 Keep the place in the list, and point #REGix at the object.
-N $D006 Compare the object at #REGix with each of the objects after it, and make
-. the object that must be drawn first the one at #REGix.
+N $D000 Remember where the next place in the list is.
+  $D000,$03 Set #R$BBC4.
+  $D003,$03 Copy the address of the object into #REGix (using the stack).
+N $D006 Compare this object with each of the others which have not been drawn.
 @ $D006 label=DrawObjectsInList_Compare
-  $D006,$04 Fetch the next entry in the list.
+  $D006,$04 Fetch the address of the next object into #REGde.
+N $D00A Draw the first object if this is the end of the list.
   $D00A,$05 Jump to #R$D094 to draw the object if it is the zero word that marks
 . the end of the list.
   $D00F,$04 Skip the entry if the object has been drawn already.
-  $D013,$06 Keep the place in the list, and point #REGiy at the object.
-  $D019,$02 Start with a relation of zero.
-N $D01B Compare the extents of the two objects along the X axis. The relation in
-. #REGc becomes 0 if the object at #REGix is wholly beyond the object at #REGiy,
-. 1 if they overlap and 2 if it is wholly before it.
-  $D01B,$0A Work out the largest extent of the object at #REGiy.
-  $D025,$0A Work out the smallest extent of the object at #REGix, and subtract
-. the largest extent of the object at #REGiy.
-  $D02F,$02 Jump to #R$D049 if the object at #REGix is wholly beyond it.
-  $D031,$0A Work out the largest extent of the object at #REGix.
-  $D03B,$0A Work out the smallest extent of the object at #REGiy, and subtract
-. the largest extent of the object at #REGix.
-  $D045,$02 Jump to #R$D048 if they overlap.
-  $D047,$01 Add one to the relation...
+N $D013 Remember where the next place in the list is.
+  $D013,$03 Set #R$BBC6.
+  $D016,$03 Copy the address of the object into #REGiy (using the stack).
+  $D019,$02 Clear the number which says how the objects compare.
+N $D01B Compare the objects from side to side. The number in #REGc stays at zero
+. if the first object starts after the second ends, becomes two if the second
+. starts after the first ends, and becomes one if they overlap.
+  $D01B,$06 Fetch the horizontal position of the second object and add its
+. horizontal size.
+  $D021,$04 Halve it, add #N$40 and keep the result in #REGb.
+N $D025 Work out the smallest extent of the object at #REGix, and subtract the
+. largest extent of the object at #REGiy.
+  $D025,$06 Fetch the horizontal position of the first object and subtract its
+. horizontal size.
+  $D02B,$03 Halve it and add #N$40.
+  $D02E,$03 Jump to #R$D049 if the first object starts after the second ends.
+N $D031 Work out the largest extent of the object at #REGix.
+  $D031,$06 Fetch the horizontal position of the first object and add its
+. horizontal size.
+  $D037,$04 Halve it, add #N$40 and keep the result in #REGb.
+N $D03B Work out the smallest extent of the object at #REGiy, and subtract the
+. largest extent of the object at #REGix.
+  $D03B,$06 Fetch the horizontal position of the second object and subtract its
+. horizontal size.
+  $D041,$03 Halve it and add #N$40.
+  $D044,$03 Jump to #R$D048 if the second object starts before the first ends.
+  $D047,$01 Add one.
 @ $D048 label=DrawObjectsInList_Overlap
-  $D048,$01 ... and add one to the relation.
-N $D049 Compare the extents along the Y axis in the same way, adding 0, 3 or 6
-. to the relation.
+  $D048,$01 Add one more.
+N $D049 Compare the objects from front to back in the same way. This time the
+. number in #REGc has zero, three or six added to it.
 @ $D049 label=DrawObjectsInList_Y
-  $D049,$0A Work out the largest extent of the object at #REGiy.
-  $D053,$0A Work out the smallest extent of the object at #REGix, and subtract
-. the largest extent of the object at #REGiy.
-  $D05D,$01 Fetch the relation.
+  $D049,$06 Fetch the vertical position of the second object and add its
+. vertical size.
+  $D04F,$04 Halve it, add #N$40 and keep the result in #REGb.
+N $D053 Work out the smallest extent of the object at #REGix, and subtract the
+. largest extent of the object at #REGiy.
+  $D053,$06 Fetch the vertical position of the first object and subtract its
+. vertical size.
+  $D059,$03 Halve it and add #N$40.
+  $D05C,$01 Subtract the end of the second object.
+  $D05D,$01 Fetch the number.
   $D05E,$02 Jump to #R$D07B if the object at #REGix is wholly beyond it.
-  $D060,$0A Work out the largest extent of the object at #REGix.
-  $D06A,$0A Work out the smallest extent of the object at #REGiy, and subtract
-. the largest extent of the object at #REGix.
-  $D074,$01 Fetch the relation.
+N $D060 Work out the largest extent of the object at #REGix.
+  $D060,$06 Fetch the vertical position of the first object and add its vertical
+. size.
+  $D066,$04 Halve it, add #N$40 and keep the result in #REGb.
+N $D06A Work out the smallest extent of the object at #REGiy, and subtract the
+. largest extent of the object at #REGix.
+  $D06A,$06 Fetch the vertical position of the second object and subtract its
+. vertical size.
+  $D070,$03 Halve it and add #N$40.
+  $D073,$01 Subtract the end of the first object.
+  $D074,$01 Fetch the number.
   $D075,$02 Jump to #R$D079 if they overlap.
-  $D077,$02 Add three to the relation...
+  $D077,$02 Add three.
 @ $D079 label=DrawObjectsInList_YOverlap
-  $D079,$02 ... and add three more to the relation.
+  $D079,$02 Add three more.
 @ $D07B label=DrawObjectsInList_Relation
-  $D07B,$01 Keep the relation.
-  $D07C,$07 Fetch the flag that tells whether the view is turned round.
-  $D083,$04 Add nine to the relation if it is.
-@ $D087 label=DrawObjectsInList_Choose
-  $D087,$07 Run the routine in the table at #R$D0A0 for the relation, which does
+  $D07B,$01 Keep the number in #REGc.
+N $D07C Fetch the rotation of the view.
+  $D07C,$03 Fetch #R$BBBA.
+  $D07F,$02,b$01 Test the lowest bit.
+  $D081,$02 Jump to #R$D087 if the view is not rotated.
+  $D083,$04 Add #N$09 to the number, to use the second half of the table.
+N $D087 Run the routine in the table at #R$D0A0 for the relation, which does
 . nothing if the object at #REGix is to be drawn first, and otherwise makes the
 . object at #REGiy the object at #REGix (see #R$D0C5), or compares them further.
-  $D08E,$06 Get the place in the list back, and loop back to compare with the
-. next entry.
+@ $D087 label=DrawObjectsInList_Choose
+  $D087,$01 Fetch the number.
+  $D088,$03 Point #REGbc at #R$D0A0.
+N $D08B Run the routine for the number.
+  $D08B,$03 Call #R$D593.
+N $D08E Fetch the place in the list after the second object.
+  $D08E,$03 Fetch #R$BBC6.
+N $D091 Go back to compare the next object.
+  $D091,$03 Jump to #R$D006.
+N $D094 There are no more objects to compare with, so the first object is the
+. one to draw. Mark it as drawn, using the place kept at #R$BBC4.
 @ $D094 label=DrawObjectsInList_Draw
   $D094,$06 Mark the entry for the object at #REGix as drawn.
+N $D09A Draw the object.
   $D09A,$03 Draw the object.
+N $D09D Go back to find the next object to draw.
   $D09D,$03 Go back to draw the objects that are left in the list.
 
 w $D0A0 Object Order Table
@@ -5015,7 +5345,7 @@ E $D0C5 View the equivalent code in;
 R $D0C5 IY Object
 R $D0C5 O:IX Object
   $D0C5,$06 Make the place in the list the place of the object at #REGiy.
-  $D0CB,$04 Make that object the one to draw first.
+  $D0CB,$04 Make that object the one to draw first (using the stack).
   $D0CF,$01 Return.
 
 c $D0D0 Compare Object Depths
@@ -5024,50 +5354,67 @@ D $D0D0 Decides which of two objects that overlap along both axes is drawn
 . first, by working out a value for each from the corners of the object, in
 . units of half a cell, that measures how far it is along the diagonal of the
 . view. The object at #REGix is kept if its value is not less than that of the
-. object at #REGiy, otherwise the object at #REGiy is chosen.
+. object at #REGiy, otherwise the object at #REGiy is chosen. The edges which it
+. uses are different when the view is rotated.
 E $D0D0 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$C2C5 }
 . LIST#
-R $D0D0 IX First object
-R $D0D0 IY Second object
-R $D0D0 O:IX The object to draw first
-  $D0D0,$07 Jump to #R$D125 if the view is turned round.
-  $D0D7,$0A Work out the largest X extent of the object at #REGiy.
-  $D0E1,$02 Clear the high byte of the extent.
-  $D0E3,$0A Work out the smallest Y extent of the object at #REGiy.
-  $D0ED,$02 Clear the high byte of the extent.
+R $D0D0 IX The address of the first object
+R $D0D0 IY The address of the second object
+N $D0D0 Jump to #R$D125 if the view is turned round.
+  $D0D0,$03 Fetch the rotation of the view.
+  $D0D3,$02,b$01 Test the lowest bit.
+  $D0D5,$02 Jump if the view is rotated.
+N $D0D7 Find the number for the second object, in #REGde.
+  $D0D7,$09 Fetch the horizontal position, add the horizontal size, halve it and
+. add #N$40.
+  $D0E0,$03 Keep it in #REGbc.
+N $D0E3 Work out the smallest Y extent of the object at #REGiy.
+  $D0E3,$09 Fetch the vertical position, subtract the vertical size, halve it
+. and add #N$40.
+  $D0EC,$03 Make the top edge a sixteen bit number in #REGhl.
   $D0EF,$03 Subtract the X extent from the Y extent, to measure how far along
 . the diagonal of the view the object is.
-  $D0F2,$04 Add #N$0100 to keep the result positive.
-  $D0F6,$04 Halve it.
+  $D0F2,$04 Add #N$0100.
+  $D0F6,$04 Divide the result by two...
   $D0FA,$01 Keep the result for the object at #REGiy.
-  $D0FB,$0A Work out the largest X extent of the object at #REGix.
-  $D105,$02 Clear the high byte of the extent.
+N $D0FB Find the number for the first object, in #REGhl, in the same way.
+  $D0FB,$09 Fetch the horizontal position, add the horizontal size, halve it and
+. add #N$40.
+  $D104,$03 Keep it in #REGbc.
   $D107,$06 Fetch the smallest Y extent of the object at #REGix.
 @ $D10D label=CompareObjectDepths_Second
-  $D10D,$04 Convert it into the same units.
-  $D111,$02 Clear the high byte of the extent.
-  $D113,$03 Subtract the X extent from the Y extent.
-  $D116,$04 Add #N$0100 to keep the result positive.
-  $D11A,$04 Halve it.
+  $D10D,$03 Halve it and add #N$40.
+  $D110,$03 Make the top edge a sixteen bit number in #REGhl.
+  $D113,$03 Subtract the horizontal edge.
+  $D116,$04 Add #N$0100.
+  $D11A,$04 Divide the result by two.
   $D11E,$03 Subtract the result for the object at #REGiy.
   $D121,$01 Return if the value for the object at #REGix is not less, which
 . keeps it as the one to draw first.
   $D122,$03 Choose the object at #REGiy instead.
+N $D125 Find the numbers when the view is rotated. The number for the first
+. object goes in #REGde...
 @ $D125 label=CompareObjectDepths_Rotated
-N $D125 The view is rotated, so the other corners of the objects are compared.
-  $D125,$0A Work out the smallest X extent of the object at #REGix.
-  $D12F,$02 Clear the high byte of the extent.
-  $D131,$0A Work out the largest Y extent of the object at #REGix.
-  $D13B,$02 Clear the high byte of the extent.
-  $D13D,$03 Subtract the X extent from the Y extent.
-  $D140,$04 Add #N$0100 to keep the result positive.
-  $D144,$04 Halve it.
+  $D125,$09 Fetch the horizontal position, subtract the horizontal size, halve
+. it and add #N$40.
+  $D12E,$03 Keep it in #REGbc.
+N $D131 Work out the largest Y extent of the object at #REGix.
+  $D131,$09 Fetch the vertical position, add the vertical size, halve it and add
+. #N$40.
+  $D13A,$03 Make the lower edge a sixteen bit number in #REGhl.
+  $D13D,$03 Subtract the horizontal edge.
+  $D140,$04 Add #N$0100.
+  $D144,$04 Divide the result by two...
   $D148,$01 Keep the result for the object at #REGix.
-  $D149,$0A Work out the smallest X extent of the object at #REGiy.
-  $D153,$02 Clear the high byte of the extent.
+N $D149 ...and the number for the second object is found in #REGhl by the end of
+. the routine above.
+  $D149,$09 Fetch the horizontal position, subtract the horizontal size, halve
+. it and add #N$40.
+  $D152,$03 Keep it in #REGbc.
   $D155,$06 Fetch the largest Y extent of the object at #REGiy.
+N $D15B Go to find the number.
   $D15B,$02 Jump to #R$D10D to compare the results.
 
 s $D15D Object List
@@ -5121,38 +5468,60 @@ E $D19D View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$C392 }
 . LIST#
-R $D19D H Row in the view
-R $D19D L Column in the view
-  $D19D,$04 Find the tile of the cell, and return if the cell is empty.
-  $D1A1,$02 Double the tile to give the number of its first list, and keep it.
+R $D19D L The column
+R $D19D H The row
+N $D19D Find the code of the cell.
+  $D19D,$03 Call #R$D564.
+  $D1A0,$01 Return if there is nothing in the cell.
+N $D1A1 Double the code to make the number of its first list.
+  $D1A1,$01 Double the code.
+  $D1A2,$01 Stash it on the stack.
+N $D1A3 Find the position of the cell on the screen.
   $D1A3,$03 Work out the position of the cell on the screen.
   $D1A6,$02 Get the number of the list back, and keep it again.
+N $D1A8 Draw the second list at the bottom when the view is rotated.
   $D1A8,$07 Jump to #R$D1F2 if the view is turned round.
-  $D1AF,$03 Draw the first list from left to right.
-  $D1B2,$03 Get the number of the list back and make it the number of the second
+N $D1AF Draw the edges at the bottom.
+  $D1AF,$03 Call #R$D1FA.
+N $D1B2 Get the number of the list back and make it the number of the second
 . list.
+  $D1B2,$01 Restore the list number from the stack.
+  $D1B3,$02,b$01 Use the second list.
+N $D1B5 Draw the edges at the top, starting from the right corner of the cell.
 @ $D1B5 label=DrawCell_RightToLeft
-N $D1B5 Draw a list of strips from right to left, starting with the last strip
-. that was drawn.
   $D1B5,$0A Move the position back to the last strip that was drawn.
-  $D1BF,$06 Find the list of strips.
-  $D1C5,$03 Use the list of strips.
-  $D1C8,$04 Clear the flag for the strips to be mirrored.
-  $D1CC,$03 Set a counter for eight strips, and the variant of the strips.
+  $D1BF,$03 Point #REGbc at #R$62A4.
+N $D1C2 Find the address of the list.
+  $D1C2,$03 Call #R$D589.
+  $D1C5,$03 Copy the list address to #REGiy (using the stack).
+N $D1C8 Draw tiles as they are.
+  $D1C8,$04 Write #N$00 to *#R$BBF2.
+  $D1CC,$03 Set a count of eight tiles, and swap each for its pair.
+N $D1CF Draw eight tiles going up and to the left.
 @ $D1CF label=DrawCell_Down
-  $D1CF,$08 Draw a strip and step down and to the left, until eight strips have
-. been drawn.
+  $D1CF,$03 Call #R$D273.
+  $D1D2,$03 Call #R$D255.
+  $D1D5,$02 Jump to #R$D1CF if there are any left.
+N $D1D7 Move down by eight pixels to start the second run.
   $D1D7,$0A Move the position of the strips up one step.
-  $D1E1,$05 Set the flag for the strips to be mirrored.
-  $D1E6,$03 Set a counter for eight strips, and the variant of the strips.
+N $D1E1 Draw the rest of the tiles flipped.
+  $D1E1,$05 Write #N$01 to *#R$BBF2.
+  $D1E6,$03 Set a count of eight tiles, and swap each for its pair.
+N $D1E9 Draw eight tiles going down and to the left.
 @ $D1E9 label=DrawCell_Up
-  $D1E9,$08 Draw a strip and step up and to the left, until eight more strips
-. have been drawn.
+  $D1E9,$03 Call #R$D273.
+  $D1EC,$03 Call #R$D26E.
+  $D1EF,$02 Jump to #R$D1E9 if there are any left.
   $D1F1,$01 Return.
+N $D1F2 The view is rotated, so draw the second list at the bottom and the first
+. at the top.
 @ $D1F2 label=DrawCell_Rotated
-N $D1F2 The view is rotated, so draw the lists in the opposite order.
-  $D1F2,$08 Draw the second list from left to right and then the first list from
-. right to left.
+  $D1F2,$02,b$01 Use the second list.
+N $D1F4 Draw the edges at the bottom.
+  $D1F4,$03 Call #R$D1FA.
+  $D1F7,$01 Restore the list number from the stack.
+N $D1F8 Draw the edges at the top.
+  $D1F8,$02 Jump to #R$D1B5.
 
 c $D1FA Draw Strips Left To Right
 @ $D1FA label=DrawStripsLeftToRight
@@ -5163,20 +5532,29 @@ E $D1FA View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$C3EF }
 . LIST#
-R $D1FA A Number of the list
-  $D1FA,$06 Find the list of strips.
-  $D200,$03 Use the list of strips.
-  $D203,$04 Clear the flag for the strips to be mirrored.
-  $D207,$03 Set a counter for eight strips, and the variant of the strips.
+R $D1FA A The number of the list in the table at #R$62A4
+N $D1FA Find the address of the list.
+  $D1FA,$03 Point #REGbc at #R$62A4.
+  $D1FD,$03 Call #R$D589.
+  $D200,$03 Copy the list address to #REGiy (using the stack).
+N $D203 Draw tiles as they are.
+  $D203,$04 Write #N$00 to *#R$BBF2.
+  $D207,$03 Set a count of eight tiles, without swapping any.
+N $D20A Draw eight tiles going up and to the right.
 @ $D20A label=DrawStripsLeftToRight_Up
-  $D20A,$08 Draw a strip and step up and to the right, until eight strips have
-. been drawn.
+  $D20A,$03 Call #R$D273.
+  $D20D,$03 Call #R$D24B.
+  $D210,$02 Jump to #R$D20A if there are any left.
+N $D212 Move down by eight pixels to start the second run.
   $D212,$0A Move the position of the strips down one step.
-  $D21C,$05 Set the flag for the strips to be mirrored.
-  $D221,$03 Set a counter for eight strips, and the variant of the strips.
+N $D21C Draw the rest of the tiles flipped.
+  $D21C,$05 Write #N$01 to *#R$BBF2.
+  $D221,$03 Set a count of eight tiles, without swapping any.
+N $D224 Draw eight tiles going down and to the right.
 @ $D224 label=DrawStripsLeftToRight_Down
-  $D224,$08 Draw a strip and step down and to the right, until eight more strips
-. have been drawn.
+  $D224,$03 Call #R$D273.
+  $D227,$03 Call #R$D232.
+  $D22A,$02 Jump to #R$D224 if there are any left.
   $D22C,$01 Return.
 
 c $D22D Step Down Right
@@ -5245,19 +5623,29 @@ E $D273 View the equivalent code in;
 . LIST#
 R $D273 C Variant of the strip (0 or 1)
 R $D273 IY Entry in the list of strips
-  $D273,$0B Return if the X position of the strip is more than #N$CF, which is
-. off the right of the view.
-  $D27E,$06 Return if the X position of the strip is #N$10 or less, which is off
-. the left of the view.
-  $D284,$06 Return if the Y position of the strip is outside the range #N$00 to
-. #N$FF.
-  $D28A,$03 Use the Y position of the strip, and keep the variant of the strip.
-  $D28D,$05 Fetch the number of the strip.
-  $D292,$05 Combine the variant with the entry for the strip in the table at
+N $D273 Return if the tile is outside the play area horizontally.
+  $D273,$04 Fetch #R$BBB6 into #REGde.
+  $D277,$07 Return if it is further to the right than #N$00CF.
+  $D27E,$06 Return if it is not further to the right than #N$0010.
+N $D284 Return if the tile is off the screen vertically.
+  $D284,$03 Fetch #R$BBB8.
+  $D287,$03 Return if the high byte is not zero.
+N $D28A Fetch the tile and find its image.
+  $D28A,$01 Keep the low byte of the vertical position in #REGd.
+  $D28B,$01 Fetch the swap flag.
+  $D28C,$01 Stash the count of tiles on the stack.
+  $D28D,$05 Fetch the tile number into #REGbc.
+N $D292 Combine the variant with the entry for the strip in the table at
 . #R$6542.
-  $D297,$06 Find the graphic for the strip.
+  $D292,$04 Find the entry for the tile in #R$6542.
+  $D296,$01 Combine it with the swap flag, to make the number of the image.
+N $D297 Find the address of the image.
+  $D297,$03 Point #REGbc at #R$6FDC.
+  $D29A,$03 Call #R$D589.
+N $D29D Draw the image.
   $D29D,$03 Draw the graphic.
-  $D2A0,$02 Get the variant back, and return.
+  $D2A0,$01 Restore the count of tiles from the stack.
+  $D2A1,$01 Return.
 
 c $D2A2 Clip Edge Strip Top
 @ $D2A2 label=ClipEdgeStripTop
@@ -5537,9 +5925,9 @@ N $D3E8 Draw the lower strip and colour the column.
   $D3EF,$01 Keep the low byte of the vertical position in #REGd.
   $D3F0,$02 Stash the count of steps and the position on the stack.
   $D3F2,$03 Call #R$D425.
-  $D3F5,$02 Restore the position and stash it again.
+  $D3F5,$02 Restore the position from the stack and stash it again.
   $D3F7,$03 Call #R$D356.
-  $D3FA,$01 Restore the position.
+  $D3FA,$01 Restore the position from the stack.
   $D3FB,$02 Move on to the next strip of the list.
 N $D3FD Draw the upper strip.
   $D3FD,$03 Fetch #R$BBB8.
@@ -5550,7 +5938,7 @@ N $D3FD Draw the upper strip.
   $D409,$03 Call #R$D425.
 N $D40C Restore the count and move on.
 @ $D40C label=DrawWallStrips_Done
-  $D40C,$01 Restore the count of steps.
+  $D40C,$01 Restore the count of steps from the stack.
   $D40D,$02 Move on to the next strip of the list.
   $D40F,$01 Return.
 N $D410 There is nothing to draw, so skip both of the strips.
@@ -5932,9 +6320,11 @@ D $D6D6 Creates four fragments (objects of type #N$8C) at the position of an
 . object, in the four objects from #R$BCCE. Each fragment flies off in a
 . different direction.
 R $D6D6 IY Object
+N $D6D6 Create four fragments at the object's position.
   $D6D6,$05 Point #REGhl at the first fragment, and set a counter for four
 . fragments.
 @ $D6DB label=CreateFragments_Loop
+N $D6DB Copy the position and send this fragment on its way.
   $D6DB,$03 Set the type of the fragment.
   $D6DE,$06 Point #REGde at the position of the object, and set a counter for
 . four bytes.
@@ -5956,7 +6346,7 @@ R $D6D6 IY Object
 
 c $D70A Update Fragment
 @ $D70A label=UpdateFragment
-D $D70A The routine for objects of type #N$8C to #N$8F, the fragments that fly
+D $D70A The routine for objects of type #N$8C to #N($8F), the fragments that fly
 . out of a monster that has been destroyed. A fragment moves in a straight line,
 . and turns into a burst when it hits something.
   $D70A,$04 Clear the flag that shows that the fragment has been drawn.
@@ -5969,15 +6359,18 @@ D $D70A The routine for objects of type #N$8C to #N$8F, the fragments that fly
 
 c $D727 Update Speed Bonus
 @ $D727 label=UpdateSpeedBonus
-D $D727 The routine for objects of type #N$02, the bonuses that make the player
-. move faster. A bonus vanishes when the player is more than four cells away.
+D $D727 The routine for objects of type #N($02), the bonuses
+. that make the player move faster. A bonus vanishes when
+. the player is more than four cells away.
 . When the player touches it, the bonus turns into a burst and the player's
 . speed is raised for #N$FF frames.
+N $D727 Vanish if the player is too far away.
   $D727,$05 Set the distance to #N$04 cells and check whether the bonus is that
 . close to the player.
   $D72C,$02 Jump to #R$D733 if it is.
   $D72E,$05 Remove the bonus, because the player is too far away, and return.
 @ $D733 label=UpdateSpeedBonus_Close
+N $D733 Raise the player's speed when the bonus is touched.
   $D733,$04 Return if the bonus is not touching the player.
   $D737,$04 Turn the bonus into a burst.
   $D73B,$05 Make the speed bonus last for #N$FF frames.
@@ -5988,15 +6381,17 @@ D $D727 The routine for objects of type #N$02, the bonuses that make the player
 
 c $D74C Update Health Bonus
 @ $D74C label=UpdateHealthBonus
-D $D74C The routine for objects of type #N$03, the bonuses that restore the
+D $D74C The routine for objects of type #N($03), the bonuses that restore the
 . player's health. A bonus vanishes when the player is more than four cells
 . away. When the player touches it, the bonus turns into a burst and the
 . player's health is made full.
+N $D74C Vanish if the player is too far away.
   $D74C,$05 Set the distance to #N$04 cells and check whether the bonus is that
 . close to the player.
   $D751,$02 Jump to #R$D758 if it is.
   $D753,$05 Remove the bonus, because the player is too far away, and return.
 @ $D758 label=UpdateHealthBonus_Close
+N $D758 Restore the player's health when the bonus is touched.
   $D758,$04 Return if the bonus is not touching the player.
   $D75C,$04 Turn the bonus into a burst.
   $D760,$05 Give the player full health.
@@ -6011,8 +6406,10 @@ D $D76C Makes a bonus appear near the player, in the object at #R$BD0E, if there
 . (type #N$03), depending on the frame counter. It is placed in a cell that is
 . not solid and is at least two cells from the player, at a random place within
 . the cell.
+N $D76C Return if a bonus is already there.
   $D76C,$04 Use the object for the bonus.
   $D770,$05 Return if there is a bonus already.
+N $D775 Choose a cell that is not solid and not too close.
   $D775,$03 Update the random number generator.
   $D778,$08 Fetch the column and the row of the player's cell.
   $D780,$07 Choose a column that is the same as the player's, or four on, from
@@ -6027,7 +6424,8 @@ D $D76C Makes a bonus appear near the player, in the object at #R$BD0E, if there
   $D7A3,$05 Set the distance to two cells.
   $D7A8,$01 Check whether the cell is closer to the player than that, and return
 . if it is.
-  $D7A9,$0A Make the type of the bonus #N$02 or #N$03, from the frame counter,
+N $D7A9 Place the bonus in the cell.
+  $D7A9,$0A Make the type of the bonus #N$02 or #N($03), from the frame counter,
 . and set it.
   $D7B3,$0A Set the position of the bonus along the X axis within the cell to a
 . random place.
@@ -6041,9 +6439,10 @@ D $D76C Makes a bonus appear near the player, in the object at #R$BD0E, if there
 
 c $D7D8 Update Burst
 @ $D7D8 label=UpdateBurst
-D $D7D8 The routine for objects of type #N$0C to #N$0F, the bursts that show an
-. object being destroyed. The burst changes to the next sprite, and the object
-. is removed after the fourth sprite and a random sound is played.
+D $D7D8 The routine for objects of type #N$0C to #N($0F), the
+. bursts that show an object being destroyed. The burst
+. changes to the next sprite, and the object is removed
+. after the fourth sprite and a random sound is played.
   $D7D8,$0A Change to the next sprite, and jump to #R$D7E8 unless that was the
 . last one.
   $D7E2,$06 Remove the burst, and play a random sound.
@@ -6052,21 +6451,23 @@ D $D7D8 The routine for objects of type #N$0C to #N$0F, the bursts that show an
 
 c $D7ED Update Shot
 @ $D7ED label=UpdateShot
-D $D7ED The routine for objects of type #N$50 to #N$5F, the shots that the
+D $D7ED The routine for objects of type #N$50 to #N($5F), the shots that the
 . player fires. A shot moves in a straight line, and turns into a burst when it
 . hits something.
+N $D7ED Move the shot along both axes.
   $D7ED,$06 Set the velocity of the shot from its speed and direction.
   $D7F3,$03 Change the sprite of the shot.
   $D7F6,$03 Check whether the scenery blocks the move along one axis.
   $D7F9,$03 Move the shot.
   $D7FC,$03 Check whether the scenery blocks the move along the other axis.
   $D7FF,$03 Move the shot.
+N $D802 Burst if the shot has hit something.
   $D802,$05 Return if the shot has not hit anything.
   $D807,$05 Turn the shot into a burst and return.
 
 c $D80C Update Thrown Item
 @ $D80C label=UpdateThrownItem
-D $D80C The routine for objects of type #N$08 to #N$0B, the items that the
+D $D80C The routine for objects of type #N$08 to #N($0B), the items that the
 . player has thrown. The item flies in a straight line. If it hits the object
 . that is four places along the object table (the monster that it belongs to),
 . the monster is destroyed, #N$25 hundred points are added to the score and the
@@ -6092,7 +6493,7 @@ N $D833 The item has hit its monster.
 
 c $D847 Update Destroyed Monster
 @ $D847 label=UpdateDestroyedMonster
-D $D847 The routine for objects of type #N$84 to #N$87, the flash that shows a
+D $D847 The routine for objects of type #N$84 to #N($87), the flash that shows a
 . monster that has been destroyed. The border of the screen is set to a colour
 . from the frame counter, and on every other frame the object moves on to the
 . next sprite. It is removed after the fourth sprite.
@@ -6106,12 +6507,14 @@ c $D865 Check Monsters Defeated
 D $D865 Checks whether all four monsters have been destroyed and their fragments
 . have gone. If so, the game is over (see #R$CC56). Returns if any monster is
 . still alive, or any of its fragments is still moving.
+N $D865 Return if any monster is still alive.
   $D865,$09 Point #REGhl at the first monster, set the distance from one object
 . to the next (#N$0010 bytes), set a counter for four monsters and clear #REGa.
 @ $D86E label=CheckMonstersDefeated_Monsters
   $D86E,$04 Combine the type of the monster with the others, and loop back until
 . all four have been checked.
   $D872,$01 Return if any monster is still alive.
+N $D873 Return if any fragment is still in the view.
   $D873,$06 Point #REGix at the first of the four fragments, and set a counter
 . for four.
 @ $D879 label=CheckMonstersDefeated_Fragments
@@ -6127,10 +6530,12 @@ c $D88E Place Items
 D $D88E Places the four items that the monsters need (type #N$04 to #N$07) in
 . random cells of the village that are not solid, in the objects from #R$BD1E.
 . The cells come from bytes of the ROM, starting from a random place.
+N $D88E Point at the first item and a random place in the ROM.
   $D88E,$03 Increase the frame counter, and update the random number generator.
   $D891,$06 Point #REGiy at the first object, and set a counter of four items.
   $D897,$08 Make a random address in the first #N$1000 bytes of the ROM.
 @ $D89F label=PlaceItems_Cell
+N $D89F Place an item in a cell that is not solid.
   $D89F,$05 Fetch a column from the ROM.
   $D8A4,$05 Fetch a row from the ROM.
   $D8A9,$07 Find the tile of the cell.
@@ -6138,7 +6543,7 @@ D $D88E Places the four items that the monsters need (type #N$04 to #N$07) in
   $D8B5,$03 Keep the counter, the address in the ROM and the cell.
   $D8B8,$0D Copy the template for an item into the object, and move on to the
 . next object.
-  $D8C5,$03 Restore the cell, the address in the ROM and the counter.
+  $D8C5,$03 Restore the cell, the ROM address and the counter from the stack.
   $D8C8,$06 Set the type of the item.
   $D8CE,$06 Set the column and the row of the item.
   $D8D4,$02 Loop back until all four items have been placed.
@@ -6152,14 +6557,17 @@ B $D8D7,$10,$10
 
 c $D8E7 Place Monsters
 @ $D8E7 label=PlaceMonsters
-D $D8E7 Places the four monsters (type #N$60, #N$64, #N$68 and #N$6C) in random
-. cells of the village that are not solid, in the objects from #R$BD5E. The
+D $D8E7 Places the four monsters (type #N($60), #N($64), #N$68
+. and #N$6C) in random cells of the village that are not
+. solid, in the objects from #R$BD5E. The
 . cells come from bytes of the ROM, starting from a random place.
+N $D8E7 Point at the first monster and a random place in the ROM.
   $D8E7,$03 Increase the frame counter, and update the random number generator.
   $D8EA,$06 Point #REGiy at the first object, and set a counter of four
 . monsters.
   $D8F0,$08 Make a random address in the first #N$1000 bytes of the ROM.
 @ $D8F8 label=PlaceMonsters_Cell
+N $D8F8 Place a monster in a cell that is not solid.
   $D8F8,$05 Fetch a column from the ROM.
   $D8FD,$05 Fetch a row from the ROM.
   $D902,$07 Find the tile of the cell.
@@ -6167,7 +6575,7 @@ D $D8E7 Places the four monsters (type #N$60, #N$64, #N$68 and #N$6C) in random
   $D90E,$03 Keep the counter, the address in the ROM and the cell.
   $D911,$0D Copy the template for a monster into the object, and move on to the
 . next object.
-  $D91E,$03 Restore the cell, the address in the ROM and the counter.
+  $D91E,$03 Restore the cell, the ROM address and the counter from the stack.
   $D921,$08 Set the type of the monster from the counter.
   $D929,$06 Set the column and the row of the monster.
   $D92F,$02 Loop back until all four monsters have been placed.
@@ -6182,8 +6590,9 @@ B $D932,$10,$10
 
 c $D942 Update Monster Item
 @ $D942 label=UpdateMonsterItem
-D $D942 The routine for objects of type #N$04 to #N$07, the items that the
-. monsters need, lying in the village. When the player touches one, the item is
+D $D942 The routine for objects of type #N$04 to #N($07), the
+. items that the monsters need, lying in the village. When
+. the player touches one, the item is
 . picked up.
   $D942,$04 Return if the item is not touching the player.
   $D946,$06 Start the item sound, which is sound effect #N$03 and has four
@@ -6192,8 +6601,9 @@ D $D942 The routine for objects of type #N$04 to #N$07, the items that the
 
 c $D94F Update Monster
 @ $D94F label=UpdateMonster
-D $D94F The routine for objects of type #N$60 to #N$6F, the monsters. A monster
-. moves about, changing direction from time to time, and kills the player if it
+D $D94F The routine for objects of type #N$60 to #N($6F), the
+. monsters. A monster moves about, changing direction from
+. time to time, and kills the player if it
 . touches the player.
   $D94F,$0A Set the offset of the pitches for the monster from its type.
   $D959,$06 Play the sound for the monster if it has been drawn. #REGbc holds
@@ -6225,8 +6635,9 @@ R $D978 IX Object
 
 c $D9A3 Update Village Item
 @ $D9A3 label=UpdateVillageItem
-D $D9A3 The routine for objects of type #N$30 to #N$3F, the items that appear in
-. the village (see #R$C5CE). An item wanders about at random while the player
+D $D9A3 The routine for objects of type #N$30 to #N($3F), the
+. items that appear in the village (see #R$C5CE). An item
+. wanders about at random while the player
 . stays in the cell that it appeared in, and is picked up when the player
 . touches it. It turns into a burst, and goes back to the items that are
 . available, when the player has gone from the cell or is dead.
@@ -6258,7 +6669,7 @@ N $D9E0 Add the item to the items that are available for the kind of tile.
 
 c $D9EB Update Bumping Body
 @ $D9EB label=UpdateBumpingBody
-D $D9EB The routine for objects of type #N$16 and #N$1E, which is the body of
+D $D9EB The routine for objects of type #N$16 and #N($1E), which is the body of
 . the player when the legs have bumped into something. The body stays in this
 . pose while the legs are flagged as having bumped into something, and goes back
 . to normal otherwise.
@@ -6271,12 +6682,14 @@ D $D9EB The routine for objects of type #N$16 and #N$1E, which is the body of
 
 c $DA00 Update Player Body
 @ $DA00 label=UpdatePlayerBody
-D $DA00 The routine for objects of type #N$20 to #N$2F, the body of the player.
-. The body follows the legs (the object before it), and has the same sprite
+D $DA00 The routine for objects of type #N$20 to #N($2F), the
+. body of the player. The body follows the legs (the object
+. before it), and has the same sprite
 . number as the legs. A sound is played when the legs bump into something, and
 . the body then changes to the bumping pose. When the player is standing still,
 . the body occasionally looks around.
-  $DA00,$04 Use the position of the body as the destination of the copy.
+  $DA00,$04 Use the position of the body as the destination of the copy
+. (using the stack).
   $DA04,$04 Use the position of the legs as the source of the copy.
   $DA08,$05 Copy the position and the speed of the legs.
   $DA0D,$07 Jump to #R$DA46 if the turn counter of the legs is zero.
@@ -6309,7 +6722,7 @@ N $DA46 The player is standing still, so the body looks around from time to
 
 c $DA7A Update Player Legs
 @ $DA7A label=UpdatePlayerLegs
-D $DA7A The routine for objects of type #N$10 to #N$15 and #N$18 to #N$1D, the
+D $DA7A The routine for objects of type #N$10 to #N$15 and #N$18 to #N($1D), the
 . legs of the player. While the player is materialising, the timer at #R$BC02 is
 . advanced by two each frame and the player just flickers into view. Once the
 . player is solid, it reads the controls and moves the player.
@@ -6329,7 +6742,7 @@ D $DA7A The routine for objects of type #N$10 to #N$15 and #N$18 to #N$1D, the
   $DAA5,$03 Work out the direction that the player is facing.
   $DAA8,$01 Keep the controls.
   $DAA9,$03 Move the player.
-  $DAAC,$01 Restore the controls.
+  $DAAC,$01 Restore the controls from the stack.
   $DAAD,$03 Throw an item if the fire button was pressed.
   $DAB0,$01 Return.
 @ $DAB1 label=UpdatePlayerLegs_Materialising
@@ -6382,7 +6795,8 @@ N $DAFD This shot is free, so the item is copied from the player into it.
   $DB05,$02 Keep the counter and the place in the inventory.
   $DB07,$03 Fetch the item and remove it from the inventory.
   $DB0A,$03 Use the player as the source of the copy.
-  $DB0D,$03 Use the shot as the destination of the copy.
+  $DB0D,$03 Use the shot as the destination of the copy (using the
+. stack).
   $DB10,$05 Copy the player into the shot.
   $DB15,$04 Make the type of the shot from the item.
 @ $DB19 label=ThrowItem_Set
@@ -6392,7 +6806,7 @@ N $DAFD This shot is free, so the item is copied from the player into it.
   $DB28,$04 Set the X offset of the sprite.
   $DB2C,$04 Set the Y offset of the sprite.
   $DB30,$05 Set the time before the next throw to two frames.
-  $DB35,$02 Restore the place in the inventory and the counter.
+  $DB35,$02 Restore the inventory place and the counter from the stack.
   $DB37,$06 Work out the number of the place counted from the start of the
 . inventory.
   $DB3D,$03 Redraw the item in the inventory tube.
@@ -6418,11 +6832,13 @@ E $DB68 View the equivalent code in;
 . { #GUNFRIGHT$CD0C }
 . LIST#
 R $DB68 E Controls
+N $DB68 Wait until the key has been pressed and then released.
   $DB68,$03 Find the flag for the key being held.
   $DB6B,$04 Jump to #R$DB72 unless the key is pressed.
   $DB6F,$03 Flag that the key is being held, and return.
 @ $DB72 label=CheckRotateKey_Released
   $DB72,$03 Return if the key was not being held.
+N $DB75 Flip the view and redraw the compass.
   $DB75,$02 Flag that the key is no longer being held.
   $DB77,$07 Flip the rotation of the view.
   $DB7E,$08 Give the player a turn counter of at least two.
@@ -6447,53 +6863,92 @@ E $DB89 View the equivalent code in;
 R $DB89 E Controls
 R $DB89 IX Player
 R $DB89 O:E Controls, with bit 2 set only if the player is to move forward
-  $DB89,$07 Jump to #R$DB95 if the player is not turning.
-  $DB90,$05 Count down the turn counter, and set the sprite of the player.
+N $DB89 Jump to #R$DC14 while a turn is still counting.
+  $DB89,$03 Fetch the direction and the time left in a turn.
+  $DB8C,$02,b$01 Keep the time left in a turn.
+  $DB8E,$02 Jump to #R$DB95 if the player is not turning.
+N $DB90 Count down the turn counter, and set the sprite of the player.
+  $DB90,$03 Count down the time.
+  $DB93,$02 Jump to #R$DC14.
+N $DB95 Use the keyboard unless a joystick is set to give a direction.
 @ $DB95 label=ChooseDirection_Controls
-  $DB95,$08 Jump to #R$DBFE if the controls are the keyboard.
+  $DB95,$03 Point #REGhl at #R$BBB0.
+  $DB98,$01 Fetch #R$BBB0.
+  $DB99,$02,b$01 Keep the bits for the controls.
+  $DB9B,$02 Jump to #R$DBFE if the controls are the keyboard.
   $DB9D,$04 Jump to #R$DBFE if the option for directional control is not set.
-  $DBA1,$08 Swap the controls for left and right, and up and down, if the view
-. is rotated.
+N $DBA1 Swap the controls for left and right, and up and down, if the view is
+. rotated.
+  $DBA1,$03 Fetch #R$BBBA.
+  $DBA4,$02,b$01 Keep the lowest bit.
+  $DBA6,$03 Call #R$DC43 if the view is rotated.
+N $DBA9 Turn towards the direction that is pressed.
   $DBA9,$04 Jump to #R$DBB1 if the control for left is used.
   $DBAD,$04 Jump to #R$DBC0 if the control for up is used.
+N $DBB1 The controls are not for up.
 @ $DBB1 label=ChooseDirection_Right
   $DBB1,$04 Jump to #R$DBE6 if the control for right is used.
   $DBB5,$04 Jump to #R$DBED if the control for down is used.
   $DBB9,$04 Jump to #R$DBF4 if the control for left is used.
-  $DBBD,$03 Clear the control for up, and return.
+N $DBBD Clear the control for up, and return.
+  $DBBD,$02 Clear bit 2 of the controls.
+  $DBBF,$01 Return.
+N $DBC0 The controls are for up.
 @ $DBC0 label=ChooseDirection_Up
   $DBC0,$03 Fetch the direction of the player.
+N $DBC3 How far is the heading from the direction that is wanted?
 @ $DBC3 label=ChooseDirection_Turn
-N $DBC3 Work out how far the player has to turn.
-  $DBC3,$06 Clear the control for up, and jump to #R$DBFB if the player is
-. facing the direction that is wanted.
+  $DBC3,$02,b$01 Keep only the heading.
+  $DBC5,$02 Clear bit 2 of the controls.
+  $DBC7,$02 Jump to #R$DBFB if the player already faces that way.
   $DBC9,$04 Jump to #R$DBD8 if the player has to turn back by a quarter.
   $DBCD,$04 Jump to #R$DBDF if the player has to turn on by a quarter.
-  $DBD1,$07 Choose which way to turn from the random seed, as the player has to
-. turn right round.
+N $DBD1 Choose which way to turn from the random seed, as the player has to turn
+. right round.
+  $DBD1,$03 Fetch the random seed.
+  $DBD4,$04 Jump to #R$DBDF if it is less than #N$80.
+N $DBD8 Turn back a quarter.
 @ $DBD8 label=ChooseDirection_TurnBack
-  $DBD8,$07 Turn the player back by a quarter, and jump to #R$DC0F.
+  $DBD8,$03 Fetch the direction of the player.
+  $DBDB,$02 Take a quarter turn off it.
+  $DBDD,$02 Jump to #R$DC0F.
+N $DBDF Turn on a quarter.
 @ $DBDF label=ChooseDirection_TurnOn
-  $DBDF,$07 Turn the player on by a quarter, and jump to #R$DC0F.
+  $DBDF,$03 Fetch the direction of the player.
+  $DBE2,$02 Add a quarter turn to it.
+  $DBE4,$02 Jump to #R$DC0F.
+N $DBE6 The controls are for right.
 @ $DBE6 label=ChooseDirection_WantRight
-  $DBE6,$07 Work out the direction of the player compared with right, and jump
-. to #R$DBC3.
+  $DBE6,$03 Fetch the direction of the player.
+  $DBE9,$02 Take a quarter turn off it.
+  $DBEB,$02 Jump to #R$DBC3.
+N $DBED The controls are for down.
 @ $DBED label=ChooseDirection_WantDown
-  $DBED,$07 Work out the direction of the player compared with down, and jump to
-. #R$DBC3.
+  $DBED,$03 Fetch the direction of the player.
+  $DBF0,$02 Take two quarter turns off it.
+  $DBF2,$02 Jump to #R$DBC3.
+N $DBF4 The controls are for left.
 @ $DBF4 label=ChooseDirection_WantLeft
-  $DBF4,$07 Work out the direction of the player compared with left, and jump to
-. #R$DBC3.
+  $DBF4,$03 Fetch the direction of the player.
+  $DBF7,$02 Take three quarter turns off it.
+  $DBF9,$02 Jump to #R$DBC3.
+N $DBFB The player faces the way that was asked.
 @ $DBFB label=ChooseDirection_Forward
   $DBFB,$03 Set the control for moving forward, and return.
+N $DBFE Left and right turn the player a quarter.
 @ $DBFE label=ChooseDirection_Relative
-N $DBFE Turn the player with the controls for left and right.
   $DBFE,$03 Fetch the direction of the player.
-  $DC01,$08 Turn the player back by a quarter if the control for left is used.
+N $DC01 Turn the player back by a quarter if the control for left is used.
+  $DC01,$04 Jump to #R$DC09 if left is not pressed.
+  $DC05,$02 Take a quarter turn off the heading.
+  $DC07,$02,b$01 Start a turn.
+N $DC09 Right turns the player the other way.
 @ $DC09 label=ChooseDirection_RelativeRight
-  $DC09,$06 Turn the player on by a quarter if the control for right is used.
+  $DC09,$04 Jump to #R$DC11 if right is not pressed.
+  $DC0D,$02 Add a quarter turn to the heading.
+N $DC0F Start a turn and store the heading.
 @ $DC0F label=ChooseDirection_Counter
-  $DC0F,$02,b$01 Set the turn counter to one.
+  $DC0F,$02,b$01 Start a turn.
 @ $DC11 label=ChooseDirection_Set
   $DC11,$03 Set the direction of the player.
 
@@ -6508,10 +6963,12 @@ E $DC14 View the equivalent code in;
 . { #GUNFRIGHT$CC13 }
 . LIST#
 R $DC14 IX Player
+N $DC14 Look up the flags and the sprite set for the direction.
   $DC14,$08 Fetch the direction of the player.
   $DC1C,$06 Turn it around if the view is rotated.
   $DC22,$02 Clear the high byte.
   $DC24,$04 Find the entry in the table.
+N $DC28 Set the flip flags and the sprite set of the legs.
   $DC28,$04 Fetch the flags from the table.
   $DC2C,$09 Set the flip flags of the legs.
   $DC35,$04 Fetch the sprite set from the table.
@@ -6528,12 +6985,14 @@ E $DC43 View the equivalent code in;
 . LIST#
 R $DC43 E Controls
 R $DC43 O:E Controls swapped
+N $DC43 Swap left with right.
   $DC43,$03 Keep the control for fire.
   $DC46,$04 Make the control for right the control for left.
   $DC4A,$02 Set the control for left.
 @ $DC4C label=SwapControls_Left
   $DC4C,$04 Make the control for left the control for right.
   $DC50,$02 Set the control for right.
+N $DC52 Swap up with down.
 @ $DC52 label=SwapControls_Down
   $DC52,$04 Make the control for down the control for up.
   $DC56,$02 Set the control for up.
@@ -6555,10 +7014,16 @@ E $DC60 View the equivalent code in;
 . LIST#
 R $DC60 E Controls
 R $DC60 IX Player
+N $DC60 Walk if bit 2 is set.
   $DC60,$04 Jump to #R$DCA8 if the control to move forward is used.
-  $DC64,$07 Fetch the direction of the player.
-  $DC6B,$06 Jump to the routine for the direction, to find the part of the
-. position that is along the way that the player is moving.
+N $DC64 Otherwise slow down in the direction of the heading.
+  $DC64,$03 Fetch the direction.
+  $DC67,$02 Move the direction into the lowest two bits.
+  $DC69,$02,b$01 Keep only the direction.
+N $DC6B Jump to the routine for the direction, to find the part of the position
+. that is along the way that the player is moving.
+  $DC6B,$03 Point #REGbc at #R$DC71.
+  $DC6E,$03 Jump to #R$D593.
 
 w $DC71 Slow Down Routines
 @ $DC71 label=SlowDownRoutines
@@ -6575,27 +7040,40 @@ E $DC79 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$CC5B }
 . LIST#
+R $DC79 IX Player
+N $DC79 Heading zero.
   $DC79,$03 Fetch the Y position of the player (moving up the screen).
+N $DC7C Find the distance to the next multiple of eight.
 @ $DC7C label=SlowPlayerDown_Distance
-  $DC7C,$04 Stop the player if the position is a multiple of eight units.
+  $DC7C,$02,b$01 Keep the lowest three bits.
+  $DC7E,$02 Jump to #R$DCA3 if the position is a multiple of eight.
   $DC80,$04 Work out the distance to the next multiple of eight units.
-  $DC84,$02 Set the greatest speed to four.
+  $DC84,$02 Set a speed of four.
   $DC86,$03 Jump to #R$DC8F if the distance is four or more.
-  $DC89,$05 Halve the greatest speed, and jump to #R$DC8F if the distance is two
-. or more.
-  $DC8E,$01 Use the distance as the speed.
+N $DC89 Halve the greatest speed, and jump to #R$DC8F if the distance is two or
+. more.
+  $DC89,$02 Halve the speed.
+  $DC8B,$03 Jump to #R$DC8F if the distance is two or more.
+  $DC8E,$01 Use the distance.
+N $DC8F Move the player at this speed.
 @ $DC8F label=SlowPlayerDown_Speed
   $DC8F,$03 Set the speed and move the player.
+N $DC92 Heading one.
 @ $DC92 label=SlowPlayerDown_Right
-  $DC92,$05 Fetch the X position of the player (moving right), and jump to
-. #R$DC7C.
+  $DC92,$03 Fetch the X position of the player (moving right).
+  $DC95,$02 Jump to #R$DC7C.
+N $DC97 Heading two.
 @ $DC97 label=SlowPlayerDown_Down
   $DC97,$03 Fetch the Y position of the player (moving down the screen).
+N $DC9A Heading two or three.
 @ $DC9A label=SlowPlayerDown_Negate
-  $DC9A,$04 Negate the position and jump to #R$DC7C.
+  $DC9A,$02 Make it negative.
+  $DC9C,$02 Jump to #R$DC7C.
+N $DC9E Heading three.
 @ $DC9E label=SlowPlayerDown_Left
-  $DC9E,$05 Fetch the X position of the player (moving left), and jump to
-. #R$DC9A.
+  $DC9E,$03 Fetch the X position of the player (moving left).
+  $DCA1,$02 Jump to #R$DC9A.
+N $DCA3 The player is at a multiple of eight, so the player stops.
 @ $DCA3 label=SlowPlayerDown_Stop
   $DCA3,$05 Set the speed of the player to zero and return.
 
@@ -6641,16 +7119,22 @@ E $DCE0 View the equivalent code in;
 . LIST#
 R $DCE0 A Speed
 R $DCE0 IX Object
-  $DCE0,$09 Use the speed for the velocity along the X axis (bit 6 of the
-. direction is set) in #REGl...
-  $DCE9,$03 ... or the velocity along the Y axis in #REGh.
+N $DCE0 Put the speed on the X axis.
+  $DCE0,$03 Make the speed the X velocity, with no Y velocity.
+  $DCE3,$06 Jump to #R$DCEC if the direction is along x.
+N $DCE9 Put the speed on the Y axis.
+  $DCE9,$03 Make the speed the Y velocity, with no X velocity.
+N $DCEC Make the speed negative for down and left.
 @ $DCEC label=SetVelocityFromSpeed_Sign
   $DCEC,$06 Jump to #R$DCFA unless the direction faces down the screen or to the
 . left.
-  $DCF2,$08 Negate the velocity along both axes.
+N $DCF2 Negate the velocity along both axes.
+  $DCF2,$04 Make the X velocity negative.
+  $DCF6,$04 Make the Y velocity negative.
+N $DCFA Store the velocities.
 @ $DCFA label=SetVelocityFromSpeed_Set
-  $DCFA,$06 Set the velocities of the object.
-  $DD00,$01 Return.
+  $DCFA,$03 Set the X velocity of the object.
+  $DCFD,$04 Set the Y velocity and return.
 
 c $DD01 Move Object
 @ $DD01 label=MoveObject
@@ -6676,19 +7160,33 @@ E $DD28 View the equivalent code in;
 . { #GUNFRIGHT$B82A }
 . LIST#
 R $DD28 IX Object
+N $DD28 Change direction at once if the object has hit a wall.
   $DD28,$06 Jump to #R$DD3D if the object has hit something.
-  $DD2E,$09 Count down the timer, and return unless it has run out.
+N $DD2E Count down the timer, and return unless it has run out.
+  $DD2E,$03 Count down the timer.
+  $DD31,$03 Fetch the timer.
+  $DD34,$02,b$01 Keep the bottom five bits.
+  $DD36,$01 Return unless the timer has run out.
   $DD37,$06 Jump to #R$DD58 if the object chases the player.
+N $DD3D Turn left or right and set a new timer.
 @ $DD3D label=UpdateDirection_Random
-  $DD3D,$0A Fetch the random seed and the direction, and jump to #R$DD54 if the
-. seed is #N$80 or more.
+  $DD3D,$03 Fetch a random number.
+  $DD40,$02 Compare it with #N$80.
+  $DD42,$03 Fetch the direction and timer.
+  $DD45,$02 Jump to #R$DD54 to turn back if the random number is #N$80 or more.
   $DD47,$02 Turn on a quarter.
+N $DD49 Set a timer from the second random seed, set the direction and return.
 @ $DD49 label=UpdateDirection_Timer
-  $DD49,$0B Set a timer from the second random seed, set the direction and
-. return.
+  $DD49,$01 Keep the new direction in #REGc.
+  $DD4A,$03 Fetch another random number.
+  $DD4D,$02,b$01 Keep the bottom six bits.
+  $DD4F,$01 Combine it with the direction.
+  $DD50,$03 Store the new direction.
+  $DD53,$01 Return.
 @ $DD54 label=UpdateDirection_Back
-N $DD54 Turn back a quarter.
-  $DD54,$04 Turn back a quarter, and jump to #R$DD49.
+N $DD54 The random number was #N$80 or more, so turn back.
+  $DD54,$02 Turn back a quarter.
+  $DD56,$02 Jump to #R$DD49.
 @ $DD58 label=UpdateDirection_Chase
 N $DD58 The object chases the player, so work out where the player is compared
 . with the direction that the object is facing.
@@ -6728,23 +7226,24 @@ c $DD99 Find Direction To Player
 D $DD99 Works out which of the four directions an object has to face to move
 . towards the player, using the axis along which the player is furthest away.
 R $DD99 IX Object
-R $DD99 O:A The direction (0 for up the screen, 1 for right, 2 for down and 3
-. for left)
+R $DD99 O:A The direction (0 up, 1 right, 2 down and 3 left)
+N $DD99 Find the axis along which the player is furthest away.
   $DD99,$0C Work out the distance along the X axis from the object to the
 . player.
-  $DDA5,$01 Keep it.
+  $DDA5,$01 Stash the signed distance on the stack.
   $DDA6,$06 Make it positive, and keep it in #REGde.
   $DDAC,$0C Work out the distance along the Y axis from the object to the
 . player.
-  $DDB8,$01 Keep it.
+  $DDB8,$01 Stash the signed distance on the stack.
   $DDB9,$05 Make it positive.
   $DDBE,$05 Compare it with the distance along the X axis, and start with the
 . direction up the screen.
-  $DDC3,$02 Restore the distances.
+  $DDC3,$02 Restore the distances from the stack.
   $DDC5,$02 Jump to #R$DDC9 if the player is further along the Y axis.
   $DDC7,$02 Use the direction to the right, and use the distance along the X
 . axis.
 @ $DDC9 label=FindDirectionToPlayer_Sign
+N $DDC9 Reverse the direction if the player is at a negative distance.
   $DDC9,$03 Return if the player is not at a negative distance.
   $DDCC,$03 Use the opposite direction, and return.
 
@@ -6791,16 +7290,18 @@ D $DE0D Makes an object face the direction that it is moving in, and tests
 . axes ends up facing along the Y axis (if the velocity along that axis is not
 . zero).
 R $DE0D IX Object
+N $DE0D Face along the X axis first.
   $DE0D,$06 Jump to #R$DE33 if the velocity along the X axis is zero.
   $DE13,$05 Face right...
   $DE18,$02,b$01 ... or face left, if the velocity is negative.
 @ $DE1A label=SetDirectionFromVelocity_X
   $DE1A,$01 Keep the direction.
   $DE1B,$09 Set the direction of the object.
-  $DE24,$08 Keep the velocity along the Y axis, and set it to zero.
+  $DE24,$08 Stash the velocity along the Y axis, and set it to zero.
   $DE2C,$03 Test whether the object can move that way.
-  $DE2F,$04 Restore the velocity along the Y axis.
+  $DE2F,$04 Restore the velocity along the Y axis from the stack.
 @ $DE33 label=SetDirectionFromVelocity_Y
+N $DE33 Then face along the Y axis.
   $DE33,$05 Return if the velocity along the Y axis is zero.
   $DE38,$05 Face up the screen...
   $DE3D,$02,b$01 ... or face down the screen, if the velocity is negative.
@@ -6809,7 +7310,7 @@ R $DE0D IX Object
   $DE40,$09 Set the direction of the object.
   $DE49,$08 Keep the velocity along the X axis, and set it to zero.
   $DE51,$03 Test whether the object can move that way.
-  $DE54,$04 Restore the velocity along the X axis.
+  $DE54,$04 Restore the velocity along the X axis from the stack.
   $DE58,$01 Return.
 
 c $DE59 Test Move
@@ -6824,11 +7325,16 @@ E $DE59 View the equivalent code in;
 . { #GUNFRIGHT$CD8C }
 . LIST#
 R $DE59 IX Object
+N $DE59 Clear bit 0 of the flags, then run the routine for the heading.
   $DE59,$04 Clear the flag for a collision.
+N $DE5D Run the routine for the heading, without clearing the flag.
 @ $DE5D label=TestMove_Keep
-N $DE5D Test the move without clearing the flag for a collision.
-  $DE5D,$07 Fetch the direction that the object is facing.
-  $DE64,$06 Run the routine for the direction.
+  $DE5D,$03 Fetch the direction that the object is facing.
+  $DE60,$02 Move the direction into the lowest two bits.
+  $DE62,$02,b$01 Keep only the direction.
+N $DE64 Run the routine for the direction.
+  $DE64,$03 Point #REGbc at #R$DE6A.
+  $DE67,$03 Jump to #R$D593.
 
 w $DE6A Test Move Routines
 @ $DE6A label=TestMoveRoutines
@@ -6980,9 +7486,13 @@ R $DF34 O:F The carry flag is set if there was a collision
   $DF66,$03 Check whether the front right corner of the object hits a wall.
   $DF69,$02 Get the edges back.
   $DF6B,$01 Return if the object hit a wall.
-  $DF6C,$05 Fetch the velocity along the Y axis, which is negative.
-  $DF71,$04 Work out the position that the velocity takes the front edge to, and
+N $DF6C Check the cells after the move.
+  $DF6C,$03 Fetch the velocity along the Y axis.
+  $DF6F,$02 Make it a negative word in #REGbc.
+N $DF71 Work out the position that the velocity takes the front edge to, and
 . return if it is in the same cell.
+  $DF71,$02 Find the front edge after the move.
+  $DF73,$02 Return if it is in the same cell.
   $DF75,$02 Save the edges.
   $DF77,$03 Check whether the front left corner hits a wall in the next cell.
   $DF7A,$02 Get the edges back, with the registers swapped over.
@@ -6995,9 +7505,13 @@ N $DF86 Check whether the front right corner hits a wall in the next cell.
 @ $DF89 label=TestMoveDown_SameCell
 N $DF89 The left and right edges are in the same cell.
   $DF89,$02 Get the edges back.
-  $DF8B,$05 Fetch the velocity along the Y axis, which is negative.
-  $DF90,$04 Work out the position that the velocity takes the front edge to, and
+N $DF8B Fetch the velocity along the Y axis, which is negative.
+  $DF8B,$03 Fetch the velocity along the Y axis.
+  $DF8E,$02 Make it a negative word in #REGbc.
+N $DF90 Work out the position that the velocity takes the front edge to, and
 . return if it is in the same cell.
+  $DF90,$02 Find the front edge after the move.
+  $DF92,$02 Return if it is in the same cell.
 N $DF94 Check whether the front edge hits a wall in the next cell.
   $DF94,$03 Jump to #R$E00B.
 
@@ -7031,9 +7545,13 @@ R $DF97 O:F The carry flag is set if there was a collision
   $DFC8,$03 Check whether the second corner of the front edge hits a wall.
   $DFCB,$02 Get the edges back.
   $DFCD,$01 Return if the object hit a wall.
-  $DFCE,$05 Fetch the velocity along the X axis, which is negative.
-  $DFD3,$04 Work out the position that the velocity takes the front edge to, and
+N $DFCE Check the cells after the move.
+  $DFCE,$03 Fetch the velocity along the X axis.
+  $DFD1,$02 Make it a negative word in #REGbc.
+N $DFD3 Work out the position that the velocity takes the front edge to, and
 . return if it is in the same cell.
+  $DFD3,$02 Find the front edge after the move.
+  $DFD5,$02 Return if it is in the same cell.
   $DFD7,$01 Use the new position of the front edge.
   $DFD8,$02 Save the edges.
   $DFDA,$03 Check whether the first corner hits a wall in the next cell.
@@ -7046,9 +7564,13 @@ N $DFE8 Check whether the second corner hits a wall in the next cell.
 @ $DFEB label=TestMoveLeft_SameCell
 N $DFEB The side edges are in the same cell.
   $DFEB,$02 Get the edges back.
-  $DFED,$05 Fetch the velocity along the X axis, which is negative.
-  $DFF2,$04 Work out the position that the velocity takes the front edge to, and
+N $DFED Fetch the velocity along the X axis, which is negative.
+  $DFED,$03 Fetch the velocity along the X axis.
+  $DFF0,$02 Make it a negative word in #REGbc.
+N $DFF2 Work out the position that the velocity takes the front edge to, and
 . return if it is in the same cell.
+  $DFF2,$02 Find the front edge after the move.
+  $DFF4,$02 Return if it is in the same cell.
   $DFF6,$01 Use the new position of the front edge.
 N $DFF7 Check whether the first corner hits a wall in the next cell.
   $DFF7,$03 Jump to #R$E020.
@@ -7063,15 +7585,18 @@ R $DFFA DE X position to test
 R $DFFA HL Y position to test
 R $DFFA IX Object
 R $DFFA O:F The carry flag is set if there was a collision
+N $DFFA Check the walls, then push the object back if it is touching one.
   $DFFA,$03 Check whether the object hits a wall in the cell.
   $DFFD,$01 Return if it did not.
-@ $DFFE label=ReduceVelocityY
 N $DFFE Reduce the velocity along the Y axis.
-  $DFFE,$07 Add twice the depth to the velocity along the Y axis, which stops
-. the object at the wall.
-@ $E005 label=SetCollisionFlag
+@ $DFFE label=ReduceVelocityY
+  $DFFE,$01 Double the depth.
+  $DFFF,$06 Add it to the velocity along the Y axis, which stops the object at
+. the wall.
 N $E005 Set the flag for a collision.
-  $E005,$06 Set the flag for a collision, set the carry flag and return.
+@ $E005 label=SetCollisionFlag
+  $E005,$04 Set the flag for a collision.
+  $E009,$02 Set the carry flag and return.
 
 c $E00B Test Cell Moving Down
 @ $E00B label=TestCellMovingDown
@@ -7095,12 +7620,14 @@ R $E013 DE X position to test
 R $E013 HL Y position to test
 R $E013 IX Object
 R $E013 O:F The carry flag is set if there was a collision
+N $E013 Check the walls, then push the object back if it is touching one.
   $E013,$03 Check whether the object hits a wall in the cell.
   $E016,$01 Return if it did not.
-@ $E017 label=ReduceVelocityX
 N $E017 Reduce the velocity along the X axis.
-  $E017,$07 Add twice the depth to the velocity along the X axis, which stops
-. the object at the wall.
+@ $E017 label=ReduceVelocityX
+  $E017,$01 Double the depth.
+  $E018,$06 Add it to the velocity along the X axis, which stops the object at
+. the wall.
   $E01E,$02 Jump to #R$E005 to set the flag for a collision.
 
 c $E020 Test Cell Moving Left
@@ -7117,9 +7644,8 @@ R $E020 O:F The carry flag is set if there was a collision
 
 c $E028 Find Position In Cell
 @ $E028 label=FindPositionInCell
-D $E028 Works out where an object is in a cell, and finds the tile of the cell.
-. The position is in half units, with an offset of #N$40 so that it is positive
-. for the object when it is in the cell or the cells next to it.
+D $E028 Finds where an object is in a cell. The position in the cell is half the
+. distance from the corner, plus #N$40. #R$E051 finds the tile of that cell.
 E $E028 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$CF67 }
@@ -7131,17 +7657,21 @@ R $E028 O:E The position of the object along the X axis in the cell
 R $E028 O:D The position of the object along the Y axis in the cell
 R $E028 O:L The column of the cell
 R $E028 O:H The row of the cell
-  $E028,$03 Save the column and the row.
+N $E028 Keep the row and column, and find the corner of the cell.
+  $E028,$02 Keep the row in #REGb and the column in #REGc.
+  $E02A,$01 Stash the row and column on the stack.
   $E02B,$03 Clear the lowest byte of the column and of the row, to give the
 . position of the corner of the cell.
+N $E02E Find the horizontal position of the object in the cell.
   $E02E,$06 Fetch the X position of the object.
   $E034,$03 Subtract the X position of the corner of the cell.
-  $E037,$04 Halve the result.
+  $E037,$04 Halve the distance.
   $E03B,$04 Add the offset, to give the position of the object along the X axis
 . in the cell.
+N $E03F Find the vertical position of the object in the cell.
   $E03F,$06 Fetch the Y position of the object.
   $E045,$03 Subtract the Y position of the corner of the cell.
-  $E048,$04 Halve the result.
+  $E048,$04 Halve the distance.
   $E04C,$04 Add the offset, to give the position of the object along the Y axis
 . in the cell.
   $E050,$01 Get the column and the row back.
@@ -7174,20 +7704,29 @@ E $E063 View the equivalent code in;
 R $E063 DE X position to test
 R $E063 HL Y position to test
 R $E063 IX Object
-R $E063 O:A The depth that the object has gone into the wall along the X axis
-. (negative)
+R $E063 O:A The depth into the wall along the X axis (negative)
 R $E063 O:F The carry flag is set if there was a collision
-  $E063,$03 Find the position in the cell and the tile.
-  $E066,$06 Find the list of rectangles for the tile.
-  $E06C,$03 Use the list of rectangles.
+N $E063 Find the cell and its rectangle list.
+  $E063,$03 Call #R$E028.
+N $E066 Find the list of rectangles for the tile.
+  $E066,$03 Point #REGbc at #R$6334.
+  $E069,$03 Call #R$D589.
+  $E06C,$03 Copy the rectangle list to #REGiy
+. (using the stack).
+N $E06F Test the next rectangle.
 @ $E06F label=CheckWallsVerticalFirst_Loop
-  $E06F,$05 Return if there are no more rectangles.
-  $E074,$05 Jump to #R$E07D to try the next rectangle if the object is not
-. touching this one along the Y axis.
-  $E079,$04 Return if it is touching along the X axis as well.
+  $E06F,$05 Return if this is the end of the
+. list.
+N $E074 Jump to #R$E07D if the object is not touching the rectangle.
+  $E074,$03 Call #R$E0C4.
+  $E077,$02 Jump to #R$E07D if the object is not touching the rectangle.
+N $E079 Return if the object is touching the rectangle.
+  $E079,$03 Call #R$E087.
+  $E07C,$01 Return if the object is touching the rectangle.
+N $E07D Move on to the next rectangle.
 @ $E07D label=CheckWallsVerticalFirst_Next
   $E07D,$08 Move on to the next rectangle.
-  $E085,$02 Jump back to check it.
+  $E085,$02 Jump to #R$E06F.
 
 c $E087 Check Overlap Along X
 @ $E087 label=CheckOverlapAlongX
@@ -7202,11 +7741,18 @@ R $E087 IX Object
 R $E087 IY Rectangle
 R $E087 O:A The depth that the object has gone into the rectangle (negative)
 R $E087 O:F The carry flag is set if the object overlaps the rectangle
+N $E087 Find the sum of the half widths.
   $E087,$09 Work out the combined half widths of the object and the rectangle.
-  $E090,$09 Work out the distance along the X axis, including the velocity.
+N $E090 Find the distance between the middles.
+  $E090,$03 Fetch the velocity along x.
+  $E093,$06 Add half of it to the position, then find the distance from the
+. middle of the rectangle.
+N $E099 Make the distance positive, then subtract the sum.
   $E099,$05 Make the distance positive.
+N $E09E Subtract the combined half widths and return.
 @ $E09E label=CheckOverlapAlongX_Depth
-  $E09E,$02 Subtract the combined half widths and return.
+  $E09E,$01 Subtract the sum.
+  $E09F,$01 Return.
 
 c $E0A0 Check Walls Horizontal First
 @ $E0A0 label=CheckWallsHorizontalFirst
@@ -7219,21 +7765,29 @@ E $E0A0 View the equivalent code in;
 R $E0A0 DE X position to test
 R $E0A0 HL Y position to test
 R $E0A0 IX Object
-R $E0A0 O:A The depth that the object has gone into the wall along the Y axis
-. (negative)
+R $E0A0 O:A The depth into the wall along the Y axis (negative)
 R $E0A0 O:F The carry flag is set if there was a collision
-  $E0A0,$03 Find the position in the cell and the tile.
-  $E0A3,$06 Find the list of rectangles for the tile.
-  $E0A9,$03 Use the list of rectangles.
+N $E0A0 Find the cell and its rectangle list.
+  $E0A0,$03 Call #R$E028.
+N $E0A3 Find the list of rectangles for the tile.
+  $E0A3,$03 Point #REGbc at #R$6334.
+  $E0A6,$03 Call #R$D589.
+  $E0A9,$03 Copy the rectangle list to #REGiy
+. (using the stack).
+N $E0AC Test the next rectangle.
 @ $E0AC label=CheckWallsHorizontalFirst_Loop
-  $E0AC,$05 Return if there are no more rectangles.
-  $E0B1,$03 Check whether the object is touching the rectangle along the X axis.
-  $E0B4,$02 Jump to #R$E0BA to try the next rectangle if it is not.
-  $E0B6,$03 Check whether the object is touching it along the Y axis too.
-  $E0B9,$01 Return if it is, as the object has hit the wall.
+  $E0AC,$05 Return if this is the end of the
+. list.
+  $E0B1,$03 Call #R$E087.
+  $E0B4,$02 Jump to #R$E0BA if the object is
+. not touching the rectangle.
+  $E0B6,$03 Call #R$E0C4.
+  $E0B9,$01 Return if the object is touching
+. the rectangle.
+N $E0BA Move on to the next rectangle.
 @ $E0BA label=CheckWallsHorizontalFirst_Next
   $E0BA,$08 Move on to the next rectangle.
-  $E0C2,$02 Jump back to check it.
+  $E0C2,$02 Jump to #R$E0AC.
 
 c $E0C4 Check Overlap Along Y
 @ $E0C4 label=CheckOverlapAlongY
@@ -7248,15 +7802,21 @@ R $E0C4 IX Object
 R $E0C4 IY Rectangle
 R $E0C4 O:A The depth that the object has gone into the rectangle (negative)
 R $E0C4 O:F The carry flag is set if the object overlaps the rectangle
+N $E0C4 Find the sum of the half depths.
   $E0C4,$09 Work out the combined half depths of the object and the rectangle.
-  $E0CD,$09 Work out the distance along the Y axis, including the velocity.
+N $E0CD Find the distance between the middles.
+  $E0CD,$03 Fetch the velocity along y.
+  $E0D0,$06 Add half of it to the position, then find the distance from the
+. middle of the rectangle.
+N $E0D6 Make the distance positive, then subtract the sum.
   $E0D6,$05 Make the distance positive.
 @ $E0DB label=CheckOverlapAlongY_Depth
-  $E0DB,$02 Subtract the combined half depths and return.
+  $E0DB,$01 Subtract the sum.
+  $E0DC,$01 Return.
 
 c $E0DD Negate HL
 @ $E0DD label=NegateHL
-D $E0DD Negates a 16-bit number.
+D $E0DD Makes #REGhl negative.
 E $E0DD View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$D01B }
@@ -7264,30 +7824,36 @@ E $E0DD View the equivalent code in;
 . { #MARTIANOIDS$B4B1 }
 . { #TRANZAM$6BF6 }
 . LIST#
-R $E0DD HL Number
-R $E0DD O:HL The number negated
+R $E0DD HL The word
+R $E0DD O:HL The negative of the word
+N $E0DD Invert both bytes, then add one.
   $E0DD,$03 Invert the low byte.
   $E0E0,$03 Invert the high byte.
-  $E0E3,$01 Add one, to make the number negative.
+  $E0E3,$01 Add one.
   $E0E4,$01 Return.
 
 c $E0E5 Sign Extend A
 @ $E0E5 label=SignExtendA
-D $E0E5 Converts a signed 8-bit number into a signed 16-bit number.
+D $E0E5 Makes a signed number into a signed word.
 E $E0E5 View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$D023 }
 . LIST#
-R $E0E5 A Number
-R $E0E5 O:HL The number as 16 bits
-  $E0E5,$06 Put the number in the low byte, and test its sign.
+R $E0E5 A The number
+R $E0E5 O:HL The word
+N $E0E5 Put the number in the low byte. The high byte is zero, or #N$FF if the
+. number is negative.
+  $E0E5,$01 Make the number the low byte.
+  $E0E6,$01 Start with a high byte of zero.
+  $E0E7,$04 Jump to #R$E0EC if the number is not negative.
   $E0EB,$01 Use #N$FF for the high byte if the number is negative.
 @ $E0EC label=SignExtendA_Set
-  $E0EC,$02 Set the high byte and return.
+  $E0EC,$01 Set the high byte.
+  $E0ED,$01 Return.
 
 c $E0EE Multiply A By DE
 @ $E0EE label=MultiplyAByDE
-D $E0EE Multiplies an 8-bit number by a 16-bit number.
+D $E0EE Multiplies #REGa by #REGde.
 E $E0EE View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE0D }
@@ -7297,14 +7863,17 @@ E $E0EE View the equivalent code in;
 . { #TRANZAM$6F2F }
 . { #UNDERWURLDE$AC68 }
 . LIST#
-R $E0EE A Multiplier
-R $E0EE DE Multiplicand
-R $E0EE O:HL The result
-  $E0EE,$05 Start with a result of zero, and count eight bits.
+R $E0EE A The first number
+R $E0EE DE The second number
+R $E0EE O:HL The product
+N $E0EE Clear the product and count the bits.
+  $E0EE,$03 Set #REGhl to #N($0000,$04,$04).
+  $E0F1,$02 Set #REGb to #N$08.
+N $E0F3 Shift the product and add when the next bit is set.
 @ $E0F3 label=MultiplyAByDE_Loop
-  $E0F3,$04 Move on to the next bit of the multiplier, and jump to #R$E0F8 if it
-. is not set.
-  $E0F7,$01 Add the multiplicand to the result.
+  $E0F3,$01 Double #REGhl.
+  $E0F4,$03 Jump to #R$E0F8 if the carry flag is not set.
+  $E0F7,$01 Add #REGde to #REGhl.
 @ $E0F8 label=MultiplyAByDE_Next
   $E0F8,$02 Loop back until all the bits have been used.
   $E0FA,$01 Return.
@@ -7316,41 +7885,63 @@ D $E0FB Builds the tables that the sprite drawing routines use to shift graphics
 .
 . There are three pairs of 256-byte pages for shifting a byte by two, four and
 . six pixels (the low byte of the shifted result is in the first page of each
-. pair, counting down from #N$FF, and the high byte is in the second). #N$FA to
-. #N$FF hold the shifts of the bytes as they are, and #N$F2 to #N$F7 hold the
-. shifts of the bytes with their bits reversed. The page at #N$F900 holds the
+. pair, counting down from #N($FF), and the high byte is in
+. the second). #N$FA to #N$FF hold the shifts of the bytes as
+. they are, and #N$F2 to #N$F7 hold the shifts of the bytes
+. with their bits reversed. The page at #R$F900 holds the
 . bytes with their bits reversed.
 E $E0FB View the equivalent code in;
 . #LIST
 . { #GUNFRIGHT$D4FD }
 . LIST#
-  $E0FB,$02 Start with the byte #N$00.
+N $E0FB Build the tables for the bytes as they are.
+  $E0FB,$02 Start with the byte at #N$00.
+N $E0FD Start with the byte as a 16-bit number, and point #REGhl at the first
+. page of the tables.
 @ $E0FD label=BuildShiftTables_Normal
-  $E0FD,$07 Start with the byte as a 16-bit number, and point #REGhl at the
-. first page of the tables.
+  $E0FD,$03 Make the word the byte.
+  $E100,$02 Start at page #N$FF.
+  $E102,$02 Set a count of #N$03 pairs.
+N $E104 Shift the word left by two bits and store it.
 @ $E104 label=BuildShiftTables_NormalLoop
-  $E104,$0E Shift the number left by two pixels, and store it in the next pair
-. of pages.
-  $E112,$03 Move on to the next byte, and loop back until all 256 have been
-. done.
-  $E115,$02 Start with the byte #N$00 again.
+  $E104,$08 Shift the word left by two bits.
+  $E10C,$04 Store the pair in the next two pages.
+  $E110,$02 Jump to #R$E104 if there are any left.
+N $E112 Move on to the next byte, and loop back until all 256 have been done.
+  $E112,$01 Move on to the next byte.
+  $E113,$02 Jump to #R$E0FD if there are any left.
+N $E115 Build the tables for the bytes with their bits reversed.
+  $E115,$02 Start with the byte at #N$00.
 @ $E117 label=BuildShiftTables_Reversed
-  $E117,$05 Count eight bits, and get the byte.
+  $E117,$02 Clear the high byte of the word.
+  $E119,$03 Set a count of #N$08 bits, and copy the byte into #REGa.
+N $E11C Turn the bits of the byte round.
 @ $E11C label=BuildShiftTables_Reverse
-  $E11C,$05 Reverse the bits of the byte.
-  $E121,$05 Start with the reversed byte as a 16-bit number, and point #REGhl at
-. the first page of the reversed tables.
+  $E11C,$03 Move the next bit into #REGc from the other end.
+  $E11F,$02 Jump to #R$E11C if there are any left.
+N $E121 Start with the reversed byte as a 16-bit number, and point #REGhl at the
+. first page of the reversed tables.
+  $E121,$01 Make the low byte the reversed byte.
+  $E122,$02 Start at page #N$F7.
+  $E124,$02 Set a count of #N$03 pairs.
+N $E126 Shift the word left by two bits and store it.
 @ $E126 label=BuildShiftTables_ReversedLoop
-  $E126,$0E Shift the number left by two pixels, and store it in the next pair
-. of pages.
-  $E134,$03 Move on to the next byte, and loop back until all 256 have been
-. done.
+  $E126,$08 Shift the word left by two bits.
+  $E12E,$04 Store the pair in the next two pages.
+  $E132,$02 Jump to #R$E126 if there are any left.
+N $E134 Move on to the next byte, and loop back until all 256 have been done.
+  $E134,$01 Move on to the next byte.
+  $E135,$02 Jump to #R$E117 if there are any left.
+N $E137 Build the table of reversed bytes.
   $E137,$03 Point #REGhl at #R$F900.
 @ $E13A label=BuildShiftTables_ReverseTable
   $E13A,$03 Start with the byte, and count eight bits.
 @ $E13D label=BuildShiftTables_ReverseBits
-  $E13D,$06 Reverse the bits of the byte.
-  $E143,$04 Store the reversed byte, and loop back until all 256 have been done.
+  $E13D,$04 Move the lowest bit of the byte into the other end of #REGe.
+  $E141,$02 Jump to #R$E13D if there are any left.
+  $E143,$01 Store the byte turned round.
+  $E144,$01 Move on to the next byte.
+  $E145,$02 Jump to #R$E13A if there are any left.
   $E147,$01 Return.
 
 c $E148 Copy Pixels To Screen
@@ -7366,36 +7957,49 @@ E $E148 View the equivalent code in;
 . bottom row of the playing area, so the rows of the buffer are copied from the
 . bottom of the screen upwards. Only the 22 bytes of each row that are inside
 . the border are copied, which are bytes 2 to 23 of the row.
-  $E148,$09 Save the stack pointer, point it at the end of the last row of the
-. playing area on the screen, and count 112 rows.
+N $E148 Keep the stack pointer, and point it at the playfield on the screen.
+  $E148,$04 Save the stack pointer.
+  $E14C,$03 Point the stack pointer at the end of the last row of the playing
+. area on the screen.
+  $E14F,$02 Set a count of #N$70 rows.
   $E151,$03 Point #REGhl at the end of the first row of the buffer.
+N $E154 Copy a row from the buffer to the screen.
 @ $E154 label=CopyPixelsToScreen_Row
   $E154,$32 Copy the last twenty bytes of the row from the buffer onto the
 . screen, two at a time.
   $E186,$04 Copy the first two bytes of the row onto the screen.
-  $E18A,$01 Keep the buffer address in #REGde.
+  $E18A,$01 Keep the address in the buffer in #REGde.
+N $E18B Move up one pixel line on the screen.
   $E18B,$04 Work out the address on the screen of the end of the row above,
 . which is one pixel row up.
-  $E18F,$07 Jump to #R$E1A1 unless that is the last pixel row of a character
-. row.
-  $E196,$07 Move up one character row, and jump to #R$E1A1 if that is in a
-. different third of the screen.
+N $E18F Jump to #R$E1A1 unless that is the last pixel row of a character row.
+  $E18F,$02 Test whether it has crossed into the previous character row.
+  $E191,$02,b$01 Keep the bits for the pixel line.
+  $E193,$03 Jump to #R$E1A1 if it has not.
+N $E196 Move to the previous character row.
+  $E196,$04 Subtract #N$20 from the low byte.
+  $E19A,$03 Jump to #R$E1A1 if that is in the previous third.
   $E19D,$04 Move up to the last pixel row of the character row.
+N $E1A1 Point at the next row.
 @ $E1A1 label=CopyPixelsToScreen_Next
   $E1A1,$01 Point the stack pointer at the row on the screen.
   $E1A2,$04 Move on to the end of the next row of the buffer.
   $E1A6,$02 Loop back until all of the rows have been copied.
-  $E1A8,$05 Get the stack pointer back and return.
+N $E1A8 Restore the stack pointer.
+  $E1A8,$04 Get the stack pointer back.
+  $E1AC,$01 Return.
 
 c $E1AD Copy Attributes To Screen
 @ $E1AD label=CopyAttributesToScreen
 D $E1AD Copies the attributes of the attribute buffer onto the screen, in the
 . same way as #R$E148. The buffer holds 14 rows of 24 bytes, and the top row of
 . the buffer is the bottom row of the playing area.
+N $E1AD Point the stack at the last row of attributes.
   $E1AD,$0C Save the stack pointer, point it at the end of the last row of
 . attributes of the playing area, count 14 rows, and point #REGhl at the end of
 . the first row of the buffer.
 @ $E1B9 label=CopyAttributesToScreen_Row
+N $E1B9 Copy a row and step up the screen.
   $E1B9,$32 Copy the last twenty bytes of the row from the buffer onto the
 . screen, two at a time.
   $E1EB,$04 Copy the first two bytes of the row onto the screen.
@@ -7440,18 +8044,24 @@ R $E21D B Number of rows of 24 bytes
 R $E21D DE Word to fill the buffer with
 R $E21D HL Address after the end of the buffer
 R $E21D O:HL Address of the start of the buffer
-  $E21D,$05 Save the stack pointer, and point it at the end of the buffer.
+N $E21D Keep the stack pointer, and point it at the end of the buffer.
+  $E21D,$04 Save the stack pointer.
+  $E221,$01 Point the stack pointer at the end of the buffer.
+N $E222 Fill a row.
 @ $E222 label=FillBuffer_Row
   $E222,$0C Fill a row of 24 bytes by pushing twelve words onto the stack.
   $E22E,$02 Loop back until all of the rows have been filled.
+N $E230 Keep the start of the buffer, and restore the stack pointer.
   $E230,$04 Fetch the address of the start of the buffer.
   $E234,$04 Get the stack pointer back.
   $E238,$01 Return.
 
 c $E239 Read Keyboard Port
 @ $E239 label=ReadKeyboardPort
-D $E239 Reads half of the keyboard. The bits of the half-row of keys to read are
-. zero, and more than one half-row can be read at once.
+D $E239 Reads some rows of the keyboard. The row selector is also written to
+. port #N$FD (with the selector as the high byte of the address), which does
+. nothing on a 48K Spectrum and is not part of any sound; the keyboard is read
+. with the same selector straight afterwards.
 E $E239 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$B759 }
@@ -7460,26 +8070,33 @@ E $E239 View the equivalent code in;
 . { #KNIGHTLORE$B5F7 }
 . { #PENTAGRAM$B952 }
 . LIST#
-R $E239 A Half-rows to read
-R $E239 O:A The keys that are pressed (bits 0 to 4, with bit 0 for the key
-. nearest the edge of the keyboard)
-R $E239 O:F The zero flag is set if no keys are pressed
+R $E239 A Row selector (a bit which is reset selects the row)
+R $E239 O:A Keys pressed, in bits 0 to 4 (a bit is set when a key is pressed)
+R $E239 O:F Zero flag set if no key is pressed
+N $E239 Write the selector, then read the keys.
   $E239,$02 Write the half-row selector to port #N$FD. The ULA only responds to
 . even port numbers, so this has no effect on the 48K Spectrum, but it leaves
 . the selector in #REGa for the next instruction.
-  $E23B,$02 Read the keyboard.
-  $E23D,$04 Make the pressed keys into set bits, and return.
+  $E23B,$02 Read the rows of the keyboard.
+N $E23D Make the pressed keys into set bits, and return.
+  $E23D,$01 Invert the bits, so that a bit is set for a key which is pressed.
+  $E23E,$02,b$01 Keep only bits 0 to 4.
+  $E240,$01 Return.
 
 c $E241 Read Controls
 @ $E241 label=ReadControls
-D $E241 Reads the controls, using the method that was chosen on the game
-. selection menu (bits 1 and 2 of #R$BBB0), and keeps them in #R$BC01.
-.
-. The bits of the controls are 0 for left, 1 for right, 2 for forward, 3 for
-. fire, 4 for down and 5 for turning the view.
-.
-. The methods are the keyboard (0), a Kempston joystick (1), a Cursor joystick
-. (2) and a Sinclair joystick (3).
+D $E241 Reads the controls using the method in bits 1 and 2 of #R$BBB0, and
+. keeps them in #R$BC01. The methods are the keyboard, a Kempston joystick, a
+. Cursor joystick and a Sinclair joystick.
+. #TABLE(default,centre,centre)
+. { =h Bit | =h Meaning }
+. { #N$00 | Left }
+. { #N$01 | Right }
+. { #N$02 | Forward }
+. { #N$03 | Fire }
+. { #N$04 | Down }
+. { #N$05 | Turning the view }
+. TABLE#
 E $E241 Continue on to #R$E250.
 E $E241 View the equivalent code in;
 . #LIST
@@ -7488,29 +8105,56 @@ E $E241 View the equivalent code in;
 . { #KNIGHTLORE$D022 }
 . LIST#
 R $E241 O:C Controls
-  $E241,$06 Fetch the control method.
+N $E241 Fetch the control method from #R$BBB0.
+  $E241,$03 Fetch #R$BBB0.
+  $E244,$01 Move the type of controls into the low bits.
+  $E245,$02,b$01 Keep the two bits.
   $E247,$03 Jump to #R$E2DA to read the keyboard if it is the keyboard.
   $E24A,$03 Jump to #R$E289 if it is a Kempston joystick.
   $E24D,$03 Jump to #R$E2AE if it is a Cursor joystick.
 
 c $E250 Read Interface 2 Joystick
 @ $E250 label=ReadInterface2Joystick
-D $E250 Reads the controls from a Sinclair joystick, which can be in either of
-. the two sockets (using the keys 1 to 5 or the keys 6 to 0).
+D $E250 Reads the controls from the Interface 2 joysticks, which are the keys 1
+. to 5 for the first joystick and 6 to 0 for the second joystick. The joysticks
+. use the keys left, right, down, up and fire in that order, so the keys of the
+. first joystick are reversed to put them in the same order as the keys of the
+. second joystick.
 E $E250 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C91B }
 . { #GUNFRIGHT$D0F2 }
 . { #KNIGHTLORE$D03E }
 . LIST#
-  $E250,$05 Read the keys 1 to 5.
-  $E255,$03 Save the registers, and count five keys.
+R $E250 O:C The controls
+N $E250 Reverse the keys 1 to 5.
+  $E250,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
+N $E255 Save the registers, and count five keys.
+  $E255,$01 Stash #REGbc on the stack.
+  $E256,$02 Set #REGb to #N$05.
 @ $E258 label=ReadInterface2Joystick_Reverse
-  $E258,$05 Reverse the order of the five keys.
-  $E25D,$03 Get the registers back, and keep the reversed keys.
-  $E260,$05 Read the keys 6 to 0.
+  $E258,$01 Rotate #REGa right.
+  $E259,$02 Rotate #REGc left.
+  $E25B,$02 Jump to #R$E258 until #REGb is zero.
+N $E25D Get the registers back, and keep the reversed keys.
+  $E25D,$01 Copy #REGc to #REGa.
+  $E25E,$01 Restore #REGbc from the stack.
+  $E25F,$01 Copy it to #REGc.
+N $E260 Merge the keys 6 to 0.
+  $E260,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
   $E265,$01 Combine them with the keys 1 to 5, so that the joysticks are the
 . same.
+N $E266 Set the controls from the keys.
   $E266,$02 Start with none of the controls.
   $E268,$06 Set the control for fire if the key for fire is pressed.
 @ $E26E label=ReadInterface2Joystick_Forward
@@ -7548,60 +8192,116 @@ E $E289 View the equivalent code in;
 
 c $E2AE Read Cursor Joystick
 @ $E2AE label=ReadCursorJoystick
-D $E2AE Reads the controls from a Cursor joystick (which uses the keys 5, 6, 7,
-. 8 and 0).
+D $E2AE Reads the controls from a cursor joystick, which uses the keys 5 for
+. left, 8 for right, 7 for up, 6 for down and 0 for fire.
 E $E2AE View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$C979 }
 . { #GUNFRIGHT$D150 }
 . { #KNIGHTLORE$D09C }
 . LIST#
+R $E2AE O:C The controls
+N $E2AE Left from the 1-5 row.
   $E2AE,$02 Start with none of the controls.
-  $E2B0,$05 Read the keys 1 to 5.
+  $E2B0,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$F7 | 1 | 2 | 3 | 4 | 5 }
+. TABLE#
   $E2B5,$06 Set the control for left if the key 5 is pressed.
+N $E2BB Fire, up, right and down from the 0-9 row.
 @ $E2BB label=ReadCursorJoystick_SecondRow
-  $E2BB,$05 Read the keys 6 to 0.
+  $E2BB,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$EF | 0 | 9 | 8 | 7 | 6 }
+. TABLE#
   $E2C0,$06 Set the control for fire if the key 0 is pressed.
 @ $E2C6 label=ReadCursorJoystick_Forward
   $E2C6,$06 Set the control for forward if the key 7 is pressed.
 @ $E2CC label=ReadCursorJoystick_Right
   $E2CC,$06 Set the control for right if the key 8 is pressed.
+N $E2D2 Set the control for down if the key 6 is pressed, and jump to #R$E31C to
+. read the key for turning the view.
 @ $E2D2 label=ReadCursorJoystick_Down
-  $E2D2,$08 Set the control for down if the key 6 is pressed, and jump to
-. #R$E31C to read the key for turning the view.
+  $E2D2,$04 Jump to #R$E31C if bit 4 of #REGa is clear.
+  $E2D6,$02 Set bit 4 of #REGc.
+  $E2D8,$02 Jump to #R$E31C.
 
 c $E2DA Read Keyboard
 @ $E2DA label=ReadKeyboard
 D $E2DA Reads the controls from the keyboard. Left is X, V, M or B, right is C
 . or N, forward is any key from A to G or from H to ENTER, fire is any key from
 . Q to T or from Y to P, and down is any key from 1 to 5 or from 6 to 0.
-  $E2DA,$05 Read the keys CAPS SHIFT, Z, X, C and V.
+N $E2DA Read left and right from CAPS SHIFT to V.
+  $E2DA,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$FE | CAPS SHIFT | Z | X | C | V }
+. TABLE#
   $E2DF,$02 Move the keys X and C into bits 0 and 1, for left and right.
   $E2E1,$06 Set the control for left as well if the key V is pressed.
+N $E2E7 Keep left and right, and read SPACE to B.
 @ $E2E7 label=ReadKeyboard_Right
-  $E2E7,$03 Keep the controls for X and C, and start with them.
-  $E2EA,$05 Read the keys SPACE, SYMBOL SHIFT, M, N and B.
+  $E2E7,$02,b$01 Keep bits 0 and 1.
+  $E2E9,$01 Put them in #REGc.
+  $E2EA,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7F | SPACE | SYMBOL SHIFT | M | N | B }
+. TABLE#
   $E2EF,$06 Set the control for left if the key M is pressed.
+N $E2F5 Set the control for right if N is pressed.
 @ $E2F5 label=ReadKeyboard_KeyN
   $E2F5,$06 Set the control for right if the key N is pressed.
+N $E2FB Set the control for left if B is pressed.
 @ $E2FB label=ReadKeyboard_KeyB
   $E2FB,$06 Set the control for left if the key B is pressed.
+N $E301 Set the control for forward if any key from A to G or H to ENTER is
+. pressed.
 @ $E301 label=ReadKeyboard_Forward
-  $E301,$05 Read the keys A to G and H to ENTER.
+  $E301,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$BD | A / ENTER | S / L | D / K | F / J | G / H }
+. TABLE#
   $E306,$04 Set the control for forward if any of them are pressed.
+N $E30A Set the control for fire if any key from Q to T or Y to P is pressed.
 @ $E30A label=ReadKeyboard_Fire
-  $E30A,$09 Read the keys Q to T and Y to P, and set the control for fire if any
-. of them are pressed.
+  $E30A,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$DB | Q / P | W / O | E / I | R / U | T / Y }
+. TABLE#
+  $E30F,$04 Set the control for fire if any of them are pressed.
+N $E313 Set the control for down if any key from 1 to 5 or 6 to 0 is pressed.
 @ $E313 label=ReadKeyboard_Down
-  $E313,$09 Read the keys 1 to 5 and 6 to 0, and set the control for down if any
-. of them are pressed.
+  $E313,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$E7 | 1 / 0 | 2 / 9 | 3 / 8 | 4 / 7 | 5 / 6 }
+. TABLE#
+  $E318,$04 Set the control for down if any of them are pressed.
 
 c $E31C Read View Key
 @ $E31C label=ReadViewKey
 D $E31C Reads the key for turning the view (Z or SYMBOL SHIFT), and keeps the
 . controls in #R$BC01.
 R $E31C C Controls
-  $E31C,$05 Read the keys CAPS SHIFT, Z, SPACE and SYMBOL SHIFT.
+N $E31C Read the key which turns the view.
+  $E31C,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
   $E321,$06 Set the control for turning the view if the key Z or SYMBOL SHIFT is
 . pressed.
 @ $E327 label=ReadViewKey_Store
@@ -7609,7 +8309,7 @@ R $E31C C Controls
 
 c $E32C Pause Game
 @ $E32C label=PauseGame
-D $E32C Pauses the game when CAPS SHIFT or SPACE is pressed on its own. The game
+D $E32C Pauses the game if CAPS SHIFT or SPACE is pressed on its own. The game
 . continues when the key has been pressed again.
 E $E32C View the equivalent code in;
 . #LIST
@@ -7617,19 +8317,29 @@ E $E32C View the equivalent code in;
 . { #GUNFRIGHT$D206 }
 . { #KNIGHTLORE$D50E }
 . LIST#
-  $E32C,$05 Read the keys CAPS SHIFT, Z, X, C, V, SPACE, SYMBOL SHIFT, M, N and
-. B.
+N $E32C Return unless CAPS SHIFT or SPACE is pressed on its own.
+  $E32C,$05 Read from the keyboard;
+. #TABLE(default,centre,centre,centre,centre,centre,centre)
+. { =h,r2 Port Number | =h,c5 Bit }
+. { =h 0 | =h 1 | =h 2 | =h 3 | =h 4 }
+. { #N$7E | SHIFT / SPACE | Z / SYM | X / M | C / N | V / B }
+. TABLE#
   $E331,$03 Return if neither of the keys CAPS SHIFT or SPACE is pressed.
-  $E334,$03 Return if any of the other keys is pressed too.
+N $E334 Return if any of the other keys is pressed too.
+  $E334,$02,b$01 Keep bits 1 to 4.
+  $E336,$01 Return if any of them is set.
 @ $E337 label=PauseGame_Release
-N $E337 Wait for the key to be released.
-  $E337,$09 Read the keys, and loop back until neither of the keys is pressed.
-@ $E340 label=PauseGame_Press
+N $E337 Wait for the key to be let go of, then pressed and let go of again.
+  $E337,$05 Read the keys.
+  $E33C,$04 Jump to #R$E337 if bit 0 is set.
 N $E340 Wait for a key to be pressed.
-  $E340,$09 Read the keys, and loop back until one of the keys is pressed.
-@ $E349 label=PauseGame_ReleaseAgain
+@ $E340 label=PauseGame_Press
+  $E340,$05 Read the keys.
+  $E345,$04 Jump to #R$E340 if bit 0 is not set.
 N $E349 Wait for the key to be released.
-  $E349,$09 Read the keys, and loop back until neither of the keys is pressed.
+@ $E349 label=PauseGame_ReleaseAgain
+  $E349,$05 Read the keys.
+  $E34E,$04 Jump to #R$E349 if bit 0 is set.
   $E352,$01 Return.
 
 c $E353 Flip Sprite
@@ -7684,7 +8394,7 @@ N $E39A Turn the sprite round, by reversing the rows.
   $E3A8,$04 Fetch the width of the sprite in characters.
   $E3AC,$03 Fetch the number of rows of the sprite, and keep it.
   $E3AF,$02 Start with the first row.
-  $E3B1,$06 Point the shadow #REGhl at the first row, and the shadow #REGb at
+  $E3B1,$06 Point #REGhl' at the first row, and #REGb' at
 . the table for reversing bits.
 @ $E3B7 label=FlipSprite_Row
   $E3B7,$04 Reverse the bits of the mask of a character, using the table.
@@ -7721,12 +8431,14 @@ D $E3D9 Draws an object, if it is on the screen. The position of the object is
 . #SIM(start=$E200,stop=$0000,sp=$5BF0)
 . #SCR$02,$05,$00,$1A,$12(draw-object) } UDGTABLE# #POPS
 R $E3D9 IX Object
+N $E3D9 Clip the X position of the sprite.
   $E3D9,$03 Work out the position of the object on the screen.
   $E3DC,$06 Return if the position along the X axis is outside the screen.
   $E3E2,$07 Add the offset of the sprite along the X axis, and return if that is
 . past the right edge of the window.
   $E3E9,$06 Return if it is past the left edge, and set the X position of the
 . sprite.
+N $E3EF Clip the Y position of the sprite.
   $E3EF,$06 Return if the position along the Y axis is outside the screen.
   $E3F5,$07 Add the offset of the sprite along the Y axis, and return if that is
 . past the top edge of the window.
@@ -7748,7 +8460,7 @@ D $E3FF Draws the sprite of an object in the screen buffer, with its mask. The
 R $E3FF IX Object
   $E3FF,$03 Turn the sprite round or upside down, if it needs it.
   $E402,$05 Work out the position of the sprite in a character, in pixels
-. (#N$00, #N$02, #N$04 or #N$06).
+. (#N($00), #N($02), #N$04 or #N$06).
   $E407,$03 Jump to #R$E48E if the sprite is on a character boundary.
   $E40A,$03 Make the high byte of the address of the table for shifting the
 . sprite.
@@ -7836,26 +8548,31 @@ E $E49F View the equivalent code in;
 . LIST#
 R $E49F BC Address in the screen buffer
 @ $E49F label=DrawAlignedColumns_Five
+N $E49F Draw the first character.
   $E49F,$01 Take the mask and the pixels of the first character from the stack.
   $E4A0,$01 Fetch the byte of the screen buffer.
   $E4A1,$04 Clear the pixels under the mask, and set the pixels of the sprite.
   $E4A5,$02 Put the byte in the screen buffer, and move on to the next byte.
 @ $E4A7 label=DrawAlignedColumns_Four
+N $E4A7 Draw the second character.
   $E4A7,$01 Take the mask and the pixels of the second character from the stack.
   $E4A8,$01 Fetch the byte of the screen buffer.
   $E4A9,$04 Clear the pixels under the mask, and set the pixels of the sprite.
   $E4AD,$02 Put the byte in the screen buffer, and move on to the next byte.
 @ $E4AF label=DrawAlignedColumns_Three
+N $E4AF Draw the third character.
   $E4AF,$01 Take the mask and the pixels of the third character from the stack.
   $E4B0,$01 Fetch the byte of the screen buffer.
   $E4B1,$04 Clear the pixels under the mask, and set the pixels of the sprite.
   $E4B5,$02 Put the byte in the screen buffer, and move on to the next byte.
 @ $E4B7 label=DrawAlignedColumns_Two
+N $E4B7 Draw the fourth character.
   $E4B7,$01 Take the mask and the pixels of the fourth character from the stack.
   $E4B8,$01 Fetch the byte of the screen buffer.
   $E4B9,$04 Clear the pixels under the mask, and set the pixels of the sprite.
   $E4BD,$02 Put the byte in the screen buffer, and move on to the next byte.
 @ $E4BF label=DrawAlignedColumns_One
+N $E4BF Draw the fifth character.
   $E4BF,$01 Take the mask and the pixels of the fifth character from the stack.
   $E4C0,$01 Fetch the byte of the screen buffer.
   $E4C1,$04 Clear the pixels under the mask, and set the pixels of the sprite.
@@ -7895,60 +8612,85 @@ R $E4CD A The first byte of the row in the screen buffer
 R $E4CD BC Address in the screen buffer
 R $E4CD H Page of the table for the first parts of the shifted bytes
 @ $E4CD label=DrawShiftedColumns_Five
-  $E4CD,$07 Take the mask and the pixels of the first character from the stack,
-. clear the pixels under the first part of the mask in the byte that is left
-. over, and set the first part of the pixels.
-  $E4D4,$03 Put the byte in the screen buffer, move on to the next byte and
-. point #REGh at the table for the second parts.
-  $E4D7,$07 Fetch the next byte of the screen buffer, clear the pixels under the
-. second part of the mask, and set the second part of the pixels, to be left
-. over for the next character.
-  $E4DE,$01 Point #REGh at the table for the first parts again, ready for the
-. next character.
+N $E4CD The jump starts here for five columns.
+  $E4CD,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
+. into #REGd.
+  $E4CF,$03 Clear the screen bits under the part of the mask which is in this
+. byte.
+  $E4D2,$02 Add the part of the pixels which is in this byte.
+N $E4D4 Put the byte in the screen buffer, move on to the next byte and point
+. #REGh at the table for the second parts.
+  $E4D4,$02 Store the byte and move on to the next.
+  $E4D6,$03 Point #REGh at the table for the bits which move into the next byte,
+. and fetch that screen byte.
+  $E4D9,$03 Clear the screen bits under the part of the mask which has moved
+. into it.
+  $E4DC,$02 Add the part of the pixels which has moved into it.
+  $E4DE,$01 Point #REGh back at the first table.
 @ $E4DF label=DrawShiftedColumns_Four
-  $E4DF,$07 Take the mask and the pixels of the second character from the stack,
-. clear the pixels under the first part of the mask in the byte that is left
-. over, and set the first part of the pixels.
-  $E4E6,$03 Put the byte in the screen buffer, move on to the next byte and
-. point #REGh at the table for the second parts.
-  $E4E9,$07 Fetch the next byte of the screen buffer, clear the pixels under the
-. second part of the mask, and set the second part of the pixels, to be left
-. over for the next character.
-  $E4F0,$01 Point #REGh at the table for the first parts again, ready for the
-. next character.
+N $E4DF The jump starts here for four columns.
+  $E4DF,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
+. into #REGd.
+  $E4E1,$03 Clear the screen bits under the part of the mask which is in this
+. byte.
+  $E4E4,$02 Add the part of the pixels which is in this byte.
+N $E4E6 Put the byte in the screen buffer, move on to the next byte and point
+. #REGh at the table for the second parts.
+  $E4E6,$02 Store the byte and move on to the next.
+  $E4E8,$03 Point #REGh at the table for the bits which move into the next byte,
+. and fetch that screen byte.
+  $E4EB,$03 Clear the screen bits under the part of the mask which has moved
+. into it.
+  $E4EE,$02 Add the part of the pixels which has moved into it.
+  $E4F0,$01 Point #REGh back at the first table.
 @ $E4F1 label=DrawShiftedColumns_Three
-  $E4F1,$07 Take the mask and the pixels of the third character from the stack,
-. clear the pixels under the first part of the mask in the byte that is left
-. over, and set the first part of the pixels.
-  $E4F8,$03 Put the byte in the screen buffer, move on to the next byte and
-. point #REGh at the table for the second parts.
-  $E4FB,$07 Fetch the next byte of the screen buffer, clear the pixels under the
-. second part of the mask, and set the second part of the pixels, to be left
-. over for the next character.
-  $E502,$01 Point #REGh at the table for the first parts again, ready for the
-. next character.
+N $E4F1 The jump starts here for three columns.
+  $E4F1,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
+. into #REGd.
+  $E4F3,$03 Clear the screen bits under the part of the mask which is in this
+. byte.
+  $E4F6,$02 Add the part of the pixels which is in this byte.
+N $E4F8 Put the byte in the screen buffer, move on to the next byte and point
+. #REGh at the table for the second parts.
+  $E4F8,$02 Store the byte and move on to the next.
+  $E4FA,$03 Point #REGh at the table for the bits which move into the next byte,
+. and fetch that screen byte.
+  $E4FD,$03 Clear the screen bits under the part of the mask which has moved
+. into it.
+  $E500,$02 Add the part of the pixels which has moved into it.
+  $E502,$01 Point #REGh back at the first table.
 @ $E503 label=DrawShiftedColumns_Two
-  $E503,$07 Take the mask and the pixels of the fourth character from the stack,
-. clear the pixels under the first part of the mask in the byte that is left
-. over, and set the first part of the pixels.
-  $E50A,$03 Put the byte in the screen buffer, move on to the next byte and
-. point #REGh at the table for the second parts.
-  $E50D,$07 Fetch the next byte of the screen buffer, clear the pixels under the
-. second part of the mask, and set the second part of the pixels, to be left
-. over for the next character.
-  $E514,$01 Point #REGh at the table for the first parts again, ready for the
-. next character.
+N $E503 The jump starts here for two columns.
+  $E503,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
+. into #REGd.
+  $E505,$03 Clear the screen bits under the part of the mask which is in this
+. byte.
+  $E508,$02 Add the part of the pixels which is in this byte.
+N $E50A Put the byte in the screen buffer, move on to the next byte and point
+. #REGh at the table for the second parts.
+  $E50A,$02 Store the byte and move on to the next.
+  $E50C,$03 Point #REGh at the table for the bits which move into the next byte,
+. and fetch that screen byte.
+  $E50F,$03 Clear the screen bits under the part of the mask which has moved
+. into it.
+  $E512,$02 Add the part of the pixels which has moved into it.
+  $E514,$01 Point #REGh back at the first table.
 @ $E515 label=DrawShiftedColumns_One
-  $E515,$07 Take the mask and the pixels of the fifth character from the stack,
-. clear the pixels under the first part of the mask in the byte that is left
-. over, and set the first part of the pixels.
-  $E51C,$03 Put the byte in the screen buffer, move on to the next byte and
-. point #REGh at the table for the second parts.
-  $E51F,$07 Fetch the next byte of the screen buffer, clear the pixels under the
-. second part of the mask, and set the second part of the pixels, to be left
-. over for the next character.
-  $E526,$01 Point #REGh at the table for the first parts again, ready for the
-. next character.
+N $E515 The jump starts here for one column.
+  $E515,$02 Invert the screen byte, and fetch the mask into #REGe and the pixels
+. into #REGd.
+  $E517,$03 Clear the screen bits under the part of the mask which is in this
+. byte.
+  $E51A,$02 Add the part of the pixels which is in this byte.
+N $E51C Put the byte in the screen buffer, move on to the next byte and point
+. #REGh at the table for the second parts.
+  $E51C,$02 Store the byte and move on to the next.
+  $E51E,$03 Point #REGh at the table for the bits which move into the next byte,
+. and fetch that screen byte.
+  $E521,$03 Clear the screen bits under the part of the mask which has moved
+. into it.
+  $E524,$02 Add the part of the pixels which has moved into it.
+  $E526,$01 Point #REGh back at the first table.
 @ $E527 label=DrawShiftedColumns_Last
   $E527,$01 Put the part of the last character that is left over in the screen
 . buffer.
@@ -7977,16 +8719,18 @@ E $E53A View the equivalent code in;
 R $E53A H Y position (from #N$48 at the first row of the buffer)
 R $E53A L X position
 R $E53A O:HL Address in the screen buffer
-  $E53A,$01 Save #REGbc.
+N $E53A Work out the column and 24 times the row.
+  $E53A,$01 Stash #REGbc on the stack.
   $E53B,$06 Divide the X position by eight.
   $E541,$04 Keep the column, and start with the Y position.
   $E545,$03 Multiply the Y position by eight.
   $E548,$02 Keep the result.
   $E54A,$02 Multiply by two more, and add it to get 24 times the Y position.
+N $E54C Add the column and the address of the buffer.
   $E54C,$03 Add the X position divided by eight.
   $E54F,$01 Add the column.
   $E550,$04 Add the address of the buffer.
-  $E554,$02 Get #REGbc back and return.
+  $E554,$02 Restore #REGbc from the stack and return.
 
 c $E556 Calculate Screen Address
 @ $E556 label=CalculateScreenAddress
@@ -8017,20 +8761,22 @@ D $E579 Works out the address in the attribute buffer of a position in the
 R $E579 H Y position (from #N$48 at the first row of the buffer)
 R $E579 L X position
 R $E579 O:HL Address in the attribute buffer
-  $E579,$01 Save #REGbc.
+N $E579 Work out 24 times the character row.
+  $E579,$01 Stash #REGbc on the stack.
   $E57A,$01 Keep the X position.
   $E57B,$06 Work out the Y position at the start of its character row.
   $E581,$03 Fetch the X position, and copy the Y position into #REGbc.
   $E584,$02 Multiply the Y position by three, to make 24 times the row.
+N $E586 Add the column and the address of the attribute buffer.
   $E586,$06 Work out the column from the X position.
   $E58C,$03 Make the column into a 16-bit number.
   $E58F,$01 Add the column.
   $E590,$04 Add the address of the attribute buffer.
-  $E594,$02 Get #REGbc back and return.
+  $E594,$02 Restore #REGbc from the stack and return.
 
 c $E596 Add A To HL
 @ $E596 label=AddAToHL
-D $E596 Adds a number to a 16-bit number.
+D $E596 Adds an unsigned number to #REGhl.
 E $E596 View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE06 }
@@ -8039,11 +8785,14 @@ E $E596 View the equivalent code in;
 . { #KNIGHTLORE$D4F2 }
 . { #PENTAGRAM$B519 }
 . LIST#
-R $E596 A Number to add
-R $E596 HL Number
-R $E596 O:HL The sum
-  $E596,$02 Add the number to the low byte.
-  $E598,$04 Add the carry to the high byte.
+R $E596 A The number
+R $E596 HL The address
+R $E596 O:HL The new address
+  $E596,$01 Add #REGa to #REGl.
+  $E597,$01 Copy it to #REGl.
+  $E598,$01 Fetch #REGh.
+  $E599,$02 Add #N$00 with carry.
+  $E59B,$01 Copy it to #REGh.
   $E59C,$01 Return.
 
 c $E59D Clear Screen
@@ -8060,6 +8809,7 @@ D $E59D Clears the whole screen to white ink on black paper, and sets the border
 . #SCR$02(clear-screen-before)
 . | #SIM(start=$E59D,stop=$0000,sp=$5BF0)
 . #SCR$02(clear-screen-after) } UDGTABLE# #POPS
+N $E59D Clear the pixels, the attributes and the border.
   $E59D,$03 Clear the pixels.
   $E5A0,$03 Clear the attributes.
   $E5A3,$04 Set the border to black.
@@ -8094,7 +8844,8 @@ D $E5B0 Sets the attributes of the screen to white ink on black paper.
 
 c $E5BA Fill Memory
 @ $E5BA label=FillMemory
-D $E5BA Fills memory with a byte. Entering at #R$E5BA fills it with zero.
+D $E5BA Fills an area of memory with zero. The entry point at #R$E5BC fills it
+. with the byte in #REGe.
 E $E5BA View the equivalent code in;
 . #LIST
 . { #ALIENEIGHT$CE56 }
@@ -8105,12 +8856,14 @@ E $E5BA View the equivalent code in;
 . { #UNDERWURLDE$9569 }
 . LIST#
 R $E5BA BC Number of bytes
-R $E5BA E Byte to fill with (when entering at #R$E5BC)
-R $E5BA HL Address
-  $E5BA,$02 Use zero to fill the memory.
+R $E5BA HL Address of the first byte
+  $E5BA,$02 Set #REGe to #N$00.
+N $E5BC Fill the memory, and loop back until all of the bytes have been filled.
 @ $E5BC label=FillMemory_WithValue
-  $E5BC,$07 Fill the memory, and loop back until all of the bytes have been
-. filled.
+  $E5BC,$01 Write #REGe.
+  $E5BD,$01 Increment #REGhl.
+  $E5BE,$01 Decrement #REGbc.
+  $E5BF,$04 Jump to #R$E5BC if #REGbc is not zero.
   $E5C3,$01 Return.
 
 s $E5C4 Pixel Buffer

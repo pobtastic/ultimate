@@ -2045,6 +2045,21 @@ D $9662 Adds points to the score of the current player, which is kept as six
 . #SCR$02,$00,$00,$06,$06(add-score-before)
 . | #SIM(start=$9662,stop=$0000,bc=$1250,sp=$5B60)
 . #SCR$02,$00,$00,$06,$06(add-score-after) } UDGTABLE# #POPS
+E $9662 View the equivalent code in;
+. #LIST
+. { #ATICATAC$A19C }
+. { #COOKIE$7415 }
+. { #CYBERUN$925E }
+. { #JETPAC$70F9 }
+. { #LUNARJETMAN$899C }
+. { #MARTIANOIDS$B573 }
+. { #NIGHTSHADE$C2ED }
+. { #PENTAGRAM$BB29 }
+. { #PSSST$737A }
+. { #SABREWULF$B5A9 }
+. { #TRANZAM$6046 }
+. { #UNDERWURLDE$A045 }
+. LIST#
 R $9662 B The highest two digits of the points, in binary coded decimal
 R $9662 C The lowest two digits of the points, in binary coded decimal
   $9662,$04 Fetch the highest two digits of the score and keep them in #REGd.
@@ -3818,6 +3833,19 @@ c $A1C1 Play Music
 D $A1C1 Plays a piece of music. Each byte of the music is a note, or #N$FF at
 . the end. Bits 0-5 of a note are its number in the table at #R$A226 (#N$00 for
 . a rest). Bits 6-7 are not used.
+.
+. The tunes played by this routine are:
+. #TABLE(default,centre,centre)
+. { =h Tune | =h Sound }
+. { Title Tune |
+. #HTML(#AUDIO0(title-tune.wav)(#INCLUDE(TitleTune))) }
+. { Start Tune |
+. #HTML(#AUDIO0(start-tune.wav)(#INCLUDE(StartTune))) }
+. { Fanfare |
+. #HTML(#AUDIO0(fanfare.wav)(#INCLUDE(Fanfare))) }
+. { Game Over Tune |
+. #HTML(#AUDIO0(game-over-tune.wav)(#INCLUDE(GameOverTune))) }
+. TABLE#
 E $A1C1 View the equivalent code in;
 . #LIST
 . { #CYBERUN$9AA9 }
@@ -3851,8 +3879,7 @@ R $A1CC O:DE The address of the next byte of the music
   $A1CC,$02,b$01 Use bits 0-5, the number of the note.
   $A1CE,$02 Jump to #R$A20F if it is a rest.
 N $A1D0 Look up the delays and the number of cycles in the table at #R$A226.
-  $A1D0,$01 Copy the note number into #REGl.
-  $A1D1,$02 Clear #REGh.
+  $A1D0,$03 Set #REGhl to the note number.
   $A1D3,$01 Double it.
   $A1D4,$03 Add the note number to make three times the number.
   $A1D7,$03 Point #REGbc at #R$A226.
